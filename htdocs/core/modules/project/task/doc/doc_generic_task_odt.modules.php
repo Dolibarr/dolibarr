@@ -41,10 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -65,7 +65,7 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 

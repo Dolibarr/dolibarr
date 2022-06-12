@@ -602,7 +602,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	// Thirdparty
-	if ($conf->societe->enabled) {
+	if (isModEnabled('societe')) {
 		print '<tr><td>';
 		print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
 		print $langs->trans("ThirdParty");
@@ -898,7 +898,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Thirdparty
-		if ($conf->societe->enabled) {
+		if (isModEnabled('societe')) {
 			print '<tr><td>';
 			print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
 			print $langs->trans("ThirdParty");
@@ -1001,7 +1001,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1170,7 +1170,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
@@ -1326,7 +1326,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
-				if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
+				if (isModEnabled('facture') && $user->rights->facture->creer) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}

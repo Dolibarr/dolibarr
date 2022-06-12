@@ -2477,7 +2477,7 @@ if ($action == 'create') {
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
-				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
@@ -2496,7 +2496,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if (!empty($conf->facture->enabled) && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
+			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
 				if ($user->rights->facture->creer) {
 					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					// If we do that, we must also make this option official.
@@ -2514,7 +2514,7 @@ if ($action == 'create') {
 				if ($user->rights->expedition->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}

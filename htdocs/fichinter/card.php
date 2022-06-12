@@ -40,7 +40,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if ($conf->contrat->enabled) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
@@ -928,7 +928,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if ($conf->contrat->enabled) {
+		if (isModEnabled('contrat')) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
@@ -1659,7 +1659,7 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->facture->creer) {

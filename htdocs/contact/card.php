@@ -1241,7 +1241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
@@ -1511,7 +1511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';

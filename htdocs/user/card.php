@@ -1154,7 +1154,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// User color
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
 		print $formother->selectColor(GETPOSTISSET('color') ?GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
@@ -1605,7 +1605,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<table class="border tableforfield centpercent">';
 
 			// Color user
-			if (!empty($conf->agenda->enabled)) {
+			if (isModEnabled('agenda')) {
 				print '<tr><td class="titlefield">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				print $formother->showColor($object->color, '');
@@ -2544,7 +2544,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// User color
-			if (!empty($conf->agenda->enabled)) {
+			if (isModEnabled('agenda')) {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				if ($caneditfield) {

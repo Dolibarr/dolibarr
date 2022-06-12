@@ -157,7 +157,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."9=Warehouse";
 		}
-		if (!empty($conf->agenda->enabled)) {
+		if (isModEnabled('agenda')) {
 			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
 		}
 		if (!empty($conf->website->enabled)) {

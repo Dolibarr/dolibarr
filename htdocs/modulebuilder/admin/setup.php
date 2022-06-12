@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 global $conf, $langs, $user, $db;
 $langs->loadLangs(array("admin", "other", "modulebuilder"));
 
-if (!$user->admin || empty($conf->modulebuilder->enabled)) {
+if (!$user->admin || !isModEnabled('modulebuilder')) {
 	accessforbidden();
 }
 

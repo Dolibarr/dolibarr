@@ -545,7 +545,7 @@ if ($action == 'create') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
@@ -919,7 +919,7 @@ if ($action == 'create') {
 			}
 
 			// Tags-Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);

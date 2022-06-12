@@ -62,7 +62,7 @@ class box_activity extends ModeleBoxes
 		// FIXME: Pb into some status
 		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((!empty($conf->facture->enabled) && $user->rights->facture->lire)
+		$this->hidden = !((isModEnabled('facture') && $user->rights->facture->lire)
 			|| (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			|| (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			);
@@ -278,7 +278,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 

@@ -869,7 +869,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td></tr>';
 
 			// Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";

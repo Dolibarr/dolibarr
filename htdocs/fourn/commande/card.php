@@ -2573,7 +2573,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			//if (! empty($conf->facture->enabled))
+			//if (isModEnabled('facture'))
 			//{
 			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
 				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
@@ -2584,7 +2584,7 @@ if ($action == 'create') {
 
 			// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
 			if ($usercancreate && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1) {  // statut 2 means approved
-				if (empty($conf->facture->enabled)) {
+				if (!isModEnabled('facture')) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 				} else {
 					if (!empty($object->linkedObjectsIds['invoice_supplier'])) {
