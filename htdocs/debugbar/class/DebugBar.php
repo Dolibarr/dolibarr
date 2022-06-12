@@ -40,7 +40,7 @@ class DolibarrDebugBar extends DebugBar
 		//$this->addCollector(new DolExceptionsCollector());
 		$this->addCollector(new DolQueryCollector());
 		$this->addCollector(new DolibarrCollector());
-		if (!empty($conf->syslog->enabled)) {
+		if (isModEnabled('syslog')) {
 			$this->addCollector(new DolLogsCollector());
 		}
 	}
