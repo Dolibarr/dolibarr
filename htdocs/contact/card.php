@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -235,6 +236,9 @@ if (empty($reshook)) {
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
 		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
 
+		//Default language
+		$object->default_lang = GETPOST('default_lang');
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -316,8 +320,9 @@ if (empty($reshook)) {
 
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
+			setEventMessages("RecordDeleted", null, 'mesgs');
+			if ($backurlforlist) {
+				header("Location: ".$backurlforlist);
 				exit;
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/contact/list.php');
@@ -435,6 +440,9 @@ if (empty($reshook)) {
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
+
+			//Default language
+			$object->default_lang = GETPOST('default_lang');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -556,6 +564,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -624,7 +633,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 			$object->canvas = $canvas;
 
-			$object->state_id = GETPOST("state_id");
+			$object->state_id = GETPOST("state_id", "int");
 
 			// We set country_id, country_code and label for the selected country
 			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
@@ -634,7 +643,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country      = $tmparray['label'];
 			}
 
-			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 			$linkback = '';
 			print load_fiche_titre($title, $linkback, 'address');
 
@@ -697,7 +706,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				} else {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty');
+					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 					print '</td></tr>';
 				}
 			}
@@ -856,7 +865,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if (!empty($value['icon'])) {
 							print '<span class="fa '.$value['icon'].'"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (!empty($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : "")).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
@@ -870,6 +879,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
 			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
+
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1150,6 +1168,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('priv', $selectarray, $object->priv, 0);
 			print '</td></tr>';
 
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
+
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
 			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
@@ -1214,7 +1241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
@@ -1362,6 +1389,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang.'_'.strtoupper($object->default_lang)) : '');
+			print $labellang;
+			print '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
 		print $object->LibPubPriv($object->priv);
 		print '</td></tr>';
@@ -1472,7 +1511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';
@@ -1550,7 +1589,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

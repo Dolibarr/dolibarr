@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -44,6 +46,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$TBomLineId = GETPOST('bomlineid', 'array');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
@@ -128,8 +131,40 @@ if (empty($reshook)) {
 	if ($cancel && !empty($backtopageforcancel)) {
 		$backtopage = $backtopageforcancel;
 	}
-
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
+
+	//Create MO with Childs
+	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
+		$noback = 0;
+		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+		$mo_parent = $object;
+
+		$moline = new MoLine($db);
+		$objectbomchildline = new BOMLine($db);
+
+		foreach ($TBomLineId as $id_bom_line) {
+			$object = new Mo($db);
+
+			$objectbomchildline->fetch($id_bom_line);
+
+			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('origin_id' => $id_bom_line));
+
+			foreach ($TMoLines as $moline) {
+				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
+				$_POST['fk_parent_line'] = $moline->id;
+				$_POST['qty'] = $moline->qty;
+				$_POST['fk_product'] = $moline->fk_product;
+			}
+
+			include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+			$res = $object->add_object_linked('mo', $mo_parent->id);
+		}
+
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.$moline->fk_mo, 1));
+		exit;
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -240,15 +275,17 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
+	mrpCollapseBomManagement();
+
 	?>
 	<script>
 		 $(document).ready(function () {
-			jQuery('#fk_bom').change(function() {
+			 jQuery('#fk_bom').change(function() {
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
 				if (jQuery('#fk_bom').val() > 0)
 				{
 					// Redirect to page with fk_bom set
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&fk_bom='+jQuery('#fk_bom').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&fk_bom='+jQuery('#fk_bom').val();
 					/*
 					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
 						console.log(data);
@@ -280,7 +317,7 @@ if ($action == 'create') {
 				else if (jQuery('#fk_bom').val() < 0) {
 					// Redirect to page with all fields defined except fk_bom set
 					console.log(jQuery('#fk_product').val());
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
 					/*
 					$('#qty').val('');
 					$("#fk_product").val('');
@@ -486,6 +523,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
 
+	//Mo Parent
+	$mo_parent = $object->getMoParent();
+	if (is_object($mo_parent)) {
+		print '<tr class="field_fk_mo_parent">';
+		print '<td class="titlefield fieldname_fk_mo_parent">' . $langs->trans('ParentMo') . '</td>';
+		print '<td class="valuefield fieldname_fk_mo_parent">' .$mo_parent->getNomUrl(1).'</td>';
+		print '</tr>';
+	}
+
 	// Common attributes
 	$keyforbreak = 'fk_warehouse';
 	unset($object->fields['fk_project']);
@@ -602,7 +648,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
 					// TODO Add test that production has not started
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
 
@@ -641,16 +687,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$nbProduced += $lineproduced['qty'];
 					}
 					if ($nbProduced > 0) {	// If production has started, we can close it
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes">'.$langs->trans("Close").'</a>'."\n";
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes&token='.newToken().'">'.$langs->trans("Close").'</a>'."\n";
 					} else {
 						print '<a class="butActionRefused" href="#" title="'.$langs->trans("GoOnTabProductionToProduceFirst", $langs->transnoentitiesnoconv("Production")).'">'.$langs->trans("Close").'</a>'."\n";
 					}
 
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 
 				if ($object->status == $object::STATUS_PRODUCED || $object->status == $object::STATUS_CANCELED) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("ReOpen").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>'."\n";
 				}
 			}
 
@@ -685,14 +731,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('mo'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, false, 'MOChild');
 
 
 		print '</div><div class="fichehalfright">';
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/mrp/mo_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/mrp/mo_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

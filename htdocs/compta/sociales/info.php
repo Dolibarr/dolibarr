@@ -81,7 +81,9 @@ $object->info($id);
 
 $head = tax_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, 'bill');
+$alreadypayed = $object->getSommePaiement();
+
+print dol_get_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, $object->picto);
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
@@ -106,8 +108,9 @@ $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaid = $alreadypayed; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
+$morehtmlright = '';
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 print '<div class="fichecenter">';
@@ -115,7 +118,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

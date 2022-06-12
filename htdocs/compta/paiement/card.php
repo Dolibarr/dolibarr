@@ -52,7 +52,7 @@ $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$result = restrictedArea($user, $object->element, $object->id, 'paiement', '');
+$result = restrictedArea($user, $object->element, $object->id, 'paiement');
 
 // Security check
 if ($user->socid) {
@@ -175,8 +175,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
-	$res = $object->update_num($_POST['num_paiement']);
+if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
+	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -184,7 +184,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday'])) {
+if ($action == 'setdatep' && GETPOST('datepday')) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
@@ -271,7 +271,7 @@ print '<table class="border centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'), '', 0, '', 'id', 'tzuser');
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)

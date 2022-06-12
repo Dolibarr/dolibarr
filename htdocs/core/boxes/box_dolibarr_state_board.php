@@ -126,7 +126,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'services' => !empty($conf->service->enabled) && $user->rights->service->lire,
 				'proposals' => !empty($conf->propal->enabled) && $user->rights->propale->lire,
 				'orders' => !empty($conf->commande->enabled) && $user->rights->commande->lire,
-				'invoices' => !empty($conf->facture->enabled) && $user->rights->facture->lire,
+				'invoices' => isModEnabled('facture') && $user->rights->facture->lire,
 				'donations' => !empty($conf->don->enabled) && $user->rights->don->lire,
 				'contracts' => !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
 				'interventions' => !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,

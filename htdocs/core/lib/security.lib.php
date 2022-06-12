@@ -216,19 +216,19 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  * 	If GETPOST('action','aZ09') defined, we also check write and delete permission.
  *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
  *
- *	@param	User	$user      	  	User to check
- *	@param  string	$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
- *									Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
- *									This is used to check permission $user->rights->features->...
- *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
- *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
- *									This is used to check permission $user->rights->features->feature2...
- *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
- *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
- *  @param	int		$isdraft		1=The object with id=$objectid is a draft
- *  @param	int		$mode			Mode (0=default, 1=return with not die)
- * 	@return	int						If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
+ *	@param	User		$user      	  	User to check
+ *	@param  string		$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
+ *										Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *										This is used to check permission $user->rights->features->...
+ *	@param  int			$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ *	@param  string		$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
+ *	@param  string		$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
+ *										This is used to check permission $user->rights->features->feature2...
+ *  @param  string		$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+ *  @param  string		$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
+ *  @param	int			$isdraft		1=The object with id=$objectid is a draft
+ *  @param	int			$mode			Mode (0=default, 1=return with not die)
+ * 	@return	int							If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
 function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
@@ -236,9 +236,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	global $db, $conf;
 	global $hookmanager;
 
+	$objectid = ((int) $objectid);	// For the case value is coming from a non sanitized user input
+
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
-	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
 	$parentfortableentity = '';
@@ -270,7 +272,6 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		$features = 'produit';
 	}
 
-
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
@@ -286,10 +287,6 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	}
 	if ($reshook > 0) {		// No other test done.
 		return 1;
-	}
-
-	if ($dbt_select != 'rowid' && $dbt_select != 'id') {
-		$objectid = "'".$objectid."'";
 	}
 
 	// Features/modules to check
@@ -539,8 +536,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
-				if (!$user->rights->facture->creer) {
+			} elseif ($feature == 'payment') {
+				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
@@ -892,8 +889,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-				if (!in_array($useridtocheck, $childids)) {
-					return false;
+				if (!$user->rights->expensereport->readall) {
+					if (!in_array($useridtocheck, $childids)) {
+						return false;
+					}
 				}
 			}
 		}

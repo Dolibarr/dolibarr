@@ -350,12 +350,16 @@ class modAccounting extends DolibarrModules
 			'b.fk_doc'=>'const-0',
 			'b.fk_docdet'=>'const-0',
 			'b.fk_user_author'=>'user->id',
-			'b.montant'=>'rule-computeMontant',
-			'b.sens'=>'rule-computeSens'
+			'b.montant'=>'rule-computeAmount',
+			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
+			'b.piece_num' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanValue', 'element' => 'Accountancy'),
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),
 			'b.subledger_account'=>array('rule'=>'accountingaccount'),
+			'b.debit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.credit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.multicurrency_amount' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
 			'b.montant' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
 			'b.sens' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
 		);

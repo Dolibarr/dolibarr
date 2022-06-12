@@ -64,7 +64,7 @@ class FormWebsite
 		$out = '';
 
 		$sql = "SELECT rowid, ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."website";
+		$sql .= " FROM ".$this->db->prefix()."website";
 		$sql .= " WHERE 1 = 1";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
@@ -114,7 +114,7 @@ class FormWebsite
 		$langs->load("admin");
 
 		$sql = "SELECT rowid, code, label, entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+		$sql .= " FROM ".$this->db->prefix().'c_type_container';
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
 		$sql .= " ORDER BY label";
 

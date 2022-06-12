@@ -39,11 +39,12 @@ class Fichinter extends CommonObject
 
 	public $fields = array(
 	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-	'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>20),
+	'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>'$conf->contrat->enabled', 'visible'=>-1, 'position'=>25),
 	'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 	'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+	'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>36),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
 	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>45),
 	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
@@ -145,6 +146,12 @@ class Fichinter extends CommonObject
 	 * @var int Project ID
 	 */
 	public $fk_project = 0;
+
+	/**
+	 * Customer Ref
+	 * @var string
+	 */
+	public $ref_client;
 
 	/**
 	 * @var array extraparams
@@ -253,9 +260,12 @@ class Fichinter extends CommonObject
 		if (!is_numeric($this->duration)) {
 			$this->duration = 0;
 		}
+		if (isset($this->ref_client)) {
+			$this->ref_client = trim($this->ref_client);
+		}
 
 		if ($this->socid <= 0) {
-			$this->error = 'ErrorBadParameterForFunc';
+			$this->error = 'ErrorFicheinterCompanyDoesNotExist';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -271,6 +281,7 @@ class Fichinter extends CommonObject
 		$sql .= "fk_soc";
 		$sql .= ", datec";
 		$sql .= ", ref";
+		$sql .= ", ref_client";
 		$sql .= ", entity";
 		$sql .= ", fk_user_author";
 		$sql .= ", fk_user_modif";
@@ -286,6 +297,7 @@ class Fichinter extends CommonObject
 		$sql .= $this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
+		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
@@ -372,6 +384,9 @@ class Fichinter extends CommonObject
 		if (!dol_strlen($this->fk_project)) {
 			$this->fk_project = 0;
 		}
+		if (isset($this->ref_client)) {
+			$this->ref_client = trim($this->ref_client);
+		}
 
 		$error = 0;
 
@@ -380,6 +395,7 @@ class Fichinter extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
 		$sql .= ", duree = ".((int) $this->duration);
+		$sql .= ", ref_client = ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
 		$sql .= ", fk_projet = ".((int) $this->fk_project);
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -422,7 +438,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -443,6 +459,7 @@ class Fichinter extends CommonObject
 
 				$this->id           = $obj->rowid;
 				$this->ref          = $obj->ref;
+				$this->ref_client   = $obj->ref_client;
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
@@ -817,7 +834,7 @@ class Fichinter extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('interventiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1289,6 +1306,7 @@ class Fichinter extends CommonObject
 		// Initialise parametres
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->ref_client = 'SPECIMEN CLIENT';
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->datec = $now;
@@ -1321,11 +1339,13 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT rowid, fk_fichinter, description, duree, date, rang';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' WHERE fk_fichinter = '.((int) $this->id).' ORDER BY rang ASC, date ASC';
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, date ASC";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1347,7 +1367,6 @@ class Fichinter extends CommonObject
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
-
 				$i++;
 			}
 			$this->db->free($resql);
@@ -1374,6 +1393,62 @@ class Fichinter extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Set customer reference number
+	 *
+	 *  @param      User	$user			Object user that modify
+	 *  @param      string	$ref_client		Customer reference
+	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *  @return     int						<0 if ko, >0 if ok
+	 */
+	public function setRefClient($user, $ref_client, $notrigger = 0)
+	{
+		// phpcs:enable
+		if (!empty($user->rights->ficheinter->creer)) {
+			$error = 0;
+
+			$this->db->begin();
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(__METHOD__.' $this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->error();
+				$error++;
+			}
+
+			if (!$error) {
+				$this->oldcopy = clone $this;
+				$this->ref_client = $ref_client;
+			}
+
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('FICHINTER_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				foreach ($this->errors as $errmsg) {
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				}
+				$this->db->rollback();
+				return -1 * $error;
+			}
+		} else {
+			return -1;
+		}
 	}
 }
 
@@ -1417,6 +1492,8 @@ class FichinterLigne extends CommonObjectLine
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_fichinter';
+
+
 
 	/**
 	 *  Constructor
@@ -1585,7 +1662,7 @@ class FichinterLigne extends CommonObjectLine
 			if ($result > 0) {
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('LINEFICHINTER_UPDATE', $user);
+					$result = $this->call_trigger('LINEFICHINTER_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}

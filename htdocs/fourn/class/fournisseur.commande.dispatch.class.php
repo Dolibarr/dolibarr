@@ -80,6 +80,13 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $fk_commandefourndet;
 
 	public $qty;
+	public $qty_asked;
+
+	public $libelle;
+	public $desc;
+	public $tva_tx;
+	public $vat_src_code;
+	public $ref_supplier;
 
 	/**
 	 * @var int ID
@@ -410,7 +417,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

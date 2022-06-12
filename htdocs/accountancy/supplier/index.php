@@ -38,7 +38,7 @@ $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -75,7 +75,7 @@ $action = GETPOST('action', 'aZ09');
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

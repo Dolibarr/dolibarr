@@ -305,8 +305,8 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			$pu = 'pu_'.$reg[1].'_'.$reg[2];
 			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 			$lot = 'lot_number_'.$reg[1].'_'.$reg[2];
-			$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$reg[1].'_'.$reg[2].'month'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'day'], $_POST['dluo_'.$reg[1].'_'.$reg[2].'year']);
-			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
+			$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dluo_'.$reg[1].'_'.$reg[2].'year', 'int'));
+			$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$reg[1].'_'.$reg[2].'month', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'day', 'int'), GETPOST('dlc_'.$reg[1].'_'.$reg[2].'year', 'int'));
 
 			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 
@@ -373,7 +373,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 		}
 	}
 
-	if (!$notrigger && !$error) {
+	if (!$error) {
 		global $conf, $langs, $user;
 		// Call trigger
 
@@ -684,7 +684,8 @@ if ($id > 0 || !empty($ref)) {
 			$db->free($resql);
 		}
 
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
+		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
+		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, l.qty as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 
 		// Enable hooks to alter the SQL query (SELECT)
@@ -720,8 +721,8 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY p.ref, p.label, p.tobatch, p.fk_default_warehouse, l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
-		$sql .= " ORDER BY p.ref, p.label";
+		//$sql .= " GROUP BY p.ref, p.label, p.tobatch, p.fk_default_warehouse, l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
+		$sql .= " ORDER BY l.rang, p.ref, p.label";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -801,7 +802,7 @@ if ($id > 0 || !empty($ref)) {
 					$nbfreeproduct++;
 				} else {
 					$remaintodispatch = price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
-					if ($remaintodispatch < 0) {
+					if ($remaintodispatch < 0 && empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN)) {
 						$remaintodispatch = 0;
 					}
 

@@ -77,7 +77,7 @@ if (!empty($conf->propal->enabled)) {
  *
  */
 
-$sql = "SELECT count(*) as cc, st.libelle, st.picto, st.id";
+$sql = "SELECT count(*) as cc, st.libelle as stcomm, st.picto, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -169,7 +169,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Actions commerciales a faire
  */
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	show_array_actions_to_do(10);
 }
 

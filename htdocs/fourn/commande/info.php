@@ -201,7 +201,7 @@ if ($permok) {
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
 	} else {

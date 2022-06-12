@@ -47,7 +47,6 @@ if (!$user->rights->projet->lire) {
 
 $hookmanager->initHooks(array('projettasknote'));
 
-//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
 $projectstatic = new Project($db);
@@ -89,6 +88,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
+//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissionnote = ($user->rights->projet->creer || $user->rights->projet->all->creer);
@@ -190,8 +190,10 @@ if ($object->id > 0) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -233,7 +235,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

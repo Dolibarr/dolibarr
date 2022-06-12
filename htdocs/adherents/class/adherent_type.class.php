@@ -121,6 +121,9 @@ class AdherentType extends CommonObject
 	/** @var array Array of members */
 	public $members = array();
 
+	/** @var string string other */
+	public $other = array();
+
 	public $multilangs = array();
 
 
@@ -271,7 +274,7 @@ class AdherentType extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			// Call trigger
-			$result = $this->call_trigger('ADHERENT_TYPE_DEL_MULTILANGS', $user);
+			$result = $this->call_trigger('MEMBER_TYPE_DEL_MULTILANGS', $user);
 			if ($result < 0) {
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);

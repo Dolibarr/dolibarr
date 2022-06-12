@@ -35,9 +35,10 @@
  * @param	string[]  $addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
  * @param	int		  $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
- * @return	array						    Returns an associative array containing the response from the server array('content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
+ * @param	int		  $ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
+ * @return	array						    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0)
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1)
 {
 	//declaring of global variables
 	global $conf;
@@ -75,9 +76,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
+	// Turning on or off the ssl target certificate
+	if ($ssl_verifypeer < 0) {
+		global $dolibarr_main_prod;
+		$ssl_verifypeer =  ($dolibarr_main_prod ? true : false);
+	}
+	if (!empty($conf->global->MAIN_CURL_DISABLE_VERIFYPEER)) {
+		$ssl_verifypeer = 0;
+	}
+
 	// Turning off the server and peer verification(TrustManager Concept).
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	// Restrict use to some protocols only
 	$protocols = 0;

@@ -213,7 +213,7 @@ class Menubase
 		// may use an already used value because its internal cursor does not increase when we do
 		// an insert with a forced id.
 		if (in_array($this->db->type, array('pgsql'))) {
-			$sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
+			$sql = "SELECT MAX(rowid) as maxrowid FROM ".$this->db->prefix()."menu";
 			$resqlrowid = $this->db->query($sql);
 			if ($resqlrowid) {
 				$obj = $this->db->fetch_object($resqlrowid);
@@ -224,7 +224,7 @@ class Menubase
 					$maxrowid = 1;
 				}
 
-				$sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+				$sql = "SELECT setval('".$this->db->prefix()."menu_rowid_seq', ".($maxrowid).")";
 				//print $sql; exit;
 				$resqlrowidset = $this->db->query($sql);
 				if (!$resqlrowidset) {
@@ -237,7 +237,7 @@ class Menubase
 
 		// Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
 		$sql = "SELECT count(*)";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu";
+		$sql .= " FROM ".$this->db->prefix()."menu";
 		$sql .= " WHERE menu_handler = '".$this->db->escape($this->menu_handler)."'";
 		$sql .= " AND fk_menu = ".((int) $this->fk_menu);
 		$sql .= " AND position = ".((int) $this->position);
@@ -250,7 +250,7 @@ class Menubase
 
 			if ($row[0] == 0) {   // If not found
 				// Insert request
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+				$sql = "INSERT INTO ".$this->db->prefix()."menu(";
 				$sql .= "menu_handler,";
 				$sql .= "entity,";
 				$sql .= "module,";
@@ -293,7 +293,7 @@ class Menubase
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
+					$this->id = $this->db->last_insert_id($this->db->prefix()."menu");
 					dol_syslog(get_class($this)."::create record added has rowid=".((int) $this->id), LOG_DEBUG);
 
 					return $this->id;
@@ -346,7 +346,7 @@ class Menubase
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+		$sql = "UPDATE ".$this->db->prefix()."menu SET";
 		$sql .= " menu_handler='".$this->db->escape($this->menu_handler)."',";
 		$sql .= " module='".$this->db->escape($this->module)."',";
 		$sql .= " type='".$this->db->escape($this->type)."',";
@@ -409,7 +409,7 @@ class Menubase
 		$sql .= " t.enabled,";
 		$sql .= " t.usertype as user,";
 		$sql .= " t.tms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu as t";
+		$sql .= " FROM ".$this->db->prefix()."menu as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -460,7 +460,7 @@ class Menubase
 	{
 		//global $conf, $langs;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+		$sql = "DELETE FROM ".$this->db->prefix()."menu";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -635,7 +635,7 @@ class Menubase
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
-		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql .= " FROM ".$this->db->prefix()."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
 		if ($type_user == 0) {

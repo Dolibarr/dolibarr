@@ -476,7 +476,7 @@ class AccountingAccount extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		if (!empty($conf->dol_no_mouse_hover)) {
@@ -561,6 +561,15 @@ class AccountingAccount extends CommonObject
 		if ($withpicto != 2) {
 			$result .= $linkstart . $label_link . $linkend;
 		}
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -577,11 +586,11 @@ class AccountingAccount extends CommonObject
 		$sql .= ' WHERE a.rowid = ' . ((int) $id);
 
 		dol_syslog(get_class($this) . '::info sql=' . $sql);
-		$result = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
@@ -596,7 +605,7 @@ class AccountingAccount extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -732,13 +741,14 @@ class AccountingAccount extends CommonObject
 		global $hookmanager;
 
 		// Instantiate hooks for external modules
-		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
+		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
-		// Execute hook accoutancyBindingCalculation
+		// Execute hook accountancyBindingCalculation
 		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
-		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
+			$const_name = '';
 			if ($type == 'customer') {
 				$const_name = "SOLD";
 			} elseif ($type == 'supplier') {

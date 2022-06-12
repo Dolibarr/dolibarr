@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -478,8 +478,12 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (isset($obj->test) && !verifCond($obj->test)) {
-			continue; // Discard line with test = false
+
+		if (isset($obj->test)) {
+			$veriftest = verifCond($obj->test);
+			if (!$veriftest) {
+				continue; // Discard line with test = false
+			}
 		}
 
 		$object->id = $obj->rowid;

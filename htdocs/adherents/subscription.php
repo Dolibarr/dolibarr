@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -829,11 +831,11 @@ if ($rowid > 0) {
 				$bankviainvoice = 1;
 			}
 		} else {
-			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$bankviainvoice = 1;
 			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
 				$bankdirect = 1;
-			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$invoiceonly = 1;
 			}
 		}
@@ -980,7 +982,7 @@ if ($rowid > 0) {
 			print '"></td></tr>';
 
 			// Complementary action
-			if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
+			if ((!empty($conf->banque->enabled) || isModEnabled('facture')) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
 				$company = new Societe($db);
 				if ($object->fk_soc) {
 					$result = $company->fetch($object->fk_soc);
@@ -1001,7 +1003,7 @@ if ($rowid > 0) {
 					print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 				}
 				// Add invoice with no payments
-				if (!empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
@@ -1031,7 +1033,7 @@ if ($rowid > 0) {
 					print '</label><br>';
 				}
 				// Add invoice with payments
-				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
@@ -1065,12 +1067,12 @@ if ($rowid > 0) {
 				// Bank account
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
 				print img_picto('', 'bank_account');
-				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
+				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2, '', 0, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Payment mode
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2);
+				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2, 1, 0, 0, 1, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Date of payment
@@ -1163,9 +1165,13 @@ if ($rowid > 0) {
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
 		print '</div>';
 
 		print '</form>';

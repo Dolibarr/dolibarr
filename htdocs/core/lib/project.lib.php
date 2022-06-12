@@ -2,7 +2,8 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +126,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
-		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
+		|| isModEnabled('facture') || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
@@ -143,10 +144,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->commande->enabled)) {
 				$nbElements += $project->getElementCount('order', 'commande');
 			}
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				$nbElements += $project->getElementCount('invoice', 'facture');
 			}
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				$nbElements += $project->getElementCount('invoice_predefined', 'facture_rec');
 			}
 			if (!empty($conf->supplier_proposal->enabled)) {
@@ -208,7 +209,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if ($conf->eventorganization->enabled && !empty($project->usage_organize_event)) {
+	if (!empty($conf->eventorganization->enabled) && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("EventOrganization");
@@ -312,7 +313,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -509,7 +510,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		$langs->load("members");
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
@@ -635,7 +636,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = $lines[$i]->ref;
-				$taskstatic->label = ($taskrole[$lines[$i]->id] ? $langs->trans("YourRole").': '.$taskrole[$lines[$i]->id] : '');
+				$taskstatic->label = (!empty($taskrole[$lines[$i]->id]) ? $langs->trans("YourRole").': '.$taskrole[$lines[$i]->id] : '');
 				$taskstatic->projectstatus = $lines[$i]->projectstatus;
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
@@ -2819,7 +2820,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		$out .= '        </div>';
 	} else {
 		// bad
-		$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
+		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}

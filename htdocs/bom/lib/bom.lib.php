@@ -84,6 +84,11 @@ function bomPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/bom/bom_net_needs.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("BOMNetNeeds");
+	$head[$h][2] = 'net_needs';
+	$h++;
+
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
@@ -131,3 +136,55 @@ function bomPrepareHead($object)
 
 	return $head;
 }
+
+/**
+ * Manage collapse bom display
+ *
+ * @return void
+ */
+function mrpCollapseBomManagement()
+{
+	?>
+
+	<script type="text/javascript" language="javascript">
+
+		$(document).ready(function () {
+			// When clicking on collapse
+			$(".collapse_bom").click(function() {
+				console.log("We click on collapse");
+				var id_bom_line = $(this).attr('id').replace('collapse-', '');
+				console.log($(this).html().indexOf('folder-open'));
+				if($(this).html().indexOf('folder-open') <= 0) {
+					$('[parentid="'+ id_bom_line +'"]').show();
+					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				}
+				else {
+					$('[parentid="'+ id_bom_line +'"]').hide();
+					$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				}
+
+				return false;
+			});
+
+			// To Show all the sub bom lines
+			$("#show_all").click(function() {
+				console.log("We click on show all");
+				$("[class^=sub_bom_lines]").show();
+				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
+				return false;
+			});
+
+			// To Hide all the sub bom lines
+			$("#hide_all").click(function() {
+				console.log("We click on hide all");
+				$("[class^=sub_bom_lines]").hide();
+				$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
+				return false;
+			});
+		});
+
+	</script>
+
+	<?php
+}
+

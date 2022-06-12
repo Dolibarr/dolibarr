@@ -69,7 +69,7 @@ if (empty($reshook)) {
 
 // Set label
 if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	$object->label = $_POST['label'];
+	$object->label = GETPOST('label');
 	$result = $object->update($user);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -144,7 +144,7 @@ if ($object->id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 

@@ -166,6 +166,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if (empty($reshook)) {
+	// Mass actions
+	$objectclass = 'Reception';
+	$objectlabel = 'Receptions';
+	$permissiontoread = $user->rights->reception->lire;
+	$permissiontoadd = $user->rights->reception->creer;
+	$permissiontodelete = $user->rights->reception->supprimer;
+	$uploaddir = $conf->reception->multidir_output[$conf->entity];
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
 	if ($massaction == 'confirm_createbills') {
 		$receptions = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
@@ -175,6 +184,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
 		$lastid= 0;
@@ -182,6 +192,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		//sort ids to keep order if one bill per third
+		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
 			 // We only invoice reception that are validated
@@ -254,6 +266,7 @@ if (empty($reshook)) {
 					$lastid = $objecttmp->id;
 
 					$TFactThird[$rcp->socid] = $objecttmp;
+					$TFactThirdNbLines[$rcp->socid] = 0; //init nblines to have lines ordered by expedition and rang
 				} else {
 					$langs->load("errors");
 					$errors[] = $rcp->ref.' : '.$langs->trans($objecttmp->error);
@@ -343,6 +356,11 @@ if (empty($reshook)) {
 
 							$objecttmp->context['createfromclone'];
 
+							$rang = $i;
+							//there may already be rows from previous receptions
+							if (!empty($createbills_onebythird))
+								$rang = $TFactThirdNbLines[$rcp->socid];
+
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
@@ -358,7 +376,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$i,
+								$rang,
 								false,
 								0,
 								null,
@@ -371,6 +389,8 @@ if (empty($reshook)) {
 
 							if ($result > 0) {
 								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep order
+									$TFactThirdNbLines[$rcp->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;

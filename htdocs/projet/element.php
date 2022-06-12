@@ -42,7 +42,7 @@ if (!empty($conf->stock->enabled)) {
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
@@ -73,7 +73,7 @@ if (!empty($conf->deplacement->enabled)) {
 if (!empty($conf->expensereport->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 if (!empty($conf->don->enabled)) {
@@ -104,7 +104,7 @@ if (!empty($conf->mrp->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 if (!empty($conf->commande->enabled)) {
@@ -271,8 +271,10 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PRO
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 	print $langs->trans('SharedProject');
 } else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 	print $langs->trans('PrivateProject');
 }
 print '</td></tr>';
@@ -297,6 +299,9 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 	if (strcmp($object->opp_amount, '')) {
 		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		if (strcmp($object->opp_percent, '')) {
+			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+		}
 	}
 	print '</td></tr>';
 }
@@ -338,7 +343,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if ($conf->categorie->enabled) {
+if (isModEnabled('categorie')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
@@ -696,7 +701,7 @@ if (!$showdatefilter) {
 	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '<div class="inline-block">';
-	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
+	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button small">';
 	print '</div>';
 	print '</form>';
 	print '</div>';

@@ -131,7 +131,7 @@ class box_birthdays extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 				}
 
 				$this->db->free($result);
@@ -144,8 +144,8 @@ class box_birthdays extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

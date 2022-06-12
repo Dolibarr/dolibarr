@@ -102,12 +102,12 @@ class FormProduct
 		} elseif ($sumStock) {
 			$sql .= ", sum(ps.reel) as stock";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+		$sql .= " FROM ".$this->db->prefix()."entrepot as e";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.fk_entrepot = e.rowid";
 		if (!empty($fk_product) && $fk_product > 0) {
 			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
 			}
 		}
 		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
@@ -655,11 +655,13 @@ class FormProduct
 		}
 
 		foreach ($productIdArray as $productId) {
-			foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
-				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
-					$label = $arraytypes['entrepot_label'].' - ';
-					$label .= $arraytypes['batch'];
-					$out .= '<option>'.$arraytypes['batch'].'</option>';
+			if (array_key_exists($productId, $this->cache_lot)) {
+				foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
+					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
+						$label = $arraytypes['entrepot_label'] . ' - ';
+						$label .= $arraytypes['batch'];
+						$out .= '<option>' . $arraytypes['batch'] . '</option>';
+					}
 				}
 			}
 		}
@@ -699,9 +701,9 @@ class FormProduct
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.rowid = pb.fk_product_stock";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
 			if (!empty($productIdList)) {
 				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}

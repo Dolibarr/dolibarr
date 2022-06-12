@@ -119,7 +119,7 @@ class MouvementStock extends CommonObject
 		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
 		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
@@ -287,7 +287,7 @@ class MouvementStock extends CommonObject
 			// If found and eatby/sellby not defined into table and provided, we update table
 			// If found and eatby/sellby not defined into table and not provided, we do nothing
 			// If not found, we add record
-			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_lot as pb";
+			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".$this->db->prefix()."product_lot as pb";
 			$sql .= " WHERE pb.fk_product = ".((int) $fk_product)." AND pb.batch = '".$this->db->escape($batch)."'";
 			dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -435,7 +435,7 @@ class MouvementStock extends CommonObject
 				$origin_id = 0;
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
+			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
@@ -457,7 +457,7 @@ class MouvementStock extends CommonObject
 			$resql = $this->db->query($sql);
 
 			if ($resql) {
-				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
+				$mvid = $this->db->last_insert_id($this->db->prefix()."stock_mouvement");
 				$this->id = $mvid;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -473,7 +473,7 @@ class MouvementStock extends CommonObject
 			// Test if there is already a record for couple (warehouse / product), so later we will make an update or create.
 			$alreadyarecord = 0;
 			if (!$error) {
-				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
+				$sql = "SELECT rowid, reel FROM ".$this->db->prefix()."product_stock";
 				$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
 
 				dol_syslog(get_class($this)."::_create check if a record already exists in product_stock", LOG_DEBUG);
@@ -524,10 +524,10 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = reel + ".((float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
+					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
 					$sql .= " (reel, fk_entrepot, fk_product) VALUES ";
 					$sql .= " (".((float) $qty).", ".((int) $entrepot_id).", ".((int) $fk_product).")";
 				}
@@ -538,7 +538,7 @@ class MouvementStock extends CommonObject
 					$this->errors[] = $this->db->lasterror();
 					$error = -3;
 				} elseif (empty($fk_product_stock)) {
-					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
+					$fk_product_stock = $this->db->last_insert_id($this->db->prefix()."product_stock");
 				}
 			}
 
@@ -559,11 +559,11 @@ class MouvementStock extends CommonObject
 			if (!$error) {
 				$newpmp = price2num($newpmp, 'MU');
 
-				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
+				// $sql = "UPDATE ".$this->db->prefix()."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".((int) $fk_product);
 				// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".((float) $newpmp).",";
-				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
+				$sql = "UPDATE ".$this->db->prefix()."product as p SET pmp = ".((float) $newpmp).",";
+				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql .= " WHERE rowid = ".((int) $fk_product);
 
 				dol_syslog(get_class($this)."::_create update AWP", LOG_DEBUG);
@@ -576,7 +576,7 @@ class MouvementStock extends CommonObject
 
 			// If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
 			// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
+			$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 			$resql = $this->db->query($sql);
 			// We do not test error, it can fails if there is child in batch details
 		}
@@ -626,8 +626,8 @@ class MouvementStock extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
 		$sql .= " t.datem,";
 		$sql .= " t.fk_product,";
@@ -644,8 +644,8 @@ class MouvementStock extends CommonObject
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_projet as fk_project";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -721,7 +721,7 @@ class MouvementStock extends CommonObject
 		$pqtys = array();
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
+		$sql .= " FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
@@ -824,8 +824,8 @@ class MouvementStock extends CommonObject
 	{
 		$nb = 0;
 
-		$sql = 'SELECT SUM(value) as nb from '.MAIN_DB_PREFIX.'stock_mouvement';
-		$sql .= ' WHERE fk_product = '.((int) $productidselected);
+		$sql = "SELECT SUM(value) as nb from ".$this->db->prefix()."stock_mouvement";
+		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
@@ -1205,8 +1205,8 @@ class MouvementStock extends CommonObject
 		$cpt = 0;
 
 		$sql = "SELECT sum(pb.qty) as cpt";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE ps.fk_product = " . ((int) $fk_product);
 		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 

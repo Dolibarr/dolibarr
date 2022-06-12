@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -135,10 +136,10 @@ $search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
+$search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -194,12 +195,12 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'f.ref'=>'Ref',
 	'f.ref_client'=>'RefCustomer',
-	'pd.description'=>'Description',
+	'f.note_public'=>'NotePublic',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
 	's.town'=>"Town",
-	'f.note_public'=>'NotePublic',
+	'pd.description'=>'Description',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -243,7 +244,7 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_pa' => array('label' => ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
 	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
@@ -251,6 +252,7 @@ $arrayfields = array(
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
+	'f.fk_fac_rec_source'=>array('label'=>'GeneratedFromTemplate', 'checked'=>0, 'position'=>520, 'enabled'=>'1'),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
@@ -360,9 +362,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
+	$search_fac_rec_source_title = '';
 	$option = '';
 	$filter = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -468,10 +471,10 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$totalpaye = $objecttmp->getSommePaiement();
+				$totalpaid = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
-				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
@@ -566,13 +569,17 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.pho
 $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
+$sql .= ' f.fk_fac_rec_source,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
+// A Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
+*/
 if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -595,17 +602,28 @@ if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 }
 
 $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if ($sortfield == "f.datef") {
+	$sql .= $db->hintindex('idx_facture_datef');
+}
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
+
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 }
+*/
 if ($sall || $search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
 }
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
+}
+
+if (!empty($search_fac_rec_source_title)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source=facrec.rowid';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
@@ -791,6 +809,9 @@ if ($search_sale > 0) {
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
+if (!empty($search_fac_rec_source_title)) {
+	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -798,6 +819,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
@@ -827,6 +850,8 @@ if (!$sall) {
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
+*/
+if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
@@ -834,14 +859,6 @@ if (!$sall) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-
-$sql .= ' ORDER BY ';
-$listfield = explode(',', $sortfield);
-$listorder = explode(',', $sortorder);
-foreach ($listfield as $key => $value) {
-	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
-}
-$sql .= ' f.rowid DESC ';
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -859,8 +876,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
-	$objforcount = $db->fetch_object($resql);
-	$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
@@ -869,7 +890,17 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= ' ORDER BY ';
+$listfield = explode(',', $sortfield);
+$listorder = explode(',', $sortorder);
+foreach ($listfield as $key => $value) {
+	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
+}
+$sql .= ' f.rowid DESC ';
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 
@@ -1059,6 +1090,9 @@ if ($resql) {
 	if ($search_categ_cus > 0) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
+	if (!empty($search_fac_rec_source_title)) {
+		$param .= '&$search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1077,7 +1111,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
+	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
@@ -1150,7 +1184,7 @@ if ($resql) {
 
 	// If the user can view prospects other than his'
 	$moreforfilter = '';
-	if ($user->rights->societe->client->voir || $socid) {
+	if ($user->rights->user->user->lire) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1158,7 +1192,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid) {
+	if ($user->rights->user->user->lire) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
@@ -1480,6 +1514,12 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+		// Template Invoice
+		print '<td class="liste_titre maxwidthonsmartphone right">';
+		print '<input class="flat maxwidth50imp" type="text" name="search_fac_rec_source_title" id="search_fac_rec_source_title" value="'.dol_escape_htmltag($search_fac_rec_source_title).'">';
+		print '</td>';
+	}
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
@@ -1639,8 +1679,11 @@ if ($resql) {
 	if (!empty($arrayfields['f.note_private']['checked'])) {
 		print_liste_field_titre($arrayfields['f.note_private']['label'], $_SERVER["PHP_SELF"], "f.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
+	if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_fac_rec_source']['label'], $_SERVER["PHP_SELF"], "facrec.titre", "", $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type,dynamount_payed", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
@@ -1656,7 +1699,22 @@ if ($resql) {
 		$totalarray['val'] = array();
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
-		while ($i < min($num, $limit)) {
+
+		$with_margin_info = false;
+		if (!empty($conf->margin->enabled) && (
+				!empty($arrayfields['total_pa']['checked'])
+				|| !empty($arrayfields['total_margin']['checked'])
+				|| !empty($arrayfields['total_margin_rate']['checked'])
+				|| !empty($arrayfields['total_mark_rate']['checked'])
+			)
+		) {
+			$with_margin_info = true;
+		}
+		$total_ht = 0;
+		$total_margin = 0;
+
+		$last_num = min($num, $limit);
+		while ($i < $last_num) {
 			$obj = $db->fetch_object($resql);
 
 			$datelimit = $db->jdate($obj->datelimite);
@@ -1741,9 +1799,11 @@ if ($resql) {
 			$facturestatic->alreadypaid = $paiement;
 
 			$marginInfo = array();
-			if (!empty($conf->margin->enabled)) {
+			if ($with_margin_info === true) {
 				$facturestatic->fetch_lines();
 				$marginInfo = $formmargin->getMarginInfosArray($facturestatic);
+				$total_ht += $obj->total_ht;
+				$total_margin += $marginInfo['total_margin'];
 			}
 
 			print '<tr class="oddeven"';
@@ -2151,7 +2211,13 @@ if ($resql) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall">'.dol_escape_htmltag($obj->multicurrency_code).' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
+				if (empty($conf->global->MAIN_SHOW_ONLY_CODE_MULTICURRENCY)) {
+					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+				} else {
+					print dol_escape_htmltag($obj->multicurrency_code);
+				}
+				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2229,11 +2295,21 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// total mark rate
+			// Total mark rate
 			if (!empty($arrayfields['total_mark_rate']['checked'])) {
 				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
+				}
+				if (!$i) {
+					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+				}
+				if ($i >= $last_num - 1) {
+					if (!empty($total_ht)) {
+						$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+					} else {
+						$totalarray['val']['total_mark_rate'] = '';
+					}
 				}
 			}
 
@@ -2288,6 +2364,23 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Template Invoice
+			if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+				print '<td class="center">';
+				if (!empty($obj->fk_fac_rec_source)) {
+					$facrec = new FactureRec($db);
+					$result = $facrec->fetch($obj->fk_fac_rec_source);
+					if ($result < 0) {
+						setEventMessages($facrec->error, $facrec->errors, 'errors');
+					} else {
+						print $facrec->getNomUrl();
+					}
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Status
 			if (!empty($arrayfields['f.fk_statut']['checked'])) {
 				print '<td class="nowrap right">';
@@ -2321,16 +2414,27 @@ if ($resql) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 	}
 
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	$db->free($resql);
 
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print "</table>\n";
-	print '</div>';
+	print '</table>'."\n";
+	print '</div>'."\n";
 
-	print "</form>\n";
+	print '</form>'."\n";
 
 	// Show the file area only when this page is not opend from the Extended POS
 	if ($contextpage != 'poslist') {

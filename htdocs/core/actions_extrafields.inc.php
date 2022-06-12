@@ -147,11 +147,12 @@ if ($action == 'add') {
 
 		if (!$error) {
 			// attrname must be alphabetical and lower case only
-			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9-_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
+			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				// Construct array for parameter (value of select list)
 				$default_value = GETPOST('default_value', 'alpha');
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
+				$params = array();
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
@@ -161,6 +162,9 @@ if ($action == 'add') {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
+						if (!array_key_exists('options', $params)) {
+							$params['options'] = array();
+						}
 						$params['options'][$key] = $value;
 					}
 				}
@@ -183,7 +187,7 @@ if ($action == 'add') {
 					$default_value,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ?GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('computed_value', 'alpha'),
@@ -315,6 +319,7 @@ if ($action == 'update') {
 				// Construct array for parameter (value of select list)
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
+				$params = array();
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
@@ -324,6 +329,9 @@ if ($action == 'update') {
 					//Esle it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
+						if (!array_key_exists('options', $params)) {
+							$params['options'] = array();
+						}
 						$params['options'][$key] = $value;
 					}
 				}

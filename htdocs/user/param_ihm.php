@@ -204,7 +204,7 @@ if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) 
 if (!empty($conf->adherent->enabled)) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
 if (!empty($conf->ticket->enabled)) {
@@ -233,6 +233,8 @@ if ($action == 'edit') {
 	}
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
+	print '<div class="underbanner clearboth"></div>';
 
 	print dol_get_fiche_end();
 
@@ -338,6 +340,8 @@ if ($action == 'edit') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
+	print '<div class="underbanner clearboth"></div>';
 
 	print dol_get_fiche_end();
 

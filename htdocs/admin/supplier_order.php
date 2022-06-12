@@ -43,6 +43,8 @@ if (!$user->admin) {
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -462,8 +464,7 @@ print "</td></tr>\n";
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
-if ($conf->banque->enabled)
-{
+if (isModEnabled('banque')) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
@@ -519,7 +520,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
 print '<td></td>';
 print '<td class="center">';
-if ($conf->reception->enabled) {
+if (isModEnabled('reception')) {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
 } else {
 	if ($conf->use_javascript_ajax) {

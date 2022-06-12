@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modulini sozlash
-PaypalDesc=Ushbu modul mijozlar tomonidan <a href="http://www.paypal.com" target="_blank"> PayPal </a> orqali to'lovlarni amalga oshirishga imkon beradi. Bu vaqtinchalik to'lov uchun yoki Dolibarr ob'ekti bilan bog'liq to'lov uchun ishlatilishi mumkin (hisob-faktura, buyurtma, ...)
+PaypalDesc=Ushbu modul <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> orqali mijozlar tomonidan to'lovlarni amalga oshirish imkonini beradi. Bu vaqtinchalik to'lov uchun yoki Dolibarr ob'ekti bilan bog'liq to'lov uchun (hisob-faktura, buyurtma, ...)
 PaypalOrCBDoPayment=PayPal (Card yoki PayPal) bilan to'lash
 PaypalDoPayment=PayPal bilan to'lash
 PAYPAL_API_SANDBOX=Rejim sinovi / qum qutisi

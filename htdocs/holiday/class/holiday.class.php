@@ -99,6 +99,10 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int 	Date approbation
+	 */
+	public $date_approbation;
 
 	/**
 	 * @var int 	Date for refuse
@@ -704,6 +708,17 @@ class Holiday extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
+
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
 			$num = $this->getNextNumRef(null);
@@ -805,6 +820,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -913,6 +939,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -1084,11 +1121,9 @@ class Holiday extends CommonObject
 			if ($infos_CP['statut'] == 5) {
 				continue; // ignore not validated holidays
 			}
-			/*
-			 var_dump("--");
-			 var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
-			 var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
-			 */
+			//var_dump("--");
+			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
+			//var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
 
 			if ($halfday == 0) {
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin']) {
@@ -1237,7 +1272,7 @@ class Holiday extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1272,7 +1307,15 @@ class Holiday extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -2129,6 +2172,7 @@ class Holiday extends CommonObject
 		if ($affect >= 0) {
 			$sql .= " AND affect = ".((int) $affect);
 		}
+		$sql .= " ORDER BY sortorder";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2162,7 +2206,7 @@ class Holiday extends CommonObject
 		$sql .= " f.date_create as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
-		//$sql .= " f.date_approve as datea,";
+		$sql .= " f.date_approve as datea,";
 		$sql .= " f.date_refuse as dater,";
 		$sql .= " f.fk_user_create as fk_user_creation,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
@@ -2185,21 +2229,17 @@ class Holiday extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approbation = $this->db->jdate($obj->datea);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_creation) {
+				if (!empty($obj->fk_user_creation)) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_creation);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_valid) {
+				if (!empty($obj->fk_user_approve_done)) {
 					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
+					$vuser->fetch($obj->fk_user_approve_done);
 					$this->user_validation = $vuser;
 				}
-				if ($obj->fk_user_modification) {
+				if (!empty($obj->fk_user_modification)) {
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification = $muser;
@@ -2212,7 +2252,7 @@ class Holiday extends CommonObject
 						$this->user_approve = $auser;
 					}
 				} else {
-					if ($obj->fk_user_approve_expected) {
+					if (!empty($obj->fk_user_approve_expected)) {
 						$auser = new User($this->db);
 						$auser->fetch($obj->fk_user_approve_expected);
 						$this->user_approve = $auser;

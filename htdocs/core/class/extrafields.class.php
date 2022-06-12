@@ -67,6 +67,11 @@ class ExtraFields
 	public $attributes;
 
 	/**
+	 * @var array	Array with boolean of status of groups
+	 */
+	public $expand_display;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -265,10 +270,10 @@ class ExtraFields
 				'default' => $default_value
 			);
 
-			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+			$result = $this->db->DDLAddField($this->db->prefix().$table, $attrname, $field_desc);
 			if ($result > 0) {
 				if ($unique) {
-					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
@@ -353,7 +358,7 @@ class ExtraFields
 				$params = '';
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,";
 			$sql .= " label,";
 			$sql .= " type,";
@@ -447,7 +452,7 @@ class ExtraFields
 
 			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql .= " FROM ".$this->db->prefix()."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
@@ -455,7 +460,7 @@ class ExtraFields
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->nb <= 0) {
-						$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
+						$result = $this->db->DDLDropField($this->db->prefix().$table, $attrname); // This also drop the unique key
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
@@ -492,7 +497,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+			$sql = "DELETE FROM ".$this->db->prefix()."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
 			$sql .= " AND elementtype = '".$this->db->escape($elementtype)."'";
@@ -597,7 +602,7 @@ class ExtraFields
 			}
 
 			if ($type != 'separate') { // No table update when separate type
-				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
+				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
@@ -606,12 +611,16 @@ class ExtraFields
 				if ($result > 0) {
 					$sql = '';
 					if ($unique) {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
-						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
+					/*if ($resql < 0) {
+						$this->error = $this->db->lasterror();
+						return -1;
+					}*/
 					return 1;
 				} else {
 					$this->error = $this->db->lasterror();
@@ -699,20 +708,20 @@ class ExtraFields
 
 			if ($entity === '' || $entity != '0') {
 				// We dont want on all entities, we delete all and current
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
-				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
+				$sql_del = "DELETE FROM ".$this->db->prefix()."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
 				$sql_del .= " AND entity = 0";
 				$sql_del .= " AND elementtype = '".$this->db->escape($elementtype)."'";
 			}
 			$resql1 = $this->db->query($sql_del);
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(";
+			$sql = "INSERT INTO ".$this->db->prefix()."extrafields(";
 			$sql .= " name,"; // This is code
 			$sql .= " entity,";
 			$sql .= " label,";
@@ -804,15 +813,13 @@ class ExtraFields
 		if ($elementtype == 'order_supplier') {
 			$elementtype = 'commande_fournisseur';
 		}
-		if ($elementtype == 'stock_mouvement') {
-			$elementtype = 'movement';
-		}
 
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
-		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help,";
+		$sql .= " css, cssview, csslist";
+		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -860,6 +867,9 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
+					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
+					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
+					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 				}
@@ -950,6 +960,8 @@ class ExtraFields
 				$morecss = 'minwidth400';
 			} elseif ($type == 'boolean') {
 				$morecss = '';
+			} elseif ($type == 'radio') {
+				$morecss = 'width25';
 			} else {
 				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
@@ -1059,35 +1071,56 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
-			}
+			if ($mode) {
+				$options = array();
+				foreach ($param['options'] as $okey => $val) {
+					if ((string) $okey == '') {
+						continue;
+					}
 
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			$out .= '<option value="0">&nbsp;</option>';
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
-					continue;
+					if ($langfile && $val) {
+						$options[$okey] = $langs->trans($val);
+					} else {
+						$options[$okey] = $val;
+					}
 				}
-				$valarray = explode('|', $val);
-				$val = $valarray[0];
-				$parent = '';
-				if (!empty($valarray[1])) {
-					$parent = $valarray[1];
+				$selected = array();
+				if (!is_array($value)) {
+					$selected = explode(',', $value);
 				}
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
-				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>';
-				if ($langfile && $val) {
-					$out .= $langs->trans($val);
-				} else {
-					$out .= $val;
+
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2));
+			} else {
+				if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 				}
-				$out .= '</option>';
+
+				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				$out .= '<option value="0">&nbsp;</option>';
+				foreach ($param['options'] as $key => $val) {
+					if ((string) $key == '') {
+						continue;
+					}
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
+					$parent = '';
+					if (!empty($valarray[1])) {
+						$parent = $valarray[1];
+					}
+					$out .= '<option value="'.$key.'"';
+					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+					$out .= '>';
+					if ($langfile && $val) {
+						$out .= $langs->trans($val);
+					} else {
+						$out .= $val;
+					}
+					$out .= '</option>';
+				}
+				$out .= '</select>';
 			}
-			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
@@ -1139,9 +1172,9 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
-						// can use curent entity filter
+						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
 						}
@@ -1158,7 +1191,7 @@ class ExtraFields
 						}
 						//We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1256,7 +1289,7 @@ class ExtraFields
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -1307,8 +1340,12 @@ class ExtraFields
 
 					$sqlwhere = '';
 					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
+						// can use current entity filter
+						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
+							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
+						}
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 							$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1370,7 +1407,7 @@ class ExtraFields
 
 						// We have to join on extrafield table
 						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+							$sql .= ' as main, '.$this->db->prefix().$InfoFieldList[0].'_extrafields as extra';
 							$sqlwhere .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[4];
 						} else {
 							$sqlwhere .= " WHERE ".$InfoFieldList[4];
@@ -1595,7 +1632,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 			if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1634,25 +1671,30 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						if (!empty($obj->{$InfoFieldList[1]})) {
-							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						$tmppropname = $InfoFieldList[1];
+						//$obj->$tmppropname = '';
+						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
+							$translabel = $langs->trans($obj->$tmppropname);
 						}
-						if ($translabel != $obj->{$InfoFieldList[1]}) {
+						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
 						} else {
-							$value = $obj->{$InfoFieldList[1]};
+							$value = isset($obj->$tmppropname) ? $obj->$tmppropname : '';
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					$c = new Categorie($this->db);
-					$c->fetch($obj->rowid);
-					$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+					if ($obj->rowid) {
+						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+						$c = new Categorie($this->db);
+						$result = $c->fetch($obj->rowid);
+						if ($result > 0) {
+							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+							foreach ($ways as $way) {
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
+							}
+						}
 					}
 					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
@@ -1660,7 +1702,7 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = $langs->trans($param['options'][$value]);
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1699,7 +1741,7 @@ class ExtraFields
 			}
 
 			$sql = "SELECT ".$keyList;
-			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			$sql .= " FROM ".$this->db->prefix().$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
@@ -1802,7 +1844,7 @@ class ExtraFields
 	}
 
 	/**
-	 * Return tag to describe alignement to use for this extrafield
+	 * Return the CSS to use for this extrafield into list
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
@@ -1818,29 +1860,33 @@ class ExtraFields
 			$type = $this->attribute_type[$key];
 		}
 
-		$align = '';
+		$cssstring = '';
 
 		if ($type == 'date') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'datetime') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'int') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'double') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'boolean') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'radio') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'checkbox') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		}
 
-		return $align;
+		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
+			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		}
+
+		return $cssstring;
 	}
 
 	/**
@@ -1850,9 +1896,10 @@ class ExtraFields
 	 * @param	string	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
+	 * @param 	string  $mode           Show output ('view') or input ('create' or 'edit') for extrafield
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
+	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card', $mode = '')
 	{
 		global $conf, $langs;
 
@@ -1865,56 +1912,68 @@ class ExtraFields
 			$colspan=0;
 		}
 
+		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+		$extrafield_param_list = array();
+		if (!empty($extrafield_param) && is_array($extrafield_param)) {
+			$extrafield_param_list = array_keys($extrafield_param['options']);
+		}
+		$extrafield_collapse_display_value = -1;
+		$expand_display = false;
+		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
+			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+		}
+		if ($mode == 'create') {
+			$extrafield_collapse_display_value = 0;
+		}
+
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .='<strong>';
+		// Output the picto
+		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
+		$out .= '&nbsp;';
+		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
 		$out .= '</'.$tagtype_dyn.'>';
 		$out .= '</'.$tagtype.'>';
 
-		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
-		if (!empty($extrafield_param) && is_array($extrafield_param)) {
-			$extrafield_param_list = array_keys($extrafield_param['options']);
+		$collapse_group = $key.(!empty($object->id) ? '_'.$object->id : '');
+		//$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-			if (count($extrafield_param_list) > 0) {
-				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
-					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
+		if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+			$this->expand_display[$collapse_group] = $expand_display;
 
-					if (!empty($conf->use_javascript_ajax)) {
-						$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-						$out .= '<script type="text/javascript">'."\n";
-						$out .= 'jQuery(document).ready(function(){'."\n";
-						if ($collapse_display === false) {
-							$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
-							$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
-						} else {
-							$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
-							$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						}
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-						$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-						$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
-						$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           } else {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           }'."\n";
-						$out .= '       });'."\n";
-						$out .= '   });'."\n";
-						$out .= '});'."\n";
-						$out .= '</script>'."\n";
-					}
+			if (!empty($conf->use_javascript_ajax) && $mode != 'create') {
+				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+				$out .= '<script type="text/javascript">'."\n";
+				$out .= 'jQuery(document).ready(function(){'."\n";
+				if ($expand_display === false) {
+					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
+					$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
+				} else {
+					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
+					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				}
+				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$collapse_group.'");'."\n";
+				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
+				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           } else {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           }'."\n";
+				$out .= '       });'."\n";
+				$out .= '   });'."\n";
+				$out .= '});'."\n";
+				$out .= '</script>'."\n";
 			}
+		} else {
+			$this->expand_display[$collapse_group] = 1;
 		}
 
 		return $out;
@@ -1923,14 +1982,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:
-	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object	$object         	Object
+	 * @param	string	$onlykey			Only some keys are filled:
+	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
+	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
 		global $_POST, $langs;
 
@@ -1947,8 +2007,8 @@ class ExtraFields
 				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
 					continue;
 				}
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && $this->attributes[$object->table_element]['type'][$key] != 'boolean') {
-					//when unticking boolean field, it's not set in POST
+
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
 					continue;
 				}
 
@@ -1990,8 +2050,10 @@ class ExtraFields
 						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
+
+						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
@@ -2004,7 +2066,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
-						$value_key = implode($value_arr, ',');
+						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = '';
 					}
@@ -2022,12 +2084,22 @@ class ExtraFields
 					}
 				}
 
+				if (!empty($error_field_required[$key]) && $todefaultifmissing) {
+					// Value is required but we have a default value and we asked to set empty value to the default value
+					if (!empty($this->attributes[$object->table_element]['default']) && !is_null($this->attributes[$object->table_element]['default'][$key])) {
+						$value_key = $this->attributes[$object->table_element]['default'][$key];
+						unset($error_field_required[$key]);
+						$nofillrequired--;
+					}
+				}
+
 				$object->array_options["options_".$key] = $value_key;
 			}
 
 			if ($nofillrequired) {
 				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				$this->error = $langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required);
+				setEventMessages($this->error, null, 'errors');
 				return -1;
 			} else {
 				return 1;
@@ -2094,6 +2166,16 @@ class ExtraFields
 						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
 					} else {
 						continue; // Value was not provided, we should not set it.
+					}
+				} elseif ($key_type == 'select') {
+					// to detect if we are in search context
+					if (GETPOSTISARRAY($keysuffix."options_".$key.$keyprefix)) {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+						// Make sure we get an array even if there's only one selected
+						$value_arr = (array) $value_arr;
+						$value_key = implode(',', $value_arr);
+					} else {
+						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {

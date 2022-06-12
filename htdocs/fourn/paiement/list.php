@@ -485,7 +485,7 @@ while ($i < min($num, $limit)) {
 
 	// No
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td>'.(($offset * $limit) + $i).'</td>';
+		print '<td class="nowraponall">'.(($offset * $limit) + $i).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -493,7 +493,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowrap">'.$paymentfournstatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$paymentfournstatic->getNomUrl(1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -510,7 +510,7 @@ while ($i < min($num, $limit)) {
 
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		if ($objp->socid > 0) {
 			print $companystatic->getNomUrl(1, '', 24);
 		}
@@ -539,7 +539,7 @@ while ($i < min($num, $limit)) {
 
 	// Bank account
 	if (!empty($arrayfields['ba.label']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		if ($objp->bid) {
 			$accountstatic->id = $objp->bid;
 			$accountstatic->ref = $objp->bref;

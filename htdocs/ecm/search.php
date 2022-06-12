@@ -128,7 +128,7 @@ if (!empty($conf->contrat->enabled)) {
 if (!empty($conf->commande->enabled)) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order', 'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 }
 if (!empty($conf->supplier_proposal->enabled)) {

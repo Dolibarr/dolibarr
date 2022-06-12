@@ -44,6 +44,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercardinfo'));
 
 $object = new FactureFournisseur($db);
 
@@ -115,7 +116,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $morehtmlref .= '</div>';
 
-$object->totalpaye = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaid = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

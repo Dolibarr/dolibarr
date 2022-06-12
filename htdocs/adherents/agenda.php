@@ -65,6 +65,9 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$objcanvas = null;
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id);
 
@@ -159,11 +162,11 @@ if ($object->id > 0) {
 
 
 	$newcardbutton = '';
-	if (!empty($conf->agenda->enabled)) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage=1&origin=member&originid='.$id);
+	if (isModEnabled('agenda')) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).($object->id > 0 ? '?id='.$object->id : '').'&origin=member&originid='.$id);
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

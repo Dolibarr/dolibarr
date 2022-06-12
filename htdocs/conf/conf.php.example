@@ -321,6 +321,15 @@ $dolibarr_cron_allow_cli='0';
 //
 // $php_session_save_handler='';
 
+// force_install_lockinstall
+// If this value is set to a value, it forces the creation of a file install.lock once an upgrade process into a new version end.
+// The value is the octal value of permission to set on created file.
+// The file install.lock prevents the use of the migration process another time. You will have to delete it manually for 
+// next upgrade.
+// Default value: '0'
+// Example: '444';
+// $force_install_lockinstall='440';
+
 
 
 //##################

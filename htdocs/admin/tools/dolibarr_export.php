@@ -214,10 +214,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	print '<br>';
 	print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
-	print '<div class="formelementrow">';
-	print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
-	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-	print '</div>';
 
 	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
 		print '<div class="formelementrow">';
@@ -239,13 +235,34 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<option value="ORACLE">ORACLE</option>';
 	print '<option value="POSTGRESQL">POSTGRESQL</option>';
 	print '</select>';
-	print '<br>';
+	print '<br><br>';
 
-	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
+	print '<div class="formelementrow">';
+	print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" checked="checked" />';
+	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
+	print '</div>';
+
+	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" checked="checked" />';
 	print '<label for="checkbox_use_quick">';
 	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
 	print '</label>';
 	print '<br>';
+
+	$execmethod = 0;
+	if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+	}
+	if (empty($execmethod)) {
+		$execmethod = 1;
+	}
+	if ($execmethod == 1) {
+		// If we use the "exec" method for shell, we ask if we need to use the alternative low memory exec mode.
+		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
+		print '<label for="lowmemorydump">';
+		print $form->textwithpicto($langs->trans('ExportUseLowMemoryMode'), $langs->trans('ExportUseLowMemoryModeHelp'));
+		print '</label>';
+		print '<br>';
+	}
 
 	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
 	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
@@ -422,7 +439,7 @@ if (in_array($type, array('pgsql'))) {
 	$prefix = 'pg_dump';
 	$ext = 'sql';
 }
-$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 print '<input type="text" name="filename_template" style="width: 90%" id="filename_template" value="'.$file.'" />';
 print '<br>';
 print '<br>';
@@ -542,10 +559,10 @@ print '</table>';
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
 
-print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:480px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -577,7 +594,7 @@ print load_fiche_titre($title);
 print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';
 $ext = 'zip';
-$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser');
 print '<input type="text" name="zipfilename_template" style="width: 90%" id="zipfilename_template" value="'.$file.'" /> <br>';
 print '<br>';
 
@@ -622,10 +639,10 @@ print '</div>';
 
 print '</div>';
 
-print '<div id="backupfileright" class="fichehalfright" style="height:250px; overflow: auto;">';
+print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';

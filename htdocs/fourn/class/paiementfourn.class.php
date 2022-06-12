@@ -67,6 +67,15 @@ class PaiementFourn extends Paiement
 	 */
 	public $type_code;
 
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 
 	/**
@@ -634,7 +643,11 @@ class PaiementFourn extends Paiement
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $langs;
+		global $langs, $conf, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -650,8 +663,12 @@ class PaiementFourn extends Paiement
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		if ($this->datepaye ? $this->datepaye : $this->date) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour', 'tzuser');
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
 		}
 
 		$linkclose = '';
@@ -679,6 +696,15 @@ class PaiementFourn extends Paiement
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

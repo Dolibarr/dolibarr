@@ -61,8 +61,6 @@ if (!empty($conf->paypal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
-global $dolibarr_main_instance_unique_id;
-
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
 
 // Clean parameters
@@ -245,9 +243,9 @@ if (!empty($conf->paypal->enabled)) {
 			$fulltag            = $FULLTAG;
 			$payerID            = $PAYPALPAYERID;
 			// Set by newpayment.php
-			$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
 			$currencyCodeType   = $_SESSION['currencyCodeType'];
 			$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+			$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
 			// From env
 			$ipaddress          = $_SESSION['ipaddress'];
 
@@ -319,12 +317,14 @@ if (!empty($conf->paypal->enabled)) {
 
 if (!empty($conf->paybox->enabled)) {
 	if ($paymentmethod == 'paybox') {
+		// TODO Add a check to validate that payment is ok.
 		$ispaymentok = true; // We call this page only if payment is ok on payment system
 	}
 }
 
 if (!empty($conf->stripe->enabled)) {
 	if ($paymentmethod == 'stripe') {
+		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
 		$ispaymentok = true; // We call this page only if payment is ok on payment system
 	}
 }
@@ -336,15 +336,20 @@ if (empty($ipaddress)) {
 }
 if (empty($TRANSACTIONID)) {
 	$TRANSACTIONID   = $_SESSION['TRANSACTIONID'];
+	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
+	}
 }
 if (empty($FinalPaymentAmt)) {
 	$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 }
-if (empty($paymentType)) {
-	$paymentType     = $_SESSION["paymentType"];
-}
 if (empty($currencyCodeType)) {
 	$currencyCodeType = $_SESSION['currencyCodeType'];
+}
+// Seems used onyl by Paypal
+if (empty($paymentType)) {
+	$paymentType     = $_SESSION["paymentType"];
 }
 
 $fulltag = $FULLTAG;
@@ -421,7 +426,7 @@ if ($ispaymentok) {
 				}
 			}
 
-			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType, LOG_DEBUG, 0, '_payment');
+			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId." currencyCodeType=".$currencyCodeType, LOG_DEBUG, 0, '_payment');
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
@@ -522,17 +527,17 @@ if ($ispaymentok) {
 					dol_syslog("Failed to get the bank account to record payment: ".$errmsg, LOG_ERR, 0, '_payment');
 				}
 
-				$operation = $paymentType; // Payment mode code
+				$operation = dol_getIdFromCode($db, $paymentTypeId, 'c_paiement', 'id', 'code', 1); // Payment mode code returned from payment mode id
 				$num_chq = '';
 				$emetteur_nom = '';
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
 				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -807,6 +812,8 @@ if ($ispaymentok) {
 				}
 			}
 
+			dol_syslog("FinalPaymentAmt = ".$FinalPaymentAmt." paymentTypeId = ".$paymentTypeId, LOG_DEBUG, 0, '_payment');
+
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 				$db->begin();
@@ -879,7 +886,7 @@ if ($ispaymentok) {
 					$db->rollback();
 				}
 			} else {
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type id" ('.$paymentTypeId.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		} else {
@@ -920,7 +927,7 @@ if ($ispaymentok) {
 			}
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -994,7 +1001,7 @@ if ($ispaymentok) {
 						$ispostactionok = -1;
 					}
 				} else {
-					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type" (' . $paymentType . ') to record the payment of order ' . $tmptag['ORD'] . '. May be payment was already recorded.';
+					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of order ' . $tmptag['ORD'] . '. May be payment was already recorded.';
 					$ispostactionok = -1;
 				}
 			} else {
@@ -1044,8 +1051,10 @@ if ($ispaymentok) {
 				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
+				$totalpaid = $FinalPaymentAmt;
+
 				if ($currencyCodeType == $conf->currency) {
-					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
@@ -1054,7 +1063,7 @@ if ($ispaymentok) {
 				}
 
 				$paiement->fk_donation = $don->id;
-				$paiement->datepaid = $now;
+				$paiement->datep = $now;
 				$paiement->paymenttype = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
@@ -1071,7 +1080,9 @@ if ($ispaymentok) {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 
-						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->setPaid($don->id);
+						}
 					}
 				}
 
@@ -1108,7 +1119,7 @@ if ($ispaymentok) {
 					$db->rollback();
 				}
 			} else {
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of donation '.$tmptag['DON'].'. May be payment was already recorded.';
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type id" ('.$paymentTypeId.') to record the payment of donation '.$tmptag['DON'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		} else {
@@ -1278,6 +1289,7 @@ if ($ispaymentok) {
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
+
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
@@ -1317,7 +1329,7 @@ if ($ispaymentok) {
 					}
 				}
 			} else {
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['ATT'].'. May be payment was already recorded.';
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type id" ('.$paymentTypeId.') to record the payment of invoice '.$tmptag['ATT'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		} else {
@@ -1514,7 +1526,7 @@ if ($ispaymentok) {
 					}
 				}
 			} else {
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['ATT'].'. May be payment was already recorded.';
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type id" ('.$paymentTypeId.') to record the payment of invoice '.$tmptag['ATT'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		} else {
@@ -1531,9 +1543,9 @@ if ($ispaymentok) {
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
-	$paymentType        = $_SESSION['PaymentType'];
 	$currencyCodeType   = $_SESSION['currencyCodeType'];
 	$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
+	$paymentType        = $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger

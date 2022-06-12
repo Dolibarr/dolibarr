@@ -51,6 +51,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercarddocument'));
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -101,7 +102,7 @@ if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
 	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -149,7 +150,7 @@ if ($object->id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

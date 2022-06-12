@@ -60,4 +60,47 @@ class FormCategory extends Form
 
 		return $filter;
 	}
+
+	/**
+	 *    Prints a select form for products categories
+	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    string	$htmlname          	Name of HTML field
+	 *    @param    int		$showempty         	Add an empty field
+	 *    @return	integer|null
+	 */
+	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
+	{
+		global $conf;
+
+		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
+		$sql .= " GROUP BY cp.fk_categorie, cat.label";
+
+		dol_syslog(get_class($this)."::selectProductCategory", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+			if ($showempty) {
+				print '<option value="0">&nbsp;</option>';
+			}
+
+			$i = 0;
+			$num_rows = $this->db->num_rows($resql);
+			while ($i < $num_rows) {
+				$category = $this->db->fetch_object($resql);
+				if ($selected && $selected == $category->cat_index) {
+					print '<option value="'.$category->cat_index.'" selected>'.$category->label.'</option>';
+				} else {
+					print '<option value="'.$category->cat_index.'">'.$category->label.'</option>';
+				}
+				$i++;
+			}
+			print ('</select>');
+
+			return $num_rows;
+		} else {
+			dol_print_error($this->db);
+		}
+	}
 }
