@@ -4732,14 +4732,17 @@ class Product extends CommonObject
 	/**
 	 *    Return clicable link of object (with eventually picto)
 	 *
-	 * @param  int    $withpicto             Add picto into link
-	 * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
-	 * @param  int    $maxlength             Maxlength of ref
-	 * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param  int    $notooltip			 No tooltip
-	 * @return string                                String with URL
+	 * @param	int		$withpicto				Add picto into link
+	 * @param	string	$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int		$maxlength				Maxlength of ref
+	 * @param 	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int		$notooltip				No tooltip
+	 * @param	int		$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string	$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @param  	string  $morecss            	''=Add more css on link
+	 * @return	string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $add_label = 0, $sep = ' - ', $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -4840,9 +4843,9 @@ class Product extends CommonObject
 			}
 
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="nowraponall classfortooltip"';
+			$linkclose .= ' class="nowraponall classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
-			$linkclose = ' class="nowraponall"';
+			$linkclose = ' class="nowraponall'.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
@@ -4881,6 +4884,9 @@ class Product extends CommonObject
 		}
 		$result .= $newref;
 		$result .= $linkend;
+		if ($withpicto != 2) {
+			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
+		}
 
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
