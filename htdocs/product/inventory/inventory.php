@@ -643,7 +643,7 @@ if ($object->id > 0) {
 			print $warehouse_static->getNomUrl(1);
 			print '</td>';
 			print '<td>';
-			print $product_static->getNomUrl(1);
+			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
 			if ($conf->productbatch->enabled) {
