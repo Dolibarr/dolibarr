@@ -6636,13 +6636,17 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	} else {
 		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		$pattern = "/<[^<>]+>/";
+		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+		// pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
+		// pass 2 - $temp after pass 2: 0000-021
+		$tempbis = $temp;
 		do {
-			// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-			// pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
-			// pass 2 - $temp after pass 2: 0000-021
+			$temp = $tempbis;
 			$tempbis = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
 			$tempbis = preg_replace($pattern, '', $tempbis);
+			//$idowhile++; print $temp.'-'.$tempbis."\n"; if ($idowhile > 100) break;
 		} while ($tempbis != $temp);
+
 		$temp = $tempbis;
 
 		// Remove '<' into remaining, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
