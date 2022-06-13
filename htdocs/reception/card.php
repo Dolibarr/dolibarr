@@ -1239,7 +1239,7 @@ if ($action == 'create') {
 
 				$extralabelslines = $extrafields->attributes[$line->table_element];
 				//Display lines extrafields
-				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+				if ((is_array($extralabelslines) && count($extralabelslines) > 0) || ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 					$colspan = 5;
 					if ($conf->productbatch->enabled) {
 						$colspan += 3;
