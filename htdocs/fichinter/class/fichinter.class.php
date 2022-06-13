@@ -1360,7 +1360,6 @@ class Fichinter extends CommonObject
 				$line->duration = $objp->duree;
 				//For invoicing we calculing hours
 				$line->qty = round($objp->duree / 3600, 2);
-				$line->date	= $this->db->jdate($objp->date);
 				$line->datei = $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
