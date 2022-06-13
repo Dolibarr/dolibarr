@@ -1786,8 +1786,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/projet/tasks/time.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->rights->projet->lire);
 
 				}
-
-
 			}
 		}
 
