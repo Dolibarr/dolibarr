@@ -124,7 +124,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
-
 		global $conf, $mysoc;
 
 		/**************Construction de quelques variables********************/
@@ -437,7 +436,8 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element." WHERE exporttype='".$this->db->escape($this->exporttype)."'");
+		$sql = 'SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element." WHERE exporttype='".$this->db->escape($this->exporttype)."'";
+		$resql = $this->db->query($sql);
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}
@@ -463,7 +463,6 @@ class IntracommReport extends CommonObject
 	 */
 	public function generateXMLFile()
 	{
-
 		$name = $this->periode.'.xml';
 		$fname = sys_get_temp_dir().'/'.$name;
 		$f = fopen($fname, 'w+');
