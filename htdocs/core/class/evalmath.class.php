@@ -374,7 +374,7 @@ class EvalMath
 	 */
 	private function pfx($tokens, $vars = array())
 	{
-		if ($tokens == false) {
+		if (empty($tokens)) {
 			return false;
 		}
 
