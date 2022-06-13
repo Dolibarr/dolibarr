@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +267,7 @@ if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
 }
-$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
+$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion'][0]);
 if ($lastactivationversion) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
 	$text .= $lastactivationversion;
@@ -505,7 +506,7 @@ if ($mode == 'feature') {
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
+	if (isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
 		foreach ($objMod->module_parts['hooks'] as $key => $val) {
 			if ($key === 'entity') {
