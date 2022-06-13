@@ -146,6 +146,12 @@ class Account extends CommonObject
 	public $iban_prefix;
 
 	/**
+	 * Address of the bank
+	 * @var string
+	 */
+	public $domiciliation;
+
+	/**
 	 * XML SEPA format: place Payment Type Information (PmtTpInf) in Credit Transfer Transaction Information (CdtTrfTxInf)
 	 * @var int
 	 */
