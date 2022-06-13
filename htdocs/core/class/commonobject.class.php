@@ -7556,11 +7556,20 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+							$getnomurlparam3 = (!isset($InfoFieldList[5]) ? 0 : $InfoFieldList[5]);
+							$getnomurlparam4 = (!isset($InfoFieldList[6]) ? -1 : $InfoFieldList[6]);
+							$getnomurlparam5 = (!isset($InfoFieldList[7]) ? 0 : $InfoFieldList[7]);
+							$getnomurlparam6 = (!isset($InfoFieldList[8]) ? 0 : $InfoFieldList[8]);
+
+							/**
+							 * @var Product $object
+							 */
 							$object->fetch($value, '', '', '', 0, 1, 1);
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6);
 						} else {
 							$object->fetch($value);
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 						}
-						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
