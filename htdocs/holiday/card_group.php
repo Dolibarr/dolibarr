@@ -655,11 +655,11 @@ if (is_object($db)) {
 }
 /**
  * send email to validator for current leave represented by (id)
- * @param $id
- * @param $cancreate
- * @param $now
- * @param $autoValidation
- * @return string|void
+ * @param $id validator for current leave represented by (id)
+ * @param $cancreate flag for user right
+ * @param $now date
+ * @param $autoValidation boolean flag on autovalidation
+ * @return stdClass
  * @throws Exception
  */
 function sendMail($id, $cancreate, $now, $autoValidation)
