@@ -201,12 +201,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->titre = GETPOST('title', 'nohtml'); // deprecated
-			$object->title = GETPOST('title', 'nohtml');
+			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
+			$object->title = GETPOST('title', 'alphanohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice', 'alpha');
+			$object->model_pdf = GETPOST('modelpdf', 'alphanohtml');
+			$object->usenewprice = GETPOST('usenewprice', 'alphanohtml');
 
 			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');

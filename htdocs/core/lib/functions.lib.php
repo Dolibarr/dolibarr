@@ -6634,12 +6634,18 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
 	} else {
-		$temp = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
-		$pattern = "/<[^<>]+>/";
-		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
-		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
 		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		$pattern = "/<[^<>]+>/";
+		do {
+			// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+			// pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
+			// pass 2 - $temp after pass 2: 0000-021
+			$tempbis = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
+			$tempbis = preg_replace($pattern, '', $tempbis);
+		} while ($tempbis != $temp);
+		$temp = $tempbis;
+
+		// Remove '<' into remaining, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		$temp = preg_replace('/<+([a-z]+)/i', '\1', $temp);
 	}
 

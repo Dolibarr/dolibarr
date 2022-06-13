@@ -403,7 +403,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfiles', 'private', 'position', 'entity'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 				$i++;
 			}
@@ -485,7 +485,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;

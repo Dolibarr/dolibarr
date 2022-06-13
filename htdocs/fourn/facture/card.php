@@ -747,10 +747,10 @@ if (empty($reshook)) {
 				$result = $object->fetch(GETPOST('fac_replacement', 'int'));
 				$object->fetch_thirdparty();
 
-				$object->ref = GETPOST('ref', 'nohtml');
+				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 				$object->socid = GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'nohtml');
+				$object->libelle = GETPOST('label', 'alphanohtml');
 				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -812,11 +812,11 @@ if (empty($reshook)) {
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
-				$object->ref = GETPOST('ref', 'nohtml');
-				$object->ref_supplier = GETPOST('ref_supplier', 'nohtml');
+				$object->ref = GETPOST('ref', 'alphanohtml');
+				$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
-				$object->libelle = GETPOST('label', 'nohtml');
-				$object->label				= GETPOST('label', 'nohtml');
+				$object->libelle = GETPOST('label', 'alphanohtml');
+				$object->label				= GETPOST('label', 'alphanohtml');
 				$object->date = $dateinvoice;
 				$object->date_echeance = $datedue;
 				$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -903,13 +903,13 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$object->socid = GETPOST('socid', 'int');
-				$object->type            = GETPOST('type');
-				$object->ref             = GETPOST('ref');
+				$object->type            = GETPOST('type', 'alphanohtml');
+				$object->ref             = GETPOST('ref', 'alphanohtml');
 				$object->date            = $dateinvoice;
 				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_supplier    = GETPOST('ref_supplier', 'nohtml');
-				$object->model_pdf = GETPOST('model');
+				$object->ref_supplier    = GETPOST('ref_supplier', 'alphanohtml');
+				$object->model_pdf = GETPOST('model', 'alphanohtml');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOST('mode_reglement_id', 'int');
@@ -962,12 +962,12 @@ if (empty($reshook)) {
 
 				// Creation invoice
 				$object->socid				= GETPOST('socid', 'int');
-				$object->type				= GETPOST('type');
-				$object->ref				= GETPOST('ref', 'nohtml');
-				$object->ref_supplier		= GETPOST('ref_supplier', 'nohtml');
+				$object->type				= GETPOST('type', 'alphanohtml');
+				$object->ref				= GETPOST('ref', 'alphanohtml');
+				$object->ref_supplier		= GETPOST('ref_supplier', 'alphanohtml');
 				$object->socid				= GETPOST('socid', 'int');
-				$object->libelle			= GETPOST('label', 'nohtml');	// deprecated
-				$object->label				= GETPOST('label', 'nohtml');
+				$object->libelle			= GETPOST('label', 'alphanohtml');	// deprecated
+				$object->label				= GETPOST('label', 'alphanohtml');
 				$object->date				= $dateinvoice;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'restricthtml');

@@ -192,7 +192,7 @@ if (empty($reshook)) {
 		if (empty($ref_fourn_old)) {
 			$ref_fourn_old = $ref_fourn;
 		}
-		$quantity = price2num(GETPOST("qty", 'nohtml'), 'MS');
+		$quantity = price2num(GETPOST("qty", 'alphanohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
 
 		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
@@ -555,7 +555,7 @@ if ($id > 0 || $ref) {
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'alphanohtml'), 'MS') : "1";
 				if ($rowid) {
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
 					print $object->fourn_qty;
@@ -577,7 +577,7 @@ if ($id > 0 || $ref) {
 
 					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 					print '<td>';
-					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
+					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
