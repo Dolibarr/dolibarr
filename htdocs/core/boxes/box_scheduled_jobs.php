@@ -63,7 +63,7 @@ class box_scheduled_jobs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
+		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
 	}
 
 	/**
