@@ -517,14 +517,14 @@ while ($i < min($num, $limit)) {
 
 	// Bank transaction
 	if (!empty($arrayfields['transaction']['checked'])) {
-        print '<td>';
-        if ($objp->fk_bank > 0) {
-            $bankline->fetch($objp->fk_bank);
-            print $bankline->getNomUrl(1, 0);
-        }
-        print '</td>';
-        if (!$i) {
-            $totalarray['nbfield']++;
+		print '<td>';
+		if ($objp->fk_bank > 0) {
+			$bankline->fetch($objp->fk_bank);
+			print $bankline->getNomUrl(1, 0);
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
 		}
 	}
 
