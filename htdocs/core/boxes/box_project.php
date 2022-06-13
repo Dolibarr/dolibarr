@@ -83,8 +83,7 @@ class box_project extends ModeleBoxes
 
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
-
-		$i = 0;
+		$num = 0;
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
