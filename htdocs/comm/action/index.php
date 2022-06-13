@@ -848,7 +848,6 @@ if ($resql) {
 		$event->fk_project = $obj->fk_project;
 
 		$event->socid = $obj->fk_soc;
-		$event->thirdparty_id = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
