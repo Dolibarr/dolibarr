@@ -209,8 +209,9 @@ if (empty($reshook)) {
 			}
 			// If no groups and no users
 			if (empty($groups) && empty($users)) {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Group")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequiredUserOrGroup"), null, 'errors');
+				//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UserOrGroup")), null, 'errors');
+				//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Group")), null, 'errors');
 				$error++;
 				$action = 'create';
 			}
@@ -486,7 +487,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		// groupe
 		print '<tr>';
-		print '<td class="titlefield fieldrequired">'.$langs->trans("groups");
+		print '<td class="titlefield fieldrequired">';
+		print $form->textwithpicto($langs->trans("groups"), $langs->trans("fusionGroupsUsers"));
 
 		print '</td>';
 
@@ -505,7 +507,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		// users
 		print '<tr>';
-		print '<td class="titlefield fieldrequired">'.$langs->trans("users").'</td>';
+		print '<td class="titlefield fieldrequired">';
+		print $form->textwithpicto($langs->trans("users"), $langs->trans("fusionGroupsUsers"));
 		print '<td>';
 
 		$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from '.MAIN_DB_PREFIX.'user as  u';
