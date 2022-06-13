@@ -264,7 +264,7 @@ if (empty($reshook)) {
 				/** GROUPS */
 				$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from ' . MAIN_DB_PREFIX . 'user as  u';
 				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'usergroup_user as ug on ug.fk_user = u.rowid  ';
-				$sql .= ' WHERE  fk_usergroup in (' . implode(',', $groups) . ')';
+				$sql .= ' WHERE  fk_usergroup in (' .$this->db->sanitize(implode(',', $groups)) . ')';
 				$resql = $db->query($sql);
 
 				if ($resql) {
@@ -423,7 +423,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			}
 
             $("input[name=autoValidation]").click( function(e) {
-				console.log("chang")
+
 
                 if( $("input[name=autoValidation]").is(":checked") ){
 					$("#AutoSendMail").prop("disabled", false);
