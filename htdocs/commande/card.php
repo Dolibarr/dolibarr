@@ -1756,7 +1756,7 @@ if ($action == 'create' && $usercancreate) {
 	if (isModEnabled('expedition')) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
 		print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
-		print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+		$form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
 
