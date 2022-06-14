@@ -1238,7 +1238,9 @@ if ($action == 'create') {
 				print "</tr>\n";
 
 				$extralabelslines = $extrafields->attributes[$line->table_element];
-				//Display lines extrafields
+
+				// Display lines extrafields
+				// $line is a line of reception (so CommandeFournisseurDispatch)
 				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 					$colspan = 5;
 					if ($conf->productbatch->enabled) {
@@ -1260,7 +1262,7 @@ if ($action == 'create') {
 					}
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
 				}
 
 				$indiceAsked++;

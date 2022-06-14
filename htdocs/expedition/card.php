@@ -2414,7 +2414,8 @@ if ($action == 'create') {
 				}
 				print "</tr>";
 
-				// Display lines extrafields
+				// Display lines extrafields.
+				// $line is a line of shipment
 				if (!empty($extrafields)) {
 					$colspan = 6;
 					if ($origin && $origin_id > 0) {
