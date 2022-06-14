@@ -287,6 +287,7 @@ ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
 ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by current object status
 ErrorAjaxRequestFailed=Request failed
+ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
