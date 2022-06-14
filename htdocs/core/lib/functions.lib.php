@@ -3502,7 +3502,7 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (!empty($conf->geoipmaxmind->enabled)) {
-		$datafile = $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
@@ -3529,7 +3529,7 @@ function dol_user_country()
 	$ret = '';
 	if (!empty($conf->geoipmaxmind->enabled)) {
 		$ip = getUserRemoteIP();
-		$datafile = $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
