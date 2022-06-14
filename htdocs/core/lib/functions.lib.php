@@ -11120,7 +11120,8 @@ function dolForgeCriteriaCallback($matches)
  * @param string $gm Passed to dol_mktime
  * @return int|string  Date as a timestamp, '' or false if error
  */
-function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto') {
+function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto')
+{
 	return dol_mktime($useHourTime ? (GETPOSTINT($prefix . 'hour')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'minute')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'second')) : 0, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
 }
 
@@ -11133,7 +11134,8 @@ function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto') {
  * @param bool $useHourTime If true, will also include hour, minute, second values from the HTTP request
  * @return string Portion of URL with query parameters for the specified date
  */
-function buildParamDate($prefix, $useHourTime = false) {
+function buildParamDate($prefix, $useHourTime = false)
+{
 	$TParam = [$prefix . 'day' => GETPOST($prefix . 'day'), $prefix . 'month' => GETPOST($prefix . 'month'), $prefix . 'year' => GETPOST($prefix . 'year')];
 	if ($useHourTime) {
 		$TParam += [$prefix . 'hour' => GETPOST($prefix . 'hour'), $prefix . 'minute' => GETPOST($prefix . 'minute'), $prefix . 'second' => GETPOST($prefix . 'second')];
