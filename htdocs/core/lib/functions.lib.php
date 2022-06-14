@@ -8964,7 +8964,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
-							$labeltemp = explode(':', $values[2]);
+							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
