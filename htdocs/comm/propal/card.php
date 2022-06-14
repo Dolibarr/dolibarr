@@ -124,7 +124,7 @@ $usercancreateorder = $user->rights->commande->creer;
 $usercancreateinvoice = $user->rights->facture->creer;
 $usercancreatecontract = $user->rights->contrat->creer;
 $usercancreateintervention = $user->hasRight('ficheinter', 'creer');
-$usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'creer') || $user->hasRight('supplier_order', 'creer'));
+$usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
