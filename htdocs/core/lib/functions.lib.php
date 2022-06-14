@@ -11116,13 +11116,29 @@ function dolForgeCriteriaCallback($matches)
  * optionally hour, minute, second) fields to return a timestamp.
  *
  * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param bool $useHourTime If true, will also include hour, minute, second values from the HTTP request
+ * @param string $hourTime  'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
+ *                             hour, minute, second respectively (for instance '23:59:59')
  * @param string $gm Passed to dol_mktime
  * @return int|string  Date as a timestamp, '' or false if error
  */
-function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto')
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
 {
-	return dol_mktime($useHourTime ? (GETPOSTINT($prefix . 'hour')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'minute')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'second')) : 0, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+	if ($hourTime === 'getpost') {
+		$hour   = GETPOSTINT($prefix . 'hour');
+		$minute = GETPOSTINT($prefix . 'minute');
+		$second = GETPOSTINT($prefix . 'second');
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = (int)$m[1];
+		$minute = (int)$m[2];
+		$second = (int)$m[3];
+	} else {
+		$hour = $minute = $second = 0;
+	}
+	// normalize out of range values
+	$hour = min($hour, 23);
+	$minute = min($minute, 59);
+	$second = min($second, 59);
+	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
 }
 
 /**
@@ -11131,14 +11147,25 @@ function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto')
  * request.
  *
  * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param bool $useHourTime If true, will also include hour, minute, second values from the HTTP request
+ * @param int $timestamp If null, the timestamp will be created from request data
+ * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
  * @return string Portion of URL with query parameters for the specified date
  */
-function buildParamDate($prefix, $useHourTime = false)
+function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
-	$TParam = [$prefix . 'day' => GETPOST($prefix . 'day'), $prefix . 'month' => GETPOST($prefix . 'month'), $prefix . 'year' => GETPOST($prefix . 'year')];
-	if ($useHourTime) {
-		$TParam += [$prefix . 'hour' => GETPOST($prefix . 'hour'), $prefix . 'minute' => GETPOST($prefix . 'minute'), $prefix . 'second' => GETPOST($prefix . 'second')];
+	if ($timestamp === null) $timestamp = GETPOSTDATE($prefix, $hourTime, $gm);
+	$TParam = array(
+		$prefix . 'day'   => intval(dol_print_date($timestamp, '%d')),
+		$prefix . 'month' => intval(dol_print_date($timestamp, '%m')),
+		$prefix . 'year'  => intval(dol_print_date($timestamp, '%Y')),
+	);
+	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
+		$TParam = array_merge($TParam, array(
+			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
+			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+		));
 	}
 
 	return '&' . http_build_query($TParam);

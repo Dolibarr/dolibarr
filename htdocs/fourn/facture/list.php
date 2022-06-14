@@ -98,8 +98,8 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_date_start = GETPOSTDATE('search_date_start', false, 'tzserver');
-$search_date_end = GETPOSTDATE('search_date_end', false, 'tzserver');
+$search_date_start = GETPOSTDATE('search_date_start', '', 'tzserver');
+$search_date_end = GETPOSTDATE('search_date_end', '23:59:59', 'tzserver');
 $search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
 $search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
 $search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
@@ -695,10 +695,10 @@ if ($resql) {
 		$param .= '&search_all='.urlencode($search_all);
 	}
 	if ($search_date_start) {
-		$param .= buildParamDate('search_date_start', false);
+		$param .= buildParamDate('search_date_start', null, '', 'tzserver');
 	}
 	if ($search_date_end) {
-		$param .= buildParamDate('search_date_end', false);
+		$param .= buildParamDate('search_date_end', null, '', 'tzserver');
 	}
 	if ($search_datelimit_startday) {
 		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
