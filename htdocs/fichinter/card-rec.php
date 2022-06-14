@@ -178,7 +178,6 @@ if ($action == 'add') {
 
 	$newinter->entity = $object->entity;
 	$newinter->duree = $object->duree;
-	$newinter->datei = $object->date;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;

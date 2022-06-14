@@ -1473,9 +1473,19 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_fichinter;
 
-	public $desc; // Description ligne
-	public $datei; // Date intervention
-	public $duration; // Duree de l'intervention
+	public $desc; 		// Description ligne
+
+	/**
+	 * @var int Date of intervention
+	 */
+	public $date; 		// Date intervention
+	/**
+	 * @var int Date of intervention
+	 * @deprecated
+	 */
+	public $datei; 		// Date intervention
+
+	public $duration; 	// Duration of intervention
 	public $rang = 0;
 
 	/**
