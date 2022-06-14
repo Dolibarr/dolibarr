@@ -2399,6 +2399,11 @@ img.photoref, div.photoref {
 	object-fit: contain;
 }
 
+img.photokanban, div.photokanban {
+	padding: 0;
+	border: none;
+}
+
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
 }
@@ -4110,7 +4115,8 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	border-bottom: 1px solid var(--colortopbordertitle1);
+	/* border-bottom: 1px solid var(--colortopbordertitle1); */
+	border-bottom: none;
 }
 
 div.liste_titre {
@@ -5180,11 +5186,11 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
 .treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 
