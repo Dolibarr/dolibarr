@@ -78,7 +78,7 @@ if (!empty($conf->expedition->enabled)) {
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 }
 if (!empty($conf->ficheinter->enabled)) {

@@ -186,7 +186,7 @@ $tmparray = array('index.php'=>'Dashboard');
 if (!empty($conf->societe->enabled)) {
 	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
 }
 if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {

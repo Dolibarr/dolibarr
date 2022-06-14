@@ -152,7 +152,7 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxqty = 150;
 		$this->postotalht = 160;
 		$this->postotalttc = 180;
-		// if (empty($conf->projet->enabled)) {
+		// if (empty($conf->project->enabled)) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
 		//     $this->posxqty-=20;
@@ -581,7 +581,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
 			$nextColumnPosX = $this->posxtva;
 		}
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$nextColumnPosX = $this->posxprojet;
 		}
 
@@ -597,7 +597,7 @@ class pdf_standard extends ModeleExpenseReport
 		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
 		// Project
-		//if (! empty($conf->projet->enabled))
+		//if (! empty($conf->project->enabled))
 		//{
 		//    $pdf->SetFont('','', $default_font_size - 1);
 		//    $pdf->SetXY($this->posxprojet, $curY);
@@ -955,7 +955,7 @@ class pdf_standard extends ModeleExpenseReport
 		//	$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		//}
 
-		//if (!empty($conf->projet->enabled))
+		//if (!empty($conf->project->enabled))
 		//{
 		//    // Project
 		//    $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
