@@ -272,7 +272,7 @@ class EmailCollectorAction extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
+			$this->fetchLinesCommon();
 		}
 		return $result;
 	}
