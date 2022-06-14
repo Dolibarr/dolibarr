@@ -49,6 +49,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 
 $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
+$search_typeid = GETPOST('search_typeid', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
@@ -92,19 +93,6 @@ if (!$sortorder) {
 }
 
 $filtre = GETPOST("filtre", 'int');
-
-if (!GETPOSTISSET('search_typeid')) {
-	$newfiltre = str_replace('filtre=', '', $filtre);
-	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val) {
-		$part = explode(':', $val);
-		if ($part[0] == 'cs.fk_type') {
-			$search_typeid = $part[1];
-		}
-	}
-} else {
-	$search_typeid = GETPOST('search_typeid', 'int');
-}
 
 $arrayfields = array(
 	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
