@@ -236,7 +236,7 @@ abstract class Stats
 
 		$year = $startyear;
 		while ($year <= $endyear) {
-			$datay[$year] = $this->getAverageByMonth($year);
+			$datay[$year] = $this->_getAverageByMonth($year);
 			$year++;
 		}
 
