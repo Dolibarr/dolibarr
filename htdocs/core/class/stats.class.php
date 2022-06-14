@@ -180,7 +180,7 @@ abstract class Stats
 				$year = $year - 1;
 			}
 			while ($year <= $endyear) {
-				$datay[$year] = $this->getAmountByMonth($year, $format);
+				$datay[$year] = $this->_getAmountByMonth($year, $format);
 				$year++;
 			}
 
