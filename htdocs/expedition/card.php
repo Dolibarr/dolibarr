@@ -1045,7 +1045,7 @@ if ($action == 'create') {
 			print '<table class="noborder centpercent">';
 
 			// Load shipments already done for same order
-			$object->loadExpeditions();
+			$objectorder->loadExpeditions();
 
 
 			$alreadyQtyBatchSetted = $alreadyQtySetted = array();
