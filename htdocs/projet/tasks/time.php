@@ -919,15 +919,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 	$massactionbutton = '';
 	$arrayofmassactions = array();
-	if ($projectstatic->usage_bill_time) {
-		$arrayofmassactions = array(
-			'generateinvoice'=>$langs->trans("GenerateBill"),
-			//'builddoc'=>$langs->trans("PDFMerge"),
-		);
-	}
-	if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
-		$langs->load("interventions");
-		$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+
+	if ($projectstatic->id > 0) {
+		// If we are on a given project.
+		if ($projectstatic->usage_bill_time) {
+			$arrayofmassactions = array(
+				'generateinvoice'=>$langs->trans("GenerateBill"),
+				//'builddoc'=>$langs->trans("PDFMerge"),
+			);
+		}
+		if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+			$langs->load("interventions");
+			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+		}
 	}
 	//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete', 'generateinvoice', 'generateinter'))) {
@@ -1251,7 +1255,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
 			if ($projectstatic->thirdparty->id > 0) {
-				print '<table class="noborder" width="100%" >';
+				print '<table class="noborder centpercent">';
 				print '<tr>';
 				print '<td class="titlefield">';
 				print $langs->trans('InterToUse');
@@ -1569,7 +1573,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		if (!empty($allprojectforuser)) {
-			print '<td></td>';
+			print '<td class="liste_titre"></td>';
 		}
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
