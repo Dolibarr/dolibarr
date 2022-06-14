@@ -86,7 +86,7 @@ abstract class Stats
 				$year = $year - 1;
 			}
 			while ($year <= $endyear) {
-				$datay[$year] = $this->getNbByMonth($year, $format);
+				$datay[$year] = $this->_getNbByMonth($year, $format);
 				$year++;
 			}
 
