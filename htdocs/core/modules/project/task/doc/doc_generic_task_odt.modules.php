@@ -133,8 +133,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->pays_code) {
-			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
