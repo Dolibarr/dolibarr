@@ -8949,8 +8949,12 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 		foreach ($conf->modules_parts['tabs'][$type] as $value) {
 			$values = explode(':', $value);
 
+			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
-				if (count($values) == 6) {       // new declaration with permissions:  $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+				if (count($values) == 6) {
+					// new declaration with permissions:
+					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+					// $value='objecttype:+tabname1:Title1,class,pathfile,method:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
 					if ($values[0] != $type) {
 						continue;
 					}
