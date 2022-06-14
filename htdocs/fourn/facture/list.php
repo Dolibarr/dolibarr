@@ -98,14 +98,8 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_start = GETPOSTDATE('search_date_start', false, 'tzserver');
+$search_date_end = GETPOSTDATE('search_date_end', false, 'tzserver');
 $search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
 $search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
 $search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
@@ -274,12 +268,6 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_country = '';
 		$search_type_thirdparty = '';
-		$search_date_startday = '';
-		$search_date_startmonth = '';
-		$search_date_startyear = '';
-		$search_date_endday = '';
-		$search_date_endmonth = '';
-		$search_date_endyear = '';
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_datelimit_startday = '';
@@ -706,23 +694,11 @@ if ($resql) {
 	if ($search_all) {
 		$param .= '&search_all='.urlencode($search_all);
 	}
-	if ($search_date_startday) {
-		$param .= '&search_date_startday='.urlencode($search_date_startday);
+	if ($search_date_start) {
+		$param .= buildParamDate('search_date_start', false);
 	}
-	if ($search_date_startmonth) {
-		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
-	}
-	if ($search_date_startyear) {
-		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
-	}
-	if ($search_date_endday) {
-		$param .= '&search_date_endday='.urlencode($search_date_endday);
-	}
-	if ($search_date_endmonth) {
-		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
-	}
-	if ($search_date_endyear) {
-		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	if ($search_date_end) {
+		$param .= buildParamDate('search_date_end', false);
 	}
 	if ($search_datelimit_startday) {
 		$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);

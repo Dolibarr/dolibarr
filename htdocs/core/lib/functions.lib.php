@@ -11110,3 +11110,34 @@ function dolForgeCriteriaCallback($matches)
 
 	return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
 }
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param bool $useHourTime If true, will also include hour, minute, second values from the HTTP request
+ * @param string $gm Passed to dol_mktime
+ * @return int|string  Date as a timestamp, '' or false if error
+ */
+function GETPOSTDATE($prefix, $useHourTime = false, $gm = 'auto') {
+	return dol_mktime($useHourTime ? (GETPOSTINT($prefix . 'hour')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'minute')) : 0, $useHourTime ? (GETPOSTINT($prefix . 'second')) : 0, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
+ * request.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param bool $useHourTime If true, will also include hour, minute, second values from the HTTP request
+ * @return string Portion of URL with query parameters for the specified date
+ */
+function buildParamDate($prefix, $useHourTime = false) {
+	$TParam = [$prefix . 'day' => GETPOST($prefix . 'day'), $prefix . 'month' => GETPOST($prefix . 'month'), $prefix . 'year' => GETPOST($prefix . 'year')];
+	if ($useHourTime) {
+		$TParam += [$prefix . 'hour' => GETPOST($prefix . 'hour'), $prefix . 'minute' => GETPOST($prefix . 'minute'), $prefix . 'second' => GETPOST($prefix . 'second')];
+	}
+
+	return '&' . http_build_query($TParam);
+}
