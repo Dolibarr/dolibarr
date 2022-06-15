@@ -67,7 +67,7 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
 	$permissiontoadd = $user->rights->projet->creer;
-	$uploaddir = $conf->projet->dir_output;
+	$uploaddir = $conf->project->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records

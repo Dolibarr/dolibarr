@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -124,7 +124,7 @@ $usercancreateorder = $user->rights->commande->creer;
 $usercancreateinvoice = $user->rights->facture->creer;
 $usercancreatecontract = $user->rights->contrat->creer;
 $usercancreateintervention = $user->hasRight('ficheinter', 'creer');
-$usercancreatepurchaseorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
@@ -1522,7 +1522,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = new FormMargin($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1779,7 +1779,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		print '<tr class="field_projectid">';
 		print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
@@ -2211,7 +2211,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br><span class="paddingrightonly">'.$langs->trans('Project').'</span>';
 		if ($usercancreate) {

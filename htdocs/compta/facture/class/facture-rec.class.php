@@ -181,7 +181,7 @@ class FactureRec extends CommonInvoice
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>75, 'isameasure'=>1),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>85),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>85),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
