@@ -84,6 +84,11 @@ class Task extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 	public $progress;
+	
+	/**
+	 * @deprecated use $date_end instead
+	 */
+	public $datee;
 
 	/**
 	 * @var int ID
@@ -2304,7 +2309,7 @@ class Task extends CommonObjectLine
 
 		$now = dol_now();
 
-		$datetouse = ($this->date_end > 0) ? $this->date_end : 0;
+		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}
