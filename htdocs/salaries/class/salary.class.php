@@ -58,7 +58,7 @@ class Salary extends CommonObject
 	public $datev;
 
 	public $salary;
-	public $amount; 
+	public $amount;
 	/**
 	 * @var int ID
 	 */
