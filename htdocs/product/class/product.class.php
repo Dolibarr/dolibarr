@@ -2338,7 +2338,8 @@ class Product extends CommonObject
 		}
 
 		if ($id) {
-			$sql .= " WHERE p.rowid = ".((int) $id)." AND p.entity IN (".getEntity($this->element).")";
+			$sql .= " WHERE p.rowid = ".((int) $id);
+			$sql .= " AND p.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE p.entity IN (".getEntity($this->element).")";
 			if ($ref) {
