@@ -144,7 +144,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
-			if (!empty($noback)) {
+			if (empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}
@@ -320,7 +320,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
-		if (!empty($noback)) {
+		if (empty($noback)) {
 			header("Location: " . $backurlforlist);
 			exit;
 		}
@@ -366,7 +366,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
 
-		if (!empty($noback)) {
+		if (empty($noback)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		}
@@ -507,7 +507,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 				$newid = $result;
 			}
 
-			if (!empty($noback)) {
+			if (empty($noback)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $newid); // Open record of new object
 				exit;
 			}
