@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 /**
  * Class to manage products or services
  */
-class Product extends CommonObject
+abstract class Product extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -547,6 +547,39 @@ class Product extends CommonObject
 			return 1;
 		}
 	}
+
+	/**
+	 *  Update a proposal line
+	 *
+	 *  @param      int			$rowid           	Id of line
+	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
+	 *  @param      float		$qty            	Quantity
+	 *  @param      float		$remise_percent  	Discount on line
+	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
+	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
+	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
+	 *  @param      string		$desc            	Description
+	 *	@param	  	string		$price_base_type	HT or TTC
+	 *	@param      int			$info_bits        	Miscellaneous informations
+	 *	@param		int			$special_code		Special code (also used by externals modules!)
+	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
+	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
+	 *  @param		int			$fk_fournprice		Id of origin supplier price
+	 *  @param		int			$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		string		$label				???
+	 *  @param		int			$type				0/1=Product/service
+	 *	@param      int			$date_start       	Start date of the line
+	 *	@param      int			$date_end         	End date of the line
+	 *  @param		array		$array_options		extrafields array
+	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 * 	@param		int			$notrigger			disable line update trigger
+	 * @param       integer $rang   line rank
+	 *  @return     int     		        		0 if OK, <0 if KO
+	 */
+	public abstract function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0);
+
+
 
 	/**
 	 *    Insert product into database
