@@ -9388,6 +9388,15 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Delete object in database
+	 *
+	 * @param User $user User that deletes
+	 * @param int $notrigger 0=triggers after, 1=disable triggers
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public abstract function delete($user, $notrigger = 0);
+
+	/**
 	 * Delete all child object from a parent ID
 	 *
 	 * @param		int		$parentId      Parent Id
