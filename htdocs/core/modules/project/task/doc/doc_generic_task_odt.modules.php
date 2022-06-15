@@ -41,10 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -65,7 +65,7 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 
@@ -133,8 +133,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->pays_code) {
-			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
@@ -481,7 +481,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -496,7 +496,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			$project->fetch($object->fk_project);
 			$project->fetch_thirdparty();
 
-			$dir = $conf->projet->dir_output."/".$project->ref."/";
+			$dir = $conf->project->dir_output."/".$project->ref."/";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -525,9 +525,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->projet->dir_temp);
-				if (!is_writable($conf->projet->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->projet->dir_temp;
+				dol_mkdir($conf->project->dir_temp);
+				if (!is_writable($conf->project->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->project->dir_temp;
 					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
 					return -1;
 				}
@@ -550,7 +550,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
+						'PATH_TO_TMP'	  => $conf->project->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
@@ -708,7 +708,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					// Replace tags of project files
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
-					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 
@@ -741,7 +741,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 
-					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 

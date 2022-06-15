@@ -1659,13 +1659,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) {
+		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0);
 		if ($force_thirdparty_id) {
 			$idtofetch = $force_thirdparty_id;
 		}
@@ -2649,7 +2649,9 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			$sql .= " , deposit_percent = " . (! empty($deposit_percent) ? "'".$this->db->escape($deposit_percent)."'" : 'NULL');
+			if (in_array($this->table_element, array('propal', 'commande'))) {
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -6146,7 +6148,7 @@ abstract class CommonObject
 								//var_dump($this->oldcopy);exit;
 								if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-									if ($this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
 										// var_dump($algo);
@@ -7389,7 +7391,7 @@ abstract class CommonObject
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = $param['options'][$value];
+			$value = isset($param['options'][$value])?$param['options'][$value]:'';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -7554,11 +7556,15 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
-							$object->fetch($value, '', '', '', 0, 1, 1);
+							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
-							$object->fetch($value);
+							$result = $object->fetch($value);
 						}
-						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						if ($result > 0) {
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						} else {
+							$value = '';
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -7998,7 +8004,11 @@ abstract class CommonObject
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
+							if (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) {
+								$value = price2num($value);
+							} elseif (isset($this->array_options['options_'.$key])) {
+								$value = $this->array_options['options_'.$key];
+							}
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
@@ -8054,7 +8064,7 @@ abstract class CommonObject
 							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
 							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.'">';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.' extra_inline_'.$extrafields->attributes[$this->table_element]['type'][$key].'">';
 						}
 
 						switch ($mode) {

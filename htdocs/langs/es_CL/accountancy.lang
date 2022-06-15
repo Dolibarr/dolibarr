@@ -159,7 +159,6 @@ DescVentilDoneExpenseReport=Consulte aquí la lista de las líneas de informes d
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de escritura, letras y eliminaciones. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrar
 ValidateHistory=Enlazar automáticamente
 ErrorAccountancyCodeIsAlreadyUse=No puede eliminar esta cuenta porque está siendo usada
-MvtNotCorrectlyBalanced=El movimiento no está correctamente equilibrado. Débito = %s | Crédito = %s
 Balancing=Equilibrio
 FicheVentilation=Tarjeta de enlace
 GeneralLedgerIsWritten=Las transacciones se escriben en el Libro mayor

@@ -642,7 +642,6 @@ $s = $newtitle;
 
 // Calendars from hooks
 $parameters = array();
-$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 if (empty($reshook)) {
 	$s .= $hookmanager->resPrint;
@@ -655,7 +654,7 @@ $viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -687,7 +686,6 @@ $viewmode .= '<span class="marginrightonly"></span>';
 
 // Add more views from hooks
 $parameters = array();
-$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;

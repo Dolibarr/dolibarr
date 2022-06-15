@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Счетоводна сметка за регистр
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Счетоводен акаунт за регистриране на членски внос
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Счетоводна сметка по подразбиране за закупени продукти (използва се, ако не е определена в продуктовата карта)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Счетоводна сметка по подразбиране за закупени продукти в ЕИО (използва се, ако не е дефинирана в картата на продукта)
@@ -289,7 +290,7 @@ ValidateHistory=Автоматично свързване
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Грешка, не може да изтриете тази счетоводна сметка, защото се използва.
-MvtNotCorrectlyBalanced=Движението не е правилно балансирано. Дебит = %s | Credit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Балансиране
 FicheVentilation=Свързваща карта
 GeneralLedgerIsWritten=Транзакциите са записани в главната счетоводна книга

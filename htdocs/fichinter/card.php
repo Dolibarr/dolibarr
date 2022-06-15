@@ -36,11 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if ($conf->contrat->enabled) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
@@ -394,11 +394,15 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						$mesg = $srcobject->error;
+						$langs->load("errors");
+						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+						$action = 'create';
 						$error++;
 					}
 				} else {
-					$mesg = $object->error;
+					$langs->load("errors");
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'create';
 					$error++;
 				}
 			} else {
@@ -422,12 +426,14 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
 						$action = 'create';
+						$error++;
 					}
 				}
 			}
 		} else {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 			$action = 'create';
+			$error++;
 		}
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;
@@ -781,7 +787,7 @@ $formfile = new FormFile($db);
 if (!empty($conf->contrat->enabled)) {
 	$formcontract = new FormContract($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -902,7 +908,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$formproject = new FormProjets($db);
 
 			$langs->load("project");
@@ -922,7 +928,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if ($conf->contrat->enabled) {
+		if (isModEnabled('contrat')) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
@@ -1155,7 +1161,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ficheinter->creer) {
@@ -1653,7 +1659,7 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->facture->creer) {

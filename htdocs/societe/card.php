@@ -2672,7 +2672,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 				if ($object->$key) {
 					if ($object->id_prof_check($i, $object) > 0) {
-						print ' &nbsp; '.$object->id_prof_url($i, $object);
+						if (!empty($object->id_prof_url($i, $object))) {
+							print ' &nbsp; '.$object->id_prof_url($i, $object);
+						}
 					} else {
 						print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
 					}

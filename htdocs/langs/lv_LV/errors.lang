@@ -281,8 +281,12 @@ ErrorRequestTooLarge=Kļūda, pieprasījums ir pārāk liels
 ErrorNotApproverForHoliday=Jūs neesat %s atvaļinājuma apstiprinātājs
 ErrorAttributeIsUsedIntoProduct=Šis atribūts tiek izmantots vienā vai vairākos produkta variantos
 ErrorAttributeValueIsUsedIntoProduct=Šī atribūta vērtība tiek izmantota vienā vai vairākos produkta variantos
-ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
-ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
+ErrorPaymentInBothCurrency=Kļūda, visas summas jāievada vienā kolonnā
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Jūs mēģināt apmaksāt rēķinus valūtā %s no konta ar valūtu %s
+ErrorInvoiceLoadThirdParty=Nevar ielādēt trešās puses objektu rēķinam "%s"
+ErrorInvoiceLoadThirdPartyKey=Trešās puses atslēga "%s" nav iestatīta rēķinam "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Dzēst rindu nav atļauts faktiskais objekta statuss
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Pieejams tikai tad, ja tiek izmantots HTTPS 
 WarningModuleXDisabledSoYouMayMissEventHere=Modulis %s nav iespējots. Tāpēc jūs varat izlaist daudz notikumu šeit.
 WarningPaypalPaymentNotCompatibleWithStrict=Vērtība “Stingrs” neļauj tiešsaistes maksājumu funkcijām darboties pareizi. Tā vietā izmantojiet “Lax”.
 
+<<<<<<< GALVA
+=======
+<<<<<<< GALVA
+<<<<<<< GALVA
+>>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
 # Validate
 RequireValidValue = Vērtība nav derīga
 RequireAtLeastXString = Nepieciešama vismaz %s rakstzīme (s)
@@ -338,3 +347,12 @@ BadSetupOfField = Kļūda, nepareizi iestatot lauku
 BadSetupOfFieldClassNotFoundForValidation = Kļūda, nepareizi iestatot lauku: klase nav atrasta validācijai
 BadSetupOfFieldFileNotFound = Kļūda, nepareizi iestatot lauku: fails netika atrasts iekļaušanai
 BadSetupOfFieldFetchNotCallable = Kļūda, nepareizi iestatot lauku: izgūšana nav izsaucama klasē
+<<<<<<< GALVA
+=======
+=======
+=======
+>>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
+>>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
+=======
+>>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
+>>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”

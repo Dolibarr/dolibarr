@@ -135,12 +135,12 @@ $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa				= GETPOST('hexa');
-$importmodelid = GETPOST('importmodelid');
+$importmodelid = GETPOST('importmodelid', 'int');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
-$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
+$separator			= (GETPOST('separator', 'alphanohtml') ? GETPOST('separator', 'alphanohtml', 3) : '');
+$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $separator_used     = str_replace('\t', "\t", $separator);
 
 $objimport = new Import($db);
@@ -492,9 +492,9 @@ if ($step == 2 && $datatoimport) {
 		print '<td style="text-align:center">';
 		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">';
 		print img_picto('', 'download', 'class="paddingright opacitymedium"');
-		print $langs->trans("DownloadEmptyExample");
+		print $langs->trans("DownloadEmptyExampleShort");
 		print '</a>';
-		print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
+		print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
@@ -583,9 +583,9 @@ if ($step == 3 && $datatoimport) {
 	print '</td><td style="text-align:right" class="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_picto('', 'download', 'class="paddingright opacitymedium"');
-	print $langs->trans("DownloadEmptyExample");
+	print $langs->trans("DownloadEmptyExampleShort");
 	print '</a>';
-	print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
+	print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 	print '</td></tr>';
 
 	print '</table>';
@@ -600,9 +600,9 @@ if ($step == 3 && $datatoimport) {
 	}
 
 
-	print '<br>';
+	print '<br><br>';
 
-	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
@@ -753,6 +753,34 @@ if ($step == 4 && $datatoimport) {
 	$model = $format;
 	$list = $objmodelimport->liste_modeles($db);
 
+	if (empty($separator)) {
+		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
+	}
+
+	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
+	if ($model == 'csv' && strlen($separator) == 1 && !GETPOSTISSET('separator')) {
+		// Count the char in first line of file.
+		$fh = fopen($conf->import->dir_temp.'/'.$filetoimport, 'r');
+		if ($fh) {
+			$sline = fgets($fh, 1000000);
+			fclose($fh);
+			$nboccurence = substr_count($sline, $separator);
+			$nboccurencea = substr_count($sline, ',');
+			$nboccurenceb = substr_count($sline, ';');
+			//var_dump($nboccurence." ".$nboccurencea." ".$nboccurenceb);exit;
+			if ($nboccurence == 0) {
+				if ($nboccurencea > 2) {
+					$separator = ',';
+				} elseif ($nboccurenceb > 2) {
+					$separator = ';';
+				}
+			}
+		}
+	}
+
+	// The value to use
+	$separator_used = str_replace('\t', "\t", $separator);
+
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 	$file = "import_".$model.".modules.php";
@@ -798,6 +826,7 @@ if ($step == 4 && $datatoimport) {
 	$fieldstarget = $objimport->array_import_fields[0];
 	$minpos = min(count($fieldssource), count($fieldstarget));
 	//var_dump($array_match_file_to_database);
+
 
 	$initialloadofstep4 = false;
 	if (empty($_SESSION['dol_array_match_file_to_database_select'])) {
@@ -946,7 +975,7 @@ if ($step == 4 && $datatoimport) {
 	if ($model == 'csv') {
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
-		print '<form>';
+		print '<form method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" value="'.$step.'" name="step">';
 		print '<input type="hidden" value="'.$format.'" name="format">';
@@ -955,10 +984,10 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
 		print $langs->trans("Separator").' : ';
-		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
+		print '<input type="text" class="width25 center" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
-		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button small" />';
+		print '<input type="text" class="width25 center" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button smallpaddingimp" />';
 		print '</form>';
 		print '</td></tr>';
 	}
@@ -971,6 +1000,7 @@ if ($step == 4 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -984,7 +1014,7 @@ if ($step == 4 && $datatoimport) {
 
 	// List of source fields
 	print '<!-- List of source fields -->'."\n";
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="select_model">';
 	print '<input type="hidden" name="step" value="4">';
@@ -996,6 +1026,7 @@ if ($step == 4 && $datatoimport) {
 	print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
 	print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
+	// Import profile to use/load
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
@@ -1052,21 +1083,19 @@ if ($step == 4 && $datatoimport) {
 	print '</td><td width="50%" class="nopaddingrightimp">';
 
 	// Set the list of all possible target fields in Dolibarr.
-	$optionsnotused = "";
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
-		$text = '<option value="'.$code.'">';
-		$text .= $langs->trans($line["label"]);
-		if ($line["required"]) {
-			$text .= "*";
+		//var_dump($line);
+		$labeltoshow = $langs->trans($line["label"]);
+		$optionsall[$code] = array('label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
+		// TODO Get type from an new array into module descriptor.
+		//$picto = 'email';
+		$picto = '';
+		if ($picto) {
+			$optionsall[$code]['picto'] = $picto;
 		}
-		$text .= '</option>';
-		if (!$line["imported"]) {
-			$optionsnotused .= $text;
-		}
-		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
 	}
-	// $optionsall is an array of all possible fields. key=>array('label'=>..., 'xxx')
+	// $optionsall is an array of all possible target fields. key=>array('label'=>..., 'xxx')
 
 	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
@@ -1119,7 +1148,11 @@ if ($step == 4 && $datatoimport) {
 
 		$j = 0;
 		foreach ($optionsall as $tmpcode => $tmpval) {	// Loop on each entry to add into each combo list.
-			$label = $tmpval['required'] ? '<strong>' : '';
+			$label = '';
+			if (!empty($tmpval['picto'])) {
+				$label .= img_picto('', $tmpval['picto'], 'class="pictofixedwidth"');
+			}
+			$label .= $tmpval['required'] ? '<strong>' : '';
 			$label .= $tmpval['label'];
 			$label .= $tmpval['required'] ? '*</strong>' : '';
 
@@ -1236,47 +1269,9 @@ if ($step == 4 && $datatoimport) {
 
 	print '</td></tr>';
 
-	// List of not imported fields
-	/*
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotUsedFields").'</td></tr>';
-
-	print '<tr valign="top"><td width="50%">';
-
-	print "\n<!-- Box ignore container -->\n";
-	print '<div id="right" class="connectedSortable">'."\n";
-
-	$nbofnotimportedfields = 0;
-	foreach ($fieldstarget as $key => $val) {
-		if (!$fieldstarget[$key]['imported']) {
-			//
-			$nbofnotimportedfields++;
-			show_elem($fieldstarget, $key, '', $var, 'nostyle');
-			//print '> '.$lefti.'-'.$key;
-			$listofkeys[$key] = 1;
-			$lefti++;
-		}
-	}
-
-	// Print one more empty field
-	$newkey = getnewkey($fieldssource, $listofkeys);
-	show_elem($fieldssource, $newkey, '', $var, 'nostyle');
-	//print '> '.$lefti.'-'.$newkey;
-	$listofkeys[$newkey] = 1;
-	$nbofnotimportedfields++;
-
-	print "</div>\n";
-	print "<!-- End box ignore container -->\n";
-
-	print '</td>';
-	print '<td width="50%">';
-	$i = 0;
-	while ($i < $nbofnotimportedfields) {
-		// Print empty cells
-		show_elem('', '', 'none', $var, 'nostyle');
-		$i++;
-	}
-	print '</td></tr>';
-	*/
+	// Lines for remark
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Remark").'</td></tr>';
+	print '<tr><td colspan="2"><div id="div-mandatory-target-fields-not-mapped"></div></td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -1287,6 +1282,19 @@ if ($step == 4 && $datatoimport) {
 		print 'var previousselectedvalueimport = "0";'."\n";
 		print 'var previousselectedlabelimport = "0";'."\n";
 		print 'var arrayofselectedvalues = [];'."\n";
+		print 'var arrayoftargetfields = [];'."\n";
+		print 'var arrayoftargetmandatoryfields = [];'."\n";
+
+		// Loop on $fieldstarget (seems sorted by 'position') to store php array into javascript array
+		$tmpi = 0;
+		foreach ($fieldstarget as $key => $val) {
+			print "arrayoftargetfields[".$tmpi."] = '".dol_escape_js($langs->trans($val['label']))."'; ";
+			if ($val['required']) {
+				print "arrayoftargetmandatoryfields[".$tmpi."] = '".dol_escape_js($key)."'; ";
+			}
+			$tmpi++;
+		}
+		print "\n";
 
 		print '$(document).ready(function () {'."\n";
 
@@ -1346,6 +1354,27 @@ if ($step == 4 && $datatoimport) {
 		print "				console.log('Select order saved');\n";
 		print "			},\n";
 		print '		});'."\n";
+
+		// Now we loop on all target fields that are mandatory to show if they are not mapped yet.
+		print '     console.log(arrayselectedfields);';
+		print '     console.log(arrayoftargetmandatoryfields);';
+		print "     listtoshow = '';";
+		print "     nbelement = arrayoftargetmandatoryfields.length
+					for (let i = 0; i < nbelement; i++) {
+						if (arrayoftargetmandatoryfields[i] && ! arrayselectedfields.includes(arrayoftargetmandatoryfields[i])) {
+							console.log(arrayoftargetmandatoryfields[i]+' not mapped');
+							listtoshow = listtoshow + (listtoshow ? ', ' : '') + '<b>' + arrayoftargetfields[i] + '*</b>';
+						}
+                    }
+					console.log(listtoshow);
+					if (listtoshow) {
+						listtoshow = '".dol_escape_js(img_warning($langs->trans("MandatoryTargetFieldsNotMapped")).' '.$langs->trans("MandatoryTargetFieldsNotMapped")).": ' + listtoshow;
+						$('#div-mandatory-target-fields-not-mapped').html(listtoshow);
+					} else {
+						$('#div-mandatory-target-fields-not-mapped').html('<span class=\"opacitymedium\">".dol_escape_js($langs->trans("AllTargetMandatoryFieldsAreMapped"))."</span>');
+					}
+		";
+
 		print '};'."\n";
 
 		// If we make a change on a selectbox
@@ -1418,14 +1447,19 @@ if ($step == 4 && $datatoimport) {
 		print '<td></td>';
 		print '</tr>';
 
+		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
+		if (is_object($objimport) && !empty($objimport->model_name)) {
+			$nameofimportprofile = $objimport->model_name;
+		}
+
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" value=""></td>';
+		print '<td><input name="import_name" class="minwidth300" value="'.$nameofimportprofile.'"></td>';
 		print '<td>';
 		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button small reposition" value="'.$langs->trans("SaveImportProfile").'">';
+		print '<input type="submit" class="button smallpaddingimp reposition" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
 		// List of existing import profils
@@ -1455,7 +1489,7 @@ if ($step == 4 && $datatoimport) {
 					print $langs->trans("Everybody");
 				} else {
 					$tmpuser->fetch($obj->fk_user);
-					print $tmpuser->getNomUrl(1);
+					print $tmpuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print '<td class="right">';
@@ -1599,6 +1633,7 @@ if ($step == 5 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -1743,7 +1778,7 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
+		$listfields[$i] = '<span class="nowrap">'.$langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label.'</span>';
 	}
 	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
@@ -2346,20 +2381,6 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	print "</div>\n";
 	print "<!-- Box end -->\n\n";
-}
-
-
-/**
- * Return a numeric into an Excel like column number
- *
- * @param	string		$n		Numeric value
- * @return 	string				Column in Excel format
- */
-function num2Alpha($n)
-{
-	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
-		$r = chr($n%26 + 0x41) . $r;
-		return $r;
 }
 
 

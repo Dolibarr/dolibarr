@@ -727,7 +727,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth150');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
@@ -1105,7 +1105,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.fk_soc']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->fk_soc > 0) {
 				$companystatic->id = $obj->fk_soc;
 				$companystatic->name = $obj->name;

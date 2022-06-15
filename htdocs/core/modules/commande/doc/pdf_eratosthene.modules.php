@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eratosthène
+ *	\brief      File of Class to generate PDF orders with template Eratosthene
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';

@@ -42,6 +42,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Visszamutató hivatkozások az ellenőrzéshez
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb napok a partnerség állapotának lemondása előtt, ha az előfizetés lejárt
 ReferingWebsiteCheck=A webhely hivatkozásának ellenőrzése
 ReferingWebsiteCheckDesc=Engedélyezhet egy funkciót, amellyel ellenőrizheti, hogy partnerei hozzáadtak-e egy visszamutató hivatkozást az Ön webhelyének domainjéhez a saját webhelyükön.
+PublicFormRegistrationPartnerDesc=A Dolibarr nyilvános URL-t/webhelyet tud Önnek biztosítani, amely lehetővé teszi a külső látogatók számára, hogy kérjék a partnerségi programban való részvételt.
 
 #
 # Object
@@ -60,6 +61,11 @@ ConfirmClosePartnershipAsk=Biztosan felmondja ezt a partnerséget?
 PartnershipType=Partnerség típusa
 PartnershipRefApproved=%s partnerség jóváhagyva
 KeywordToCheckInWebsite=Ha ellenőrizni szeretné, hogy egy adott kulcsszó megtalálható-e az egyes partnerek weboldalán, akkor itt adja meg ezt a kulcsszót
+PartnershipDraft=Piszkozat
+PartnershipAccepted=Elfogadva
+PartnershipRefused=Elutasítva
+PartnershipCanceled=Megszakítva
+PartnershipManagedFor=A partnerek
 
 #
 # Template Mail
@@ -83,12 +89,6 @@ CountLastUrlCheckError=Az utolsó URL-ellenőrzés hibáinak száma
 LastCheckBacklink=Az utolsó URL-ellenőrzés dátuma
 ReasonDeclineOrCancel=Elutasítás oka
 
-#
-# Status
-#
-PartnershipDraft=Piszkozat
-PartnershipAccepted=Elfogadva
-PartnershipRefused=Elutasítva
-PartnershipCanceled=Megszakítva
-PartnershipManagedFor=A partnerek
+NewPartnershipRequest=Új partnerségi kérelem
+NewPartnershipRequestDesc=Ez az űrlap lehetővé teszi, hogy kérjen részt partnerségi programunkban. Ha segítségre van szüksége az űrlap kitöltéséhez, kérjük, lépjen kapcsolatba e-mailben <b> %s </b> .
 

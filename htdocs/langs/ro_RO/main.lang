@@ -1174,3 +1174,6 @@ ConfirmAllocateCommercial=Confirmare asignare reprezentant vânzări
 ConfirmAllocateCommercialQuestion=Sigur vrei să asignezi %s la înregistră(rile) selectate?
 CommercialsAffected=Reprezentanții de vânzări afectați
 CommercialAffected=Reprezentantul de vânzări afectat
+YourMessage=Mesajul tău
+YourMessageHasBeenReceived=Mesajul tău a fost primit. Vă vom răspunde sau vă vom contacta cât mai curând posibil.
+UrlToCheck=Url de verificat
