@@ -263,39 +263,38 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 	/**
 	 * testUserHasRight
-	 *
-	 * @return  void
+	 * @param	User  $localobject		 User
+	 * @return  User  $localobject		 User
+	 * @depends testUserOther
 	 */
-	// public function testUserHasRight()
-	// {
-	// 	global $conf,$user,$langs,$db;
-	// 	$conf=$this->savconf;
-	// 	$user=$this->savuser;
-	// 	$langs=$this->savlangs;
-	// 	$db=$this->savdb;
-	// 	/*$result=$localobject->setstatus(0);
-	// 	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-	// 	$this->assertLessThan($result, 0);
-	// 	*/
+	public function testUserHasRight($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
 
-	// 	print __METHOD__." id=". $user->id ."\n";
-	// 	//$this->assertNotEquals($user->date_creation, '');
-	// 	$user->addrights(0, 'supplier_proposal');
+		print __METHOD__." id=". $localobject->id ."\n";
+		//$this->assertNotEquals($user->date_creation, '');
+		$user->addrights(0, 'supplier_proposal');
+		$this->assertEquals($localobject->hasRight('member', ''), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
 
-	// 	$this->assertEquals($user->hasRight('member', ''), 0);
-	// 	$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('product', 'member', 'read'), 0);
-	// 	$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('produit', 'member', 'read'), 0);
-	// 	$user->clearrights();
-	// 	//print __METHOD__. $user->hasRight('module', 'level11');
-	// 	return $user;
-	// }
+		return $localobject;
+	}
 
 	/**
 	 * testUserSetPassword
 	 *
 	 * @param   User  $localobject     User
 	 * @return  void
-	 * @depends testUserOther
+	 * @depends testUserHasRight
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testUserSetPassword($localobject)
