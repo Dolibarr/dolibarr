@@ -185,7 +185,7 @@ if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->re
 if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$elementList['project'] = img_picto('', 'project', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
 if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {

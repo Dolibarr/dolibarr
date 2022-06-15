@@ -165,8 +165,8 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>20),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>25),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>20),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>25),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1, 'position'=>31),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>35),
@@ -1821,8 +1821,9 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	$last_num = min($num, $limit);
-	while ($i < $last_num) {
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$notshippable = 0;
@@ -2456,6 +2457,17 @@ if ($resql) {
 
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
 	$db->free($resql);
 

@@ -919,15 +919,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 	$massactionbutton = '';
 	$arrayofmassactions = array();
-	if ($projectstatic->usage_bill_time) {
-		$arrayofmassactions = array(
-			'generateinvoice'=>$langs->trans("GenerateBill"),
-			//'builddoc'=>$langs->trans("PDFMerge"),
-		);
-	}
-	if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
-		$langs->load("interventions");
-		$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+
+	if ($projectstatic->id > 0) {
+		// If we are on a given project.
+		if ($projectstatic->usage_bill_time) {
+			$arrayofmassactions = array(
+				'generateinvoice'=>$langs->trans("GenerateBill"),
+				//'builddoc'=>$langs->trans("PDFMerge"),
+			);
+		}
+		if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+			$langs->load("interventions");
+			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
+		}
 	}
 	//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete', 'generateinvoice', 'generateinter'))) {
@@ -1251,7 +1255,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
 			if ($projectstatic->thirdparty->id > 0) {
-				print '<table class="noborder" width="100%" >';
+				print '<table class="noborder centpercent">';
 				print '<tr>';
 				print '<td class="titlefield">';
 				print $langs->trans('InterToUse');
@@ -1347,7 +1351,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_valuebilled == '0') {
 			$sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
 		}
+
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
+
 		// Add where from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -1567,7 +1573,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		if (!empty($allprojectforuser)) {
-			print '<td></td>';
+			print '<td class="liste_titre"></td>';
 		}
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
@@ -1869,26 +1875,24 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Action column
 			print '<td class="center nowraponall">';
-			if (($action == 'editline' || $action == 'splitline') && $_GET['lineid'] == $task_time->rowid) {
-				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
+			if (($action == 'editline' || $action == 'splitline') && GETPOST('lineid', 'int') == $task_time->rowid) {
+				print '<input type="hidden" name="lineid" value="'.GETPOST('lineid', 'int').'">';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
-				print '<br>';
+				print ' ';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			} elseif ($user->rights->projet->time || $user->rights->projet->all->creer) {	 // Read project and enter time consumed on assigned tasks
-				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer) {
-					if ($conf->MAIN_FEATURES_LEVEL >= 2) {
+			} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
+				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+					if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
 						print '&nbsp;';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
-						print img_split();
+						print img_split('', 'class="pictofixedwidth"');
 						print '</a>';
 					}
 
-					print '&nbsp;';
 					print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
-					print img_edit();
+					print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 					print '</a>';
 
-					print '&nbsp;';
 					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';

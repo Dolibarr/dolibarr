@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
@@ -848,7 +848,6 @@ if ($resql) {
 		$event->fk_project = $obj->fk_project;
 
 		$event->socid = $obj->fk_soc;
-		$event->thirdparty_id = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property

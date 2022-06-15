@@ -366,8 +366,9 @@ class EvalMath
 	}
 
 	/**
-	 * evaluate postfix notation
+	 * Evaluate postfix notation
 	 *
+
 	 * @param array $tokens      	Expression
 	 * @param array $vars       	Array
 	 * @return string 				Output

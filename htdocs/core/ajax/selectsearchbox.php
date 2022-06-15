@@ -89,10 +89,10 @@ if (!empty($conf->mrp->enabled) && $user->rights->mrp->read && empty($conf->glob
 	$arrayresult['searchintomo'] = array('position'=>35, 'shortcut'=>'', 'img'=>'object_mrp', 'label'=>$langs->trans("SearchIntoMO", $search_boxvalue), 'text'=>img_picto('', 'object_mrp', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMO", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/mrp/mo_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire) {
+if (!empty($conf->project->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire) {
 	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire) {
+if (!empty($conf->project->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire) {
 	$arrayresult['searchintotasks'] = array('position'=>45, 'img'=>'object_projecttask', 'label'=>$langs->trans("SearchIntoTasks", $search_boxvalue), 'text'=>img_picto('', 'object_projecttask', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTasks", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/tasks/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
