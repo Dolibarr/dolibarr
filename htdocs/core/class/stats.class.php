@@ -220,6 +220,13 @@ abstract class Stats
 	}
 
 	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	protected abstract function getAverageByMonth($year, $format = 0);
+
+	/**
 	 * Return average of entity by month for several years
 	 *
 	 * @param	int		$endyear		Start year
@@ -236,7 +243,7 @@ abstract class Stats
 
 		$year = $startyear;
 		while ($year <= $endyear) {
-			$datay[$year] = $this->_getAverageByMonth($year);
+			$datay[$year] = $this->getAverageByMonth($year);
 			$year++;
 		}
 
