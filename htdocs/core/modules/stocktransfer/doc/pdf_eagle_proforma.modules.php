@@ -26,9 +26,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
+ *	\file       htdocs/core/modules/commande/doc/pdf_eagle_proforma.modules.php
  *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eratosthène
+ *	\brief      File of Class to generate PDF orders with template Eagle
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Class to generate PDF orders with template Eratosthene
+ *	Class to generate PDF orders with template Eagle
  */
 class pdf_eagle_proforma extends ModelePDFCommandes
 {
