@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->project->enabled) && $user->hasRight('project', 'lire')) {
+	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
