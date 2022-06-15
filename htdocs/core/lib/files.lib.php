@@ -1675,10 +1675,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 				// dol_sanitizeFileName the file name and lowercase extension
 				$info = pathinfo($destfull);
-				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
+				$destfull = $info['dirname'].'/'.dol_sanitizeFileName($info['filename'].(!empty($info['extension']) ? ('.'.strtolower($info['extension'])) : ''));
 				$info = pathinfo($destfile);
 
-				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
+				$destfile = dol_sanitizeFileName($info['filename'].(!empty($info['extension']) ? ('.'.strtolower($info['extension'])) : ''));
 
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
