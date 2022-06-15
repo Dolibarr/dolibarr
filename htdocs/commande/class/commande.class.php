@@ -2123,9 +2123,9 @@ class Commande extends CommonOrder
 
 				$line->product_ref = $objp->product_ref;
 				$line->product_label = $objp->product_label;
-				$line->product_desc     = $objp->product_desc;
 				$line->product_tosell   = $objp->product_tosell;
 				$line->product_tobuy    = $objp->product_tobuy;
+				$line->product_desc     = $objp->product_desc;
 				$line->product_tobatch  = $objp->product_tobatch;
 				$line->product_barcode  = $objp->product_barcode;
 
