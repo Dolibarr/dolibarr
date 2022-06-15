@@ -84,7 +84,7 @@ class Task extends CommonObjectLine
 	public $date_start;
 	public $date_end;
 	public $progress;
-	
+
 	/**
 	 * @deprecated use $date_end instead
 	 */
