@@ -281,7 +281,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 		print __METHOD__." id=". $localobject->id ."\n";
 		//$this->assertNotEquals($user->date_creation, '');
-		$user->addrights(0, 'supplier_proposal');
+		$localobject->addrights(0, 'supplier_proposal');
 		$this->assertEquals($localobject->hasRight('member', ''), 0);
 		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
 		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
