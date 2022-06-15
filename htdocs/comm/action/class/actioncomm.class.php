@@ -1145,8 +1145,16 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = '".$this->db->escape($this->type_id)."'";
+			$sql .= ", fk_action = ".(int) $this->type_id;
+			if (empty($this->type_code)) {
+				$cactioncomm = new CActionComm($this->db);
+				$result = $cactioncomm->fetch($this->type_id);
+				if ($result >= 0 && !empty($cactioncomm->code)) {
+					$this->type_code = $cactioncomm->code;
+				}
+			}
 		}
+		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -2505,14 +2513,16 @@ class ActionComm extends CommonObject
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event
+	 * @param int		$usermodid	The user who modified the percent
 	 * @return int					1 when update of the event was suscessfull, otherwise -1
 	 */
-	public function updatePercent($id, $percent)
+	public function updatePercent($id, $percent, $usermodid = 0)
 	{
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
+		if ($usermodid > 0) $sql .= ", fk_user_mod = ".$usermodid;
 		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {

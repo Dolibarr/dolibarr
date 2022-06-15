@@ -117,7 +117,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$projectRequired = $conf->project->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
@@ -1691,7 +1691,7 @@ if ($action == 'create') {
 			 // Thirdparty
 			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 			 // Project
-			 if (! empty($conf->projet->enabled))
+			 if (! empty($conf->project->enabled))
 			 {
 			 $langs->load("projects");
 			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -2055,7 +2055,7 @@ if ($action == 'create') {
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
 				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->projet->enabled)) {
+				if (!empty($conf->project->enabled)) {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
@@ -2100,7 +2100,7 @@ if ($action == 'create') {
 						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
-						if (!empty($conf->projet->enabled)) {
+						if (!empty($conf->project->enabled)) {
 							print '<td class="center dateproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
@@ -2261,7 +2261,7 @@ if ($action == 'create') {
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
-						if (!empty($conf->projet->enabled)) {
+						if (!empty($conf->project->enabled)) {
 							$colspan++;
 						}
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2336,7 +2336,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Select project
-						if (!empty($conf->projet->enabled)) {
+						if (!empty($conf->project->enabled)) {
 							print '<td>';
 							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 							print '</td>';
@@ -2409,7 +2409,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
-				if (!empty($conf->projet->enabled)) {
+				if (!empty($conf->project->enabled)) {
 					$colspan++;
 				}
 				if ($action != 'editline') {
@@ -2486,7 +2486,7 @@ if ($action == 'create') {
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
 				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->projet->enabled)) {
+				if (!empty($conf->project->enabled)) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
@@ -2515,7 +2515,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Select project
-				if (!empty($conf->projet->enabled)) {
+				if (!empty($conf->project->enabled)) {
 					print '<td class="inputproject">';
 					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';

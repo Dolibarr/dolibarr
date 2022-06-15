@@ -406,4 +406,9 @@ ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
 
 ALTER TABLE llx_cronjob ADD COLUMN email_alert varchar(128);
- 
+
+ALTER TABLE llx_paiement MODIFY COLUMN ext_payment_id varchar(255);
+ALTER TABLE llx_payment_donation MODIFY COLUMN ext_payment_id varchar(255);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar(255);
+
+

@@ -187,7 +187,7 @@ if ($id > 0 || $ref) {
 
 	$out = '';
 	$morehtmlcenter = '';
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		$permok = $user->rights->agenda->myactions->create;
 		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
 			if (get_class($objproduct) == 'Product') {
@@ -200,7 +200,7 @@ if ($id > 0 || $ref) {
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

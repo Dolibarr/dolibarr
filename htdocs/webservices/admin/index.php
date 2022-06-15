@@ -108,7 +108,7 @@ $webservices = array(
 		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
 		'actioncomm'		=> '!empty($conf->agenda->enabled)',
 		'category'			=> '!empty($conf->categorie->enabled)',
-		'project'			=> '!empty($conf->projet->enabled)',
+		'project'			=> '!empty($conf->project->enabled)',
 		'other'				=> ''
 );
 
