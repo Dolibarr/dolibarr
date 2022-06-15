@@ -232,7 +232,7 @@ if ($action == 'add' && empty($cancel)) {
 	// Set user current salary as ref salary for the payment
 	$fuser = new User($db);
 	$fuser->fetch(GETPOST("fk_user", "int"));
-	$object->amount = $fuser->salary;
+	$object->salary = $fuser->salary;
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
