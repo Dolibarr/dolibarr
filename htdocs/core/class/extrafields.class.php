@@ -1268,7 +1268,8 @@ class ExtraFields
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
-					foreach ($data as $data_key => $data_value) {
+					$dataArray = str_split($data); // as $data is not traversable as it's a string
+					foreach ($dataArray as $data_key => $data_value) {
 						$out .= '<option value="'.$data_key.'"';
 						$out .= ($value == $data_key ? ' selected' : '');
 						$out .= '>'.$data_value.'</option>';
