@@ -288,8 +288,16 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
+			$is_sc = false;
+			foreach ($links as $v) {
+				if ($v['type'] == 'sc') {
+					$is_sc = true;
+					break;
+				}
+			}
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
+				if ($links[$key]['type'] == 'user' && !$is_sc) continue;
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
