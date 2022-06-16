@@ -289,7 +289,7 @@ class Categorie extends CommonObject
 					$this->MAP_CAT_FK[$mapCode] = $mapList['cat_fk'];
 					$this->MAP_CAT_TABLE[$mapCode] = $mapList['cat_table'];
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
-					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					self::$MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
 				}
 			}
 		}
@@ -311,7 +311,7 @@ class Categorie extends CommonObject
 				'cat_fk'    => (empty($this->MAP_CAT_FK[$mapCode]) ? $mapCode : $this->MAP_CAT_FK[$mapCode]),
 				'cat_table' => (empty($this->MAP_CAT_TABLE[$mapCode]) ? $mapCode : $this->MAP_CAT_TABLE[$mapCode]),
 				'obj_class' => (empty($this->MAP_OBJ_CLASS[$mapCode]) ? $mapCode : $this->MAP_OBJ_CLASS[$mapCode]),
-				'obj_table' => (empty($this->MAP_OBJ_TABLE[$mapCode]) ? $mapCode : $this->MAP_OBJ_TABLE[$mapCode])
+				'obj_table' => (empty(self::$MAP_OBJ_TABLE[$mapCode]) ? $mapCode : self::$MAP_OBJ_TABLE[$mapCode])
 			);
 		}
 
@@ -846,7 +846,7 @@ class Categorie extends CommonObject
 
 		$sql = "SELECT c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]);
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as c";
-		$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])." as o";
+		$sql .= ", ".MAIN_DB_PREFIX.(empty(self::$MAP_OBJ_TABLE[$type]) ? $type : self::$MAP_OBJ_TABLE[$type])." as o";
 		$sql .= " WHERE o.entity IN (".getEntity($obj->element).")";
 		$sql .= " AND c.fk_categorie = ".((int) $this->id);
 		$sql .= " AND c.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = o.rowid";
