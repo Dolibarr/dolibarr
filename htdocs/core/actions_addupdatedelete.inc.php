@@ -266,7 +266,7 @@ if (!$error) {
 		$action = 'view';
 		$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 		$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-		if ($urltogo && !$noback) { {
+		if ($urltogo && !$noback) {
 			header("Location: " . $urltogo);
 			exit;
 			}
