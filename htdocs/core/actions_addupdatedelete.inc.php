@@ -165,110 +165,110 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 // Action to update record
 if ($action == 'update' && !empty($permissiontoadd)) {
-	foreach ($object->fields as $key => $val) {
-		// Check if field was submited to be edited
-		if ($object->fields[$key]['type'] == 'duration') {
-			if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) {
-				continue; // The field was not submited to be saved
-			}
-		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			if (!GETPOSTISSET($key)) {
-				$object->$key = 0; // use 0 instead null if the field is defined as not null
-				continue;
-			}
-		} else {
-			if (!GETPOSTISSET($key)) {
-				continue; // The field was not submited to be saved
-			}
+foreach ($object->fields as $key => $val) {
+	// Check if field was submited to be edited
+	if ($object->fields[$key]['type'] == 'duration') {
+		if (!GETPOSTISSET($key.'hour') || !GETPOSTISSET($key.'min')) {
+			continue; // The field was not submited to be saved
 		}
-		// Ignore special fields
-		if (in_array($key, array('rowid', 'entity', 'import_key'))) {
+	} elseif ($object->fields[$key]['type'] == 'boolean') {
+		if (!GETPOSTISSET($key)) {
+			$object->$key = 0; // use 0 instead null if the field is defined as not null
 			continue;
 		}
-		if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
-			if (!in_array(abs($val['visible']), array(1, 3, 4))) {
-				continue; // Only 1 and 3 and 4, that are cases to update
-			}
+	} else {
+		if (!GETPOSTISSET($key)) {
+			continue; // The field was not submited to be saved
 		}
+	}
+	// Ignore special fields
+	if (in_array($key, array('rowid', 'entity', 'import_key'))) {
+		continue;
+	}
+	if (in_array($key, array('date_creation', 'tms', 'fk_user_creat', 'fk_user_modif'))) {
+		if (!in_array(abs($val['visible']), array(1, 3, 4))) {
+			continue; // Only 1 and 3 and 4, that are cases to update
+		}
+	}
 
-		// Set value to update
-		if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
-			$tmparray = explode(':', $object->fields[$key]['type']);
-			if (!empty($tmparray[1])) {
-				$value = GETPOST($key, $tmparray[1]);
-			} else {
-				$value = GETPOST($key, 'restricthtml');
-			}
-		} elseif ($object->fields[$key]['type'] == 'date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
-		} elseif ($object->fields[$key]['type'] == 'datetime') {
-			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
-		} elseif ($object->fields[$key]['type'] == 'duration') {
-			if (GETPOST($key.'hour', 'int') != '' || GETPOST($key.'min', 'int') != '') {
-				$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
-			} else {
-				$value = '';
-			}
-		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
-			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
-		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
-		} elseif ($object->fields[$key]['type'] == 'reference') {
-			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+	// Set value to update
+	if (preg_match('/^(text|html)/', $object->fields[$key]['type'])) {
+		$tmparray = explode(':', $object->fields[$key]['type']);
+		if (!empty($tmparray[1])) {
+			$value = GETPOST($key, $tmparray[1]);
 		} else {
-			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
-			} else {
-				$value = GETPOST($key, 'alphanohtml');
-			}
+			$value = GETPOST($key, 'restricthtml');
 		}
-		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
-			$value = ''; // This is an implicit foreign key field
+	} elseif ($object->fields[$key]['type'] == 'date') {
+		$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
+	} elseif ($object->fields[$key]['type'] == 'datetime') {
+		$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
+	} elseif ($object->fields[$key]['type'] == 'duration') {
+		if (GETPOST($key.'hour', 'int') != '' || GETPOST($key.'min', 'int') != '') {
+			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
+		} else {
+			$value = '';
 		}
-		if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
-			$value = ''; // This is an explicit foreign key field
+	} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
+		$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
+	} elseif ($object->fields[$key]['type'] == 'boolean') {
+		$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
+	} elseif ($object->fields[$key]['type'] == 'reference') {
+		$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+	} else {
+		if ($key == 'lang') {
+			$value = GETPOST($key, 'aZ09');
+		} else {
+			$value = GETPOST($key, 'alphanohtml');
 		}
+	}
+	if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') {
+		$value = ''; // This is an implicit foreign key field
+	}
+	if (!empty($object->fields[$key]['foreignkey']) && $value == '-1') {
+		$value = ''; // This is an explicit foreign key field
+	}
 
-		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
-		}
+	$object->$key = $value;
+	if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+	}
 
-		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
-			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
-				if (!$object->validateField($object->fields, $key, $value)) {
-					$error++;
-				}
-			}
-		}
-
-		if (isModEnabled('categorie')) {
-			$categories = GETPOST('categories', 'array');
-			if (method_exists($object, 'setCategories')) {
-				$object->setCategories($categories);
+	// Validation of fields values
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
+			if (!$object->validateField($object->fields, $key, $value)) {
+				$error++;
 			}
 		}
 	}
+
+	if (isModEnabled('categorie')) {
+		$categories = GETPOST('categories', 'array');
+		if (method_exists($object, 'setCategories')) {
+			$object->setCategories($categories);
+		}
+	}
+}
 
 	// Fill array 'array_options' with data from add form
-	if (!$error) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
-		if ($ret < 0) {
-			$error++;
-		}
+if (!$error) {
+	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	if ($ret < 0) {
+		$error++;
 	}
+}
 
-	if (!$error) {
-		$result = $object->update($user);
-		if ($result > 0) {
-			$action = 'view';
-			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
-			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			if ($urltogo && !$noback) { {
-				header("Location: " . $urltogo);
-				exit;
+if (!$error) {
+	$result = $object->update($user);
+	if ($result > 0) {
+		$action = 'view';
+		$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+		$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+		if ($urltogo && !$noback) { {
+			header("Location: " . $urltogo);
+			exit;
 			}
 		} else {
 			$error++;
