@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=لائن کی قسم (0=پروڈکٹ، 1=سروس)
 FileWithDataToImport=درآمد کرنے کے لیے ڈیٹا کے ساتھ فائل کریں۔
 FileToImport=درآمد کرنے کے لیے سورس فائل
 FileMustHaveOneOfFollowingFormat=درآمد کرنے کے لیے فائل میں درج ذیل فارمیٹس میں سے ایک ہونا ضروری ہے۔
-DownloadEmptyExample=فیلڈ مواد کی معلومات کے ساتھ ٹیمپلیٹ فائل ڈاؤن لوڈ کریں۔
-StarAreMandatory=* لازمی فیلڈز ہیں۔
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=اسے منتخب کرنے کے لیے %s آئیکن پر کلک کرکے امپورٹ فائل فارمیٹ کے طور پر استعمال کرنے کے لیے فائل فارمیٹ کا انتخاب کریں...
 ChooseFileToImport=فائل اپ لوڈ کریں پھر %s آئیکن پر کلک کریں تاکہ فائل کو سورس امپورٹ فائل کے طور پر منتخب کیا جا سکے۔
 SourceFileFormat=ماخذ فائل کی شکل
@@ -135,3 +135,6 @@ NbInsert=داخل کردہ لائنوں کی تعداد: %s
 NbUpdate=اپ ڈیٹ کردہ لائنوں کی تعداد: %s
 MultipleRecordFoundWithTheseFilters=ان فلٹرز کے ساتھ متعدد ریکارڈز ملے ہیں: %s
 StocksWithBatch=بیچ/سیریل نمبر والی مصنوعات کا اسٹاک اور مقام (گودام)
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

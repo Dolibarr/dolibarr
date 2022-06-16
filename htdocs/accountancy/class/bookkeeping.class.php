@@ -606,9 +606,13 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) {
 			$this->credit = 0;
 		}
+		if (empty($this->montant)) {
+			$this->montant = 0;
+		}
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
+		$this->montant = price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -1661,11 +1665,10 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
-			$this->date_creation = $obj->date_creation;
-			$this->date_modification = $obj->date_modification;
-			$this->date_export = $obj->date_export;
-			$this->date_validation = $obj->date_validated;
-			$this->date_validation = $obj->date_validation;
+			$this->date_creation = $this->db->jdate($obj->date_creation);
+			$this->date_modification = $this->db->jdate($obj->date_modification);
+			$this->date_export = $this->db->jdate($obj->date_export);
+			$this->date_validation = $this->db->jdate($obj->date_validation);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
@@ -1843,8 +1846,8 @@ class BookKeeping extends CommonObject
 	/**
 	 * Transform transaction
 	 *
-	 * @param  number   $direction      If 0 tmp => real, if 1 real => tmp
-	 * @param  string   $piece_num      Piece num
+	 * @param  number   $direction      If 0: tmp => real, if 1: real => tmp
+	 * @param  string   $piece_num      Piece num = Transaction ref
 	 * @return int                      int <0 if KO, >0 if OK
 	 */
 	public function transformTransaction($direction = 0, $piece_num = '')
@@ -1862,57 +1865,82 @@ class BookKeeping extends CommonObject
 			if ($next_piecenum < 0) {
 				$error++;
 			}
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.' (doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
-			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
-			$sql .= ' SELECT doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
-			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			if (!$error) {
+				// Delete if there is an empty line
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity)." AND numero_compte IS NULL AND debit = 0 AND credit = 0";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			if (!$error) {
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.' (doc_date, doc_type,';
+				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
+				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
+				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
+				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
+				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
+				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
+				$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND numero_compte IS NOT NULL AND entity = ' .((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
+			}
+
+			if (!$error) {
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
 			}
 		} elseif ($direction == 1) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			if (!$error) {
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
 			}
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'_tmp (doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
-			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-			$sql .= ' SELECT doc_date, doc_type,';
-			$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
-			$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
-			$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			if (!$error) {
+				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'_tmp (doc_date, doc_type,';
+				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
+				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
+				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
+				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
+				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
+				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
 			}
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			if (!$error) {
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.'_tmp WHERE piece_num = '.((int) $piece_num).' AND entity = ' .((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->errors[] = 'Error '.$this->db->lasterror();
+					dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+				}
 			}
 		}
 		if (!$error) {

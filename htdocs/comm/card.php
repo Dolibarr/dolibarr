@@ -40,10 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->propal->enabled)) {
@@ -77,10 +75,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->expedition->enabled)) {
 	$langs->load("sendings");
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 }
 if (!empty($conf->ficheinter->enabled)) {
@@ -741,7 +739,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		// Box factures
 		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
@@ -827,7 +825,7 @@ if ($object->id > 0) {
 		$sql .= ", p.total_tva";
 		$sql .= ", p.total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
-		$sql .= ", p.datep as dp, p.fin_validite as date_limit";
+		$sql .= ", p.datep as dp, p.fin_validite as date_limit, p.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -887,7 +885,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
@@ -1226,7 +1224,7 @@ if ($object->id > 0) {
 	 * Latest interventions
 	 */
 	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1261,7 +1259,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1283,7 +1281,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
@@ -1311,7 +1309,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices templates
 	 */
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1406,7 +1404,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices
 	 */
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1569,7 +1567,7 @@ if ($object->id > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
 			}
 
-			if (!empty($conf->facture->enabled) && $object->status == 1) {
+			if (isModEnabled('facture') && $object->status == 1) {
 				if (empty($user->rights->facture->creer)) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				} else {
@@ -1597,7 +1595,7 @@ if ($object->id > 0) {
 		}
 
 		// Add action
-		if (!empty($conf->agenda->enabled) && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
+		if (isModEnabled('agenda') && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
 			if ($user->rights->agenda->myactions->create) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
 			} else {

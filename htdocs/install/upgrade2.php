@@ -167,20 +167,25 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-	// Chargement config
-	if (!$error) {
-		$conf->setValues($db);
-		// Reset forced setup after the setValues
-		if (defined('SYSLOG_FILE')) {
-			$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
-		}
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
-	}
+	// Load global conf
+	$conf->setValues($db);
+
+
+	$listofentities = array(1);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);
-	$hookmanager->initHooks(array('upgrade'));
+	$hookmanager->initHooks(array('upgrade2'));
+
+	$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto);
+	$object = new stdClass();
+	$action = "upgrade";
+	$reshook = $hookmanager->executeHooks('doUpgradeBefore', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook >= 0 && is_array($hookmanager->resArray)) {
+		// Example: $hookmanager->resArray = array(2, 3, 10);
+		$listofentities = array_unique(array_merge($listofentities, $hookmanager->resArray));
+	}
 
 
 	/***************************************************************************************
@@ -188,384 +193,398 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	 * Migration of data
 	 *
 	 ***************************************************************************************/
+
+	// Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemployment date';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemploymentend date';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_range integer';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_c_exp_tax_cat integer';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN langs varchar(24)';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fieldcomputed text';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fielddefault varchar(255)';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX."extrafields ADD COLUMN enabled varchar(255) DEFAULT '1'";
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN help text';
+	$db->query($sql, 1);
+	$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL';
+	$db->query($sql, 1);
+
+
 	$db->begin();
 
-	if (!$error) {
-		// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
-		// Version to install is DOL_VERSION
-		$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL) ? $conf->global->MAIN_VERSION_LAST_INSTALL : ''));
-
-		// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-		// dans la 1ere colonne, la description de l'action a faire
-		// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
-
-		$versiontoarray = explode('.', $versionto);
-		$versionranarray = explode('.', DOL_VERSION);
-
-
-		// Force to execute this at begin to avoid the new core code into Dolibarr to be broken.
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN birth date';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemployment date';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN dateemploymentend date';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_range integer';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user ADD COLUMN default_c_exp_tax_cat integer';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN langs varchar(24)';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fieldcomputed text';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN fielddefault varchar(255)';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX."extrafields ADD COLUMN enabled varchar(255) DEFAULT '1'";
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'extrafields ADD COLUMN help text';
-		$db->query($sql, 1);
-		$sql = 'ALTER TABLE '.MAIN_DB_PREFIX.'user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL';
-		$db->query($sql, 1);
-
-
-		$afterversionarray = explode('.', '2.0.0');
-		$beforeversionarray = explode('.', '2.7.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			// Script pour V2 -> V2.1
-			migrate_paiements($db, $langs, $conf);
-
-			migrate_contracts_det($db, $langs, $conf);
-
-			migrate_contracts_date1($db, $langs, $conf);
-
-			migrate_contracts_date2($db, $langs, $conf);
-
-			migrate_contracts_date3($db, $langs, $conf);
-
-			migrate_contracts_open($db, $langs, $conf);
-
-			migrate_modeles($db, $langs, $conf);
-
-			migrate_price_propal($db, $langs, $conf);
-
-			migrate_price_commande($db, $langs, $conf);
-
-			migrate_price_commande_fournisseur($db, $langs, $conf);
-
-			migrate_price_contrat($db, $langs, $conf);
-
-			migrate_paiementfourn_facturefourn($db, $langs, $conf);
-
-
-			// Script pour V2.1 -> V2.2
-			migrate_paiements_orphelins_1($db, $langs, $conf);
-
-			migrate_paiements_orphelins_2($db, $langs, $conf);
-
-			migrate_links_transfert($db, $langs, $conf);
-
-
-			// Script pour V2.2 -> V2.4
-			migrate_commande_expedition($db, $langs, $conf);
-
-			migrate_commande_livraison($db, $langs, $conf);
-
-			migrate_detail_livraison($db, $langs, $conf);
-
-
-			// Script pour V2.5 -> V2.6
-			migrate_stocks($db, $langs, $conf);
-
-
-			// Script pour V2.6 -> V2.7
-			migrate_menus($db, $langs, $conf);
-
-			migrate_commande_deliveryaddress($db, $langs, $conf);
-
-			migrate_restore_missing_links($db, $langs, $conf);
-
-			migrate_rename_directories($db, $langs, $conf, '/compta', '/banque');
-
-			migrate_rename_directories($db, $langs, $conf, '/societe', '/mycompany');
+	foreach ($listofentities as $entity) {
+		// Set $conf context for entity
+		$conf->setEntityValues($db, $entity);
+		// Reset forced setup after the setValues
+		if (defined('SYSLOG_FILE')) {
+			$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
 		}
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
-		// Script for 2.8
-		$afterversionarray = explode('.', '2.7.9');
-		$beforeversionarray = explode('.', '2.8.9');
-		//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_price_facture($db, $langs, $conf); // Code of this function works for 2.8+ because need a field tva_tx
+		if (!$error) {
+			if (count($listofentities) > 1) {
+				print '<tr><td colspan="4">*** '.$langs->trans("Entity").' '.$entity.'</td></tr>'."\n";
+			}
 
-			migrate_relationship_tables($db, $langs, $conf, 'co_exp', 'fk_commande', 'commande', 'fk_expedition', 'shipping');
+			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
+			// Version to install is DOL_VERSION
+			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL) ? $conf->global->MAIN_VERSION_LAST_INSTALL : ''));
 
-			migrate_relationship_tables($db, $langs, $conf, 'pr_exp', 'fk_propal', 'propal', 'fk_expedition', 'shipping');
+			// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
+			// dans la 1ere colonne, la description de l'action a faire
+			// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
-			migrate_relationship_tables($db, $langs, $conf, 'pr_liv', 'fk_propal', 'propal', 'fk_livraison', 'delivery');
+			$versiontoarray = explode('.', $versionto);
+			$versionranarray = explode('.', DOL_VERSION);
 
-			migrate_relationship_tables($db, $langs, $conf, 'co_liv', 'fk_commande', 'commande', 'fk_livraison', 'delivery');
 
-			migrate_relationship_tables($db, $langs, $conf, 'co_pr', 'fk_propale', 'propal', 'fk_commande', 'commande');
+			$afterversionarray = explode('.', '2.0.0');
+			$beforeversionarray = explode('.', '2.7.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// Script pour V2 -> V2.1
+				migrate_paiements($db, $langs, $conf);
 
-			migrate_relationship_tables($db, $langs, $conf, 'fa_pr', 'fk_propal', 'propal', 'fk_facture', 'facture');
+				migrate_contracts_det($db, $langs, $conf);
 
-			migrate_relationship_tables($db, $langs, $conf, 'co_fa', 'fk_commande', 'commande', 'fk_facture', 'facture');
+				migrate_contracts_date1($db, $langs, $conf);
 
-			migrate_project_user_resp($db, $langs, $conf);
+				migrate_contracts_date2($db, $langs, $conf);
 
-			migrate_project_task_actors($db, $langs, $conf);
-		}
+				migrate_contracts_date3($db, $langs, $conf);
 
-		// Script for 2.9
-		$afterversionarray = explode('.', '2.8.9');
-		$beforeversionarray = explode('.', '2.9.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_project_task_time($db, $langs, $conf);
+				migrate_contracts_open($db, $langs, $conf);
 
-			migrate_customerorder_shipping($db, $langs, $conf);
+				migrate_modeles($db, $langs, $conf);
 
-			migrate_shipping_delivery($db, $langs, $conf);
+				migrate_price_propal($db, $langs, $conf);
 
-			migrate_shipping_delivery2($db, $langs, $conf);
-		}
+				migrate_price_commande($db, $langs, $conf);
 
-		// Script for 3.0
-		$afterversionarray = explode('.', '2.9.9');
-		$beforeversionarray = explode('.', '3.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			// No particular code
-		}
+				migrate_price_commande_fournisseur($db, $langs, $conf);
 
-		// Script for 3.1
-		$afterversionarray = explode('.', '3.0.9');
-		$beforeversionarray = explode('.', '3.1.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_rename_directories($db, $langs, $conf, '/rss', '/externalrss');
+				migrate_price_contrat($db, $langs, $conf);
 
-			migrate_actioncomm_element($db, $langs, $conf);
-		}
+				migrate_paiementfourn_facturefourn($db, $langs, $conf);
 
-		// Script for 3.2
-		$afterversionarray = explode('.', '3.1.9');
-		$beforeversionarray = explode('.', '3.2.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_price_contrat($db, $langs, $conf);
 
-			migrate_mode_reglement($db, $langs, $conf);
+				// Script pour V2.1 -> V2.2
+				migrate_paiements_orphelins_1($db, $langs, $conf);
 
-			migrate_clean_association($db, $langs, $conf);
-		}
+				migrate_paiements_orphelins_2($db, $langs, $conf);
 
-		// Script for 3.3
-		$afterversionarray = explode('.', '3.2.9');
-		$beforeversionarray = explode('.', '3.3.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_categorie_association($db, $langs, $conf);
-		}
+				migrate_links_transfert($db, $langs, $conf);
 
-		// Script for 3.4
-		// No specific scripts
 
-		// Tasks to do always and only into last targeted version
-		$afterversionarray = explode('.', '3.6.9'); // target is after this
-		$beforeversionarray = explode('.', '3.7.9'); // target is before this
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_event_assignement($db, $langs, $conf);
-		}
+				// Script pour V2.2 -> V2.4
+				migrate_commande_expedition($db, $langs, $conf);
 
-		// Scripts for 3.9
-		$afterversionarray = explode('.', '3.7.9');
-		$beforeversionarray = explode('.', '3.8.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			// No particular code
-		}
+				migrate_commande_livraison($db, $langs, $conf);
 
-		// Scripts for 4.0
-		$afterversionarray = explode('.', '3.9.9');
-		$beforeversionarray = explode('.', '4.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_rename_directories($db, $langs, $conf, '/fckeditor', '/medias');
-		}
+				migrate_detail_livraison($db, $langs, $conf);
 
-		// Scripts for 5.0
-		$afterversionarray = explode('.', '4.0.9');
-		$beforeversionarray = explode('.', '5.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			// Migrate to add entity value into llx_societe_remise
-			migrate_remise_entity($db, $langs, $conf);
 
-			// Migrate to add entity value into llx_societe_remise_except
-			migrate_remise_except_entity($db, $langs, $conf);
-		}
+				// Script pour V2.5 -> V2.6
+				migrate_stocks($db, $langs, $conf);
 
-		// Scripts for 6.0
-		$afterversionarray = explode('.', '5.0.9');
-		$beforeversionarray = explode('.', '6.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			if (!empty($conf->multicompany->enabled)) {
-				global $multicompany_transverse_mode;
 
-				// Only if the transverse mode is not used
-				if (empty($multicompany_transverse_mode)) {
-					// Migrate to add entity value into llx_user_rights
-					migrate_user_rights_entity($db, $langs, $conf);
+				// Script pour V2.6 -> V2.7
+				migrate_menus($db, $langs, $conf);
 
-					// Migrate to add entity value into llx_usergroup_rights
-					migrate_usergroup_rights_entity($db, $langs, $conf);
+				migrate_commande_deliveryaddress($db, $langs, $conf);
+
+				migrate_restore_missing_links($db, $langs, $conf);
+
+				migrate_rename_directories($db, $langs, $conf, '/compta', '/banque');
+
+				migrate_rename_directories($db, $langs, $conf, '/societe', '/mycompany');
+			}
+
+			// Script for 2.8
+			$afterversionarray = explode('.', '2.7.9');
+			$beforeversionarray = explode('.', '2.8.9');
+			//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_price_facture($db, $langs, $conf); // Code of this function works for 2.8+ because need a field tva_tx
+
+				migrate_relationship_tables($db, $langs, $conf, 'co_exp', 'fk_commande', 'commande', 'fk_expedition', 'shipping');
+
+				migrate_relationship_tables($db, $langs, $conf, 'pr_exp', 'fk_propal', 'propal', 'fk_expedition', 'shipping');
+
+				migrate_relationship_tables($db, $langs, $conf, 'pr_liv', 'fk_propal', 'propal', 'fk_livraison', 'delivery');
+
+				migrate_relationship_tables($db, $langs, $conf, 'co_liv', 'fk_commande', 'commande', 'fk_livraison', 'delivery');
+
+				migrate_relationship_tables($db, $langs, $conf, 'co_pr', 'fk_propale', 'propal', 'fk_commande', 'commande');
+
+				migrate_relationship_tables($db, $langs, $conf, 'fa_pr', 'fk_propal', 'propal', 'fk_facture', 'facture');
+
+				migrate_relationship_tables($db, $langs, $conf, 'co_fa', 'fk_commande', 'commande', 'fk_facture', 'facture');
+
+				migrate_project_user_resp($db, $langs, $conf);
+
+				migrate_project_task_actors($db, $langs, $conf);
+			}
+
+			// Script for 2.9
+			$afterversionarray = explode('.', '2.8.9');
+			$beforeversionarray = explode('.', '2.9.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_project_task_time($db, $langs, $conf);
+
+				migrate_customerorder_shipping($db, $langs, $conf);
+
+				migrate_shipping_delivery($db, $langs, $conf);
+
+				migrate_shipping_delivery2($db, $langs, $conf);
+			}
+
+			// Script for 3.0
+			$afterversionarray = explode('.', '2.9.9');
+			$beforeversionarray = explode('.', '3.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// No particular code
+			}
+
+			// Script for 3.1
+			$afterversionarray = explode('.', '3.0.9');
+			$beforeversionarray = explode('.', '3.1.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_rename_directories($db, $langs, $conf, '/rss', '/externalrss');
+
+				migrate_actioncomm_element($db, $langs, $conf);
+			}
+
+			// Script for 3.2
+			$afterversionarray = explode('.', '3.1.9');
+			$beforeversionarray = explode('.', '3.2.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_price_contrat($db, $langs, $conf);
+
+				migrate_mode_reglement($db, $langs, $conf);
+
+				migrate_clean_association($db, $langs, $conf);
+			}
+
+			// Script for 3.3
+			$afterversionarray = explode('.', '3.2.9');
+			$beforeversionarray = explode('.', '3.3.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_categorie_association($db, $langs, $conf);
+			}
+
+			// Script for 3.4
+			// No specific scripts
+
+			// Tasks to do always and only into last targeted version
+			$afterversionarray = explode('.', '3.6.9'); // target is after this
+			$beforeversionarray = explode('.', '3.7.9'); // target is before this
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_event_assignement($db, $langs, $conf);
+			}
+
+			// Scripts for 3.9
+			$afterversionarray = explode('.', '3.7.9');
+			$beforeversionarray = explode('.', '3.8.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// No particular code
+			}
+
+			// Scripts for 4.0
+			$afterversionarray = explode('.', '3.9.9');
+			$beforeversionarray = explode('.', '4.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_rename_directories($db, $langs, $conf, '/fckeditor', '/medias');
+			}
+
+			// Scripts for 5.0
+			$afterversionarray = explode('.', '4.0.9');
+			$beforeversionarray = explode('.', '5.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// Migrate to add entity value into llx_societe_remise
+				migrate_remise_entity($db, $langs, $conf);
+
+				// Migrate to add entity value into llx_societe_remise_except
+				migrate_remise_except_entity($db, $langs, $conf);
+			}
+
+			// Scripts for 6.0
+			$afterversionarray = explode('.', '5.0.9');
+			$beforeversionarray = explode('.', '6.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				if (!empty($conf->multicompany->enabled)) {
+					global $multicompany_transverse_mode;
+
+					// Only if the transverse mode is not used
+					if (empty($multicompany_transverse_mode)) {
+						// Migrate to add entity value into llx_user_rights
+						migrate_user_rights_entity($db, $langs, $conf);
+
+						// Migrate to add entity value into llx_usergroup_rights
+						migrate_usergroup_rights_entity($db, $langs, $conf);
+					}
 				}
 			}
-		}
 
-		// Scripts for 7.0
-		$afterversionarray = explode('.', '6.0.9');
-		$beforeversionarray = explode('.', '7.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			// Migrate contact association
-			migrate_event_assignement_contact($db, $langs, $conf);
+			// Scripts for 7.0
+			$afterversionarray = explode('.', '6.0.9');
+			$beforeversionarray = explode('.', '7.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				// Migrate contact association
+				migrate_event_assignement_contact($db, $langs, $conf);
 
-			migrate_reset_blocked_log($db, $langs, $conf);
-		}
-
-		// Scripts for 8.0
-		$afterversionarray = explode('.', '7.0.9');
-		$beforeversionarray = explode('.', '8.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_rename_directories($db, $langs, $conf, '/contracts', '/contract');
-		}
-
-		// Scripts for 9.0
-		$afterversionarray = explode('.', '8.0.9');
-		$beforeversionarray = explode('.', '9.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_user_photospath();
-		}
-
-		// Scripts for 11.0
-		$afterversionarray = explode('.', '10.0.9');
-		$beforeversionarray = explode('.', '11.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_users_socialnetworks();
-			migrate_members_socialnetworks();
-			migrate_contacts_socialnetworks();
-			migrate_thirdparties_socialnetworks();
-		}
-
-		// Scripts for 14.0
-		$afterversionarray = explode('.', '13.0.9');
-		$beforeversionarray = explode('.', '14.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_export_import_profiles('export');
-			migrate_export_import_profiles('import');
-		}
-
-		// Scripts for 16.0
-		$afterversionarray = explode('.', '15.0.9');
-		$beforeversionarray = explode('.', '16.0.9');
-		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			migrate_user_photospath2();
-		}
-	}
-
-
-	// Code executed only if migration is LAST ONE. Must always be done.
-	if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3) {
-		// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
-		$listofmodule = array(
-			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
-			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-			'MAIN_MODULE_BOM'=>'menuonly',
-			'MAIN_MODULE_BANQUE'=>'menuonly',
-			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-			'MAIN_MODULE_CRON'=>'newboxdefonly',
-			'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-			'MAIN_MODULE_BLOCKEDLOG'=>'noboxes',
-			'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-			'MAIN_MODULE_DON'=>'newboxdefonly',
-			'MAIN_MODULE_ECM'=>'newboxdefonly',
-			'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
-			'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
-			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-			'MAIN_MODULE_MARGIN'=>'menuonly',
-			'MAIN_MODULE_MRP'=>'menuonly',
-			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
-			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-			'MAIN_MODULE_RECRUITMENT'=>'menuonly',
-			'MAIN_MODULE_RESOURCE'=>'noboxes',
-			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
-			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
-			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-			'MAIN_MODULE_STRIPE'=>'menuonly',
-			'MAIN_MODULE_TICKET'=>'newboxdefonly',
-			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
-			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
-			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
-			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
-		);
-
-		$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
-		if ($result < 0) {
-			$error++;
-		}
-		// Reload menus (this must be always and only into last targeted version)
-		$result = migrate_reload_menu($db, $langs, $conf);
-		if ($result < 0) {
-			$error++;
-		}
-	}
-
-	// Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
-	// In most cases (online install or upgrade) $enablemodules is empty. Can be forced when ran from command line.
-	if (!$error && $enablemodules) {
-		// Reload modules (this must be always done and only into last targeted version)
-		$listofmodules = array();
-		$enablemodules = preg_replace('/enablemodules=/', '', $enablemodules);
-		$tmplistofmodules = explode(',', $enablemodules);
-		foreach ($tmplistofmodules as $value) {
-			$listofmodules[$value] = 'forceactivate';
-		}
-
-		$resultreloadmodules = migrate_reload_modules($db, $langs, $conf, $listofmodules, 1);
-		if ($resultreloadmodules < 0) {
-			$error++;
-		}
-	}
-
-
-	// Can call a dedicated external upgrade process
-	if (!$error) {
-		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto);
-		$object = new stdClass();
-		$action = "upgrade";
-		$reshook = $hookmanager->executeHooks('doUpgrade2', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if ($hookmanager->resNbOfHooks > 0) {
-			if ($reshook < 0) {
-				print '<tr><td colspan="4">';
-				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: ';
-				print $hookmanager->error;
-				print "<!-- (".$reshook.") -->";
-				print '</td></tr>';
-			} else {
-				print '<tr class="trforrunsql"><td colspan="4">';
-				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: <span class="ok">OK</span>';
-				print "<!-- (".$reshook.") -->";
-				print '</td></tr>';
+				migrate_reset_blocked_log($db, $langs, $conf);
 			}
-		} else {
-			//if (! empty($conf->modules))
-			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
-				print '<tr class="trforrunsql"><td colspan="4">';
-				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
-				print '</td></tr>';
+
+			// Scripts for 8.0
+			$afterversionarray = explode('.', '7.0.9');
+			$beforeversionarray = explode('.', '8.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_rename_directories($db, $langs, $conf, '/contracts', '/contract');
+			}
+
+			// Scripts for 9.0
+			$afterversionarray = explode('.', '8.0.9');
+			$beforeversionarray = explode('.', '9.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_user_photospath();
+			}
+
+			// Scripts for 11.0
+			$afterversionarray = explode('.', '10.0.9');
+			$beforeversionarray = explode('.', '11.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_users_socialnetworks();
+				migrate_members_socialnetworks();
+				migrate_contacts_socialnetworks();
+				migrate_thirdparties_socialnetworks();
+			}
+
+			// Scripts for 14.0
+			$afterversionarray = explode('.', '13.0.9');
+			$beforeversionarray = explode('.', '14.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_export_import_profiles('export');
+				migrate_export_import_profiles('import');
+			}
+
+			// Scripts for 16.0
+			$afterversionarray = explode('.', '15.0.9');
+			$beforeversionarray = explode('.', '16.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_user_photospath2();
+			}
+		}
+
+
+		// Code executed only if migration is LAST ONE. Must always be done.
+		if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3) {
+			// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
+			$listofmodule = array(
+				'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
+				'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+				'MAIN_MODULE_BOM'=>'menuonly',
+				'MAIN_MODULE_BANQUE'=>'menuonly',
+				'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+				'MAIN_MODULE_CRON'=>'newboxdefonly',
+				'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+				'MAIN_MODULE_BLOCKEDLOG'=>'noboxes',
+				'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
+				'MAIN_MODULE_DON'=>'newboxdefonly',
+				'MAIN_MODULE_ECM'=>'newboxdefonly',
+				'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
+				'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
+				'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+				'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+				'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+				'MAIN_MODULE_MARGIN'=>'menuonly',
+				'MAIN_MODULE_MRP'=>'menuonly',
+				'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
+				'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+				'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+				'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+				'MAIN_MODULE_RECRUITMENT'=>'menuonly',
+				'MAIN_MODULE_RESOURCE'=>'noboxes',
+				'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+				'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+				'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
+				'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
+				'MAIN_MODULE_STRIPE'=>'menuonly',
+				'MAIN_MODULE_TICKET'=>'newboxdefonly',
+				'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
+				'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
+				'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
+				'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
+			);
+
+			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
+			if ($result < 0) {
+				$error++;
+			}
+			// Reload menus (this must be always and only into last targeted version)
+			$result = migrate_reload_menu($db, $langs, $conf);
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		// Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
+		// In most cases (online install or upgrade) $enablemodules is empty. Can be forced when ran from command line.
+		if (!$error && $enablemodules) {
+			// Reload modules (this must be always done and only into last targeted version)
+			$listofmodules = array();
+			$enablemodules = preg_replace('/enablemodules=/', '', $enablemodules);
+			$tmplistofmodules = explode(',', $enablemodules);
+			foreach ($tmplistofmodules as $value) {
+				$listofmodules[$value] = 'forceactivate';
+			}
+
+			$resultreloadmodules = migrate_reload_modules($db, $langs, $conf, $listofmodules, 1);
+			if ($resultreloadmodules < 0) {
+				$error++;
+			}
+		}
+
+
+		// Can call a dedicated external upgrade process with hook doUpgradeAfterDB()
+		if (!$error) {
+			$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf'=>$conf);
+			$object = new stdClass();
+			$action = "upgrade";
+			$reshook = $hookmanager->executeHooks('doUpgradeAfterDB', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+			if ($hookmanager->resNbOfHooks > 0) {
+				if ($reshook < 0) {
+					print '<tr><td colspan="4">';
+					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: ';
+					print $hookmanager->error;
+					print "<!-- (".$reshook.") -->";
+					print '</td></tr>';
+				} else {
+					print '<tr class="trforrunsql"><td colspan="4">';
+					print '<b>'.$langs->trans('UpgradeExternalModule').' (DB)</b>: <span class="ok">OK</span>';
+					print "<!-- (".$reshook.") -->";
+					print '</td></tr>';
+				}
+			} else {
+				//if (! empty($conf->modules))
+				if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
+					print '<tr class="trforrunsql"><td colspan="4">';
+					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterDB");
+					print '</td></tr>';
+				}
 			}
 		}
 	}
 
 	print '</table>';
-
 
 	if (!$error) {
 		// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
@@ -576,22 +595,67 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// We always commit.
 	// Process is designed so we can run it several times whatever is situation.
 	$db->commit();
+
+
+	/***************************************************************************************
+	 *
+	 * Migration of files
+	 *
+	 ***************************************************************************************/
+
+	foreach ($listofentities as $entity) {
+		// Set $conf context for entity
+		$conf->setEntityValues($db, $entity);
+		// Reset forced setup after the setValues
+		if (defined('SYSLOG_FILE')) {
+			$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+		}
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
+
+		// Copy directory medias
+		$srcroot = DOL_DOCUMENT_ROOT.'/install/medias';
+		$destroot = DOL_DATA_ROOT.'/medias';
+		dolCopyDir($srcroot, $destroot, 0, 0);
+
+
+		// Actions for all versions (no database change but delete some files and directories)
+		migrate_delete_old_files($db, $langs, $conf);
+		migrate_delete_old_dir($db, $langs, $conf);
+		// Actions for all versions (no database change but create some directories)
+		dol_mkdir(DOL_DATA_ROOT.'/bank');
+		// Actions for all versions (no database change but rename some directories)
+		migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+
+
+		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf'=>$conf);
+		$object = new stdClass();
+		$action = "upgrade";
+		$reshook = $hookmanager->executeHooks('doUpgradeAfterFiles', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($hookmanager->resNbOfHooks > 0) {
+			if ($reshook < 0) {
+				print '<tr><td colspan="4">';
+				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: ';
+				print $hookmanager->error;
+				print "<!-- (".$reshook.") -->";
+				print '</td></tr>';
+			} else {
+				print '<tr class="trforrunsql"><td colspan="4">';
+				print '<b>'.$langs->trans('UpgradeExternalModule').' (Files)</b>: <span class="ok">OK</span>';
+				print "<!-- (".$reshook.") -->";
+				print '</td></tr>';
+			}
+		} else {
+			//if (! empty($conf->modules))
+			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
+				print '<tr class="trforrunsql"><td colspan="4">';
+				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterFiles");
+				print '</td></tr>';
+			}
+		}
+	}
+
 	$db->close();
-
-
-	// Copy directory medias
-	$srcroot = DOL_DOCUMENT_ROOT.'/install/medias';
-	$destroot = DOL_DATA_ROOT.'/medias';
-	dolCopyDir($srcroot, $destroot, 0, 0);
-
-
-	// Actions for all versions (no database change but delete some files and directories)
-	migrate_delete_old_files($db, $langs, $conf);
-	migrate_delete_old_dir($db, $langs, $conf);
-	// Actions for all versions (no database change but create some directories)
-	dol_mkdir(DOL_DATA_ROOT.'/bank');
-	// Actions for all versions (no database change but rename some directories)
-	migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
 	$silent = 0;
 	if (!$silent) {
@@ -1358,11 +1422,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 		if ($select_resql) {
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
-			$var = true;
 
 			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
-				$var = !$var;
 				$select_obj = $db->fetch_object($select_resql);
 
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
@@ -1949,7 +2011,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-	if (!empty($conf->facture->enabled)) {
+	if (isModEnabled('facture')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -4051,6 +4113,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/export/export_excel.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
+		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
 		'/categories/class/api_category.class.php',
@@ -4560,7 +4623,7 @@ function migrate_user_photospath2()
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT.'/'.$entity.'/users';
 			} else {
-				$dir = $conf->user->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+				$dir = DOL_DATA_ROOT.'/users';
 			}
 
 			if ($dir) {

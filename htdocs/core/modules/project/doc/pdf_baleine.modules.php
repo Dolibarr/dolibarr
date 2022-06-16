@@ -146,7 +146,6 @@ class pdf_baleine extends ModelePDFProjects
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -196,11 +195,11 @@ class pdf_baleine extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->project->dir_output;
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -662,7 +661,7 @@ class pdf_baleine extends ModelePDFProjects
 
 		foreach($object->linkedObjects as $objecttype => $objects)
 		{
-			var_dump($objects);exit;
+			//var_dump($objects);exit;
 			if ($objecttype == 'commande')
 			{
 				$outputlangs->load('orders');

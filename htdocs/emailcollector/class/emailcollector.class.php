@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // 
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
 require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php"; // reception
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 //require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
 //require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse report
 
@@ -110,7 +111,7 @@ class EmailCollector extends CommonObject
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax150'),
+		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax250'),
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector', 'csslist'=>'tdoverflowmax150'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'csslist'=>'small'),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflow125'),
@@ -504,7 +505,7 @@ class EmailCollector extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $action, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -537,13 +538,6 @@ class EmailCollector extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -562,7 +556,6 @@ class EmailCollector extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-		global $action, $hookmanager;
 		$hookmanager->initHooks(array('emailcollectordao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -901,9 +894,17 @@ class EmailCollector extends CommonObject
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
 							if (strtolower($sourcefield) == 'header') {
-								$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								if (preg_match('/^options_/', $tmpproperty)) {
+									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+								} else {
+									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								}
 							} else {
-								$object->$tmpproperty = $valueextracted;
+								if (preg_match('/^options_/', $tmpproperty)) {
+									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+								} else {
+									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								}
 							}
 						} else {
 							// Regex not found
@@ -965,12 +966,13 @@ class EmailCollector extends CommonObject
 	public function doCollectOneCollector()
 	{
 		global $conf, $langs, $user;
+		global $hookmanager;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_DEBUG);
 
 		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
@@ -1228,7 +1230,8 @@ class EmailCollector extends CommonObject
 				$header = imap_fetchheader($connection, $imapemail, 0);
 				$overview = imap_fetch_overview($connection, $imapemail, 0);
 
-				/* print $header; var_dump($overview); */
+				// print $header;
+				// var_dump($overview);
 
 				// Process $header of email
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
@@ -1250,19 +1253,21 @@ class EmailCollector extends CommonObject
 				$headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
 
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 				//print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." References: ".dol_escape_htmltag($headers['References'])." In-Reply-To: ".dol_escape_htmltag($headers['In-Reply-To'])."<br>\n";
 
 				// If there is a filter on trackid
 				if ($searchfilterdoltrackid > 0) {
 					if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - No header References found");
 						continue; // Exclude email
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
 					if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Header References found and matching signature of application");
 						continue; // Exclude email
 					}
 				}
@@ -1270,6 +1275,7 @@ class EmailCollector extends CommonObject
 				if ($searchfilterisanswer > 0) {
 					if (empty($headers['In-Reply-To'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header)");
 						continue; // Exclude email
 					}
 					// Note: we can have
@@ -1283,6 +1289,7 @@ class EmailCollector extends CommonObject
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is not an answer (no RE prefix in subject)");
 						continue; // Exclude email
 					}
 				}
@@ -1298,6 +1305,7 @@ class EmailCollector extends CommonObject
 						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 						if ($isanswer) {
 							$nbemailprocessed++;
+							dol_syslog(" Discarded - Email is an answer");
 							continue; // Exclude email
 						}
 					}
@@ -1336,19 +1344,20 @@ class EmailCollector extends CommonObject
 
 				$this->getmsg($connection, $imapemail);
 
-				//print $plainmsg; var_dump($plainmsg); exit;
+				//print $plainmsg;
+				//var_dump($plainmsg); exit;
 
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
 				// Removed emojis
 				$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
 
-				/*var_dump($plainmsg);
-				var_dump($htmlmsg);
-				var_dump($messagetext);*/
-				/*var_dump($charset);
-				var_dump($attachments);
-				exit;*/
+				//var_dump($plainmsg);
+				//var_dump($htmlmsg);
+				//var_dump($messagetext);
+				//var_dump($charset);
+				//var_dump($attachments);
+				//exit;
 
 				// Parse IMAP email structure
 				/*
@@ -1381,11 +1390,13 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
-				//var_dump($result); var_dump($partplain); var_dump($parthtml);
+				//var_dump($result);
+				//var_dump($partplain);
+				//var_dump($parthtml);
 
-				var_dump($structure);
-				var_dump($parthtml);
-				var_dump($partplain);
+				//var_dump($structure);
+				//var_dump($parthtml);
+				//var_dump($partplain);
 
 				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
 				*/
@@ -1436,8 +1447,13 @@ class EmailCollector extends CommonObject
 
 					foreach ($arrayofreferences as $reference) {
 						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
-						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
-							// This is a Dolibarr reference
+						$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
+						if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+						}
+
+						if ($resultsearchtrackid) {
+							// This is a Dolibarr reference of the server
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
@@ -1886,12 +1902,12 @@ class EmailCollector extends CommonObject
 							// Overwrite values with values extracted from source email
 							$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
 
-							/*var_dump($fk_element_id);
-							var_dump($fk_element_type);
-							var_dump($alreadycreated);
-							var_dump($operation['type']);
-							var_dump($actioncomm);
-							exit;*/
+							//var_dump($fk_element_id);
+							//var_dump($fk_element_type);
+							//var_dump($alreadycreated);
+							//var_dump($operation['type']);
+							//var_dump($actioncomm);
+							//exit;
 
 							if ($errorforthisaction) {
 								$errorforactions++;
@@ -1911,8 +1927,8 @@ class EmailCollector extends CommonObject
 						if (count($pj) > 0) {
 							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
 							$resql = $this->db->query($sql);
-							if ($resql->num_rows == 0) {
-								$this->errors = 'User Not allowed to add documents';
+							if ($this->db->num_rows($resql) == 0) {
+								$this->errors[] = 'User Not allowed to add documents';
 							}
 							$arrayobject = array(
 								'propale' => array('table' => 'propal',
@@ -2009,10 +2025,16 @@ class EmailCollector extends CommonObject
 									'object' => 'Mo'),
 							);
 
+							if (!is_object($hookmanager)) {
+								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+								$hookmanager = new HookManager($this->db);
+							}
 							$hookmanager->initHooks(array('emailcolector'));
 							$parameters = array('arrayobject' => $arrayobject);
 							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
-							if ($reshook > 0) $arrayobject = $hookmanager->resArray;
+							if ($reshook > 0) {
+								$arrayobject = $hookmanager->resArray;
+							}
 
 							$resultobj = array();
 
@@ -2044,7 +2066,7 @@ class EmailCollector extends CommonObject
 										$path = ($objectmanaged->entity > 1 ? "/" . $objectmanaged->entity : '');
 										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath . '/' . dol_sanitizeFileName($objectmanaged->ref) . '/';
 									} else {
-										$this->errors = 'object not found';
+										$this->errors[] = 'object not found';
 									}
 								}
 							}
@@ -2054,12 +2076,12 @@ class EmailCollector extends CommonObject
 
 									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 									if ($resr == -1) {
-										$this->errors = 'Doc not saved';
+										$this->errors[] = 'Doc not saved';
 									}
 								}
 							}
 						} else {
-							$this->errors = 'no joined piece';
+							$this->errors[] = 'no joined piece';
 						}
 					} elseif ($operation['type'] == 'project') {
 						// Create project / lead
@@ -2372,8 +2394,6 @@ class EmailCollector extends CommonObject
 					} elseif (substr($operation['type'], 0, 4) == 'hook') {
 						// Create event specific on hook
 						// this code action is hook..... for support this call
-						global $hookmanager;
-
 						if (!is_object($hookmanager)) {
 							include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 							$hookmanager = new HookManager($this->db);
@@ -2398,9 +2418,9 @@ class EmailCollector extends CommonObject
 							'header'=>$header,
 							'attachments'=>$attachments,
 						);
-						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+						$reshook = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 
-						if ($res < 0) {
+						if ($reshook < 0) {
 							$errorforthisaction++;
 							$this->error = $hookmanager->resPrint;
 						}

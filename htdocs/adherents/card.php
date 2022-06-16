@@ -285,7 +285,7 @@ if (empty($reshook)) {
 			$object->lastname    = trim(GETPOST("lastname", 'alphanohtml'));
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
-			$object->pass        = trim(GETPOST("pass", 'alpha'));
+			$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
 			$object->company     = trim(GETPOST("societe", 'alphanohtml'));
@@ -450,8 +450,8 @@ if (empty($reshook)) {
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$url   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
-		$pass = GETPOST("password", 'alpha');
-		$photo = GETPOST("photo", 'alpha');
+		$pass = GETPOST("password", 'none');	// For password, we use 'none'
+		$photo = GETPOST("photo", 'alphanohtml');
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
 
@@ -999,7 +999,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$generated_password = getRandomPassword(false);
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Password").'</span></td><td>';
-			print '<input type="text" class="minwidth300" maxlength="50" name="password" value="'.$generated_password.'">';
+			print '<input type="text" class="minwidth300" maxlength="50" name="password" value="'.dol_escape_htmltag($generated_password).'">';
 			print '</td></tr>';
 		}
 
@@ -1224,7 +1224,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.(GETPOSTISSET("pass") ? GETPOST("pass", '', 2) : $object->pass).'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : $object->pass).'"></td></tr>';
 		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
@@ -1286,7 +1286,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
+		print '<tr><td>'.(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
 
 		// Website
@@ -2030,7 +2030,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAX = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/adherents/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

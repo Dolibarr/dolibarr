@@ -25,3 +25,7 @@ ContactSynchronized=Aloqa sinxronlashtirildi
 ForceSynchronize=Dolibarr -> LDAP-ni sinxronlashtirishni majburlash
 ErrorFailedToReadLDAP=LDAP ma'lumotlar bazasini o'qib bo'lmadi. LDAP modulini sozlashni va ma'lumotlar bazasiga kirishni tekshiring.
 PasswordOfUserInLDAP=LDAP-dagi foydalanuvchi paroli
+LDAPPasswordHashType=Parol xesh turi
+LDAPPasswordHashTypeExample=Serverda ishlatiladigan parol xesh turi
+SupportedForLDAPExportScriptOnly=Faqat ldap eksport skripti tomonidan quvvatlanadi
+SupportedForLDAPImportScriptOnly=Faqat ldap import skripti tomonidan qo'llab-quvvatlanadi

@@ -186,30 +186,21 @@ if ($id > 0 || $ref) {
 	$objcon = new stdClass();
 
 	$out = '';
-	$permok = $user->rights->agenda->myactions->create;
-	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
-		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		if (get_class($objproduct) == 'Product') {
-			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
-		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
-		//$out.=$langs->trans("AddAnAction").' ';
-		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-		//$out.="</a>";
-	}
-
-
-	//print '<div class="tabsAction">';
-	//print '</div>';
-
-
 	$morehtmlcenter = '';
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
+		$permok = $user->rights->agenda->myactions->create;
+		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
+			if (get_class($objproduct) == 'Product') {
+				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
+			}
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;percentage=-1';
+		}
+
 		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

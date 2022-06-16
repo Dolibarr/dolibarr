@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 
 /**
@@ -113,7 +114,7 @@ class Categorie extends CommonObject
 	 *
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_CAT_FK = array(
+	public $MAP_CAT_FK = array(
 		'customer' => 'soc',
 		'supplier' => 'soc',
 		'contact'  => 'socpeople',
@@ -125,7 +126,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_CAT_TABLE = array(
+	public $MAP_CAT_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
 		'bank_account'=> 'account',
@@ -136,7 +137,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_OBJ_CLASS = array(
+	public $MAP_OBJ_CLASS = array(
 		'product'  => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
@@ -178,7 +179,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_OBJ_TABLE = array(
+	public static $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
 		'member'   => 'adherent',
@@ -257,6 +258,12 @@ class Categorie extends CommonObject
 	 * @var array Mother of table
 	 */
 	public $motherof = array();
+
+	/**
+	 * @var array Childs
+	 */
+	public $childs = array();
+
 
 	/**
 	 *	Constructor
@@ -819,7 +826,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management' ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset
@@ -913,7 +920,7 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
-		$type = checkVal($type, 'aZ09');
+		$type = sanitizeVal($type, 'aZ09');
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
@@ -982,7 +989,7 @@ class Categorie extends CommonObject
 					$categories[$i]['array_options'] = $category_static->array_options;
 
 					// multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (!empty($conf->global->MAIN_MULTILANGS) && isset($category_static->multilangs)) {
 						$categories[$i]['multilangs'] = $category_static->multilangs;
 					}
 				}

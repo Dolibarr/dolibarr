@@ -431,12 +431,12 @@ if ($action == 'create') {
 		// Account movement
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
-		print '<td>'.$object->piece_num.'</td>';
+		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
 		print '</tr>';
 
 		// Date
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
@@ -540,7 +540,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document export
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
 		print '<td>';
@@ -548,7 +548,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document validation
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
 		print '<td>';
@@ -607,6 +607,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
+
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -647,11 +648,14 @@ if ($action == 'create') {
 
 				print "</tr>\n";
 
-				// Empty line is the first line of $object->linesmvt
-				// So we must get the first line (the empty one) and put it at the end of the array
-				// in order to display it correctly to the user
-				$empty_line = array_shift($object->linesmvt);
-				$object->linesmvt[]= $empty_line;
+				// Add an empty line if there is not yet
+				if (!empty($object->linesmvt[0])) {
+					$tmpline = $object->linesmvt[0];
+					if (!empty($tmpline->numero_compte)) {
+						$line = new BookKeepingLine();
+						$object->linesmvt[] = $line;
+					}
+				}
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';

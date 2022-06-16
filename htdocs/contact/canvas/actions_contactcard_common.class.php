@@ -206,7 +206,7 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;
 			}
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 				$i++;

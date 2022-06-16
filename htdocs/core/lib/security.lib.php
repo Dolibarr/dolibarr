@@ -240,7 +240,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
-	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
 	$parentfortableentity = '';
@@ -536,8 +536,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
-				if (!$user->rights->facture->creer) {
+			} elseif ($feature == 'payment') {
+				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
@@ -774,7 +774,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject)) {
-			if (!empty($conf->projet->enabled) && empty($user->rights->projet->all->lire)) {
+			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -795,7 +795,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask)) {
-			if (!empty($conf->projet->enabled) && empty($user->rights->projet->all->lire)) {
+			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;

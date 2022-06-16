@@ -66,3 +66,5 @@ RepeatableIntervention=Шаблон посредничества
 ToCreateAPredefinedIntervention=Чтобы создать предопределенное или повторяющееся посредничество, создайте общее посредничество и преобразуйте его в шаблон посредничества.
 ConfirmReopenIntervention=Вы уверены, что хотите снова открыть посредничество <b>%s</b>?
 GenerateInter=Созадать посредничество
+FichinterNoContractLinked=Вмешательство %s создано без связанного контракта.
+ErrorFicheinterCompanyDoesNotExist=Компания не существует. Вмешательство не создано.

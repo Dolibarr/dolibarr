@@ -87,6 +87,11 @@ class Mailing extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string email to
+	 */
+	public $sendto;
+
+	/**
 	 * @var string email reply to
 	 */
 	public $email_replyto;
@@ -174,6 +179,16 @@ class Mailing extends CommonObject
 	 * @var array statuts
 	 */
 	public $statuts = array();
+
+	/**
+	 * @var array substitutionarray
+	 */
+	public $substitutionarray;
+
+	/**
+	 * @var array substitutionarrayfortest
+	 */
+	public $substitutionarrayfortest;
 
 
 	/**
@@ -713,13 +728,6 @@ class Mailing extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}

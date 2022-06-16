@@ -6,6 +6,7 @@
  * Copyright (C) 2014-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +160,9 @@ class Project extends CommonObject
 	public $statuts_long;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
+
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
 	public $opp_percent; // opportunity probability
 
 	public $email_msgid;
@@ -236,14 +239,14 @@ class Project extends CommonObject
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
-		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>1, 'visible'=>1, 'position'=>75),
-		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>1, 'visible'=>1, 'position'=>80),
+		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'visible'=>1, 'position'=>75),
+		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'visible'=>1, 'position'=>80),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90, 'searchall'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
 		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>1, 'position'=>115),
+		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'position'=>115),
 		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>119),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
@@ -543,9 +546,9 @@ class Project extends CommonObject
 
 				if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref)) {
 					// We remove directory
-					if ($conf->projet->dir_output) {
-						$olddir = $conf->projet->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
-						$newdir = $conf->projet->dir_output."/".dol_sanitizeFileName($this->ref);
+					if ($conf->project->dir_output) {
+						$olddir = $conf->project->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
+						$newdir = $conf->project->dir_output."/".dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir)) {
 							include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 							$res = @rename($olddir, $newdir);
@@ -906,8 +909,8 @@ class Project extends CommonObject
 		if (empty($error)) {
 			// We remove directory
 			$projectref = dol_sanitizeFileName($this->ref);
-			if ($conf->projet->dir_output) {
-				$dir = $conf->projet->dir_output."/".$projectref;
+			if ($conf->project->dir_output) {
+				$dir = $conf->project->dir_output."/".$projectref;
 				if (file_exists($dir)) {
 					$res = @dol_delete_dir_recursive($dir);
 					if (!$res) {
@@ -1204,16 +1207,17 @@ class Project extends CommonObject
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
-			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
+			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ";
+			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"').$langs->trans("PrivateProject"));
 		}
 		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
 		}
-		if (!empty($this->dateo)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->dateo, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		if (!empty($this->date_start)) {
+			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
-		if (!empty($this->datee)) {
-			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->datee, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
+		if (!empty($this->date_end)) {
+			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) {
 			$label .= '<br>'.$moreinpopup;
@@ -1639,8 +1643,8 @@ class Project extends CommonObject
 			if ($clone_project_file) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				$clone_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($defaultref);
-				$ori_project_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($orign_project_ref);
+				$clone_project_dir = $conf->project->dir_output."/".dol_sanitizeFileName($defaultref);
+				$ori_project_dir = $conf->project->dir_output."/".dol_sanitizeFileName($orign_project_ref);
 
 				if (dol_mkdir($clone_project_dir) >= 0) {
 					$filearray = dol_dir_list($ori_project_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
@@ -2054,7 +2058,7 @@ class Project extends CommonObject
 			$project_static = new Project($this->db);
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->projet->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->project->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedProjects");
 			$response->labelShort = $langs->trans("Opened");
 			if ($user->rights->projet->all->lire) {
@@ -2070,7 +2074,7 @@ class Project extends CommonObject
 
 				$project_static->statut = $obj->status;
 				$project_static->opp_status = $obj->fk_opp_status;
-				$project_static->datee = $this->db->jdate($obj->datee);
+				$project_static->date_end = $this->db->jdate($obj->datee);
 
 				if ($project_static->hasDelay()) {
 					$response->nbtodolate++;
@@ -2152,13 +2156,13 @@ class Project extends CommonObject
 		if (!($this->statut == self::STATUS_VALIDATED)) {
 			return false;
 		}
-		if (!$this->datee && !$this->date_end) {
+		if (!$this->date_end) {
 			return false;
 		}
 
 		$now = dol_now();
 
-		return ($this->datee ? $this->datee : $this->date_end) < ($now - $conf->projet->warning_delay);
+		return ($this->date_end) < ($now - $conf->project->warning_delay);
 	}
 
 

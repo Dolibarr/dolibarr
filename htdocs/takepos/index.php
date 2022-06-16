@@ -205,6 +205,9 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
+	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+	$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+	$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
@@ -592,6 +595,18 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_start = $('#search_start_'+moreorless).val();
 	}
 
+	if (search_term == '') {
+		$("[id^=prowatermark]").html("");
+		$("[id^=prodesc]").text("");
+		$("[id^=probutton]").text("");
+		$("[id^=probutton]").hide();
+		$("[id^=proprice]").attr("class", "hidden");
+		$("[id^=proprice]").html("");
+		$("[id^=proimg]").attr("src", "genimg/empty.png");
+		$("[id^=prodiv]").data("rowid", "");
+		return;
+	}
+
 	var search = false;
 	var eventKeyCode = window.event.keyCode;
 	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
@@ -613,6 +628,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
+						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
 						$("#probutton" + i).text("");
 						$("#probutton" + i).hide();
@@ -707,8 +723,9 @@ function Search2(keyCodeForEnter, moreorless) {
 
 }
 
+/* Function called on an action into the PAD */
 function Edit(number) {
-	console.log("We click on PAD on number="+number);
+	console.log("We click on PAD on key="+number);
 
 	if (typeof(selectedtext) == "undefined") {
 		return;	// We click on an action on the number pad but there is no line selected
@@ -717,20 +734,19 @@ function Edit(number) {
 	var text=selectedtext+"<br> ";
 
 
-	if (number=='c'){
-		editnumber="";
+	if (number=='c') {
+		editnumber='';
 		Refresh();
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 		return;
-	}
-	else if (number=='qty'){
-		if (editaction=='qty' && editnumber!=""){
+	} else if (number=='qty') {
+		if (editaction=='qty' && editnumber != '') {
 			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 			});
 
 			setFocusOnSearchField();
@@ -739,13 +755,12 @@ function Edit(number) {
 		else {
 			editaction="qty";
 		}
-	}
-	else if (number=='p'){
-		if (editaction=='p' && editnumber!=""){
+	} else if (number=='p') {
+		if (editaction=='p' && editnumber!="") {
 			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#price").html("<?php echo $langs->trans("Price"); ?>");
+				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -754,13 +769,12 @@ function Edit(number) {
 		else {
 			editaction="p";
 		}
-	}
-	else if (number=='r'){
-		if (editaction=='r' && editnumber!=""){
+	} else if (number=='r') {
+		if (editaction=='r' && editnumber!="") {
 			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -775,21 +789,21 @@ function Edit(number) {
 	}
 	if (editaction=='qty'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Qty").": "; ?>";
-		$("#qty").html("OK");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("OK").addClass("clicked");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='p'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("OK");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("OK").addClass("clicked");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='r'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("OK");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("OK").addClass("clicked");
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
@@ -1123,7 +1137,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 		}
 	}
 
-	if (empty($paiementsModes)) {
+	if (empty($paiementsModes) && !empty($conf->banque->enabled)) {
 		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');

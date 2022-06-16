@@ -46,6 +46,7 @@ $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 $notab = GETPOST('notab', 'int');
+$type = GETPOST('type', 'alpha');
 
 $error = 0;
 $mesg = '';
@@ -205,7 +206,7 @@ if ($result || !($id > 0)) {
 		print '</td></tr>';
 
 		// Tag
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
 			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
@@ -302,49 +303,49 @@ if ($result || !($id > 0)) {
 		}
 	}
 
-	if ($conf->propal->enabled) {
+	if (isModEnabled('propal')) {
 		$graphfiles['propal'] = array('modulepart'=>'productstats_proposals',
 		'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsProposals") : $langs->transnoentitiesnoconv("NumberOfProposals")));
 	}
 
-	if ($conf->supplier_proposal->enabled) {
+	if (isModEnabled('supplier_proposal')) {
 		$graphfiles['proposalssuppliers'] = array('modulepart'=>'productstats_proposalssuppliers',
 		'file' => $object->id.'/proposalssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierProposals") : $langs->transnoentitiesnoconv("NumberOfSupplierProposals")));
 	}
 
-	if ($conf->order->enabled) {
+	if (isModEnabled('order')) {
 		$graphfiles['orders'] = array('modulepart'=>'productstats_orders',
 		'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders") : $langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
 	}
 
-	if ($conf->supplier_order->enabled) {
+	if (isModEnabled('supplier_order')) {
 		$graphfiles['orderssuppliers'] = array('modulepart'=>'productstats_orderssuppliers',
 		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders") : $langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
 	}
 
-	if ($conf->facture->enabled) {
+	if (isModEnabled('facture')) {
 		$graphfiles['invoices'] = array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices") : $langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
 	}
 
-	if ($conf->supplier_invoice->enabled) {
+	if (isModEnabled('supplier_invoice')) {
 		$graphfiles['invoicessuppliers'] = array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices") : $langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
 	}
 
-	if ($conf->contrat->enabled) {
+	if (isModEnabled('contrat')) {
 		$graphfiles['contracts'] = array('modulepart'=>'productstats_contracts',
 			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsContracts") : $langs->transnoentitiesnoconv("NumberOfContracts")));
 	}
 
-	if ($conf->mrp->enabled) {
+	if (isModEnabled('mrp')) {
 		$graphfiles['mrp'] = array('modulepart'=>'productstats_mrp',
 			'file' => $object->id.'/mos12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsMos") : $langs->transnoentitiesnoconv("NumberOfMos")));
