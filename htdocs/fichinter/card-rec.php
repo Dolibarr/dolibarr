@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 	// on récupère les enregistrements
 	$object->fetch($id);
-
+	$res = $object->fetch_lines();
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
 		$newinter->socid = $object->socid;
@@ -178,6 +178,7 @@ if ($action == 'add') {
 
 	$newinter->entity = $object->entity;
 	$newinter->duree = $object->duree;
+	$newinter->datei = $object->date;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -194,7 +195,7 @@ if ($action == 'add') {
 	if ($newfichinterid > 0) {
 		// Now we add line of details
 		foreach ($object->lines as $line) {
-			$newinter->addline($user, $newfichinterid, $line->desc, '', $line->duree, '');
+			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, '');
 		}
 
 		// on update le nombre d'inter crée à partir du modèle
@@ -743,7 +744,7 @@ if ($action == 'create') {
 				print '<div class="inline-block divButAction">';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
-				print $langs->trans("CreateFichInter").'</a></div>';
+				print $langs->trans("AddIntervention").'</a></div>';
 			}
 
 			if ($user->rights->ficheinter->supprimer) {

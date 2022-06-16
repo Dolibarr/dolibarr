@@ -1047,7 +1047,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if ($conf->ficheinter->enabled) {
+		if (!empty($conf->ficheinter->enabled)) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;
