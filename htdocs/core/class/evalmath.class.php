@@ -366,9 +366,9 @@ class EvalMath
 	}
 
 	/**
-	 * evaluate postfix notation
+	 * Evaluate postfix notation
 	 *
-	 * @param string $tokens      	Expression
+	 * @param string $tokens      	An array of expression to evaluate ('operators'). The operand are into ->stack.
 	 * @param array $vars       	Array
 	 * @return string 				Output
 	 */

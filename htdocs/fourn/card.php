@@ -881,7 +881,7 @@ if ($object->id > 0) {
 		}
 
 		// Add action
-		if (!empty($conf->agenda->enabled) && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
+		if (isModEnabled('agenda') && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
 			if ($user->rights->agenda->myactions->create) {
 				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;socid='.$object->id, '');
 			} else {

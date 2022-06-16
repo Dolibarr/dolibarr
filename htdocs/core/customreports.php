@@ -507,16 +507,16 @@ if ($mode == 'grid') {
 				);
 			}
 		}
-		// Add measure from extrafields
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
-					$arrayofyaxis['te.'.$key] = array(
-						'label' => $extrafields->attributes[$object->table_element]['label'][$key],
-						'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
-						'table' => $object->table_element
-					);
-				}
+	}
+	// Add measure from extrafields
+	if ($object->isextrafieldmanaged) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key]) && (!isset($extrafields->attributes[$object->table_element]['enabled'][$key]) || dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1, 1, '1'))) {
+				$arrayofyaxis['te.'.$key] = array(
+					'label' => $extrafields->attributes[$object->table_element]['label'][$key],
+					'position' => (int) $extrafields->attributes[$object->table_element]['pos'][$key],
+					'table' => $object->table_element
+				);
 			}
 		}
 	}

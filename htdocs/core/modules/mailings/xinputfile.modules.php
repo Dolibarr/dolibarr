@@ -151,10 +151,12 @@ class mailing_xinputfile extends MailingTargets
 						$cpt++;
 						$buffer = trim(fgets($handle));
 						$tab = explode(';', $buffer, 4);
-						$email = $tab[0];
-						$name = $tab[1];
-						$firstname = $tab[2];
-						$other = $tab[3];
+
+						$email = dol_string_nohtmltag($tab[0]);
+						$name = dol_string_nohtmltag(empty($tab[1]) ? '' : $tab[1]);
+						$firstname = dol_string_nohtmltag(empty($tab[2]) ? '' : $tab[2]);
+						$other = dol_string_nohtmltag(empty($tab[3]) ? '' : $tab[3]);
+
 						if (!empty($buffer)) {
 							//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
 							if (isValidEMail($email)) {

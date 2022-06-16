@@ -167,7 +167,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if ($conf->categorie->enabled) {
+if (isModEnabled('categorie')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";

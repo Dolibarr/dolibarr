@@ -141,7 +141,9 @@ button.calcbutton2 {
 	margin: 1px;
 	border-radius: 3px;
 }
-
+button.calcbutton2.clicked {
+	background-color: #8855AA;
+}
 button.calcbutton2 .iconwithlabel {
 	padding-bottom: 10px;
 }

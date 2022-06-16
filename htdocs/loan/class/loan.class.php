@@ -224,15 +224,15 @@ class Loan extends CommonObject
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_capital)) {
+		if (isModEnabled('accounting') && empty($this->account_capital)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_insurance)) {
+		if (isModEnabled('accounting') && empty($this->account_insurance)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_interest)) {
+		if (isModEnabled('accounting') && empty($this->account_interest)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
 			return -2;
 		}

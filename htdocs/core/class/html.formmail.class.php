@@ -116,6 +116,7 @@ class FormMail extends Form
 	 * @var int|string|array
 	 */
 	public $withto; // Show recipient emails
+	public $withreplyto;
 
 	/**
 	 * @var int|string 0 = Do not Show free text for recipient emails
@@ -395,7 +396,7 @@ class FormMail extends Form
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 				$newlang = $this->param['langsmodels'];
 			}
 			if (!empty($newlang)) {
@@ -584,7 +585,10 @@ class FormMail extends Form
 						}
 
 						// Add also company main email
-						$liste['company'] = $conf->global->MAIN_INFO_SOCIETE_NOM.' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+						if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+							$liste['company'] = !empty($conf->global->MAIN_INFO_SOCIETE_NOM)?$conf->global->MAIN_INFO_SOCIETE_NOM:$conf->global->MAIN_INFO_SOCIETE_MAIL;
+							$liste['company'].=' &lt;'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'&gt;';
+						}
 
 						// Add also email aliases if there is some
 						$listaliases = array(
@@ -1540,7 +1544,7 @@ class FormMail extends Form
 
 					$extrafields->fetch_name_optionals_label($product->table_element, true);
 
-					if (is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
+					if (!empty($extrafields->attributes[$product->table_element]['label']) && is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
 						}
@@ -1618,7 +1622,7 @@ class FormMail extends Form
 					if (!empty($conf->don->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
-					if (!empty($conf->facture->enabled)) {
+					if (isModEnabled('facture')) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
 					if (!empty($conf->commande->enabled)) {
@@ -1635,7 +1639,7 @@ class FormMail extends Form
 					if (!empty($conf->don->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 					}
-					if (!empty($conf->facture->enabled)) {
+					if (isModEnabled('facture')) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
 					if (!empty($conf->commande->enabled)) {
@@ -1672,6 +1676,8 @@ class FormMail extends Form
 
 /**
  * ModelMail
+ *
+ * Object of table llx_c_email_templates
  */
 class ModelMail
 {
@@ -1686,6 +1692,16 @@ class ModelMail
 	public $label;
 
 	/**
+	 * @var int Owner of email template
+	 */
+	public $fk_user;
+
+	/**
+	 * @var int Is template private
+	 */
+	public $private;
+
+	/**
 	 * @var string Model mail topic
 	 */
 	public $topic;
@@ -1697,4 +1713,14 @@ class ModelMail
 	public $content_lines;
 	public $lang;
 	public $joinfiles;
+
+	/**
+	 * @var string Module the template is dedicated for
+	 */
+	public $module;
+
+	/**
+	 * @var int Position of template in a combo list
+	 */
+	public $position;
 }
