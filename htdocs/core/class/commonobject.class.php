@@ -6148,7 +6148,7 @@ abstract class CommonObject
 								//var_dump($this->oldcopy);exit;
 								if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-									if ($this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
 										// var_dump($algo);
@@ -7556,19 +7556,26 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
-							$getnomurlparam3 = (!isset($InfoFieldList[5]) ? 0 : $InfoFieldList[5]);
-							$getnomurlparam4 = (!isset($InfoFieldList[6]) ? -1 : $InfoFieldList[6]);
-							$getnomurlparam5 = (!isset($InfoFieldList[7]) ? 0 : $InfoFieldList[7]);
-							$getnomurlparam6 = (!isset($InfoFieldList[8]) ? 0 : $InfoFieldList[8]);
-
-							/**
-							 * @var Product $object
-							 */
-							$object->fetch($value, '', '', '', 0, 1, 1);
-							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6);
+							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
-							$object->fetch($value);
-							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+							$result = $object->fetch($value);
+						}
+						if ($result > 0) {
+							if ($object->element === 'product') {
+								$getnomurlparam3 = (!isset($InfoFieldList[5]) ? 0 : $InfoFieldList[5]);
+								$getnomurlparam4 = (!isset($InfoFieldList[6]) ? -1 : $InfoFieldList[6]);
+								$getnomurlparam5 = (!isset($InfoFieldList[7]) ? 0 : $InfoFieldList[7]);
+								$getnomurlparam6 = (!isset($InfoFieldList[8]) ? 0 : $InfoFieldList[8]);
+
+								/**
+								 * @var Product $object
+								 */
+								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6);
+							} else {
+								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+							}
+						} else {
+							$value = '';
 						}
 					}
 				} else {

@@ -347,9 +347,9 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$langs->load("compta");
 		$rowspan++; $sectionauto[] = array('position'=>120, 'level'=>1, 'module'=>'salaries', 'test'=>$conf->salaries->enabled, 'label'=>$langs->trans("Salaries"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}
-	if (!empty($conf->projet->enabled)) {
-		$rowspan++; $sectionauto[] = array('position'=>130, 'level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
-		$rowspan++; $sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
+	if (!empty($conf->project->enabled)) {
+		$rowspan++; $sectionauto[] = array('position'=>130, 'level'=>1, 'module'=>'project', 'test'=>$conf->project->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+		$rowspan++; $sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>$conf->project->enabled, 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
 	if (!empty($conf->ficheinter->enabled)) {
 		$langs->load("interventions");
