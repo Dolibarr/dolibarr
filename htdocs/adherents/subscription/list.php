@@ -111,7 +111,7 @@ $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 		$search_note = "";
 		$search_amount = "";
 		$search_account = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -628,10 +628,10 @@ while ($i < min($num, $limit)) {
 	print '<td class="center">';
 	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
+		if (in_array($obj->crowid, $arrayofselected)) {
 			$selected = 1;
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '<input id="cb'.$obj->crowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->crowid.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
 	if (!$i) {

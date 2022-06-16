@@ -144,6 +144,7 @@ class Asset extends CommonObject
 	public $fk_disposal_type;
 	public $disposal_depreciated;
 	public $disposal_subject_to_vat;
+	public $supplier_invoice_id;
 	public $note_public;
 	public $note_private;
 	public $date_creation;

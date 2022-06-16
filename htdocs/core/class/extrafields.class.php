@@ -817,7 +817,8 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help,";
+		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
@@ -866,6 +867,9 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
+					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
+					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
+					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 				}
@@ -956,6 +960,8 @@ class ExtraFields
 				$morecss = 'minwidth400';
 			} elseif ($type == 'boolean') {
 				$morecss = '';
+			} elseif ($type == 'radio') {
+				$morecss = 'width25';
 			} else {
 				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
@@ -1065,35 +1071,56 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
-			}
+			if ($mode) {
+				$options = array();
+				foreach ($param['options'] as $okey => $val) {
+					if ((string) $okey == '') {
+						continue;
+					}
 
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			$out .= '<option value="0">&nbsp;</option>';
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
-					continue;
+					if ($langfile && $val) {
+						$options[$okey] = $langs->trans($val);
+					} else {
+						$options[$okey] = $val;
+					}
 				}
-				$valarray = explode('|', $val);
-				$val = $valarray[0];
-				$parent = '';
-				if (!empty($valarray[1])) {
-					$parent = $valarray[1];
+				$selected = array();
+				if (!is_array($value)) {
+					$selected = explode(',', $value);
 				}
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
-				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>';
-				if ($langfile && $val) {
-					$out .= $langs->trans($val);
-				} else {
-					$out .= $val;
+
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2));
+			} else {
+				if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 				}
-				$out .= '</option>';
+
+				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				$out .= '<option value="0">&nbsp;</option>';
+				foreach ($param['options'] as $key => $val) {
+					if ((string) $key == '') {
+						continue;
+					}
+					$valarray = explode('|', $val);
+					$val = $valarray[0];
+					$parent = '';
+					if (!empty($valarray[1])) {
+						$parent = $valarray[1];
+					}
+					$out .= '<option value="'.$key.'"';
+					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+					$out .= '>';
+					if ($langfile && $val) {
+						$out .= $langs->trans($val);
+					} else {
+						$out .= $val;
+					}
+					$out .= '</option>';
+				}
+				$out .= '</select>';
 			}
-			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
@@ -1147,7 +1174,7 @@ class ExtraFields
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
-						// can use curent entity filter
+						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
 						}
@@ -1262,7 +1289,7 @@ class ExtraFields
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -1315,6 +1342,10 @@ class ExtraFields
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
+						// can use current entity filter
+						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
+							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
+						}
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 							$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1640,25 +1671,30 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						if (!empty($obj->{$InfoFieldList[1]})) {
-							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						$tmppropname = $InfoFieldList[1];
+						//$obj->$tmppropname = '';
+						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
+							$translabel = $langs->trans($obj->$tmppropname);
 						}
-						if ($translabel != $obj->{$InfoFieldList[1]}) {
+						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
 						} else {
-							$value = $obj->{$InfoFieldList[1]};
+							$value = isset($obj->$tmppropname) ? $obj->$tmppropname : '';
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					$c = new Categorie($this->db);
-					$c->fetch($obj->rowid);
-					$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+					if ($obj->rowid) {
+						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+						$c = new Categorie($this->db);
+						$result = $c->fetch($obj->rowid);
+						if ($result > 0) {
+							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+							foreach ($ways as $way) {
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
+							}
+						}
 					}
 					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
@@ -1666,14 +1702,16 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = $langs->trans($param['options'][$value]);
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
 			$toprint = array();
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					if (!empty($valueval)) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -1808,7 +1846,7 @@ class ExtraFields
 	}
 
 	/**
-	 * Return tag to describe alignement to use for this extrafield
+	 * Return the CSS to use for this extrafield into list
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
@@ -1824,29 +1862,33 @@ class ExtraFields
 			$type = $this->attribute_type[$key];
 		}
 
-		$align = '';
+		$cssstring = '';
 
 		if ($type == 'date') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'datetime') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'int') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'double') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'boolean') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'radio') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'checkbox') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		}
 
-		return $align;
+		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
+			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		}
+
+		return $cssstring;
 	}
 
 	/**
@@ -1942,14 +1984,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:
-	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object	$object         	Object
+	 * @param	string	$onlykey			Only some keys are filled:
+	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
+	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
 		global $_POST, $langs;
 
@@ -2009,8 +2052,10 @@ class ExtraFields
 						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
+
+						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
@@ -2023,7 +2068,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
-						$value_key = implode($value_arr, ',');
+						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = '';
 					}
@@ -2041,12 +2086,22 @@ class ExtraFields
 					}
 				}
 
+				if (!empty($error_field_required[$key]) && $todefaultifmissing) {
+					// Value is required but we have a default value and we asked to set empty value to the default value
+					if (!empty($this->attributes[$object->table_element]['default']) && !is_null($this->attributes[$object->table_element]['default'][$key])) {
+						$value_key = $this->attributes[$object->table_element]['default'][$key];
+						unset($error_field_required[$key]);
+						$nofillrequired--;
+					}
+				}
+
 				$object->array_options["options_".$key] = $value_key;
 			}
 
 			if ($nofillrequired) {
 				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				$this->error = $langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required);
+				setEventMessages($this->error, null, 'errors');
 				return -1;
 			} else {
 				return 1;
@@ -2113,6 +2168,16 @@ class ExtraFields
 						$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
 					} else {
 						continue; // Value was not provided, we should not set it.
+					}
+				} elseif ($key_type == 'select') {
+					// to detect if we are in search context
+					if (GETPOSTISARRAY($keysuffix."options_".$key.$keyprefix)) {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+						// Make sure we get an array even if there's only one selected
+						$value_arr = (array) $value_arr;
+						$value_key = implode(',', $value_arr);
+					} else {
+						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {

@@ -407,10 +407,10 @@ if (empty($error) && !empty($xml)) {
 	$checksumget = md5(join(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
-	/*var_dump(count($file_list['added']));
-	var_dump($checksumget);
-	var_dump($checksumtoget);
-	var_dump($checksumget == $checksumtoget);*/
+	//var_dump(count($file_list['added']));
+	//var_dump($checksumget);
+	//var_dump($checksumtoget);
+	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 

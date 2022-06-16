@@ -56,7 +56,7 @@ if (!empty($conf->propal->enabled)) {
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -268,7 +268,10 @@ if (empty($reshook)) {
 						$sub_qty[$j]['id_batch'] = GETPOST($batch, 'int'); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
-						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+						//var_dump($qty);
+						//var_dump($batch);
+						//var_dump($sub_qty[$j]['q']);
+						//var_dump($sub_qty[$j]['id_batch']);
 
 						$j++;
 						$batch = "batchl".$i."_".$j;
@@ -325,7 +328,6 @@ if (empty($reshook)) {
 		//var_dump($batch_line[2]);
 
 		if ($totalqty > 0) {		// There is at least one thing to ship
-			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -813,7 +815,7 @@ if (empty($action)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -900,7 +902,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($object->fk_project)) {
 					$projectid = $object->fk_project;
@@ -1569,7 +1571,8 @@ if ($action == 'create') {
 						}
 					}
 
-					// Line extrafield
+					// Display lines for extrafields of the Shipment line
+					// $line is a 'Order line'
 					if (!empty($extrafields)) {
 						//var_dump($line);
 						$colspan = 5;
@@ -1578,6 +1581,7 @@ if ($action == 'create') {
 						$srcLine = new OrderLine($db);
 						$srcLine->id = $line->id;
 						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+
 						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
@@ -1714,7 +1718,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if (0) {    // Do not change on shipment
@@ -2412,7 +2416,8 @@ if ($action == 'create') {
 				}
 				print "</tr>";
 
-				// Display lines extrafields
+				// Display lines extrafields.
+				// $line is a line of shipment
 				if (!empty($extrafields)) {
 					$colspan = 6;
 					if ($origin && $origin_id > 0) {
@@ -2475,7 +2480,7 @@ if ($action == 'create') {
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
-				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
@@ -2494,7 +2499,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if (!empty($conf->facture->enabled) && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
+			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
 				if ($user->rights->facture->creer) {
 					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					// If we do that, we must also make this option official.
@@ -2512,7 +2517,7 @@ if ($action == 'create') {
 				if ($user->rights->expedition->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}

@@ -56,6 +56,8 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $picto = 'emailsenderprofile';
 
+	public $fk_user_creat;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;

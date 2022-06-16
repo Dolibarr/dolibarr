@@ -83,7 +83,7 @@ if ($resultproject < 0) {
 }
 
 // Security check
-if (empty($conf->projet->enabled)) {
+if (empty($conf->project->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
 

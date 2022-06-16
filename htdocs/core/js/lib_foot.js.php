@@ -230,7 +230,7 @@ print '
 					}
 				);
 
-				jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
+				jQuery(\'.clipboardCPValue, .clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 					/* console.log(this.parentNode); */
 					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class and we want to copy content of clipboardCPValue class");
 

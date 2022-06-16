@@ -376,7 +376,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
+if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
@@ -480,10 +480,13 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
 	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
-	if ($rescomp > 0) {   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
-		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
-		header("Location: ".DOL_URL_ROOT."/install/index.php");
-		exit;
+	if ($rescomp > 0) {   // Programs have a version higher than database.
+		if (empty($conf->global->MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE) || $rescomp < 3) {
+			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
+			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
+			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			exit;
+		}
 	}
 }
 
@@ -1340,15 +1343,16 @@ if (!function_exists("llxHeader")) {
 	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
 	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
-	 * @param	int				$disablenofollow	Disable the "nofollow" on page
+	 * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+	 * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
 	 * @return	void
 	 */
-	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
 		global $conf;
 
 		// html header
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
 
 		$tmpcsstouse = 'sidebar-collapse'.($morecssonbody ? ' '.$morecssonbody : '');
 		// If theme MD and classic layer, we open the menulayer by default.
@@ -1366,11 +1370,11 @@ if (!function_exists("llxHeader")) {
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
 
 		// top menu and left menu area
-		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) {
+		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 
-		if (empty($conf->dol_hide_leftmenu)) {
+		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			left_menu('', $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
@@ -1461,10 +1465,11 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param 	array  	$arrayofjs		 Array of complementary js files
  * @param 	array  	$arrayofcss		 Array of complementary css files
  * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
- * @param   int     $disablenofollow Disable no follow tag
+ * @param   int     $disablenofollow Disable nofollow tag for meta robots
+ * @param   int     $disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 
@@ -1495,7 +1500,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		// Displays meta
 		print '<meta charset="utf-8">'."\n";
-		print '<meta name="robots" content="noindex'.($disablenofollow ? '' : ',nofollow').'">'."\n"; // Do not index
+		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
@@ -1750,7 +1755,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if (empty($disableforlogin) && (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -1778,7 +1783,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
 			if (!defined('NOBROWSERNOTIF') && !defined('NOREQUIREMENU') && !defined('NOLOGIN')) {
 				$enablebrowsernotif = false;
-				if (!empty($conf->agenda->enabled) && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+				if (isModEnabled('agenda') && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 					$enablebrowsernotif = true;
 				}
 				if ($conf->browser->layout == 'phone') {
@@ -1957,7 +1962,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		// Link to module builder
-		if (!empty($conf->modulebuilder->enabled)) {
+		if (isModEnabled('modulebuilder')) {
 			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
@@ -2081,6 +2086,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		print "</div>\n"; // end div class="login_block"
 
 		print '</header>';
+		//print '<header class="header2">&nbsp;</header>';
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";
@@ -2147,7 +2153,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
-	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.$langs->trans("Country".$mysoc->country_code).'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2244,7 +2250,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2397,7 +2403,15 @@ function printDropdownQuickadd()
 	$items = array(
 		'items' => array(
 			array(
-				"url" => "/societe/card.php?action=create",
+				"url" => "/adherents/card.php?action=create&amp;mainmenu=members",
+				"title" => "MenuNewMember@members",
+				"name" => "Adherent@members",
+				"picto" => "object_member",
+				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"position" => 5,
+			),
+			array(
+				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
@@ -2405,7 +2419,7 @@ function printDropdownQuickadd()
 				"position" => 10,
 			),
 			array(
-				"url" => "/contact/card.php?action=create",
+				"url" => "/contact/card.php?action=create&amp;mainmenu=companies",
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
@@ -2413,7 +2427,7 @@ function printDropdownQuickadd()
 				"position" => 20,
 			),
 			array(
-				"url" => "/comm/propal/card.php?action=create",
+				"url" => "/comm/propal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
@@ -2422,7 +2436,7 @@ function printDropdownQuickadd()
 			),
 
 			array(
-				"url" => "/commande/card.php?action=create",
+				"url" => "/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
@@ -2430,15 +2444,15 @@ function printDropdownQuickadd()
 				"position" => 40,
 			),
 			array(
-				"url" => "/compta/facture/card.php?action=create",
+				"url" => "/compta/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
 				"position" => 50,
 			),
 			array(
-				"url" => "/contrat/card.php?action=create",
+				"url" => "/contrat/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
@@ -2446,31 +2460,31 @@ function printDropdownQuickadd()
 				"position" => 60,
 			),
 			array(
-				"url" => "/supplier_proposal/card.php?action=create",
+				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
-				"picto" => "object_propal",
+				"picto" => "supplier_proposal",
 				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
 				"position" => 70,
 			),
 			array(
-				"url" => "/fourn/commande/card.php?action=create",
+				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
-				"picto" => "object_order",
+				"picto" => "supplier_order",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
 				"position" => 80,
 			),
 			array(
-				"url" => "/fourn/facture/card.php?action=create",
+				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
-				"picto" => "object_bill",
+				"picto" => "supplier_invoice",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
 				"position" => 90,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=0",
+				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
@@ -2478,12 +2492,20 @@ function printDropdownQuickadd()
 				"position" => 100,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=1",
+				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
 				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
 				"position" => 110,
+			),
+			array(
+				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
+				"title" => "AddUser@users",
+				"name" => "User@users",
+				"picto" => "user",
+				"activation" => $user->rights->user->user->creer, // vs hooking
+				"position" => 500,
 			),
 		),
 	);
@@ -2498,7 +2520,7 @@ function printDropdownQuickadd()
 	$parameters = array();
 	$hook_items = $items;
 	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
-	if (is_numeric($reshook) && is_array($hookmanager->results)) {
+	if (is_numeric($reshook) && !empty($hookmanager->results) && is_array($hookmanager->results)) {
 		if ($reshook == 0) {
 			$items['items'] = array_merge($items['items'], $hookmanager->results); // add
 		} else {
@@ -2510,7 +2532,8 @@ function printDropdownQuickadd()
 		foreach ($items['items'] as $key => $row) {
 			$position[$key] = $row['position'];
 		}
-		array_multisort($position, SORT_ASC, $items['items']);
+		$array1_sort_order = SORT_ASC;
+		array_multisort($position, $array1_sort_order, $items['items']);
 	}
 
 	foreach ($items['items'] as $item) {

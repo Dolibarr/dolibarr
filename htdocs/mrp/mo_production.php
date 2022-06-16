@@ -50,6 +50,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'moc
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid   = GETPOST('lineid', 'int');
 $fk_movement   = GETPOST('fk_movement', 'int');
+$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
@@ -519,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
@@ -734,6 +735,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
+
+			// Select warehouse to force it everywhere
+			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				$listwarehouses = $tmpwarehouse->list_array(1);
+				if (count($listwarehouses) > 1) {
+					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+				} elseif (count($listwarehouses) == 1) {
+					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+				}
+			}
 		}
 		print '</td>';
 		if ($conf->stock->enabled) {
@@ -1056,6 +1067,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</table>';
 		print '</div>';
+
+		// default warehouse processing
+		print '<script type="text/javascript">
+			$(document).ready(function () {
+				$("select[name=fk_default_warehouse]").change(function() {
+                    var fk_default_warehouse = $("option:selected", this).val();
+					$("select[name^=idwarehouse-]").val(fk_default_warehouse).change();
+                });
+			});
+		</script>';
 
 
 		// Lines to produce

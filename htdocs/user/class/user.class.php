@@ -80,6 +80,7 @@ class User extends CommonObject
 	 * @var string gender
 	 */
 	public $gender;
+
 	public $birth;
 
 	/**
@@ -297,7 +298,7 @@ class User extends CommonObject
 	public $all_permissions_are_loaded;
 
 	/**
-	 * @var int Number of rights granted to the user
+	 * @var int Number of rights granted to the user. Value loaded after a getrights().
 	 */
 	public $nb_rights;
 
@@ -364,8 +365,8 @@ class User extends CommonObject
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
 		'firstname'=>array('type'=>'varchar(50)', 'label'=>'FirstName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'ref_employee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
-		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'national_registration_number', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
+		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
+		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
 	);
 
 
@@ -717,7 +718,8 @@ class User extends CommonObject
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'position@hrm' => 'all@hrm' // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'facturerec' => 'facture'
 		);
 		if (!empty($moduletomoduletouse[$module])) {
 			$module = $moduletomoduletouse[$module];
@@ -883,15 +885,18 @@ class User extends CommonObject
 				$i = 0;
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-					if (!$this->db->query($sql)) {
-						$error++;
-					}
-					$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-					if (!$this->db->query($sql)) {
-						$error++;
+					if ($obj) {
+						$nid = $obj->id;
+
+						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
+						if (!$this->db->query($sql)) {
+							$error++;
+						}
+						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+						if (!$this->db->query($sql)) {
+							$error++;
+						}
 					}
 
 					$i++;
@@ -1096,6 +1101,14 @@ class User extends CommonObject
 			}
 		}
 
+		// For avoid error
+		if (!isset($this->rights) || !is_object($this->rights)) {
+			$this->rights = new stdClass(); // For avoid error
+		}
+		if (!isset($this->rights->user) || !is_object($this->rights->user)) {
+			$this->rights->user = new stdClass(); // For avoid error
+		}
+
 		// Get permission of users + Get permissions of groups
 
 		// First user permissions
@@ -1121,7 +1134,6 @@ class User extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
@@ -1131,9 +1143,6 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
-						if (!isset($this->rights) || !is_object($this->rights)) {
-							$this->rights = new stdClass(); // For avoid error
-						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1200,9 +1209,6 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
-						if (!isset($this->rights) || !is_object($this->rights)) {
-							$this->rights = new stdClass(); // For avoid error
-						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1230,6 +1236,63 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+		}
+
+		// Force permission on user for admin
+		if (!empty($this->admin)) {
+			if (empty($this->rights->user->user)) {
+				$this->rights->user->user = new stdClass();
+			}
+			$listofpermtotest = array('lire', 'creer', 'password', 'supprimer', 'export');
+			foreach ($listofpermtotest as $permtotest) {
+				if (empty($this->rights->user->user->$permtotest)) {
+					$this->rights->user->user->$permtotest = 1;
+					$this->nb_rights++;
+				}
+			}
+			if (empty($this->rights->user->self)) {
+				$this->rights->user->self = new stdClass();
+			}
+			$listofpermtotest = array('creer', 'password');
+			foreach ($listofpermtotest as $permtotest) {
+				if (empty($this->rights->user->self->$permtotest)) {
+					$this->rights->user->self->$permtotest = 1;
+					$this->nb_rights++;
+				}
+			}
+			// Add test on advanced permissions
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (empty($this->rights->user->user_advance)) {
+					$this->rights->user->user_advance = new stdClass();
+				}
+				$listofpermtotest = array('readperms', 'write');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user->user_advance->$permtotest)) {
+						$this->rights->user->user_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+				if (empty($this->rights->user->self_advance)) {
+					$this->rights->user->self_advance = new stdClass();
+				}
+				$listofpermtotest = array('readperms', 'writeperms');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user->self_advance->$permtotest)) {
+						$this->rights->user->self_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+				if (empty($this->rights->user->group_advance)) {
+					$this->rights->user->group_advance = new stdClass();
+				}
+				$listofpermtotest = array('read', 'readperms', 'write', 'delete');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user) || empty($this->rights->user->group_advance->$permtotest)) {
+						$this->rights->user->group_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+			}
 		}
 
 		// For backward compatibility
@@ -2742,13 +2805,6 @@ class User extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('userdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2863,7 +2919,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
+		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2894,6 +2950,50 @@ class User extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+
+		$label = '';
+		if (!empty($this->photo)) {
+			//$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			//$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
+			$return .= $label;
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if ($this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
 	}
 
 
@@ -3748,7 +3848,7 @@ class User extends CommonObject
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if ($this->findUserIdByEmailCache[$email]) {
+		if (isset($this->findUserIdByEmailCache[$email])) {
 			return $this->findUserIdByEmailCache[$email];
 		}
 

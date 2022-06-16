@@ -122,11 +122,11 @@ if (empty($reshook)) {
 	// Action add group
 	if ($action == 'add') {
 		if ($caneditperms) {
-			if (!GETPOST("nom", "nohtml")) {
+			if (!GETPOST("nom", "alphanohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= GETPOST("nom", 'nohtml');
+				$object->name	= GETPOST("nom", 'alphanohtml');
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name = GETPOST("nom", 'nohtml');
+			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
@@ -257,7 +257,7 @@ $formfile = new FormFile($db);
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
-	print dol_set_focus('#nom');
+	dol_set_focus('#nom');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -454,7 +454,7 @@ if ($action == 'create') {
 						print '<td class="center">'.$useringroup->getLibStatut(5).'</td>';
 						print '<td class="right">';
 						if (!empty($user->admin)) {
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=removeuser&token='.newToken().'&user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
 						} else {
@@ -483,7 +483,7 @@ if ($action == 'create') {
 			$genallowed = $user->rights->user->user->creer;
 			$delallowed = $user->rights->user->user->supprimer;
 
-			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, null);

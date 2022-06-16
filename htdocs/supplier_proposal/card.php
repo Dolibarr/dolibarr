@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -321,8 +321,20 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				if ($origin && $originid) {
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
+					$element = $subelement = $origin;
+					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+						$element = $regs[1];
+						$subelement = $regs[2];
+					}
+
+					// For compatibility
+					if ($element == 'order') {
+						$element = $subelement = 'commande';
+					}
+					if ($element == 'propal') {
+						$element = 'comm/propal';
+						$subelement = 'propal';
+					}
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -741,7 +753,9 @@ if (empty($reshook)) {
 						$date_end
 					);
 
-					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
+					//var_dump($tva_tx);
+					//var_dump($productsupplier->fourn_pu);
+					//var_dump($price_base_type);exit;
 					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -1117,7 +1131,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1136,8 +1150,20 @@ if ($action == 'create') {
 
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
-		$element = 'supplier_proposal';
-		$subelement = 'supplier_proposal';
+		$element = $subelement = GETPOST('origin');
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+
+		// For compatibility
+		if ($element == 'order' || $element == 'commande') {
+			$element = $subelement = 'commande';
+		}
+		if ($element == 'propal') {
+			$element = 'comm/propal';
+			$subelement = 'propal';
+		}
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -1286,7 +1312,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 
 		$formproject = new FormProjets($db);
@@ -1529,7 +1555,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {

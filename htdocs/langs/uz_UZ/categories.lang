@@ -90,6 +90,7 @@ CategorieRecursivHelp=Agar parametr yoniq bo'lsa, mahsulotni pastki toifaga qo's
 AddProductServiceIntoCategory=Quyidagi mahsulot / xizmatni qo'shing
 AddCustomerIntoCategory=Mijozga toifani tayinlang
 AddSupplierIntoCategory=Yetkazib beruvchiga toifani tayinlang
+AssignCategoryTo=Kategoriyani tayinlang
 ShowCategory=Teg / toifani ko'rsatish
 ByDefaultInList=Odatiy bo'lib, ro'yxatda
 ChooseCategory=Toifani tanlang

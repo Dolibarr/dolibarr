@@ -34,7 +34,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	//include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
@@ -201,12 +201,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->titre = GETPOST('title', 'nohtml'); // deprecated
-			$object->title = GETPOST('title', 'nohtml');
+			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
+			$object->title = GETPOST('title', 'alphanohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice', 'alpha');
+			$object->model_pdf = GETPOST('modelpdf', 'alphanohtml');
+			$object->usenewprice = GETPOST('usenewprice', 'alphanohtml');
 
 			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
@@ -641,7 +641,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -924,7 +924,7 @@ llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -954,7 +954,7 @@ if ($action == 'create') {
 		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$rowspan++;
 		}
 		if ($object->fk_account > 0) {
@@ -1034,20 +1034,10 @@ if ($action == 'create') {
 
 		// Payment mode
 		print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
+		print img_picto('', 'payment', 'class="pictofixedwidth"');
 		print $form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ? GETPOST('mode_reglement_id', 'int') : $object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 0, 0, 1, '', 1);
 		//$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', '', 1);
 		print "</td></tr>";
-
-		// Project
-		if (!empty($conf->projet->enabled) && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
-			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
-			$langs->load('projects');
-			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project');
-			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
-			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$object->thirdparty->id.(!empty($id) ? '&id='.$id : '')).'">'.img_object($langs->trans("AddProject"), 'add').'</a>';
-			print '</td></tr>';
-		}
 
 		// Bank account
 		if ($object->fk_account > 0) {
@@ -1056,10 +1046,22 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
+		// Project
+		if (!empty($conf->project->enabled) && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
+			$langs->load('projects');
+			print '<tr><td>'.$langs->trans('Project').'</td><td>';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
+			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$object->thirdparty->id.(!empty($id) ? '&id='.$id : '')).'">'.img_object($langs->trans("AddProject"), 'add').'</a>';
+			print '</td></tr>';
+		}
+
 		// Model pdf
 		print "<tr><td>".$langs->trans('Model')."</td><td>";
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$list = ModelePDFFactures::liste_modeles($db);
+		print img_picto('', 'generic', 'class="pictofixedwidth"');
 		print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
 		print "</td></tr>";
 
@@ -1201,7 +1203,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
@@ -1605,19 +1607,19 @@ if ($action == 'create') {
 
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-        	<input type="hidden" name="token" value="' . newToken().'">
-        	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-        	<input type="hidden" name="mode" value="">
-        	<input type="hidden" name="id" value="' . $object->id.'">
-        	';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<input type="hidden" name="token" value="' . newToken().'">';
+		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">';
+		print '<input type="hidden" name="mode" value="">';
+		print '<input type="hidden" name="id" value="' . $object->id.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 		// Show object lines
 		if (!empty($object->lines)) {
 			$canchangeproduct = 1;
@@ -1693,7 +1695,20 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-		print '</div></div>';
+		print '</div>';
+		print '<div class="fichehalfright">';
+
+		$MAXEVENT = 10;
+
+		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+
+		print '</div>';
+		print '</div>';
 	}
 }
 

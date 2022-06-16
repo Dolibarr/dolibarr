@@ -23,10 +23,10 @@ TOKEN_DELETE=Διαγραφή αποθηκευμένου διακριτικού
 OAUTH_GOOGLE_NAME=OAuth υπηρεσία Google
 OAUTH_GOOGLE_ID=Αναγνωριστικό Google OAuth
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Μεταβείτε στη <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">σελίδα αυτή, στη</a> συνέχεια &quot;Πιστοποιητικά&quot;, για να δημιουργήσετε διαπιστευτήρια OAuth
+OAUTH_GOOGLE_DESC=Μεταβείτε σε <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> αυτή τη σελίδα </a> και μετά "Διαπιστευτήρια" για να δημιουργήσετε διαπιστευτήρια OAuth
 OAUTH_GITHUB_NAME=Υπηρεσία OAuth GitHub
 OAUTH_GITHUB_ID=Αναγνωριστικό OAuth GitHub
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Μεταβείτε στη <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">σελίδα αυτή, στη</a> συνέχεια &quot;Εγγραφή νέας εφαρμογής&quot; για να δημιουργήσετε διαπιστευτήρια OAuth
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_GITHUB_DESC=Μεταβείτε σε <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> αυτή τη σελίδα </a> και στη συνέχεια "Εγγραφή νέας εφαρμογής" για να δημιουργήσετε διαπιστευτήρια OAuth
+OAUTH_STRIPE_TEST_NAME=Δοκιμή OAuth Stripe
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Ζωντανά

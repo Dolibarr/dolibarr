@@ -116,6 +116,16 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
+	 * @var array		To store result of ->liste_contact()
+	 */
+	public $contacts_ids;
+
+	/**
+	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
+	 */
+	public $linked_objects;
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -201,7 +211,7 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 	The type of originating object ('commande', 'facture', ...)
+	 * @var string 	The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;
@@ -1649,13 +1659,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) {
+		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0);
 		if ($force_thirdparty_id) {
 			$idtofetch = $force_thirdparty_id;
 		}
@@ -2236,10 +2246,14 @@ abstract class CommonObject
 	 *	Link element with a project
 	 *
 	 *	@param     	int		$projectid		Project id to link element to
+	 *  @param		int		$notrigger		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setProject($projectid)
+	public function setProject($projectid, $notrigger = 0)
 	{
+		global $user;
+		$error = 0;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -2270,13 +2284,33 @@ abstract class CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		}
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->fk_project = ((int) $projectid);
-			return 1;
 		} else {
 			dol_print_error($this->db);
+			$error++;
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper($this->element) . '_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
@@ -2588,12 +2622,13 @@ abstract class CommonObject
 	/**
 	 *  Change the payments terms
 	 *
-	 *  @param		int		$id		Id of new payment terms
-	 *  @return		int				>0 if OK, <0 if KO
+	 *  @param		int		$id					Id of new payment terms
+	 *  @param		string	$deposit_percent	% of deposit if needed by payment terms
+	 *  @return		int							>0 if OK, <0 if KO
 	 */
-	public function setPaymentTerms($id)
+	public function setPaymentTerms($id, $deposit_percent = null)
 	{
-		dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.var_export($deposit_percent, true).')');
 		if ($this->statut >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_cond_reglement';
@@ -2604,8 +2639,19 @@ abstract class CommonObject
 				$fieldname = 'cond_reglement_supplier';
 			}
 
+			if (empty($deposit_percent) || $deposit_percent < 0) {
+				$deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+			}
+
+			if ($deposit_percent > 100) {
+				$deposit_percent = 100;
+			}
+
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			if (in_array($this->table_element, array('propal', 'commande'))) {
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2615,6 +2661,7 @@ abstract class CommonObject
 					$this->cond_reglement_supplier_id = $id;
 				}
 				$this->cond_reglement = $id; // for compatibility
+				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setPaymentTerms Error '.$sql.' - '.$this->db->error());
@@ -3391,9 +3438,9 @@ abstract class CommonObject
 	 *  Must be called at end of methods addline or updateline.
 	 *
 	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
+	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
@@ -4844,7 +4891,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = $line->ref; //can change ref in hook
-				$product_static->label = $line->label; //can change label in hook
+				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
 
@@ -4880,7 +4927,7 @@ abstract class CommonObject
 				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($line->description)); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -6078,7 +6125,7 @@ abstract class CommonObject
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '') {
-							$new_array_options[$key] = null;
+							$value = null;
 						}
 						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
@@ -6101,7 +6148,7 @@ abstract class CommonObject
 								//var_dump($this->oldcopy);exit;
 								if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-									if ($this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
 										// var_dump($algo);
@@ -6444,7 +6491,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
@@ -6802,7 +6849,7 @@ abstract class CommonObject
 				if ((string) $key == '') {
 					continue;
 				}
-				list($val, $parent) = explode('|', $val);
+				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -6952,7 +6999,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
-			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
+			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, $morecss, 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
 			foreach ($param['options'] as $keyopt => $val) {
@@ -7333,18 +7380,18 @@ abstract class CommonObject
 				$checked = ' checked ';
 			}
 			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
-		} elseif ($type == 'mail') {
+		} elseif ($type == 'mail' || $type == 'email') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
-			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 1);
+			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = $param['options'][$value];
+			$value = isset($param['options'][$value])?$param['options'][$value]:'';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -7509,11 +7556,15 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
-							$object->fetch($value, '', '', '', 0, 1, 1);
+							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
-							$object->fetch($value);
+							$result = $object->fetch($value);
 						}
-						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						if ($result > 0) {
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						} else {
+							$value = '';
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -7770,7 +7821,7 @@ abstract class CommonObject
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
 	 * @param	string		$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
-	 * @return 	string
+	 * @return 	string						String with html content to show
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0, $display_type = 'card')
 	{
@@ -7779,13 +7830,20 @@ abstract class CommonObject
 		if (!is_object($form)) {
 			$form = new Form($db);
 		}
+		if (!is_object($extrafields)) {
+			dol_syslog('Bad parameter extrafields for showOptionals', LOG_ERR);
+			return 'Bad parameter extrafields for showOptionals';
+		}
+		if (!is_array($extrafields->attributes[$this->table_element])) {
+			dol_syslog("extrafields->attributes was not loaded with extrafields->fetch_name_optionals_label(table_element);", LOG_WARNING);
+		}
 
 		$out = '';
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
-			if (key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
+			if (is_array($extrafields->attributes[$this->table_element]) && key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
 				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
@@ -7923,26 +7981,38 @@ abstract class CommonObject
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$datekey = $keyprefix.'options_'.$key.$keysuffix;
+							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOST($datekey.'month', 'int', 3), GETPOST($datekey.'day', 'int', 3), GETPOST($datekey.'year', 'int', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
+							$timekey = $keyprefix.'options_'.$key.$keysuffix;
+							$value = (GETPOSTISSET($timekey)) ? dol_mktime(GETPOST($timekey.'hour', 'int', 3), GETPOST($timekey.'min', 'int', 3), GETPOST($timekey.'sec', 'int', 3), GETPOST($timekey.'month', 'int', 3), GETPOST($timekey.'day', 'int', 3), GETPOST($timekey.'year', 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
+							if (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) {
+								$value = price2num($value);
+							} elseif (isset($this->array_options['options_'.$key])) {
+								$value = $this->array_options['options_'.$key];
+							}
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int'))) {
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'varchar', 'select', 'int', 'boolean'))) {
 							if ($action == 'create') {
 								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : $extrafields->attributes[$this->table_element]['default'][$key];
 							}
@@ -7952,14 +8022,14 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
 								$out .= '<td></td>';
 							}
-							$out .= '<td class="wordbreak';
+							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div style="display: inline-block; padding-right:4px" class="titlefieldcreate wordbreak';
 						}
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -7992,9 +8062,9 @@ abstract class CommonObject
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 						if ($display_type == 'card') {
 							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
-							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.' extra_inline_'.$extrafields->attributes[$this->table_element]['type'][$key].'">';
 						}
 
 						switch ($mode) {
@@ -8761,7 +8831,7 @@ abstract class CommonObject
 					}
 				}
 			} else {
-				$this->{$field} = $obj->{$field};
+				$this->{$field} = !empty($obj->{$field}) ? $obj->{$field} : null;
 			}
 		}
 

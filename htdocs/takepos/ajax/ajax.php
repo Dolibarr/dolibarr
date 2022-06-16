@@ -48,13 +48,15 @@ $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'sup
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
+$search_start = GETPOST('search_start', 'int');
+$search_limit = GETPOST('search_limit', 'int');
 
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array('takeposproductsearch'));
+$hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
 /*
  * View
@@ -69,13 +71,22 @@ if ($action == 'getProducts') {
 	if ($result > 0) {
 		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
 		// Removed properties we don't need
+		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {
+				if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+					// remove products without stock
+					$prod->load_stock('nobatch,novirtual');
+					if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
+						continue;
+					}
+				}
 				unset($prod->fields);
 				unset($prod->db);
+				$res[] = $prod;
 			}
 		}
-		echo json_encode($prods);
+		echo json_encode($res);
 	} else {
 		echo 'Failed to load category with id='.$category;
 	}
@@ -92,7 +103,7 @@ if ($action == 'getProducts') {
 				'rowid' => $thirdparty->id,
 				'name' => $thirdparty->name,
 				'barcode' => $thirdparty->barcode,
-		  'object' => 'thirdparty'
+				'object' => 'thirdparty'
 			);
 			echo json_encode($rows);
 			exit;
@@ -111,8 +122,8 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	if (!empty($conf->barcode->enabled) && !empty($conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT)) {
-		$barcode_rules = $conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT;
+	$barcode_rules = getDolGlobalString('TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT');
+	if (!empty($conf->barcode->enabled) && !empty($barcode_rules)) {
 		$barcode_rules_list = array();
 
 		// get barcode rules
@@ -208,33 +219,55 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price' ;
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price' ;
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ', ps.reel';
+	}
+
 	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' ON (p.rowid = ps.fk_product';
+		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+	}
 
 	// Add tables from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListTables', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ' AND ps.reel > 0';
+	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
+
+	// load only one page of products
+	$sql.= $db->plimit($search_limit, $search_start);
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$rows = array();
+
 		while ($obj = $db->fetch_object($resql)) {
 			$objProd = new Product($db);
 			$objProd->fetch($obj->rowid);
@@ -254,7 +287,7 @@ if ($action == 'getProducts') {
 				}
 			}
 
-			$rows[] = array(
+			$row = array(
 				'rowid' => $obj->rowid,
 				'ref' => $obj->ref,
 				'label' => $obj->label,
@@ -267,7 +300,27 @@ if ($action == 'getProducts') {
 				'qty' => 1,
 				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
+			// Add entries to row from hooks
+			$parameters=array();
+			$parameters['row'] = $row;
+			$parameters['obj'] = $obj;
+			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			if ($reshook > 0) {
+				// replace
+				if (count($hookmanager->resArray)) {
+					$row = $hookmanager->resArray;
+				} else {
+					$row = array();
+				}
+			} else {
+				// add
+				if (count($hookmanager->resArray)) {
+					$rows[] = $hookmanager->resArray;
+				}
+				$rows[] = $row;
+			}
 		}
+
 		echo json_encode($rows);
 	} else {
 		echo 'Failed to search product : '.$db->lasterror();

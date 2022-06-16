@@ -394,7 +394,7 @@ textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
-input:focus, textarea:focus, button:focus, select:focus {
+input:focus, textarea:focus, button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus {
 	border-bottom: 1px solid #666;
 }
 
@@ -403,7 +403,8 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 120px;
@@ -487,7 +488,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 textarea {
 	border-radius: 0;
@@ -584,6 +585,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 a.butStatus {
 	padding-left: 5px;
@@ -968,6 +970,12 @@ textarea.centpercent {
 .nopaddingright {
 	padding-right: 0;
 }
+.nopaddingleftimp {
+	padding-left: 0 !important;
+}
+.nopaddingrightimp {
+	padding-right: 0 !important;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -1049,7 +1057,7 @@ div.urllink, div.urllink a {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
@@ -1655,7 +1663,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ width: 250px; }
+.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -1747,9 +1755,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: 175px;
 	}
 
-	.poweredbyimg {
-		width: 48px;
-	}
 	input.buttonpayment, button.buttonpayment, div.buttonpayment {
 		min-width: 270px;
 	}
@@ -1860,7 +1865,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 150px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; }
+	.titlefield { width: auto; min-width: unset; }
 	.titlefieldcreate { width: auto; }
 
 	#tooltip {
@@ -1962,6 +1967,9 @@ td.showDragHandle {
 	padding-<?php print $left; ?>: 229px;
 	padding-top: 16px;
 <?php } ?>
+}
+.bodyforlist #id-right {
+	padding-bottom: 4px;
 }
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
@@ -2391,6 +2399,11 @@ img.photoref, div.photoref {
 	object-fit: contain;
 }
 
+img.photokanban, div.photokanban {
+	padding: 0;
+	border: none;
+}
+
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
 }
@@ -2440,7 +2453,7 @@ $heightmenu = 48; /* height of top menu, part with image */
 $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
 	$heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu = 0;
 }
 ?>
@@ -2625,98 +2638,21 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 	outline: none;
 }
 
-/* Do not load menu img if hidden to save bandwidth */
-<?php if (empty($dol_hide_topmenu)) { ?>
-	<?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-		<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-	<?php } ?>
 
 div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png', 1) ?>);
 	background-position-x: center;
 }
 
-div.mainmenu.billing {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png', 1) ?>);
-}
-
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png', 1) ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png', 1) ?>);
-}
-
-div.mainmenu.bank {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png', 1) ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png', 1) ?>);
-}
-
-div.mainmenu.takepos {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png', 1) ?>);
-}
-
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png', 1) ?>);
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png', 1) ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png', 1) ?>);
-}
-
-div.mainmenu.externalsite {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png', 1) ?>);
-}
-
-div.mainmenu.ftp {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png', 1) ?>);
-}
-
-div.mainmenu.hrm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png', 1) ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png', 1) ?>);
-}
-
 div.mainmenu.menu {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 10px;
 	left: 1px;
 }
 
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
-}
 
-div.mainmenu.mrp {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
-}
 
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png', 1) ?>);
-}
-
-div.mainmenu.ticket {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket.png', 1) ?>);
-}
-
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png', 1) ?>);
-}
-
-div.mainmenu.website {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png', 1) ?>);
-}
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
+	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
 	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -3164,6 +3100,7 @@ div.blockvmenulogo
 	object-fit: contain;
 	width: inherit;
 	height: inherit;
+	image-rendering: -webkit-optimize-contrast;
 }
 #mainmenutd_companylogo::after {
 	content: unset;
@@ -3638,7 +3575,7 @@ td.border, div.tagtable div div.border {
 	left: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -3651,7 +3588,7 @@ td.border, div.tagtable div div.border {
 	right: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -4007,7 +3944,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	-webkit-box-shadow: unset;
 }
 
-.oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
+.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
 {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 }
@@ -4178,7 +4115,8 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	border-bottom: 1px solid var(--colortopbordertitle1);
+	/* border-bottom: 1px solid var(--colortopbordertitle1); */
+	border-bottom: none;
 }
 
 div.liste_titre {
@@ -4232,7 +4170,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4257,9 +4195,9 @@ div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
-div .tdtop {
+div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
-	padding-top: 5px !important;
+	padding-top: 8px !important;
 	padding-bottom: 0px !important;
 }
 
@@ -4450,6 +4388,9 @@ span.dashboardlineko {
 }
 a.valignmiddle.dashboardlineindicator {
 	line-height: 30px;
+}
+.height30 {
+	height: 30px !important;
 }
 
 tr.box_titre {
@@ -4668,6 +4609,9 @@ div.titre {
 	padding-bottom: 5px;
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
+}
+div.titre.small {
+	font-size: 1em;
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -4961,9 +4905,10 @@ table.dp {
 	vertical-align:middle;
 	cursor: pointer;
 }
-.datenowlink
-{
+.datenowlink {
 	color: rgb(<?php print $colortextlink; ?>);
+	font-size: 0.8em;
+	opacity: 0.7;
 }
 
 .categtextwhite, .treeview .categtextwhite.hover {
@@ -5022,7 +4967,7 @@ span[phptag] {
 	color: #000 !important;
 	text-shadow: none;
 }
-.bordertransp {
+.bordertransp:not(.nobordertransp) {
 	background-color: transparent;
 	background-image: none;
 	border: 1px solid #aaa;
@@ -5241,10 +5186,11 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
+.treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 
@@ -6334,6 +6280,9 @@ dl.dropdown {
 	max-height: 264px;
 	overflow: auto;
 }
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
+}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
@@ -7153,6 +7102,23 @@ div.clipboardCPValue.hidewithsize {
 		margin: 0 0 0 -8px !important;
 	}
 
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -7276,6 +7242,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.titlefield {
 		width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
+		min-width: unset;
 	}
 	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 		/* max-width: 100px; */			/* but no more than 100px */
@@ -7359,3 +7326,4 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+

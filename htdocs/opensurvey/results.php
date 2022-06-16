@@ -75,7 +75,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -609,7 +609,7 @@ if (GETPOST('ajoutsujet')) {
 
 		print '&nbsp;';
 
-		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
+		print $formother->selectyear('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
 		print '<br><br>'.$langs->trans("AddStartHour").': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";

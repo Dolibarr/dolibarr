@@ -209,6 +209,7 @@ class Societe extends CommonObject
 		//'remise_supplier' =>array('type'=>'double', 'label'=>'SupplierDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
 		'mode_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>295),
 		'cond_reglement' =>array('type'=>'tinyint(4)', 'label'=>'Cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
+		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>301),
 		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
 		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
 		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
@@ -408,16 +409,38 @@ class Societe extends CommonObject
 	public $idprof1;
 
 	/**
+	 * @var string Professional ID 1
+	 * @deprecated
+	 * @see $idprof1
+	 */
+	public $siren;
+
+
+	/**
 	 * Professional ID 2 (Ex: Siret in France)
 	 * @var string
 	 */
 	public $idprof2;
 
 	/**
+	 * @var string Professional ID 2
+	 * @deprecated
+	 * @see $idprof2
+	 */
+	public $siret;
+
+	/**
 	 * Professional ID 3 (Ex: Ape in France)
 	 * @var string
 	 */
 	public $idprof3;
+
+	/**
+	 * @var string Professional ID 3
+	 * @deprecated
+	 * @see $idprof3
+	 */
+	public $ape;
 
 	/**
 	 * Professional ID 4 (Ex: RCS in France)
@@ -482,6 +505,9 @@ class Societe extends CommonObject
 	public $remise_percent;
 	public $remise_supplier_percent;
 
+	public $mode_reglement_id;
+	public $cond_reglement_id;
+	public $deposit_percent;
 	public $mode_reglement_supplier_id;
 	public $cond_reglement_supplier_id;
 	public $transport_mode_supplier_id;
@@ -500,18 +526,19 @@ class Societe extends CommonObject
 
 	/**
 	 * Date of last update
-	 * @var string
+	 * @var integer|string
 	 */
 	public $date_modification;
 
 	/**
 	 * User that made last update
-	 * @var string
+	 * @var User
 	 */
 	public $user_modification;
 
 	/**
-	 * @var integer|string date_creation
+	 * Date of creation
+	 * @var integer|string
 	 */
 	public $date_creation;
 
@@ -915,8 +942,8 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_sell";
 			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
+			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".((int) $this->status);
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -952,7 +979,7 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->escape($this->accountancy_code_customer)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier)."'";
 					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
@@ -1078,7 +1105,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($error)) {
+		if (empty($error)) {
 			dol_syslog(get_class($this)."::create_individual success");
 			$this->db->commit();
 		} else {
@@ -1462,6 +1489,7 @@ class Societe extends CommonObject
 
 			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape($this->mode_reglement_id)."'" : "null");
 			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape($this->cond_reglement_id)."'" : "null");
+			$sql .= ",deposit_percent = ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 			$sql .= ",transport_mode = ".(!empty($this->transport_mode_id) ? "'".$this->db->escape($this->transport_mode_id)."'" : "null");
 			$sql .= ",mode_reglement_supplier = ".(!empty($this->mode_reglement_supplier_id) ? "'".$this->db->escape($this->mode_reglement_supplier_id)."'" : "null");
 			$sql .= ",cond_reglement_supplier = ".(!empty($this->cond_reglement_supplier_id) ? "'".$this->db->escape($this->cond_reglement_supplier_id)."'" : "null");
@@ -1691,7 +1719,7 @@ class Societe extends CommonObject
 			$sql .= ', spe.accountancy_code_customer as code_compta, spe.accountancy_code_supplier as code_compta_fournisseur, spe.accountancy_code_buy, spe.accountancy_code_sell';
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
-		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.transport_mode';
+		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.deposit_percent, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
 		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
@@ -1869,6 +1897,7 @@ class Societe extends CommonObject
 
 				$this->mode_reglement_id 	= $obj->mode_reglement;
 				$this->cond_reglement_id 	= $obj->cond_reglement;
+				$this->deposit_percent		= $obj->deposit_percent;
 				$this->transport_mode_id 	= $obj->transport_mode;
 				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
 				$this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
@@ -2712,13 +2741,6 @@ class Societe extends CommonObject
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
-
-			/*
-			$hookmanager->initHooks(array('thirdpartydao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			*/
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';

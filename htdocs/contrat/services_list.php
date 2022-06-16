@@ -163,7 +163,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$filter_opcloture = "";
 		$mode = '';
 		$filter = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -486,7 +486,7 @@ $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('categorie') && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');

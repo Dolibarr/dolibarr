@@ -26,12 +26,12 @@ button.dropdown-item.global-search-item {
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	right: 65px;
+	<?php echo $right; ?>: 55px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
-	right: 20px;
+	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
 
@@ -124,6 +124,15 @@ button.dropdown-item.global-search-item {
 }
 
 
+/* CSS to hide the arrow to show open/close */
+div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 2px;
+}
+div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
+}
+
+
 .dropdown-toggle{
 	text-decoration: none !important;
 }
@@ -201,7 +210,7 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: 46px;
+	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -221,7 +230,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background: rgb(--colorbackhmenu1);
 }
 
 
@@ -244,6 +253,7 @@ a.top-menu-dropdown-link {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
@@ -293,7 +303,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-align: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -302,6 +312,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
@@ -386,7 +400,7 @@ a.top-menu-dropdown-link {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);

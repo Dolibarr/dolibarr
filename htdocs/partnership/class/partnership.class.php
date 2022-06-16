@@ -199,7 +199,7 @@ class Partnership extends CommonObject
 
 		$this->db = $db;
 
-		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member', 'csslist'=>'tdoverflowmax150');
 		} else {
 			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');
@@ -247,7 +247,7 @@ class Partnership extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsManadatory";
+			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
 		}
 
@@ -311,7 +311,8 @@ class Partnership extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -518,7 +519,7 @@ class Partnership extends CommonObject
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-
+		print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -554,7 +555,7 @@ class Partnership extends CommonObject
 	public function update(User $user, $notrigger = false)
 	{
 		if ($this->fk_soc <= 0 && $this->fk_member <= 0) {
-			$this->error[] = "ErrorThirpdartyOrMemberidIsManadatory";
+			$this->error[] = "ErrorThirpdartyOrMemberidIsMandatory";
 			return -1;
 		}
 

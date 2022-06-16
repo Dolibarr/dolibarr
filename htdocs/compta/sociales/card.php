@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -166,8 +166,8 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$object->fetch($id);
-	$totalpaye = $object->getSommePaiement();
-	if (empty($totalpaye)) {
+	$totalpaid = $object->getSommePaiement();
+	if (empty($totalpaid)) {
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: list.php");
@@ -332,7 +332,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $bankaccountstatic = new Account($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -406,7 +406,7 @@ if ($action == 'create') {
 	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		// Associated project
@@ -454,7 +454,7 @@ if ($id > 0) {
 	if ($result > 0) {
 		$head = tax_prepare_head($object);
 
-		$totalpaye = $object->getSommePaiement();
+		$totalpaid = $object->getSommePaiement();
 
 		// Clone confirmation
 		if ($action === 'clone') {
@@ -539,7 +539,7 @@ if ($id > 0) {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->tax->charges->creer) {
@@ -551,11 +551,11 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', 0, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1);
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -576,7 +576,7 @@ if ($id > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -690,7 +690,7 @@ if ($id > 0) {
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql) {
-			$totalpaye = 0;
+			$totalpaid = 0;
 
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -748,7 +748,7 @@ if ($id > 0) {
 					}
 					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>";
-					$totalpaye += $objp->amount;
+					$totalpaid += $objp->amount;
 					$i++;
 				}
 			} else {
@@ -757,10 +757,10 @@ if ($id > 0) {
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
-			$resteapayer = $object->amount - $totalpaye;
+			$resteapayer = $object->amount - $totalpaid;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -820,7 +820,7 @@ if ($id > 0) {
 			}
 
 			// Delete
-			if ($user->rights->tax->charges->supprimer && empty($totalpaye)) {
+			if ($user->rights->tax->charges->supprimer && empty($totalpaid)) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
@@ -863,7 +863,7 @@ if ($id > 0) {
 			/*
 			 $MAXEVENT = 10;
 
-			 $morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+			 $morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 			 // List of actions on element
 			 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
