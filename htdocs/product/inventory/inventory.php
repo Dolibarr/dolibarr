@@ -94,6 +94,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
+//Parameters Page
+$param = '&id='.$object->id;
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+$paramwithsearch = $param;
+
+
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
@@ -104,12 +112,6 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $now = dol_now();
 
-//Parameters Page
-$param = '&id='.$object->id;
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
-}
-$paramwithsearch = $param;
 
 
 /*
@@ -547,8 +549,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'?page='.$page.$paramwithsearch.'">';
+	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'?page='.$page.'&id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
