@@ -565,7 +565,7 @@ if (!empty($object->piece_num)) {
 
 			$count_line = count($object->linesmvt);
 			$num_line = 0;
-			foreach ($object->linesmvt as $line) {
+			foreach ($object->linesmvt as $key => $line) {
 				$num_line++;
 				print '<tr class="oddeven">';
 				$total_debit += $line->debit;
@@ -600,7 +600,7 @@ if (!empty($object->piece_num)) {
 					if ($action == "" || $action == 'add') {
 						print '<!-- td columns in add mode -->';
 						print '<td>';
-						print $formaccounting->select_account('', 'accountingaccount_number[]', 1, array(), 1, 1, '');
+						print $formaccounting->select_account('', 'accountingaccount_number['.$key.']', 1, array(), 1, 1, '');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -608,18 +608,18 @@ if (!empty($object->piece_num)) {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount('', 'subledger_account[]', 1, 'maxwidth250', '', 'subledger_label');
+							print $formaccounting->select_auxaccount('', 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account[]" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+							print '<input type="text" class="maxwidth150" name="subledger_account['.$key.']" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '" />';
 						}
-						print '<br><input type="text" class="maxwidth150" name="subledger_label[]" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label['.$key.']" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '" />';
 						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation[]" value="' . $label_operation[$key] . '"/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit[]" value="" /></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit[]" value="" /></td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation['.$key.']" value="' . $label_operation[$key] . '"/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit['.$key.']" value="" /></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit['.$key.']" value="" /></td>';
 						// Add button should not appear twice
 						if ($num_line === $count_line) {
-							print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+							print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '" /></td>';
 						} else {
 							print '<td class="right"></td>';
 						}
