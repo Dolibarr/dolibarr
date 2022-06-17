@@ -110,12 +110,13 @@ class TicketStats extends Stats
 	}
 
 	/**
-	 *     Renvoie le montant de facture par mois pour une annee donnee
+	 *  Return th eamount of tickets for a month and a given year
 	 *
-	 *    @param  int $year Year to scan
-	 *    @return array                Array of values
+	 *  @param  int 	$year 		Year to scan
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *  @return array               Array of values
 	 */
-	public function getAmountByMonth($year)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		$sql = "SELECT date_format(datec,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
@@ -124,7 +125,7 @@ class TicketStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getAmountByMonth($year, $sql);
+		$res = $this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}
