@@ -132,6 +132,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'order_supplier':
 			$element = 'supplier_order';
 			break; // "/fourn/class/fournisseur.commande.class.php"
+		case 'invoice_supplier':
+			$element = 'supplier_invoice';
+			break; // "/fourn/class/fournisseur.facture.class.php"
 	}
 
 	if (is_object($mc)) {
