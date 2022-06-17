@@ -1058,7 +1058,7 @@ class Contrat extends CommonObject
 						if (count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$originforcontact = 'commande';
-								$originidforcontact = $value->id;
+								$originidforcontact = $value;
 								break; // We take first one
 							}
 						}
