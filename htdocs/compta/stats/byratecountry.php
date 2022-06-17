@@ -306,7 +306,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql('MONTH(f.datef)='.$i, 'fd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -325,7 +325,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
 	$sql .= " ORDER BY country, product_type, vatrate";
 
-	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -393,7 +393,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql2 .= " SUM(".$db->ifsql('MONTH(ff.datef)='.$i, 'ffd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
+		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
 	}
 	$sql2 .= "  SUM(ffd.total_ht) as total";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -413,7 +413,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ORDER BY country, product_type, vatrate";
 
 	//print $sql2;
-	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
 	$resql2 = $db->query($sql2);
 	if ($resql2) {
 		$num = $db->num_rows($resql2);

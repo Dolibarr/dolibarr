@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -311,7 +311,7 @@ $form = new Form($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -338,7 +338,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
             			setPaymentType();
             			$("#selectpaymenttype").change(function() {
@@ -481,16 +481,15 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		// Associated project
 		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -510,11 +509,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
@@ -542,7 +537,7 @@ if ($id) {
 			array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
 			array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
 			array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
-			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens") . ' ' . $set_value_help, 'values' => $sensarray, 'default' => $object->sens),
+			array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens").' '.$set_value_help, 'values' => $sensarray, 'default' => $object->sens),
 		);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
@@ -558,12 +553,12 @@ if ($id) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->banque->modifier) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

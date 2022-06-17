@@ -33,11 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -71,11 +66,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
-if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
-	accessforbidden();
-}
-if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
-	accessforbidden();
+$type = $object->type;
+
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -91,9 +87,10 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_delete') {
+		$savtype = $object->type;
 		$res = $object->delete($user);
 		if ($res > 0) {
-			if ($object->type == 'bank-transfer') {
+			if ($savtype == 'bank-transfer') {
 				header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
@@ -177,8 +174,7 @@ if ($id > 0 || $ref) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
@@ -189,18 +185,18 @@ if ($id > 0 || $ref) {
 	print '</tr>';
 	*/
 
-	if ($object->date_trans <> 0) {
+	if (!empty($object->date_trans)) {
 		$muser = new User($db);
 		$muser->fetch($object->user_trans);
 
 		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 		print dol_print_date($object->date_trans, 'day');
-		print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
 		print '</td></tr>';
 	}
-	if ($object->date_credit <> 0) {
+	if (!empty($object->date_credit)) {
 		print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 		print dol_print_date($object->date_credit, 'day');
 		print '</td></tr>';
@@ -216,7 +212,7 @@ if ($id > 0 || $ref) {
 	$acc = new Account($db);
 	$result = $acc->fetch(($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT));
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	$labelofbankfield = "BankToReceiveWithdraw";
 	if ($object->type == 'bank-transfer') {
 		$labelofbankfield = 'BankToPayCreditTransfer';
@@ -230,7 +226,7 @@ if ($id > 0 || $ref) {
 	print '</td>';
 	print '</tr>';
 
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	$labelfororderfield = 'WithdrawalFile';
 	if ($object->type == 'bank-transfer') {
 		$labelfororderfield = 'CreditTransferFile';
@@ -241,8 +237,17 @@ if ($id > 0 || $ref) {
 	if ($object->type == 'bank-transfer') {
 		$modulepart = 'paymentbybanktransfer';
 	}
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
-	print '</td></tr></table>';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+	print img_picto('', 'download', 'class="paddingleft"');
+	print '</a>';
+	print '</td></tr>';
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '</table>';
 
 	print '</div>';
 
@@ -285,7 +290,7 @@ if ($id > 0 || $ref) {
 		print '<br>';
 	}
 
-	if (!empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+	if (!empty($object->date_trans) && empty($object->date_credit) && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
 		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -294,7 +299,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
+		print $form->selectDate(-1, '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
@@ -306,20 +311,21 @@ if ($id > 0 || $ref) {
 	// Actions
 	if ($action != 'settransmitted' && $action != 'setcredited') {
 		print "\n".'<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			if (empty($object->date_trans)) {
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
+				else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
+			}
+			if (!empty($object->date_trans) && empty($object->date_credit)) {
+				if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
+				else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
+			}
 
-		if (empty($object->date_trans)) {
-			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
-			else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
+			else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
 		}
-
-		if (!empty($object->date_trans) && $object->date_credit == 0) {
-			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
-			else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
-		}
-
-		if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
-		else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
-
 		print '</div>';
 	}
 
@@ -364,6 +370,9 @@ if ($id > 0 || $ref) {
 		$i = 0;
 
 		$urladd = "&id=".urlencode($id);
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$urladd .= '&limit='.urlencode($limit);
+		}
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -373,6 +382,12 @@ if ($id > 0 || $ref) {
 		}
 		if (!empty($limit)) {
 			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
+		}
+		if (!empty($sortfield)) {
+			print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+		}
+		if (!empty($sortorder)) {
+			print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
@@ -394,10 +409,9 @@ if ($id > 0 || $ref) {
 
 			// Status of line
 			print "<td>";
+			print '<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newToken().'">';
 			print $ligne->LibStatut($obj->statut, 2);
-			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newtoken().'">';
-			print sprintf("%06s", $obj->rowid);
+			print '<span class="paddingleft">'.$obj->rowid.'</span>';
 			print '</a></td>';
 
 			$thirdparty = new Societe($db);
@@ -417,7 +431,7 @@ if ($id > 0 || $ref) {
 					if ($obj->statut == 2) {
 						if ($user->rights->prelevement->bons->credit) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newtoken().'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newToken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}
@@ -435,6 +449,8 @@ if ($id > 0 || $ref) {
 		}
 
 		if ($num > 0) {
+			$total = price2num($total, 'MT');
+
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';

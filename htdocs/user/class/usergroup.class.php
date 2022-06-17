@@ -191,8 +191,8 @@ class UserGroup extends CommonObject
 		$ret = array();
 
 		$sql = "SELECT g.rowid, ug.entity as usergroup_entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
-		$sql .= " ".MAIN_DB_PREFIX."usergroup_user as ug";
+		$sql .= " FROM ".$this->db->prefix()."usergroup as g,";
+		$sql .= " ".$this->db->prefix()."usergroup_user as ug";
 		$sql .= " WHERE ug.fk_usergroup = g.rowid";
 		$sql .= " AND ug.fk_user = ".((int) $userid);
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
@@ -241,9 +241,9 @@ class UserGroup extends CommonObject
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " FROM ".$this->db->prefix()."user as u";
 		if (!empty($this->id)) {
-			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
 		}
 		$sql .= " WHERE 1 = 1";
 		if (!empty($this->id)) {
@@ -315,7 +315,7 @@ class UserGroup extends CommonObject
 			// Si on a demande ajout d'un droit en particulier, on recupere
 			// les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
-			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
+			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
 			$sql .= " AND entity = ".((int) $entity);
 
@@ -358,7 +358,7 @@ class UserGroup extends CommonObject
 		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
+			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
 				$sql .= " AND ".$whereforadd;
@@ -372,11 +372,11 @@ class UserGroup extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = ".((int) $this->id)." AND fk_id=".((int) $nid)." AND entity = ".((int) $entity);
+					$sql = "DELETE FROM ".$this->db->prefix()."usergroup_rights WHERE fk_usergroup = ".((int) $this->id)." AND fk_id=".((int) $nid)." AND entity = ".((int) $entity);
 					if (!$this->db->query($sql)) {
 						$error++;
 					}
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+					$sql = "INSERT INTO ".$this->db->prefix()."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
 					if (!$this->db->query($sql)) {
 						$error++;
 					}
@@ -437,7 +437,7 @@ class UserGroup extends CommonObject
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
-			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
+			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
 			$sql .= " AND entity = ".((int) $entity);
 
@@ -485,7 +485,7 @@ class UserGroup extends CommonObject
 		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
+			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
 				$sql .= " AND ".$wherefordel;
@@ -503,7 +503,7 @@ class UserGroup extends CommonObject
 						$nid = $obj->id;
 					}
 
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+					$sql = "DELETE FROM ".$this->db->prefix()."usergroup_rights";
 					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".((int) $nid);
 					$sql .= " AND entity = ".((int) $entity);
 					if (!$this->db->query($sql)) {
@@ -564,7 +564,7 @@ class UserGroup extends CommonObject
 		 * Recuperation des droits
 		 */
 		$sql = "SELECT r.module, r.perms, r.subperms ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
 		$sql .= " AND r.entity = ".((int) $conf->entity);
 		$sql .= " AND u.entity = ".((int) $conf->entity);
@@ -761,13 +761,6 @@ class UserGroup extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('groupdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -785,7 +778,7 @@ class UserGroup extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

@@ -107,7 +107,7 @@ print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td>';
 print '</td>';
 print '<td class="center">';
-print $langs->trans("Required");
+print '<span class="opacitymedium">'.img_picto($langs->trans("Required"), 'switch_on').'</span>';
 /*if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	print '<a href="confexped.php?action=activate_sending&token='.newToken().'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';

@@ -50,8 +50,8 @@ $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -80,7 +80,7 @@ $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_sc_type = '';
-	//$toselect = '';
+	//$toselect = array();
 	//$search_array_options = array();
 }
 
@@ -135,9 +135,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$sql = "SELECT c.id, c.libelle as label,";
-$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
-$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+$sql = "SELECT c.id, c.libelle as type_label,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
+$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
@@ -231,8 +231,8 @@ print '<tr class="liste_titre">';
 print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("SocialContribution", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, 'width="140px"', $sortfield, $sortorder);
-print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
@@ -253,30 +253,38 @@ if (!$resql) {
 $i = 0;
 $total = 0;
 $totalnb = 0;
-$totalpaye = 0;
+$totalpaid = 0;
 
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
-	print '<tr class="oddeven">';
-	// Ref payment
+
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;
-	print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
-	// Label
-	print '<td>';
+	$payment_sc_static->date = $db->jdate($obj->datep);
+
 	$socialcontrib->id = $obj->rowid;
-	$socialcontrib->ref = empty($obj->libelle) ? $obj->label : $obj->libelle;
-	$socialcontrib->label = empty($obj->libelle) ? $obj->label : $obj->libelle;
-	print $socialcontrib->getNomUrl(1, '20');
+	$socialcontrib->ref = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
+	$socialcontrib->paye = $obj->paye;
+	// $obj->label_sc is label of social contribution (may be empty)
+	// $obj->type_label is label of type of social contribution
+	$socialcontrib->label = empty($obj->label_sc) ? $obj->type_label : $obj->label_sc;
+	$socialcontrib->type_label = $obj->type_label;
+
+	print '<tr class="oddeven">';
+	// Ref payment
+	print '<td class="nowraponall">'.$payment_sc_static->getNomUrl(1)."</td>\n";
+	// Label
+	print '<td class="tdoverflowmax250">';
+	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdmaxoverflow300">'.$obj->label.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdoverflowmax300">'.$obj->label.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {
 		$date = $obj->date_ech;
 	}
-	print '<td>'.dol_print_date($date, 'day').'</td>';
+	print '<td class="center">'.dol_print_date($date, 'day').'</td>';
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 
@@ -338,8 +346,8 @@ while ($i < min($num, $limit)) {
 
 	// Paid
 	print '<td class="right">';
-	if ($obj->totalpaye) {
-		print '<span class="amount">'.price($obj->totalpaye).'</span>';
+	if ($obj->totalpaid) {
+		print '<span class="amount">'.price($obj->totalpaid).'</span>';
 	}
 	print '</td>';
 
@@ -349,7 +357,7 @@ while ($i < min($num, $limit)) {
 
 	$total = $total + $obj->total;
 	$totalnb = $totalnb + $obj->nb;
-	$totalpaye = $totalpaye + $obj->totalpaye;
+	$totalpaid = $totalpaid + $obj->totalpaid;
 	$i++;
 }
 
@@ -365,7 +373,7 @@ if (!empty($conf->banque->enabled)) {
 	print '<td></td>';
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price($totalpaye)."</td>";
+print '<td class="liste_total right">'.price($totalpaid)."</td>";
 print '<td></td>';
 print "</tr>";
 

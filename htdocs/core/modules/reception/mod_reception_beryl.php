@@ -96,10 +96,10 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
+	 *	@param	Object		$reception	Reception object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $shipment)
+	public function getNextValue($objsoc, $reception)
 	{
 		global $db, $conf;
 

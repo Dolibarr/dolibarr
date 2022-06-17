@@ -216,7 +216,7 @@ if (!in_array($year, $arrayyears)) {
 	$arrayyears[$year] = $year;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -260,7 +260,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -277,7 +277,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 

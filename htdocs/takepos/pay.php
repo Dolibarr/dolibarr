@@ -37,9 +37,6 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
-//if (!defined('NOREQUIREAJAX')) {
-//	define('NOREQUIREAJAX', '1');
-//}
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -113,6 +110,9 @@ if ($resql) {
 		if (!empty($conf->global->$accountname) && $conf->global->$accountname > 0) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
+		}
+		if (empty($conf->banque->enabled)) {
+			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
 		}
 	}
 }
@@ -255,6 +255,20 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			});
 		}, 2500);
 	}
+
+<?php
+if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
+	echo "var line1='".$langs->trans('TotalTTC')."'.substring(0,20);";
+	echo "line1=line1.padEnd(20);";
+	echo "var line2='".price($invoice->total_ttc, 1, '', 1, -1, -1)."'.substring(0,20);";
+	echo "line2=line2.padEnd(20);";
+	echo "$.ajax({
+		type: 'GET',
+		data: { text: line1+line2 },
+		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
+	});";
+}
+?>
 </script>
 
 <div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
@@ -325,7 +339,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><span class="hideonsmartphone"><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[0]->code)).'</span></button>';
 } else {
 	print '<button type="button" class="calcbutton2">'.$langs->trans("NoPaimementModesDefined").'</button>';
 }
@@ -351,7 +365,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br> '.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[1]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
@@ -378,7 +392,7 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[2]->code)).'</button>';
 } else {
 	$button = array_pop($action_buttons);
 	print '<button type="button" class="calcbutton2" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
@@ -406,7 +420,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 		}
 	}
 
-	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'. $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
+	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\');">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
 	$i = $i + 1;
 }
 

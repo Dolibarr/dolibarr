@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Бұл модуль міндетті тү�
 OnlyNonValid=Жарамсыз
 TooManyRecordToScanRestrictFilters=Сканерлеуге/талдауға тым көп жазбалар. Тізімді шектеу сүзгілерімен шектеңіз.
 RestrictYearToExport=Экспорттауға ай / жылды шектеу
+BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

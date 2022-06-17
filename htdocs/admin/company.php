@@ -91,9 +91,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	$db->begin();
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency", 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -178,19 +178,19 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'nohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object", 'nohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START", 'int'), 'chaine', 0, '', $conf->entity);
 
@@ -369,23 +369,22 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$countrynotdefined = '<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
+$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' <a href="#trzipbeforecountry">('.$langs->trans("SeeAbove").')</a></span>';
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'company', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 
-/**
- * Edit parameters
- */
+// Edit parameters
+
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
@@ -404,21 +403,21 @@ print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->
 
 // Name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag((GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? $conf->global->MAIN_INFO_SOCIETE_NOM : ''))).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag((GETPOSTISSET('nom') ? GETPOST('nom', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? $conf->global->MAIN_INFO_SOCIETE_NOM : ''))).'"'.(empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS) ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : '')).'</textarea></td></tr>'."\n";
+print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS) ? $conf->global->MAIN_INFO_SOCIETE_ADDRESS : '')).'</textarea></td></tr>'."\n";
 
 // Zip
-print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alpha') : (!empty($conf->global->MAIN_INFO_SOCIETE_ZIP) ? $conf->global->MAIN_INFO_SOCIETE_ZIP : ''))).'"></td></tr>'."\n";
+print '<tr class="oddeven" id="trzipbeforecountry"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
+print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_ZIP) ? $conf->global->MAIN_INFO_SOCIETE_ZIP : ''))).'"></td></tr>'."\n";
 
-print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? $conf->global->MAIN_INFO_SOCIETE_TOWN : ''))).'"></td></tr>'."\n";
+print '<tr class="oddeven" id="trtownbeforecountry"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
+print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_TOWN) ? $conf->global->MAIN_INFO_SOCIETE_TOWN : ''))).'"></td></tr>'."\n";
 
 // Country
-print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
+print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country($mysoc->country_id, 'country_id', '', 0);
 if ($user->admin) {
@@ -426,14 +425,14 @@ if ($user->admin) {
 }
 print '</td></tr>'."\n";
 
-print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
+print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
 $state_id = 0;
 if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 	$state_id = $tmp[0];
 }
 print img_picto('', 'state', 'class="pictofixedwidth"');
-print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id');
+print $formcompany->select_state($state_id, $mysoc->country_code, 'state_id', 'maxwidth200onsmartphone minwidth300');
 print '</td></tr>'."\n";
 
 // Currency
@@ -457,7 +456,7 @@ print '</td></tr>'."\n";
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
+print '<input class="minwidth300 maxwidth500 widthcentpercentminusx" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
@@ -483,7 +482,7 @@ print '</div>';
 if (!empty($mysoc->logo_small)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 80px; max-width: 200px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
+		print '<img style="max-height: 80px; max-width: 200px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
 	} elseif (!empty($mysoc->logo)) {
 		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
@@ -495,14 +494,14 @@ if (!empty($mysoc->logo_small)) {
 		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly">';
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
 	print '</div>';
 } elseif (!empty($mysoc->logo)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'">';
 		print '</div>';
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	} else {
 		print '<div class="inline-block valignmiddle">';
 		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -520,7 +519,7 @@ print '</div>';
 if (!empty($mysoc->logo_squarred_small)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
 		print '<div class="inline-block valignmiddle marginrightonly">';
-		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
 	} elseif (!empty($mysoc->logo_squarred)) {
 		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
@@ -528,16 +527,16 @@ if (!empty($mysoc->logo_squarred_small)) {
 		}
 		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
 		print '</div>';
 	}
-	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred)) {
 		print '<div class="inline-block valignmiddle">';
-		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
 		print '</div>';
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 	} else {
 		print '<div class="inline-block valignmiddle">';
 		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -565,17 +564,17 @@ $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'nohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS) ? $conf->global->MAIN_INFO_SOCIETE_MANAGERS : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS) ? $conf->global->MAIN_INFO_SOCIETE_MANAGERS : ''))).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'nohtml') : (!empty($conf->global->MAIN_INFO_GDPR) ? $conf->global->MAIN_INFO_GDPR : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : (!empty($conf->global->MAIN_INFO_GDPR) ? $conf->global->MAIN_INFO_GDPR : ''))).'"></td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag((GETPOSTISSET('capital') ? GETPOST('capital', 'nohtml') : (!empty($conf->global->MAIN_INFO_CAPITAL) ? $conf->global->MAIN_INFO_CAPITAL : ''))).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_CAPITAL) ? $conf->global->MAIN_INFO_CAPITAL : ''))).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
@@ -824,10 +823,7 @@ if ($mysoc->useRevenueStamp()) {
 
 print "</table>";
 
-
-print '<br><div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

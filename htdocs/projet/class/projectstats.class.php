@@ -28,6 +28,10 @@ class ProjectStats extends Stats
 	public $userid;
 	public $socid;
 	public $year;
+	public $yearmonth;
+	public $status;
+	public $opp_status;
+
 
 	/**
 	 * Constructor
@@ -158,32 +162,50 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId = '';
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
 		}
 
 		$sqlwhere[] = ' t.entity IN ('.getEntity('project').')';
 
 		if (!empty($this->userid)) {
-			$sqlwhere[] = ' t.fk_user_resp='.$this->userid;
+			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
 
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (!empty($this->socid)) {
-			$sqlwhere[] = ' t.fk_soc='.$this->socid;
+			$sqlwhere[] = ' t.fk_soc = '.((int) $this->socid);
 		}
 		if (!empty($this->year) && empty($this->yearmonth)) {
-			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
+			$sqlwhere[] = " date_format(t.datec,'%Y') = '".$this->db->escape($this->year)."'";
 		}
 		if (!empty($this->yearmonth)) {
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
 		}
 
 		if (!empty($this->status)) {
-			$sqlwhere[] = " t.fk_opp_status IN (".$this->db->sanitize($this->status).")";
+			$sqlwhere[] = " t.fk_statut IN (".$this->db->sanitize($this->status).")";
 		}
 
-		if (!$user->rights->projet->all->lire) {
+		if (!empty($this->opp_status)) {
+			if (is_numeric($this->opp_status) && $this->opp_status > 0) {
+				$sqlwhere[] = " t.fk_opp_status = ".((int) $this->opp_status);
+			}
+			if ($this->opp_status == 'all') {
+				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1)";
+			}
+			if ($this->opp_status == 'openedopp') {
+				$sqlwhere[] = " (t.fk_opp_status IS NOT NULL AND t.fk_opp_status <> -1 AND t.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST')))";
+			}
+			if ($this->opp_status == 'notopenedopp') {
+				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1 OR t.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
+			}
+			if ($this->opp_status == 'none') {
+				$sqlwhere[] = " (t.fk_opp_status IS NULL OR t.fk_opp_status = -1)";
+			}
+		}
+
+		if (empty($user->rights->projet->all->lire)) {
 			$sqlwhere[] = " t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
 

@@ -11,19 +11,19 @@
 	font-variant: normal;
 	text-rendering: auto;
 	line-height: 26px;
-	font-size: 1.5em;
+	font-size: 1.3em;
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 }
 
 .fa-15x {
 	font-size: 1.5em;
 }
 
-div.mainmenu {
-	background-image: none !important;
+div.mainmenu.menu {
+	background-image: none;
 }
 
 div.mainmenu.menu::before {

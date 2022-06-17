@@ -160,7 +160,7 @@ if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->f
 	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
-	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
+	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
 
 	if ($amount_ht > 0) {
 		$error = 0;
@@ -267,8 +267,8 @@ if ($socid > 0) {
 		$remise_all = $remise_user = 0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND discount_type = 0"; // Exclude supplier discounts
 		$sql .= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
 		$sql .= " GROUP BY rc.fk_user";
@@ -284,11 +284,11 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
@@ -297,8 +297,8 @@ if ($socid > 0) {
 		$remise_all = $remise_user = 0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND discount_type = 1"; // Exclude customer discounts
 		$sql .= " AND (fk_invoice_supplier_line IS NULL AND fk_invoice_supplier IS NULL)";
 		$sql .= " GROUP BY rc.fk_user";
@@ -314,11 +314,11 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
@@ -353,7 +353,7 @@ if ($socid > 0) {
 			print '</td></tr>';
 		}
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
+		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'" autofocus>';
 		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 		print '<tr><td>'.$langs->trans("VAT").'</td>';
 		print '<td>';
@@ -382,7 +382,7 @@ if ($socid > 0) {
 
 	print '<br>';
 
-	if ($_GET['action'] == 'remove') {
+	if ($action == 'remove') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.GETPOST('remid'), $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
@@ -408,8 +408,8 @@ if ($socid > 0) {
 		$sql .= " fa.ref as ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
 		$sql .= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
@@ -445,7 +445,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturestatic->id = $obj->fk_facture_source;
@@ -472,15 +472,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -532,7 +532,6 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
@@ -547,8 +546,8 @@ if ($socid > 0) {
 		$sql .= " fa.ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 1"; // Eliminate customer discounts
 		$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)";
@@ -584,7 +583,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
@@ -611,15 +610,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -667,7 +666,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
@@ -700,7 +698,7 @@ if ($socid > 0) {
 		$sql .= " , ".MAIN_DB_PREFIX."facturedet as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_facture_line = fc.rowid";
 		$sql .= " AND fc.fk_facture = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -718,7 +716,7 @@ if ($socid > 0) {
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_facture = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
@@ -768,7 +766,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -843,7 +842,6 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
@@ -860,7 +858,7 @@ if ($socid > 0) {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn_det as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_invoice_supplier_line = fc.rowid";
 		$sql .= " AND fc.fk_facture_fourn = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -879,7 +877,7 @@ if ($socid > 0) {
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_invoice_supplier = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 1"; // Eliminate customer discounts
@@ -929,7 +927,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -1000,7 +999,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}

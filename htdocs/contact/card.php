@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -111,10 +112,27 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	// Cancel
-	if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
-		header("Location: ".$backtopage);
-		exit;
+	$backurlforlist = DOL_URL_ROOT.'/contact/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/contact/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
 	}
 
 	// Creation utilisateur depuis contact
@@ -218,6 +236,9 @@ if (empty($reshook)) {
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
 		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
 
+		//Default language
+		$object->default_lang = GETPOST('default_lang');
+
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -279,7 +300,7 @@ if (empty($reshook)) {
 		if (empty($error) && $id > 0) {
 			$db->commit();
 			if (!empty($backtopage)) {
-				$url = $backtopage;
+				$url = str_replace('__ID__', $id, $backtopage);
 			} else {
 				$url = 'card.php?id='.$id;
 			}
@@ -299,8 +320,9 @@ if (empty($reshook)) {
 
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
+			setEventMessages("RecordDeleted", null, 'mesgs');
+			if ($backurlforlist) {
+				header("Location: ".$backurlforlist);
 				exit;
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/contact/list.php');
@@ -418,6 +440,9 @@ if (empty($reshook)) {
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
+
+			//Default language
+			$object->default_lang = GETPOST('default_lang');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -538,6 +563,9 @@ if (empty($reshook)) {
  *	View
  */
 
+$form = new Form($db);
+$formadmin = new FormAdmin($db);
+$formcompany = new FormCompany($db);
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
@@ -546,13 +574,10 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $c
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-$form = new Form($db);
-$formcompany = new FormCompany($db);
-
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
+$objsoc = new Societe($db);
 if ($socid > 0) {
-	$objsoc = new Societe($db);
 	$objsoc->fetch($socid);
 }
 
@@ -608,7 +633,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 			$object->canvas = $canvas;
 
-			$object->state_id = GETPOST("state_id");
+			$object->state_id = GETPOST("state_id", "int");
 
 			// We set country_id, country_code and label for the selected country
 			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
@@ -618,7 +643,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country      = $tmparray['label'];
 			}
 
-			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 			$linkback = '';
 			print load_fiche_titre($title, $linkback, 'address');
 
@@ -626,7 +651,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="create";
@@ -681,7 +706,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				} else {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty');
+					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 					print '</td></tr>';
 				}
 			}
@@ -701,7 +726,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Address
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
 				$object->address = $objsoc->address; // Predefined with third party
 			}
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
@@ -720,10 +745,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Zip / Town
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) {
 				$object->zip = $objsoc->zip; // Predefined with third party
 			}
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) {
 				$object->town = $objsoc->town; // Predefined with third party
 			}
 			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
@@ -757,10 +782,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) {
 				$object->phone_pro = $objsoc->phone; // Predefined with third party
 			}
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
 				$object->fax = $objsoc->fax; // Predefined with third party
 			}
 
@@ -790,7 +815,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
 			print '</tr>';
 
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) {
 				$object->email = $objsoc->email; // Predefined with third party
 			}
 
@@ -804,7 +829,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 					print '$(document).ready(function () {
 							$("#email").keyup(function() {
 								if ($(this).val()!="") {
@@ -840,7 +865,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if (!empty($value['icon'])) {
 							print '<span class="fa '.$value['icon'].'"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (!empty($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : "")).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
@@ -854,6 +879,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
 			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
+
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -896,7 +930,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td>';
 
 			print '<td><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
-			if ($object->birthday_alert) {
+			if (!empty($object->birthday_alert)) {
 				print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked>';
 			} else {
 				print '<input type="checkbox" name="birthday_alert" id="birthday_alert">';
@@ -908,16 +942,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-			if (!empty($backtopage)) {
-				print ' &nbsp; &nbsp; ';
-				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			} else {
-				print ' &nbsp; &nbsp; ';
-				print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-			}
-			print '</div>';
+			print $form->buttonsSaveCancel("Add");
 
 			print "</form>";
 		} elseif ($action == 'edit' && !empty($id)) {
@@ -939,7 +964,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
 
 			if ($conf->use_javascript_ajax) {
-				print "\n".'<script type="text/javascript" language="javascript">'."\n";
+				print "\n".'<script type="text/javascript">'."\n";
 				print 'jQuery(document).ready(function () {
 							jQuery("#selectcountry_id").change(function() {
 								document.formsoc.action.value="edit";
@@ -1014,7 +1039,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
-			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'nohtml') : $object->address).'</textarea>';
+			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</div><div class="paddingrightonly valignmiddle inline-block">';
 			if ($conf->use_javascript_ajax) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
@@ -1086,7 +1111,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript" language="javascript">'."\n";
+					print "\n".'<script type="text/javascript">'."\n";
 
 					print '
 					jQuery(document).ready(function () {
@@ -1142,6 +1167,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
 			print $form->selectarray('priv', $selectarray, $object->priv, 0);
 			print '</td></tr>';
+
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
@@ -1207,7 +1241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
@@ -1247,11 +1281,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print "</form>";
 		}
@@ -1303,7 +1333,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref = '<div class="refidno">';
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		$morehtmlref .= '<div class="refidno">';
 		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 			$objsoc->fetch($object->socid);
 			// Thirdparty
@@ -1355,6 +1389,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang.'_'.strtoupper($object->default_lang)) : '');
+			print $labellang;
+			print '</td></tr>';
+		}
+
 		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
 		print $object->LibPubPriv($object->priv);
 		print '</td></tr>';
@@ -1377,7 +1423,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans('ProspectLevel');
 				print '<td>';
 				if ($action != 'editlevel' && $user->rights->societe->contact->creer) {
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 				}
 				print '</tr></table>';
 				print '</td><td>';
@@ -1400,7 +1446,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$titlealt = $val['label'];
 					}
 					if ($object->stcomm_id != $val['id']) {
-						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 					}
 				}
 				print '</div></td></tr>';
@@ -1410,10 +1456,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1465,7 +1511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';
@@ -1481,17 +1527,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		print '<tr><td>';
-		print $langs->trans("VCard").'</td><td colspan="3">';
-		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-		print $langs->trans("Download");
-		print '</a>';
-		print '</td></tr>';
-
 		print "</table>";
 
-		print '</div></div></div>';
+		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
@@ -1515,11 +1553,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if ($user->rights->societe->contact->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 			}
 
 			if (!$object->user_id && $user->rights->user->user->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 
 			// Activer
@@ -1547,18 +1585,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
-			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'contact', $object->socid, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
 
-			print '</div></div></div>';
+			print '</div></div>';
 		}
 
 		// Presend form

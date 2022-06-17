@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Opsætning af FTP klient-modul
-NewFTPClient=Ny FTP-forbindelse opsætning
-FTPArea=FTP Område
-FTPAreaDesc=Denne skærm viser en visning af en FTP-server.
-SetupOfFTPClientModuleNotComplete=Opsætningen af FTP-klientmodulet ser ud til at være ufuldstændig
-FTPFeatureNotSupportedByYourPHP=Din PHP understøtter ikke FTP-funktioner
-FailedToConnectToFTPServer=Kunne ikke forbinde til FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Kunne ikke logge på FTP server med defineret login / password
+FTPClientSetup=Opsætning af FTP- eller SFTP-klientmodul
+NewFTPClient=Ny FTP / FTPS-forbindelsesopsætning
+FTPArea=FTP / FTPS-område
+FTPAreaDesc=Dette skærmbillede viser en FTP et SFTP-server.
+SetupOfFTPClientModuleNotComplete=Opsætningen af FTP- eller SFTP-klientmodulet ser ud til at være ufuldstændig
+FTPFeatureNotSupportedByYourPHP=Din PHP understøtter ikke FTP- eller SFTP-funktioner
+FailedToConnectToFTPServer=Der kunne ikke oprettes forbindelse til serveren (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Kunne ikke logge ind på serveren med defineret login / adgangskode
 FTPFailedToRemoveFile=Kunne ikke fjerne filen <b>%s.</b>
 FTPFailedToRemoveDir=Kunne ikke fjerne biblioteket<b>%s</b>: Kontroller tilladelser, og at biblioteket er tomt.
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Vælg et FTP-server fra menuen ...
-FailedToGetFile=Failed to get files %s
+FTPPassiveMode=Passiv mode
+ChooseAFTPEntryIntoMenu=Vælg et FTP / SFTP-sted i menuen ...
+FailedToGetFile=Kunne ikke hente filer %s

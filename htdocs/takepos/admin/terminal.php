@@ -409,7 +409,7 @@ if ($atleastonefound == 0 && !empty($conf->banque->enabled)) {
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

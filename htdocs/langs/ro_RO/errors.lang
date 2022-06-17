@@ -9,6 +9,7 @@ ErrorBadMXDomain=Adresa de email %s pare incorectă (domeniul nu are o înregist
 ErrorBadUrl=Url-ul %s este incorect
 ErrorBadValueForParamNotAString=Valoare greșită pentru parametru. Se adaugă,  în general, atunci când traducerea lipsește.
 ErrorRefAlreadyExists=Referinţa <b>%s</b> există deja.
+ErrorTitleAlreadyExists=Titlul <b>%s</b> există deja.
 ErrorLoginAlreadyExists=Login-ul %s există deja.
 ErrorGroupAlreadyExists=Grupul %s există deja.
 ErrorEmailAlreadyExists=Email-ul %s există deja.
@@ -27,7 +28,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca pe
 ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de numerar, sunt accepate doar plăţi de tip cash.
 ErrorFromToAccountsMustDiffers=Contul bancar sursă şi contul bancar destinaţie trebuie să fie diferite.
 ErrorBadThirdPartyName=Valoare greşită pentru numele terțului
+ForbiddenBySetupRules=Interzis de regulile de instalare configurare
 ErrorProdIdIsMandatory=%s este obligatoriu
+ErrorAccountancyCodeCustomerIsMandatory=Codul contabil aferent clientului %s este obligatoriu
 ErrorBadCustomerCodeSyntax=Sintaxă eronată pentru codul de client
 ErrorBadBarCodeSyntax=Sintaxă greșită pentru codul de bare. Poate s-a setat un tip de cod de bare greșit sau ați definit o mască de numerotare care nu se potrivește cu valoarea scanată.
 ErrorCustomerCodeRequired=Codul client este obligatoriu
@@ -64,7 +67,7 @@ ErrorDestinationAlreadyExists=Un fişier cu numele <b>%s</b> există deja.
 ErrorPartialFile=Fişierul nu a fost recepţionat complet de server.
 ErrorNoTmpDir=Directorul temporar %s nu există.
 ErrorUploadBlockedByAddon=Încărcarea este blocată de un plugin PHP/Apache.
-ErrorFileSizeTooLarge=Dimensiunea fişierului este prea mare.
+ErrorFileSizeTooLarge=Dimensiunea fișierului este prea mare sau fișierul nu este furnizat.
 ErrorFieldTooLong=Câmpul %s este prea lung.
 ErrorSizeTooLongForIntType=Dimensiunea este prea mare pentru tipul int (%s cifre maxim)
 ErrorSizeTooLongForVarcharType=Dimensiune prea mare pentru tipul string(%s caractere maxim)
@@ -111,6 +114,7 @@ ErrorFailedToLoadRSSFile=Eşec la obţinerea feed-ului RSS. Încercaţi să adă
 ErrorForbidden=Acces restricționat. <De> Încercați să accesați o pagină, zonă sau caracteristică a unui modul fără a fi autentificat sau pentru care utilizatorul dvs. nu are permisiunile necesare.
 ErrorForbidden2=Permisiunea pentru acest nume de autentificare poate fi definită de către administratorul sistemului din meniul %s->%s.
 ErrorForbidden3=Se pare că sistemul nu este utilizat printr-o sesiune cu autentificare. Aruncati o privire în documentaţia de instalare pentru a şti cum să gestionaţi autentificările (htaccess, mod_auth sau altele...).
+ErrorForbidden4=Atenţie: șterge cookie-urile browserului pentru a distruge sesiunile existente aferente acestei conectări.
 ErrorNoImagickReadimage=Clasa Imagick nu a fost găsită în PHP. Nu este disponibilă previzualizarea. Administratorii pot dezactiva această filă din meniul Setări - Afişare.
 ErrorRecordAlreadyExists=Înregistrarea există deja
 ErrorLabelAlreadyExists=Această etichetă există deja
@@ -150,7 +154,7 @@ ErrorWarehouseMustDiffers=Depozitul sursă și depozitul țintă trebuie să dif
 ErrorBadFormat=Format greşit!
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Eroare, acest membru nu este încă asociat unui terț. Asociază un membru la un terț existent sau crează un terț nou înainte de a crea factura de adeziune  - cotizaţie.
 ErrorThereIsSomeDeliveries=Eroare, există unele expedieri legate de această livrare. Ștergere refuzată.
-ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o intrare bancară care a fost reconciliată
+ErrorCantDeletePaymentReconciliated=Nu se poate șterge o plată care a generat o tranzacţie bancară reconciliată
 ErrorCantDeletePaymentSharedWithPayedInvoice=Nu se poate șterge o plată conţinută de cel puțin o factură cu starea Plătită
 ErrorPriceExpression1=Nu se poate atribui la constanta '%s'
 ErrorPriceExpression2=Nu se poate redefini funcția built-in  '%s'
@@ -271,6 +275,18 @@ CheckVersionFail=Verificarea versiunii a eşuat
 ErrorWrongFileName=Numele fișierului nu poate să conțină _SOMETHING_ în el
 ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de plată, vă rugăm să modificați.
 ErrorIsNotADraft=%s nu este o schiţă
+ErrorExecIdFailed=Nu se poate executa comanda "id"
+ErrorBadCharIntoLoginName=Caracter nepermis în numele de utilizator
+ErrorRequestTooLarge=Eroare, cererea este prea mare
+ErrorNotApproverForHoliday=Nu eşti persoana care aprobă pentru concediul %s
+ErrorAttributeIsUsedIntoProduct=Acest atribut este utilizat în una sau mai multe variante de produs
+ErrorAttributeValueIsUsedIntoProduct=Această valoare de atribut este utilizată în una sau mai multe variante de produs
+ErrorPaymentInBothCurrency=Eroare, toate sumele trebuiesc introduse în aceiaşi coloană
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Încerci să plăteşti facturile în moneda %s dintr-un cont cu moneda%s 
+ErrorInvoiceLoadThirdParty=Nu se poate încărca obiectul terț pentru factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Cheia pentru terțul "%s" nu este setată pentru factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Ștergerea liniei nu este permisă de starea curentă a obiectului
+ErrorAjaxRequestFailed=Solicitare eşuată
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -306,12 +322,18 @@ WarningAvailableOnlyForHTTPSServers=Disponibil numai dacă se utilizează conexi
 WarningModuleXDisabledSoYouMayMissEventHere=Modulul %s nu a fost activat. Este posibil să pierdeți o mulțime de evenimente aici. 
 WarningPaypalPaymentNotCompatibleWithStrict=Valoarea 'Strictă' face ca funcțiile de plată online să nu funcționeze corect. Folosiți în schimb 'Lax'.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valoare invalidă
 RequireAtLeastXString = Necesită cel puţin %s caracter(e)
 RequireXStringMax = Necesită %s caracter(e) maxim
 RequireAtLeastXDigits = Necesită cel puţin %s cifr(e)
 RequireXDigitsMax = Necesită cel puţin %s cifr(e) maxim
+RequireValidNumeric = Necesită o valoare numerică
 RequireValidEmail = Adresa de email nu este validă
 RequireMaxLength = Lungimea trebuie să fie mai mică de %s caractere
 RequireMinLength = Lungimea trebuie să fie mai mare de %s caracter(e)
@@ -325,3 +347,12 @@ BadSetupOfField = Eroare setare invalidă a câmpului
 BadSetupOfFieldClassNotFoundForValidation = Eroare setare valoare câmp : Clasa nu a fost găsită pentru validare
 BadSetupOfFieldFileNotFound = Eroare setare valoare câmp : Fișierul nu a fost găsit pentru includere
 BadSetupOfFieldFetchNotCallable = Eroare setare valoare câmp : Operaţia fetch nu este apelabilă din clasă
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git

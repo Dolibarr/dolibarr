@@ -126,10 +126,10 @@ class ModelNumRefHolidays
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
-	 *	@return	string					Value
+	 *	@param	Object		$holiday	Holiday object
+	 *	@return	string					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $holiday)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

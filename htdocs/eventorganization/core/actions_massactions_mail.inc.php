@@ -31,7 +31,7 @@
 // $parameters, $object, $action must be defined for the hook.
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
-// $uploaddir may be defined (example to $conf->projet->dir_output."/";)
+// $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
 
@@ -78,7 +78,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$listofobjectid = array();
 
 	$listofobjectref = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient') == 'on' ? 1 : 0);
+	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
 
 	if (!$error) {
 		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
@@ -90,7 +90,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$attendees = $attendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm' => $objecttmp->id));
+				$attendees = $attendee->fetchAll();
 				if (is_array($attendees) && count($attendees) > 0) {
 					foreach ($attendees as $attmail) {
 						if (!empty($attmail->email)) {
@@ -111,7 +111,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		$massaction = 'presend_attendees';
 	}
 
-	$receiver = $_POST['receiver'];
+	$receiver = GETPOST('receiver', 'alphawithlgt');
 	if (!is_array($receiver)) {
 		if (empty($receiver) || $receiver == '-1') {
 			$receiver = array();
@@ -119,7 +119,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$receiver = array($receiver);
 		}
 	}
-	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 1) {    // if only one recipient, receiver is mandatory
+	if (!trim($_POST['sendto']) && count($receiver) == 0 && count($listofselectedid) == 0) {    // if only one recipient, receiver is mandatory
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Recipient")), null, 'warnings');
 		$massaction = 'presend_attendees';
@@ -143,7 +143,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			$sendto = $attendees->thirdparty->name . '<' . trim($attendees->email) . '>';
 
 			// Define $sendtocc
-			$receivercc = $_POST['receivercc'];
+			$receivercc = GETPOST('receivercc', 'alphawithlgt');
 			if (!is_array($receivercc)) {
 				if ($receivercc == '-1') {
 					$receivercc = array();
@@ -153,7 +153,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			}
 			$tmparray = array();
 			if (trim($_POST['sendtocc'])) {
-				$tmparray[] = trim($_POST['sendtocc']);
+				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			$sendtocc = implode(',', $tmparray);
 
@@ -173,21 +173,21 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email FROM ' . MAIN_DB_PREFIX . 'c_email_senderprofile WHERE rowid = ' . (int) $reg[1];
+				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$from = $obj->label . ' <' . $obj->email . '>';
+					$from = dol_string_nospecial($obj->label, ' ', array(",")) . ' <' . $obj->email . '>';
 				}
 			} else {
-				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] . '>';
+				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")) . ' <' . GETPOST('frommail') . '>';
 			}
 
 			$replyto = $from;
 			$subject = GETPOST('subject', 'restricthtml');
 			$message = GETPOST('message', 'restricthtml');
 
-			$sendtobcc = GETPOST('sendtoccc');
+			$sendtobcc = GETPOST('sendtoccc', 'alphawithlgt');
 
 			// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 			// Make substitution in email content

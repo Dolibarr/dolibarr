@@ -37,17 +37,18 @@ EventOrganization=Organización de eventos
 Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
-EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada a Conferencia<br>Enviar Chamada a Stand<br>Recibir Chamadas para Conferencias<br>Recibir chamada a Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar recordatorio do evento aos relatores<br>Enviar recordatorio do evento ao anfitrión do stand<br>Enviar recordatorio do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip2=Manteña o campo baleiro se non precisa crear tarefas automaticamente.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para engadir a terceiros creada automaticamente cando alguén suxire unha conferencia 
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para engadir a terceiros creada automaticamente cando suxiren un stand 
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modelo de correo electrónico para enviar despois de recibir unha suxestión dunha conferencia.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Modelo de correo electrónico para enviar despois de recibir a suxestión dun stand. 
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Padrón de correo electrónico para enviar despois do pago dun rexistro a un stand. 
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Padrón de correo electrónico para enviar despois do pagamento dun rexistro a un stand. 
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Padrón de correo electrónico para enviar despois de pagar un rexistro a un evento. 
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modelo de correo electrónico de acción masiva para os asistentes 
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modelo de correo electrónico de acción masiva para os relatores
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtra a listaxe de selección de terceiros na tarxeta/formulario de creación de asistentes coa categoría 
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtra a listaxe de selección de terceiros na tarxeta/formulario de creación de asistentes co tipo de cliente 
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Padrón de correo electrónico para usar ao enviar correos electrónicos desde a acción masiva "Enviar correos electrónicos" aos ponentes
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Padrón de correo electrónico para usar ao enviar correos electrónicos desde a acción masiva "Enviar correos electrónicos" aos asistentes
+EVENTORGANIZATION_FILTERATTENDEES_CAT = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a  na categoría de terceiros
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a aos de natureza terceiros 
 
 #
 # Object
@@ -71,6 +72,7 @@ EventOrganizationEmailBoothPayment = Pagamento do seu stand
 EventOrganizationEmailRegistrationPayment = Inscrición nun evento 
 EventOrganizationMassEmailAttendees = Comunicación aos asistentes 
 EventOrganizationMassEmailSpeakers = Comunicación aos relatores
+ToSpeakers=Aos ponentes
 
 #
 # Event
@@ -83,14 +85,14 @@ PriceOfRegistration=Prezo da inscrición
 PriceOfRegistrationHelp=Prezo a pagar para inscribirse ou participar no evento 
 PriceOfBooth=Prezo da subscrición para estar nun stand
 PriceOfBoothHelp=Prezo da subscrición para estar nun stand
-EventOrganizationICSLink=Ligazón ICS para eventos 
+EventOrganizationICSLink=Ligazón ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencia ou stand
 Attendees=Asistentes 
 ListOfAttendeesOfEvent=Listaxe de asistentes ao evento 
 DownloadICSLink = Descargar ligazón ICS
-EVENTORGANIZATION_SECUREKEY = Clave segura da ligazón de rexistro público a unha conferencia 
+EVENTORGANIZATION_SECUREKEY = Semente para asegurar a chave da páxina pública de rexistro para suxerir unha conferencia
 SERVICE_BOOTH_LOCATION = Servizo empregado para a fila de facturas sobre a situación do stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo usado para a fila de facturas sobre unha subscrición de asistente a unha conferencia 
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
 NbVotes=Número de votos 
 #
 # Status
@@ -164,3 +166,4 @@ EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é difer
 ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento 
+MaxNbOfAttendees=Número máximo de asistentes
