@@ -307,7 +307,6 @@ if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 
 dol_syslog('htdocs/accountancy/supplier/index.php', LOG_DEBUG);
-
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
