@@ -34,6 +34,13 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 *  @param	int		$year 			number
+	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * 	@return int						value
+	 */
+	protected abstract function getNbByMonth($year, $format = 0);
+
+	/**
 	 * Return nb of elements by month for several years
 	 *
 	 * @param 	int		$endyear		Start year
