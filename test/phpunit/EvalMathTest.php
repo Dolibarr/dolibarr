@@ -146,6 +146,6 @@ class InventoryTest extends PHPUnit\Framework\TestCase
 
 		$result = $localobject->evaluate('');
 		$this->assertEquals($result, '');
-		print __METHOD__." result=". 'void' ."\n";
+		print __METHOD__." result=".$result."\n";
 	}
 }
