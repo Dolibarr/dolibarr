@@ -60,7 +60,7 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
+	if ((isModEnabled('expedition_bon') && $user->rights->expedition->lire)
 	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;

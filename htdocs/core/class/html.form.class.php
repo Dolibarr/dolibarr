@@ -867,17 +867,17 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 *  @param	string	$selected       		Id or Code or Label of preselected country
-	 *  @param  string	$htmlname       		Name of html select object
-	 *  @param  string	$htmloption     		More html options on select object
-	 *  @param	integer	$maxlength				Max length for labels (0=no limit)
-	 *  @param	string	$morecss				More css class
-	 *  @param	string	$usecodeaskey			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 *  @param	int		$showempty				Show empty choice
-	 *  @param	int		$disablefavorites		1=Disable favorites,
-	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
-	 *  @param	int		$hideflags				Hide flags
+	 *  @param	string		$selected       		Id or Code or Label of preselected country
+	 *  @param  string		$htmlname       		Name of html select object
+	 *  @param  string		$htmloption     		More html options on select object
+	 *  @param	integer		$maxlength				Max length for labels (0=no limit)
+	 *  @param	string		$morecss				More css class
+	 *  @param	string		$usecodeaskey			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int|string	$showempty				Show empty choice
+	 *  @param	int			$disablefavorites		1=Disable favorites,
+	 *  @param	int			$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 *  @param	array		$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int			$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
@@ -920,13 +920,19 @@ class Form
 				}
 
 				if (empty($disablefavorites)) {
-					array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+					$array1_sort_order = SORT_DESC;
+					$array2_sort_order = SORT_ASC;
+					array_multisort($favorite, $array1_sort_order, $label, $array2_sort_order, $countryArray);
 				} else {
 					$countryArray = dol_sort_array($countryArray, 'label');
 				}
 
 				if ($showempty) {
-					$out .= '<option value="">&nbsp;</option>'."\n";
+					if (is_numeric($showempty)) {
+						$out .= '<option value="">&nbsp;</option>'."\n";
+					} else {
+						$out .= '<option value="">'.$langs->trans($showempty).'</option>'."\n";
+					}
 				}
 
 				if ($addspecialentries) {	// Add dedicated entries for groups of countries
@@ -1279,7 +1285,6 @@ class Form
 
 			// mode 1
 			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
@@ -1294,6 +1299,8 @@ class Form
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
+
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids);
@@ -4355,6 +4362,7 @@ class Form
 				print ' selected';
 			}
 			print '>';
+			$value = '';
 			if ($format == 0) {
 				$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			} elseif ($format == 1) {
@@ -4970,7 +4978,7 @@ class Form
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
-						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+						$more .= $this->selectarray($input['name'], $input['values'], isset($input['default'])?$input['default']:'', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
@@ -8431,12 +8439,13 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 *  @param	CommonObject	$object		      Object we want to show links to
-	 *  @param  string          $morehtmlright    More html to show on right of title
-	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
-	 *  @return	int							      <0 if KO, >=0 if OK
+	 *  @param	CommonObject	$object		    				Object we want to show links to
+	 *  @param  string          $morehtmlright  				More html to show on right of title
+	 *  @param  array           $compatibleImportElementsList  	Array of compatibles elements object for "import from" action
+	 *  @param	string			$title							Title
+	 *  @return	int							      				<0 if KO, >=0 if OK
 	 */
-	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
+	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
@@ -8455,7 +8464,7 @@ class Form
 			$nbofdifferenttypes = count($object->linkedObjects);
 
 			print '<!-- showLinkedObjectBlock -->';
-			print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
+			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
 
 			print '<div class="div-table-responsive-no-min">';
@@ -8493,13 +8502,13 @@ class Form
 				// To work with non standard path
 				if ($objecttype == 'facture') {
 					$tplpath = 'compta/'.$element;
-					if (empty($conf->facture->enabled)) {
+					if (!isModEnabled('facture')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'facturerec') {
 					$tplpath = 'compta/facture';
 					$tplname = 'linkedobjectblockForRec';
-					if (empty($conf->facture->enabled)) {
+					if (!isModEnabled('facture')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'propal') {
@@ -8524,11 +8533,6 @@ class Form
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) {
-						continue; // Do not show if module disabled
-					}
-				} elseif ($objecttype == 'mo') {
-					$tplpath = 'mrp/mo';
-					if (empty($conf->mrp->enabled)) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'ficheinter') {
@@ -8629,23 +8633,62 @@ class Form
 			}
 
 			$possiblelinks = array(
-				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
-				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
-				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
-				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'propal'=>array(
+					'enabled'=>(!empty($conf->propal->enabled) ? $conf->propal->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToProposal',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
+				'order'=>array(
+					'enabled'=>(!empty($conf->commande->enabled) ? $conf->commande->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToOrder',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
+				'invoice'=>array(
+					'enabled'=>isModEnabled('facture'),
+					'perms'=>1,
+					'label'=>'LinkToInvoice',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'invoice_template'=>array(
+					'enabled'=>isModEnabled('facture'),
+					'perms'=>1,
+					'label'=>'LinkToTemplateInvoice',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
-					'enabled'=>$conf->contrat->enabled,
+					'enabled'=>(!empty($conf->contrat->enabled) ? $conf->contrat->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
 							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
 				),
-				'fichinter'=>array('enabled'=>!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
-				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
-				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
-				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
-				'mo'=>array('enabled'=>$conf->mrp->enabled, 'perms'=>1, 'label'=>'LinkToMo', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
+				'fichinter'=>array(
+					'enabled'=>(!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToIntervention',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
+				'supplier_proposal'=>array(
+					'enabled'=>(!empty($conf->supplier_proposal->enabled) ? $conf->supplier_proposal->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToSupplierProposal',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
+				'order_supplier'=>array(
+					'enabled'=>(!empty($conf->supplier_order->enabled) ? $conf->supplier_order->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToSupplierOrder',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
+				'invoice_supplier'=>array(
+					'enabled'=>(!empty($conf->supplier_invoice->enabled) ? $conf->supplier_invoice->enabled : 0),
+					'perms'=>1, 'label'=>'LinkToSupplierInvoice',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
+				'ticket'=>array(
+					'enabled'=>(!empty($conf->ticket->enabled) ? $conf->ticket->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToTicket',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
+				'mo'=>array(
+					'enabled'=>(!empty($conf->mrp->enabled) ? $conf->mrp->enabled : 0),
+					'perms'=>1,
+					'label'=>'LinkToMo',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
 			);
 		}
 
@@ -9332,16 +9375,16 @@ class Form
 	/**
 	 *	Return select list of groups
 	 *
-	 *  @param	string	$selected       Id group preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  string	$exclude        Array list of groups id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  string	$include        Array list of groups id to include
-	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-	 * 	@param	string	$force_entity	'0' or Ids of environment to force
-	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 *  @param  string	$morecss		More css to add to html component
+	 *  @param	string			$selected       Id group preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  string|array	$exclude        Array list of groups id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  string|array	$include        Array list of groups id to include
+	 * 	@param	int				$enableonly		Array list of groups id to be enabled. All other must be disabled
+	 * 	@param	string			$force_entity	'0' or Ids of environment to force
+	 * 	@param	bool			$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param  string			$morecss		More css to add to html component
 	 *  @return	string
 	 *  @see select_dolusers()
 	 */
@@ -9396,7 +9439,6 @@ class Form
 		if ($resql) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
 
 			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 
@@ -9438,6 +9480,8 @@ class Form
 				$out .= '<option value="" disabled>'.$langs->trans("NoUserGroupDefined").'</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

@@ -9,6 +9,7 @@ ErrorBadMXDomain=E-posten %s virker feil (domenet har ingen gyldig MX-post)
 ErrorBadUrl=URL %s er feil
 ErrorBadValueForParamNotAString=Feil parameterverdi. Dette skjer vanligvis når en oversettelse mangler.
 ErrorRefAlreadyExists=Referanse <b> %s </b> eksisterer allerede.
+ErrorTitleAlreadyExists=Tittel <b> %s </b> eksisterer allerede.
 ErrorLoginAlreadyExists=brukernavnet %s eksisterer allerede.
 ErrorGroupAlreadyExists=Gruppen %s eksisterer allerede.
 ErrorEmailAlreadyExists=E-post %s eksisterer allerede.
@@ -66,7 +67,7 @@ ErrorDestinationAlreadyExists=En annen fil med navnet <b> %s </b> eksisterer all
 ErrorPartialFile=Filen ble ikke fullstendig mottatt av server.
 ErrorNoTmpDir=Midlertidig mappe %s finnes ikke.
 ErrorUploadBlockedByAddon=Opplastning blokkert av en PHP/Apache plugin.
-ErrorFileSizeTooLarge=Filstørrelsen er for stor.
+ErrorFileSizeTooLarge=Filstørrelsen er for stor eller filen er ikke oppgitt.
 ErrorFieldTooLong=Felt %s er for langt.
 ErrorSizeTooLongForIntType=Størrelse for lang for int-type (%s sifre maksimum)
 ErrorSizeTooLongForVarcharType=Størrelse for lang for streng-type (%s tegn maksimum)
@@ -85,7 +86,7 @@ ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke lagre en handling med "status 
 ErrorRefAlreadyExists=Referanse <b> %s </b> eksisterer allerede.
 ErrorPleaseTypeBankTransactionReportName=Vennligst skriv inn kontoutskriftsnavnet der oppføringen skal rapporteres (Format YYYYMM eller YYYYMMDD)
 ErrorRecordHasChildren=Kunne ikke slette posten fordi den har noen under-oppføringer.
-ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
+ErrorRecordHasAtLeastOneChildOfType=Objekt %s har minst ett barn av typen %s
 ErrorRecordIsUsedCantDelete=Kan ikke slette posten. Den er allerede brukt eller inkludert i et annet objekt.
 ErrorModuleRequireJavascript=Javascript må være aktivert for å kunne bruke denne funksjonen. For å aktivere/deaktivere Javascript, gå til menyen Hjem-> Oppsett-> Visning.
 ErrorPasswordsMustMatch=Passordene må samsvare med hverandre
@@ -113,7 +114,7 @@ ErrorFailedToLoadRSSFile=Klarer ikke hente RSS-feed. Prøv å legge konstant MAI
 ErrorForbidden=Ingen tilgang. <br> Du prøver å få tilgang til en side, område eller funksjon i en deaktivert modul eller uten å være i en godkjent økt eller som ikke er tillatt din bruker.
 ErrorForbidden2=Tillatelse for denne innloggingen kan settes av Dolibarr-administratoren fra menyen %s->%s.
 ErrorForbidden3=Det ser ut til at Dolibarr ikke brukes gjennom en autentisert sesjon. Du kan lese mer i dokumentasjonen om hvordan du håndterer autentisering (htaccess, mod_auth eller andre...).
-ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
+ErrorForbidden4=Merk: slett informasjonskapslene i nettleseren for å fjerne eksisterende økter for denne påloggingen.
 ErrorNoImagickReadimage=Funksjonen imagick_readimage finnes ikke på denne PHP-installasjonen. Forhåndsvisning er da ikke mulig. Administrator kan slå av denne fanen i Oppsett - Visning.
 ErrorRecordAlreadyExists=Posten eksistererer fra før.
 ErrorLabelAlreadyExists=Denne etiketten eksisterer allerede
@@ -121,7 +122,7 @@ ErrorCantReadFile=Kunne ikke lese filen '%s'
 ErrorCantReadDir=Kunne ikke lese mappen '%s'
 ErrorBadLoginPassword=Feil verdi for brukernavn eller passord
 ErrorLoginDisabled=Kontoen din har blitt deaktivert
-ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
+ErrorFailedToRunExternalCommand=Kunne ikke kjøre ekstern kommando. Sjekk at den er tilgjengelig og kan kjøres av PHP-serverbrukeren. Sjekk også at kommandoen ikke er beskyttet på skallnivå av et sikkerhetslag som apparmor.
 ErrorFailedToChangePassword=Kunne ikke endre passord
 ErrorLoginDoesNotExists=Bruker med loginn <b>%s</b> kunne ikke bli funnet.
 ErrorLoginHasNoEmail=Denne brukeren har ingen e-postadresse. Prosess avbrutt.
@@ -266,17 +267,26 @@ ErrorDateIsInFuture=Feil, datoen kan ikke settes frem i tid
 ErrorAnAmountWithoutTaxIsRequired=Feil, beløp er obligatorisk
 ErrorAPercentIsRequired=Feil, fyll ut prosentandelen riktig
 ErrorYouMustFirstSetupYourChartOfAccount=Du må først konfigurere kontoplanen din
-ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
-ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
+ErrorFailedToFindEmailTemplate=Kunne ikke finne mal med kodenavn %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Varighet ikke definert på tjenesten. Ingen måte å beregne timeprisen.
 ErrorActionCommPropertyUserowneridNotDefined=Brukerens eier kreves
-ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+ErrorActionCommBadType=Valgt hendelsestype (id: %n, kode: %s) finnes ikke i ordboken for hendelsestype
 CheckVersionFail=Versjonskontroll mislyktes
-ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
-ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
-ErrorIsNotADraft=%s is not a draft
-ErrorExecIdFailed=Can't execute command "id"
-ErrorBadCharIntoLoginName=Unauthorized character in the login name
-ErrorRequestTooLarge=Error, request too large
+ErrorWrongFileName=Navnet på filen kan ikke inneholde __SOMETHING__
+ErrorNotInDictionaryPaymentConditions=Ikke i ordboken for betalingsvilkår, vennligst endre.
+ErrorIsNotADraft=%s er ikke et utkast
+ErrorExecIdFailed=Kan ikke utføre kommandoen "id"
+ErrorBadCharIntoLoginName=Uautorisert tegn i påloggingsnavnet
+ErrorRequestTooLarge=Feil, forespørselen er for stor
+ErrorNotApproverForHoliday=Du er ikke godkjenneren for permisjon %s
+ErrorAttributeIsUsedIntoProduct=Dette attributtet brukes i én eller flere varevarianter
+ErrorAttributeValueIsUsedIntoProduct=Denne attributtverdien brukes i én eller flere varevarianter
+ErrorPaymentInBothCurrency=Feil, alle beløp må legges inn i samme kolonne
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Du prøver å betale fakturaer i valutaen %s fra en konto med valutaen %s
+ErrorInvoiceLoadThirdParty=Kan ikke laste inn tredjepartsobjekt for faktura "%s"
+ErrorInvoiceLoadThirdPartyKey=Tredjepartsnøkkel "%s" ikke angitt for faktura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Slett linje er ikke tillatt av faktisk objektstatus
+ErrorAjaxRequestFailed=Forespørsel feilet
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parameteren upload_max_filesize (%s) er høyere enn PHP-parameteren post_max_size (%s). Dette er ikke et konsistent oppsett.
@@ -310,25 +320,39 @@ WarningTheHiddenOptionIsOn=Advarsel, det skjulte alternativet <b> %s </b> er på
 WarningCreateSubAccounts=Advarsel, du kan ikke opprette en underkonto direkte, du må opprette en tredjepart eller en bruker og tildele dem en regnskapskode for å finne dem i denne listen
 WarningAvailableOnlyForHTTPSServers=Bare tilgjengelig hvis du bruker HTTPS-sikret tilkobling.
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s er ikke aktivert, så du kan gå glipp av mange hendelser her.
-WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
+WarningPaypalPaymentNotCompatibleWithStrict=Verdien 'Strict' gjør at betalingsfunksjonene på nettet ikke fungerer som de skal. Bruk 'Lax' i stedet.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
-RequireValidValue = Value not valid
-RequireAtLeastXString = Requires at least %s character(s)
-RequireXStringMax = Requires %s character(s) max
-RequireAtLeastXDigits = Requires at least %s digit(s)
-RequireXDigitsMax = Requires %s digit(s) max
-RequireValidNumeric = Requires a numeric value
-RequireValidEmail = Email address is not valid
-RequireMaxLength = Length must be less than %s chars
-RequireMinLength = Length must be more than %s char(s)
-RequireValidUrl = Require valid URL
-RequireValidDate = Require a valid date
-RequireANotEmptyValue = Is required
-RequireValidDuration = Require a valid duration
-RequireValidExistingElement = Require an existing value
-RequireValidBool = Require a valid boolean
-BadSetupOfField = Error bad setup of field
-BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
-BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
-BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+RequireValidValue = Verdien er ikke gyldig
+RequireAtLeastXString = Krever minst %s tegn
+RequireXStringMax = Krever maks%s tegn 
+RequireAtLeastXDigits = Krever minst %s siffer
+RequireXDigitsMax = Krever maks %s siffer
+RequireValidNumeric = Krever en numerisk verdi
+RequireValidEmail = E-postadressen er ikke gyldig
+RequireMaxLength = Lengden må være mindre enn %s tegn
+RequireMinLength = Lengden må være mer enn %s tegn
+RequireValidUrl = Krev gyldig URL
+RequireValidDate = Krev en gyldig dato
+RequireANotEmptyValue = Er påkrevd
+RequireValidDuration = Krev en gyldig varighet
+RequireValidExistingElement = Krev en eksisterende verdi
+RequireValidBool = Krev en gyldig boolsk verdi
+BadSetupOfField = Feil oppsett av felt
+BadSetupOfFieldClassNotFoundForValidation = Feil oppsett av felt: Klasse ikke funnet for validering
+BadSetupOfFieldFileNotFound = Feil oppsett av felt: Filen ble ikke funnet for inkludering
+BadSetupOfFieldFetchNotCallable = Feil oppsett av felt: Henting kan ikke kalles på klasse
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

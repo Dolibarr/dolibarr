@@ -424,3 +424,6 @@ PMPExpected=PMP agardado
 ExpectedValuation=Valor agardado
 PMPReal=PMP real
 RealValuation=Valor real
+ConfirmEditExtrafield = Seleccione o campo extra que quere modificar
+ConfirmEditExtrafieldQuestion = Está certo de querer modificar este campo extra?
+ModifyValueExtrafields = Modificar o valor dun campo extra

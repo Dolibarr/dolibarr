@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Masukkan nama modul / aplikasi yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Masukkan nama objek yang akan dibuat tanpa spasi. Gunakan huruf besar untuk memisahkan kata-kata (Misalnya: MyObject, Siswa, Guru ...). File kelas CRUD, tetapi juga file API, halaman ke daftar / tambahkan / edit / hapus objek dan file SQL akan dihasilkan.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Jalur tempat modul dihasilkan / diedit (direktori pertama untuk modul eksternal didefinisikan menjadi %s):<strong>%s </strong>
 ModuleBuilderDesc3=Modul yang dihasilkan / dapat diedit ditemukan:<strong>%s </strong>
 ModuleBuilderDesc4=Modul terdeteksi sebagai 'dapat diedit' ketika file<strong>%s </strong> ada di root direktori modul
 NewModule=Modul baru
 NewObjectInModulebuilder=Objek baru
+NewDictionary=New dictionary
 ModuleKey=Kunci modul
 ObjectKey=Kunci objek
+DicKey=Dictionary key
 ModuleInitialized=Modul diinisialisasi
 FilesForObjectInitialized=File untuk objek baru '%s' diinisialisasi
 FilesForObjectUpdated=File untuk objek '%s' diperbarui (file .sql dan file .class.php)

@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Redovisningskonto för att registrera donationer
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Redovisningskonto för att registrera prenumerationer
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Redovisningskonto som standard för att registrera kundinsättning
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Redovisningskonto som standard för de köpta produkterna (används om det inte definieras i produktbladet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Redovisningskonto som standard för de köpta produkterna i EEG (används om det inte definieras i produktbladet)
@@ -289,7 +290,7 @@ ValidateHistory=Förbind automatiskt
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fel, du kan inte ta bort denna redovisningskonto eftersom den används
-MvtNotCorrectlyBalanced=Rörelsen är inte korrekt balanserad. Debit = %s | Kredit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balansering
 FicheVentilation=Förbindande kort
 GeneralLedgerIsWritten=Transaktioner skrivs i huvudboken

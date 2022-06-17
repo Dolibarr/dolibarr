@@ -282,7 +282,7 @@ print '</tr>'."\n";
 print '</table>';
 
 print '</div>';
-
+print '<br>';
 
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
@@ -340,7 +340,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
-		if (empty($modules[$obj->module])) {
+		if (!isset($obj->module) || empty($modules[$obj->module])) {
 			$i++;
 			continue;
 		}

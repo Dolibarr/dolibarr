@@ -339,6 +339,7 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 }
 $morejs = array();
 $morecss = array();
+$morehtmlright = "";
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -561,7 +562,7 @@ if ($search_api_key != '') {
 if ($search_supervisor > 0) {
 	$param .= "&amp;search_supervisor=".urlencode($search_supervisor);
 }
-if ($search_statut != '' && $search_statut >= 0) {
+if ($search_statut != '') {
 	$param .= "&amp;search_statut=".urlencode($search_statut);
 }
 if ($optioncss != '') {
@@ -612,9 +613,9 @@ if (!empty($socid)) {
 }
 
 $newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
@@ -726,7 +727,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth150');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
@@ -1104,7 +1105,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.fk_soc']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->fk_soc > 0) {
 				$companystatic->id = $obj->fk_soc;
 				$companystatic->name = $obj->name;

@@ -226,7 +226,7 @@ class FormActions
 			}
 
 			$newcardbutton = '';
-			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create)) {
+			if (isModEnabled('agenda') && !empty($user->rights->agenda->myactions->create)) {
 				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
 				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
@@ -259,7 +259,6 @@ class FormActions
 					}
 
 					$ref = $actioncomm->getNomUrl(1, -1);
-					$label = $actioncomm->getNomUrl(0, 36);
 
 					print '<tr class="oddeven">';
 
@@ -304,7 +303,7 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td>'.$label.'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

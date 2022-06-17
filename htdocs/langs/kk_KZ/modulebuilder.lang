@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Бос орынсыз құру үшін модуль/қосымшаның атын енгізіңіз. Сөздерді ажырату үшін бас әріптерді қолданыңыз (Мысалы: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Бос орынсыз жасалатын нысан атауын енгізіңіз. Сөздерді ажырату үшін бас әріптерді қолданыңыз (Мысалы: MyObject, Student, Teacher ...). CRUD сынып файлы, сонымен қатар API файлы, объектілерді тізімдеу/қосу/өңдеу/жою үшін беттер және SQL файлдары жасалады.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Модульдер жасалатын/өңделетін жол (%s анықталған сыртқы модульдердің бірінші каталогы): <strong> %s </strong>
 ModuleBuilderDesc3=Жасалған/өңделетін модульдер табылды: <strong> %s </strong>
 ModuleBuilderDesc4=Модуль каталогының түбірінде <strong> %s </strong> файлы болған кезде модуль «өңделетін» ретінде анықталады
 NewModule=Жаңа модуль
 NewObjectInModulebuilder=Жаңа объект
+NewDictionary=New dictionary
 ModuleKey=Модуль кілті
 ObjectKey=Объект кілті
+DicKey=Dictionary key
 ModuleInitialized=Модуль инициализацияланды
 FilesForObjectInitialized=«%s» жаңа объектісінің файлдары инициализацияланды
 FilesForObjectUpdated=«%s» нысанына арналған файлдар жаңартылды (.sql файлдары мен .class.php файлы)

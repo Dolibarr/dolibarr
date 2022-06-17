@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Aquesta eina només l'han d'utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank" rel="noopener noreferrer"> és aquí </a>.
-EnterNameOfModuleDesc=Introduïu el nom del mòdul/aplicació per a crear sense espais. Utilitzeu majúscules per separar paraules (per exemple: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Introduïu el nom de l'objecte que voleu crear sense espais. Utilitzeu majúscules per separar paraules (Per exemple: MyObject, Estudiant, Professor...). El fitxer de classes CRUD, però també el fitxer API, pàgines per a llistar/afegir/editar/eliminar objectes i els fitxers SQL es generaran.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Camí on es generen / editen els mòduls (primer directori per als mòduls externs definits en %s): <strong> %s </strong>
 ModuleBuilderDesc3=S'han trobat mòduls generats/editables: <strong>%s</strong>
 ModuleBuilderDesc4=Es detecta un mòdul com "editable" quan el fitxer <strong>%s</strong> existeix al directori arrel del mòdul
 NewModule=Mòdul nou
 NewObjectInModulebuilder=Objecte nou
+NewDictionary=New dictionary
 ModuleKey=Clau del mòdul
 ObjectKey=Clau de l'objecte
+DicKey=Dictionary key
 ModuleInitialized=Mòdul inicialitzat
 FilesForObjectInitialized=S'han inicialitzat els fitxers per al objecte nou '%s'
 FilesForObjectUpdated=Fitxers de l'objecte '%s' actualitzat (fitxers .sql i fitxer .class.php)

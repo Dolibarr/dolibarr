@@ -2790,6 +2790,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
 		}
 		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER)) {
+			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		} else {
 			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
@@ -3322,7 +3323,7 @@ if ($action == 'editcss') {
 		// Clean the php htaccesscontent file to remove php code and get only html part
 		$htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
 	} else {
-		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');
+		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
 	if (!trim($htaccesscontent)) {
 		$htaccesscontent .= "# Order allow,deny\n";

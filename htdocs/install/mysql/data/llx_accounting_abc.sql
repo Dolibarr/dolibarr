@@ -176,6 +176,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account USA US-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 11, 'US-BASE', 'USA basic chart of accounts', 1);
 
+-- Description of chart of account USA US-GAAP-BASIC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 11, 'US-GAAP-BASIC', 'USA GAAP basic chart of accounts', 1);
+
 -- Description of chart of account Canada CA-ENG-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 14, 'CA-ENG-BASE', 'Canadian basic chart of accounts - English', 1);
 

@@ -3479,6 +3479,81 @@ class Product extends CommonObject
 		}
 	}
 
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Charge tableau des stats facture recurrentes pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_facture, <0 if ko or >0 if ok
+	 */
+	public function load_stats_facturerec($socid = 0)
+	{
+		// phpcs:enable
+		global $db, $conf, $user, $hookmanager;
+
+		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM('fd.qty') as qty";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as fd";
+		$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
+		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE f.rowid = fd.fk_facture";
+		$sql .= " AND f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= " AND fd.fk_product = ".((int) $this->id);
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND f.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_facturerec['customers'] = $obj->nb_customers;
+			$this->stats_facturerec['nb'] = $obj->nb;
+			$this->stats_facturerec['rows'] = $obj->nb_rows;
+			$this->stats_facturerec['qty'] = $obj->qty ? $obj->qty : 0;
+
+			// if it's a virtual product, maybe it is in invoice by extension
+			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+				$TFather = $this->getFather();
+				if (is_array($TFather) && !empty($TFather)) {
+					foreach ($TFather as &$fatherData) {
+						$pFather = new Product($this->db);
+						$pFather->id = $fatherData['id'];
+						$qtyCoef = $fatherData['qty'];
+
+						if ($fatherData['incdec']) {
+							$pFather->load_stats_facture($socid);
+
+							$this->stats_facturerec['customers'] += $pFather->stats_facturerec['customers'];
+							$this->stats_facturerec['nb'] += $pFather->stats_facturerec['nb'];
+							$this->stats_facturerec['rows'] += $pFather->stats_facturerec['rows'];
+							$this->stats_facturerec['qty'] += $pFather->stats_facturerec['qty'] * $qtyCoef;
+						}
+					}
+				}
+			}
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsCustomerInvoiceRec', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_facturerec = $hookmanager->resArray['stats_facturerec'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Charge tableau des stats facture pour le produit/service
@@ -4896,14 +4971,14 @@ class Product extends CommonObject
 		}
 
 		if (!empty($conf->accounting->enabled)) {
-			if ($this->status) {
+			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				$label .= '<br>';
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
 			}
-			if ($this->status_buy) {
+			if ($this->status_buy && isset($this->accountancy_code_buy)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				if (empty($this->status)) {
 					$label .= '<br>';

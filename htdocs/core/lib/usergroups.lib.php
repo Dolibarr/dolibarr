@@ -72,7 +72,7 @@ function user_prepare_head(User $object)
 	$head[$h][2] = 'guisetup';
 	$h++;
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		if (empty($conf->global->AGENDA_EXT_NB)) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
@@ -372,7 +372,12 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</th></tr>';
 	}
 
-	print '<tr><td colspan="'.$colspan.'">';
+	print '<tr><td colspan="'.$colspan.'" class="center">';
+
+	if (!empty($conf->global->MAIN_FORCETHEME)) {
+		$langs->load("errors");
+		print $langs->trans("WarningThemeForcedTo", $conf->global->MAIN_FORCETHEME);
+	}
 
 	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
@@ -450,26 +455,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
 
-	// Show logo
-	if ($foruserprofile) {
-		// Nothing
-	} else {
-		// Show logo
-		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("EnableShowLogo").'</td><td>';
-		if ($edit) {
-			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
-			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
-		} else {
-			print  yn($conf->global->MAIN_SHOW_LOGO);
-		}
-		print '</td>';
-		print '</tr>';
-		/*
-		print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
-		print "</tr>";*/
-	}
-
-
 	// TopMenuDisableImages
 	if ($foruserprofile) {
 		/*
@@ -493,26 +478,51 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		 if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		 print '</td>';*/
 	} else {
-		$default = $langs->trans('No');
+		$listoftopmenumodes = array(
+			'0' => $langs->transnoentitiesnoconv("IconAndText"),
+			'1' => $langs->transnoentitiesnoconv("TextOnly"),
+			'2' => $langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
+			'3' => $langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
+			'4' => $langs->transnoentitiesnoconv("IconOnly"),
+		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
-			//print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
+			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE)?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:0);
 		} else {
-			print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+			$listoftopmenumodes[$conf->global->THEME_TOPMENU_DISABLE_IMAGE];
+			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
 		}
-		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
 		print '</td>';
 		print '</tr>';
+	}
+
+	// Show logo
+	if ($foruserprofile) {
+		// Nothing
+	} else {
+		// Show logo
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("EnableShowLogo").'</td><td>';
+		if ($edit) {
+			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
+			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
+		} else {
+			print  yn($conf->global->MAIN_SHOW_LOGO);
+		}
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
+		print '</td>';
+		print '</tr>';
+		/*
+		 print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+		 print "</tr>";*/
 	}
 
 	// BorderTableActive
 	if ($foruserprofile) {
 	} else {
-		$default = $langs->trans('No');
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
@@ -522,8 +532,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		} else {
 			print yn($conf->global->THEME_ELDY_USEBORDERONTABLE);
 		}
-		print ' &nbsp; <span class="nowraponall opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';
-		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes"));
 		print '</td>';
 		print '</tr>';
 	}

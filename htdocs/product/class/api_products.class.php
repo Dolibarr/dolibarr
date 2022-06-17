@@ -258,7 +258,7 @@ class Products extends DolibarrApi
 
 							if (is_array($product_static->stock_warehouse)) {
 								foreach ($product_static->stock_warehouse as $keytmp => $valtmp) {
-									if (is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
+									if (isset($product_static->stock_warehouse[$keytmp]->detail_batch) && is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
 										foreach ($product_static->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 											unset($product_static->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 										}
@@ -781,9 +781,9 @@ class Products extends DolibarrApi
 		}
 
 		// Clean data
-		$ref_fourn = checkVal($ref_fourn, 'alphanohtml');
-		$desc_fourn = checkVal($desc_fourn, 'restricthtml');
-		$barcode = checkVal($barcode, 'alphanohtml');
+		$ref_fourn = sanitizeVal($ref_fourn, 'alphanohtml');
+		$desc_fourn = sanitizeVal($desc_fourn, 'restricthtml');
+		$barcode = sanitizeVal($barcode, 'alphanohtml');
 
 		$result = $this->productsupplier->update_buyprice($qty, $buyprice, DolibarrApiAccess::$user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges, $remise_percent, $remise, $newnpr, $delivery_time_days, $supplier_reputation, $localtaxes_array, $newdefaultvatcode, $multicurrency_buyprice, $multicurrency_price_base_type, $multicurrency_tx, $multicurrency_code, $desc_fourn, $barcode, $fk_barcode_type);
 
@@ -2045,7 +2045,7 @@ class Products extends DolibarrApi
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
-					if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+					if (isset($this->product->stock_warehouse[$keytmp]->detail_batch) && is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
 						foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 							unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 						}

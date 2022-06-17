@@ -103,7 +103,7 @@ $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'projecttasklist';
-
+$optioncss  = GETPOST('optioncss', 'aZ');
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -137,7 +137,7 @@ $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
@@ -234,7 +234,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Tasks';
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
-	$uploaddir = $conf->projet->dir_output.'/tasks';
+	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -648,7 +648,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";

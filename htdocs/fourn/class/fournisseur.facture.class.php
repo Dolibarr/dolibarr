@@ -277,7 +277,7 @@ class FactureFournisseur extends CommonInvoice
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
@@ -297,8 +297,8 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>145),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateLimReglement', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
@@ -2354,20 +2354,21 @@ class FactureFournisseur extends CommonInvoice
 			$info_bits = 0;
 		}
 
-		if ($idproduct) {
-			$product = new Product($this->db);
-			$result = $product->fetch($idproduct);
-			$product_type = $product->type;
-		} else {
-			$product_type = $type;
-		}
-
 		//Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new SupplierInvoiceLine($this->db);
 		$line->fetch($id);
 		$line->fetch_optionals();
 
 		$staticline = clone $line;
+
+		if ($idproduct) {
+			$product = new Product($this->db);
+			$result = $product->fetch($idproduct);
+			$product_type = $product->type;
+		} else {
+			$idproduct = $staticline->fk_product;
+			$product_type = $type;
+		}
 
 		$line->oldline = $staticline;
 		$line->context = $this->context;

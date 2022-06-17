@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto księgowe dla zarejestrowanych dotatcji
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto księgowe do rejestracji subskrypcji
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto księgowe domyślnie do rejestracji wpłaty klienta
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto księgowe domyślnie dla kupowanych produktów (używane, jeśli nie zostało zdefiniowane w karcie produktu)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto księgowe domyślnie dla zakupionych produktów w EWG (używane, jeśli nie zostało zdefiniowane w karcie produktu)
@@ -289,7 +290,7 @@ ValidateHistory=Dowiąż automatycznie
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
-MvtNotCorrectlyBalanced=Ruch nie jest prawidłowo wyważony. Obciążenie = %s | Kredyt = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balansowy
 FicheVentilation=Karta dowiązania
 GeneralLedgerIsWritten=Transakcje zapisane w księdze głównej

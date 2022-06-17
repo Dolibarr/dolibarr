@@ -233,7 +233,7 @@ class Utils
 				$prefix = 'pg_dump';
 				$ext = 'sql';
 			}
-			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
 
 		$outputdir = $conf->admin->dir_output.'/backup';
@@ -276,7 +276,7 @@ class Utils
 			$param = $dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 			$param .= " -u ".$dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -P ".$dolibarr_main_db_port;
+				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
 			if (GETPOST("use_transaction", "alpha")) {
 				$param .= " --single-transaction";

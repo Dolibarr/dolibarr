@@ -55,6 +55,8 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
+$objcanvas = GETPOST("objcanvas", "alpha");
+$comefromclone = GETPOST("comefromclone", "alpha");
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
@@ -388,7 +390,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->projet->dir_output;
+			$upload_dir = $conf->project->dir_output;
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -600,7 +602,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	// Thirdparty
-	if ($conf->societe->enabled) {
+	if (isModEnabled('societe')) {
 		print '<tr><td>';
 		print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
 		print $langs->trans("ThirdParty");
@@ -896,7 +898,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Thirdparty
-		if ($conf->societe->enabled) {
+		if (isModEnabled('societe')) {
 			print '<tr><td>';
 			print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
 			print $langs->trans("ThirdParty");
@@ -999,7 +1001,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1090,7 +1092,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
-			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -1168,7 +1170,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
@@ -1205,7 +1207,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
             	{
                     var element = jQuery("#opp_status option:selected");
                     var defaultpercent = element.attr("defaultpercent");
-                    var defaultcloseproject = '.$defaultcheckedwhenoppclose.';
+                    var defaultcloseproject = '.((int) $defaultcheckedwhenoppclose).';
                     var elemcode = element.attr("elemcode");
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 
@@ -1324,7 +1326,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
-				if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
+				if (isModEnabled('facture') && $user->rights->facture->creer) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
@@ -1392,7 +1394,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire && $userAccess > 0);
 		$delallowed = ($user->rights->projet->creer && $userWrite > 0);
@@ -1416,7 +1418,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Presend form
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
-	$diroutput = $conf->projet->dir_output;
+	$diroutput = $conf->project->dir_output;
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

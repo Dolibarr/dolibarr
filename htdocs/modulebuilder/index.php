@@ -73,7 +73,7 @@ $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
 
 // Security check
-if (empty($conf->modulebuilder->enabled)) {
+if (!isModEnabled('modulebuilder')) {
 	accessforbidden();
 }
 if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {
@@ -235,6 +235,33 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			} else {
 				// $result == 0
 				setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
+			}
+		}
+
+		// Copy last html.formsetup.class.php' to backport folder
+		$tryToCopyFromSetupClass = true;
+		$backportDest = $destdir .'/backport/v16/core/class';
+		$backportFileSrc = DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+		$backportFileDest = $backportDest.'/html.formsetup.class.php';
+		$result = dol_mkdir($backportDest);
+
+		if ($result < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailToCreateDir", $backportDest), null, 'errors');
+			$tryToCopyFromSetupClass = false;
+		}
+
+		if ($tryToCopyFromSetupClass) {
+			$result = dol_copy($backportFileSrc, $backportFileDest);
+			if ($result <= 0) {
+				if ($result < 0) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToCopyFile", $backportFileSrc, $backportFileDest), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("FileDidAlreadyExist", $backportFileDest), null, 'warnings');
+				}
 			}
 		}
 

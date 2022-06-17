@@ -219,7 +219,7 @@ ErrorBadLinkSourceSetButBadValueForRef=Der Link ist ungültig. Die Quelle für d
 ErrorTooManyErrorsProcessStopped=Zu viele Fehler, Verarbeitung abgebrochen.
 ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Massenfreigabe ist nicht Möglich, wenn die Option um den Lagerbestand zu Verändern eingeschaltet ist (Sie müssen jedes Dokument einzeln freigeben umd das Lager für die Lagerbewegung anzugeben)
 ErrorObjectMustHaveStatusDraftToBeValidated=Objekt %s muss im Entwurfstatus sein um es zu bestätigen.
-ErrorObjectMustHaveLinesToBeValidated=Objekt %s muss Zeilen haben damit es bestätigt werden kann.
+ErrorObjectMustHaveLinesToBeValidated=Objekt %s muss Zeilen haben damit es freigegeben werden kann.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Nur freigegebene Rechnungen können mittels der "Via E-Mail senden" Massenaktion versendet werden.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=Sie müssen angeben ob der Artikel ein vordefiniertes Produkt ist oder nicht
 ErrorDiscountLargerThanRemainToPaySplitItBefore=Der Rabatt den Sie anwenden wollen ist grösser als der verbleibende Rechnungsbetrag. Teilen Sie den Rabatt in zwei kleinere Rabatte auf.
@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=Dieses Attribut wird in mindestens einer Produkt
 ErrorAttributeValueIsUsedIntoProduct=Dieser Attributwert wird in mindestens einer Produktvariante verwendet
 ErrorPaymentInBothCurrency=Fehler, alle Beträge müssen in die gleiche Spalte eingetragen werden
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Sie versuchen Rechnungen in der Währung %s von einem Konto mit der Währung %s zu bezahlen
+ErrorInvoiceLoadThirdParty=Das Geschäftspartner-Objekt für Rechnung „%s“ kann nicht geladen werden
+ErrorInvoiceLoadThirdPartyKey=Geschäftspartner-Schlüssel "%s" ist für Rechnung "%s" nicht vorhanden
+ErrorDeleteLineNotAllowedByObjectStatus=Das Löschen einer Zeile ist aufgrund des tatsächlichen Objektstatus nicht zulässig
+ErrorAjaxRequestFailed=Anfrage fehlgeschlagen
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -308,16 +312,21 @@ WarningYourLoginWasModifiedPleaseLogin=Ihr Login wurde verändert. Aus Sicherhei
 WarningAnEntryAlreadyExistForTransKey=Eine Übersetzung für diesen Übersetzungsschlüssel existiert schon für diese Sprache
 WarningNumberOfRecipientIsRestrictedInMassAction=Achtung, die Anzahl der verschiedenen Empfänger ist auf <b> %s </b> beschränkt, wenn Massenaktionen für Listen verwendet werden
 WarningDateOfLineMustBeInExpenseReportRange=Das Datum dieser Positionszeile ist ausserhalb der Datumsspanne dieser Spesenabrechnung
-WarningProjectDraft=Das Projekt befindet sich noch im Entwurfsmodus. Vergessen Sie nicht, es zu validieren, wenn Sie Aufgaben verwenden möchten.
+WarningProjectDraft=Das Projekt befindet sich noch im Entwurfsmodus. Vergessen Sie nicht, es freizugeben, wenn Sie Aufgaben verwenden möchten.
 WarningProjectClosed=Projekt ist geschlossen. Sie müssen es zuerst wieder öffnen.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Einige Bank-Transaktionen wurden entfernt, nachdem der Kassenbon, der diese enthielt, erzeugt wurde. Daher wird sich die Anzahl der Checks und die Endsumme auf dem Kassenbon von der Anzahl und Endsumme in der Liste unterscheiden.
 WarningFailedToAddFileIntoDatabaseIndex=Warnung: Dateieintrag zur ECM-Datenbankindextabelle konnte nicht hinzugefügt werden
 WarningTheHiddenOptionIsOn=Achtung, die versteckte Option <b> %s </b> ist aktiviert.
-WarningCreateSubAccounts=Achtung, Sie können kein Unterkonto direkt erstellen. Sie müssen einen Geschäftspartner oder einen Benutzer erstellen und ihm einen Buchungscode zuweisen, um sie in dieser Liste zu finden
+WarningCreateSubAccounts=Achtung, Sie können kein Unterkonto direkt erstellen. Sie müssen einen Geschäftspartner oder einen Benutzer erstellen und ihm ein Buchungskonto zuweisen, um ihn in dieser Liste zu finden
 WarningAvailableOnlyForHTTPSServers=Nur verfügbar, wenn eine HTTPS-gesicherte Verbindung verwendet wird.
 WarningModuleXDisabledSoYouMayMissEventHere=Das Modul %s wurde nicht aktiviert. Sie können also eine Menge Veranstaltung hier verpassen.
 WarningPaypalPaymentNotCompatibleWithStrict=Der Wert 'Strict' führt dazu, dass die Online-Zahlungsfunktionen nicht richtig funktionieren. Verwenden Sie stattdessen 'Lax'.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Wert nicht gültig
 RequireAtLeastXString = Mindestlänge beträgt %s Zeichen
@@ -338,3 +347,12 @@ BadSetupOfField = Fehler beim Setup des Feldes
 BadSetupOfFieldClassNotFoundForValidation = Fehler beim Setup des Feldes: Klasse für Validierung nicht gefunden
 BadSetupOfFieldFileNotFound = Fehler beim Setup des Feldes: einzubindende Datei nicht gefunden
 BadSetupOfFieldFetchNotCallable = Fehler beim Setup des Felds: Kann bei der Klasse nicht aufgerufen werden
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Dette værktøj må kun bruges af erfarne brugere eller udviklere. Det giver værktøjer til at bygge eller redigere dit eget modul. Dokumentation for alternativ <a href="%s" target="_blank" rel="noopener noreferrer"> manuel udvikling er her </a> .
-EnterNameOfModuleDesc=Indtast navnet på modulet / programmet for at oprette uden mellemrum. Brug store bogstaver til at adskille ord (For eksempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Indtast navnet på objektet, der skal oprettes uden mellemrum. Brug store bogstaver til at adskille ord (For eksempel: MyObject, Student, Lærer ...). CRUD-klassefilen, men også API-filen, vil der blive genereret sider til liste / tilføj / rediger / slet objekt og SQL-filer.
+EnterNameOfModuleDesc=Indtast navnet på modulet/applikationen, der skal oprettes uden mellemrum. Brug store bogstaver til at adskille ord (for eksempel: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Indtast navnet på det objekt, der skal oprettes, uden mellemrum. Brug store bogstaver til at adskille ord (for eksempel: Mit objekt, elev, lærer...). CRUD-klassefilen, men også API-fil, sider til liste/tilføj/rediger/slet objekt og SQL-filer vil blive genereret.
+EnterNameOfDictionaryDesc=Indtast navnet på den ordbog, der skal oprettes uden mellemrum. Brug store bogstaver til at adskille ord (for eksempel: MyDico...). Klassefilen, men også SQL-filen vil blive genereret.
 ModuleBuilderDesc2=Sti, hvor moduler genereres / redigeres (første bibliotek for eksterne moduler defineret i %s):<strong>%s</strong>
 ModuleBuilderDesc3=Genererede / redigerbare moduler fundet: <strong> %s </strong>
 ModuleBuilderDesc4=Et modul registreres som 'redigerbart', når filen <strong> %s </strong> findes i root af modulmappen
 NewModule=Nyt modul
 NewObjectInModulebuilder=Nyt objekt
+NewDictionary=Ny ordbog
 ModuleKey=Modul nøgle
 ObjectKey=Objektnøgle
+DicKey=Ordbogsnøgle
 ModuleInitialized=Modul initialiseret
 FilesForObjectInitialized=Filer til nyt objekt '%s' initialiseret
 FilesForObjectUpdated=Filer til objekt '%s' opdateret (.sql-filer og .class.php-fil)

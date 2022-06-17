@@ -260,7 +260,7 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Partnership")), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("NewPartnership"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -406,7 +406,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->projet->enabled)) {
+	 if (! empty($conf->project->enabled)) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
