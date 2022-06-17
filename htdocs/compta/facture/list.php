@@ -1091,7 +1091,7 @@ if ($resql) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if (!empty($search_fac_rec_source_title)) {
-		$param .= '&$search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
+		$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 	}
 
 	// Add $param from extra fields
