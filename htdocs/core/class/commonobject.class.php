@@ -7565,12 +7565,13 @@ abstract class CommonObject
 								$getnomurlparam3 = (!isset($InfoFieldList[5]) ? 0 : $InfoFieldList[5]);
 								$getnomurlparam4 = (!isset($InfoFieldList[6]) ? -1 : $InfoFieldList[6]);
 								$getnomurlparam5 = (!isset($InfoFieldList[7]) ? 0 : $InfoFieldList[7]);
-								$getnomurlparam6 = (!isset($InfoFieldList[8]) ? 0 : $InfoFieldList[8]);
+								$getnomurlparam6 = (!isset($InfoFieldList[8]) ? '' : $InfoFieldList[8]);
+								$getnomurlparam7 = (!isset($InfoFieldList[9]) ? 0 : $InfoFieldList[9]);
 
 								/**
 								 * @var Product $object
 								 */
-								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6);
+								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6, $getnomurlparam7);
 							} else {
 								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 							}
