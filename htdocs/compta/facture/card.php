@@ -4711,36 +4711,36 @@ if ($action == 'create') {
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_tva, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($sign * $object->multicurrency_total_tva, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="nowrap amountcard">'.price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 	}
 
 	// Amount
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('AmountHT').'</td>';
-	print '<td class="nowrap amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<td class="nowrap right amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap right amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="nowrap amountcard">'.price($sign * $object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+		print '<td class="nowrap right amountcard">'.price($sign * $object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	}
 	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {	// Localtax2
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class="nowrap amountcard">'.price($sign * $object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+		print '<td class="nowrap right amountcard">'.price($sign * $object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	}
 
 	// Revenue stamp
@@ -4796,7 +4796,7 @@ if ($action == 'create') {
 	}
 
 	// Total with tax
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap amountcard">'.price($sign * $object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap right amountcard">'.price($sign * $object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	print '</table>';
 
