@@ -299,7 +299,7 @@ $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 } else {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.")";
@@ -382,7 +382,7 @@ if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 } else {
 	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";
@@ -467,7 +467,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 	$sql .= "  AND ff.fk_statut > 0";
 	$sql .= "  AND ffd.product_type <= 2";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
 	} else {
 		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";
