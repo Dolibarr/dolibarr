@@ -154,11 +154,19 @@ class Facture extends CommonInvoice
 	public $remise_absolue;
 	public $remise_percent;
 	public $total_ht;
-	public $total_tva;
+	public $total_vat;
 	public $total_localtax1;
 	public $total_localtax2;
 	public $total_ttc;
 	public $revenuestamp;
+
+	/**
+	 * @deprecated
+	 *
+	 * @see total_vat
+	 */
+	public $total_tva;
+
 
 	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
