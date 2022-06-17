@@ -173,7 +173,9 @@ class ActionsStripeconnect
 			// On verifie si la facture a des paiements
 			$sql = 'SELECT pf.amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql .= ' WHERE pf.fk_facture = '.$object->id;
+			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
+
+			$totalpaid = 0;
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -182,14 +184,14 @@ class ActionsStripeconnect
 
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
-					$totalpaye += $objp->amount;
+					$totalpaid += $objp->amount;
 					$i++;
 				}
 			} else {
 				dol_print_error($this->db, '');
 			}
 
-			$resteapayer = $object->total_ttc - $totalpaye;
+			$resteapayer = $object->total_ttc - $totalpaid;
 			// Request a direct debit order
 			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0) {
 				$stripe = new Stripe($this->db);

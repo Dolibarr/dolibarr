@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Aquesta eina només l’han d’utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per a construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank"> és aquí </a>.
-EnterNameOfModuleDesc=Introduïu el nom del mòdul/aplicació per a crear sense espais. Utilitzeu majúscules per separar paraules (per exemple: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Introduïu el nom de l'objecte que voleu crear sense espais. Utilitzeu majúscules per separar paraules (Per exemple: MyObject, Estudiant, Professor...). El fitxer de classes CRUD, però també el fitxer API, pàgines per a llistar/afegir/editar/eliminar objectes i els fitxers SQL es generaran.
+ModuleBuilderDesc=Aquesta eina només l'han d'utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank" rel="noopener noreferrer"> és aquí </a>.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Camí on es generen / editen els mòduls (primer directori per als mòduls externs definits en %s): <strong> %s </strong>
 ModuleBuilderDesc3=S'han trobat mòduls generats/editables: <strong>%s</strong>
 ModuleBuilderDesc4=Es detecta un mòdul com "editable" quan el fitxer <strong>%s</strong> existeix al directori arrel del mòdul
 NewModule=Mòdul nou
 NewObjectInModulebuilder=Objecte nou
+NewDictionary=New dictionary
 ModuleKey=Clau del mòdul
 ObjectKey=Clau de l'objecte
+DicKey=Dictionary key
 ModuleInitialized=Mòdul inicialitzat
 FilesForObjectInitialized=S'han inicialitzat els fitxers per al objecte nou '%s'
 FilesForObjectUpdated=Fitxers de l'objecte '%s' actualitzat (fitxers .sql i fitxer .class.php)
@@ -52,7 +55,7 @@ LanguageFile=Arxiu del llenguatge
 ObjectProperties=Propietats de l'objecte
 ConfirmDeleteProperty=Estàs segur que vols eliminar la propietat <strong> %s </strong>? Això canviarà el codi a la classe PHP, però també eliminarà la columna de la definició de la taula de l'objecte.
 NotNull=No és NULL
-NotNullDesc=1=Estableix la base de dades a NOT NULL. -1=Permet els valors nuls i força el valor a ser NULL si és buit ('' ó 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Utilitzat per a 'cerca tot'
 DatabaseIndex=Índex de bases de dades
 FileAlreadyExists=El fitxer %s ja existeix
@@ -94,11 +97,11 @@ LanguageDefDesc=Introduïu a aquests fitxers, totes les claus i les traduccions 
 MenusDefDesc=Definiu aquí els menús proporcionats pel vostre mòdul
 DictionariesDefDesc=Defineix aquí els diccionaris que ofereix el teu mòdul
 PermissionsDefDesc=Definiu aquí els nous permisos proporcionats pel vostre mòdul
-MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> menús</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul es reactiven), els menús també es visualitzen a l'editor de menús disponible per als usuaris administradors de %s.
+MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul/aplicació es defineixen a la matriu <strong> $this->menus </strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l'editor incrustat. <br> <br> Nota: un cop definits (i el mòdul reactivat), els menús també són visibles a l'editor de menús disponible per als usuaris administradors a %s.
 DictionariesDefDescTooltip=Els diccionaris subministrats pel vostre mòdul/aplicació es defineixen a la matriu <strong>$this->dictionaries</strong> del fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definit (i reactivat el mòdul), els diccionaris també són visibles a la zona de configuració per als usuaris administradors a %s.
 PermissionsDefDescTooltip=Els permisos proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> rights</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul reactivat), els permisos es visualitzen a la configuració de permisos per defecte %s.
-HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, en el descriptor del mòdul, el context dels "hooks" que voleu gestionar (una llista de contextos es pot trobar si cerqueu '<b>initHooks</b>' (en el codi del nucli de Dolibarr. <br> Editeu el fitxer del "hook" per afegir el codi de les vostres funcions "hookables" (les quals es poden trobar cercant "<b>executeHooks</b>" en el codi del nucli de Dolibarr).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, en el descriptor del mòdul, el context dels "hooks" que voleu gestionar (una llista de contextos es pot trobar si cerqueu '<b>initHooks</b>' (en el codi del nucli de Dolibarr. <br> Editeu el fitxer del "hook" per a afegir el codi de les vostres funcions "hookables" (les quals es poden trobar cercant "<b>executeHooks</b>" en el codi del nucli de Dolibarr).
+TriggerDefDesc=Definiu al fitxer disparador el codi que voleu executar quan s'executi un esdeveniment empresarial extern al vostre mòdul (esdeveniments desencadenats per altres mòduls).
 SeeIDsInUse=Consulteu els identificadors que s’utilitzen a la instal·lació
 SeeReservedIDsRangeHere=Consultar l'interval d'identificadors reservats
 ToolkitForDevelopers=Kit d'eines per als desenvolupadors de Dolibarr
@@ -110,7 +113,7 @@ DropTableIfEmpty=(Suprimeix la taula si està buida)
 TableDoesNotExists=La taula %s no existeix
 TableDropped=S'ha esborrat la taula %s
 InitStructureFromExistingTable=Creeu la cadena de la matriu d'estructura d'una taula existent
-UseAboutPage=Desactiva la pàgina sobre
+UseAboutPage=No generar la pàgina Sobre
 UseDocFolder=Desactiva la carpeta de documentació
 UseSpecificReadme=Utilitzeu un ReadMe específic
 ContentOfREADMECustomized=Nota: El contingut del fitxer README.md s'ha substituït pel valor específic definit a la configuració de ModuleBuilder.
@@ -127,10 +130,10 @@ UseSpecificEditorURL = Utilitzeu editor específic URL
 UseSpecificFamily = Utilitzeu una família específica
 UseSpecificAuthor = Utilitzeu un autor específic
 UseSpecificVersion = Utilitzeu una versió inicial específica
-IncludeRefGeneration=La referència de l’objecte s’ha de generar automàticament
-IncludeRefGenerationHelp=Marca-ho si vols incloure codi per a gestionar la generació automàtica de la referència
-IncludeDocGeneration=Vull generar alguns documents des de l'objecte
-IncludeDocGenerationHelp=Si ho marques, es generarà el codi per afegir una casella "Generar document" al registre.
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeDocGenerationHelp=Si ho marques, es generarà el codi per a afegir una casella "Generar document" al registre.
 ShowOnCombobox=Mostra el valor a la llista desplegable
 KeyForTooltip=Clau per donar més informació
 CSSClass=CSS per a editar/crear un formulari
@@ -138,10 +141,15 @@ CSSViewClass=CSS per al formulari de lectura
 CSSListClass=CSS per a llistats
 NotEditable=No editable
 ForeignKey=Clau forana
-TypeOfFieldsHelp=Tipus de camps: <br> varchar(99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName: relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que afegim un botó + després del desplegable per a crear el registre, 'filtre' pot ser 'status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)' per exemple)
+TypeOfFieldsHelp=Tipus de camps: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' vol dir que afegim un botó + després de la combinació per crear el registre <br> 'filtre' és una condició sql, exemple: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
 TableNotEmptyDropCanceled=La taula no està buida. S'ha cancel·lat l'eliminació.
 ModuleBuilderNotAllowed=El creador de mòduls està disponible però no permès al vostre usuari.
 ImportExportProfiles=Importar i exportar perfils
-ValidateModBuilderDesc=Poseu 1 si aquest camp s'ha de validar amb $ this-> validateField () o 0 si cal una validació
+ValidateModBuilderDesc=Establiu-ho a 1 si voleu que el mètode $this->validateField() de l'objecte es cridi per validar el contingut del camp durant la inserció o l'actualització. Establiu 0 si no es requereix validació.
+WarningDatabaseIsNotUpdated=Avís: la base de dades no s'actualitza automàticament, heu de destruir les taules i desactivar-habilitar el mòdul perquè es tornin a crear taules.
+LinkToParentMenu=Menú principal (fk_xxxxmenu)
+ListOfTabsEntries=Llista d'entrades de pestanyes
+TabsDefDesc=Definiu aquí les pestanyes proporcionades pel vostre mòdul
+TabsDefDescTooltip=Les pestanyes proporcionades pel vostre mòdul/aplicació es defineixen a la matriu <strong> $this->tabs </strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l'editor incrustat.

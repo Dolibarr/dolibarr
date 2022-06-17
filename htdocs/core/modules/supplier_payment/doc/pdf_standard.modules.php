@@ -77,45 +77,18 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
 	 * Issuer
 	 * @var Societe
 	 */
 	public $emetteur;
+
+	public $posxdate;
+	public $posxreffacturefourn;
+	public $posxreffacture;
+	public $posxtype;
+	public $posxtotalht;
+	public $posxtva;
+	public $posxtotalttc;
 
 
 	/**
@@ -133,7 +106,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
-		$this->update_main_doc_field = 0;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 0;	// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -169,6 +142,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -318,8 +292,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -445,6 +419,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
 						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
@@ -813,6 +790,25 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+
+			// Show default IBAN account
+			$sql = "SELECT iban_prefix as iban";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
+			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
+			$sql .= " AND rib.default_rib = 1";
+			$sql .= " AND rib.type = 'ban'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				$iban = $obj->iban;
+			}
+
+			if (!empty($iban)) {
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx + 2, $posy + 15);
+				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
+			}
 		}
 	}
 

@@ -30,7 +30,7 @@
 
 if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask', 'add')))) && (empty($cancel) || $id > 0)) {
 	if (($id > 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'
-		$ret = $object->fetch($id, $ref);
+		$ret = $object->fetch($id, (empty($ref)? '' : $ref));
 		if ($ret > 0) {
 			$object->fetch_thirdparty();
 			$id = $object->id;

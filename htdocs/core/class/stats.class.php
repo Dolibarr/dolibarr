@@ -34,6 +34,13 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 *  @param	int		$year 			number
+	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * 	@return int						value
+	 */
+	protected abstract function getNbByMonth($year, $format = 0);
+
+	/**
 	 * Return nb of elements by month for several years
 	 *
 	 * @param 	int		$endyear		Start year
@@ -122,6 +129,13 @@ abstract class Stats
 		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
+
+	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	protected abstract function getAmountByMonth($year, $format = 0);
 
 	/**
 	 * Return amount of elements by month for several years.
@@ -460,7 +474,6 @@ abstract class Stats
 		return $data;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *     Return the amount per month for a given year
@@ -615,6 +628,33 @@ abstract class Stats
 			dol_print_error($this->db);
 		}
 
+		return $result;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 *  Returns the summed amounts per year for a given number of past years ending now
+	 *  @param  string  $sql    SQL
+	 *  @return array
+	 */
+	protected function _getAmountByYear($sql)
+	{
+		$result = array();
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$row = $this->db->fetch_row($resql);
+				$j = (int) $row[0];
+				$result[] = [
+					0 => (int) $row[0],
+					1 => (int) $row[1],
+				];
+				$i++;
+			}
+			$this->db->free($resql);
+		}
 		return $result;
 	}
 }

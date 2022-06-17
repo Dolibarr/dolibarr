@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'cron', 'members'));
+$langs->loadLangs(array('admin', 'cron', 'members', 'bills'));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -263,7 +263,7 @@ if ($action == 'create') {
 }
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                     function initfields()
                     {
@@ -532,11 +532,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print dol_get_fiche_end();
 
-	print '<div align="center">';
-	print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-	print "</div>";
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 } else {
@@ -550,21 +546,24 @@ if (($action == "create") || ($action == "edit")) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= $langs->trans($object->label);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	// box add_jobs_box
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">';
+	/*print '<tr><td class="titlefield">';
 	print $langs->trans('CronLabel')."</td>";
 	print "<td>".$langs->trans($object->label);
-	print "</td></tr>";
+	print "</td></tr>";*/
 
-	print "<tr><td>";
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype', $object->jobtype, 1);
 	print "</td></tr>";
@@ -609,11 +608,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($conf->multicompany->enabled)) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
-		if (!$object->entity) {
-			print $langs->trans("AllEntities");
+		if (empty($object->entity)) {
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$langs->trans("AllEntities");
 		} else {
 			$mc->getInfo($object->entity);
-			print $mc->label;
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$mc->label;
 		}
 		print "</td></tr>";
 	}
@@ -621,10 +620,8 @@ if (($action == "create") || ($action == "edit")) {
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
+	print '<div class="fichehalfright">';
 
-
-	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -697,11 +694,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
-	print '</div>';
+
 
 	print '<br>';
 
-	print '<div class="fichecenter">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -740,7 +737,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
+
 	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
 
 	print dol_get_fiche_end();
 
@@ -749,7 +750,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
 	}
 
 	if ((empty($user->rights->cron->execute))) {
@@ -757,7 +758,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (empty($object->status)) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&token='.newToken().'&id='.$object->id.(empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY).'">'.$langs->trans("CronExecute").'</a>';
 	}
 
 	if (!$user->rights->cron->create) {

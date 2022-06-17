@@ -131,6 +131,13 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var string The civilite code, not an integer
+	 * @deprecated
+	 * @see $civility_code
+	 */
+	public $civilite;
+
+	/**
 	 * @var string Address
 	 */
 	public $address;
@@ -180,6 +187,12 @@ class Contact extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+	/**
+	 * URL
+	 * @var string
+	 */
+	public $url;
 
 	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
@@ -315,6 +328,7 @@ class Contact extends CommonObject
 	 */
 	public $stcomm_picto;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -376,23 +390,29 @@ class Contact extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $user;
+		global $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
 
 		$sql = "SELECT count(sp.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
-		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".((int) $user->id)."))";
+		$sql .= " ".$clause." sp.entity IN (".getEntity($this->element).")";
+		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat = ".((int) $user->id)."))";
 		if ($user->socid > 0) {
 			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+		}
+		// Add where from hooks
+		if (is_object($hookmanager)) {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 		}
 
 		$resql = $this->db->query($sql);
@@ -596,7 +616,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
-		$sql .= " WHERE rowid=".((int) $id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -872,12 +892,12 @@ class Contact extends CommonObject
 
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
-		$sql .= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql .= " birthday = ".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		if ($user) {
-			$sql .= ", fk_user_modif=".$user->id;
+			$sql .= ", fk_user_modif = ".((int) $user->id);
 		}
-		$sql .= " WHERE rowid=".$this->db->escape($id);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." -", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1280,7 +1300,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid=".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -1389,24 +1409,25 @@ class Contact extends CommonObject
 	 *  Return name of contact with link (and eventually picto)
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
-	 *	@param		int			$withpicto					Include picto with link
+	 *	@param		int			$withpicto					Include picto with link (1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
 	 *	@param		string		$option						Where the link point to
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@param		int			$notooltip					1=Disable tooltip
+	 *  @param  	string  	$morecss            		Add more css on link
 	 *	@return		string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
 
 		$result = ''; $label = '';
-
 		if (!empty($this->photo) && class_exists('Form')) {
-			$label .= '<div class="photointooltip">';
-			$label .= Form::showphoto('contact', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
-			$label .= '</div><div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('contact', $this, 0, 40, 0, 'photoref', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
 		}
 
 		$label .= img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Contact").'</u>';
@@ -1453,14 +1474,7 @@ class Contact extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
-
-			/*
-				$hookmanager->initHooks(array('contactdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-				*/
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1474,20 +1488,20 @@ class Contact extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			if ($withpicto == -2) {
-				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($moreparam ? ' '.$moreparam : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			if ($withpicto < 0) {
+				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 			} else {
 				$result .= img_object(($notooltip ? '' : $label), ( $this->picto ?  $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
-			$result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
+			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('contactdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1558,8 +1572,8 @@ class Contact extends CommonObject
 			$statusType = 'status5';
 		}
 
-		$label = $langs->trans($labelStatus[$status]);
-		$labelshort = $langs->trans($labelStatusShort[$status]);
+		$label = $langs->transnoentitiesnoconv($labelStatus[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($labelStatusShort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
@@ -1819,7 +1833,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople=".((int) $this->id)." AND entity IN (".getEntity("societe_contact").")";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople=".((int) $this->id)." AND entity IN (".getEntity("contact").")";
 
 		$result = $this->db->query($sql);
 		if (!$result) {

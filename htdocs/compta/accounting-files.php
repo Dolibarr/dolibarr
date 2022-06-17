@@ -127,7 +127,7 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled), 'perms' => !empty($user->rights->facture->lire)),
+	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
 	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
 	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
@@ -625,24 +625,24 @@ if (!empty($date_start) && !empty($date_stop)) {
 	$param .= '&action=searchfiles';
 
 	/*
-	 print '<input type="hidden" name="token" value="'.currentToken().'">';
-	 print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
-	 print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
-	 print '<input type="hidden" name="date_startyear" value="'.GETPOST('date_startyear', 'int').'" />';
-	 print '<input type="hidden" name="date_stopday" value="'.GETPOST('date_stopday', 'int').'" />';
-	 print '<input type="hidden" name="date_stopmonth" value="'.GETPOST('date_stopmonth', 'int').'" />';
-	 print '<input type="hidden" name="date_stopyear" value="'.GETPOST('date_stopyear', 'int').'" />';
-	 foreach ($listofchoices as $choice => $val) {
-	 print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
-	 }
+	print '<input type="hidden" name="token" value="'.currentToken().'">';
+	print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
+	print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
+	print '<input type="hidden" name="date_startyear" value="'.GETPOST('date_startyear', 'int').'" />';
+	print '<input type="hidden" name="date_stopday" value="'.GETPOST('date_stopday', 'int').'" />';
+	print '<input type="hidden" name="date_stopmonth" value="'.GETPOST('date_stopmonth', 'int').'" />';
+	print '<input type="hidden" name="date_stopyear" value="'.GETPOST('date_stopyear', 'int').'" />';
+	foreach ($listofchoices as $choice => $val) {
+		print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
+	}
 
-	 print '<input class="butAction butDownload small marginleftonly" type="submit" value="'.$langs->trans("Download").'"';
-	 if (empty($TData)) {
-	 print " disabled";
-	 }
-	 print '/>';
-	 print '</form>'."\n";
-	 */
+	print '<input class="butAction butDownload small marginleftonly" type="submit" value="'.$langs->trans("Download").'"';
+	if (empty($TData)) {
+		print " disabled";
+	}
+	print '/>';
+	print '</form>'."\n";
+	*/
 
 	print '<br>';
 

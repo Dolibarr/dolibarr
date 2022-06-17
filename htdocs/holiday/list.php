@@ -101,7 +101,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "cp.rowid";
+	$sortfield = "cp.ref";
 }
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -200,7 +200,7 @@ if (empty($reshook)) {
 		$search_valideur = "";
 		$search_status = "";
 		$search_type = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -213,6 +213,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Holiday';
 	$permissiontoread = $user->rights->holiday->read;
 	$permissiontodelete = $user->rights->holiday->delete;
+	$permissiontoapprove = $user->rights->holiday->approve;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -295,7 +296,7 @@ $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -303,7 +304,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
 $sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
@@ -441,6 +442,9 @@ if ($resql) {
 	if (!empty($user->rights->holiday->delete)) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
+	if (!empty($user->rights->holiday->approve)) {
+		$arrayofmassactions['preapproveleave'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Approve");
+	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -485,9 +489,8 @@ if ($resql) {
 		print '<div class="tabsAction">';
 
 		$cancreate = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
-				$cancreate = 1;
+		if (!empty($user->rights->holiday->writeall)) {
+			$cancreate = 1;
 		}
 		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
 			$cancreate = 1;
@@ -622,7 +625,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_debut']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
-		$formother->select_year($search_year_start, 'search_year_start', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_start, 'search_year_start', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -630,7 +633,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
-		$formother->select_year($search_year_end, 'search_year_end', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_end, 'search_year_end', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -651,7 +654,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
-		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
+		print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -659,7 +662,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.tms']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
-		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
+		print $formother->selectyear($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -718,7 +721,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.statut']['checked'])) {
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -739,6 +742,7 @@ if ($resql) {
 		$i = 0;
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
+		$totalduration = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -785,21 +789,23 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['cp.fk_user']['checked'])) {
-				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-				print '<td class="tdoverflowmax150">'.$approbatorstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax125">'.$approbatorstatic->getNomUrl(-1).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked'])) {
-				print '<td class="minwidth100">';
 				$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
-				print empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
+				$labeltypeleavetoshow = empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
+
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltypeleavetoshow).'">';
+				print $labeltypeleavetoshow;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -808,7 +814,9 @@ if ($resql) {
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
 				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
-				print $nbopenedday.' '.$langs->trans('DurationDays');
+				$totalduration += $nbopenedday;
+				print $nbopenedday;
+				//print ' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -889,6 +897,21 @@ if ($resql) {
 			print '</tr>'."\n";
 
 			$i++;
+		}
+
+		// Add a line for total if there is a total to show
+		if (!empty($arrayfields['duration']['checked'])) {
+			print '<tr class="total">';
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					if ($key == 'duration') {
+						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+			}
+			print '</tr>';
 		}
 	}
 

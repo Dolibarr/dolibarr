@@ -113,7 +113,7 @@ class Comment extends CommonObject
 		$error = 0;
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "description";
 		$sql .= ", datec";
 		$sql .= ", fk_element";
@@ -128,7 +128,7 @@ class Comment extends CommonObject
 		$sql .= ", '".(isset($this->fk_element) ? $this->fk_element : "null")."'";
 		$sql .= ", '".$this->db->escape($this->element_type)."'";
 		$sql .= ", '".(isset($this->fk_user_author) ? $this->fk_user_author : "null")."'";
-		$sql .= ", ".$user->id."";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(!empty($this->entity) ? $this->entity : '1');
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
@@ -146,7 +146,7 @@ class Comment extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			if (!$notrigger) {
 				// Call trigger
@@ -195,7 +195,7 @@ class Comment extends CommonObject
 		$sql .= " c.fk_user_modif,";
 		$sql .= " c.entity,";
 		$sql .= " c.import_key";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -254,7 +254,7 @@ class Comment extends CommonObject
 
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " datec=".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
@@ -315,7 +315,7 @@ class Comment extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -364,7 +364,7 @@ class Comment extends CommonObject
 		if (!empty($element_type) && !empty($fk_element)) {
 			$sql = "SELECT";
 			$sql .= " c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 			$sql .= " WHERE c.fk_element = ".((int) $fk_element);
 			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql .= " AND c.entity = ".$conf->entity;

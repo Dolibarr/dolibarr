@@ -27,6 +27,9 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -40,9 +43,14 @@ if (!empty($conf->accounting->enabled)) {
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
-$action = GETPOST("action", "alpha");
-$cancel = GETPOST('cancel');
-$confirm = GETPOST('confirm');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST("action", "aZ09");
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_payment = GETPOST("auto_create_paiement", "int");
@@ -57,14 +65,41 @@ if (empty($refund)) {
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
 $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
 
+// Initialize technical objects
 $object = new Tva($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
 
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
+// Initialize array of search criterias
+$search_all = GETPOST("search_all", 'alpha');
+$search = array();
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
+}
+
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
+
+// Load object
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+$permissiontoread = $user->rights->tax->charges->lire;
+$permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1].'/vat';
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -74,9 +109,15 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
-/**
+/*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if ($cancel && !$id) {
 	header("Location: list.php");
@@ -155,7 +196,8 @@ if ($action == 'add' && !$cancel) {
 	}
 	$object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note = GETPOST("note", 'restricthtml');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
@@ -195,7 +237,7 @@ if ($action == 'add' && !$cancel) {
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));
@@ -231,9 +273,9 @@ if ($action == 'add' && !$cancel) {
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$result = $object->fetch($id);
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
-	if (empty($totalpaye)) {
+	if (empty($totalpaid)) {
 		$db->begin();
 
 		$ret = $object->delete($user);
@@ -265,7 +307,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {
 }
 
 if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
-	$amount = price2num(GETPOST('amount'));
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 	if (empty($amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
@@ -276,7 +318,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->cr
 	} else {
 		$result = $object->fetch($id);
 
-		$object->amount		= price2num($amount);
+		$object->amount	= $amount;
 
 		$result = $object->update($user);
 		if ($result <= 0) {
@@ -298,8 +340,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->paye = 0;
 		$object->id = $object->ref = null;
+		$object->paye = 0;
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -339,11 +381,12 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
+$formproject = new FormProjets($db);
 
 $title = $langs->trans("VAT")." - ".$langs->trans("Card");
 $help_url = '';
-
-llxHeader("", $title, $help_url);
+llxHeader('', $title, $help_url);
 
 
 if ($id) {
@@ -359,7 +402,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print /** @lang JavaScript */'
 			$(document).ready(function () {
 				let onAutoCreatePaiementChange = function () {
@@ -417,7 +460,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</td>';
-	//print "<br>\n";
+	print "</tr>\n";
 
 	// Label
 	if ($refund == 1) {
@@ -425,7 +468,7 @@ if ($action == 'create') {
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"] ?GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
@@ -447,14 +490,15 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
+	$form->select_types_paiements(GETPOST("type_payment", 'int'), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
 	print "</td>\n";
 	print "</tr>";
 
 	if (!empty($conf->banque->enabled)) {
+		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
-		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
+		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // List of bank account available
 		print '</td></tr>';
 	}
 
@@ -466,7 +510,7 @@ if ($action == 'create') {
 	// Comments
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" rows="'.ROWS_3.'" class="quatrevingtpercent">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
 	// Other attributes
@@ -493,10 +537,10 @@ if ($action == 'create') {
 }
 
 // View mode
-if ($id) {
+if ($id > 0) {
 	$head = vat_prepare_head($object);
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	// Clone confirmation
 	if ($action === 'clone') {
@@ -536,7 +580,7 @@ if ($id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -573,7 +617,7 @@ if ($id) {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode') {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -591,7 +635,7 @@ if ($id) {
 		print $langs->trans('BankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -614,7 +658,6 @@ if ($id) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	$nbcols = 3;
 	if (!empty($conf->banque->enabled)) {
@@ -640,7 +683,7 @@ if ($id) {
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -664,7 +707,8 @@ if ($id) {
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a>';
+				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
@@ -691,7 +735,7 @@ if ($id) {
 				}
 				print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				print "</tr>";
-				$totalpaye += $objp->amount;
+				$totalpaid += $objp->amount;
 				$i++;
 			}
 		} else {
@@ -700,10 +744,10 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaye;
+		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -719,39 +763,36 @@ if ($id) {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div align="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
+
 		print "</form>\n";
 	}
 
-	/*
-	 * Action bar
-	 */
-	print "<div class=\"tabsAction\">\n";
+
+	// Buttons for actions
+
+	print '<div class="tabsAction">'."\n";
+
 	if ($action != 'edit') {
 		// Reopen
 		if ($object->paye && $user->rights->tax->charges->creer) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/tva/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
 		if ($object->paye == 0 && $user->rights->tax->charges->creer) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/tva/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_vat.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_vat.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 		}
 
 		// Classify 'paid'
@@ -761,21 +802,80 @@ if ($id) {
 			|| (round($resteapayer) >= 0 && $object->amount < 0)
 		)
 		&& $user->rights->tax->charges->creer) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/tva/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->tax->charges->creer) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/tva/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
 		}
 
-		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaye)) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaid)) {
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
-	print "</div>";
+	print '</div>'."\n";
+
+
+
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	if ($action != 'presend') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		$includedocgeneration = 1;
+
+		// Documents
+		if ($includedocgeneration) {
+			$objref = dol_sanitizeFileName($object->ref);
+			$relativepath = $objref.'/'.$objref.'.pdf';
+			$filedir = $conf->tax->dir_output.'/vat/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			//$genallowed = $user->rights->tax->charges->lire; // If you can read, you can build the PDF to read content
+			$genallowed = 0;
+			$delallowed = $user->rights->tax->charges->creer; // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('tax-vat', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		}
+
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+
+		print '</div><div class="fichehalfright">';
+
+		/*
+		$MAXEVENT = 10;
+
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		*/
+
+		print '</div></div>';
+	}
+
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	// Presend form
+	$modelmail = 'vat';
+	$defaulttopic = 'InformationMessage';
+	$diroutput = $conf->tax->dir_output;
+	$trackid = 'vat'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 llxFooter();

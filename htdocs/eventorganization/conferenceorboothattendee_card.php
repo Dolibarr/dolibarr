@@ -202,7 +202,7 @@ $title = $langs->trans("ConferenceOrBoothAttendee");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-$result = $projectstatic->fetch(empty($confOrBooth->fk_project)?$fk_project:$confOrBooth->fk_project);
+$result = $projectstatic->fetch(empty($confOrBooth->fk_project) ? $fk_project : $confOrBooth->fk_project);
 if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
 }
@@ -235,7 +235,7 @@ if (!empty($withproject)) {
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 		$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -317,7 +317,6 @@ if (!empty($withproject)) {
 	print '</div>';
 
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -328,7 +327,7 @@ if (!empty($withproject)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($projectstatic->id, 'project', 1);
 		print "</td></tr>";
@@ -368,7 +367,7 @@ if (!empty($withproject)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	// Show message
-	$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
 	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
@@ -386,7 +385,7 @@ if (!empty($withproject)) {
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
-	print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
@@ -397,20 +396,19 @@ if (!empty($withproject)) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$projectstatic->id.'&type=global';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
 	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-	print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -459,11 +457,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -508,9 +502,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
@@ -527,7 +519,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$moreparam .= '&fk_project='.((int) $fk_project);
 	}
 
-	$head = conferenceorboothattendeePrepareHead($object);
+	$head = conferenceorboothAttendeePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
 
 	$formconfirm = '';
@@ -595,58 +587,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
-
-
-	/*
-	 * Lines
-	 */
-
-	if (!empty($object->table_element_line)) {
-		// Show object lines
-		$result = $object->getLinesArray();
-
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-		<input type="hidden" name="token" value="' . newToken().'">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="page_y" value="">
-		<input type="hidden" name="id" value="' . $object->id.'">
-		';
-
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
-		}
-
-		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		}
-
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		}
-
-		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
-			if ($action != 'editline') {
-				// Add products/services form
-
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
-					$object->formAddObjectLine(1, $mysoc, $soc);
-			}
-		}
-
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '</table>';
-		}
-		print '</div>';
-
-		print "</form>\n";
-	}
-
 
 	// Buttons for actions
 

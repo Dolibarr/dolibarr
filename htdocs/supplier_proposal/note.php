@@ -29,7 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
@@ -43,6 +43,11 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplier_proposalnote'));
+
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
 
 $object = new SupplierProposal($db);
@@ -55,7 +60,13 @@ $object = new SupplierProposal($db);
 
 $permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -94,12 +105,12 @@ if ($id > 0 || !empty($ref)) {
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->supplier_proposal->creer) {
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
 					}
 					if ($action == 'classify') {
@@ -117,9 +128,10 @@ if ($id > 0 || !empty($ref)) {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}

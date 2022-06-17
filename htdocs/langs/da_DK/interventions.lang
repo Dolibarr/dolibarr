@@ -66,3 +66,5 @@ RepeatableIntervention=Skabelon for intervention
 ToCreateAPredefinedIntervention=For at oprette en foruddefineret eller tilbagevendende intervention skal du oprette en fælles intervention og konvertere den til interventionsskabelon
 ConfirmReopenIntervention=Er du sikker på, at du vil åbne interventionen <b> %s </b>?
 GenerateInter=Generer intervention
+FichinterNoContractLinked=Intervention %s er blevet oprettet uden en tilknyttet kontrakt.
+ErrorFicheinterCompanyDoesNotExist=Virksomheden eksisterer ikke. Intervention er ikke blevet oprettet.

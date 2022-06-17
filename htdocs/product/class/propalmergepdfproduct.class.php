@@ -104,7 +104,7 @@ class Propalmergepdfproduct extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_merge_pdf_product(";
+		$sql = "INSERT INTO ".$this->db->prefix()."propal_merge_pdf_product(";
 		$sql .= "fk_product,";
 		$sql .= "file_name,";
 		if ($conf->global->MAIN_MULTILANGS) {
@@ -132,7 +132,7 @@ class Propalmergepdfproduct extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal_merge_pdf_product");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."propal_merge_pdf_product");
 		}
 
 		// Commit or rollback
@@ -173,7 +173,7 @@ class Propalmergepdfproduct extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
+		$sql .= " FROM ".$this->db->prefix()."propal_merge_pdf_product as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -231,9 +231,9 @@ class Propalmergepdfproduct extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
+		$sql .= " FROM ".$this->db->prefix()."propal_merge_pdf_product as t";
 		$sql .= " WHERE t.fk_product = ".((int) $product_id);
-		if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($lang)) {
 			$sql .= " AND t.lang = '".$this->db->escape($lang)."'";
 		}
 
@@ -248,7 +248,7 @@ class Propalmergepdfproduct extends CommonObject
 
 					$line->fk_product = $obj->fk_product;
 					$line->file_name = $obj->file_name;
-					if ($conf->global->MAIN_MULTILANGS) {
+					if (!empty($conf->global->MAIN_MULTILANGS)) {
 						$line->lang = $obj->lang;
 					}
 					$line->fk_user_author = $obj->fk_user_author;
@@ -258,7 +258,7 @@ class Propalmergepdfproduct extends CommonObject
 					$line->import_key = $obj->import_key;
 
 
-					if ($conf->global->MAIN_MULTILANGS) {
+					if (!empty($conf->global->MAIN_MULTILANGS)) {
 						$this->lines[$obj->file_name.'_'.$obj->lang] = $line;
 					} else {
 						$this->lines[$obj->file_name] = $line;
@@ -307,7 +307,7 @@ class Propalmergepdfproduct extends CommonObject
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal_merge_pdf_product SET";
+		$sql = "UPDATE ".$this->db->prefix()."propal_merge_pdf_product SET";
 
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " file_name=".(isset($this->file_name) ? "'".$this->db->escape($this->file_name)."'" : "null").",";
@@ -357,7 +357,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
+			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -400,7 +400,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
+			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
 			$sql .= " WHERE fk_product = ".((int) $product_id);
 
 			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
@@ -444,8 +444,8 @@ class Propalmergepdfproduct extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql .= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
+			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
+			$sql .= " WHERE fk_product = ".((int) $this->fk_product)." AND file_name = '".$this->db->escape($this->file_name)."'";
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);

@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori som automatiskt kan läggas t
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori som ska läggas till tredje part automatiskt skapas när de föreslår en monter
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Mall för e-post att skicka efter att ha fått ett förslag på en konferens.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Mall för e-post att skicka efter att ha fått ett förslag på en monter.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Mall för e-post för massaktion till attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Mall för e-post för massaktion till högtalare
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrera tredje parts vallista i deltagarnas skapande kort / formulär med kategori
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtrera tredje parts vallista i deltagarnas skapande kort / formulär med kundtyp
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Payment of your booth
 EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Kommunikation till deltagarna
 EventOrganizationMassEmailSpeakers = Kommunikation till högtalarna
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Pris för registrering
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Prenumerationspris för att stå en monter
 PriceOfBoothHelp=Prenumerationspris för att stå en monter
-EventOrganizationICSLink=Länka ICS för evenemang
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=Information om konferens eller monter
 Attendees=Deltagare
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Ladda ner ICS-länk
-EVENTORGANIZATION_SECUREKEY = Säker nyckel till länken till offentlig registrering till en konferens
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Tjänst som används för fakturaraden om en monterplats
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tjänst som används för fakturaraden om en deltagarprenumeration på en konferens
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Röstetal
 #
 # Status

@@ -22,7 +22,7 @@
 /**
  * \file scripts/cron/cron_run_jobs.php
  * \ingroup cron
- * \brief Execute pendings jobs
+ * \brief Execute pendings jobs from command line
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,6 +42,11 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
+}
+
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cron');
 }
 
 $sapi_type = php_sapi_name();
@@ -76,6 +81,8 @@ $userlogin = $argv[2];
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -102,6 +109,11 @@ if (empty($conf->cron->enabled)) {
 // Check security key
 if ($key != $conf->global->CRON_KEY) {
 	print "Error: securitykey is wrong\n";
+	exit(-1);
+}
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-only mode\n";
 	exit(-1);
 }
 

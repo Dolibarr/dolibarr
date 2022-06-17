@@ -209,9 +209,9 @@ while ($i <= $MAXAGENDA) {
 	print '<td><input type="text" class="flat hideifnotset minwidth100 maxwidth100onsmartphone" name="AGENDA_EXT_NAME_'.$id.'_'.$key.'" value="'.$name_value.'"></td>';
 	// URL
 	$src_value = (GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) ?GETPOST('AGENDA_EXT_SRC_'.$id.'_'.$key) : (empty($object->conf->$src) ? '' : $object->conf->$src));
-	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC_'.$id.'_'.$key.'" value="'.$src_value.'"></td>';
+	print '<td><input type="url" class="flat hideifnotset width300" name="AGENDA_EXT_SRC_'.$id.'_'.$key.'" value="'.$src_value.'"></td>';
 	// Offset TZ
-	$offsettz_value = (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) : (empty($object->conf->$offsettz) ? 0 : $object->conf->$offsettz));
+	$offsettz_value = (GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key) : (empty($object->conf->$offsettz) ? '' : $object->conf->$offsettz));
 	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ_'.$id.'_'.$key.'" value="'.$offsettz_value.'" size="1"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowraponall right">';
@@ -226,10 +226,12 @@ while ($i <= $MAXAGENDA) {
 print '</table>';
 print '</div>';
 
-
-print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+$addition_button = array(
+	'name' => 'save',
+	'label_key' => 'Save',
+	'addclass' => 'hideifnotset',
+);
+print $form->buttonsSaveCancel("", "", $addition_button);
 
 print dol_get_fiche_end();
 

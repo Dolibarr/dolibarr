@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Ин восита бояд танҳо аз ҷониби корбарони ботаҷриба ё таҳиягарон истифода шавад. Он хидматрасониҳоро барои сохтан ё таҳрир кардани модули худ таъмин мекунад. Ҳуҷҷатҳо барои таҳияи дастии алтернативии <a href="%s" target="_blank"> дар ин ҷо </a> ҳастанд.
-EnterNameOfModuleDesc=Номи модул/барномаро ворид кунед, то бидуни фосила эҷод кунед. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Номи объектро ворид кунед, ки бидуни фосила эҷод карда шавад. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyObject, Student, Teacher ...). Файли синфи CRUD, инчунин файли API, саҳифаҳо барои рӯйхат/илова/таҳрир/нест кардани объект ва файлҳои SQL тавлид карда мешаванд.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Роҳе, ки модулҳо тавлид/таҳрир карда мешаванд (феҳристи аввал барои модулҳои беруна ба %s муайян карда шудааст): <strong> %s </strong>
 ModuleBuilderDesc3=Модулҳои тавлидшуда/таҳриршаванда ёфт шуданд: <strong> %s </strong>
 ModuleBuilderDesc4=Ҳангоме ки файли <strong> %s </strong> дар решаи директорияи модул мавҷуд аст, модул ҳамчун "таҳриршаванда" муайян карда мешавад
 NewModule=Модули нав
 NewObjectInModulebuilder=Объекти нав
+NewDictionary=New dictionary
 ModuleKey=Калиди модул
 ObjectKey=Калиди объект
+DicKey=Dictionary key
 ModuleInitialized=Модул оғоз карда шуд
 FilesForObjectInitialized=Файлҳо барои объекти нави '%s' оғоз карда шуданд
 FilesForObjectUpdated=Файлҳо барои объекти '%s' нав карда шуданд (файлҳои .sql ва файли .class.php)
@@ -52,7 +55,7 @@ LanguageFile=Файл барои забон
 ObjectProperties=Хусусиятҳои объект
 ConfirmDeleteProperty=Шумо мутмаин ҳастед, ки моликияти <strong> %s </strong> нест кардан мехоҳед? Ин рамзро дар синфи PHP тағир медиҳад, аммо сутунро аз таърифи ҷадвали объект хориҷ мекунад.
 NotNull=Не NULL
-NotNullDesc=1 = Пойгоҳи додаҳоро ба NOT NULL гузоред. -1 = Ба арзиши сифр иҷозат диҳед ва арзиши холиро ба NULL, агар холӣ бошад ('' ё 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Барои ҷустуҷӯи ҳама истифода мешавад
 DatabaseIndex=Индекси пойгоҳи додаҳо
 FileAlreadyExists=Файли %s аллакай вуҷуд дорад
@@ -94,11 +97,11 @@ LanguageDefDesc=Ба ин файлҳо, ҳама калид ва тарҷума�
 MenusDefDesc=Дар ин ҷо менюҳои аз ҷониби модули шумо пешниҳодшударо муайян кунед
 DictionariesDefDesc=Дар ин ҷо луғатҳоро, ки модули шумо пешниҳод кардааст, муайян кунед
 PermissionsDefDesc=Дар ин ҷо иҷозатҳои наверо, ки модули шумо пешкаш кардааст, муайян кунед
-MenusDefDescTooltip=Менюҳое, ки модул/замимаи шумо пешкаш кардааст, дар массиви <strong> $ this-> менюҳои </strong> ба файли тавсифкунандаи модул муайян карда шудаанд. Шумо метавонед ин файлро дастӣ таҳрир кунед ё муҳаррири дохилшударо истифода баред. <br> <br> Эзоҳ: Пас аз муайян кардан (ва модули дубора фаъол кардан) менюҳо инчунин дар муҳаррири меню, ки барои корбарони админ дар %s дастрасанд, намоён мешаванд.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=Луғатҳо, ки модул/замимаи шумо пешкаш кардааст, дар массиви <strong> $ this-> луғатҳо </strong> ба файли тавсифкунандаи модул муайян карда шудаанд. Шумо метавонед ин файлро дастӣ таҳрир кунед ё муҳаррири дохилшударо истифода баред. <br> <br> Эзоҳ: Пас аз муайян кардан (ва модули дубора фаъол кардан), луғатҳо низ дар майдони танзим барои корбарони админ дар %s намоён мешаванд.
 PermissionsDefDescTooltip=Иҷозатҳое, ки модул/замимаи шумо пешкаш кардааст, дар массиви <strong> $ this-> ҳуқуқи </strong> ба файли тавсифкунандаи модул муайян карда шудаанд. Шумо метавонед ин файлро дастӣ таҳрир кунед ё муҳаррири дохилшударо истифода баред. <br> <br> Эзоҳ: Пас аз муайян кардан (ва модул дубора фаъол кардан), иҷозатҳо дар танзимоти пешфарзии %s намоён мешаванд.
 HooksDefDesc=Дар амволи <b> module_parts ['hooks'] </b>, дар тавсифи модул контексти қалмоқе, ки шумо мехоҳед идора кунед, муайян кунед (рӯйхати контекстҳоро тавассути ҷустуҷӯи '<b> initHooks (a09a4b2 a09a4b2) файли қалмоқӣ барои илова кардани коди вазифаҳои пайвастшудаи шумо (функсияҳои пайвастшавандаро тавассути ҷустуҷӯи '<b> executeHooks </b>' дар коди аслӣ ёфтан мумкин аст).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Бингар, ки ID -ҳои дар насби шумо истифодашаванда
 SeeReservedIDsRangeHere=Ба доираи ID -ҳои ҳифзшуда нигаред
 ToolkitForDevelopers=Маҷмӯи асбобҳо барои таҳиягарони Dolibarr
@@ -110,7 +113,7 @@ DropTableIfEmpty=(Агар холӣ бошад, мизро нест кунед)
 TableDoesNotExists=Ҷадвали %s вуҷуд надорад
 TableDropped=Ҷадвали %s нест карда шуд
 InitStructureFromExistingTable=Сатри массиви сохтории ҷадвали мавҷударо созед
-UseAboutPage=Дар бораи саҳифа хомӯш кунед
+UseAboutPage=Do not generate the About page
 UseDocFolder=Папкаи ҳуҷҷатҳоро хомӯш кунед
 UseSpecificReadme=ReadMe -и мушаххасро истифода баред
 ContentOfREADMECustomized=Эзоҳ: Мундариҷаи файли README.md бо арзиши мушаххасе, ки дар танзимоти ModuleBuilder муайян карда шудааст, иваз карда шудааст.
@@ -127,9 +130,9 @@ UseSpecificEditorURL = URL -и муҳаррири мушаххасро исти�
 UseSpecificFamily = Як оилаи мушаххасро истифода баред
 UseSpecificAuthor = Муаллифи мушаххасро истифода баред
 UseSpecificVersion = Як версияи мушаххаси ибтидоиро истифода баред
-IncludeRefGeneration=Истинод ба объект бояд ба таври худкор тавлид шавад
-IncludeRefGenerationHelp=Инро санҷед, агар шумо хоҳед, ки кодро барои идоракунии худкори истинод дохил кунед
-IncludeDocGeneration=Ман мехоҳам аз объект чанд ҳуҷҷат тавлид кунам
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=Агар шумо инро тафтиш кунед, барои илова кардани қуттии "Ҳуҷҷат эҷод кардан" дар сабт баъзе кодҳо тавлид карда мешаванд.
 ShowOnCombobox=Нишон додани арзиши дар combobox
 KeyForTooltip=Калид барои маслиҳат
@@ -138,10 +141,15 @@ CSSViewClass=CSS барои хондан
 CSSListClass=CSS барои рӯйхат
 NotEditable=Таҳрир карда намешавад
 ForeignKey=Калиди хориҷӣ
-TypeOfFieldsHelp=Навъи майдонҳо: <br> varchar (99), дубора (24,8), воқеӣ, матн, html, datetime, тамғаи вақт, бутун, бутун: ClassName: relatpath/to/classfile.class.php [: 1 [: filter]] ('1' маънои онро дорад, ки мо барои сохтани сабт тугмаи + -ро илова мекунем, 'филтр' метавонад 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' бошад)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Табдилдиҳандаи Ascii ба HTML
 AsciiToPdfConverter=Табдилдиҳандаи Ascii ба PDF
 TableNotEmptyDropCanceled=Ҷадвал холӣ нест. Таркиш бекор карда шуд.
 ModuleBuilderNotAllowed=Созандаи модул дастрас аст, аммо ба корбари шумо иҷозат дода намешавад.
 ImportExportProfiles=Профилҳои воридот ва содирот
-ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.

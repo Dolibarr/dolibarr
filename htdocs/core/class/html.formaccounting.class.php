@@ -82,7 +82,7 @@ class FormAccounting extends Form
 			$selected = $selectid;
 		} else {
 			$sql = "SELECT rowid, code, label, nature, entity, active";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " FROM ".$this->db->prefix()."accounting_journal";
 			$sql .= " WHERE active = 1";
 			$sql .= " AND entity = ".$conf->entity;
 			if ($nature && is_numeric($nature)) {
@@ -162,7 +162,7 @@ class FormAccounting extends Form
 			$selected = $selectedIds;
 		} else {
 			$sql = "SELECT rowid, code, label, nature, entity, active";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
+			$sql .= " FROM ".$this->db->prefix()."accounting_journal";
 			$sql .= " WHERE active = 1";
 			$sql .= " AND entity = ".$conf->entity;
 			if ($nature && is_numeric($nature)) {
@@ -238,7 +238,7 @@ class FormAccounting extends Form
 
 		if (!empty($mysoc->country_id)) {
 			$sql = "SELECT c.rowid, c.label as type, c.range_account";
-			$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
+			$sql .= " FROM ".$this->db->prefix()."c_accounting_category as c";
 			$sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			if (empty($allcountries)) {
@@ -247,7 +247,7 @@ class FormAccounting extends Form
 			$sql .= " ORDER BY c.label ASC";
 		} else {
 			$sql = "SELECT c.rowid, c.label as type, c.range_account";
-			$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
+			$sql .= " FROM ".$this->db->prefix()."c_accounting_category as c, ".$this->db->prefix()."c_country as co";
 			$sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			$sql .= " AND c.fk_country = co.rowid";
@@ -307,7 +307,7 @@ class FormAccounting extends Form
 		// phpcs:enable
 		$options = array();
 
-		$sql = 'SELECT DISTINCT import_key from '.MAIN_DB_PREFIX.'accounting_bookkeeping';
+		$sql = "SELECT DISTINCT import_key FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -363,8 +363,8 @@ class FormAccounting extends Form
 			$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
+			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 			$sql .= " AND aa.active = 1";
 			$sql .= " AND aa.entity=".$conf->entity;
@@ -439,9 +439,10 @@ class FormAccounting extends Form
 	 * @param int|string    $showempty      Add an empty field
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
 	 * @return string       	   			String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
 
@@ -454,7 +455,7 @@ class FormAccounting extends Form
 
 			// Auxiliary thirdparties account
 			$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+			$sql .= " FROM ".$this->db->prefix()."societe";
 			$sql .= " WHERE entity IN (".getEntity('societe').")";
 			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
 
@@ -480,7 +481,7 @@ class FormAccounting extends Form
 
 			// Auxiliary user account
 			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
-			$sql .= " FROM ".MAIN_DB_PREFIX."user";
+			$sql .= " FROM ".$this->db->prefix()."user";
 			$sql .= " WHERE entity IN (".getEntity('user').")";
 			$sql .= " ORDER BY accountancy_code";
 
@@ -505,6 +506,19 @@ class FormAccounting extends Form
 
 		// Build select
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		//automatic filling if we give the name of the subledger_label input
+		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
+			$out .= '<script>
+				jQuery(document).ready(() => {
+					$("#'.$htmlname.'").on("select2:select", function(e) {
+						var regExp = /\(([^)]+)\)/;
+						const match = regExp.exec(e.params.data.text);
+						$(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]);
+					});
+				});
+
+			</script>';
+		}
 
 		return $out;
 	}
@@ -527,7 +541,7 @@ class FormAccounting extends Form
 		$out_array = array();
 
 		$sql = "SELECT DISTINCT date_format(doc_date, '%Y') as dtyear";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY date_format(doc_date, '%Y')";
 		dol_syslog(__METHOD__, LOG_DEBUG);

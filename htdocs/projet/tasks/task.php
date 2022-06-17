@@ -91,7 +91,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 	if (!$error) {
 		$object->oldcopy = clone $object;
 
-		$tmparray = explode('_', $_POST['task_parent']);
+		$tmparray = explode('_', GETPOST('task_parent'));
 		$task_parent = $tmparray[1];
 		if (empty($task_parent)) {
 			$task_parent = 0; // If task_parent is ''
@@ -99,12 +99,14 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
-		$object->description = GETPOST('description', "alphanohtml");
+		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $object->description = GETPOST('description', "alphanohtml");
+		else $object->description = GETPOST('description', "restricthtml");
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
 		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
+		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -116,7 +118,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 			$result = $object->update($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
-				$action='edit';
+				$action = 'edit';
 			}
 		} else {
 			$action = 'edit';
@@ -175,7 +177,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
-	$upload_dir = $conf->projet->dir_output;
+	$upload_dir = $conf->project->dir_output;
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
 	$ret = dol_delete_file($file);
@@ -237,7 +239,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -285,8 +287,10 @@ if ($id > 0 || !empty($ref)) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -319,7 +323,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent">';
@@ -330,7 +333,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
@@ -338,7 +341,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -406,8 +408,8 @@ if ($id > 0 || !empty($ref)) {
 
 			// Third party
 			print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
-			if ($projectstatic->societe->id) {
-				print $projectstatic->societe->getNomUrl(1);
+			if ($projectstatic->thirdparty->id) {
+				print $projectstatic->thirdparty->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
@@ -442,8 +444,24 @@ if ($id > 0 || !empty($ref)) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
+
+		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+			print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$object->description.'</textarea>';
+		} else {
+			// WYSIWYG editor
+			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+			$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+			if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+				$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+			}
+			$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+			print $doleditor->Create();
+		}
 		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Budget").'</td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : price2num($object->budget_amount)).'"></td>';
+		print '</tr>';
 
 		// Other options
 		$parameters = array();
@@ -457,10 +475,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Modify");
 
 		print '</form>';
 	} else {
@@ -538,13 +553,13 @@ if ($id > 0 || !empty($ref)) {
 
 		// Description
 		print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
-		print nl2br($object->description);
+		print dol_htmlentitiesbr($object->description);
 		print '</td></tr>';
 
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
@@ -570,6 +585,13 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($object->budget_amount, '')) {
+			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+		}
+		print '</td></tr>';
+
 		// Other attributes
 		$cols = 3;
 		$parameters = array('socid'=>$socid);
@@ -577,7 +599,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 
 		print '</div>';
@@ -600,7 +621,7 @@ if ($id > 0 || !empty($ref)) {
 		if (empty($reshook)) {
 			// Modify
 			if ($user->rights->projet->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}
@@ -608,7 +629,7 @@ if ($id > 0 || !empty($ref)) {
 			// Delete
 			if ($user->rights->projet->supprimer) {
 				if (!$object->hasChildren() && !$object->hasTimeSpent()) {
-					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Delete').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				}
@@ -626,14 +647,14 @@ if ($id > 0 || !empty($ref)) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
-		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire);
 		$delallowed = ($user->rights->projet->creer);
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -641,7 +662,7 @@ if ($id > 0 || !empty($ref)) {
 		$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
 		$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 }
 

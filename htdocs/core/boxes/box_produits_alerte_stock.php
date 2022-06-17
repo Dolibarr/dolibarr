@@ -103,8 +103,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
-				$parameters = array('boxproductalertstocklist'=>1);
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$parameters = array('boxproductalertstocklist' => 1, 'boxcode' => $this->boxcode);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
 			$sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
@@ -129,8 +129,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sqld .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -163,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'td' => 'class="tdoverflowmax100 maxwidth150onsmartphone"',
 						'text' => $objp->label,
 					);
 
@@ -186,18 +186,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
-						'text' => $price,
-					);
+					/*$this->info_box_contents[$line][] = array(
+						'td' => 'class="nowraponall right amount"',
+						'text' => $price.' '.$price_base_type,
+					);*/
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => $price_base_type,
-					);
-
-					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center nowraponall"',
 						'text' => price2num($objp->total_stock, 'MS').' / '.$objp->seuil_stock_alerte,
 						'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
 					);
@@ -210,7 +205,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 1).'</span>',
 						'asis' => 1
 					);
 

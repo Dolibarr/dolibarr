@@ -178,7 +178,7 @@ class Export
 									// Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
-									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
 									// Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)
@@ -268,7 +268,7 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 				}
 			}
 			$sql .= $sqlWhere;
@@ -302,7 +302,7 @@ class Export
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		$NameField = checkVal($NameField, 'aZ09');
+		$NameField = sanitizeVal($NameField, 'aZ09');
 		$szFilterQuery = '';
 
 		//print $TypeField." ".$NameField." ".$ValueField;
@@ -349,6 +349,13 @@ class Export
 				break;
 			case 'Boolean':
 				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
+				break;
+			case 'FormSelect':
+				if (is_numeric($ValueField) && $ValueField > 0) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					$szFilterQuery = " 1=1";	// Test always true
+				}
 				break;
 			case 'Status':
 			case 'List':
@@ -402,7 +409,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -443,6 +450,16 @@ class Export
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
 				break;
+			case 'FormSelect':
+				//var_dump($NameField);
+				if ($InfoFieldList[1] == 'select_company') {
+					$szFilterField .= $form->select_company('', $NameField, '', 1);
+				} elseif ($InfoFieldList[1] == 'selectcontacts') {
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+				} elseif ($InfoFieldList[1] == 'select_dolusers') {
+					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+				}
+				break;
 			case 'List':
 				// 0 : Type du champ
 				// 1 : Nom de la table
@@ -455,14 +472,14 @@ class Export
 				} else {
 					$keyList = 'rowid';
 				}
-				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
 				if ($InfoFieldList[1] == 'c_stcomm') {
-					$sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
+					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
 				}
 				if ($InfoFieldList[1] == 'c_country') {
-					$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
+					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
 				}
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[1];
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}
@@ -614,6 +631,9 @@ class Export
 				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
 			} else {
 				$filename = "export_".$datatoexport;
+			}
+			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
 			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;

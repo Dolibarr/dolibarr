@@ -47,7 +47,7 @@ function facture_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
@@ -60,7 +60,7 @@ function facture_prepare_head($object)
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE pfd.fk_facture = ".$object->id;
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -71,7 +71,7 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -200,7 +200,7 @@ function invoice_rec_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/card-rec.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/card-rec.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("RepeatableInvoice");
 	$head[$h][2] = 'card';
 	$h++;
@@ -217,243 +217,32 @@ function invoice_rec_prepare_head($object)
 }
 
 /**
- * Return a HTML table that contains a pie chart of customer invoices
+ * Return array head with list of tabs to view object informations.
  *
- * @param	int		$socid		(Optional) Show only results from the customer with this id
- * @return	string				A HTML table that contains a pie chart of customer invoices
+ * @param   Facture     $object     Invoice object
+ * @return array                    head array with tabs
  */
-function getCustomerInvoicePieChart($socid = 0)
+function supplier_invoice_rec_prepare_head($object)
 {
-	global $conf, $db, $langs, $user;
+	global $db, $langs, $conf;
 
-	if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) {
-		return '';
-	}
+	$h = 0;
+	$head = array();
 
-	$sql = "SELECT count(f.rowid), f.fk_statut";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
-	$sql .= " WHERE f.fk_soc = s.rowid";
-	$sql .= " AND f.entity IN (".getEntity('facture').")";
-	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
-	$sql .= " GROUP BY f.fk_statut";
+	$head[$h][0] = DOL_URL_ROOT . '/fourn/facture/card-rec.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("RepeatableSupplierInvoice");
+	$head[$h][2] = 'card';
+	$h++;
 
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		return '';
-	}
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice_supplier_rec');
 
-	$num = $db->num_rows($resql);
-	$i = 0;
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice_supplier_rec', 'remove');
 
-	$total = 0;
-	$vals = [];
-
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			$vals[$row[1]] = $row[0];
-			$total += $row[0];
-		}
-
-		$i++;
-	}
-
-	$db->free($resql);
-
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	$result = '<div class="div-table-responsive-no-min">';
-	$result .= '<table class="noborder nohover centpercent">';
-	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomerInvoice").'</td>';
-	$result .= '</tr>';
-
-	$objectstatic = new Facture($db);
-	$array = [Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED];
-	$dataseries = [];
-
-	foreach ($array as $status) {
-		$objectstatic->statut = $status;
-		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
-
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
-		if ($status == Facture::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == Facture::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == Facture::STATUS_CLOSED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == Facture::STATUS_ABANDONED) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-
-		if (!$conf->use_javascript_ajax) {
-			$result .= '<tr class="oddeven">';
-			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
-			$result .= '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			$result .= '</tr>';
-		}
-	}
-
-	if ($conf->use_javascript_ajax) {
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('150');
-		$dolgraph->setWidth('300');
-		$dolgraph->draw('idgraphcustomerinvoices');
-
-		$result .= '<tr>';
-		$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
-		$result .= '</tr>';
-	}
-
-	$result .= '<tr class="liste_total">';
-	$result .= '<td>'.$langs->trans("Total").'</td>';
-	$result .= '<td class="right">'.$total.'</td>';
-	$result .= '</tr>';
-
-	$result .= '</table>';
-	$result .= '</div>';
-
-	return $result;
-}
-
-
-/**
- * Return a HTML table that contains a pie chart of supplier invoices
- *
- * @param	int		$socid		(Optional) Show only results from the supplier with this id
- * @return	string				A HTML table that contains a pie chart of supplier invoices
- */
-function getPurchaseInvoicePieChart($socid = 0)
-{
-	global $conf, $db, $langs, $user;
-
-	if (!((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire))) {
-		return '';
-	}
-
-	$sql = "SELECT count(f.rowid), f.fk_statut";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
-	$sql .= " WHERE f.fk_soc = s.rowid";
-	$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
-	if ($user->socid) {
-		$sql .= ' AND f.fk_soc = '.$user->socid;
-	}
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
-	$sql .= " GROUP BY f.fk_statut";
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		return '';
-	}
-
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	$total = 0;
-	$vals = [];
-
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			$vals[$row[1]] = $row[0];
-			$total += $row[0];
-		}
-
-		$i++;
-	}
-
-	$db->free($resql);
-
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	$result = '<div class="div-table-responsive-no-min">';
-	$result .= '<table class="noborder nohover centpercent">';
-
-	$result .= '<tr class="liste_titre">';
-	$result .= '<td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SupplierInvoice").'</td>';
-	$result .= '</tr>';
-
-	$objectstatic = new FactureFournisseur($db);
-	$array = [FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED, FactureFournisseur::STATUS_ABANDONED];
-	$dataseries = [];
-
-	foreach ($array as $status) {
-		$objectstatic->statut = $status;
-		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
-
-		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
-		if ($status == FactureFournisseur::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == FactureFournisseur::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == FactureFournisseur::STATUS_CLOSED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == FactureFournisseur::STATUS_ABANDONED) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-
-		if (!$conf->use_javascript_ajax) {
-			$result .= '<tr class="oddeven">';
-			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
-			$result .= '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			$result .= '</tr>';
-		}
-	}
-
-	if ($conf->use_javascript_ajax) {
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('150');
-		$dolgraph->setWidth('300');
-		$dolgraph->draw('idgraphpurchaseinvoices');
-
-		$result .= '<tr>';
-		$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
-		$result .= '</tr>';
-	}
-
-	$result .= '<tr class="liste_total">';
-	$result .= '<td>'.$langs->trans("Total").'</td>';
-	$result .= '<td class="right">'.$total.'</td>';
-	$result .= '</tr>';
-
-	$result .= '</table>';
-	$result .= '</div>';
-
-	return $result;
+	return $head;
 }
 
 /**
@@ -465,7 +254,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -480,10 +269,11 @@ function getNumberInvoicesPieChart($mode)
 		date_add($datenowadd30, $interval30days);
 		date_add($datenowadd15, $interval15days);
 
-		$sql = "SELECT sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
+		$sql = "SELECT";
+		$sql .= " sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
-		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."'", 1, 0).") as nbnotlatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."' OR f.date_lim_reglement IS NULL", 1, 0).") as nbnotlatenow";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
 		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
 		if ($mode == 'customers') {
@@ -508,24 +298,39 @@ function getNumberInvoicesPieChart($mode)
 
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+				/*
 				$dataseries = array(array($langs->trans('InvoiceLate30Days'), $obj->nblate30)
 									,array($langs->trans('InvoiceLate15Days'), $obj->nblate15 - $obj->nblate30)
 									,array($langs->trans('InvoiceLateMinus15Days'), $obj->nblatenow - $obj->nblate15)
 									,array($langs->trans('InvoiceNotLate'), $obj->nbnotlatenow - $obj->nbnotlate15)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
+				*/
+				$dataseries[$i]=array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
-			foreach ($dataseries as $key=>$value) {
-				$total += $value[1];
+			if (!empty($dataseries[0])) {
+				foreach ($dataseries[0] as $key => $value) {
+					if (is_numeric($value)) {
+						$total += $value;
+					}
+				}
 			}
+			$legend = array(
+				$langs->trans('InvoiceLate30Days'),
+				$langs->trans('InvoiceLate15Days'),
+				$langs->trans('InvoiceLateMinus15Days'),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate') : $langs->trans("InvoiceToPay"),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate15Days') : $langs->trans("InvoiceToPay15Days"),
+				$mode == 'customers' ? $langs->trans('InvoiceNotLate30Days') : $langs->trans("InvoiceToPay30Days"),
+			);
 
 			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus11, '-'.$badgeStatus11);
 
 			$result = '<div class="div-table-responsive-no-min">';
 			$result .= '<table class="noborder nohover centpercent">';
 			$result .= '<tr class="liste_titre">';
-			$result .= '<td>'.$langs->trans("Statistics").' - ';
+			$result .= '<td>'.$langs->trans("NbOfOpenInvoices").' - ';
 			if ($mode == 'customers') {
 				$result .= $langs->trans("CustomerInvoice");
 			} elseif ($mode == 'fourn' || $mode == 'suppliers') {
@@ -537,14 +342,20 @@ function getNumberInvoicesPieChart($mode)
 			$result .= '</tr>';
 
 			if ($conf->use_javascript_ajax) {
+				//var_dump($dataseries);
 				$dolgraph = new DolGraph();
 				$dolgraph->SetData($dataseries);
+
+				$dolgraph->setLegend($legend);
+
 				$dolgraph->SetDataColor(array_values($colorseries));
 				$dolgraph->setShowLegend(2);
 				$dolgraph->setShowPercent(1);
-				$dolgraph->SetType(['pie']);
-				$dolgraph->setHeight('150');
-				$dolgraph->setWidth('300');
+				$dolgraph->SetType(array('bars', 'bars', 'bars', 'bars', 'bars', 'bars'));
+				//$dolgraph->SetType(array('pie'));
+				$dolgraph->setHeight('160');	/* 160 min is required to show the 6 lines of legend */
+				$dolgraph->setWidth('450');
+				$dolgraph->setHideXValues(true);
 				if ($mode == 'customers') {
 					$dolgraph->draw('idgraphcustomerinvoices');
 				} elseif ($mode == 'fourn' || $mode == 'suppliers') {
@@ -590,16 +401,16 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= ", s.rowid as socid, s.email";
 	$sql .= ", s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user ";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -614,7 +425,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", sc.fk_soc, sc.fk_user";
 	}
 
@@ -738,12 +549,12 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -860,7 +671,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
@@ -868,7 +679,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
@@ -965,7 +776,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
@@ -973,7 +784,7 @@ function getPurchaseInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.tms DESC";
@@ -1071,7 +882,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 	$result = '';
 
-	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 		$tmpinvoice = new Facture($db);
 
 		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
@@ -1084,12 +895,12 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= ", sum(pf.amount) as am";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays,".MAIN_DB_PREFIX."facture as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		$sql .= " AND f.entity IN (".getEntity('invoice').')';
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -1174,11 +985,6 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nobordernopadding nowrap">';
 					print $tmpinvoice->getNomUrl(1, '');
 					print '</td>';
-					print '<td width="20" class="nobordernopadding nowrap">';
-					if ($tmpinvoice->hasDelay()) {
-						print img_warning($langs->trans("Late"));
-					}
-					print '</td>';
 					print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 					$filename = dol_sanitizeFileName($obj->ref);
 					$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -1190,7 +996,12 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nowrap tdoverflowmax100">';
 					print $societestatic->getNomUrl(1, 'customer');
 					print '</td>';
-					print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
+					print '<td class="right">';
+					print dol_print_date($db->jdate($obj->datelimite), 'day');
+					if ($tmpinvoice->hasDelay()) {
+						print img_warning($langs->trans("Late"));
+					}
+					print '</td>';
 					if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 						print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 					}
@@ -1218,7 +1029,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print "</tr>\n";
 				}
 
-				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</font> </td>';
+				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 					print '<td class="right"><span class="amount">'.price($total).'</span></td>';
@@ -1270,14 +1081,14 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$sql .= ", sum(pf.amount) as am";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.rowid = ff.fk_soc";
 		$sql .= " AND ff.entity = ".$conf->entity;
 		$sql .= " AND ff.paye = 0";
 		$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -1383,7 +1194,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print "</tr>\n";
 				}
 
-				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</font> </td>';
+				print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</span> </td>';
 				print '<td>&nbsp;</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 					print '<td class="right">'.price($total).'</td>';

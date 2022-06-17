@@ -28,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -90,7 +91,13 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$object->ref = $object->batch; // For document management ( it use $object->ref)
+	$object->ref = $object->batch; // Old system for document management ( it uses $object->ref)
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+	$filearray = dol_dir_list($upload_dir, "files");
+	if (empty($filearray)) {
+		// If no files linked yet, use new system on lot id. (Batch is not unique and can be same on different product)
+		$object->fetch($id, $productid, $batch);
+	}
 }
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
@@ -386,9 +393,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -401,11 +405,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -536,12 +536,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			/*TODO      if ($user->rights->stock->lire)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
 			if ($user->rights->stock->supprimer)
 			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
 			}
 			*/
 		}
@@ -573,7 +573,7 @@ if ($action != 'presend') {
 		print $formfile->showdocuments('product_batch', $objref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $langs->default_lang, '', $object);
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
@@ -581,7 +581,7 @@ if ($action != 'presend') {
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'productlot', 0, 1, '', $MAXEVENT);
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

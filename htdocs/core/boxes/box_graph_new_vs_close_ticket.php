@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_nb_ticket_last_x_days.php
+ *     \file        htdocs/core/boxes/box_graph_new_vs_close_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
@@ -98,10 +98,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketCreatedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -116,10 +116,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketClosedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);

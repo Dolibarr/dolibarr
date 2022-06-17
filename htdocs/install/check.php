@@ -93,7 +93,7 @@ if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        //
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
 if (empty($force_install_nophpinfo)) {
-	print ' (<a href="phpinfo.php" target="_blank">'.$langs->trans("MoreInformation").'</a>)';
+	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
 }
 print "<br>\n";
 
@@ -118,10 +118,28 @@ if (!function_exists("session_id")) {
 }
 
 
+// Check for mbstring extension
+if (!extension_loaded("mbstring")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "MBString")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "MBString")."<br>\n";
+}
+
+// Check for json extension
+if (!extension_loaded("json")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "JSON")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "JSON")."<br>\n";
+}
+
 // Check if GD is supported (we need GD for image conversion)
 if (!function_exists("imagecreate")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
@@ -131,7 +149,7 @@ if (!function_exists("imagecreate")) {
 // Check if Curl is supported
 if (!function_exists("curl_init")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
@@ -139,31 +157,47 @@ if (!function_exists("curl_init")) {
 
 // Check if PHP calendar extension is available
 if (!function_exists("easter_date")) {
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Calendar")."<br>\n";
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
+// Check if Curl is supported
+if (!function_exists("simplexml_load_string")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
+}
 
 // Check if UTF8 is supported
 if (!function_exists("utf8_encode")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
-	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
 }
-
 
 // Check if intl methods are supported
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");
-		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Intl")."<br>\n";
 		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
 	}
+}
+
+// Check if Curl is supported
+if (!function_exists("imap_open")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
 }
 
 if (!class_exists('ZipArchive')) {
@@ -406,33 +440,32 @@ if (!file_exists($conffile)) {
 		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$allowupgrade = false;
 		}
-		if (defined("MAIN_NOT_INSTALLED")) {
+		if (getDolGlobalInt("MAIN_NOT_INSTALLED")) {
 			$allowupgrade = false;
 		}
 		if (GETPOST('allowupgrade')) {
 			$allowupgrade = true;
 		}
-		$migrationscript = array(array('from'=>'3.0.0', 'to'=>'3.1.0'),
-								array('from'=>'3.1.0', 'to'=>'3.2.0'),
-								array('from'=>'3.2.0', 'to'=>'3.3.0'),
-								array('from'=>'3.3.0', 'to'=>'3.4.0'),
-								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0'),
-								array('from'=>'3.6.0', 'to'=>'3.7.0'),
-								array('from'=>'3.7.0', 'to'=>'3.8.0'),
-								array('from'=>'3.8.0', 'to'=>'3.9.0'),
-								array('from'=>'3.9.0', 'to'=>'4.0.0'),
-								array('from'=>'4.0.0', 'to'=>'5.0.0'),
-								array('from'=>'5.0.0', 'to'=>'6.0.0'),
-								array('from'=>'6.0.0', 'to'=>'7.0.0'),
-								array('from'=>'7.0.0', 'to'=>'8.0.0'),
-								array('from'=>'8.0.0', 'to'=>'9.0.0'),
-								array('from'=>'9.0.0', 'to'=>'10.0.0'),
-								array('from'=>'10.0.0', 'to'=>'11.0.0'),
-								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0'),
-								array('from'=>'13.0.0', 'to'=>'14.0.0')
-		);
+
+		$dir = DOL_DOCUMENT_ROOT."/install/mysql/migration/";	// We use mysql migration scripts whatever is database driver
+		dolibarr_install_syslog("Scan sql files for migration files in ".$dir);
+
+		// Get files list of migration file x.y.z-a.b.c.sql into /install/mysql/migration
+		$migrationscript = array();
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				$reg = array();
+				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
+					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2])) {
+						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
+					}
+				}
+			}
+			$migrationscript = dol_sort_array($migrationscript, 'from', 'asc', 1);
+		} else {
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir", $dir).'</div>';
+		}
 
 		$count = 0;
 		foreach ($migrationscript as $migarray) {

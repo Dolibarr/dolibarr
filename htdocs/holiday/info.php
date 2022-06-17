@@ -78,7 +78,7 @@ $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 $form = new Form($db);
 
-$title = $langs->trans("Holiday")." - ".$langs->trans("Info");
+$title = $langs->trans("Leave")." - ".$langs->trans("Info");
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 

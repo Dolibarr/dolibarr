@@ -46,8 +46,8 @@ $project_ref = GETPOST('project_ref', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -74,6 +74,7 @@ $socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
+$permissiontoadd = $user->rights->projet->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -109,7 +110,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object->project = clone $projectstatic;
 
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -151,7 +152,7 @@ if ($object->id > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -199,8 +200,10 @@ if ($object->id > 0) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -232,7 +235,6 @@ if ($object->id > 0) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -243,7 +245,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
@@ -251,7 +253,6 @@ if ($object->id > 0) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 

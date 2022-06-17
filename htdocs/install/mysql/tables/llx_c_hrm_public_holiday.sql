@@ -18,14 +18,15 @@
 
 create table llx_c_hrm_public_holiday
 (
-  id					integer AUTO_INCREMENT PRIMARY KEY,
-  entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
-  fk_country			integer,			
-  code		    		varchar(62),
-  dayrule               varchar(64) DEFAULT '',		-- 'easter', 'eastermonday', ...
-  day					integer,
-  month					integer,
-  year					integer,					-- 0 for all years
-  active				integer DEFAULT 1,
-  import_key			varchar(14)
+  id               integer AUTO_INCREMENT PRIMARY KEY,
+  entity           integer	DEFAULT 0 NOT NULL,   -- multi company id, 0 = all
+  fk_country       integer,
+  fk_departement   integer,
+  code             varchar(62),
+  dayrule          varchar(64) DEFAULT '',        -- 'easter', 'eastermonday', ...
+  day              integer,
+  month            integer,
+  year             integer,                       -- 0 for all years
+  active           integer DEFAULT 1,
+  import_key       varchar(14)
 )ENGINE=innodb;

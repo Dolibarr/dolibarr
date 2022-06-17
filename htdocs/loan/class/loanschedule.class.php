@@ -498,7 +498,7 @@ class LoanSchedule extends CommonObject
 		$toinsert = array();
 
 		$sql = "SELECT l.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.paid = 0";
 		$resql = $this->db->query($sql);
 
@@ -511,7 +511,8 @@ class LoanSchedule extends CommonObject
 						$this->db->begin();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan ";
 						$sql .= "(fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif) ";
-						$sql .= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif FROM ".MAIN_DB_PREFIX."loan_schedule WHERE rowid =".$echid;
+						$sql .= "SELECT fk_loan,datec,tms,datep,amount_capital,amount_insurance,amount_interest,fk_typepayment,num_payment,note_private,note_public,fk_bank,fk_user_creat,fk_user_modif";
+						$sql .= " FROM ".MAIN_DB_PREFIX."loan_schedule WHERE rowid =".((int) $echid);
 						$res = $this->db->query($sql);
 						if ($res) {
 							$this->db->commit();
