@@ -131,6 +131,13 @@ abstract class Stats
 	}
 
 	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	protected abstract function getAmountByMonth($year, $format = 0);
+
+	/**
 	 * Return amount of elements by month for several years.
 	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
@@ -466,7 +473,6 @@ abstract class Stats
 
 		return $data;
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
