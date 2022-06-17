@@ -187,6 +187,12 @@ abstract class CommonObject
 	public $projet;
 
 	/**
+	 * @deprecated
+	 * @see fk_project
+	 */
+	public $fk_projet;
+
+	/**
 	 * @var Contact a related contact
 	 * @see fetch_contact()
 	 */
