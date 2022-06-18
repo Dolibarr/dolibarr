@@ -62,7 +62,7 @@ MainAccountForSubscriptionPaymentNotDefined=Le compte comptable général des pa
 AccountancyArea=Espace comptabilité
 AccountancyAreaDescIntro=L'utilisation du module de comptabilité se fait en plusieurs étapes:
 AccountancyAreaDescActionOnce=Les actions suivantes sont habituellement exécutées une seule fois, ou une fois par an ...
-AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la ventilation (écriture des enregistrements dans les journaux et grand livre)
+AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pour vous faire gagner du temps à l'avenir en vous proposant le bon compte comptable par défaut lors de la ventilation (écrire des enregistrements dans les journaux et grand livre)
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
 
 AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la liste des journaux depuis le menu %s
@@ -71,7 +71,7 @@ AccountancyAreaDescChart=Étape %s : Sélectionnez et | ou complétez votre plan
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDefault=Étape %s : Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
-AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescExpenseReport=Étape %s : Définissez les comptes comptables par défaut des dépenses des notes de frais. Pour cela, suivez le menu %s.
 AccountancyAreaDescSal=Étape %s : Définissez les comptes comptables de paiements de salaires. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescContrib=Étape %s : Définissez les comptes comptables des dépenses spéciales (taxes diverses). Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDonation=Étape %s : Définissez le compte comptable par défaut des dons. Pour cela, suivez le menu suivant %s.
@@ -79,7 +79,7 @@ AccountancyAreaDescSubscription=Étape %s : définissez les comptes de comptabil
 AccountancyAreaDescMisc=Étape %s : Définissez le compte par défaut obligatoire et les comptes comptables par défaut pour les transactions diverses. Pour cela, utilisez l'entrée du menu suivant %s.
 AccountancyAreaDescLoan=Étape %s : Définissez les comptes comptables par défaut des emprunts. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescBank=Étape %s : Définissez les comptes comptables et les codes des journaux de chaque compte bancaire et financier. Vous pouvez commencer à partir de la page %s.
-AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, suivez le menu suivant %s.
+AccountancyAreaDescProd=Étape %s : Définissez les comptes comptables sur vos produits/services. Pour cela, utilisez la page suivante %s.
 
 AccountancyAreaDescBind=Étape %s : Vérifier que la liaison entre les %s lignes existantes et le compte comptable est faite, ainsi l'application sera capable d'inscrire les transaction dans le grand livre en un seul clic. Compléter les liaisons manquantes. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescWriteRecords=Étape %s: Ecrire les transactions dans le grand livre. Pour cela, suivez le menu <strong>%s</strong>, et cliquer sur le bouton <strong>%s</strong>.
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Liaison notes de frais
 CreateMvts=Créer nouvelle transaction
 UpdateMvts=Modification d'une transaction
 ValidTransaction=Valider la transaction
-WriteBookKeeping=Enregistrer les écritures en comptabilité
+WriteBookKeeping=Enregistrer les transactions en comptabilité
 Bookkeeping=Grand livre
 BookkeepingSubAccount=Grand livre auxiliaire
 AccountBalance=Balance des comptes
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Compte comptable pour l'enregistrement des dons
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les adhésions
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour les acomptes clients
+UseAuxiliaryAccountOnCustomerDeposit=Utiliser des sous-comptes pour les lignes de dépôt des clients
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte comptable par défaut pour les produits achetés dans la CEE (utilisé si non défini dans la fiche produit)
@@ -219,12 +220,12 @@ ByPredefinedAccountGroups=Par groupes prédéfinis
 ByPersonalizedAccountGroups=Par groupes personnalisés
 ByYear=Par année
 NotMatch=Non défini
-DeleteMvt=Supprimer des lignes d'opérations de la comptabilité
+DeleteMvt=Supprimer certaines lignes de la comptabilité
 DelMonth=Mois à effacer
 DelYear=Année à supprimer
 DelJournal=Journal à supprimer
-ConfirmDeleteMvt=Cette action supprime les lignes des opérations pour l'année/mois et/ou pour le journal sélectionné (au moins un critère est requis). Vous devrez utiliser de nouveau la fonctionnalité '%s' pour retrouver vos écritures dans la comptabilité.
-ConfirmDeleteMvtPartial=Cette action supprime l'écriture de la comptabilité (toutes les lignes opérations liées à une même écriture seront effacées).
+ConfirmDeleteMvt=Cela supprimera toutes les lignes en comptabilité pour l'année/mois et/ou pour un journal spécifique (Au moins un critère est requis). Vous devrez réutiliser la fonctionnalité '%s' pour que l'enregistrement supprimé revienne dans le grand livre.
+ConfirmDeleteMvtPartial=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées)
 FinanceJournal=Journal de trésorerie
 ExpenseReportsJournal=Journal des notes de frais
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
@@ -278,11 +279,11 @@ DescVentilExpenseReportMore=Si vous avez défini des comptes comptables au nivea
 DescVentilDoneExpenseReport=Consultez ici la liste des lignes des notes de frais et leur compte comptable
 
 Closure=Clôture annuelle
-DescClosure=Consultez ici le nombre de mouvements par mois non validés et les périodes fiscales déjà ouvertes
-OverviewOfMovementsNotValidated=Etape 1/ Aperçu des mouvements non validés. (Nécessaire pour clôturer un exercice comptable)
-AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés et validés
-NotAllMovementsCouldBeRecordedAsValidated=Tous les mouvements n'ont pas pu être enregistrés et validés
-ValidateMovements=Valider les mouvements
+DescClosure=Consulter le nombre de mouvements par mois non validés et les périodes fiscales déjà ouvertes
+OverviewOfMovementsNotValidated=Aperçu des mouvements non validés et verrouillés
+AllMovementsWereRecordedAsValidated=Tous les mouvements ont été enregistrés comme validés et ont été verrouillés
+NotAllMovementsCouldBeRecordedAsValidated=Certains mouvements n'ont pas pu être enregistrés comme validés et n'ont pas été verrouillés
+ValidateMovements=Valider et verrouiller l'enregistrement...
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
@@ -294,14 +295,15 @@ Balancing=Équilibrage
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
 GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être journalisées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà comptabilisées.
-NoNewRecordSaved=Plus d'enregistrements à journaliser
+NoNewRecordSaved=Aucune ligne à transférer
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 Accounted=En comptabilité
 NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
-WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
+WarningRecordWithoutSubledgerAreExcluded=Attention, toutes les lignes sans compte auxiliaire défini sont filtrées et exclues de cette vue
+AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
 ## Admin
 BindingOptions=Options de liaisons avec les codes comptables
@@ -329,8 +331,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
-NotifiedExportDate=Marquer les lignes comme exportées (la modification des enregistrements ne sera pas possible)
-NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning"> (pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité) </span>
+NotifiedValidationDate=Validez et verrouillez les entrées exportées <span class="warning"> (même effet que la fonction "Fermeture", la modification et la suppression des lignes ne seront CERTAINEMENT pas possibles) </span>
+DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
@@ -394,6 +397,21 @@ Range=Plage de comptes
 Calculated=Calculé
 Formula=Formule
 
+## Reconcile
+Unlettering=Annuler le rapprochement
+AccountancyNoLetteringModified=Pas de rapprochement modifié
+AccountancyOneLetteringModifiedSuccessfully=Un rapprochement modifié avec succès
+AccountancyLetteringModifiedSuccessfully=%s rapprochements modifiés avec succès
+AccountancyNoUnletteringModified=Aucune annulation de rapprochement modifiée
+AccountancyOneUnletteringModifiedSuccessfully=Une annulation de rapprochement modifiée avec succès
+AccountancyUnletteringModifiedSuccessfully=%s annulations de rapprochement modifiées avec succès
+
+## Confirm box
+ConfirmMassUnlettering=Confirmation d'annulation de rapprochement en masse
+ConfirmMassUnletteringQuestion=Êtes-vous sûr de vouloir annuler le rapprochement de(s) %s enregistrement(s) sélectionné(s) ?
+ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
+ConfirmMassDeleteBookkeepingWritingQuestion=Cela supprimera la transaction de la comptabilité (toutes les lignes liées à la même transaction seront supprimées). Êtes-vous sûr de vouloir supprimer le(s) %s enregistrement(s) sélectionné(s) ?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
 ErrorNoAccountingCategoryForThisCountry=Pas de catégories de regroupement comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
@@ -406,6 +424,9 @@ Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=Le solde (%s) n'est pas égal à 0
+AccountancyErrorLetteringBookkeeping=Des erreurs sont survenues concernant les transactions : %s
 
 ## Import
 ImportAccountingEntries=Écritures comptables

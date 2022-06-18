@@ -159,11 +159,11 @@ if ($resql) {
 			$thirdpartystatic->idprof5 = $obj->idprof5;
 			$thirdpartystatic->idprof6 = $obj->idprof6;
 
-			print '<tr class="oddeven"><td>';
+			print '<tr class="oddeven"><td class="nowraponall">';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $thirdpartystatic->getNomUrl(1, 'customer');
 			print '</td>';
 
@@ -225,17 +225,17 @@ if ($result) {
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
-
-			print '<tr class="oddeven">';
-
-			print "<td>";
 			$bprev->id = $obj->rowid;
 			$bprev->ref = $obj->ref;
 			$bprev->statut = $obj->statut;
+
+			print '<tr class="oddeven">';
+
+			print '<td class="nowraponall">';
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right nowraponall"><span class="amount">'.price($obj->amount)."</span></td>\n";
 			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
 			print "</tr>\n";

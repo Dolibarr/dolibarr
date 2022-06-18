@@ -204,7 +204,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed") {
+		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -595,7 +595,7 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
 		$invoice->fetch($placeid);
 	}
 
@@ -913,7 +913,7 @@ if (empty($reshook)) {
 			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
 		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
+		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
 			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 		}
 	}
@@ -1446,7 +1446,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
 				if ($line->special_code == "4") {
-					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
@@ -1489,7 +1489,7 @@ if ($placeid > 0) {
 			}
 			$htmlforlines .= '" id="'.$line->id.'"';
 			if ($line->special_code == "4") {
-				$htmlforlines .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 			}
 			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';

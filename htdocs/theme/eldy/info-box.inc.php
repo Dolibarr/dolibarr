@@ -10,7 +10,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  */
 
 .info-box-module.--external span.info-box-icon-version {
-	background: #bbb;
+	background: rgba(0,0,0,0.2);
 }
 
 .info-box-module.--external.--need-update span.info-box-icon-version{
@@ -489,6 +489,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-container {
 		margin: 0 0 0 0px !important;
 		width: 100% !important;
+		justify-content: space-between;
 	}
 	.info-box-module {
 		width: 100%;

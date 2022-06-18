@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -524,7 +524,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -692,12 +692,12 @@ if ($id > 0 || $ref) {
 			} else {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 
 				// Price minimum
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 			}
 

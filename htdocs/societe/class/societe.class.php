@@ -942,8 +942,8 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_sell";
 			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
+			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".((int) $this->status);
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -1105,7 +1105,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($error)) {
+		if (empty($error)) {
 			dol_syslog(get_class($this)."::create_individual success");
 			$this->db->commit();
 		} else {
@@ -2741,13 +2741,6 @@ class Societe extends CommonObject
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
-
-			/*
-			$hookmanager->initHooks(array('thirdpartydao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			*/
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';

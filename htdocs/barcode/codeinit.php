@@ -188,7 +188,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<br>';
 
 // For thirdparty
-if ($conf->societe->enabled) {
+if (isModEnabled('societe')) {
 	$nbno = $nbtotal = 0;
 
 	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');

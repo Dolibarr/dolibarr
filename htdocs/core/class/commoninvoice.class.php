@@ -168,17 +168,18 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 *    	Return amount (with tax) of all deposits invoices used by invoice.
-	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
+   *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
 	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
 	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
+		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			// FACTURE_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
 			return 0.0;
-		}
+		}*/
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -1084,4 +1085,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
+
+	public $fk_accounting_account;
 }

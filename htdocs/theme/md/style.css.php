@@ -394,7 +394,7 @@ textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
-input:focus, textarea:focus, button:focus, select:focus {
+input:focus, textarea:focus, button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus {
 	border-bottom: 1px solid #666;
 }
 
@@ -403,7 +403,8 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 120px;
@@ -487,7 +488,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 textarea {
 	border-radius: 0;
@@ -2398,6 +2399,11 @@ img.photoref, div.photoref {
 	object-fit: contain;
 }
 
+img.photokanban, div.photokanban {
+	padding: 0;
+	border: none;
+}
+
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
 }
@@ -3569,7 +3575,7 @@ td.border, div.tagtable div div.border {
 	left: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -3582,7 +3588,7 @@ td.border, div.tagtable div div.border {
 	right: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -4109,7 +4115,8 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	border-bottom: 1px solid var(--colortopbordertitle1);
+	/* border-bottom: 1px solid var(--colortopbordertitle1); */
+	border-bottom: none;
 }
 
 div.liste_titre {
@@ -4163,7 +4170,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4960,7 +4967,7 @@ span[phptag] {
 	color: #000 !important;
 	text-shadow: none;
 }
-.bordertransp {
+.bordertransp:not(.nobordertransp) {
 	background-color: transparent;
 	background-image: none;
 	border: 1px solid #aaa;
@@ -5179,11 +5186,11 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
 .treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 
@@ -7319,3 +7326,4 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+

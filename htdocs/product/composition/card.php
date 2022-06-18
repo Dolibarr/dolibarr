@@ -28,7 +28,7 @@
  */
 
 require '../../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -144,9 +144,10 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
  * View
  */
 
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
-$form = new Form($db);
 
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search') {
@@ -201,8 +202,10 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $help_url);
 
 $head = product_prepare_head($object);
+
 $titre = $langs->trans("CardProduct".$object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+
 print dol_get_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
@@ -218,10 +221,11 @@ if ($id > 0 || !empty($ref)) {
 			$shownav = 0;
 		}
 
-		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
 		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
@@ -229,23 +233,33 @@ if ($id > 0 || !empty($ref)) {
 			// Type
 			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefieldcreate">';
+				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
 
+			print '</table>';
+
+			print '</div><div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("Nature").'</td><td>';
-				print $object->getLibFinished();
-				print '</td></tr>';
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $object->getLibFinished();
+					//print $formproduct->selectProductNature('finished', $object->finished);
+					print '</td></tr>';
+				}
 			}
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td><td>';
+				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
 					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 				} else {
@@ -265,16 +279,13 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 			print '</div>';
+			print '</div>';
 		}
 
 		print dol_get_fiche_end();
 
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-		print '</div>';
-
-		print '<br>';
+		print '<br><br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
 		$object->get_sousproduits_arbo(); // Load $object->sousprods
@@ -552,7 +563,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</tr>'."\n";
 		} else {
-			$colspan = 8;
+			$colspan = 10;
 			if (!empty($conf->stock->enabled)) {
 				$colspan++;
 			}

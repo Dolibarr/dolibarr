@@ -370,7 +370,7 @@ class modCommande extends DolibarrModules
 			),
 		);
 
-		//Import CPV Lines
+		//Import Order Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
 		$this->import_label[$r] = 'SaleOrderLines';

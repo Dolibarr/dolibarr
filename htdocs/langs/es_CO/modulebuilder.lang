@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-EnterNameOfModuleDesc=Ingrese el nombre del módulo / aplicación a crear sin espacios. Utilice mayúsculas para separar palabras (por ejemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Ingrese el nombre del objeto a crear sin espacios. Utilice mayúsculas para separar palabras (por ejemplo: MyObject, Student, Teacher ...). Se generarán el archivo de clase CRUD, pero también el archivo API, las páginas para listar / agregar / editar / eliminar objetos y archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definido en %s): <strong> %s </strong>
 ModuleBuilderDesc3=Módulos generados / editables encontrados: <strong> %s </strong>
 ModuleBuilderDesc4=Un módulo se detecta como 'editable' cuando el archivo <strong> %s </strong> existe en la raíz del directorio del módulo

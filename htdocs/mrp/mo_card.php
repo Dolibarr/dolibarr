@@ -135,7 +135,7 @@ if (empty($reshook)) {
 
 	//Create MO with Childs
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
-		$noback = 0;
+		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 		$mo_parent = $object;
@@ -162,7 +162,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_list.php', 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.$moline->fk_mo, 1));
 		exit;
 	}
 
@@ -275,7 +275,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print mrpCollapseBomManagement();
+	mrpCollapseBomManagement();
 
 	?>
 	<script>
@@ -285,7 +285,7 @@ if ($action == 'create') {
 				if (jQuery('#fk_bom').val() > 0)
 				{
 					// Redirect to page with fk_bom set
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&fk_bom='+jQuery('#fk_bom').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&fk_bom='+jQuery('#fk_bom').val();
 					/*
 					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
 						console.log(data);
@@ -317,7 +317,7 @@ if ($action == 'create') {
 				else if (jQuery('#fk_bom').val() < 0) {
 					// Redirect to page with all fields defined except fk_bom set
 					console.log(jQuery('#fk_product').val());
-					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&token=<?php echo newToken(); ?>&qty='+jQuery('#qty').val()+'&mrptype='+jQuery('#mrptype').val()+'&fk_product='+jQuery('#fk_product').val()+'&label='+jQuery('#label').val()+'&fk_project='+jQuery('#fk_project').val()+'&fk_warehouse='+jQuery('#fk_warehouse').val();
 					/*
 					$('#qty').val('');
 					$("#fk_product").val('');
@@ -484,7 +484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref .= $langs->trans('ThirdParty').' ';
 	$morehtmlref .= ': '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {

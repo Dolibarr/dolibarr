@@ -239,7 +239,7 @@ if (empty($reshook)) {
 		//Default language
 		$object->default_lang = GETPOST('default_lang');
 
-        // Fill array 'array_options' with data from add form
+		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
 			$error++;
@@ -444,7 +444,7 @@ if (empty($reshook)) {
 			//Default language
 			$object->default_lang = GETPOST('default_lang');
 
-            // Fill array 'array_options' with data from add form
+			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
@@ -881,8 +881,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			//Default language
-			if (!empty($conf->global->MAIN_MULTILANGS))
-			{
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone', 0, 0, 0, null, 1);
 
@@ -1040,7 +1039,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
-			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'nohtml') : $object->address).'</textarea>';
+			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</div><div class="paddingrightonly valignmiddle inline-block">';
 			if ($conf->use_javascript_ajax) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
@@ -1170,10 +1169,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			//Default language
-			if (!empty($conf->global->MAIN_MULTILANGS))
-			{
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-                print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+				print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
 
 				print '</td>';
 				print '</tr>';
@@ -1243,7 +1241,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 				print $object->ref_facturation ? $object->ref_facturation : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>');
 				print '</td></tr>';
@@ -1392,21 +1390,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Default language
-        if (!empty($conf->global->MAIN_MULTILANGS))
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
-            //$s=picto_from_langcode($object->default_lang);
-            //print ($s?$s.' ':'');
-            $langs->load("languages");
-            $labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang.'_'.strtoupper($object->default_lang)) : '');
-            print $labellang;
-            print '</td></tr>';
-        }
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang.'_'.strtoupper($object->default_lang)) : '');
+			print $labellang;
+			print '</td></tr>';
+		}
 
-        print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
-        print $object->LibPubPriv($object->priv);
-        print '</td></tr>';
+		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
+		print $object->LibPubPriv($object->priv);
+		print '</td></tr>';
 
 		print '</table>';
 		print '</div>';
@@ -1514,7 +1511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';

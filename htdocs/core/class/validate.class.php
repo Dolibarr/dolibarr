@@ -300,13 +300,13 @@ class Validate
 	/**
 	 * Check for all values in db
 	 *
-	 * @param array  $values    Boolean to validate
+	 * @param integer  $id of element
 	 * @param string $classname the class name
 	 * @param string $classpath the class path
 	 * @return boolean Validity is ok or not
 	 * @throws Exception
 	 */
-	public function isFetchable($values, $classname, $classpath)
+	public function isFetchable($id, $classname, $classpath)
 	{
 		if (!empty($classpath)) {
 			if (dol_include_once($classpath)) {
@@ -319,7 +319,7 @@ class Validate
 						return false;
 					}
 
-					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $values)) {
+					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $id)) {
 						return true;
 					} else { $this->error = $this->outputLang->trans('RequireValidExistingElement'); }
 				} else { $this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation'); }

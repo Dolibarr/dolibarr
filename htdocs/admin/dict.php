@@ -488,14 +488,14 @@ $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
 $tabcond[5] = (!empty($conf->societe->enabled) || !empty($conf->adherent->enabled));
-$tabcond[6] = !empty($conf->agenda->enabled);
+$tabcond[6] = isModEnabled('agenda');
 $tabcond[7] = !empty($conf->tax->enabled);
 $tabcond[8] = !empty($conf->societe->enabled);
 $tabcond[9] = true;
 $tabcond[10] = true;
 $tabcond[11] = (!empty($conf->societe->enabled));
-$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
-$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
+$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
+$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
 $tabcond[14] = (!empty($conf->product->enabled) && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
 $tabcond[16] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
@@ -508,12 +508,12 @@ $tabcond[22] = (!empty($conf->commande->enabled) || !empty($conf->propal->enable
 $tabcond[23] = true;
 $tabcond[24] = !empty($conf->resource->enabled);
 $tabcond[25] = !empty($conf->website->enabled);
-//$tabcond[26]= ! empty($conf->product->enabled);
+//$tabcond[26]= !empty($conf->product->enabled);
 $tabcond[27] = !empty($conf->societe->enabled);
 $tabcond[28] = !empty($conf->holiday->enabled);
-$tabcond[29] = !empty($conf->projet->enabled);
+$tabcond[29] = !empty($conf->project->enabled);
 $tabcond[30] = !empty($conf->label->enabled);
-//$tabcond[31]= ! empty($conf->accounting->enabled);
+//$tabcond[31]= !empty($conf->accounting->enabled);
 $tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
 $tabcond[33] = !empty($conf->hrm->enabled);
 $tabcond[34] = !empty($conf->hrm->enabled);
@@ -846,12 +846,15 @@ if (empty($reshook)) {
 			$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', GETPOST("code"));
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		// If check ok and action add, add the line
 		if ($ok && GETPOST('actionadd')) {
 			if ($tabrowid[$id]) {
 				// Get free id for insert
 				$newid = 0;
-				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tabname[$id];
+				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tablename;
 				$result = $db->query($sql);
 				if ($result) {
 					$obj = $db->fetch_object($result);
@@ -862,7 +865,7 @@ if (empty($reshook)) {
 			}
 
 			// Add new entry
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tabname[$id]." (";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tablename." (";
 			// List of fields
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
 				$sql .= $tabrowid[$id].",";
@@ -887,7 +890,7 @@ if (empty($reshook)) {
 				} elseif ($value == 'taux' || $value == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($value == 'entity') {
-					$_POST[$keycode] = getEntity($tabname[$id]);
+					$_POST[$keycode] = getEntity($tablename);
 				}
 
 				if ($i) {
@@ -903,7 +906,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;
@@ -938,7 +941,7 @@ if (empty($reshook)) {
 			}
 
 			// Modify entry
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
 			// Modifie valeur des champs
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
@@ -956,7 +959,7 @@ if (empty($reshook)) {
 				} elseif ($field == 'taux' || $field == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($field == 'entity') {
-					$_POST[$keycode] = getEntity($tabname[$id]);
+					$_POST[$keycode] = getEntity($tablename);
 				}
 
 				if ($i) {
@@ -972,7 +975,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;
@@ -983,7 +986,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 			}
 			if (in_array('entity', $listfieldmodify)) {
-				$sql .= " AND entity = ".((int) getEntity($tabname[$id], 0));
+				$sql .= " AND entity = ".((int) getEntity($tablename, 0));
 			}
 
 			dol_syslog("actionmodify", LOG_DEBUG);
@@ -1002,7 +1005,10 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabname[$id]." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -1490,11 +1496,13 @@ if ($id > 0) {
 			}
 
 			if ($valuetoshow != '') {
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
 				$tdsoffields .= '<th'.($class ? ' class="'.$class.'"' : '').'>';
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$tdsoffields .= '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$tdsoffields .= $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$tdsoffields .= '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$tdsoffields .= $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$tdsoffields .= $valuetoshow;
 				}
@@ -1643,8 +1651,8 @@ if ($id > 0) {
 				continue;
 			}
 
-			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabhelp[$id][$value])) {
-				$tabhelp[$id][$value] = $langs->trans('LabelUsedByDefault');
+			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
+				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
 			}
 
 			// Determines the name of the field in relation to the possible names
@@ -1850,10 +1858,12 @@ if ($id > 0) {
 
 			// Show field title
 			if ($showfield) {
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$newvaluetoshow = '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$newvaluetoshow = '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$newvaluetoshow = $valuetoshow;
 				}

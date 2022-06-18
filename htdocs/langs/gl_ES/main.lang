@@ -1174,3 +1174,6 @@ ConfirmAllocateCommercial=Asignar a confirmación do representante de vendas
 ConfirmAllocateCommercialQuestion=Está certo de querer asignar o(s) rexistro(s) seleccionado(s) a %s?
 CommercialsAffected=Representantes de vendas afectados
 CommercialAffected=Representante de vendas afectado
+YourMessage=A súa mensaxe
+YourMessageHasBeenReceived=Recibiuse a súa mensaxe. Atenderemos ou contactaremos con vostede canto antes.
+UrlToCheck=URL para comprobar

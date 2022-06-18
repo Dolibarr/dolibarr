@@ -149,7 +149,8 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 100px;
@@ -227,6 +228,9 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
+.tableforfield input {
+	padding: 2px;
+}
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -281,7 +285,7 @@ div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
- select:focus, .select2-container--open .select2-selection--single {
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -2372,6 +2376,9 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
 	object-fit: contain;
+}
+img.photokanban, div.photokanban {
+	padding: 0;
 }
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
@@ -5335,11 +5342,11 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
 .treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */
@@ -6024,7 +6031,7 @@ span.select2.select2-container.select2-container--default {
 }
 span.select2.select2-container.select2-container--default {
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
-	//border-bottom: solid 1px var(--inputbordercolor);
+	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
 
@@ -6341,6 +6348,17 @@ span#select2-boxbookmark-container {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
 }
 
 
@@ -7629,6 +7647,11 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 }
 
 ?>
+
+	div.extra_inline_chkbxlst,
+	div.extra_inline_checkbox {
+		min-width:150px;
+	}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2021 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2022 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 // Need global variable $urllogo, $title and $titletruedolibarrversion to be defined by caller (like dol_loginfunction in security2.lib.php)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
-
+// $titletruedolibarrversion must be defined
 
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
@@ -71,6 +71,12 @@ $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmlt
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
 }
+if (preg_match('/'.preg_quote('core/modules/oauth', '/').'/', $php_self)) {
+	$php_self = DOL_URL_ROOT.'/index.php?mainmenu=home';
+}
+$php_self = preg_replace('/(\?|&amp;|&)action=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)massaction=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(

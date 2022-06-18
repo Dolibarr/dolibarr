@@ -136,6 +136,7 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+ALTER TABLE llx_c_stcomm MODIFY COLUMN code VARCHAR(24) NOT NULL;
 ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
 
 UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
@@ -306,6 +307,8 @@ ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NUL
 ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+
 ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
 ALTER TABLE llx_mailing ADD UNIQUE INDEX uk_mailing(titre, entity);
@@ -373,8 +376,8 @@ ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 
-DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
-DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
 
 ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
 
@@ -401,4 +404,11 @@ ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);
 ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
+
+ALTER TABLE llx_cronjob ADD COLUMN email_alert varchar(128);
+
+ALTER TABLE llx_paiement MODIFY COLUMN ext_payment_id varchar(255);
+ALTER TABLE llx_payment_donation MODIFY COLUMN ext_payment_id varchar(255);
+ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar(255);
+
 
