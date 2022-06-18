@@ -6118,6 +6118,17 @@ ul.select2-results__options li {
 	font-size: 0.95em;
 }
 
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */

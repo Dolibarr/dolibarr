@@ -208,7 +208,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Skill|FR:Module_Skill_FR|ES:Módulo_Skill";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Skills"));
+$title = $langs->trans("Skills");
 $morejs = array();
 $morecss = array();
 
