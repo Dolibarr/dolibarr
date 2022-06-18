@@ -77,6 +77,10 @@ $save = GETPOST('save', 'alpha');
 if (!empty($save)) {
 	$action = 'add';
 }
+$valid = GETPOST('validate', 'alpha');
+if (!empty($valid)) {
+	$action = 'valid';
+}
 $update = GETPOST('update', 'alpha');
 if (!empty($update)) {
 	$action = 'confirm_update';
@@ -161,7 +165,7 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-} elseif ($action == 'add') {
+} elseif ($action == 'add' || $action == 'valid') {
 	$error = 0;
 
 	foreach ($accountingaccount_number as $key => $value) {
@@ -223,7 +227,7 @@ if ($action == "confirm_update") {
 		$debit = 0;
 		$credit = 0;
 
-		$action = '';
+		$action = $action == 'add' ? '' : $action ; // stay in valid mode when not adding line
 	}
 } elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
@@ -688,9 +692,9 @@ if (!empty($object->piece_num)) {
 				print '<br>';
 				print '<div class="center">';
 				if ($total_debit == $total_credit) {
-					print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+					print '<input type="submit" class="button" name="validate" value="' . $langs->trans("ValidTransaction") . '" />';
 				} else {
-					print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+					print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'" />';
 				}
 
 				print ' &nbsp; ';
