@@ -254,7 +254,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			if(!empty($projectid)) $sql .= " AND fk_projet = ".$db->sanitize($projectid);
 		}
 		// Loan payments
-		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms']) and empty($projectid)) {
+		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms']) && empty($projectid)) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
