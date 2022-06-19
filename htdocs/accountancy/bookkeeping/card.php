@@ -378,7 +378,7 @@ if (!empty($object->piece_num)) {
 	print load_fiche_titre($langs->trans($mode =="_tmp" ? "CreateMvts": "UpdateMvts"), $backlink);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'" />';
 	}
 	$head = array();
 	$h = 0;
@@ -416,13 +416,13 @@ if (!empty($object->piece_num)) {
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
-	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.$doc_ref.'"></td>';
+	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.$doc_ref.'" /></td>';
 	print '</tr>';
 
 	/*
 	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
-	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
+	print '<td><input type="text" class="minwidth200 name="doc_type" value="" /></td>';
 	print '</tr>';
 	*/
 
@@ -522,14 +522,14 @@ if (!empty($object->piece_num)) {
 		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 		if ($optioncss != '') {
-			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'" />';
 		}
 
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-		print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-		print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-		print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'" />';
+		print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'" />'."\n";
+		print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'" />'."\n";
+		print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'" />'."\n";
+		print '<input type="hidden" name="mode" value="'.$mode.'" />'."\n";
 
 		if (count($object->linesmvt) > 0) {
 			print '<div class="div-table-responsive-no-min">';
@@ -588,17 +588,17 @@ if (!empty($object->piece_num)) {
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 						print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 					} else {
-						print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'" />';
 					}
 					// Add also input for subledger label
-					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'" />';
 					print '</td>';
-					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'" /></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'" /></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'" /></td>';
 					print '<td>';
-					print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
-					print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
+					print '<input type="hidden" name="id" value="'.$line->id.'" />'."\n";
+					print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'" />';
 					print '</td>';
 				} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
 					if ($action == "" || $action == 'add') {
