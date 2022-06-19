@@ -72,7 +72,7 @@ class FileUpload
 		} elseif ($element == 'project_task') {
 			$pathname = 'projet';
 			$filename = 'task';
-			$dir_output = $conf->projet->dir_output;
+			$dir_output = $conf->project->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';

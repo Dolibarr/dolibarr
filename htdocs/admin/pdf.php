@@ -108,7 +108,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
@@ -482,7 +482,7 @@ print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" v
 print '</td></tr>';
 
 // Show project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
 	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
