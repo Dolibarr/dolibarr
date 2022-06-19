@@ -18,8 +18,8 @@
 -- Table to store the configuration of the accounting accounts of a fixed asset for fiscal status
 --
 -- Data example:
--- INSERT INTO `llx_asset_accountancy_codes_fiscal` (`rowid`, `fk_asset`, `fk_asset_model`, `accelerated_depreciation`, `endowment_accelerated_depreciation`, `provision_accelerated_depreciation`, `tms`, `fk_user_modif`) VALUES
--- (2, 1, NULL, NULL, NULL, NULL, '2022-01-18 14:20:20', 1);
+-- INSERT INTO llx_asset_accountancy_codes_fiscal (fk_asset, fk_asset_model, accelerated_depreciation, endowment_accelerated_depreciation, provision_accelerated_depreciation, tms, fk_user_modif) VALUES
+-- (1, NULL, NULL, NULL, NULL, '2022-01-18 14:20:20', 1);
 
 CREATE TABLE llx_asset_accountancy_codes_fiscal(
     rowid									integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
