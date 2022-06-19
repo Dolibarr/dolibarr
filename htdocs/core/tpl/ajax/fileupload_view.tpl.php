@@ -37,6 +37,13 @@ if (empty($conf) || !is_object($conf)) {
 		<span class="btn btn-success fileinput-button">
 			<i class="icon-plus icon-white"></i>
 			<span><?php echo $langs->trans('AddFiles'); ?></span>
+			<?php
+			$maxfilesizearray = getMaxFileSizeArray();
+			$maxmin = $maxfilesizearray['maxmin'];
+			if ($maxmin > 0) {
+				print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+			}
+			?>
 			<input type="file" name="files[]" multiple>
 		</span>
 		<button type="submit" class="btn btn-primary start">

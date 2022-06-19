@@ -110,6 +110,11 @@ class mailing_xinputfile extends MailingTargets
 		global $langs;
 
 		$s = '';
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$s .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
 		$s .= '<input type="file" name="username" class="flat">';
 		return $s;
 	}

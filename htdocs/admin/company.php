@@ -477,6 +477,11 @@ if (!empty($conf->barcode->enabled)) {
 // Logo
 print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+if ($maxmin > 0) {
+	print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo" id="logo" accept="image/*">';
 print '</div>';
 if (!empty($mysoc->logo_small)) {
@@ -514,6 +519,11 @@ print '</td></tr>';
 // Logo (squarred)
 print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+if ($maxmin > 0) {
+	print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="logo_squarred" id="logo_squarred" accept="image/*">';
 print '</div>';
 if (!empty($mysoc->logo_squarred_small)) {
