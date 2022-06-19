@@ -15,7 +15,8 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 -- ========================================================================
 --
--- Table to store the configuration of the accounting accounts of a fixed asset for economic status
+-- Table to store the configuration of the accounting accounts of a fixed asset for economic status (fk_asset will be filled and fk_asset_model will be null)
+-- or to store the configuration of the accounting accounts for templates of asset (fk_asset_model will be filled and fk_asset will be null)
 --
 -- Data example:
 -- INSERT INTO `llx_asset_accountancy_codes_economic` (`rowid`, `fk_asset`, `fk_asset_model`, `asset`, `depreciation_asset`, `depreciation_expense`, `value_asset_sold`, `receivable_on_assignment`, `proceeds_from_sales`, `vat_collected`, `vat_deductible`, `tms`, `fk_user_modif`) VALUES
