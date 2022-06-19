@@ -18,7 +18,7 @@
 -- Table to store depreciation of a fixed asset
 --
 -- Data example:
--- INSERT INTO `llx_asset_depreciation` (`rowid`, `fk_asset`, `depreciation_mode`, `ref`, `depreciation_date`, `depreciation_ht`, `cumulative_depreciation_ht`, `accountancy_code_debit`, `accountancy_code_credit`, `tms`, `fk_user_modif`) VALUES
+-- INSERT INTO llx_asset_depreciation (rowid, fk_asset, depreciation_mode, ref, depreciation_date, depreciation_ht, cumulative_depreciation_ht, accountancy_code_debit, accountancy_code_credit, tms, fk_user_modif) VALUES
 -- (194, 1, 'economic', '2022-01', '2022-01-31 23:59:59', 2.00000000, 2.00000000, '2818', '68112', '2022-03-09 14:10:29', NULL),
 -- (195, 1, 'economic', '2022-02', '2022-02-28 23:59:59', 5.00000000, 7.00000000, '2818', '68112', '2022-03-09 14:10:29', NULL),
 -- (314, 1, 'economic', '2022-03', '2022-03-31 23:59:59', 8.33000000, 15.33000000, '2818', '68112', '2022-03-09 14:15:48', NULL),
@@ -95,6 +95,6 @@ CREATE TABLE llx_asset_depreciation(
     accountancy_code_debit          varchar(32),
     accountancy_code_credit         varchar(32),
 
-	tms                             timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    tms                             timestamp       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_modif                   integer
 ) ENGINE=innodb;
