@@ -18,8 +18,8 @@
 -- Table for fixed asset model
 --
 -- Data example:
--- INSERT INTO `llx_asset_model` (`rowid`, `entity`, `ref`, `label`, `asset_type`, `note_public`, `note_private`, `date_creation`, `tms`, `fk_user_creat`, `fk_user_modif`, `import_key`, `status`) VALUES
--- (1, 1, 'LAPTOP', 'Laptop', 1, NULL, NULL, '2022-01-18 14:27:09', '2022-01-24 09:31:49', 1, 1, NULL, 1);
+-- INSERT INTO llx_asset_model (entity, ref, label, asset_type, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, import_key, status) VALUES
+-- (1, 'LAPTOP', 'Laptop', 1, NULL, NULL, '2022-01-18 14:27:09', '2022-01-24 09:31:49', 1, 1, NULL, 1);
 
 CREATE TABLE llx_asset_model(
     rowid					integer			AUTO_INCREMENT PRIMARY KEY NOT NULL,
