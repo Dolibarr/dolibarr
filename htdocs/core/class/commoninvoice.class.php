@@ -947,13 +947,18 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->fk_account > 0) {
 			// Bank BAN if country is LI or CH
 			// TODO Add
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$s .= $bankaccount->iban."\n";
 		} else {
 			$s .= "\n";
 		}
 		// Seller
-		$s .= "S";
+		$s .= "S\n";
 		$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($mysoc->address, 70, 'right', 'UTF-8', 1)."\n";
+		$addresslinearray = explode("\n", $mysoc->address);
+		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
 		$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
@@ -967,11 +972,13 @@ abstract class CommonInvoice extends CommonObject
 		$s .= "\n";
 		// Amount of payment (to do?)
 		$s .= price($pricewithtaxstring, 0, 'none', 0, 0, 2)."\n";
-		$s .= $this->currency_code."\n";
+		$s .= ($this->multicurrency_code ? $this->multicurrency_code : $conf->currency)."\n";
 		// Buyer
-		$s .= "S";
+		$s .= "S\n";
 		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
-		$s .= dol_trunc($this->thirdparty->address, 70, 'right', 'UTF-8', 1)."\n";
+		$addresslinearray = explode("\n", $this->thirdparty->address);
+		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
 		$s .= dol_trunc($this->thirdparty->zip, 16, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($this->thirdparty->town, 35, 'right', 'UTF-8', 1)."\n";
 		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
