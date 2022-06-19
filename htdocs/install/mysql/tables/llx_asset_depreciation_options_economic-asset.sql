@@ -18,8 +18,8 @@
 -- Table to store economical depreciation of a fixed asset
 --
 -- Data example:
--- INSERT INTO `llx_asset_depreciation_options_economic` (`rowid`, `fk_asset`, `fk_asset_model`, `depreciation_type`, `accelerated_depreciation_option`, `degressive_coefficient`, `duration`, `duration_type`, `amount_base_depreciation_ht`, `amount_base_deductible_ht`, `total_amount_last_depreciation_ht`, `tms`, `fk_user_modif`) VALUES
--- (11, 1, NULL, 1, NULL, 1.75000000, 60, 1, 500.00000000, 0.00000000, 7.00000000, '2022-03-09 14:15:48', 1);
+-- INSERT INTO llx_asset_depreciation_options_economic (fk_asset, fk_asset_model, depreciation_type, accelerated_depreciation_option, degressive_coefficient, duration, duration_type, amount_base_depreciation_ht, amount_base_deductible_ht, total_amount_last_depreciation_ht, tms, fk_user_modif) VALUES
+-- (1, NULL, 1, NULL, 1.75000000, 60, 1, 500.00000000, 0.00000000, 7.00000000, '2022-03-09 14:15:48', 1);
 
 CREATE TABLE llx_asset_depreciation_options_economic(
     rowid                               integer         AUTO_INCREMENT PRIMARY KEY NOT NULL,
