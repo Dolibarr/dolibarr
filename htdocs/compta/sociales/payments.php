@@ -147,13 +147,15 @@ $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.d
 $sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.login, u.admin, u.statut,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " aj.label as account_journal";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON ba.fk_accountancy_journal = aj.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = cs.fk_user";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity IN (".getEntity("tax").")";
@@ -341,10 +343,7 @@ while ($i < min($num, $limit)) {
 
 			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;
-
-				$accountingjournal = new AccountingJournal($db);
-				$accountingjournal->fetch($obj->fk_accountancy_journal);
-				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+				$accountstatic->accountancy_journal = $obj->account_journal;
 			}
 			print $accountstatic->getNomUrl(1);
 		} else {
