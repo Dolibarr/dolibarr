@@ -22,6 +22,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
+	--colorbackgrey: #f0f0f0;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -72,6 +73,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
 				--colorbackmobilemenu: #080808;
+				--colorbackgrey: #0f0f0f;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -273,8 +275,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	/* background-color: var(--colorbacktitle1); */
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
 
