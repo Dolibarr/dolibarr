@@ -900,6 +900,94 @@ abstract class CommonInvoice extends CommonObject
 
 		return $s;
 	}
+
+
+	/**
+	 * Build string for QR-Bill (Switzerland)
+	 *
+	 * @return	string			String for Switzerland QR Code if QR-Bill
+	 */
+	public function buildSwitzerlandQRString()
+	{
+		global $conf, $mysoc;
+
+		$tmplang = new Translate('', $conf);
+		$tmplang->setDefaultLang('en_US');
+		$tmplang->load("main");
+
+		$pricewithtaxstring = price2num($this->total_ttc, 2, 1);
+		$pricetaxstring = price2num($this->total_tva, 2, 1);
+
+		$complementaryinfo = '';
+		/*
+		 Example: //S1/10/10201409/11/190512/20/1400.000-53/30/106017086/31/180508/32/7.7/40/2:10;0:30
+		 /10/ Numéro de facture – 10201409
+		 /11/ Date de facture – 12.05.2019
+		 /20/ Référence client – 1400.000-53
+		 /30/ Numéro IDE pour la TVA – CHE-106.017.086 TVA
+		 /31/ Date de la prestation pour la comptabilisation de la TVA – 08.05.2018
+		 /32/ Taux de TVA sur le montant total de la facture – 7.7%
+		 /40/ Conditions – 2% d’escompte à 10 jours, paiement net à 30 jours
+		 */
+		$datestring = dol_print_date($this->date, '%y%m%d');
+		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
+		//$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+		$complementaryinfo = '//S1/10/'.str_replace('/', '', $this->ref).'/11/'.$datestring;
+		if ($this->ref_client) {
+			$complementaryinfo .= '/20/'.$this->ref_client;
+		}
+		if ($this->thirdparty->vat_number) {
+			$complementaryinfo .= '/30/'.$this->thirdparty->vat_number;
+		}
+
+		// Header
+		$s .= "SPC\n";
+		$s .= "0200\n";
+		$s .= "1\n";
+		if ($this->fk_account > 0) {
+			// Bank BAN if country is LI or CH
+			// TODO Add
+		} else {
+			$s .= "\n";
+		}
+		// Seller
+		$s .= "S";
+		$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->address, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		// Final seller
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		// Amount of payment (to do?)
+		$s .= price($pricewithtaxstring, 0, 'none', 0, 0, 2)."\n";
+		$s .= $this->currency_code."\n";
+		// Buyer
+		$s .= "S";
+		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->address, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->zip, 16, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->town, 35, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		// ID of payment
+		$s .= "NON\n";			// NON or QRR
+		$s .= "\n";				// QR Code if previous field is QRR
+		if ($complementaryinfo) {
+			$s .= $complementaryinfo."\n";
+		} else {
+			$s .= "\n";
+		}
+		$s .= "EPD\n";
+		$s .= "\n";
+		//var_dump($s);exit;
+		return $s;
+	}
 }
 
 

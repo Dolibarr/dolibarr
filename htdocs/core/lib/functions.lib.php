@@ -5467,7 +5467,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
  *
  *		@param	float				$amount			Amount to format
  *		@param	integer				$form			Type of format, HTML or not (not by default)
- *		@param	Translate|string	$outlangs		Object langs for output
+ *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int					$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
@@ -5490,25 +5490,31 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$nbdecimal = $rounding;
 
-	// Output separators by default (french)
-	$dec = ',';
-	$thousand = ' ';
-
-	// If $outlangs not forced, we use use language
-	if (!is_object($outlangs)) {
-		$outlangs = $langs;
-	}
-
-	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'None') {
+	if ($outlangs === 'none') {
+		// Use international separators
+		$dec = '.';
 		$thousand = '';
-	} elseif ($thousand == 'Space') {
+	} else {
+		// Output separators by default (french)
+		$dec = ',';
 		$thousand = ' ';
+
+		// If $outlangs not forced, we use use language
+		if (!is_object($outlangs)) {
+			$outlangs = $langs;
+		}
+
+		if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
+		}
+		if ($thousand == 'None') {
+			$thousand = '';
+		} elseif ($thousand == 'Space') {
+			$thousand = ' ';
+		}
 	}
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
@@ -5547,7 +5553,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	// Add symbol of currency if requested
 	$cursymbolbefore = $cursymbolafter = '';
-	if ($currency_code) {
+	if ($currency_code && is_object($outlangs)) {
 		if ($currency_code == 'auto') {
 			$currency_code = $conf->currency;
 		}

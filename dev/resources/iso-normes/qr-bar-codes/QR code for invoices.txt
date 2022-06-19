@@ -20,3 +20,9 @@ https://www.pwc.com/m1/en/services/tax/me-tax-legal-news/2021/saudi-arabia-guide
 https://www.tecklenborgh.com/post/ksa-zatca-publishes-guide-on-how-to-develop-a-fatoora-compliant-qr-code
 
 Method to encode/decode ZATCA string is available in test/phpunit/BarcodeTest.php 
+
+
+* FOR QR-Bill in switzerland
+----------------------------
+Syntax of QR Code https://www.swiss-qr-invoice.org/fr/
+Syntax of complentary field named "structured information of invoice S1": https://www.swiss-qr-invoice.org/downloads/qr-bill-s1-syntax-fr.pdf
