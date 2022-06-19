@@ -98,7 +98,6 @@ if (!empty($conf->loan->enabled)) {
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if (!empty($conf->societe->enabled)) {
 	$list_account[] = '---Deposits---';
-	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
 
 /*
@@ -106,7 +105,7 @@ if (!empty($conf->societe->enabled)) {
  */
 if ($action == 'update') {
 	$error = 0;
-
+	// Process $list_account_main
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
@@ -114,7 +113,7 @@ if ($action == 'update') {
 			$error++;
 		}
 	}
-
+	// Process $list_account
 	foreach ($list_account as $constname) {
 		$reg = array();
 		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
@@ -127,6 +126,13 @@ if ($action == 'update') {
 			$error++;
 		}
 	}
+
+	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
+	$constvalue = GETPOST($constname, 'int');
+	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -246,10 +252,24 @@ foreach ($list_account as $key) {
 	}
 }
 
+
+// Customer deposit account
+print '<tr class="oddeven value">';
+// Param
+print '<td>';
+print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT');
+print '</td>';
+// Value
+print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print '</td>';
+print '</tr>';
+
+
 if (!empty($conf->societe->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
-	if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
+	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
 		print '</a></td>';
@@ -264,7 +284,7 @@ if (!empty($conf->societe->enabled)) {
 print "</table>\n";
 print "</div>\n";
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 
 print '</form>';
 
