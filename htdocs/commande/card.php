@@ -270,8 +270,8 @@ if (empty($reshook)) {
 			$object->source = GETPOST('source_id');
 			$object->fk_project = GETPOST('projectid', 'int');
 
+			//Possibility to select the name of the client for the client ref if there are any
 			if (GETPOSTISSET('ref_select_client') && !empty(GETPOST('ref_select_client'))) {
-				//fetch client name
 				$sql = "SELECT lastname FROM ".$db->prefix()."socpeople WHERE rowid = ".GETPOST('ref_select_client', 'int');
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -281,7 +281,6 @@ if (empty($reshook)) {
 			} else {
 				$object->ref_client = GETPOST('ref_client', 'alpha');
 			}
-			// $object->ref_client = GETPOST('ref_client', 'alpha');
 			$object->model_pdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
@@ -1670,7 +1669,7 @@ if ($action == 'create' && $usercancreate) {
 	// Reference client
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 	$pre_select_ref = '';
-	if ($socid > 0) {
+	if ($socid > 0) { //Possibility to select the name of the client for the client ref if there are any
 		$select_client_ref .= $langs->trans('or').$form->selectcontacts($soc->id, '', 'ref_select_client', 1, $srccontactslist, '', 0);
 	}
 	if (!empty($conf->global->MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER) && !empty($origin) && !empty($originid)) {
