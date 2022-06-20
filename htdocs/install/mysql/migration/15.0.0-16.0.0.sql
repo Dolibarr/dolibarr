@@ -136,6 +136,9 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+ALTER TABLE llx_projet_task_time ADD COLUMN intervention_id integer DEFAULT NULL;
+ALTER TABLE llx_projet_task_time ADD COLUMN intervention_line_id integer DEFAULT NULL;
+
 ALTER TABLE llx_c_stcomm MODIFY COLUMN code VARCHAR(24) NOT NULL;
 ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
 
