@@ -49,9 +49,9 @@ $result = restrictedArea($user, 'bom|mrp');
 $staticbom = new BOM($db);
 $staticmo = new Mo($db);
 
-llxHeader('', $langs->trans("MRP"), '');
+llxHeader('', $langs->trans("CAM"), '');
 
-print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
+print load_fiche_titre($langs->trans("CAMArea"), '', 'mrp');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

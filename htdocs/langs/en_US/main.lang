@@ -1072,6 +1072,7 @@ YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 Inventory=Inventory
 AnalyticCode=Analytic code
 TMenuMRP=MRP
+TMenuCAM=CAM
 ShowCompanyInfos=Show company infos
 ShowMoreInfos=Show More Infos
 NoFilesUploadedYet=Please upload a document first
