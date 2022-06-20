@@ -147,6 +147,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$result = $object->insertExtraFields('COMPANY_MODIFY');
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
@@ -170,6 +171,7 @@ if ($id > 0 && empty($object->id)) {
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
 		dol_print_error($db, $object->error);
+		exit(-1);
 	}
 }
 

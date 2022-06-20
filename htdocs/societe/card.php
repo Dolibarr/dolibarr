@@ -954,6 +954,7 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error('', $object->error);
+		exit(-1);
 	}
 }
 
