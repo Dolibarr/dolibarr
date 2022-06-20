@@ -530,6 +530,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	background-color: #eee;
 	white-space: normal;
 	color: #888 !important;
+	height: 60px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
