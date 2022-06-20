@@ -131,8 +131,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		if (empty($conf->global->EXPEDITION_RIBERA_MASK)) {
 			$this->error = 'NotConfigured';
 			return 0;
-		} else
-			$mask = $conf->global->EXPEDITION_RIBERA_MASK;
+		} else $mask = $conf->global->EXPEDITION_RIBERA_MASK;
 
 		$date = $shipment->date_expedition;
 
