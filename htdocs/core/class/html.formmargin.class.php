@@ -98,7 +98,11 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			$pa_ht = ($pv < 0 ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			if ($object->type == $object::TYPE_CREDIT_NOTE){
+				$pa_ht = ($pv <= 0 ? -$line->pa_ht : $line->pa_ht);	
+			}else{
+				$pa_ht = ($pv < 0 ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			}
 			if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 				|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE && $object->situation_counter > 0)) {
 				$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
