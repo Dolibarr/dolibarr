@@ -7615,6 +7615,14 @@ div.clipboardCPValue.hidewithsize {
 		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
 		border-bottom: 1px solid var(--colortopbordertitle1) !important;
 	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
+	}
 }
 
 @media only screen and (max-width: 320px)

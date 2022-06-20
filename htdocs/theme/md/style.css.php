@@ -4673,7 +4673,6 @@ div#card-errors {
 }
 
 
-
 /*
  * Effect Postit
  */
@@ -7298,6 +7297,14 @@ div.clipboardCPValue.hidewithsize {
 	
 	div.divButAction {
 		margin-bottom: 0.5em;
+	}
+	
+	div#card-errors {
+		max-width: unset;
+	}
+	
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 
