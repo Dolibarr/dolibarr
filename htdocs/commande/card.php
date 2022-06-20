@@ -1679,7 +1679,6 @@ if ($action == 'create' && $usercancreate) {
 	}
 	print '</tr>';
 
-
 	// Thirdparty
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('Customer').'</td>';
