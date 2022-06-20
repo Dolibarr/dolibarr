@@ -4670,7 +4670,7 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
 
 
