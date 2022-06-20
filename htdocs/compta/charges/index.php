@@ -204,7 +204,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
@@ -273,7 +273,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 	print load_fiche_titre($langs->trans("VATDeclarations").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
-	$sql = "SELECT ptva.rowid, pv.rowid as id_tva, pv.amount as amount_tva, ptva.amount, pv.label, pv.datev as dm, ptva.datep as date_payment, ptva.fk_bank,";
+	$sql = "SELECT ptva.rowid, pv.rowid as id_tva, pv.amount as amount_tva, ptva.amount, pv.label, pv.datev as dm, ptva.datep as date_payment, ptva.fk_bank, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
