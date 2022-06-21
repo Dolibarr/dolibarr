@@ -799,6 +799,7 @@ URLPhoto=URL of photo/logo
 SetLinkToAnotherThirdParty=Link to another third party
 LinkTo=Link to
 LinkToProposal=Link to proposal
+LinkToExpedition= Link to expedition
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
 LinkToTemplateInvoice=Link to template invoice

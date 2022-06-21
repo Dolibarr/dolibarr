@@ -799,6 +799,7 @@ URLPhoto=URL de la photo/logo
 SetLinkToAnotherThirdParty=Lier vers un autre tiers
 LinkTo=Lier à
 LinkToProposal=Lier à une proposition commerciale
+LinkToExpedition=Lier à une expédition
 LinkToOrder=Lier à une commande
 LinkToInvoice=Lier à une facture
 LinkToTemplateInvoice=Lien vers le modèle de facture
