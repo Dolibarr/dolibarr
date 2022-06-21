@@ -475,13 +475,17 @@ print '<br>';
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
-print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 print '<span class="opacitymedium">';
 print $langs->trans("or").' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
 
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+if ($maxmin > 0) {
+	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
 print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';

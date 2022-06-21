@@ -1,4 +1,4 @@
--- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2022      OpenDSI              <support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,12 +12,13 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
+--
+--
 
-create table llx_asset_type_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
+--
+-- Do not include comments at end of line, this file is parsed during install and string '--' are removed.
+--
 
+INSERT INTO llx_c_asset_disposal_type (rowid, entity, code, label, active) VALUES (1, 1, 'C', 'Sale', 1);
+INSERT INTO llx_c_asset_disposal_type (rowid, entity, code, label, active) VALUES (2, 1, 'HS', 'Putting out of service', 1);
+INSERT INTO llx_c_asset_disposal_type (rowid, entity, code, label, active) VALUES (3, 1, 'D', 'Destruction', 1);

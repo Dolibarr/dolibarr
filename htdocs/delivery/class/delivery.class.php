@@ -106,6 +106,8 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	public $commande_id;
+
 	public $lines = array();
 
 

@@ -187,6 +187,12 @@ abstract class CommonObject
 	public $projet;
 
 	/**
+	 * @deprecated
+	 * @see fk_project
+	 */
+	public $fk_projet;
+
+	/**
 	 * @var Contact a related contact
 	 * @see fetch_contact()
 	 */
@@ -272,7 +278,7 @@ abstract class CommonObject
 	public $country_id;
 
 	/**
-	 * @var string
+	 * @var string		The ISO country code on 2 chars.
 	 * @see getFullAddress(), isInEEC(), country
 	 */
 	public $country_code;
