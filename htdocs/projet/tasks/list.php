@@ -68,6 +68,7 @@ $search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
+$search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
@@ -206,6 +207,8 @@ if (empty($reshook)) {
 		$search_categ = "";
 		$search_projectstatus = -1;
 		$search_project_ref = "";
+		$search_societe = "";
+		$search_societe_alias = "";
 		$search_project_title = "";
 		$search_task_ref = "";
 		$search_task_label = "";
@@ -583,6 +586,9 @@ if ($search_task_progress != '') {
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
+if ($search_societe != '') {
+	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
 if ($search_projectstatus != '') {
 	$param .= '&search_projectstatus='.urlencode($search_projectstatus);
 }
@@ -774,7 +780,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe_alias).'" size="4">';
+	print '<input type="text" class="flat" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'" size="4">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
