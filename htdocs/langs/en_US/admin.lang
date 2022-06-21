@@ -2266,4 +2266,6 @@ IconOnlyTextOnHover=Icon only - Text of icon appears under icon on mouse hover t
 IconOnly=Icon only - Text on tooltip only
 INVOICE_ADD_ZATCA_QR_CODE=Show the ZATCA QR code on invoices
 INVOICE_ADD_ZATCA_QR_CODEMore=Some Arabic countries need this QR Code on their invoices
+INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices
 UrlSocialNetworksDesc=Url link of social network. Use {socialid} for the variable part that contains the social network ID.
+IfThisCategoryIsChildOfAnother=If this category is a child of another one

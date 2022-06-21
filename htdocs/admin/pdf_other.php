@@ -62,6 +62,11 @@ if ($action == 'update') {
 	}
 	if (GETPOSTISSET('INVOICE_ADD_ZATCA_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_ZATCA_QR_CODE", GETPOST("INVOICE_ADD_ZATCA_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
+	}
+	if (GETPOSTISSET('INVOICE_ADD_SWISS_QR_CODE')) {
+		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -135,6 +140,17 @@ if (isModEnabled('facture')) {
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("INVOICE_ADD_ZATCA_QR_CODE", $arrval, $conf->global->INVOICE_ADD_ZATCA_QR_CODE);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_ADD_SWISS_QR_CODE"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_ADD_SWISS_QR_CODE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVOICE_ADD_SWISS_QR_CODE", $arrval, $conf->global->INVOICE_ADD_SWISS_QR_CODE);
 	}
 	print '</td></tr>';
 

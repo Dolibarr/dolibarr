@@ -1058,7 +1058,7 @@ class Contrat extends CommonObject
 						if (count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$originforcontact = 'commande';
-								$originidforcontact = $value->id;
+								$originidforcontact = $value;
 								break; // We take first one
 							}
 						}
@@ -2126,7 +2126,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Return list of other contracts for same company than current contract
+	 *  Return list of other contracts for the same company than current contract
 	 *
 	 *	@param	string		$option					'all' or 'others'
 	 *	@param	array		$status					sort contracts having these status
@@ -2138,7 +2138,7 @@ class Contrat extends CommonObject
 	{
 		$tab = array();
 
-		$sql = "SELECT c.rowid, c.ref";
+		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		if (!empty($product_categories)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
@@ -2159,12 +2159,12 @@ class Contrat extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$contrat = new Contrat($this->db);
 				$contrat->fetch($obj->rowid);
-				$tab[] = $contrat;
+				$tab[$contrat->id] = $contrat;
 				$i++;
 			}
 			return $tab;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}

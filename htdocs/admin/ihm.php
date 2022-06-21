@@ -636,6 +636,11 @@ if ($mode == 'login') {
 	if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 		$disabled = ' disabled="disabled"';
 	}
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input type="file" class="flat maxwidthinputfileonsmartphone" name="imagebackground" id="imagebackground"' . $disabled . '>';
 	if ($disabled) {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
