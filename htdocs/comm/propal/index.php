@@ -151,7 +151,8 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec, p.total_ht, p.total_tva, p.total_ttc";
+
 $sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -182,6 +183,9 @@ if ($resql) {
 
 			$propalstatic->id = $obj->rowid;
 			$propalstatic->ref = $obj->ref;
+			$propalstatic->total_ht = $obj->total_ht;
+			$propalstatic->total_tva = $obj->total_tva;
+			$propalstatic->total_ttc = $obj->total_ttc;
 
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->socname;
