@@ -154,6 +154,7 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
 	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
 	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
 	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
@@ -326,7 +327,7 @@ if (count($listoftaskcontacttype) == 0) {
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
 $sql .= " t.description, t.fk_task_parent";
@@ -412,6 +413,9 @@ if ($search_task_budget_amount) {
 }
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_societe_alias) {
+	$sql .= natural_search('s.name_alias', $search_societe_alias);
 }
 if ($search_date_start) {
 	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";
@@ -768,6 +772,11 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe).'" size="4">';
 	print '</td>';
 }
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe_alias).'" size="4">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofstatus = array();
@@ -890,6 +899,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
@@ -992,6 +1005,11 @@ while ($i < $imaxinloop) {
 	$projectstatic->statut = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
+	if ($obj->socid) {
+		$socstatic->id = $obj->socid;
+		$socstatic->name = $obj->name;
+		$socstatic->name_alias = $obj->alias;
+	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
@@ -1101,9 +1119,20 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td>';
 				if ($obj->socid) {
-					$socstatic->id = $obj->socid;
-					$socstatic->name = $obj->name;
-					print $socstatic->getNomUrl(1);
+					print $socstatic->getNomUrl(1, '', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Alias
+			if (!empty($arrayfields['s.name_alias']['checked'])) {
+				print '<td>';
+				if ($obj->socid) {
+					print $socstatic->name_alias;
 				} else {
 					print '&nbsp;';
 				}
