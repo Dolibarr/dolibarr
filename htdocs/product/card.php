@@ -1860,7 +1860,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));

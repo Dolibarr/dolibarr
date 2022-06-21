@@ -661,7 +661,7 @@ if ($conf->banque->enabled) {
 }
 
 // Ask for warehouse during order
-if ($conf->stock->enabled) {
+if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
 	if (! empty($conf->use_javascript_ajax)) {

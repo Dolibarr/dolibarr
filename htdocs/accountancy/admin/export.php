@@ -239,7 +239,7 @@ if (!$conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = $accountancyexport->getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }
