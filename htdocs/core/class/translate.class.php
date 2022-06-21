@@ -656,7 +656,7 @@ class Translate
 
 			return $str;
 		} else { // Translation is not available
-			//if ($key[0] == '$') { return dol_eval($key,1); }
+			//if ($key[0] == '$') { return dol_eval($key, 1, 1, '1'); }
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -722,7 +722,7 @@ class Translate
 			return $str;
 		} else {
 			if ($key[0] == '$') {
-				return dol_eval($key, 1);
+				return dol_eval($key, 1, 1, '1');
 			}
 			return $this->getTradFromKey($key);
 		}
@@ -1089,11 +1089,12 @@ class Translate
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-
-				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-				$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-				$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
-				$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
+				if ($obj) {
+					// If a translation exists, we use it lese we use the default label
+					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
+				}
 				$i++;
 			}
 			if (empty($currency_code)) {

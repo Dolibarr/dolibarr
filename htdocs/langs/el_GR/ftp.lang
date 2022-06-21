@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP εγκατάσταση μονάδας πελάτη
-NewFTPClient=Νέα ρύθμιση της σύνδεσης FTP
-FTPArea=FTP Περιοχή
-FTPAreaDesc=Αυτή η οθόνη σας δείχνει το περιεχόμενο μιας προβολής του διακομιστή FTP
-SetupOfFTPClientModuleNotComplete=Ρύθμιση της μονάδας-πελάτη FTP φαίνεται να μην είναι πλήρης
-FTPFeatureNotSupportedByYourPHP=Η PHP σας δεν υποστηρίζει FTP λειτουργίες
-FailedToConnectToFTPServer=Αποτυχία σύνδεσης με τον FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Αποτυχία σύνδεσης με τον FTP server login / password
-FTPFailedToRemoveFile=Αποτυχία διαγραφής <b>%s</b> αρχείο.
-FTPFailedToRemoveDir=Αποτυχία διαγραφής <b>%s</b> κατάλογου (ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός).
-FTPPassiveMode=Passive λειτουργία
-ChooseAFTPEntryIntoMenu=Επιλέξτε ένα μενού εισαγωγής FTP
-FailedToGetFile=Αποτυχία απόκτησης αρχείου  %s
+FTPClientSetup=Ρύθμιση μονάδας FTP ή SFTP Client
+NewFTPClient=Ρύθμιση νέας σύνδεσης FTP/FTPS
+FTPArea=Περιοχή FTP/FTPS
+FTPAreaDesc=Αυτή η οθόνη εμφανίζει μια προβολή ενός διακομιστή FTP και SFTP.
+SetupOfFTPClientModuleNotComplete=Η εγκατάσταση της μονάδας πελάτη FTP ή SFTP φαίνεται να είναι ελλιπής
+FTPFeatureNotSupportedByYourPHP=Η PHP σας δεν υποστηρίζει λειτουργίες FTP ή SFTP
+FailedToConnectToFTPServer=Απέτυχε η σύνδεση με τον διακομιστή (διακομιστής %s, θύρα %s)
+FailedToConnectToFTPServerWithCredentials=Απέτυχε η σύνδεση στο διακομιστή με καθορισμένη σύνδεση/κωδικό πρόσβασης
+FTPFailedToRemoveFile=Αποτυχία διαγραφής αρχείου<b>%s</b>.
+FTPFailedToRemoveDir=Αποτυχία κατάργησης του καταλόγου <b> %s </b> : ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός.
+FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Επιλέξτε μια τοποθεσία FTP/SFTP από το μενού...
+FailedToGetFile=Αποτυχία λήψης αρχείων %s

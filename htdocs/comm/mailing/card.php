@@ -745,7 +745,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-	print $htmlother->selectColor($_POST['bgcolor'], 'bgcolor', '', 0);
+	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
 
 	print '</table>';
@@ -961,7 +961,7 @@ if ($action == 'create') {
 			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
-				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->fk_user_valid == $user->id)) {
+				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->user_validation == $user->id)) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
 
@@ -1066,7 +1066,7 @@ if ($action == 'create') {
 
 				print dol_get_fiche_end();
 
-				print dol_set_focus('#sendto');
+				dol_set_focus('#sendto');
 			}
 
 
@@ -1249,6 +1249,11 @@ if ($action == 'create') {
 				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			// Add link to add file
+			$maxfilesizearray = getMaxFileSizeArray();
+			$maxmin = $maxfilesizearray['maxmin'];
+			if ($maxmin > 0) {
+				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+			}
 			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 			$out .= ' ';
 			$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';

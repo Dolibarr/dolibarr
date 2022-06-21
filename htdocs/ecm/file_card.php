@@ -346,7 +346,7 @@ if ($action != 'edit') {
 	print $fulllink;
 }
 if ($action != 'edit') {
-	print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here.
+	print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here.
 }
 print '</td></tr>';
 
@@ -376,7 +376,7 @@ if (!empty($object->share)) {
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="quatrevingtpercent nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		} else {
 			print $fulllink;
 		}

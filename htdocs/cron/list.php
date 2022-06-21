@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -353,6 +353,10 @@ if ($action == 'execute') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
 }
 
+if ($action == 'delete') {
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.$param, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
+}
+
 // List of mass actions available
 $arrayofmassactions = array(
 //'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
@@ -478,8 +482,12 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (isset($obj->test) && !verifCond($obj->test)) {
-			continue; // Discard line with test = false
+
+		if (isset($obj->test)) {
+			$veriftest = verifCond($obj->test);
+			if (!$veriftest) {
+				continue; // Discard line with test = false
+			}
 		}
 
 		$object->id = $obj->rowid;

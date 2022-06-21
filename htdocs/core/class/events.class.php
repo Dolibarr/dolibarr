@@ -167,7 +167,7 @@ class Events // extends CommonObject
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";
-		$sql .= " ".($user->id ? "'".$this->db->escape($user->id)."'" : 'NULL').",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : 'NULL').",";
 		$sql .= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
 		$sql .= " '".$this->db->escape(dol_getprefix())."'";
 		$sql .= ")";

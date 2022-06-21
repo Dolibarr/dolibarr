@@ -127,6 +127,19 @@ $langs->trans("FridayMin"),
 $langs->trans("SaturdayMin")
 );
 
+
+$dec = ',';
+$thousand = ' ';
+if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+	$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+}
+if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+	$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+}
+if ($thousand == 'Space') {
+	$thousand = ' ';
+}
+
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
@@ -136,6 +149,7 @@ var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
 var tradDays = <?php echo json_encode($tradDays) ?>;
 var tradDaysShort = <?php echo json_encode($tradDaysShort) ?>;
 var tradDaysMin = <?php echo json_encode($tradDaysMin) ?>;
+var currencyCache = <?php echo json_encode($langs->cache_currencies) ?>;
 
 // For JQuery date picker
 $(document).ready(function() {
@@ -623,6 +637,18 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
 			window.location.href = url;
 			//location.reload();
 			return false;
@@ -704,6 +730,18 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+			var page_y = $(document).scrollTop();
+			url = url.replace(/page_y=\d+/g, '');
+			if (page_y > 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&page_y="+page_y;
+				} else {
+					url = url + "?page_y="+page_y;
+				}
+			}
+			url = url.replace(/&&+/, '&');
+			console.log("url ro redirect = "+url);
+
 			window.location.href = url;
 			//location.reload();
 			return false;
@@ -990,6 +1028,7 @@ function document_preview(file, type, title)
 		img.src = file;
 
 	}
+
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
@@ -1004,6 +1043,7 @@ function document_preview(file, type, title)
 		}
 
 		$("#dialogforpopup").html(newElem);
+
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
@@ -1089,22 +1129,87 @@ function getParameterByName(name, valueifnotfound)
 // Another solution, easier, to build a javascript rounding function
 function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + decimals) + "e-" + decimals); }
 
-
 /**
  * Function similar to PHP price()
  *
+ * Example use:
+ *   pricejs(13312.448, 'MT', 'EUR', 'fr_FR')
+ *   // (depending on conf for 'MT'): '13 312.45 €'
+ *
+ *   pricejs(343000.121, 'MT')
+ *   // assuming conf for 'MT' is 2 and $langs->defaultlang is 'en_US': '343,000.12'
+ *
  * @param  {number|string} amount    The amount to show
  * @param  {string} mode             'MT' or 'MU'
+ * @param  {string} currency_code    ISO code of currency (empty by default)
+ * @param  {string} force_locale     ISO code locale to use (if empty, will use Dolibarr's current locale code)
  * @return {string}                  The amount with digits
+ *
  */
-function pricejs(amount, mode) {
+function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
 	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
 	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_decimal_separator = <?php echo json_encode($dec) ?>;
+	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
+	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
+	var amountAsLocalizedString;
+	var useIntl = Boolean(Intl && Intl.NumberFormat);
+	var nDigits;
+	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
 
-	if (mode == 'MU') return amount.toFixed(main_rounding_unit);
-	if (mode == 'MT') return amount.toFixed(main_rounding_tot);
-	return 'Bad value for parameter mode';
+	if (mode === 'MU') nDigits = main_rounding_unit;
+	else if (mode === 'MT') nDigits = main_rounding_tot;
+	else return 'Bad value for parameter mode';
+
+	if (useIntl) {
+		// simple version: let the browser decide how to format the number using the provided language / currency
+		// parameters
+		var formattingOptions = {
+			minimumFractionDigits: nDigits,
+			maximumFractionDigits: nDigits
+		};
+		if (currency_code) {
+			formattingOptions['style'] = 'currency';
+			formattingOptions['currency'] = currency_code;
+		}
+		return Intl.NumberFormat(locale_code.replace('_', '-'), formattingOptions).format(amount);
+	}
+
+	// No Intl -> attempt to format the number in a way similar to Dolibarr PHP's `price()` function
+	amountAsLocalizedString = amount.toFixed(nDigits).replace(
+		/((?!^)(?:\d{3})*)(?:\.(\d+))?$/,
+		(fullMatch, digitsByThree, decimals) =>
+			digitsByThree.replace(
+				/\d{3}/g,
+				(groupOfThree) => main_thousand_separator + groupOfThree
+			) + (decimals !== undefined ? main_decimal_separator + decimals : '')
+	).replace(/ /, ' ');
+	if (!currency_code) return amountAsLocalizedString;
+
+	// print with currency
+	var currency_symbol = currency_code;
+
+	// codes of languages / currencies where the symbol must be placed before the amount
+	var currencyBeforeAmountCodes = {
+		currency: ['AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD'],
+		language: ['nl_NL']
+	};
+
+	if (currencyCache[currency_code]
+		&& currencyCache[currency_code]['unicode']
+		&& currencyCache[currency_code]['unicode'].length) {
+		currency_symbol = currencyCache[currency_code]['unicode'].reduce(function (res, cur) {return res + cur}, '');
+	}
+
+	if (currencyBeforeAmountCodes.currency.indexOf(currency_code) >= 0
+		|| currencyBeforeAmountCodes.language.indexOf(locale_code)) {
+		// if we use a language or a currency where the symbol is placed before the amount
+		return currency_symbol + amountAsLocalizedString;
+	}
+
+	// by default: currency symbol after the amount
+	return amountAsLocalizedString + ' ' + currency_symbol;
 }
 
 /**
@@ -1117,20 +1222,8 @@ function pricejs(amount, mode) {
 function price2numjs(amount) {
 	if (amount == '') return '';
 
-	<?php
-	$dec = ',';
-	$thousand = ' ';
-	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'Space') {
-		$thousand = ' ';
-	}
-	print "var dec='".dol_escape_js($dec)."'; var thousand='".dol_escape_js($thousand)."';\n"; // Set var in javascript
-	?>
+	var dec = <?php echo json_encode($dec) ?>;
+	var thousand = <?php echo json_encode($thousand) ?>;
 
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
 	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
@@ -1187,15 +1280,33 @@ $(document).ready(function() {
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame
+// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 $(document).ready(function() {
-	if (window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
 
 	}
+});
+
+
+/*
+ * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * see: https://github.com/select2/select2/issues/5993
+ * see: https://github.com/jquery/jquery/issues/4382
+ *
+ * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
+ */
+$(document).on('select2:open', () => {
+	console.log("Execute the focus (click on combo or use space when on component");
+	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+	$(this).one('mouseup keyup',()=>{
+		setTimeout(()=>{
+			allFound[allFound.length - 1].focus();
+		},0);
+	});
 });
 
 // End of lib_head.js.php

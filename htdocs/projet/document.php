@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'other'));
+$hookmanager->initHooks(array('projectcarddocument'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -48,7 +49,7 @@ if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 }
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -108,7 +109,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');

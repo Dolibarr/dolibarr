@@ -54,9 +54,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
-// For encryption
-global $dolibarr_main_instance_unique_id;
-
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
@@ -86,7 +83,7 @@ if ($resultproject < 0) {
 }
 
 // Security check
-if (empty($conf->projet->enabled)) {
+if (empty($conf->project->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
 

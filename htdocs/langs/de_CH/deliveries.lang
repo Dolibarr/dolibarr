@@ -7,7 +7,6 @@ ValidateDeliveryReceiptConfirm=Bist du sicher, dass du diesen Lieferschein frei 
 DeleteDeliveryReceiptConfirm=Bist du sicher, dass du den Lieferschein <b>%s</b> löschen willst?
 TrackingNumber=Sendungsverfolgungsnummer
 DeliveryNotValidated=Die Lieferung ist nicht freigegeben
-StatusDeliveryValidated=Erhalten
 NameAndSignature=Name / Unterschrift
 Deliverer=Lieferant
 ErrorStockIsNotEnough=Der Lagerbestand ist zu klein

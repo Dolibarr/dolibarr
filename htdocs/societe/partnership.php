@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2021 NextGestion 			<contact@nextgestion.com>
+ * Copyright (C) 2022 Charlene Benke 		<charlent@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-if (empty($id) && $socid && (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty')) {
+if (empty($id) && $socid && (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty')) {
 	$id = $socid;
 }
 
@@ -94,8 +95,8 @@ $usercanclose = $user->rights->partnership->write; // Used by the include of act
 $upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') {
-	accessforbidden();
+if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') != 'thirdparty') {
+	accessforbidden('Partnership is not activated for thirdparties');
 }
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
@@ -180,25 +181,25 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
-	if ($societe->client) {
+	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_client));
-		$tmpcheck = $societe->check_codeclient();
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
 
-	if ($societe->fournisseur) {
+	if ($object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_fournisseur));
-		$tmpcheck = $societe->check_codefournisseur();
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}

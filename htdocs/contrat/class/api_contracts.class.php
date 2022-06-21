@@ -278,8 +278,8 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = checkVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
@@ -336,8 +336,8 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = checkVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
 
 		$updateRes = $this->contract->updateline(
 			$lineid,

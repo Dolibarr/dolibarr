@@ -389,6 +389,9 @@ class ActionComm extends CommonObject
 	const EVENT_FINISHED = 100;
 
 
+	public $fields = array();
+
+
 	/**
 	 *      Constructor
 	 *
@@ -778,7 +781,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
-		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
+		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
@@ -867,6 +870,16 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+
+				//email information
+				$this->email_msgid=$obj->email_msgid;
+				$this->email_from=$obj->email_from;
+				$this->email_sender=$obj->email_sender;
+				$this->email_to=$obj->email_to;
+				$this->email_tocc=$obj->email_tocc;
+				$this->email_tobcc=$obj->email_tobcc;
+				$this->email_subject=$obj->email_subject;
+				$this->errors_to=$obj->errors_to;
 
 				$this->fetch_optionals();
 
@@ -1132,8 +1145,16 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = '".$this->db->escape($this->type_id)."'";
+			$sql .= ", fk_action = ".(int) $this->type_id;
+			if (empty($this->type_code)) {
+				$cactioncomm = new CActionComm($this->db);
+				$result = $cactioncomm->fetch($this->type_id);
+				if ($result >= 0 && !empty($cactioncomm->code)) {
+					$this->type_code = $cactioncomm->code;
+				}
+			}
 		}
+		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -1210,11 +1231,14 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $id) {
+					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+						if (!is_array($val)) {	// For backward compatibility when val=id
+							$val = array('id'=>$val);
+						}
 						if (!empty($already_inserted[$val['id']])) continue;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $val['id']).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -1582,8 +1606,25 @@ class ActionComm extends CommonObject
 		if (isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
+		if (!empty($this->email_msgid)) {
+			$langs->load("mails");
+			$tooltip .= '<br>';
+			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
+			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->email_subject;
+			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
+			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			if (!empty($this->email_tocc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
+			}
+			/* Disabled because bcc must remain by defintion not visible
+			if (!empty($this->email_tobcc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
+			} */
+		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
+			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
+			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 		}
 		$linkclose = '';
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
@@ -1594,15 +1635,8 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1).'"';
+			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
 			$linkclose .= ' class="'.$classname.' classfortooltip"';
-
-			/*
-			$hookmanager->initHooks(array('actiondao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			$linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
-			*/
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
 		}
@@ -2211,6 +2245,26 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Function used to replace a product id with another one.
+	 *
+	 *  @param DoliDB $dbs Database handler
+	 *  @param int $origin_id Old product id
+	 *  @param int $dest_id New product id
+	 *  @return bool
+	 */
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		// using $dbs, not $this->db because function is static
+		if (!$dbs->query($sql)) {
+			//$this->errors = $dbs->lasterror();
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 *  Is the action delayed?
 	 *
 	 *  @return bool
@@ -2459,14 +2513,16 @@ class ActionComm extends CommonObject
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event
+	 * @param int		$usermodid	The user who modified the percent
 	 * @return int					1 when update of the event was suscessfull, otherwise -1
 	 */
-	public function updatePercent($id, $percent)
+	public function updatePercent($id, $percent, $usermodid = 0)
 	{
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
+		if ($usermodid > 0) $sql .= ", fk_user_mod = ".$usermodid;
 		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {

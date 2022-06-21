@@ -211,7 +211,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @return int  ID of supplier invoice
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function post($request_data = null)
 	{
@@ -283,7 +283,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function delete($id)
 	{
@@ -300,7 +300,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting invoice');
 		}
 
 		return array(
@@ -326,7 +326,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 405
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -450,9 +450,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		// Calculate amount to pay
-		$totalpaye = $this->invoice->getSommePaiement();
+		$totalpaid = $this->invoice->getSommePaiement();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
-		$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totaldeposits, 'MT');
+		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totaldeposits, 'MT');
 
 		$this->db->begin();
 
@@ -473,7 +473,6 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->paiementid = $payment_mode_id;
 		$paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
-		$paiement->oper = $paiement->paiementcode; // For backward compatibility
 		$paiement->num_payment = $num_payment;
 		$paiement->note_public = $comment;
 
@@ -558,8 +557,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = checkVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -625,8 +624,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = checkVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,
@@ -647,7 +646,8 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
-			$request_data->ref_supplier
+			$request_data->ref_supplier,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {

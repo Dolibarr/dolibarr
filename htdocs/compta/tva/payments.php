@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	$sql = "SELECT tva.rowid, tva.label as label, b.fk_account, ptva.fk_bank";
 	$sql .= ", tva.datev";
 	$sql .= ", tva.amount as total,";
-	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaye, ptva.num_paiement as num_payment,";
+	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaid, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva,";
 	$sql .= " ".MAIN_DB_PREFIX."payment_vat as ptva";
@@ -175,10 +175,14 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		$i = 0;
 		$total = 0;
 		$totalnb = 0;
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
+
+			$tva->id = $obj->rowid;
+			$tva->ref = $obj->rowid;
+			$tva->label = $obj->label;
 
 			$payment_vat_static->id = $obj->pid;
 			$payment_vat_static->ref = $obj->pid;
@@ -190,31 +194,32 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 			// VAT
 			print '<td>';
-			$tva->id = $obj->rowid;
-			$tva->ref = $obj->rowid;
-			$tva->label = $obj->label;
 			print $tva->getNomUrl(1, '20');
 			print '</td>';
 
 			// Label
-			print '<td>'.$obj->label.'</td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 
 			// Date
-			$date = $obj->datev;
-			print '<td>'.dol_print_date($date, 'day').'</td>';
+			$date = $db->jdate($obj->datev);
+			print '<td class="center nowraponall">'.dol_print_date($date, 'day').'</td>';
 
 			// Date payment
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+			$datep = $db->jdate($obj->datep);
+			print '<td class="center nowraponalls">'.dol_print_date($datep, 'day').'</td>';
 
 			// Type payment
-			print '<td>';
+			$labelpaymenttype = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				$labelpaymenttype = $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 			}
+
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labelpaymenttype).'">';
+			print dol_escape_htmltag($labelpaymenttype);
 			print '</td>';
 
 			// Chq number
-			print '<td>'.$obj->num_payment.'</td>';
+			print '<td>'.dol_escape_htmltag($obj->num_payment).'</td>';
 
 			if (!empty($conf->banque->enabled)) {
 				// Bank transaction
@@ -231,21 +236,20 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 				print '</td>';
 			}
 
-			// Type
-			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
+
 			// Paid
 			print '<td class="right"><span class="amount">';
-			if ($obj->totalpaye) {
-				print price($obj->totalpaye);
+			if ($obj->totalpaid) {
+				print price($obj->totalpaid);
 			}
 			print '</span></td>';
 			print '</tr>';
 
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
-			$totalpaye = $totalpaye + $obj->totalpaye;
+			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
 
@@ -260,7 +264,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		}
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td class="liste_total right">'.price($totalpaye)."</td>";
+		print '<td class="liste_total right">'.price($totalpaid)."</td>";
 		print "</tr>";
 	} else {
 		dol_print_error($db);

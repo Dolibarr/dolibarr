@@ -135,12 +135,13 @@ $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa				= GETPOST('hexa');
-$importmodelid = GETPOST('importmodelid');
-$excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 1);
+$importmodelid = GETPOST('importmodelid', 'int');
+$excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
-$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
+$separator			= (GETPOST('separator', 'alphanohtml') ? GETPOST('separator', 'alphanohtml', 3) : '');
+$enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
+$separator_used     = str_replace('\t', "\t", $separator);
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -152,18 +153,19 @@ $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 
 // Init $array_match_file_to_database from _SESSION
-$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database"]) ? $_SESSION["dol_array_match_file_to_database"] : '';
-$array_match_file_to_database = array();
-$fieldsarray = explode(',', $serialized_array_match_file_to_database);
-foreach ($fieldsarray as $elem) {
-	$tabelem = explode('=', $elem, 2);
-	$key = $tabelem[0];
-	$val = (isset($tabelem[1]) ? $tabelem[1] : '');
-	if ($key && $val) {
-		$array_match_file_to_database[$key] = $val;
+if (empty($array_match_file_to_database)) {
+	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
+	$array_match_file_to_database = array();
+	$fieldsarray = explode(',', $serialized_array_match_file_to_database);
+	foreach ($fieldsarray as $elem) {
+		$tabelem = explode('=', $elem, 2);
+		$key = $tabelem[0];
+		$val = (isset($tabelem[1]) ? $tabelem[1] : '');
+		if ($key && $val) {
+			$array_match_file_to_database[$key] = $val;
+		}
 	}
 }
-
 
 /*
  * Actions
@@ -303,57 +305,25 @@ if ($step == 4 && $action == 'select_model') {
 			}
 		}
 		$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
+		$_SESSION['dol_array_match_file_to_database_select'] = $_SESSION["dol_array_match_file_to_database"];
 	}
 }
-
-if ($action == 'saveorder') {
+if ($action == 'saveselectorder') {
 	// Enregistrement de la position des champs
-	dol_syslog("boxorder=".GETPOST('boxorder')." datatoimport=".GETPOST("datatoimport"), LOG_DEBUG);
-	$part = explode(':', GETPOST('boxorder'));
-	$colonne = $part[0];
-	$list = $part[1];
-	dol_syslog('column='.$colonne.' list='.$list);
-
-	// Init targets fields array
-	$fieldstarget = $objimport->array_import_fields[0];
-
-	// Reinit match arrays. We redefine array_match_file_to_database
 	$serialized_array_match_file_to_database = '';
-	$array_match_file_to_database = array();
-	$fieldsarray = explode(',', $list);
-	$pos = 0;
-	foreach ($fieldsarray as $fieldnb) {	// For each elem in list. fieldnb start from 1 to ...
-		// Get name of database fields at position $pos and put it into $namefield
-		$posbis = 0; $namefield = '';
-		foreach ($fieldstarget as $key => $val) {	// key:   val:
-			//dol_syslog('AjaxImport key='.$key.' val='.$val);
-			if ($posbis < $pos) {
-				$posbis++;
-				continue;
-			}
-			// We found the key of targets that is at position pos
-			$namefield = $key;
-			//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
-
-			break;
-		}
-
-		if ($fieldnb && $namefield) {
-			$array_match_file_to_database[$fieldnb] = $namefield;
-			if ($serialized_array_match_file_to_database) {
-				$serialized_array_match_file_to_database .= ',';
-			}
-			$serialized_array_match_file_to_database .= ($fieldnb.'='.$namefield);
-		}
-
-		$pos++;
+	dol_syslog("selectorder=".GETPOST('selectorder'), LOG_DEBUG);
+	$selectorder = explode(",", GETPOST('selectorder'));
+	$fieldtarget = $fieldstarget = $objimport->array_import_fields[0];
+	foreach ($selectorder as $key => $code) {
+		$serialized_array_match_file_to_database .= $key.'='.$code;
+		$serialized_array_match_file_to_database .= ',';
 	}
-
-	// We save new matching in session
-	$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
-	dol_syslog('dol_array_match_file_to_database='.$serialized_array_match_file_to_database);
+	$serialized_array_match_file_to_database = substr($serialized_array_match_file_to_database, 0, -1);
+	dol_syslog('dol_array_match_file_to_database_select='.$serialized_array_match_file_to_database);
+	$_SESSION["dol_array_match_file_to_database_select"] = $serialized_array_match_file_to_database;
+	echo "{}";
+	exit(0);
 }
-
 
 
 
@@ -371,6 +341,7 @@ if ($step == 1 || !$datatoimport) {
 	$serialized_array_match_file_to_database = '';
 	$array_match_file_to_database = array();
 	$_SESSION["dol_array_match_file_to_database"] = '';
+	$_SESSION["dol_array_match_file_to_database_select"] = '';
 
 	$param = '';
 	if ($excludefirstline) {
@@ -491,7 +462,6 @@ if ($step == 2 && $datatoimport) {
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<br>';
 
@@ -509,7 +479,7 @@ if ($step == 2 && $datatoimport) {
 	$filetoimport = '';
 
 	// Add format informations and link to download example
-	print '<tr class="liste_titre"><td colspan="6">';
+	print '<tr class="liste_titre"><td colspan="5">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
 	$list = $objmodelimport->liste_modeles($db);
@@ -519,9 +489,11 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"');
+		print $langs->trans("DownloadEmptyExampleShort");
 		print '</a>';
-		print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
+		print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
@@ -608,9 +580,11 @@ if ($step == 3 && $datatoimport) {
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">';
+	print img_picto('', 'download', 'class="paddingright opacitymedium"');
+	print $langs->trans("DownloadEmptyExampleShort");
 	print '</a>';
-	print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
+	print $form->textwithpicto('', $langs->trans("DownloadEmptyExample").'.<br>'.$langs->trans("StarAreMandatory"));
 	print '</td></tr>';
 
 	print '</table>';
@@ -625,12 +599,10 @@ if ($step == 3 && $datatoimport) {
 	}
 
 
-	print '<br>';
+	print '<br><br>';
 
-	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-
 	print '<input type="hidden" value="'.$step.'" name="step">';
 	print '<input type="hidden" value="'.dol_escape_htmltag($format).'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
@@ -649,6 +621,11 @@ if ($step == 3 && $datatoimport) {
 
 	// Input file name box
 	print '<div class="marginbottomonly">';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
 	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
@@ -763,8 +740,48 @@ if ($step == 3 && $datatoimport) {
 
 // STEP 4: Page to make matching between source file and database fields
 if ($step == 4 && $datatoimport) {
+	//var_dump($_SESSION["dol_array_match_file_to_database_select"]);
+	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
+	$array_match_file_to_database = array();
+	$fieldsarray = explode(',', $serialized_array_match_file_to_database);
+	foreach ($fieldsarray as $elem) {
+		$tabelem = explode('=', $elem, 2);
+		$key = $tabelem[0];
+		$val = (isset($tabelem[1]) ? $tabelem[1] : '');
+		if ($key && $val) {
+			$array_match_file_to_database[$key] = $val;
+		}
+	}
 	$model = $format;
 	$list = $objmodelimport->liste_modeles($db);
+
+	if (empty($separator)) {
+		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
+	}
+
+	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
+	if ($model == 'csv' && strlen($separator) == 1 && !GETPOSTISSET('separator')) {
+		// Count the char in first line of file.
+		$fh = fopen($conf->import->dir_temp.'/'.$filetoimport, 'r');
+		if ($fh) {
+			$sline = fgets($fh, 1000000);
+			fclose($fh);
+			$nboccurence = substr_count($sline, $separator);
+			$nboccurencea = substr_count($sline, ',');
+			$nboccurenceb = substr_count($sline, ';');
+			//var_dump($nboccurence." ".$nboccurencea." ".$nboccurenceb);exit;
+			if ($nboccurence == 0) {
+				if ($nboccurencea > 2) {
+					$separator = ',';
+				} elseif ($nboccurenceb > 2) {
+					$separator = ';';
+				}
+			}
+		}
+	}
+
+	// The value to use
+	$separator_used = str_replace('\t', "\t", $separator);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -773,7 +790,7 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 	if ($model == 'xlsx') {
@@ -799,18 +816,24 @@ if ($step == 4 && $datatoimport) {
 		// Put into array fieldssource starting with 1.
 		$i = 1;
 		foreach ($arrayrecord as $key => $val) {
-			$fieldssource[$i]['example1'] = dol_trunc($val['val'], 24);
-			$i++;
+			if ($val["type"] != -1) {
+				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
+				$i++;
+			}
 		}
 		$obj->import_close_file();
 	}
 
 	// Load targets fields in database
 	$fieldstarget = $objimport->array_import_fields[0];
-
-	$maxpos = max(count($fieldssource), count($fieldstarget));
-
+	$minpos = min(count($fieldssource), count($fieldstarget));
 	//var_dump($array_match_file_to_database);
+
+
+	$initialloadofstep4 = false;
+	if (empty($_SESSION['dol_array_match_file_to_database_select'])) {
+		$initialloadofstep4 = true;
+	}
 
 	// Is it a first time in page (if yes, we must initialize array_match_file_to_database)
 	if (count($array_match_file_to_database) == 0) {
@@ -840,12 +863,51 @@ if ($step == 4 && $datatoimport) {
 			$pos++;
 		}
 		// Save the match array in session. We now will use the array in session.
-		$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
+		$_SESSION["dol_array_match_file_to_database_select"] = $serialized_array_match_file_to_database;
 	}
 	$array_match_database_to_file = array_flip($array_match_file_to_database);
 
+
+	$fieldstarget_tmp = array();
+	$arraykeysfieldtarget = array_keys($fieldstarget);
+	$position = 0;
+	foreach ($fieldstarget as $key => $label) {
+		$isrequired = preg_match('/\*$/', $label);
+		if (!empty($isrequired)) {
+			$newlabel = substr($label, 0, -1);
+			$fieldstarget_tmp[$key] = array("label"=>$newlabel,"required"=>true);
+		} else {
+			$fieldstarget_tmp[$key] = array("label"=>$label,"required"=>false);
+		}
+		if (!empty($array_match_database_to_file[$key])) {
+			$fieldstarget_tmp[$key]["imported"] = true;
+			$fieldstarget_tmp[$key]["position"] = $array_match_database_to_file[$key]-1;
+			$keytoswap = $key;
+			while (!empty($array_match_database_to_file[$keytoswap])) {
+				if ($position+1 > $array_match_database_to_file[$keytoswap]) {
+					$keytoswapwith = $array_match_database_to_file[$keytoswap]-1;
+					$tmp = [$keytoswap=>$fieldstarget_tmp[$keytoswap]];
+					unset($fieldstarget_tmp[$keytoswap]);
+					$fieldstarget_tmp = arrayInsert($fieldstarget_tmp, $keytoswapwith, $tmp);
+					$keytoswapwith = $arraykeysfieldtarget[$array_match_database_to_file[$keytoswap]-1];
+					$tmp = $fieldstarget_tmp[$keytoswapwith];
+					unset($fieldstarget_tmp[$keytoswapwith]);
+					$fieldstarget_tmp[$keytoswapwith] = $tmp;
+					$keytoswap = $keytoswapwith;
+				} else {
+					break;
+				}
+			}
+		} else {
+			$fieldstarget_tmp[$key]["imported"] = false;
+		}
+		$position++;
+	}
+	$fieldstarget = $fieldstarget_tmp;
+
 	//print $serialized_array_match_file_to_database;
 	//print $_SESSION["dol_array_match_file_to_database"];
+	//print $_SESSION["dol_array_match_file_to_database_select"];
 	//var_dump($array_match_file_to_database);exit;
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
@@ -873,7 +935,7 @@ if ($step == 4 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="centpercent border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
@@ -915,7 +977,7 @@ if ($step == 4 && $datatoimport) {
 	if ($model == 'csv') {
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
-		print '<form>';
+		print '<form method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" value="'.$step.'" name="step">';
 		print '<input type="hidden" value="'.$format.'" name="format">';
@@ -924,10 +986,10 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
 		print $langs->trans("Separator").' : ';
-		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
+		print '<input type="text" class="width25 center" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
-		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button small" />';
+		print '<input type="text" class="width25 center" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button smallpaddingimp" />';
 		print '</form>';
 		print '</td></tr>';
 	}
@@ -940,6 +1002,7 @@ if ($step == 4 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -953,7 +1016,7 @@ if ($step == 4 && $datatoimport) {
 
 	// List of source fields
 	print '<!-- List of source fields -->'."\n";
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="select_model">';
 	print '<input type="hidden" name="step" value="4">';
@@ -965,14 +1028,15 @@ if ($step == 4 && $datatoimport) {
 	print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
 	print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
+	// Import profile to use/load
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
-	$s = $langs->trans("SelectImportFields", '{s1}');
+	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button small reposition" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -986,7 +1050,7 @@ if ($step == 4 && $datatoimport) {
 
 	//var_dump($array_match_file_to_database);
 
-	print '<tr valign="top"><td width="50%">';
+	print '<tr valign="top"><td width="50%" class="nopaddingleftimp">';
 
 	$fieldsplaced = array();
 	$valforsourcefieldnb = array();
@@ -999,12 +1063,10 @@ if ($step == 4 && $datatoimport) {
 	print '<div id="left" class="connectedSortable">'."\n";
 
 	// List of source fields
-	$var = true;
+	$var = false;
 	$lefti = 1;
-	foreach ($array_match_file_to_database as $key => $val) {
-		$var = !$var;
+	foreach ($fieldssource as $key => $val) {
 		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
-		//print '> '.$lefti.'-'.$key.'-'.$val;
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
 		$valforsourcefieldnb[$lefti] = $key;
@@ -1016,68 +1078,145 @@ if ($step == 4 && $datatoimport) {
 	}
 	//var_dump($valforsourcefieldnb);
 
-	// Complete source fields from count($fieldssource)+1 to count($fieldstarget)
-	$more = 1;
-	$num = count($fieldssource);
-	while ($lefti <= $num) {
-		$var = !$var;
-		$newkey = getnewkey($fieldssource, $listofkeys);
-		show_elem($fieldssource, $newkey, '', $var); // key start after field number in source file
-		//print '> '.$lefti.'-'.$newkey;
-		$listofkeys[$key] = 1;
-		$lefti++;
-		$more++;
-	}
-
 	print "</div>\n";
 	print "<!-- End box left container -->\n";
 
 
-	print '</td><td width="50%">';
+	print '</td><td width="50%" class="nopaddingrightimp">';
 
-	// List of target fields
-	$height = '24px'; //needs px for css height attribute below
+	// Set the list of all possible target fields in Dolibarr.
+	$optionsall = array();
+	foreach ($fieldstarget as $code => $line) {
+		//var_dump($line);
+		$labeltoshow = $langs->trans($line["label"]);
+		$optionsall[$code] = array('label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
+		// TODO Get type from an new array into module descriptor.
+		//$picto = 'email';
+		$picto = '';
+		if ($picto) {
+			$optionsall[$code]['picto'] = $picto;
+		}
+	}
+	// $optionsall is an array of all possible target fields. key=>array('label'=>..., 'xxx')
+
+	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
 	$mandatoryfieldshavesource = true;
+	$more = "";
+	//var_dump($fieldstarget);
+	//var_dump($optionsall);
+	//exit;
+	/*
+	var_dump($_SESSION['dol_array_match_file_to_database']);
+	var_dump($_SESSION['dol_array_match_file_to_database_select']);
+	var_dump($optionsall);
+	var_dump($fieldssource);
+	var_dump($fieldstarget);
+	*/
 
-	print '<table width="100%" class="nobordernopadding">';
-	foreach ($fieldstarget as $code => $label) {
-		print '<tr class="oddeven" style="height:'.$height.'">';
-
-		$i++;
+	print '<table class="nobordernopadding centpercent tableimport">';
+	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
+		if ($i == $minpos) {
+			break;
+		}
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$tablealias = preg_replace('/(\..*)$/i', '', $code);
-		$tablename = $objimport->array_import_tables[0][$tablealias];
+		$tablename = !empty($objimport->array_import_tables[0][$tablealias]) ? $objimport->array_import_tables[0][$tablealias] : "";
 
-		$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
+		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		//print '<td class="nowraponall" style="font-weight: normal">=> '.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowraponall" style="font-weight: normal">=> </td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
-		$newlabel = preg_replace('/\*$/', '', $label);
-		$text = $langs->trans($newlabel);
-		$more = '';
-		if (preg_match('/\*$/', $label)) {
-			$text = '<span class="fieldrequired">'.$text.'</span>';
-			$more = ((!empty($valforsourcefieldnb[$i]) && $valforsourcefieldnb[$i] <= count($fieldssource)) ? '' : img_warning($langs->trans("FieldNeedSource")));
-			if ($mandatoryfieldshavesource) {
-				$mandatoryfieldshavesource = (!empty($valforsourcefieldnb[$i]) && ($valforsourcefieldnb[$i] <= count($fieldssource)));
-			}
-			//print 'xx'.($i).'-'.$valforsourcefieldnb[$i].'-'.$mandatoryfieldshavesource;
+
+		$modetoautofillmapping = 'session';		// Use setup in session
+		if ($initialloadofstep4) {
+			$modetoautofillmapping = 'guess';
 		}
-		print $text;
-		print '</td>';
-		// Info field
+		//var_dump($_SESSION['dol_array_match_file_to_database_select']);
+		//var_dump($modetoautofillmapping);
+		//var_dump($_SESSION['dol_array_match_file_to_database']);
+		//var_dump($modetoautofillmapping);
+
+		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.($i+1).'">';
+		if (!empty($line["imported"])) {
+			print '<option value="-1">&nbsp;</option>';
+		} else {
+			print '<option selected="" value="-1">&nbsp;</option>';
+		}
+
+		$j = 0;
+		foreach ($optionsall as $tmpcode => $tmpval) {	// Loop on each entry to add into each combo list.
+			$label = '';
+			if (!empty($tmpval['picto'])) {
+				$label .= img_picto('', $tmpval['picto'], 'class="pictofixedwidth"');
+			}
+			$label .= $tmpval['required'] ? '<strong>' : '';
+			$label .= $tmpval['label'];
+			$label .= $tmpval['required'] ? '*</strong>' : '';
+
+			// If we must guess how to fill the preselected value, and we can't because input value are not string
+			if ($modetoautofillmapping == 'guess' && $j == 0 && is_numeric($tmpval)) {
+				$modetoautofillmapping = 'orderoftargets';
+			}
+
+			print '<option value="'.$tmpcode.'"';
+			if ($modetoautofillmapping == 'orderoftargets') {
+				// The mode where we fill the preselected value of combo one by one in order of available targets fields in the declaration in descriptor file.
+				if ($j == $i) {
+					print ' selected';
+				}
+			} elseif ($modetoautofillmapping == 'guess') {
+				// The mode where we try to guess which value to preselect from the name in first column of source file.
+				$regs = array();
+				if (preg_match('/^(.+)\((.+)\)$/', $line['example1'], $regs)) {
+					$tmpstring1 = $regs[1];
+					$tmpstring2 = $regs[2];
+				} else {
+					$tmpstring1 = $line['example1'];
+					$tmpstring2 = '';
+				}
+				$tmpstring1 = str_replace('*', '', trim($tmpstring1));
+				$tmpstring2 = str_replace('*', '', trim($tmpstring2));
+				if ($tmpstring1 && ($tmpstring1 == $tmpcode || $tmpstring1 == $tmpval)) {
+					print ' selected';
+					// TODO Check that $tmpcode not already selected
+				} elseif ($tmpstring2 && ($tmpstring2 == $tmpcode || $tmpstring2 == $tmpval)) {
+					print ' selected';
+					// TODO Check that $tmpcode not already selected
+				}
+			} elseif ($modetoautofillmapping == 'session' && !empty($_SESSION['dol_array_match_file_to_database_select'])) {
+				$tmpselectioninsession = dolExplodeIntoArray($_SESSION['dol_array_match_file_to_database_select'], ',', '=');
+				//var_dump($code);
+				//var_dump($tmpselectioninsession);
+				//if ($tmpselectioninsession[$j] == $code) {
+				if (!empty($tmpselectioninsession[($i+1)]) && $tmpselectioninsession[($i+1)] == $tmpcode) {
+					print ' selected';
+				}
+				print ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i+1)]) ? $tmpselectioninsession[($i+1)] : "").'"';
+			}
+			print ' data-html="'.dol_escape_htmltag($label).'"';
+			print '>';
+			print $label;
+			print '</options>';
+			$j++;
+		}
+		print '</select>';
+		print ajax_combobox('selectorderimport_'.($i+1));
+		print "</td>";
+
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
-		$filecolumn = $array_match_database_to_file[$code];
+		$filecolumn = ($i + 1);
 		// Source field info
 		$htmltext = '<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
 		if ($filecolumn > count($fieldssource)) {
 			$htmltext .= $langs->trans("DataComeFromNoWhere").'<br>';
 		} else {
 			if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
-				$filecolumntoshow = $filecolumn;
+				$filecolumntoshow = num2Alpha($i);
 				$htmltext .= $langs->trans("DataComeFromFileFieldNb", $filecolumntoshow).'<br>';
 			} else {
 				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref') {
@@ -1089,8 +1228,7 @@ if ($step == 4 && $datatoimport) {
 			}
 		}
 		// Source required
-		$htmltext .= $langs->trans("SourceRequired").': <b>'.yn(preg_match('/\*$/', $label)).'</b><br>';
-		$example = $objimport->array_import_examplevalues[0][$code];
+		$example = !empty($objimport->array_import_examplevalues[0][$code])?$objimport->array_import_examplevalues[0][$code]:"";
 		// Example
 		if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
 			if ($example) {
@@ -1112,6 +1250,7 @@ if ($step == 4 && $datatoimport) {
 		$htmltext .= '<br>';
 		// Target field info
 		$htmltext .= '<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
+		//$htmltext .= $langs->trans("SourceRequired").': <b>'.yn($line["label"]).'</b><br>';
 		if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
 			$htmltext .= $langs->trans("DataIsInsertedInto").'<br>';
 		} else {
@@ -1122,94 +1261,147 @@ if ($step == 4 && $datatoimport) {
 				$htmltext .= $langs->trans("DataCodeIDSourceIsInsertedInto").'<br>';
 			}
 		}
-		$htmltext .= $langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
+		$htmltext .= $langs->trans("FieldTitle").": <b>".$langs->trans($fieldstarget[$arraykeysfieldtarget[$code-1]]["label"])."</b><br>";
 		$htmltext .= $langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./', '', $code)."</b><br>";
 		print $form->textwithpicto($more, $htmltext);
-		print '</td>';
-
 		print '</tr>';
+		$i++;
 	}
 	print '</table>';
 
 	print '</td></tr>';
 
-	// List of not imported fields
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotImportedFields").'</td></tr>';
-
-	print '<tr valign="top"><td width="50%">';
-
-	print "\n<!-- Box ignore container -->\n";
-	print '<div id="right" class="connectedSortable">'."\n";
-
-	$nbofnotimportedfields = 0;
-	foreach ($fieldssource as $key => $val) {
-		if (empty($fieldsplaced[$key])) {
-			//
-			$nbofnotimportedfields++;
-			show_elem($fieldssource, $key, '', $var, 'nostyle');
-			//print '> '.$lefti.'-'.$key;
-			$listofkeys[$key] = 1;
-			$lefti++;
-		}
-	}
-
-	// Print one more empty field
-	$newkey = getnewkey($fieldssource, $listofkeys);
-	show_elem($fieldssource, $newkey, '', $var, 'nostyle');
-	//print '> '.$lefti.'-'.$newkey;
-	$listofkeys[$newkey] = 1;
-	$nbofnotimportedfields++;
-
-	print "</div>\n";
-	print "<!-- End box ignore container -->\n";
-
-	print '</td>';
-	print '<td width="50%">';
-	$i = 0;
-	while ($i < $nbofnotimportedfields) {
-		// Print empty cells
-		show_elem('', '', 'none', $var, 'nostyle');
-		$i++;
-	}
-	print '</td></tr>';
+	// Lines for remark
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Remark").'</td></tr>';
+	print '<tr><td colspan="2"><div id="div-mandatory-target-fields-not-mapped"></div></td></tr>';
 
 	print '</table>';
 	print '</div>';
 
 
-	if ($conf->use_javascript_ajax) {
-		print '<script type="text/javascript">';
-		print 'jQuery(function() {
-                    jQuery("#left, #right").sortable({
-                        /* placeholder: \'ui-state-highlight\', */
-                        handle: \'.boxhandle\',
-                        revert: \'invalid\',
-                        items: \'.box\',
-                        containment: \'.fiche\',
-                        connectWith: \'.connectedSortable\',
-                        stop: function(event, ui) {
-                            updateOrder();
-                        }
-                    });
-                });
-        ';
+	if (!empty($conf->use_javascript_ajax)) {
+		print '<script type="text/javascript">'."\n";
+		print 'var previousselectedvalueimport = "0";'."\n";
+		print 'var previousselectedlabelimport = "0";'."\n";
+		print 'var arrayofselectedvalues = [];'."\n";
+		print 'var arrayoftargetfields = [];'."\n";
+		print 'var arrayoftargetmandatoryfields = [];'."\n";
+
+		// Loop on $fieldstarget (seems sorted by 'position') to store php array into javascript array
+		$tmpi = 0;
+		foreach ($fieldstarget as $key => $val) {
+			print "arrayoftargetfields[".$tmpi."] = '".dol_escape_js($langs->trans($val['label']))."'; ";
+			if ($val['required']) {
+				print "arrayoftargetmandatoryfields[".$tmpi."] = '".dol_escape_js($key)."'; ";
+			}
+			$tmpi++;
+		}
 		print "\n";
-		print 'function updateOrder(){'."\n";
-		print 'var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));'."\n";
-		//print 'var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));'."\n";
-		print 'var boxorder = \'A:\' + left_list;'."\n";
-		//print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
-		//print 'alert(\'boxorder=\' + boxorder);';
-		//print 'var userid = \''.$user->id.'\';'."\n";
-		//print 'var datatoimport = "'.$datatoimport.'";'."\n";
-		// print 'jQuery.ajax({ url: "ajaximport.php?step=4&boxorder=" + boxorder + "&userid=" + userid + "&datatoimport=" + datatoimport,
-		//                    async: false
-		//        });'."\n";
-		// Now reload page
-		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
-		//print 'alert(newlocation);';
-		print 'window.location.href=newlocation;'."\n";
-		print '}'."\n";
+
+		print '$(document).ready(function () {'."\n";
+
+		print 'setOptionsToDisabled();'."\n";
+		print 'saveSelection();'."\n";
+
+		print '$(".targetselectchange").focus(function(){'."\n";
+		print '		previousselectedvalueimport = $(this).val();'."\n";
+		print '		previousselectedlabelimport = $(this).children("option:selected").text();'."\n";
+		print '		console.log("previousselectedvalueimport="+previousselectedvalueimport)'."\n";
+		print '})'."\n";
+
+		// Function to set the disabled flag
+		// - We set all option to "enabled"
+		// - Then we scan all combo to get the value currently selected and save them into the array arrayofselectedvalues
+		// - Then we set to disabled all fields that are selected
+		print 'function setOptionsToDisabled() {'."\n";
+		print '		console.log("Remove the disabled flag everywhere");'."\n";
+		print '		$("select.targetselectchange").not($( this )).find(\'option\').prop("disabled", false);'."\n";	// Enable all options
+		print '		arrayofselectedvalues = [];'."\n";
+		print '		$("select.targetselectchange").each(function(){'."\n";
+		print '			id = $(this).attr(\'id\')'."\n";
+		print '			value = $(this).val()'."\n";
+		//print '         console.log("a selected value has been found for component "+id+" = "+value);'."\n";
+		print '			arrayofselectedvalues.push(value);'."\n";
+		print '		});'."\n";
+		print '		console.log("List of all selected values");'."\n";
+		print '		console.log(arrayofselectedvalues);'."\n";
+		print '     console.log("Set the option to disabled for every entry that is currently selected somewhere else (so into arrayofselectedvalues)");'."\n";
+		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";	// Loop on each selected value
+		print '         if (value != -1) {'."\n";
+		//print '     		console.log("Process key="+key+" value="+value+" to disable.");'."\n";
+		print '				$("select.targetselectchange").find(\'option[value="\'+value+\'"]:not(:selected)\').prop("disabled", true);'."\n";	// Set to disabled except if currently selected
+		print '         }'."\n";
+		print '     });'."\n";
+		print '};'."\n";
+
+		// Function to save the selection in database
+		print 'function saveSelection() {'."\n";
+		//print '		console.log(arrayofselectedvalues);'."\n";
+		print '		arrayselectedfields = [];'."\n";
+		print '		arrayselectedfields.push("0");'."\n";
+		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";
+		print '         if (value != -1) {'."\n";
+		print '			arrayselectedfields.push(value);'."\n";
+		print '			} else {'."\n";
+		print '			arrayselectedfields.push(0);'."\n";
+		print '			}'."\n";
+		print '		});'."\n";
+
+		print "		$.ajax({\n";
+		print "			type: 'POST',\n";
+		print "			dataType: 'json',\n";
+		print "			url: '".dol_escape_js($_SERVER["PHP_SELF"])."?action=saveselectorder&token=".newToken()."',\n";
+		print "			data: 'selectorder='+arrayselectedfields.toString(),\n";
+		print "			success: function(){\n";
+		print "				console.log('Select order saved');\n";
+		print "			},\n";
+		print '		});'."\n";
+
+		// Now we loop on all target fields that are mandatory to show if they are not mapped yet.
+		print '     console.log(arrayselectedfields);';
+		print '     console.log(arrayoftargetmandatoryfields);';
+		print "     listtoshow = '';";
+		print "     nbelement = arrayoftargetmandatoryfields.length
+					for (let i = 0; i < nbelement; i++) {
+						if (arrayoftargetmandatoryfields[i] && ! arrayselectedfields.includes(arrayoftargetmandatoryfields[i])) {
+							console.log(arrayoftargetmandatoryfields[i]+' not mapped');
+							listtoshow = listtoshow + (listtoshow ? ', ' : '') + '<b>' + arrayoftargetfields[i] + '*</b>';
+						}
+                    }
+					console.log(listtoshow);
+					if (listtoshow) {
+						listtoshow = '".dol_escape_js(img_warning($langs->trans("MandatoryTargetFieldsNotMapped")).' '.$langs->trans("MandatoryTargetFieldsNotMapped")).": ' + listtoshow;
+						$('#div-mandatory-target-fields-not-mapped').html(listtoshow);
+					} else {
+						$('#div-mandatory-target-fields-not-mapped').html('<span class=\"opacitymedium\">".dol_escape_js($langs->trans("AllTargetMandatoryFieldsAreMapped"))."</span>');
+					}
+		";
+
+		print '};'."\n";
+
+		// If we make a change on a selectbox
+		print '$(".targetselectchange").change(function(){'."\n";
+		print '     setOptionsToDisabled();'."\n";
+
+		print '		if(previousselectedlabelimport != "" && previousselectedvalueimport != -1) {'."\n";
+		print '			let valuetochange = $(this).val(); '."\n";
+		print '			$(".boxtdunused").each(function(){'."\n";
+		print '				if ($(this).text().includes(valuetochange)){'."\n";
+		print '					arraychild = $(this)[0].childNodes'."\n";
+		print '					arraytexttomodify = arraychild[0].textContent.split(" ")'."\n";
+		print '					arraytexttomodify[1] = previousselectedvalueimport '."\n";
+		print '					textmodified = arraytexttomodify.join(" ") '."\n";
+		print '					arraychild[0].textContent = textmodified'."\n";
+		print '					arraychild[1].innerHTML = previousselectedlabelimport'."\n";
+		print '				}'."\n";
+		print '			})'."\n";
+		print '		}'."\n";
+		print '		$(this).blur()'."\n";
+
+		print '		saveSelection()'."\n";
+		print '});'."\n";
+
+		print '})'."\n";
 		print '</script>'."\n";
 	}
 
@@ -1220,7 +1412,7 @@ if ($step == 4 && $datatoimport) {
 
 	if (count($array_match_file_to_database)) {
 		if ($mandatoryfieldshavesource) {
-			print '<a class="butAction" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butAction saveorderselect" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
 		}
@@ -1245,6 +1437,7 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
+		print '<input type="hidden" name="page_y" value="">';
 		print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 		print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
@@ -1256,14 +1449,19 @@ if ($step == 4 && $datatoimport) {
 		print '<td></td>';
 		print '</tr>';
 
+		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
+		if (is_object($objimport) && !empty($objimport->model_name)) {
+			$nameofimportprofile = $objimport->model_name;
+		}
+
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" value=""></td>';
+		print '<td><input name="import_name" class="minwidth300" value="'.$nameofimportprofile.'"></td>';
 		print '<td>';
 		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
+		print '<input type="submit" class="button smallpaddingimp reposition" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
 		// List of existing import profils
@@ -1293,7 +1491,7 @@ if ($step == 4 && $datatoimport) {
 					print $langs->trans("Everybody");
 				} else {
 					$tmpuser->fetch($obj->fk_user);
-					print $tmpuser->getNomUrl(1);
+					print $tmpuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print '<td class="right">';
@@ -1314,7 +1512,6 @@ if ($step == 4 && $datatoimport) {
 	}
 }
 
-
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport) {
 	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
@@ -1334,7 +1531,7 @@ if ($step == 5 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
@@ -1438,6 +1635,7 @@ if ($step == 5 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -1470,11 +1668,25 @@ if ($step == 5 && $datatoimport) {
 	if ($action == 'launchsimu') {
 		print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
 	}
+	if ($excludefirstline == 2) {
+		print $form->textwithpicto("", $langs->trans("WarningFirstImportedLine", $excludefirstline), 1, 'warning', "warningexcludefirstline");
+		print '<script>
+			$( document ).ready(function() {
+				$("input[name=\'excludefirstline\']").on("change",function(){
+					if($(this).val() <= 1){
+						$(".warningexcludefirstline").hide();
+					}else{
+						$(".warningexcludefirstline").show();
+					}
+				})
+			});
+		</script>';
+	}
 	print '</td></tr>';
 
 	// Keys for data UPDATE (not INSERT of new data)
 	print '<tr><td>';
-	print $langs->trans("KeysToUseForUpdates");
+	print $form->textwithpicto($langs->trans("KeysToUseForUpdates"), $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
 	print '</td><td>';
 	if ($action == 'launchsimu') {
 		if (count($updatekeys)) {
@@ -1489,7 +1701,7 @@ if ($step == 5 && $datatoimport) {
 	} else {
 		if (is_array($objimport->array_import_updatekeys[0]) && count($objimport->array_import_updatekeys[0])) {   //TODO dropdown UL is created inside nested SPANS
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
-			print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
+			//print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
 		}
@@ -1568,7 +1780,7 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
+		$listfields[$i] = '<span class="nowrap">'.$langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label.'</span>';
 	}
 	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
@@ -1783,7 +1995,7 @@ if ($step == 6 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
@@ -2095,39 +2307,40 @@ $db->close();
  * @param	array	$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not)
+ * @param	boolean	$var			Line style (odd or not). No more used.
  * @param	int		$nostyle		Hide style
  * @return	void
  */
 function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 {
-	global $langs, $bc;
+	global $langs;
 
-	$height = '24px';
+	$height = '32px';
 
 	if ($key == 'none') {
 		//stop multiple duplicate ids with no number
 		print "\n\n<!-- Box_no-key start-->\n";
 		print '<div class="box boximport" style="padding:0;">'."\n";
-		print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">'."\n";
+		print '<table summary="boxtable_no-key" class="centpercent nobordernopadding">'."\n";
 	} else {
 		print "\n\n<!-- Box ".$pos." start -->\n";
 		print '<div class="box boximport" style="padding: 0;" id="boxto_'.$pos.'">'."\n";
 
-		print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+		print '<table summary="boxtable'.$pos.'" class="nobordernopadding centpercent tableimport">'."\n";
 	}
 
-	if ($pos && $pos > count($fieldssource)) {	// No fields
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+	if (($pos && $pos > count($fieldssource)) && (!isset($fieldssource[$pos]["imported"]))) {	// No fields
+		/*
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
-		print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("NoFields");
 		print '</td>';
 		print '</tr>';
+		*/
 	} elseif ($key == 'none') {	// Empty line
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -2137,19 +2350,30 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '</tr>';
 	} else {
 		// Print field of source file
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-		print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
+		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwith"');
 		print '</td>';
-		print '<td class="nowraponall" style="font-weight: normal">';
-		print $langs->trans("Field").' '.$pos;
-		$example = $fieldssource[$pos]['example1'];
+		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
+			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
+		} else {
+			print '<td class="nowraponall" style="font-weight: normal">';
+		}
+		print $langs->trans("Column").' '.num2Alpha($pos - 1).' (#'.$pos.')';
+		if (empty($fieldssource[$pos]['example1'])) {
+			$example = $fieldssource[$pos]['label'];
+		} else {
+			$example = $fieldssource[$pos]['example1'];
+		}
 		if ($example) {
 			if (!utf8_check($example)) {
 				$example = utf8_encode($example);
 			}
-			print ' (<i>'.$example.'</i>)';
+			print ' - ';
+			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
+			print '<i class="opacitymedium">'.$example.'</i>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -2188,4 +2412,31 @@ function getnewkey(&$fieldssource, &$listofkey)
 
 	$listofkey[$i] = 1;
 	return $i;
+}
+/**
+ * Return array with element inserted in it at position $position
+ *
+ * @param 	array	$array			Array of field source
+ * @param	mixed	$position		key of postion to insert to
+ * @param	array	$insertArray	Array to insert
+ * @return	array
+ */
+function arrayInsert($array, $position, $insertArray)
+{
+	$ret = [];
+
+	if ($position == count($array)) {
+		$ret = $array + $insertArray;
+	} else {
+		$i = 0;
+		foreach ($array as $key => $value) {
+			if ($position == $i++) {
+				$ret += $insertArray;
+			}
+
+			$ret[$key] = $value;
+		}
+	}
+
+	return $ret;
 }

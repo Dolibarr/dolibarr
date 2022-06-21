@@ -627,10 +627,10 @@ class EcmDirectory extends CommonObject
 	 *				date_c              Date creation
 	 * 				fk_user_c           User creation
 	 *  			login_c             Login creation
-	 * 				fullpath	        Full path of id (Added by build_path_from_id_categ call)
-	 *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
-	 * 				fulllabel	        Full label (Added by build_path_from_id_categ call)
-	 * 				level		        Level of line (Added by build_path_from_id_categ call)
+	 * 				fullpath	        Full path of id (Added by buildPathFromId call)
+	 *              fullrelativename    Full path name (Added by buildPathFromId call)
+	 * 				fulllabel	        Full label (Added by buildPathFromId call)
+	 * 				level		        Level of line (Added by buildPathFromId call)
 	 *
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
 	 *	@return	array			        Tableau de array
@@ -698,10 +698,10 @@ class EcmDirectory extends CommonObject
 
 		// We add properties fullxxx to all elements
 		foreach ($this->cats as $key => $val) {
-			if (isset($motherof[$key])) {
+			if (isset($this->motherof[$key])) {
 				continue;
 			}
-			$this->build_path_from_id_categ($key, 0);
+			$this->buildPathFromId($key, 0);
 		}
 
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
@@ -710,7 +710,6 @@ class EcmDirectory extends CommonObject
 		return $this->cats;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
 	 *  Separator between directories is always '/', whatever is OS.
@@ -719,9 +718,8 @@ class EcmDirectory extends CommonObject
 	 * 	@param	int		$protection		Deep counter to avoid infinite loop
 	 * 	@return	void
 	 */
-	public function build_path_from_id_categ($id_categ, $protection = 0)
+	private function buildPathFromId($id_categ, $protection = 0)
 	{
-		// phpcs:enable
 		// Define fullpath
 		if (!empty($this->cats[$id_categ]['id_mere'])) {
 			$this->cats[$id_categ]['fullpath'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
@@ -745,7 +743,7 @@ class EcmDirectory extends CommonObject
 		}
 		if (isset($this->cats[$id_categ]['id_children']) && is_array($this->cats[$id_categ]['id_children'])) {
 			foreach ($this->cats[$id_categ]['id_children'] as $key => $val) {
-				$this->build_path_from_id_categ($val, $protection);
+				$this->buildPathFromId($val, $protection);
 			}
 		}
 	}

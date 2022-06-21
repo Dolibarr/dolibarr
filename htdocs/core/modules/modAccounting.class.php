@@ -256,7 +256,7 @@ class modAccounting extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Chartofaccounts';
-		$this->export_icon[$r] = 'accounting';
+		$this->export_icon[$r] = $this->picto;
 		$this->export_permission[$r] = array(array("accounting", "chartofaccount"));
 		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa.account_parent'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
 		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa.account_parent'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
@@ -354,8 +354,12 @@ class modAccounting extends DolibarrModules
 			'b.sens'=>'rule-computeDirection'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
+			'b.piece_num' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanValue', 'element' => 'Accountancy'),
 			'b.numero_compte'=>array('rule'=>'accountingaccount'),
 			'b.subledger_account'=>array('rule'=>'accountingaccount'),
+			'b.debit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.credit' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
+			'b.multicurrency_amount' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
 			'b.montant' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
 			'b.sens' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
 		);

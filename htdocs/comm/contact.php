@@ -88,7 +88,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
-$sql .= " AND p.entity IN (".getEntity('socpeople').")";
+$sql .= " AND p.entity IN (".getEntity('contact').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }

@@ -288,7 +288,10 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
 
 			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';

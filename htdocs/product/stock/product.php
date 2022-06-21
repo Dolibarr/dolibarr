@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -496,8 +496,8 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 			if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
 			} else {
-				$d_eatby = dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-				$d_sellby = dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+				$d_eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+				$d_sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 				$pdluo->batch = $batchnumber;
 				$pdluo->eatby = $d_eatby;
 				$pdluo->sellby = $d_sellby;
@@ -524,7 +524,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -692,12 +692,12 @@ if ($id > 0 || $ref) {
 			} else {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 
 				// Price minimum
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				print $langs->trans("Variable");
+				print '<span class="opacitymedium">'.$langs->trans("Variable").'</span>';
 				print '</td></tr>';
 			}
 
@@ -986,6 +986,7 @@ if (!$variants) {
 	$num = 0;
 	$total = 0;
 	$totalvalue = $totalvaluesell = 0;
+	$totalwithpmp = 0;
 
 	$resql = $db->query($sql);
 	if ($resql) {

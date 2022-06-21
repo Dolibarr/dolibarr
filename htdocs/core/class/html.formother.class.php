@@ -88,7 +88,7 @@ class FormOther
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<br>';
-		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYouBarCode")).'"></textarea>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYourBarCodes")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
 
@@ -110,7 +110,7 @@ class FormOther
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
 		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
-			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");
+			console.log("We call js to execute \''.dol_escape_js($jstoexecuteonadd).'\'");
 			'.dol_escape_js($jstoexecuteonadd).'();
 			return false;	/* We want to stay on the scan tool */
 		})';
@@ -473,15 +473,6 @@ class FormOther
 		$langs->load('users');
 
 		$out = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
-			$comboenhancement = ajax_combobox($htmlname);
-			if ($comboenhancement) {
-				$out .= $comboenhancement;
-			}
-		}
 
 		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
 
@@ -622,6 +613,16 @@ class FormOther
 
 		$out .= '</select>';
 
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+			$comboenhancement = ajax_combobox($htmlname);
+			if ($comboenhancement) {
+				$out .= $comboenhancement;
+			}
+		}
+
 		return $out;
 	}
 
@@ -699,11 +700,14 @@ class FormOther
 							print ' selected';
 						}
 
-						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						$labeltoshow = $lines[$i]->projectref;
+						//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 						if (empty($lines[$i]->public)) {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 						} else {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 						}
 
 						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
@@ -737,12 +741,14 @@ class FormOther
 						print ' disabled';
 					}
 
-					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
-					$labeltoshow .= ' '.$lines[$i]->projectlabel;
+					$labeltoshow = $lines[$i]->projectref;
+					//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public)) {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 					} else {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 					}
 					if ($lines[$i]->id) {
 						$labeltoshow .= ' > ';
@@ -999,7 +1005,7 @@ class FormOther
 			6=>$langs->trans("Day6")
 		);
 
-		$select_week = '<select class="flat" name="'.$htmlname.'">';
+		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
 			$select_week .= '<option value="-1">&nbsp;</option>';
 		}
@@ -1013,6 +1019,9 @@ class FormOther
 			$select_week .= '</option>';
 		}
 		$select_week .= '</select>';
+
+		$select_week .= ajax_combobox($htmlname);
+
 		return $select_week;
 	}
 
@@ -1079,12 +1088,14 @@ class FormOther
 	 *  @param	int			$invert			Invert
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
+	 *  @param  bool		$addjscombo		Add js combo
 	 *  @return	string
+	 *  @deprecated
 	 */
-	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
 	{
 		// phpcs:enable
-		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
+		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss, $addjscombo);
 	}
 
 	/**
@@ -1486,58 +1497,6 @@ class FormOther
 	{
 		global $langs, $extrafields, $form;
 
-		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
-
-		foreach ($object->fields as $key => $val) {
-			if (!$val['isameasure']) {
-				if (in_array($key, array(
-					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
-					continue;
-				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
-					continue;
-				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
-					continue;
-				}
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
-					continue;
-				}
-				if (preg_match('/^pass/', $key)) {
-					continue;
-				}
-				if (in_array($val['type'], array('html', 'text'))) {
-					continue;
-				}
-				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
-				} else {
-					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
-				}
-			}
-		}
-		// Add extrafields to Group by
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
-					continue;
-				}
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-					continue;
-				}
-				$arrayofgroupby['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-			}
-		}
-
-		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
 		$arrayofgroupbylabel = array();
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
@@ -1558,68 +1517,13 @@ class FormOther
 	 */
 	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
 	{
-		global $langs, $extrafields, $form;
-
-		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
-		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
-		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
-		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
-		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
-		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
-
-
-		foreach ($object->fields as $key => $val) {
-			if (!$val['measure']) {
-				if (in_array($key, array(
-					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
-					continue;
-				}
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
-					continue;
-				}
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
-					continue;
-				}
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
-					continue;
-				}
-				if (preg_match('/^pass/', $key)) {
-					continue;
-				}
-				if (in_array($val['type'], array('html', 'text'))) {
-					continue;
-				}
-				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
-					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
-					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
-				} else {
-					$arrayofxaxis['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
-				}
-			}
-		}
-
-		// Add extrafields to X-Axis
-		if ($object->isextrafieldmanaged) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
-					continue;
-				}
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
-					continue;
-				}
-				$arrayofxaxis['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
-			}
-		}
-
-		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
+		global $form;
 
 		$arrayofxaxislabel = array();
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250 maxwidth500', 1);
 
 		return $result;
 	}

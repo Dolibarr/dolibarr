@@ -16,3 +16,5 @@ Journals=Diarios Contables
 JournalFinancial=Diarios Financieros
 AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de la factura
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+ConfirmMassDeleteBookkeepingWriting=Confirmar Eliminar en Masa

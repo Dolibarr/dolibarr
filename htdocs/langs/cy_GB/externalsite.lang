@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Gosod dolen i wefan allanol
+ExternalSiteURL=URL Gwefan Allanol o gynnwys HTML iframe
+ExternalSiteModuleNotComplete=Nid oedd Module ExternalSite wedi'i ffurfweddu'n gywir.
+ExampleMyMenuEntry=Fy nghofnod ar y ddewislen
