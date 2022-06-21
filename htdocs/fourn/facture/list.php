@@ -77,6 +77,7 @@ $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'int');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -178,6 +179,7 @@ $arrayfields = array(
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>0),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>0),
 	's.town'=>array('label'=>"Town", 'checked'=>-1),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
@@ -252,6 +254,7 @@ if (empty($reshook)) {
 		$search_label = "";
 		$search_project = '';
 		$search_company = "";
+		$search_company_alias = "";
 		$search_amount_no_tax = "";
 		$search_amount_all_tax = "";
 		$search_montant_ht = '';
@@ -413,7 +416,7 @@ $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
 $sql .= " f.note_public, f.note_private,";
 $sql .= " f.fk_user_author,";
-$sql .= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
+$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -517,6 +520,9 @@ if ($search_project) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_company_alias) {
+	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -693,6 +699,7 @@ if ($resql) {
 		$soc->fetch($socid);
 		if (empty($search_company)) {
 			$search_company = $soc->name;
+			$search_company_alias = $soc->name_alias;
 		}
 	}
 
@@ -756,6 +763,9 @@ if ($resql) {
 	}
 	if ($search_company) {
 		$param .= '&search_company='.urlencode($search_company);
+	}
+	if ($search_company_alias) {
+		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_login) {
 		$param .= '&search_login='.urlencode($search_login);
@@ -1004,6 +1014,10 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 	}
+	// Alias
+	if (!empty($arrayfields['s.name_alias']['checked'])) {
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
+	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
@@ -1181,6 +1195,9 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], 's.nom', '', $param, '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['s.name_alias']['checked'])) {
+		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1188,7 +1205,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.name_alias", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['state.name_alias']['checked'])) {
+		print_liste_field_titre($arrayfields['state.name_alias']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1293,6 +1313,7 @@ if ($resql) {
 
 			$thirdparty->id = $obj->socid;
 			$thirdparty->name = $obj->name;
+			$thirdparty->name_alias = $obj->alias;
 			$thirdparty->client = $obj->client;
 			$thirdparty->fournisseur = $obj->fournisseur;
 			$thirdparty->code_client = $obj->code_client;
@@ -1417,7 +1438,16 @@ if ($resql) {
 			// Third party
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td class="tdoverflowmax200">';
-				print $thirdparty->getNomUrl(1, 'supplier');
+				print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Alias
+			if (!empty($arrayfields['s.name_alias']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				print $thirdparty->name_alias;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
