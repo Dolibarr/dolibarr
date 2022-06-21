@@ -1628,6 +1628,8 @@ if ($action == 'create') {
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
+			$formconfirm = '';
+
 			// Clone confirmation
 			if ($action == 'clone') {
 				// Create an array for form
@@ -1927,6 +1929,7 @@ if ($action == 'create') {
 
 			// List of payments already done
 			$nbcols = 3;
+			$nbrows = 0;
 			if (!empty($conf->banque->enabled)) {
 				$nbrows++;
 				$nbcols++;
