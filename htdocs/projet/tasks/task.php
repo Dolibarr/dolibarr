@@ -45,6 +45,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
+$comefromclone = GETPOST("comefromclone", "alpha");
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
@@ -659,6 +660,20 @@ if ($id > 0 || !empty($ref)) {
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		// modified by hook
 		if (empty($reshook)) {
+			// Cancel
+			if ($cancel) {
+				if (GETPOST("comefromclone") == 1) {
+					$result = $object->delete($user);
+					if ($result > 0) {
+						header("Location: index.php");
+						exit;
+					} else {
+						dol_syslog($object->error, LOG_DEBUG);
+						setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
+					}
+				}
+			}
+
 			// Modify
 			if ($user->rights->projet->creer) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
