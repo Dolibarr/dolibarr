@@ -267,7 +267,7 @@ class Ticket extends CommonObject
 		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-1, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>'$conf->projet->enabled', 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>-1, 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'index'=>1, 'help'=>"LinkToProject"),
 		//'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'help'=>""),	// what is this ?
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
 		'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-1, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
@@ -2594,7 +2594,7 @@ class Ticket extends CommonObject
 						if (is_array($internal_contacts) && count($internal_contacts) > 0) {
 							// altairis: set default subject
 							$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-							$subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
+							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;

@@ -132,6 +132,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'order_supplier':
 			$element = 'supplier_order';
 			break; // "/fourn/class/fournisseur.commande.class.php"
+		case 'invoice_supplier':
+			$element = 'supplier_invoice';
+			break; // "/fourn/class/fournisseur.facture.class.php"
 	}
 
 	if (is_object($mc)) {
@@ -2246,6 +2249,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	}
 
+	// Show address and email
 	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files'))) {
 		$moreaddress = $object->getBannerAddress('refaddress', $object);
 		if ($moreaddress) {
@@ -2950,6 +2954,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	//$rep .= '</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
+
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
 		if ($reshook > 0) {
 			$rep = '';
@@ -3502,7 +3507,7 @@ function dolGetCountryCodeFromIp($ip)
 	$countrycode = '';
 
 	if (!empty($conf->geoipmaxmind->enabled)) {
-		$datafile = $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
@@ -3529,7 +3534,7 @@ function dol_user_country()
 	$ret = '';
 	if (!empty($conf->geoipmaxmind->enabled)) {
 		$ip = getUserRemoteIP();
-		$datafile = $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
@@ -5464,7 +5469,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
  *
  *		@param	float				$amount			Amount to format
  *		@param	integer				$form			Type of format, HTML or not (not by default)
- *		@param	Translate|string	$outlangs		Object langs for output
+ *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int					$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
@@ -5487,25 +5492,31 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$nbdecimal = $rounding;
 
-	// Output separators by default (french)
-	$dec = ',';
-	$thousand = ' ';
-
-	// If $outlangs not forced, we use use language
-	if (!is_object($outlangs)) {
-		$outlangs = $langs;
-	}
-
-	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'None') {
+	if ($outlangs === 'none') {
+		// Use international separators
+		$dec = '.';
 		$thousand = '';
-	} elseif ($thousand == 'Space') {
+	} else {
+		// Output separators by default (french)
+		$dec = ',';
 		$thousand = ' ';
+
+		// If $outlangs not forced, we use use language
+		if (!is_object($outlangs)) {
+			$outlangs = $langs;
+		}
+
+		if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
+		}
+		if ($thousand == 'None') {
+			$thousand = '';
+		} elseif ($thousand == 'Space') {
+			$thousand = ' ';
+		}
 	}
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
@@ -5544,7 +5555,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	// Add symbol of currency if requested
 	$cursymbolbefore = $cursymbolafter = '';
-	if ($currency_code) {
+	if ($currency_code && is_object($outlangs)) {
 		if ($currency_code == 'auto') {
 			$currency_code = $conf->currency;
 		}
@@ -6634,12 +6645,22 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
 	} else {
-		$temp = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
+		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		$pattern = "/<[^<>]+>/";
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
-		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
-		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		// pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
+		// pass 2 - $temp after pass 2: 0000-021
+		$tempbis = $temp;
+		do {
+			$temp = $tempbis;
+			$tempbis = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
+			$tempbis = preg_replace($pattern, '', $tempbis);
+			//$idowhile++; print $temp.'-'.$tempbis."\n"; if ($idowhile > 100) break;
+		} while ($tempbis != $temp);
+
+		$temp = $tempbis;
+
+		// Remove '<' into remaining, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		$temp = preg_replace('/<+([a-z]+)/i', '\1', $temp);
 	}
 
@@ -7303,7 +7324,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (!empty($conf->projet->enabled)) {		// Most objects
+			if (!empty($conf->project->enabled)) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
@@ -8495,7 +8516,7 @@ function verifCond($strToEvaluate)
 		//dol_eval($str, 0, 1, '2'); // The dol_eval must contains all the global $xxx used into a condition
 		//var_dump($strToEvaluate);
 		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval must contains all the global $xxx for all variables $xxx found into the string condition
-		$rights = (($rep && strpos($rep, 'Bad string syntax to evaluate') === false) ? true : false);
+		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
 	return $rights;
@@ -8939,8 +8960,12 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 		foreach ($conf->modules_parts['tabs'][$type] as $value) {
 			$values = explode(':', $value);
 
+			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
-				if (count($values) == 6) {       // new declaration with permissions:  $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+				if (count($values) == 6) {
+					// new declaration with permissions:
+					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+					// $value='objecttype:+tabname1:Title1,class,pathfile,method:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
 					if ($values[0] != $type) {
 						continue;
 					}
@@ -8954,7 +8979,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
-							$labeltemp = explode(':', $values[2]);
+							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);

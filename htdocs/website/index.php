@@ -3323,7 +3323,7 @@ if ($action == 'editcss') {
 		// Clean the php htaccesscontent file to remove php code and get only html part
 		$htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
 	} else {
-		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');
+		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 	}
 	if (!trim($htaccesscontent)) {
 		$htaccesscontent .= "# Order allow,deny\n";
@@ -3412,6 +3412,11 @@ if ($action == 'editcss') {
 	print '<tr><td>';
 	print $form->textwithpicto($langs->trans('ImportFavicon'), $langs->trans('FaviconTooltip'));
 	print '</td><td>';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
 	print '</tr></td>';
 
@@ -3633,7 +3638,11 @@ if ($action == 'importsite') {
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
-	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
 	print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';

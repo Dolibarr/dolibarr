@@ -25,7 +25,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -68,7 +68,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 
 $form = new Form($db);
 
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -90,7 +90,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if (!empty($object->fk_project)) {

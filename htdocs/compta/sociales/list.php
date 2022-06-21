@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -112,7 +112,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->project->enabled))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
@@ -191,7 +191,7 @@ $formother = new FormOther($db);
 $bankstatic = new Account($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$projectstatic = new Project($db);
 }
 
@@ -199,7 +199,7 @@ llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
@@ -209,7 +209,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (cs.fk_account = ba.rowid)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pay ON (cs.fk_mode_reglement = pay.id)';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
@@ -223,7 +223,7 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	if ($search_project_ref != '') {
 		$sql .= natural_search("p.ref", $search_project_ref);
 	}
@@ -259,7 +259,7 @@ if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
 $sql .= $db->order($sortfield, $sortorder);
@@ -560,7 +560,7 @@ while ($i < min($num, $limit)) {
 	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
 
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;

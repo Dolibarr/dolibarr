@@ -22,6 +22,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
+	--colorbackgrey: #f0f0f0;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -72,6 +73,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
 				--colorbackmobilemenu: #080808;
+				--colorbackgrey: #0f0f0f;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -273,8 +275,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	/* background-color: var(--colorbacktitle1); */
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
 
@@ -1044,6 +1045,7 @@ div.divsearchfield {
 	overflow: auto;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -2376,6 +2378,9 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
 	object-fit: contain;
+}
+img.photokanban, div.photokanban {
+	padding: 0;
 }
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
@@ -4813,7 +4818,7 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
 
 
@@ -5339,11 +5344,11 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
 .treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */
@@ -7610,6 +7615,14 @@ div.clipboardCPValue.hidewithsize {
 	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
 		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
 		border-bottom: 1px solid var(--colortopbordertitle1) !important;
+	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 

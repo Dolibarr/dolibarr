@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_rouget.modules.php
+ *	\file       htdocs/core/modules/expedition/doc/pdf_eagle.modules.php
  *	\ingroup    expedition
- *	\brief      Class file used to generate the dispatch slips for the Rouget model
+ *	\brief      Class file used to generate the dispatch slips for the Eagle model
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/stocktransfer/modules_stocktransfer.php';

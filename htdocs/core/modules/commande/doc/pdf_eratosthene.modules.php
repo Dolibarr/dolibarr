@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eratosthène
+ *	\brief      File of Class to generate PDF orders with template Eratosthene
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -834,6 +834,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
 						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

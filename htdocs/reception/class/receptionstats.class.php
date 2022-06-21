@@ -82,12 +82,13 @@ class ReceptionStats extends Stats
 	}
 
 	/**
-	 * Return reception number by month for a year
+	 *	Return reception number by month for a year
 	 *
-	 * @param	int		$year		Year to scan
-	 * @return	array				Array with number by month
+	 *	@param	int		$year		Year to scan
+	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@return	array				Array with number by month
 	 */
-	public function getNbByMonth($year)
+	public function getNbByMonth($year, $format = 0)
 	{
 		global $user;
 
@@ -101,7 +102,7 @@ class ReceptionStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 

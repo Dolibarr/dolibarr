@@ -1039,7 +1039,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
 			print '<td colspan="3">';
 			print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
-			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'nohtml') : $object->address).'</textarea>';
+			print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'alphanohtml') : $object->address).'</textarea>';
 			print '</div><div class="paddingrightonly valignmiddle inline-block">';
 			if ($conf->use_javascript_ajax) {
 				print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
@@ -1271,7 +1271,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 			}
 			//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-			print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+			print '<tr><td>';
+			$maxfilesizearray = getMaxFileSizeArray();
+			$maxmin = $maxfilesizearray['maxmin'];
+			if ($maxmin > 0) {
+				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+			}
+			print '<input type="file" class="flat" name="photo" id="photoinput">';
+			print '</td></tr>';
 			print '</table>';
 
 			print '</td>';

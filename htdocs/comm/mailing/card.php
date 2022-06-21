@@ -1249,6 +1249,11 @@ if ($action == 'create') {
 				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			// Add link to add file
+			$maxfilesizearray = getMaxFileSizeArray();
+			$maxmin = $maxfilesizearray['maxmin'];
+			if ($maxmin > 0) {
+				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+			}
 			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 			$out .= ' ';
 			$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';

@@ -252,9 +252,9 @@ if ($type == 'directory') {
 	} elseif ($module == 'salaries') {
 		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'project_task') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {

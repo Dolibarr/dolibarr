@@ -480,10 +480,13 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
 	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
-	if ($rescomp > 0) {   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
-		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
-		header("Location: ".DOL_URL_ROOT."/install/index.php");
-		exit;
+	if ($rescomp > 0) {   // Programs have a version higher than database.
+		if (empty($conf->global->MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE) || $rescomp < 3) {
+			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
+			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
+			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			exit;
+		}
 	}
 }
 

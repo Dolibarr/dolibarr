@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -593,7 +593,7 @@ $movement = new MouvementStock($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -800,7 +800,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {

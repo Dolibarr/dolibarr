@@ -511,7 +511,7 @@ $tabcond[25] = !empty($conf->website->enabled);
 //$tabcond[26]= !empty($conf->product->enabled);
 $tabcond[27] = !empty($conf->societe->enabled);
 $tabcond[28] = !empty($conf->holiday->enabled);
-$tabcond[29] = !empty($conf->projet->enabled);
+$tabcond[29] = !empty($conf->project->enabled);
 $tabcond[30] = !empty($conf->label->enabled);
 //$tabcond[31]= !empty($conf->accounting->enabled);
 $tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
@@ -906,7 +906,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;
@@ -975,7 +975,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfile', 'private', 'pos', 'position', 'scale', 'use_default'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;

@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (!empty($conf->project->enabled) && $user->hasRight('project', 'lire')) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -170,11 +170,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 

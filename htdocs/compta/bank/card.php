@@ -125,11 +125,11 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -226,11 +226,11 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -458,7 +458,7 @@ if ($action == 'create') {
 	print '<td>';
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_4, '90%');
+	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

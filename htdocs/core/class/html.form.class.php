@@ -4362,6 +4362,7 @@ class Form
 				print ' selected';
 			}
 			print '>';
+			$value = '';
 			if ($format == 0) {
 				$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			} elseif ($format == 1) {
@@ -4748,7 +4749,7 @@ class Form
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) {
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			}
 			print '</form>';
 		} else {
@@ -4900,9 +4901,11 @@ class Form
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
+	 *     @param	string			$labelbuttonyes		Label for Yes
+	 *     @param	string			$labelbuttonno		Label for No
 	 *     @return 	string      		    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
 	{
 		global $langs, $conf;
 
@@ -5011,7 +5014,7 @@ class Form
 								$more .= ' checked="checked"';
 							}
 							$more .= ' /> ';
-							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'">'.$selval.'</label>';
+							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'" class="valignmiddle">'.$selval.'</label>';
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
@@ -5117,6 +5120,7 @@ class Form
             				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5124,7 +5128,7 @@ class Form
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
-                        "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
+                        "'.dol_escape_js($langs->transnoentities($labelbuttonyes)).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
                         	var inputok = '.json_encode($inputok).';	/* List of fields into form */
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
@@ -5147,7 +5151,7 @@ class Form
             				if (pageyes.length > 0) { location.href = urljump; }
                             $(this).dialog("close");
                         },
-                        "'.dol_escape_js($langs->transnoentities("No")).'": function() {
+                        "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
@@ -5212,7 +5216,7 @@ class Form
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
 			$formconfirm .= '<td class="valid center">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
+			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
 			$formconfirm .= '</tr>'."\n";
@@ -8843,9 +8847,11 @@ class Form
 	 *  @param	int      	$useempty		1=Add empty line
 	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
 	 *  @param	string		$morecss		More CSS
-	 *	@return	string						See option
+	 *  @param	string		$labelyes		Label for Yes
+	 *  @param	string		$labelno		Label for No
+	 *  @return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '')
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
 
@@ -8856,6 +8862,7 @@ class Form
 			$no = "0";
 		}
 
+
 		$disabled = ($disabled ? ' disabled' : '');
 
 		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
@@ -8863,12 +8870,12 @@ class Form
 			$resultyesno .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
 		}
 		if (("$value" == 'yes') || ($value == 1)) {
-			$resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans($labelyes).'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'">'.$langs->trans($labelno).'</option>'."\n";
 		} else {
 			$selected = (($useempty && $value != '0' && $value != 'no') ? '' : ' selected');
-			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans($labelyes).'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans($labelno).'</option>'."\n";
 		}
 		$resultyesno .= '</select>'."\n";
 
@@ -9360,7 +9367,14 @@ class Form
 				if ($object->photo) {
 					$ret .= '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</label><br><br></td></tr>';
 				}
-				$ret .= '<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'></td></tr>';
+				$ret .= '<tr><td class="tdoverflow">';
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$ret .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
+				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'>';
+				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}
 		} else {
@@ -9374,16 +9388,16 @@ class Form
 	/**
 	 *	Return select list of groups
 	 *
-	 *  @param	string	$selected       Id group preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  string	$exclude        Array list of groups id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  string	$include        Array list of groups id to include
-	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-	 * 	@param	string	$force_entity	'0' or Ids of environment to force
-	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 *  @param  string	$morecss		More css to add to html component
+	 *  @param	string			$selected       Id group preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  string|array	$exclude        Array list of groups id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  string|array	$include        Array list of groups id to include
+	 * 	@param	int				$enableonly		Array list of groups id to be enabled. All other must be disabled
+	 * 	@param	string			$force_entity	'0' or Ids of environment to force
+	 * 	@param	bool			$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param  string			$morecss		More css to add to html component
 	 *  @return	string
 	 *  @see select_dolusers()
 	 */
