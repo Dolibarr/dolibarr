@@ -121,7 +121,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		if (! $conf->propal->enabled) {
 			print __METHOD__." propal module not enabled\n"; die(1);
 		}
-		if (! $conf->projet->enabled) {
+		if (! $conf->project->enabled) {
 			print __METHOD__." project module not enabled\n"; die(1);
 		}
 		if (! $conf->expedition->enabled) {
@@ -377,7 +377,7 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-		$conf->projet->dir_output.='/temp';
+		$conf->project->dir_output.='/temp';
 		$localobject=new Project($this->savdb);
 		$localobject->initAsSpecimen();
 

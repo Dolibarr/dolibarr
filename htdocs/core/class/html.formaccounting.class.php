@@ -283,7 +283,7 @@ class FormAccounting extends Form
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			} else {
-				$out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
+				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
 			}
 		} else {
 			dol_print_error($this->db);
@@ -505,6 +505,7 @@ class FormAccounting extends Form
 		}
 
 		// Build select
+		$out = '';
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		//automatic filling if we give the name of the subledger_label input
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {

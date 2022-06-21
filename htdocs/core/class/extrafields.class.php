@@ -60,6 +60,11 @@ class ExtraFields
 	 */
 	public $attribute_choice;
 
+	/**
+	 * @var array array to store extrafields definition
+	 * @deprecated
+	 */
+	public $attribute_list;
 
 	/**
 	 * @var array New array to store extrafields definition
@@ -1709,7 +1714,9 @@ class ExtraFields
 			$toprint = array();
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					if (!empty($valueval)) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';

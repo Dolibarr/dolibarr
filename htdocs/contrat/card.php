@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -1002,7 +1002,7 @@ llxHeader('', $langs->trans("Contract"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1161,7 +1161,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load('projects');
 
 		$formproject = new FormProjets($db);
@@ -1321,7 +1321,7 @@ if ($action == 'create') {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 		}
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->contrat->creer) {
@@ -1415,7 +1415,7 @@ if ($action == 'create') {
 		}
 
 
-		$arrayothercontracts = $object->getListOfContracts('others');
+		$arrayothercontracts = $object->getListOfContracts('others');	// array or -1 if technical error
 
 		/*
 		 * Lines of contracts
@@ -1544,9 +1544,9 @@ if ($action == 'create') {
 						print '<td class="right nowraponall">'.price($objp->pa_ht).'</td>';
 					}
 
-					// Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
+					// Icon move, update et delete (status contract 0=draft,1=validated,2=closed)
 					print '<td class="nowraponall right">';
-					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0)) {
+					if ($user->rights->contrat->creer && is_array($arrayothercontracts) && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
 						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=move&token='.newToken().'&rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');

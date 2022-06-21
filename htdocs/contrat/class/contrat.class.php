@@ -233,7 +233,7 @@ class Contrat extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
@@ -1058,7 +1058,7 @@ class Contrat extends CommonObject
 						if (count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$originforcontact = 'commande';
-								$originidforcontact = $value->id;
+								$originidforcontact = $value;
 								break; // We take first one
 							}
 						}
@@ -2126,7 +2126,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Return list of other contracts for same company than current contract
+	 *  Return list of other contracts for the same company than current contract
 	 *
 	 *	@param	string		$option					'all' or 'others'
 	 *	@param	array		$status					sort contracts having these status
@@ -2138,7 +2138,7 @@ class Contrat extends CommonObject
 	{
 		$tab = array();
 
-		$sql = "SELECT c.rowid, c.ref";
+		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		if (!empty($product_categories)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
@@ -2159,12 +2159,12 @@ class Contrat extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$contrat = new Contrat($this->db);
 				$contrat->fetch($obj->rowid);
-				$tab[] = $contrat;
+				$tab[$contrat->id] = $contrat;
 				$i++;
 			}
 			return $tab;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}

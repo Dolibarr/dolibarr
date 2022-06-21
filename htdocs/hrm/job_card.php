@@ -21,8 +21,8 @@
 
 /**
  *    \file       job_card.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view job
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view job
  */
 
 
