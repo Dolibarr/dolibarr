@@ -954,6 +954,7 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error('', $object->error);
+		exit(-1);
 	}
 }
 
@@ -2517,7 +2518,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$maxfilesizearray = getMaxFileSizeArray();
 				$maxmin = $maxfilesizearray['maxmin'];
 				if ($maxmin > 0) {
-					$texte .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+					$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 				}
 				print '<input type="file" class="flat" name="photo" id="photoinput">';
 				print '</td></tr>';

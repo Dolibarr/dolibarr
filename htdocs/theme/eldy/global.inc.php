@@ -4817,7 +4817,7 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
 
 
@@ -7614,6 +7614,14 @@ div.clipboardCPValue.hidewithsize {
 	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
 		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
 		border-bottom: 1px solid var(--colortopbordertitle1) !important;
+	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 

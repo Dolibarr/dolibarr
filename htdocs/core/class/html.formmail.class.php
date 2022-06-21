@@ -832,7 +832,7 @@ class FormMail extends Form
 						$maxfilesizearray = getMaxFileSizeArray();
 						$maxmin = $maxfilesizearray['maxmin'];
 						if ($maxmin > 0) {
-							$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+							$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 						}
 						// Can add other files
 						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) {

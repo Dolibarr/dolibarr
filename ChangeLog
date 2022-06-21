@@ -198,7 +198,7 @@ Following changes may create regressions for some external modules, but were nec
 * Method fetch_all_resources(), fetch_all_used(), fetch_all_available() of DolResource has been removed (they were not used by core code).
 * Method fetch_all of DolResource has been renamed into fetchAll() to match naming conventions.
 * The hook 'upgrade' and 'doUpgrade2" has been renamed 'doUpgradeBefore' and 'doUpgradeAfterDB'. A new trigger 'doUpgradeAfterFiles' has been introduced.
-
+* The context hook 'suppliercard' when on the supplier tab of a thirdparty has been renamed into 'thirdpartysupplier'
 
 
 ***** ChangeLog for 15.0.2 compared to 15.0.1 *****

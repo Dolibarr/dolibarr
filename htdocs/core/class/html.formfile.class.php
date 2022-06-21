@@ -154,7 +154,7 @@ class FormFile
 			$maxphptoshow = $maxfilesizearray['maxphptoshow'];
 			$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
 			if ($maxmin > 0) {
-				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 			}
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
 			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
