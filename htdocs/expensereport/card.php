@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -138,7 +138,7 @@ $candelete = 0;
 if (!empty($user->rights->expensereport->supprimer)) {
 	$candelete = 1;
 }
-if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->rights->expensereport->write && in_array($object->fk_user_author, $childids)) {
+if ($object->statut == ExpenseReport::STATUS_DRAFT && !empty($user->rights->expensereport->write) && in_array($object->fk_user_author, $childids)) {
 	$candelete = 1;
 }
 
@@ -1467,6 +1467,8 @@ if ($action == 'create') {
 	}
 
 	// Public note
+	$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : '';
+
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -1476,6 +1478,8 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Private note
+	$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : '';
+
 	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
