@@ -346,7 +346,7 @@ UseProductFournDesc=Ajouter une fonctionnalité pour définir la description pro
 ProductSupplierDescription=Description du fournisseur du produit
 UseProductSupplierPackaging=Utiliser le conditionnement/emballage sur les prix fournisseur (recalculer les quantités en fonction de l'emballage défini sur le prix fournisseur lors de l'ajout / mise à jour de la ligne dans les documents fournisseurs)
 PackagingForThisProduct=Emballage
-PackagingForThisProductDesc=Sur une commande fournisseur, vous commanderez automatiquement cette quantité ou un multiple. Vous ne pourrez pas saisir un montant inférieur
+PackagingForThisProductDesc=Sur une commande fournisseur, vous commanderez automatiquement cette quantité ou un multiple.
 QtyRecalculatedWithPackaging=La quantité de la ligne a été recalculée en fonction de l'emballage du fournisseur
 
 #Attributes

@@ -356,10 +356,19 @@ class Utils
 
 				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
 
+
+				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
+				$MemoryLimit = getDolGlobalString('MAIN_MEMORY_LIMIT_DUMP');
+				if (!empty($MemoryLimit)) {
+					@ini_set('memory_limit', $MemoryLimit);
+				}
+
+
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
+
 					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0) {

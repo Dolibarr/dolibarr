@@ -1282,6 +1282,15 @@ if (empty($reshook)) {
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
+
+					unset($qty);
+					unset($value_unit_ht);
+					unset($value_unit);
+					unset($vatrate);
+					unset($comments);
+					unset($fk_c_type_fees);
+					unset($fk_project);
+					unset($date);
 				}
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
@@ -2059,7 +2068,8 @@ if ($action == 'create') {
 						// IK
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 							print '<td class="fk_c_exp_tax_cat">';
-							print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+							$exp_tax_cat_label = dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
+							print $langs->trans($exp_tax_cat_label);
 							print '</td>';
 						}
 
