@@ -3389,7 +3389,7 @@ class Form
 
 				$hookmanager->initHooks(array('ordersuppliercard'));
 
-				$hookmanager->executeHooks('addContentSelectProductLine', [],$objp); // Note that $action and $object may have been modified by hook
+				$hookmanager->executeHooks('addContentSelectProductLine', [], $objp); // Note that $action and $object may have been modified by hook
 
 				if (!empty($hookmanager->resPrint)) {
 					$outval .= " - " . $hookmanager->resPrint;
