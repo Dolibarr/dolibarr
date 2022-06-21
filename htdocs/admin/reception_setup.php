@@ -455,7 +455,7 @@ print $form->textwithpicto($langs->trans("FreeLegalTextOnReceptions"), $langs->t
 $variablename='RECEPTION_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 }
 else
 {

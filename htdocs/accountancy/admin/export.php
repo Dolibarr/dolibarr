@@ -211,7 +211,7 @@ if ($num) {
 
 		// Value
 		print '<td>';
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 		print '</td></tr>';
 	}
 }

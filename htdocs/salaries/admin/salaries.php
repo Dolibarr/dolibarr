@@ -122,7 +122,7 @@ foreach ($list as $key) {
 	if (!empty($conf->accounting->enabled)) {
 		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
 	} else {
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
 	print '</td></tr>';
 }
