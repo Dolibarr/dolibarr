@@ -1727,6 +1727,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 						}
 					}
 
+					// Update table of files
+					if ($donotupdatesession == 1) {
+						$sharefile = 0;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', $sharefile);
+					}
+
 					$nbok++;
 				} else {
 					$langs->load("errors");
