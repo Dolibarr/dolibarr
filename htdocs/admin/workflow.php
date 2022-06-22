@@ -65,6 +65,12 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->propal->enabled) && !empty($conf->commande->enabled)),
 		'picto'=>'order'
 	),
+	'WORKFLOW_PROPAL_NOTCREATE_ORDER_IFEXISTS'=>array(
+		'family'=>'create',
+		'position'=>15,
+		'enabled'=>(!empty($conf->propal->enabled) && !empty($conf->commande->enabled)),
+		'picto'=>'order'
+	),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array(
 		'family'=>'create',
 		'position'=>20,

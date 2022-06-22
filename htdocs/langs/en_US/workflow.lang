@@ -3,6 +3,7 @@ WorkflowSetup=Workflow module setup
 WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
 ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
 # Autocreate
+descWORKFLOW_PROPAL_NOTCREATE_ORDER_IFEXISTS=Do not Automatically create a sales order after a commercial proposal is signed if it already exists
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated

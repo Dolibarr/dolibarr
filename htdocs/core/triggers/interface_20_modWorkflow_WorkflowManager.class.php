@@ -86,7 +86,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 				return $ret;
 			}
+			if (!empty($conf->global->WORKFLOW_PROPAL_NOTCREATE_ORDER_IFEXISTS)) {
+				$object->fetchObjectLinked();
+				if (!empty($object->linkedObjectsIds['commande']))
+					return $ret;
+			}
 		}
+
 
 		// Order to invoice
 		if ($action == 'ORDER_CLOSE') {
