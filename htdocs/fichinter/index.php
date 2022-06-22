@@ -89,7 +89,6 @@ $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	$i = 0;
 
 	$total = 0;
 	$totalinprocess = 0;
@@ -97,38 +96,30 @@ if ($resql) {
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-			{
-				$bool = (!empty($row[2]) ?true:false);
-			if (!isset($vals[$row[1].$bool])) {
-				$vals[$row[1].$bool] = 0;
+	if ($num>0) {
+		while ($row = $db->fetch_row($resql)) {
+				var_dump($row);
+			$bool = (!empty($row[2]) ? true : false);
+
+			if (!isset($vals[$row[1] . $bool])) {
+				$vals[$row[1] . $bool] = 0;
 			}
-				$vals[$row[1].$bool] += $row[0];
-				$totalinprocess += $row[0];
-			}
+			$vals[$row[1] . $bool] += $row[0];
+			$totalinprocess += $row[0];
+
 			$total += $row[0];
 		}
-		$i++;
 	}
 	$db->free($resql);
-
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(0, 1, 3);
-	$bool = false;
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_BILLED, Fichinter::STATUS_CLOSED);
+
 	foreach ($listofstatus as $status) {
-		$dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
-		if ($status == 3 && !$bool) {
-			$bool = true;
-		} else {
-			$bool = false;
-		}
+		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
 
 		if ($status == Fichinter::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
@@ -143,6 +134,7 @@ if ($resql) {
 			$colorseries[$status] = $badgeStatus6;
 		}
 	}
+	var_dump($dataseries);
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td class="center" colspan="2">';
 
