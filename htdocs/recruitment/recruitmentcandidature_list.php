@@ -104,7 +104,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -148,8 +148,6 @@ if ($id > 0 || !empty($ref)) {
 	$jobposition->fetch($id, $ref);
 	$id = $jobposition->id;
 }
-
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -229,7 +227,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_RecruitmentCandidature|FR:Module_RecruitmentCandidature_FR|ES:Módulo_RecruitmentCandidature";
 $help_url = '';
-$title = $langs->trans('ListOfCandidatures');
+$title = $langs->trans('RecruitmentCandidatures');
 $morejs = array();
 $morecss = array();
 
@@ -370,7 +368,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
 
 // Part to show record
@@ -461,7 +459,7 @@ if ($jobposition->id > 0 && (empty($action) || ($action != 'edit' && $action != 
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -637,7 +635,7 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 }
 foreach ($object->fields as $key => $val) {
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {

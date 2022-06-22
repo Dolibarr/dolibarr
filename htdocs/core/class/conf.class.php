@@ -746,8 +746,8 @@ class Conf
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
 
-			// Default max file size for upload
-			$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
+			// Default max file size for upload (deprecated)
+			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 			// By default, we propagate contacts
 			if (!isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) {

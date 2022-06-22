@@ -256,7 +256,7 @@ $arrayfields = array(
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
-if (getDolGlobalString("INVOICE_USE_SITUATION") && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+if (getDolGlobalString("INVOICE_USE_SITUATION") && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 	$arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0, 'position'=>86);
 }
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
@@ -1091,7 +1091,7 @@ if ($resql) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if (!empty($search_fac_rec_source_title)) {
-		$param .= '&$search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
+		$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 	}
 
 	// Add $param from extra fields
