@@ -3917,7 +3917,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'world', 'private',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3968,7 +3968,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas', 'workstation'=>'pallet', 'world'=>'globe', 'private'=>'user-lock',
+				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
