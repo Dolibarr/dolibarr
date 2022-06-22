@@ -98,13 +98,11 @@ if ($resql) {
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
 	if ($num>0) {
 		while ($row = $db->fetch_row($resql)) {
-				var_dump($row);
-			$bool = (!empty($row[2]) ? true : false);
 
-			if (!isset($vals[$row[1] . $bool])) {
-				$vals[$row[1] . $bool] = 0;
+			if (!isset($vals[$row[1]])) {
+				$vals[$row[1]] = 0;
 			}
-			$vals[$row[1] . $bool] += $row[0];
+			$vals[$row[1]] += $row[0];
 			$totalinprocess += $row[0];
 
 			$total += $row[0];
@@ -134,7 +132,7 @@ if ($resql) {
 			$colorseries[$status] = $badgeStatus6;
 		}
 	}
-	var_dump($dataseries);
+
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td class="center" colspan="2">';
 
