@@ -1433,7 +1433,7 @@ if ($action == 'create') {
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'),, ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_2, '90%');
 					$doleditor->Create();
 
 					$objectline = new FichinterLigne($db);
