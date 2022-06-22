@@ -539,7 +539,6 @@ if (!empty($conf->ficheinter->enabled)) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, $maxofloop);
 
