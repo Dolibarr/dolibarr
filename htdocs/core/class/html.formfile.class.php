@@ -1282,7 +1282,6 @@ class FormFile
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
 						&& !preg_match('/\.meta$/i', $file['name'])) {
-
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
