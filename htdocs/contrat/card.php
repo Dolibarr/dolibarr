@@ -1261,7 +1261,24 @@ if ($action == 'create') {
 			// Confirmation de la fermeture
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CloseAContract"), $langs->trans("ConfirmCloseContract"), "confirm_close", '', 0, 1);
 		} elseif ($action == 'activate') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", '', 0, 1);
+			//$sql = "SELECT date_ouverture, date_cloture, commentaire FROM " . MAIN_DB_PREFIX ."contratdet WHERE fk_contrat = " . $object->id;
+			////$sql.= "";
+//
+			//$result = $db->query($sql);
+			//if ($result) {
+			//	$objp = $db->fetch_object($result);
+			//}
+//
+			//// Definie date debut et fin par defaut
+			//$dateactstart = $objp->date_ouverture;
+			//$dateactend = $objp->date_cloture;
+			//$comment = $objp->commentaire;
+			$formquestion = array(
+				array('type' => 'other', 'name' => 'active', 'label' => $langs->trans("DateServiceActivate"), 'value' => $form->selectDate('', '', $usehm, $usehm, '', "active", 1, 0), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)'),
+				array('type' => 'other', 'name' => 'active', 'label' => $langs->trans("DateEndPlanned"), 'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0), '', ''),
+				array('type' => 'text', 'comment' => 'active', 'label' => $langs->trans("Comment"), 'value' => '', '', '', 'class' => 'minwidth300')
+			);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
