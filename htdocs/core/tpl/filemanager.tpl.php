@@ -53,8 +53,10 @@ if ($module == 'medias') {
 	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 	$showroot = 1;
 }
-$section = 0;
 
+if (!isset($section)) {
+	$section = 0;
+}
 
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
