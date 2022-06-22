@@ -156,8 +156,8 @@ if (!empty($conf->productbatch->enabled) &&
 // Purchase price and project
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
-print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->projet->enabled)) {
+print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+if (!empty($conf->project->enabled)) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');
@@ -180,7 +180,7 @@ print '</td>';
 print '</tr>';
 
 // Extrafield template
-include 'extrafields_add.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 print '</table>';
 

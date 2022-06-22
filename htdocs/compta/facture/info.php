@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -47,7 +47,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	$ret = $object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 // Security check
@@ -84,7 +84,7 @@ $object->info($object->id);
 $head = facture_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
-$totalpaye = $object->getSommePaiement();
+$totalpaid = $object->getSommePaiement();
 
 // Invoice content
 
@@ -97,7 +97,7 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->facture->creer) {
@@ -131,7 +131,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $morehtmlref .= '</div>';
 
-$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
@@ -140,7 +140,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

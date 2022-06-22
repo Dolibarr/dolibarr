@@ -57,6 +57,7 @@ $socid = GETPOST('socid', 'int');
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+if ($selected_cat == -1) $selected_cat = '';
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -178,6 +179,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -200,6 +202,9 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
+
+$exportlink="";
+$namelink="";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -653,7 +658,7 @@ if (count($amount)) {
 		if (!empty($conf->commande->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (!empty($conf->facture->enabled) && $key > 0) {
+		if (isModEnabled('facture') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

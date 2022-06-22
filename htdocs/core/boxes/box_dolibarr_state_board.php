@@ -79,6 +79,9 @@ class box_dolibarr_state_board extends ModeleBoxes
 		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
+			$object = new stdClass;
+			$action = '';
+			$hookmanager->executeHooks('addStatisticLine', array(), $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
 			$boxstatFromHook = $hookmanager->resPrint;
@@ -123,14 +126,14 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'services' => !empty($conf->service->enabled) && $user->rights->service->lire,
 				'proposals' => !empty($conf->propal->enabled) && $user->rights->propale->lire,
 				'orders' => !empty($conf->commande->enabled) && $user->rights->commande->lire,
-				'invoices' => !empty($conf->facture->enabled) && $user->rights->facture->lire,
+				'invoices' => isModEnabled('facture') && $user->rights->facture->lire,
 				'donations' => !empty($conf->don->enabled) && $user->rights->don->lire,
 				'contracts' => !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
 				'interventions' => !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
 				'supplier_orders' => !empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 				'supplier_invoices' => !empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 				'supplier_proposals' => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
-				'projects' => !empty($conf->projet->enabled) && $user->rights->projet->lire,
+				'projects' => !empty($conf->project->enabled) && $user->rights->projet->lire,
 				'expensereports' => !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
 				'holidays' => !empty($conf->holiday->enabled) && $user->rights->holiday->read,
 				'ticket' => !empty($conf->ticket->enabled) && $user->rights->ticket->read,

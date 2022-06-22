@@ -183,7 +183,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -234,7 +234,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -406,7 +406,7 @@ class FormCompany extends Form
 							// Show break
 							$key = $langs->trans("Country".strtoupper($obj->country_code));
 							$valuetoshow = ($key != "Country".strtoupper($obj->country_code)) ? $obj->country_code." - ".$key : $obj->country;
-							print '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
+							print '<option value="-2" disabled>----- '.$valuetoshow." -----</option>\n";
 							$country = $obj->country;
 						}
 
@@ -618,7 +618,7 @@ class FormCompany extends Form
 	 */
 	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
 			// Use Ajax search
@@ -718,6 +718,10 @@ class FormCompany extends Form
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
+			// Add where from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('selectCompaniesForNewContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.nom ASC";
 
 			$resql = $this->db->query($sql);

@@ -129,7 +129,7 @@ class Loan extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
-		$sql .= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
+		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
 
@@ -151,6 +151,7 @@ class Loan extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
 				$this->paid = $obj->paid;
+				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
@@ -223,15 +224,15 @@ class Loan extends CommonObject
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_capital)) {
+		if (isModEnabled('accounting') && empty($this->account_capital)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_insurance)) {
+		if (isModEnabled('accounting') && empty($this->account_insurance)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_interest)) {
+		if (isModEnabled('accounting') && empty($this->account_interest)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
 			return -2;
 		}

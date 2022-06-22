@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 
 /**
@@ -113,7 +114,7 @@ class Categorie extends CommonObject
 	 *
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_CAT_FK = array(
+	public $MAP_CAT_FK = array(
 		'customer' => 'soc',
 		'supplier' => 'soc',
 		'contact'  => 'socpeople',
@@ -125,7 +126,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_CAT_TABLE = array(
+	public $MAP_CAT_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
 		'bank_account'=> 'account',
@@ -136,7 +137,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_OBJ_CLASS = array(
+	public $MAP_OBJ_CLASS = array(
 		'product'  => 'Product',
 		'customer' => 'Societe',
 		'supplier' => 'Fournisseur',
@@ -174,11 +175,10 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @var array 	Object table mapping from type string (table llx_...) when value of key does not match table name.
+	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
-	protected $MAP_OBJ_TABLE = array(
+	public $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
 		'member'   => 'adherent',
@@ -257,6 +257,12 @@ class Categorie extends CommonObject
 	 * @var array Mother of table
 	 */
 	public $motherof = array();
+
+	/**
+	 * @var array Childs
+	 */
+	public $childs = array();
+
 
 	/**
 	 *	Constructor
@@ -819,7 +825,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management' ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset
@@ -913,7 +919,7 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
-		$type = checkVal($type, 'aZ09');
+		$type = sanitizeVal($type, 'aZ09');
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
@@ -982,7 +988,7 @@ class Categorie extends CommonObject
 					$categories[$i]['array_options'] = $category_static->array_options;
 
 					// multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (!empty($conf->global->MAIN_MULTILANGS) && isset($category_static->multilangs)) {
 						$categories[$i]['multilangs'] = $category_static->multilangs;
 					}
 				}
@@ -1141,10 +1147,10 @@ class Categorie extends CommonObject
 		}
 
 		// We add the fullpath property to each elements of first level (no parent exists)
-		dol_syslog(get_class($this)."::get_full_arbo call to build_path_from_id_categ", LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
 		foreach ($this->cats as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
-			$this->build_path_from_id_categ($key, 0); // Process a branch from the root category key (this category has no parent)
+			$this->buildPathFromId($key, 0); // Process a branch from the root category key (this category has no parent)
 		}
 
 		// Include or exclude leaf including $markafterid from tree
@@ -1174,7 +1180,6 @@ class Categorie extends CommonObject
 		return $this->cats;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	For category id_categ and its childs available in this->cats, define property fullpath and fulllabel.
 	 *  It is called by get_full_arbo()
@@ -1185,19 +1190,18 @@ class Categorie extends CommonObject
 	 *	@return		void
 	 *  @see get_full_arbo()
 	 */
-	public function build_path_from_id_categ($id_categ, $protection = 1000)
+	private function buildPathFromId($id_categ, $protection = 1000)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
+		//dol_syslog(get_class($this)."::buildPathFromId id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
 
 		if (!empty($this->cats[$id_categ]['fullpath'])) {
 			// Already defined
-			dol_syslog(get_class($this)."::build_path_from_id_categ fullpath and fulllabel already defined", LOG_WARNING);
+			dol_syslog(get_class($this)."::buildPathFromId fullpath and fulllabel already defined", LOG_WARNING);
 			return;
 		}
 
 		// First build full array $motherof
-		//$this->load_motherof();	// Disabled because already done by caller of build_path_from_id_categ
+		//$this->load_motherof();	// Disabled because already done by caller of buildPathFromId
 
 		// $this->cats[$id_categ] is supposed to be already an array. We just want to complete it with property fullpath and fulllabel
 

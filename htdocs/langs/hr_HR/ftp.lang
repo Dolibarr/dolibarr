@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Podešavanje FTP Klijent modula
-NewFTPClient=Podešavanje novog FTP spajanja
-FTPArea=FTP sučelje
-FTPAreaDesc=Ovaj ekran vam prikazuje sadržaj FTP servera
-SetupOfFTPClientModuleNotComplete=Postavke modula FTP klijenta nije potpun
-FTPFeatureNotSupportedByYourPHP=Vaš PHP ne podržava FTP funkcije
-FailedToConnectToFTPServer=Neuspješno povezivanje s FTP serverom (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Neuspješna prijava na FTP server s pristupnim podacima
+FTPClientSetup=Postavljanje modula FTP ili SFTP klijenta
+NewFTPClient=Nova postavka FTP/FTPS veze
+FTPArea=FTP/FTPS sučelje
+FTPAreaDesc=Ovaj zaslon prikazuje prikaz FTP i SFTP poslužitelja.
+SetupOfFTPClientModuleNotComplete=Čini se da postavljanje FTP ili SFTP klijentskog modula nije dovršeno
+FTPFeatureNotSupportedByYourPHP=Vaš PHP ne podržava FTP ili SFTP funkcije
+FailedToConnectToFTPServer=Povezivanje s poslužiteljem nije uspjelo (poslužitelj %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Prijava na poslužitelj s definiranom prijavom/lozinkom nije uspjela
 FTPFailedToRemoveFile=Neuspješno brisanje datoteke <b>%s</b>.
-FTPFailedToRemoveDir=Neuspješno brisanje mape <b>%s</b> (Provjerite prava pristupa i da li je mapa prazna).
+FTPFailedToRemoveDir=Uklanjanje direktorija <b> %s </b> nije uspjelo: provjerite dopuštenja i je li direktorij prazan.
 FTPPassiveMode=Pasivni mod
-ChooseAFTPEntryIntoMenu=Odaberite FTP na izborniku
+ChooseAFTPEntryIntoMenu=Odaberite FTP/SFTP stranicu s izbornika...
 FailedToGetFile=Neuspješno preuzimanje datoteka %s

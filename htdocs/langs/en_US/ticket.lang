@@ -90,15 +90,17 @@ TicketPublicAccess=A public interface requiring no identification is available a
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
-TicketEmailNotificationFrom=Notification email from
-TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifications email to
-TicketEmailNotificationToHelp=Send email notifications to this address.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
 TicketsEmailMustExist=Require an existing email address to create a ticket
 TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
+TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Public interface
 TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
 TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
@@ -145,6 +147,8 @@ TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received
 TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
 TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 
 #
 # Index & list page
@@ -217,12 +221,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Recipient is empty. No email send
 TicketGoIntoContactTab=Please go into "Contacts" tab to select them
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
-TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
-TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Signature
 TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Signature of response email
 TicketMessageMailSignatureHelpAdmin=This text will be inserted after the response message.
 TicketMessageHelp=Only this text will be saved in the message list on ticket card.
@@ -258,6 +262,8 @@ TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from p
 ErrorTicketRefRequired=Ticket reference name is required
 TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -285,7 +291,7 @@ TicketNewEmailBody=This is an automatic email to confirm you have registered a n
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
 TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
 TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.

@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
 if (empty($user->rights->opensurvey->read)) {
@@ -75,7 +75,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -609,7 +609,7 @@ if (GETPOST('ajoutsujet')) {
 
 		print '&nbsp;';
 
-		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
+		print $formother->selectyear('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
 		print '<br><br>'.$langs->trans("AddStartHour").': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
@@ -1149,7 +1149,7 @@ $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
-		$meilleursujet .= ", ";
+		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
@@ -1158,7 +1158,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i], '%A').')' : '');
+				$meilleursujet .= dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), 'daytext').' ('.dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), '%A').')';
 			}
 		} else {
 			$tmps = explode('@', $toutsujet[$i]);

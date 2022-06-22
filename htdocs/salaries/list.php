@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,21 +90,9 @@ $search_date_end_to = dol_mktime(23, 59, 59, GETPOST('search_date_end_tomonth', 
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_status = GETPOST('search_status', 'int');
+$search_type_id = GETPOST('search_type_id', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
-
-if (!GETPOST('search_type_id', 'int')) {
-	$newfiltre = str_replace('filtre=', '', $filtre);
-	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val) {
-		$part = explode(':', $val);
-		if ($part[0] == 's.fk_typepayment') {
-			$search_type_id = $part[1];
-		}
-	}
-} else {
-	$search_type_id = GETPOST('search_type_id', 'int');
-}
 
 $childids = $user->getAllChildIds(1);
 
@@ -260,12 +248,19 @@ if ($search_user) {
 if ($search_label) {
 	$sql .= natural_search(array('s.label'), $search_label);
 }
-if (!empty($search_date_start_from) && !empty($search_date_start_to)) {
-	$sql .= " AND s.datesp BETWEEN '".$db->idate($search_date_start_from)."' AND '".$db->idate($search_date_start_to)."'";
+if (!empty($search_date_start_from)) {
+	$sql .= " AND s.datesp >= '".$db->idate($search_date_start_from)."'";
 }
-if (!empty($search_date_end_from) && !empty($search_date_end_to)) {
-	$sql .= " AND s.dateep BETWEEN '".$db->idate($search_date_end_from)."' AND '".$db->idate($search_date_end_to)."'";
+if (!empty($search_date_end_from)) {
+	$sql .= " AND s.dateep >= '".$db->idate($search_date_end_from)."'";
 }
+if (!empty($search_date_start_to)) {
+	$sql .= " AND s.datesp <= '".$db->idate($search_date_start_to)."'";
+}
+if (!empty($search_date_end_to)) {
+	$sql .= " AND s.dateep <= '".$db->idate($search_date_end_to)."'";
+}
+
 if ($search_amount) {
 	$sql .= natural_search("s.amount", $search_amount, 1);
 }
@@ -499,7 +494,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -512,6 +507,9 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 $i = 0;
 $total = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$totalarray['val'] = array();
+$totalarray['val']['totalttcfield'] = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {

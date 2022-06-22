@@ -113,6 +113,12 @@ class ChargeSociales extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var double total
+	 */
+	public $total;
+
+	public $totalpaid;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -123,7 +129,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -364,7 +370,7 @@ class ChargeSociales extends CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SOCIALCHARGES_MODIFY', $user);
+				$result = $this->call_trigger('SOCIALCONTRIBUTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

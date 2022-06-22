@@ -49,6 +49,8 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid   = GETPOST('lineid', 'int');
+$fk_movement   = GETPOST('fk_movement', 'int');
+$fk_default_warehouse = GETPOST('fk_default_warehouse', 'int');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
@@ -445,7 +447,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid.'&fk_movement='.$fk_movement, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 	// Clone confirmation
 	if ($action == 'clone') {
@@ -518,7 +520,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
@@ -733,11 +735,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			print $langs->trans("Warehouse");
+
+			// Select warehouse to force it everywhere
+			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				$listwarehouses = $tmpwarehouse->list_array(1);
+				if (count($listwarehouses) > 1) {
+					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+				} elseif (count($listwarehouses) == 1) {
+					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+				}
+			}
 		}
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if ($conf->stock->enabled) {
 			// Available
-			print '<td>';
+			print '<td align="right">';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Stock");
 			}
@@ -808,7 +820,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct->fetch($line->fk_product);
 					$linecost = price2num($tmpproduct->pmp, 'MT');
 
-					if ($line->origin_type == 'free' && $object->qty > 0) {
+					if ($object->qty > 0) {
 						// add free consume line cost to bomcost
 						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 						if (empty($costprice)) {
@@ -822,12 +834,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
 						$bomcost += $linecost;
-					} elseif ($line->origin_id > 0 && $line->origin_type == 'bom' && $object->qty > 0) {
-						foreach ($bom->lines as $bomline) {
-							if ($bomline->id == $line->origin_id) {
-								$linecost = price2num(($line->qty * $bomline->unit_cost) / $object->qty, 'MT');
-							}
-						}
 					}
 
 					$bomcost = price2num($bomcost, 'MU');
@@ -920,7 +926,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id);
 						print '<td class="center">';
 						print '<a class="reposition" href="'.$href.'">';
-						print img_picto('', 'delete');
+						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
 						print '</a>';
 						print '</td>';
 					}
@@ -964,16 +970,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 
 						// Lot Batch
-						print '<td>';
-						if ($line2['batch'] != '') {
-							$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
-							print $tmpbatch->getNomUrl(1);
+						if ($conf->productbatch->enabled) {
+							print '<td>';
+							if ($line2['batch'] != '') {
+								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+								print $tmpbatch->getNomUrl(1);
+							}
+							print '</td>';
 						}
-						print '</td>';
 
 						// Action delete line
 						if ($permissiontodelete) {
-							print '<td></td>';
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							print '<td class="center">';
+							print '<a class="reposition" href="'.$href.'">';
+							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
+							print '</a>';
+							print '</td>';
 						}
 
 						print '</tr>';
@@ -1054,6 +1067,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</table>';
 		print '</div>';
+
+		// default warehouse processing
+		print '<script type="text/javascript">
+			$(document).ready(function () {
+				$("select[name=fk_default_warehouse]").change(function() {
+                    var fk_default_warehouse = $("option:selected", this).val();
+					$("select[name^=idwarehouse-]").val(fk_default_warehouse).change();
+                });
+			});
+		</script>';
 
 
 		// Lines to produce
@@ -1224,7 +1247,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$href .= '&lineid='.$line->id;
 						print '<td class="center">';
 						print '<a class="reposition" href="'.$href.'">';
-						print img_picto('', "delete");
+						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
 						print '</a>';
 						print '</td>';
 					}

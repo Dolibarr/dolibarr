@@ -135,7 +135,7 @@ class Productcustomerprice extends CommonObject
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = trim($this->tva_tx);
+			$this->tva_tx = (float) $this->tva_tx;
 		}
 		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
@@ -621,7 +621,7 @@ class Productcustomerprice extends CommonObject
 			$this->price_base_type = trim($this->price_base_type);
 		}
 		if (isset($this->tva_tx)) {
-			$this->tva_tx = trim($this->tva_tx);
+			$this->tva_tx = (float) $this->tva_tx;
 		}
 		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
@@ -766,7 +766,7 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_UPDATE', $user);
+			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}

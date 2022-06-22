@@ -166,6 +166,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if (empty($reshook)) {
+	// Mass actions
+	$objectclass = 'Reception';
+	$objectlabel = 'Receptions';
+	$permissiontoread = $user->rights->reception->lire;
+	$permissiontoadd = $user->rights->reception->creer;
+	$permissiontodelete = $user->rights->reception->supprimer;
+	$uploaddir = $conf->reception->multidir_output[$conf->entity];
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
 	if ($massaction == 'confirm_createbills') {
 		$receptions = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
@@ -631,6 +640,22 @@ if ($search_array_options) {
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
 		$tmpkey = preg_replace('/search_options_/', '', $key);
+		if (is_array($val) && array_key_exists('start', $val) && array_key_exists('end', $val)) {
+			// date range from list filters is stored as array('start' => <timestamp>, 'end' => <timestamp>)
+			// start date
+			$param .= '&search_options_'.$tmpkey.'_startyear='.dol_print_date($val['start'], '%Y');
+			$param .= '&search_options_'.$tmpkey.'_startmonth='.dol_print_date($val['start'], '%m');
+			$param .= '&search_options_'.$tmpkey.'_startday='.dol_print_date($val['start'], '%d');
+			$param .= '&search_options_'.$tmpkey.'_starthour='.dol_print_date($val['start'], '%H');
+			$param .= '&search_options_'.$tmpkey.'_startmin='.dol_print_date($val['start'], '%M');
+			// end date
+			$param .= '&search_options_'.$tmpkey.'_endyear='.dol_print_date($val['end'], '%Y');
+			$param .= '&search_options_'.$tmpkey.'_endmonth='.dol_print_date($val['end'], '%m');
+			$param .= '&search_options_'.$tmpkey.'_endday='.dol_print_date($val['end'], '%d');
+			$param .= '&search_options_'.$tmpkey.'_endhour='.dol_print_date($val['end'], '%H');
+			$param .= '&search_options_'.$tmpkey.'_endmin='.dol_print_date($val['end'], '%M');
+			$val = '';
+		}
 		if ($val != '') {
 			$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
 		}

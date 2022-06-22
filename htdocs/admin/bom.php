@@ -93,7 +93,7 @@ if ($action == 'updateMask') {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bom&file=SPECIMEN.pdf");
 			return;
 		} else {
-			setEventMessages($module->error, null, 'errors');
+			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
 	} else {
@@ -176,7 +176,7 @@ $head = bomAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
 
 /*
- * BOMs Numbering model
+ * Numbering module
  */
 
 print load_fiche_titre($langs->trans("BOMsNumberingModules"), '', '');
@@ -202,10 +202,11 @@ foreach ($dirmodels as $reldir) {
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 8) == 'mod_bom_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
+					$classname = $file;
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file($db);
+					$module = new $classname($db);
 
 					// Show modules according to features level
 					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
@@ -220,7 +221,7 @@ foreach ($dirmodels as $reldir) {
 						print $module->info();
 						print '</td>';
 
-						// Show example of numbering model
+						// Show example of numbering module
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
@@ -277,13 +278,13 @@ foreach ($dirmodels as $reldir) {
 }
 print "</table>";
 print "</div>";
-print "<br>\n";
 
 
 /*
  * Document templates generators
  */
 
+print "<br>\n";
 print load_fiche_titre($langs->trans("BOMsModelModule"), '', '');
 
 // Load array def with activated templates
@@ -307,8 +308,8 @@ if ($resql) {
 
 
 print '<div class="div-table-responsive-no-min">';
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -364,13 +365,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -379,7 +380,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->BOM_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -421,12 +422,12 @@ foreach ($dirmodels as $reldir) {
 
 print '</table>';
 print '</div>';
-print "<br>";
 
 /*
  * Other options
  */
 
+print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<div class="div-table-responsive-no-min">';

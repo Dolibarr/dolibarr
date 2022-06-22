@@ -2,6 +2,7 @@
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,7 +169,6 @@ class ProductCombination
 		}
 
 		if (empty($combination_price_levels)) {
-
 			/**
 			 * for auto retrocompatibility with last behavior
 			 */
@@ -542,7 +542,14 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+
+						if ($ret < 0) {
+							$this->db->rollback();
+							$this->error = $child->error;
+							$this->errors = $child->errors;
+							return $ret;
+						}
 					}
 				}
 			} else {
@@ -564,7 +571,14 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+
+				if ($ret < 0) {
+					$this->db->rollback();
+					$this->error = $child->error;
+					$this->errors = $child->errors;
+					return $ret;
+				}
 			}
 
 			$this->db->commit();
@@ -573,6 +587,8 @@ class ProductCombination
 		}
 
 		$this->db->rollback();
+		$this->error = $child->error;
+		$this->errors = $child->errors;
 		return -1;
 	}
 
@@ -628,12 +644,12 @@ class ProductCombination
 		$variants = array();
 
 		//Attributes
-		$sql = "SELECT DISTINCT fk_prod_attr, a.rang";
+		$sql = "SELECT DISTINCT fk_prod_attr, a.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c ON c2v.fk_prod_combination = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = c.fk_product_child";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a ON a.rowid = fk_prod_attr";
 		$sql .= " WHERE c.fk_product_parent = ".((int) $productid)." AND p.tosell = 1";
-		$sql .= $this->db->order('a.rang', 'asc');
+		$sql .= $this->db->order('a.position', 'asc');
 
 		$query = $this->db->query($sql);
 
@@ -1040,12 +1056,16 @@ class ProductCombinationLevel
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".(int) $rowid;
+		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE rowid = ".(int) $rowid;
 
-		$obj = $this->db->getRow($sql);
-
-		if ($obj) {
-			return $this->fetchFormObj($obj);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				return $this->fetchFormObj($obj);
+			}
 		}
 
 		return -1;
@@ -1124,11 +1144,14 @@ class ProductCombinationLevel
 			$sql = "SELECT rowid id";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE fk_product_attribute_combination = ".(int) $this->fk_product_attribute_combination;
-			$sql .= ' AND fk_price_level = '.intval($this->fk_price_level);
+			$sql .= ' AND fk_price_level = '.((int) $this->fk_price_level);
 
-			$existObj = $this->db->getRow($sql);
-			if ($existObj) {
-				$this->id = $existObj->id;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$this->id = $obj->id;
+				}
 			}
 		}
 

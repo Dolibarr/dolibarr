@@ -233,7 +233,7 @@ class Utils
 				$prefix = 'pg_dump';
 				$ext = 'sql';
 			}
-			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
 
 		$outputdir = $conf->admin->dir_output.'/backup';
@@ -276,7 +276,7 @@ class Utils
 			$param = $dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 			$param .= " -u ".$dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -P ".$dolibarr_main_db_port;
+				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
 			if (GETPOST("use_transaction", "alpha")) {
 				$param .= " --single-transaction";
@@ -342,7 +342,7 @@ class Utils
 
 			$handle = '';
 
-			$lowmemorydump = GETPOSTISSET("lowmemorydump", "alpha") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
+			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
 
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
@@ -651,12 +651,13 @@ class Utils
 	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
 	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
 		global $conf, $langs;
 
@@ -667,10 +668,17 @@ class Utils
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
+
 		if ($redirectionfile) {
 			$command .= " > ".dol_sanitizePathName($redirectionfile);
 		}
-		$command .= " 2>&1";
+
+		if ($redirectionfileerr && ($redirectionfileerr != $redirectionfile)) {
+			// If we ask a redirect of stderr on a given file not already used for stdout
+			$command .= " 2> ".dol_sanitizePathName($redirectionfileerr);
+		} else {
+			$command .= " 2>&1";
+		}
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
@@ -679,7 +687,7 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		dol_syslog("Utils::executeCLI execmethod=".$execmethod." command=".$command, LOG_DEBUG);
 		$output_arr = array();
 
 		if ($execmethod == 1) {

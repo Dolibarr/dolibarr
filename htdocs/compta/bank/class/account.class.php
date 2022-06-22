@@ -146,6 +146,12 @@ class Account extends CommonObject
 	public $iban_prefix;
 
 	/**
+	 * Address of the bank
+	 * @var string
+	 */
+	public $domiciliation;
+
+	/**
 	 * XML SEPA format: place Payment Type Information (PmtTpInf) in Credit Transfer Transaction Information (CdtTrfTxInf)
 	 * @var int
 	 */
@@ -519,9 +525,10 @@ class Account extends CommonObject
 	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *  @param	int			$datev			Date value
 	 *  @param  string      $num_releve     Label of bank receipt for reconciliation
+	 *  @param	float		$amount_main_currency	Amount
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '')
+	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
 		// Deprecation warning
 		if (is_numeric($oper)) {
@@ -579,6 +586,7 @@ class Account extends CommonObject
 		$accline->datev = $datev;
 		$accline->label = $label;
 		$accline->amount = $amount;
+		$accline->amount_main_currency = $amount_main_currency;
 		$accline->fk_user_author = $user->id;
 		$accline->fk_account = $this->id;
 		$accline->fk_type = $oper;
@@ -866,7 +874,7 @@ class Account extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BANKACCOUNT_UPDATE', $user);
+				$result = $this->call_trigger('BANKACCOUNT_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -1198,7 +1206,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	tms		$date_end	Date until we want to get bank account sold
+	 *	@param	int		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
@@ -1453,9 +1461,13 @@ class Account extends CommonObject
 
 		// Call function to check BAN
 
-		if (!checkIbanForAccount($this) || !checkSwiftForAccount($this)) {
+		if (!checkIbanForAccount($this)) {
 			$this->error_number = 12;
-			$this->error_message = 'IBANSWIFTControlError';
+			$this->error_message = 'IBANNotValid';
+		}
+		if (!checkSwiftForAccount($this)) {
+			$this->error_number = 12;
+			$this->error_message = 'SwiftNotValid';
 		}
 		/*if (! checkBanForAccount($this))
 		{
@@ -1728,7 +1740,7 @@ class Account extends CommonObject
 		if ($dbs->query($sql)) {
 			return true;
 		} else {
-			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
 			//$this->errors = $dbs->lasterror();
 			return false;
 		}
@@ -1797,7 +1809,8 @@ class AccountLine extends CommonObject
 	 */
 	public $datev;
 
-	public $amount;
+	public $amount;					/* Amount of payment in the bank account currency */
+	public $amount_main_currency;	/* Amount in the currency of company if bank account use another currency */
 
 	/**
 	 * @var int ID
@@ -1958,6 +1971,7 @@ class AccountLine extends CommonObject
 		$sql .= ", datev";
 		$sql .= ", label";
 		$sql .= ", amount";
+		$sql .= ", amount_main_currency";
 		$sql .= ", fk_user_author";
 		$sql .= ", num_chq";
 		$sql .= ", fk_account";
@@ -1972,7 +1986,8 @@ class AccountLine extends CommonObject
 		$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", ".($this->fk_user_author > 0 ? $this->fk_user_author : "null");
+		$sql .= ", ".(empty($this->amount_main_currency) ? "NULL" : price2num($this->amount_main_currency));
+		$sql .= ", ".($this->fk_user_author > 0 ? ((int) $this->fk_user_author) : "null");
 		$sql .= ", ".($this->num_chq ? "'".$this->db->escape($this->num_chq)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->fk_account)."'";
 		$sql .= ", '".$this->db->escape($this->fk_type)."'";

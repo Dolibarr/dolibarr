@@ -49,6 +49,6 @@ GroupOfTicket=Chiptalar guruhi
 YouCanLinkArticleToATicketCategory=Siz maqolani chiptalar guruhiga bog'lashingiz mumkin (shuning uchun maqola yangi chiptalarni saralash paytida taklif qilinadi)
 SuggestedForTicketsInGroup=Guruh bo'lganda chiptalar taklif etiladi
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Eskirgan deb belgilang
+ConfirmCloseKM=Ushbu maqolaning yopilishini eskirgan deb tasdiqlaysizmi?
+ConfirmReopenKM=Ushbu maqolani "Tasdiqlangan" holatiga qaytarmoqchimisiz?

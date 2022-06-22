@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '16.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '16.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -115,6 +115,13 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 	}
 
 	header("Location: ".$path."install/index.php");
+
+	/*
+	print '<br><center>';
+	print 'The conf/conf.php file was not found or is not readable by the web server. If this is your first access, <a href="'.$path.'install/index.php">click here to start the Dolibarr installation process</a> to create it...';
+	print '</center><br>';
+	*/
+
 	exit;
 }
 
@@ -287,8 +294,9 @@ $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
 if ($suburi == '/') {
 	$suburi = ''; // If $suburi is /, it is now ''
 }
-define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
-
+if (!defined('DOL_URL_ROOT')) {
+	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
+}
 //print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
 // Define prefix MAIN_DB_PREFIX

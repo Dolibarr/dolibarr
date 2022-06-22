@@ -109,7 +109,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
-
 	if (!$searchkey) {
 		return;
 	}

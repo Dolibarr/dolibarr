@@ -42,6 +42,8 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $db;
 
+	public $enabled = '$conf->societe->enabled';
+
 
 	/**
 	 *	Constructor
@@ -123,7 +125,7 @@ class mailing_advthirdparties extends MailingTargets
 			if (count($socid) > 0 || count($contactid) > 0) {
 				$sql = "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
+				$sql .= " WHERE socp.entity IN (".getEntity('contact').")";
 				if (count($contactid) > 0) {
 					$sql .= " AND socp.rowid IN (".$this->db->sanitize(implode(',', $contactid)).")";
 				}
@@ -198,8 +200,8 @@ class mailing_advthirdparties extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param	string	$sql 		Not use here
-	 *	@return	    int			          Nb of recipients
+	 *  @param		string			$sql 		Not use here
+	 * 	@return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -210,8 +212,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql .= " WHERE s.email != ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

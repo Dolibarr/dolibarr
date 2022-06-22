@@ -51,8 +51,15 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 // Initialize technical objects
 $object = new Skill($db);
+$extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('skillcard', 'globalcard')); // Note that conf->hooks_modules contains array
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
 
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
@@ -201,6 +208,9 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
 
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 
 	// SKILLDET ADD
 	//@todo je stop ici ... à continuer  (affichage des 5 skilled input pour create action
@@ -247,6 +257,8 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '</table>';
 
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	// SKILLDET
 
@@ -415,6 +427,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$object->fields['label']['visible']=0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+	// Other attributes. Fields from hook formObjectOptions and Extrafields.
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 
 	print '</table>';
@@ -841,7 +856,7 @@ if ($action != "create" && $action != "edit") {
 
 	$MAXEVENT = 10;
 
-	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/hrm/skill_agenda.php?id='.$object->id);
+	$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/hrm/skill_agenda.php?id='.$object->id);
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

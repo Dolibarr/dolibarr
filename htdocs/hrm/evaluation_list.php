@@ -208,7 +208,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Evaluation|FR:Module_Evaluation_FR|ES:Módulo_Evaluation";
 $help_url = '';
-$title = $langs->trans("List").'&nbsp;'.$langs->trans('Evaluations');
+$title = $langs->trans('Evaluations');
 $morejs = array();
 $morecss = array();
 
@@ -412,7 +412,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/evaluation_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/evaluation_card.php', 1).'?action=create', '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
