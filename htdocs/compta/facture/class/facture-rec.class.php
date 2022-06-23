@@ -338,6 +338,8 @@ class FactureRec extends CommonInvoice
 
 				// Add lines
 				$num = count($facsrc->lines);
+				$date_start_fill = ($conf->global->INVOICE_REC_DATE_TO_YES) ? 1 : 0;
+				$date_end_fill = ($conf->global->INVOICE_REC_DATE_TO_YES) ? 1 : 0;
 				for ($i = 0; $i < $num; $i++) {
 					$tva_tx = $facsrc->lines[$i]->tva_tx;
 					if (!empty($facsrc->lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
@@ -363,8 +365,8 @@ class FactureRec extends CommonInvoice
 						$facsrc->lines[$i]->label,
 						$facsrc->lines[$i]->fk_unit,
 						$facsrc->lines[$i]->multicurrency_subprice,
-						0,
-						0,
+						$date_start_fill,
+						$date_end_fill,
 						null,
 						$facsrc->lines[$i]->pa_ht
 					);
