@@ -2255,7 +2255,7 @@ abstract class CommonObject
 	 *  @param		int		$notrigger		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setProject($user, $projectid, $notrigger = 0)
+	public function setProject($projectid, $notrigger = 0)
 	{
 		global $user;
 		$error = 0;
