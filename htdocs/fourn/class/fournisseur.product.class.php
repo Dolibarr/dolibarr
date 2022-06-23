@@ -411,15 +411,15 @@ class ProductFournisseur extends Product
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
 
 			if (!$error) {
-				if(!empty($options) && is_array($options)){
+				if (!empty($options) && is_array($options)) {
 					$productfournisseurprice = new ProductFournisseurPrice($this->db);
 					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
-					if($res > 0){
-						foreach($options as $key=>$value){
+					if ($res > 0) {
+						foreach($options as $key=>$value) {
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
-						if($res < 0) $error++;
+						if ($res < 0) $error++;
 					}
 				}
 			}
@@ -510,15 +510,15 @@ class ProductFournisseur extends Product
 				}
 
 				if (!$error) {
-					if(!empty($options) && is_array($options)){
+					if (!empty($options) && is_array($options)) {
 						$productfournisseurprice = new ProductFournisseurPrice($this->db);
 						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
-						if($res > 0){
-							foreach($options as $key=>$value){
+						if ($res > 0) {
+							foreach($options as $key=>$value) {
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
-							if($res < 0) $error++;
+							if ($res < 0) $error++;
 						}
 					}
 				}
