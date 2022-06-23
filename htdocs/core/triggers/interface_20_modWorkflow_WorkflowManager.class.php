@@ -72,27 +72,28 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
-				include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-				$newobject = new Commande($this->db);
-
-				$newobject->context['createfrompropal'] = 'createfrompropal';
-				$newobject->context['origin'] = $object->element;
-				$newobject->context['origin_id'] = $object->id;
-
-				$ret = $newobject->createFromProposal($object, $user);
-				if ($ret < 0) {
-					$this->error = $newobject->error;
-					$this->errors[] = $newobject->error;
-				}
-				return $ret;
-			}
-			if (!empty($conf->global->WORKFLOW_PROPAL_NOTCREATE_ORDER_IFEXISTS)) {
 				$object->fetchObjectLinked();
-				if (!empty($object->linkedObjectsIds['commande']))
+				if (!empty($object->linkedObjectsIds['commande'])){
+					setEventMessages($langs->trans("OrderExists"), null, 'warnings');
 					return $ret;
-			}
-		}
-
+				}
+				else {	
+					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$newobject = new Commande($this->db);
+					
+					$newobject->context['createfrompropal'] = 'createfrompropal';
+					$newobject->context['origin'] = $object->element;
+					$newobject->context['origin_id'] = $object->id;
+					
+					$ret = $newobject->createFromProposal($object, $user);
+					if ($ret < 0) {
+						$this->error = $newobject->error;
+						$this->errors[] = $newobject->error;
+					}
+					return $ret;
+				}
+			}				
+		}	
 
 		// Order to invoice
 		if ($action == 'ORDER_CLOSE') {
