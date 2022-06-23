@@ -607,12 +607,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				print '<td class="nowraponall">';
 				print $salary->getNomUrl(1);
 				print '</td>';
-
-				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
-				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" class="nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
-				print '<td class="right" class="nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
-
+				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
+				print '<td class="right nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -628,9 +626,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest leave requests
-	if (!empty($conf->holiday->enabled) &&
-		($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))
-		) {
+	if (!empty($conf->holiday->enabled) && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -664,11 +660,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $holiday->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->status, 5).'</td></tr>';
+				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right nowraponall">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
+				print '<td class="right nowraponall">'.$holiday->LibStatut($objp->status, 5).'</td>';
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -714,11 +711,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$exp->status = $objp->status;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $exp->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px"><span class="amount">'.price($objp->total_ttc).'</span></td>';
-				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->status, 5).'</td></tr>';
+				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($objp->total_ttc).'</span></td>';
+				print '<td class="right nowraponall">'.$exp->LibStatut($objp->status, 5).'</td>';
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
