@@ -220,11 +220,10 @@ abstract class Stats
 	}
 
 	/**
-	 * @param	int		$year			year number
-	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @param	int     $year           year number
 	 * @return 	int						value
 	 */
-	protected abstract function getAverageByMonth($year, $format = 0);
+	protected abstract function getAverageByMonth($year);
 
 	/**
 	 * Return average of entity by month for several years
