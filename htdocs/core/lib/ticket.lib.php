@@ -306,7 +306,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 
 	if (isModEnabled('agenda')) {
-
 		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
