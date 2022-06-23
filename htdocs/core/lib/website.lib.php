@@ -214,6 +214,18 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 }
 
 /**
+ * Converts smiley string into the utf8 sequence.
+ * @param	string		$content			Content to replace
+ * @return	string							Replacement of all smiley strings with their utf8 code
+ * @see dolWebsiteOutput()
+ */
+function dolReplaceSmileyCodeWithUTF8($content)
+{
+	return $content;
+}
+
+
+/**
  * Render a string of an HTML content and output it.
  * Used to ouput the page when viewed from a server (Dolibarr or Apache).
  *
@@ -368,6 +380,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
 	}
+
+	$content = dolReplaceSmileyCodeWithUTF8($content);
 
 	dol_syslog("dolWebsiteOutput end");
 
