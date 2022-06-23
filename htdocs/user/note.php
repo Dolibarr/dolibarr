@@ -142,7 +142,7 @@ if ($id) {
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 		// Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_8, '90%');
 		$doleditor->Create();
 	} else {
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));

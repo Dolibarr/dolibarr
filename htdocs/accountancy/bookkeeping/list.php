@@ -207,7 +207,7 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 
 $accountancyexport = new AccountancyExport($db);
 $listofformat = $accountancyexport->getType();
-$formatexportset = $conf->global->ACCOUNTING_EXPORT_MODELCSV;
+$formatexportset = getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV');
 if (empty($listofformat[$formatexportset])) {
 	$formatexportset = 1;
 }

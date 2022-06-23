@@ -631,7 +631,7 @@ if ($id > 0 || $ref) {
 				print '</td></tr>';
 			}
 
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				print '<tr><td class="">'.$langs->trans("ManageLotSerial").'</td><td>';
 				print $object->getLibStatut(0, 2);
 				print '</td></tr>';

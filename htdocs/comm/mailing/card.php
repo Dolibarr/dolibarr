@@ -753,7 +753,7 @@ if ($action == 'create') {
 	print '<div style="padding-top: 10px">';
 	// wysiwyg editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+	$doleditor = new DolEditor('bodyemail', GETPOST('bodyemail', 'restricthtmlallowunvalid'), '', 600, 'dolibarr_mailings', '', true, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '90%');
 	$doleditor->Create();
 	print '</div>';
 
@@ -1273,7 +1273,7 @@ if ($action == 'create') {
 			if ($action == 'edit') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '90%');
 				$doleditor->Create();
 			}
 			if ($action == 'edithtml') {
