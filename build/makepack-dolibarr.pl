@@ -499,8 +499,9 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.nova*`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
-		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
 
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README`;

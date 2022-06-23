@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - assets
-AssetType=Vermögenstyp
+NewAsset=Neuer Vermögenswert
 AssetsLines=Vermögen
 DeleteAnAssetType=Vermögenstyp löschen
 ConfirmDeleteAssetType=Bist du sicher, dass du diesen Vermögenstyp löschen willst?
@@ -8,4 +8,4 @@ AssetsType=Vermögenstyp
 AssetsTypeId=ID Vermögenswert
 AssetsTypeLabel=Beschreibung Vermögenstyp
 AssetsTypes=Vermögenstypen
-NewAsset=Neuer Vermögenswert
+AssetType=Vermögenstyp

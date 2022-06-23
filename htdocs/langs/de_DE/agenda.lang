@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=Ereignis-ID
 Actions=Ereignisse
-Agenda=Terminplan
-TMenuAgenda=Terminplanung
-Agendas=Terminpläne
+Agenda=Agenda
+TMenuAgenda=Agenda
+Agendas=Agenden
 LocalAgenda=Standardkalender
 ActionsOwnedBy=Ereignis stammt von
 ActionsOwnedByShort=Eigentümer
@@ -30,7 +30,7 @@ ViewDay=Tagesansicht
 ViewWeek=Wochenansicht
 ViewPerUser=Ansicht pro Benutzer
 ViewPerType=Anzeige pro Typ
-AutoActions= Automatische Befüllung der Tagesordnung
+AutoActions= Automatische Befüllung der Agenda
 AgendaAutoActionDesc= Hier können Sie Ereignisse definieren, die Dolibarr automatisch in der Agenda erstellen soll. Wenn nichts markiert ist, werden nur manuelle Aktionen in die Protokolle aufgenommen und in der Agenda angezeigt. Die automatische Verfolgung von Geschäftsaktionen an Objekten (Validierung, Statusänderung) wird nicht gespeichert.
 AgendaSetupOtherDesc= Diese Seite bietet Optionen, um den Export Ihrer Dolibarr-Ereignisse in einen externen Kalender (Thunderbird, Google Calendar usw.) zu ermöglichen.
 AgendaExtSitesDesc=Diese Seite erlaubt es, externe Kalenderquellen zu definieren, um deren Termine in der Dolibarr-Terminplanung zu sehen.
@@ -127,7 +127,7 @@ MRP_MO_CANCELInDolibarr=Fertigungsauftrag storniert
 PAIDInDolibarr=%s bezahlt
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
-DateActionStart=Beginnt
+DateActionStart=Beginn
 DateActionEnd=Ende
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
@@ -135,7 +135,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
-AgendaUrlOptionsIncludeHolidays=<b> includeseholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
+AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
 AgendaShowBirthdayEvents=Geburtstage der Kontakte
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Beschäftigt

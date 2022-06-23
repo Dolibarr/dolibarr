@@ -175,6 +175,6 @@ Unanswered=Sans réponse
 Answered=Répondu
 IsNotAnAnswer=N'est pas une réponse (e-mail initial)
 IsAnAnswer=Est une réponse à un e-mail initial
-RecordCreatedByEmailCollector=Enregistrement créé par le Collecteur d'e-mails%s depuis l'email %s
+RecordCreatedByEmailCollector=Enregistrement créé par le Collecteur d'e-mails %s depuis l'email %s
 DefaultBlacklistMailingStatus=Valeur par défaut du champ '%s' lors de la création d'un nouveau contact
 DefaultStatusEmptyMandatory=Vide mais obligatoire

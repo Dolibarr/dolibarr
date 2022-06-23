@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - orders
 OrdersArea=Übersicht Kundenaufträge
 SuppliersOrdersArea=Übersicht Lieferantenbestellungen
-OrderCard=Bestellung - Übersicht
+OrderCard=Bestellung – Übersicht
 OrderId=Bestell-ID
 Order=Kundenauftrag
 PdfOrderTitle=Auftragsbestätigung

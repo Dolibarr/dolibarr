@@ -831,11 +831,11 @@ if ($rowid > 0) {
 				$bankviainvoice = 1;
 			}
 		} else {
-			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$bankviainvoice = 1;
 			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
 				$bankdirect = 1;
-			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$invoiceonly = 1;
 			}
 		}
@@ -982,7 +982,7 @@ if ($rowid > 0) {
 			print '"></td></tr>';
 
 			// Complementary action
-			if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
+			if ((!empty($conf->banque->enabled) || isModEnabled('facture')) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
 				$company = new Societe($db);
 				if ($object->fk_soc) {
 					$result = $company->fetch($object->fk_soc);
@@ -1003,7 +1003,7 @@ if ($rowid > 0) {
 					print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 				}
 				// Add invoice with no payments
-				if (!empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
@@ -1033,7 +1033,7 @@ if ($rowid > 0) {
 					print '</label><br>';
 				}
 				// Add invoice with payments
-				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");

@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Conto di contabilità per registrare le donazioni
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conto contabile per registrare gli abbonamenti
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conto contabile per impostazione predefinita per registrare il deposito del cliente
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conto di contabilità predefinito per i prodotti acquistati (se non definito nella scheda prodotto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Conto contabile predefinito per i prodotti acquistati in CEE (usato se non definito nella scheda prodotto)
@@ -289,7 +290,7 @@ ValidateHistory=Collega automaticamente
 AutomaticBindingDone=Associazioni automatiche eseguite (%s) - Associazioni automatiche non possibili per alcuni record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Errore, non puoi cancellare la voce del piano dei conti perché è utilizzata
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transazioni scritte nel libro contabile

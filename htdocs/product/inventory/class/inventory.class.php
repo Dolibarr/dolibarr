@@ -313,7 +313,7 @@ class Inventory extends CommonObject
 					$inventoryline->batch = $obj->batch;
 					$inventoryline->datec = dol_now();
 
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
 					} else {
 						$inventoryline->qty_stock = $obj->reel;

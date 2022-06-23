@@ -148,64 +148,15 @@ class FormFile
 
 			$out .= '<td class="valignmiddle nowrap">';
 
-			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
-			$maxphp = @ini_get('upload_max_filesize'); // In unknown
-			if (preg_match('/k$/i', $maxphp)) {
-				$maxphp = preg_replace('/k$/i', '', $maxphp);
-				$maxphp = $maxphp * 1;
-			}
-			if (preg_match('/m$/i', $maxphp)) {
-				$maxphp = preg_replace('/m$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024;
-			}
-			if (preg_match('/g$/i', $maxphp)) {
-				$maxphp = preg_replace('/g$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024;
-			}
-			if (preg_match('/t$/i', $maxphp)) {
-				$maxphp = preg_replace('/t$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024 * 1024;
-			}
-			$maxphp2 = @ini_get('post_max_size'); // In unknown
-			if (preg_match('/k$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1;
-			}
-			if (preg_match('/m$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024;
-			}
-			if (preg_match('/g$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024;
-			}
-			if (preg_match('/t$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
-			}
-			// Now $max and $maxphp and $maxphp2 are in Kb
-			$maxmin = $max;
-			$maxphptoshow = $maxphptoshowparam = '';
-			if ($maxphp > 0) {
-				$maxmin = min($max, $maxphp);
-				$maxphptoshow = $maxphp;
-				$maxphptoshowparam = 'upload_max_filesize';
-			}
-			if ($maxphp2 > 0) {
-				$maxmin = min($max, $maxphp2);
-				if ($maxphp2 < $maxphp) {
-					$maxphptoshow = $maxphp2;
-					$maxphptoshowparam = 'post_max_size';
-				}
-			}
-
+			$maxfilesizearray = getMaxFileSizeArray();
+			$max = $maxfilesizearray['max'];
+			$maxmin = $maxfilesizearray['maxmin'];
+			$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+			$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
 			if ($maxmin > 0) {
-				// MAX_FILE_SIZE doit précéder le champ input de type file
-				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
+				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 			}
-
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
-			//$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic') ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
@@ -1470,7 +1421,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
 						if ($useinecm == 1 || $useinecm == 5) {	// ECM manual tree only
 							// $section is inside $param
-							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
+							$newparam = preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}

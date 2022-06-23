@@ -79,8 +79,8 @@ class Paiement extends CommonObject
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
 	public $author;
-	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
-	public $paiementcode; // Code of payment.
+	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	public $paiementcode; 	// Code of mode of payment.
 
 	/**
 	 * @var string Type of payment label

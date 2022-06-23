@@ -784,7 +784,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
 		if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
@@ -838,16 +838,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
 		$thirdTypeArray['customer'] = $langs->trans("customer");
-		if ($conf->propal->enabled && $user->rights->propal->lire) {
+		if (isModEnabled('propal') && $user->rights->propal->lire) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
-		if ($conf->commande->enabled && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if ($conf->facture->enabled && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
-		if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+		if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 			$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 		}
 	}

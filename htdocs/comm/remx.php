@@ -284,11 +284,11 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
@@ -314,11 +314,11 @@ if ($socid > 0) {
 		}
 
 		print '<tr><td class="titlefield">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
-		print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
 		if (!empty($user->fk_soc)) {    // No need to show this for external users
 			print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountMy").'</td>';
-			print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+			print '<td class="amount">'.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").'</td></tr>';
 		}
 	}
 
@@ -353,7 +353,7 @@ if ($socid > 0) {
 			print '</td></tr>';
 		}
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
+		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'" autofocus>';
 		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 		print '<tr><td>'.$langs->trans("VAT").'</td>';
 		print '<td>';
@@ -382,7 +382,7 @@ if ($socid > 0) {
 
 	print '<br>';
 
-	if ($_GET['action'] == 'remove') {
+	if ($action == 'remove') {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.GETPOST('remid'), $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
@@ -445,7 +445,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturestatic->id = $obj->fk_facture_source;
@@ -472,15 +472,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -583,7 +583,7 @@ if ($socid > 0) {
 					$obj = $db->fetch_object($resql);
 
 					print '<tr class="oddeven">';
-					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour').'</td>';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel').'</td>';
 					if (preg_match('/\(CREDIT_NOTE\)/', $obj->description)) {
 						print '<td class="minwidth100">';
 						$facturefournstatic->id = $obj->fk_invoice_supplier_source;
@@ -610,15 +610,15 @@ if ($socid > 0) {
 						print $obj->description;
 						print '</td>';
 					}
-					print '<td class="nowrap">'.$langs->trans("NotConsumed").'</td>';
-					print '<td class="right">'.price($obj->amount_ht).'</td>';
+					print '<td class="nowrap"><span class="opacitymedium">'.$langs->trans("NotConsumed").'</span></td>';
+					print '<td class="right amount">'.price($obj->amount_ht).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ht).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ht).'</td>';
 					}
 					print '<td class="right">'.vatrate($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), true).'</td>';
-					print '<td class="right">'.price($obj->amount_ttc).'</td>';
+					print '<td class="right amount">'.price($obj->amount_ttc).'</td>';
 					if (!empty($conf->multicurrency->enabled)) {
-						print '<td class="right">'.price($obj->multicurrency_amount_ttc).'</td>';
+						print '<td class="right amount">'.price($obj->multicurrency_amount_ttc).'</td>';
 					}
 					print '<td class="center">';
 					print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a>';
@@ -766,7 +766,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -926,7 +927,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {

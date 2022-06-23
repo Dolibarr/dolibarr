@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Цим інструментом повинні користуватися лише досвідчені користувачі або розробники. Він надає утиліти для створення або редагування вашого власного модуля. Документація для альтернативної розробки вручну <a href="%s" target="_blank" rel="noopener noreferrer"> знаходиться тут </a>.
-EnterNameOfModuleDesc=Введіть назву модуля/програми, яку потрібно створити, без пробілів. Використовуйте верхній регістр для розділення слів (наприклад: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Введіть назву об’єкта, який потрібно створити, без пробілів. Використовуйте великі літери для розділення слів (наприклад: MyObject, Student, Teacher...). Буде згенерований файл класу CRUD, а також файл API, сторінки для списку/додавання/редагування/видалення об’єктів та файли SQL.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Шлях, де генеруються/редагуються модулі (перший каталог для зовнішніх модулів, визначених як %s): <strong> %s </strong>
 ModuleBuilderDesc3=Знайдено створені/редаговані модулі: <strong> %s </strong>
 ModuleBuilderDesc4=Модуль визначається як «доступний для редагування», коли файл <strong> %s </strong> існує в кореневому каталозі модуля
 NewModule=Новий модуль
 NewObjectInModulebuilder=Новий об'єкт
+NewDictionary=New dictionary
 ModuleKey=Ключ модуля
 ObjectKey=Ключ об'єкта
+DicKey=Dictionary key
 ModuleInitialized=Модуль ініціалізовано
 FilesForObjectInitialized=Файли для нового об’єкта '%s' ініціалізовано
 FilesForObjectUpdated=Оновлено файли для об’єкта '%s' (файли .sql і файл .class.php)

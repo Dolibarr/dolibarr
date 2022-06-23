@@ -76,7 +76,7 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 }
 
 if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofile = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
@@ -99,7 +99,10 @@ if ($action == 'update') {
 	$error = 0;
 
 	if ($mode == 'template') {
+		//dolibarr_del_const($db, "MAIN_THEME", 0);	// To be sure we don't have this constant set for all entities
+
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
 			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
@@ -227,7 +230,7 @@ if ($action == 'update') {
 
 	if ($mode == 'other') {
 		dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
@@ -632,6 +635,11 @@ if ($mode == 'login') {
 	$disabled = '';
 	if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 		$disabled = ' disabled="disabled"';
+	}
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" class="flat maxwidthinputfileonsmartphone" name="imagebackground" id="imagebackground"' . $disabled . '>';
 	if ($disabled) {

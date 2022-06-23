@@ -32,6 +32,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 
 /**
@@ -256,9 +257,10 @@ class ProductFournisseur extends Product
 	 *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
 	 *    @param  	string		$barcode     	                Barcode
 	 *    @param  	int		    $fk_barcode_type     	        Barcode type
+	 *    @param  	array		$options		     	       	Extrafields of product fourn price
 	 *    @return	int											<0 if KO, >=0 if OK
 	 */
-	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '')
+	public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '', $options = array())
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -407,7 +409,21 @@ class ProductFournisseur extends Product
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
-			//print $sql;exit;
+
+			if (!$error) {
+				if (!empty($options) && is_array($options)) {
+					$productfournisseurprice = new ProductFournisseurPrice($this->db);
+					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
+					if ($res > 0) {
+						foreach ($options as $key=>$value) {
+							$productfournisseurprice->array_options[$key] = $value;
+						}
+						$res = $productfournisseurprice->update($user);
+						if ($res < 0) $error++;
+					}
+				}
+			}
+
 			// TODO Add price_base_type and price_ttc
 
 			dol_syslog(get_class($this).'::update_buyprice update knowing id of line = product_fourn_price_id = '.$this->product_fourn_price_id, LOG_DEBUG);
@@ -448,11 +464,11 @@ class ProductFournisseur extends Product
 				// Add price for this quantity to supplier
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql .= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
-				$sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type)";
+				$sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type";
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$sql .= ", packaging";
 				}
-				$sql .= " values(";
+				$sql .= ") values(";
 				$sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 				$sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
 				$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
@@ -491,6 +507,20 @@ class ProductFournisseur extends Product
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
 					$error++;
+				}
+
+				if (!$error) {
+					if (!empty($options) && is_array($options)) {
+						$productfournisseurprice = new ProductFournisseurPrice($this->db);
+						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
+						if ($res > 0) {
+							foreach ($options as $key=>$value) {
+								$productfournisseurprice->array_options[$key] = $value;
+							}
+							$res = $productfournisseurprice->update($user);
+							if ($res < 0) $error++;
+						}
+					}
 				}
 
 				if (!$error && empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {

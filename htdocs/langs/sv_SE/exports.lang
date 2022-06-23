@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Typ av linje (0 = produkt, 1 = tjänst)
 FileWithDataToImport=Fil med data för att importera
 FileToImport=Källa fil du vill importera
 FileMustHaveOneOfFollowingFormat=Fil som ska importeras måste ha ett av följande format
-DownloadEmptyExample=Ladda ner mall med fält för innehållsinformation
-StarAreMandatory=* alla fält krävs
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Välj det filformat som ska användas som importfilformat genom att klicka på ikonen %s för att välja den ...
 ChooseFileToImport=Ladda upp filen och klicka sedan på %s ikonen för att välja fil som källa importfil ...
 SourceFileFormat=Källa filformat
@@ -135,3 +135,6 @@ NbInsert=Antal infogade rader: %s
 NbUpdate=Antal uppdaterade rader: %s
 MultipleRecordFoundWithTheseFilters=Flera poster har hittats med dessa filter: %s
 StocksWithBatch=Lager och plats (lager) för produkter med batch / serienummer
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

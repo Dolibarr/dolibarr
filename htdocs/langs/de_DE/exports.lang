@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Leistung)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import
 FileMustHaveOneOfFollowingFormat=Die zu importierende Datei muss eines der folgenden Formate haben
-DownloadEmptyExample=Vorlagendatei mit Feldinhaltsinformationen herunterladen
-StarAreMandatory=* sind Pflichtfelder
+DownloadEmptyExample=Vorlagendatei herunterladen mit Beispielen und Informationen zu importierbaren Feldern
+StarAreMandatory=In der Vorlagendatei sind alle Felder mit einem * Pflichtfelder
 ChooseFormatOfFileToImport=Wählen Sie das Dateiformat aus, das als Importdateiformat verwendet werden soll, indem Sie auf das Symbol %s klicken, um es auszuwählen ...
 ChooseFileToImport=Datei hochladen und dann auf das Symbol %s klicken, um die Datei als Quell-Importdatei auszuwählen ...
 SourceFileFormat=Quelldateiformat
@@ -135,3 +135,6 @@ NbInsert=Anzahl eingefügter Zeilen: %s
 NbUpdate=Anzahl geänderter Zeilen: %s
 MultipleRecordFoundWithTheseFilters=Mehrere Ergebnisse wurden mit diesen Filtern gefunden: %s
 StocksWithBatch=Lagerbestände und Standort (Lager) von Produkten mit Chargen- / Seriennummer
+WarningFirstImportedLine=Die erste(n) Zeile(n) werden mit der aktuellen Auswahl nicht importiert
+NotUsedFields=Nicht verwendete Felder der Datenbank
+SelectImportFieldsSource = Ordnen Sie die Felder aus der zu importierenden Datei den entsprechenden Feldern in der Datenbank mit Hilfe der Auswahlelemente zu oder wählen Sie ein vordefiniertes Importprofil aus:

@@ -60,6 +60,11 @@ class ExtraFields
 	 */
 	public $attribute_choice;
 
+	/**
+	 * @var array array to store extrafields definition
+	 * @deprecated
+	 */
+	public $attribute_list;
 
 	/**
 	 * @var array New array to store extrafields definition
@@ -817,7 +822,8 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help,";
+		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
@@ -866,6 +872,9 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
+					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
+					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
+					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 				}
@@ -1667,25 +1676,30 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						if (!empty($obj->{$InfoFieldList[1]})) {
-							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						$tmppropname = $InfoFieldList[1];
+						//$obj->$tmppropname = '';
+						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
+							$translabel = $langs->trans($obj->$tmppropname);
 						}
-						if ($translabel != $obj->{$InfoFieldList[1]}) {
+						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
 						} else {
-							$value = $obj->{$InfoFieldList[1]};
+							$value = isset($obj->$tmppropname) ? $obj->$tmppropname : '';
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
-					$c = new Categorie($this->db);
-					$c->fetch($obj->rowid);
-					$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #bbb"').'>'.img_object('', 'category').' '.$way.'</li>';
+					if ($obj->rowid) {
+						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+						$c = new Categorie($this->db);
+						$result = $c->fetch($obj->rowid);
+						if ($result > 0) {
+							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+							foreach ($ways as $way) {
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
+							}
+						}
 					}
 					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
@@ -1700,7 +1714,9 @@ class ExtraFields
 			$toprint = array();
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					if (!empty($valueval)) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -1835,7 +1851,7 @@ class ExtraFields
 	}
 
 	/**
-	 * Return tag to describe alignement to use for this extrafield
+	 * Return the CSS to use for this extrafield into list
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
@@ -1851,29 +1867,33 @@ class ExtraFields
 			$type = $this->attribute_type[$key];
 		}
 
-		$align = '';
+		$cssstring = '';
 
 		if ($type == 'date') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'datetime') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'int') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'double') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'boolean') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'radio') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'checkbox') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		}
 
-		return $align;
+		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
+			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		}
+
+		return $cssstring;
 	}
 
 	/**
@@ -2053,7 +2073,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
-						$value_key = implode($value_arr, ',');
+						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = '';
 					}

@@ -192,7 +192,7 @@ if (empty($reshook)) {
 		if (empty($ref_fourn_old)) {
 			$ref_fourn_old = $ref_fourn;
 		}
-		$quantity = price2num(GETPOST("qty", 'nohtml'), 'MS');
+		$quantity = price2num(GETPOST("qty", 'alphanohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
 
 		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
@@ -285,34 +285,8 @@ if (empty($reshook)) {
 				if (GETPOSTISSET('ref_fourn_price_id')) {
 					$object->fetch_product_fournisseur_price(GETPOST('ref_fourn_price_id', 'int'));
 				}
-
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
-				if (!empty($extrafield_values)) {
-					$resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".((int) $object->product_fourn_price_id));
-					// Insert a new extrafields row, if none exists
-					if ($db->num_rows($resql) != 1) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key).', ';
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".((int) $object->product_fourn_price_id).", ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= "'".$db->escape($value)."', ";
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).')';
-					} else {
-						// update the existing one
-						$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
-						foreach ($extrafield_values as $key => $value) {
-							$sql .= str_replace('options_', '', $key)." = '".$db->escape($value)."', ";
-						}
-						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
-					}
-
-					// Execute the sql command from above
-					$db->query($sql);
-				}
 
 				$newprice = price2num(GETPOST("price", "alpha"));
 
@@ -330,9 +304,9 @@ if (empty($reshook)) {
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type);
+					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;
@@ -555,7 +529,7 @@ if ($id > 0 || $ref) {
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'alphanohtml'), 'MS') : "1";
 				if ($rowid) {
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
 					print $object->fourn_qty;
@@ -577,7 +551,7 @@ if ($id > 0 || $ref) {
 
 					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 					print '<td>';
-					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'nohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
+					$packaging = GETPOSTISSET('packaging') ? price2num(GETPOST('packaging', 'alphanohtml'), 'MS') : ((empty($rowid)) ? "1" : price2num($object->packaging, 'MS'));
 					print '<input class="flat" name="packaging" size="5" value="'.$packaging.'">';
 
 					// Units
@@ -806,7 +780,7 @@ END;
 					print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
 					print '<td>';
 
-					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -1076,9 +1050,9 @@ END;
 
 						// Supplier ref
 						if ($usercancreate) { // change required right here
-							print '<td>'.$productfourn->getNomUrl().'</td>';
+							print '<td class="tdoverflowmax150">'.$productfourn->getNomUrl().'</td>';
 						} else {
-							print '<td>'.$productfourn->fourn_ref.'</td>';
+							print '<td class="tdoverflowmax150">'.dol_escape_htmltag($productfourn->fourn_ref).'</td>';
 						}
 
 						// Availability
@@ -1109,13 +1083,13 @@ END;
 
 						// Price for the quantity
 						print '<td class="right">';
-						print $productfourn->fourn_price ?price($productfourn->fourn_price) : "";
+						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
 						print '</td>';
 
 						if (!empty($conf->multicurrency->enabled)) {
 							// Price for the quantity in currency
 							print '<td class="right">';
-							print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
+							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
 							print '</td>';
 						}
 

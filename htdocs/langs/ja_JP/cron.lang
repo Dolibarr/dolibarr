@@ -15,7 +15,7 @@ CronExplainHowToRunUnix=Unix環境では、次のcrontabエントリを使用し
 CronExplainHowToRunWin=Microsoft(tm)Windows環境では、スケジュールされたタスクツールを使用して、5分ごとにコマンドラインを実行できる。
 CronMethodDoesNotExists=クラス%sには、メソッド%sが含まれていない。
 CronMethodNotAllowed=クラス%sのメソッド%sは、禁止されているメソッドのブラックリストに含まれている
-CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールがアクティブ化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
+CronJobDefDesc=cronジョブプロファイルは、モジュール記述子ファイルに定義されている。モジュールが有効化されると、それらがロードされて使用可能になるため、管理ツールメニュー%sからジョブを管理できる。
 CronJobProfiles=事前定義されたcronジョブプロファイルのリスト
 # Menu
 EnabledAndDisabled=有効および無効

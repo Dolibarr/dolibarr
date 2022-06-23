@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=Αυτό το χαρακτηριστικό χρ�
 ErrorAttributeValueIsUsedIntoProduct=Αυτή η τιμή χαρακτηριστικού χρησιμοποιείται σε μία ή περισσότερες παραλλαγές προϊόντος
 ErrorPaymentInBothCurrency=Σφάλμα, όλα τα ποσά πρέπει να εισαχθούν στην ίδια στήλη
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Προσπαθείτε να πληρώσετε τιμολόγια στο νόμισμα %s από έναν λογαριασμό με το νόμισμα %s
+ErrorInvoiceLoadThirdParty=Δεν είναι δυνατή η φόρτωση αντικειμένου τρίτου μέρους για το τιμολόγιο "%s"
+ErrorInvoiceLoadThirdPartyKey=Το κλειδί τρίτου μέρους "%s" δεν έχει οριστεί για τιμολόγιο "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Η διαγραφή γραμμής δεν επιτρέπεται από την πραγματική κατάσταση του αντικειμένου
+ErrorAjaxRequestFailed=To αίτημα AJAX απέτυχε
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτό δεν είναι μια σταθερή ρύθμιση.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Διατίθεται μόνο εάν χρη�
 WarningModuleXDisabledSoYouMayMissEventHere=Η ενότητα %s δεν έχει ενεργοποιηθεί. Έτσι, μπορεί να χάσετε πολλές λειτουργίες.
 WarningPaypalPaymentNotCompatibleWithStrict=Η τιμή "Αυστηρή" κάνει τις λειτουργίες ηλεκτρονικής πληρωμής να μην λειτουργούν σωστά. Χρησιμοποιήστε την τιμη 'Lax' .
 
+<<<<<<< ΚΕΦΑΛΙΔΑ
+=======
+<<<<<<< ΚΕΦΑΛΙΔΑ
+<<<<<<< ΚΕΦΑΛΙΔΑ
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη
 RequireAtLeastXString = Απαιτεί τουλάχιστον %s χαρακτήρα(ες)
@@ -338,3 +347,12 @@ BadSetupOfField = Σφάλμα κακή ρύθμιση του πεδίου
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+<<<<<<< ΚΕΦΑΛΙΔΑ
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

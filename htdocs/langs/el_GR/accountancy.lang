@@ -21,7 +21,7 @@ ServiceForThisThirdparty=Υπηρεσία προς τρίτο μέρος
 CantSuggest=Δεν προτείνεται
 AccountancySetupDoneFromAccountancyMenu=Οι περισσότερες ρυθμίσεις της λογιστικής γίνονται από το μενού %s
 ConfigAccountingExpert=Διαμόρφωση της μονάδας λογιστική (διπλή εγγραφή)
-Journalization=Περιοδικότητα
+Journalization=Εγγραφή ημερολογίου
 Journals=Ημερολόγια
 JournalFinancial=Οικονομικά ημερολόγια
 BackToChartofaccounts=Επιστροφή στο λογιστικό σχέδιο 
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για τ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για την εγγραφή συνδρομών
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Λογιστικός λογαριασμός από προεπιλογή για εγγραφή κατάθεσης πελάτη
+UseAuxiliaryAccountOnCustomerDeposit=Χρησιμοποιήστε δευτερεύοντες λογαριασμούς στις γραμμές καταθέσεων πελατών
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Λογαριασμός λογιστικής από προεπιλογή για τα αγορασμένα προϊόντα (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Λογαριασμός από προεπιλογή για τα προϊόντα που αγοράστηκαν στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
@@ -289,7 +290,7 @@ ValidateHistory=Δεσμεύστε αυτόματα
 AutomaticBindingDone=Ολοκληρώθηκαν οι αυτόματες δεσμεύσεις (%s) - Δεν είναι δυνατή η αυτόματη δέσμευση για κάποιες εγγραφές (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
-MvtNotCorrectlyBalanced=Η κίνηση δεν είναι σωστά ισορροπημένη. Χρέωση = %s | Πιστωτικό = %s
+MvtNotCorrectlyBalanced=Η κίνηση δεν είναι σωστά ισοζυγισμένη. Χρέωση = %s & Πίστωση = %s
 Balancing=Εξισορρόπηση
 FicheVentilation=Δεσμευτική κάρτα
 GeneralLedgerIsWritten=Οι συναλλαγές γράφονται στο Ledger

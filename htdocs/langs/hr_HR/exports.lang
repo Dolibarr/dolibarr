@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Vrsta linije (0=proizvod, 1=usluga)
 FileWithDataToImport=Datoteka s podacima za uvoz
 FileToImport=Izvorna datoteka za uvoz
 FileMustHaveOneOfFollowingFormat=Datoteka za uvoz mora imati jedan od sljedećih formata
-DownloadEmptyExample=Preuzmite datoteku predloška s informacijama o sadržaju polja
-StarAreMandatory=* su obavezna polja
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Odaberite format datoteke za korištenje kao format datoteke za uvoz klikom na ikonu %s da biste ga odabrali...
 ChooseFileToImport=Prenesite datoteku, a zatim kliknite na ikonu %s da odaberete datoteku kao izvornu datoteku za uvoz...
 SourceFileFormat=Format izvorne datoteke
@@ -135,3 +135,6 @@ NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
 StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

@@ -446,7 +446,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print "</tr>\n";
 
 	// Date of birth
-	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("DateOfBirth", 'birth', $object->birth, $object, $user->rights->user->user->creer);
@@ -457,7 +457,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal email
-	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
@@ -468,7 +468,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal phone
-	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
@@ -533,7 +533,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Employee Number
-	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
@@ -544,7 +544,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// National registration number
-	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
+	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);

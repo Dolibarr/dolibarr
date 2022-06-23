@@ -218,3 +218,5 @@ XExternalUserCreated=%s külső felhasználó létrehozva
 ForceMemberNature=Kényszertag jellege (egyéni vagy vállalati)
 CreateDolibarrLoginDesc=A felhasználói bejelentkezés létrehozása a tagok számára lehetővé teszi számukra az alkalmazáshoz való csatlakozást. A megadott jogosultságoktól függően például saját maguk is megtekinthetik vagy módosíthatják a fájljukat.
 CreateDolibarrThirdPartyDesc=A harmadik fél az a jogi személy, amely a számlán szerepel, ha úgy dönt, hogy minden egyes hozzájáruláshoz számlát állít elő. Később, a hozzájárulás rögzítésének folyamata során tudja létrehozni.
+MemberFirstname=Tag keresztneve
+MemberLastname=Tag vezetékneve
