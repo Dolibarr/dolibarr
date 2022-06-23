@@ -114,7 +114,8 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_BILLED, Fichinter::STATUS_CLOSED);
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	if (!empty($conf->global->FICHINTER_CLASSIFY_BILLED)) $listofstatus[] = Fichinter::STATUS_BILLED;
 
 	foreach ($listofstatus as $status) {
 		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
@@ -127,9 +128,6 @@ if ($resql) {
 		}
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == Fichinter::STATUS_CLOSED) {
-			$colorseries[$status] = $badgeStatus6;
 		}
 	}
 
@@ -149,21 +147,15 @@ if ($resql) {
 
 		print '</td></tr>';
 	}
-	$bool = false;
 	foreach ($listofstatus as $status) {
 		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
 			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
-			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
-			print $fichinterstatic->LibStatut($status, $bool, 3);
+			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
+			print $fichinterstatic->LibStatut($status, 3);
 			print '</a>';
 			print '</td>';
 			print "</tr>\n";
-			if ($status == 3 && !$bool) {
-				$bool = true;
-			} else {
-				$bool = false;
-			}
 		}
 	}
 	//if ($totalinprocess != $total)
