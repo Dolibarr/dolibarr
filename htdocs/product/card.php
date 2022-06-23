@@ -13,7 +13,7 @@
  * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud	 <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016-2022	Charlene Benke		 <charlene@patas-monkey.com>
  * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
