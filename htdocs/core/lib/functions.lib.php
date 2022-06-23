@@ -745,7 +745,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			// - posted value not empty, or
 			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
-			if ($out != '') {		// $out = '0' or 'abc', it is a search criteria to keep
+			if ($out != '' && isset($user)) {// $out = '0' or 'abc', it is a search criteria to keep
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
 			}
 		}
