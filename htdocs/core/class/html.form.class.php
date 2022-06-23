@@ -3387,8 +3387,6 @@ class Form
 				$opt .= $optlabel;
 				$outval .= $outvallabel;
 
-				$hookmanager->initHooks(array('ordersuppliercard'));
-
 				$hookmanager->executeHooks('addContentSelectProductLine', [], $objp); // Note that $action and $object may have been modified by hook
 
 				if (!empty($hookmanager->resPrint)) {
