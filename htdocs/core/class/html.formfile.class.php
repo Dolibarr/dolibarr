@@ -148,64 +148,15 @@ class FormFile
 
 			$out .= '<td class="valignmiddle nowrap">';
 
-			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
-			$maxphp = @ini_get('upload_max_filesize'); // In unknown
-			if (preg_match('/k$/i', $maxphp)) {
-				$maxphp = preg_replace('/k$/i', '', $maxphp);
-				$maxphp = $maxphp * 1;
-			}
-			if (preg_match('/m$/i', $maxphp)) {
-				$maxphp = preg_replace('/m$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024;
-			}
-			if (preg_match('/g$/i', $maxphp)) {
-				$maxphp = preg_replace('/g$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024;
-			}
-			if (preg_match('/t$/i', $maxphp)) {
-				$maxphp = preg_replace('/t$/i', '', $maxphp);
-				$maxphp = $maxphp * 1024 * 1024 * 1024;
-			}
-			$maxphp2 = @ini_get('post_max_size'); // In unknown
-			if (preg_match('/k$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1;
-			}
-			if (preg_match('/m$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024;
-			}
-			if (preg_match('/g$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024;
-			}
-			if (preg_match('/t$/i', $maxphp2)) {
-				$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
-			}
-			// Now $max and $maxphp and $maxphp2 are in Kb
-			$maxmin = $max;
-			$maxphptoshow = $maxphptoshowparam = '';
-			if ($maxphp > 0) {
-				$maxmin = min($max, $maxphp);
-				$maxphptoshow = $maxphp;
-				$maxphptoshowparam = 'upload_max_filesize';
-			}
-			if ($maxphp2 > 0) {
-				$maxmin = min($max, $maxphp2);
-				if ($maxphp2 < $maxphp) {
-					$maxphptoshow = $maxphp2;
-					$maxphptoshowparam = 'post_max_size';
-				}
-			}
-
+			$maxfilesizearray = getMaxFileSizeArray();
+			$max = $maxfilesizearray['max'];
+			$maxmin = $maxfilesizearray['maxmin'];
+			$maxphptoshow = $maxfilesizearray['maxphptoshow'];
+			$maxphptoshowparam = $maxfilesizearray['maxphptoshowparam'];
 			if ($maxmin > 0) {
-				// MAX_FILE_SIZE doit précéder le champ input de type file
-				$out .= '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
+				$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 			}
-
 			$out .= '<input class="flat minwidth400 maxwidth200onsmartphone" type="file"';
-			//$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $conf->browser->layout != 'classic') ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= ((!empty($conf->global->MAIN_DISABLE_MULTIPLE_FILEUPLOAD) || $disablemulti) ? ' name="userfile"' : ' name="userfile[]" multiple');
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
 			$out .= (!empty($accept) ? ' accept="'.$accept.'"' : ' accept=""');
@@ -1162,12 +1113,13 @@ class FormFile
 	 *  @param   string $sortfield          Sort field ('name', 'size', 'position', ...)
 	 *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
-	 *  @param	 int	$addfilterfields	Add line with filters
+	 *  @param	 int	$addfilterfields	Add the line with filters
 	 *  @param	 int	$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
+	 *  @param	 string	$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
-	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
+	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager, $form;
@@ -1272,7 +1224,7 @@ class FormFile
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
 			}
 
-			print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min"'.($moreattrondiv ? ' '.$moreattrondiv : '').'>';
 			print '<table id="tablelines" class="centpercent liste noborder nobottom">'."\n";
 
 			if (!empty($addfilterfields)) {
@@ -1330,7 +1282,7 @@ class FormFile
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
 						&& !preg_match('/\.meta$/i', $file['name'])) {
-					if ($filearray[$key]['rowid'] > 0) {
+					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
 					$filepath = $relativepath.$file['name'];
@@ -1339,8 +1291,9 @@ class FormFile
 					$nboflines++;
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
-					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid'] > 0 ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
+					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+
 
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
@@ -1468,7 +1421,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
 						if ($useinecm == 1 || $useinecm == 5) {	// ECM manual tree only
 							// $section is inside $param
-							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
+							$newparam = preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}

@@ -96,7 +96,6 @@ UserAccountancyCode=Código de contabilidade do usuário
 UserLogoff=Usuário desconetado
 UserLogged=Usuário Conectado
 DateOfEmployment=Data de emprego
-DateEmploymentstart=Data de Início do Emprego
 DateEmploymentEnd=Data de término do emprego
 CantDisableYourself=Você não pode desativar seu próprio registro de usuário
 ForceUserExpenseValidator=Forçar validação do relatório de despesas

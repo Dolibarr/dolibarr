@@ -678,20 +678,28 @@ $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
-// Count total nb of records
+// Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -700,6 +708,7 @@ if (!$resql) {
 }
 
 $num = $db->num_rows($resql);
+
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -860,8 +869,8 @@ if (GETPOST('delsoc')) {
 
 // List of mass actions available
 $arrayofmassactions = array(
-'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->creer) {
@@ -999,12 +1008,8 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-} else {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, 'left'); // This also change content of $arrayfields
-}
-	// Show the massaction checkboxes only when this page is not opend from the Extended POS
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+// Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -1672,7 +1677,8 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '<div class="inline-block">';
+		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 			$titlealt = 'default';

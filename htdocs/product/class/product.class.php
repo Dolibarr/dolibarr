@@ -2303,6 +2303,7 @@ class Product extends CommonObject
 		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
 		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity instead of field 'pmp' into llx_product.
 		$separatedStock = false;		// Set to true will count stock from subtable llx_product_stock. It is slower than using denormalized field 'stock', but it is required when using multientity and shared warehouses.
+		$visibleWarehousesEntities = $conf->entity;
 		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
 			if (!empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
 				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . $this->db->prefix() . "product_perentity WHERE fk_product = ".((int) $id)." AND entity = ".(int) $conf->entity);
@@ -2312,7 +2313,6 @@ class Product extends CommonObject
 			}
 			global $mc;
 			$separatedStock = true;
-			$visibleWarehousesEntities = $conf->entity;
 			if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
 				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 			}
@@ -2746,7 +2746,7 @@ class Product extends CommonObject
 	public function load_stats_bom($socid = 0)
 	{
 		// phpcs:enable
-		global $user, $hookmanager;
+		global $user, $hookmanager, $action;
 
 		$error = 0;
 
@@ -2815,7 +2815,7 @@ class Product extends CommonObject
 	public function load_stats_propale($socid = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT p.fk_soc) as nb_customers, COUNT(DISTINCT p.rowid) as nb,";
 		$sql .= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
@@ -2946,7 +2946,7 @@ class Product extends CommonObject
 	public function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 		$sql .= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
@@ -3106,7 +3106,7 @@ class Product extends CommonObject
 	public function load_stats_sending($socid = 0, $filtrestatut = '', $forVirtualStock = 0, $filterShipmentStatus = '')
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT e.fk_soc) as nb_customers, COUNT(DISTINCT e.rowid) as nb,";
 		$sql .= " COUNT(ed.rowid) as nb_rows, SUM(ed.qty) as qty";
@@ -3248,7 +3248,7 @@ class Product extends CommonObject
 	public function load_stats_inproduction($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT m.fk_soc) as nb_customers, COUNT(DISTINCT m.rowid) as nb,";
 		$sql .= " COUNT(mp.rowid) as nb_rows, SUM(mp.qty) as qty, role";
@@ -3341,7 +3341,7 @@ class Product extends CommonObject
 	public function load_stats_contrat($socid = 0)
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 		$sql .= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
@@ -3415,7 +3415,7 @@ class Product extends CommonObject
 	public function load_stats_facture($socid = 0)
 	{
 		// phpcs:enable
-		global $db, $conf, $user, $hookmanager;
+		global $db, $conf, $user, $hookmanager, $action;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
 		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(".$this->db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
@@ -3470,6 +3470,81 @@ class Product extends CommonObject
 			$reshook = $hookmanager->executeHooks('loadStatsCustomerInvoice', $parameters, $this, $action);
 			if ($reshook > 0) {
 				$this->stats_facture = $hookmanager->resArray['stats_facture'];
+			}
+
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Charge tableau des stats facture recurrentes pour le produit/service
+	 *
+	 * @param  int $socid Id societe
+	 * @return int                     Array of stats in $this->stats_facture, <0 if ko or >0 if ok
+	 */
+	public function load_stats_facturerec($socid = 0)
+	{
+		// phpcs:enable
+		global $db, $conf, $user, $hookmanager;
+
+		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM('fd.qty') as qty";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as fd";
+		$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
+		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= " WHERE f.rowid = fd.fk_facture";
+		$sql .= " AND f.fk_soc = s.rowid";
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
+		$sql .= " AND fd.fk_product = ".((int) $this->id);
+		if (empty($user->rights->societe->client->voir) && !$socid) {
+			$sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+		}
+		//$sql.= " AND f.fk_statut != 0";
+		if ($socid > 0) {
+			$sql .= " AND f.fk_soc = ".((int) $socid);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			$this->stats_facturerec['customers'] = $obj->nb_customers;
+			$this->stats_facturerec['nb'] = $obj->nb;
+			$this->stats_facturerec['rows'] = $obj->nb_rows;
+			$this->stats_facturerec['qty'] = $obj->qty ? $obj->qty : 0;
+
+			// if it's a virtual product, maybe it is in invoice by extension
+			if (!empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+				$TFather = $this->getFather();
+				if (is_array($TFather) && !empty($TFather)) {
+					foreach ($TFather as &$fatherData) {
+						$pFather = new Product($this->db);
+						$pFather->id = $fatherData['id'];
+						$qtyCoef = $fatherData['qty'];
+
+						if ($fatherData['incdec']) {
+							$pFather->load_stats_facture($socid);
+
+							$this->stats_facturerec['customers'] += $pFather->stats_facturerec['customers'];
+							$this->stats_facturerec['nb'] += $pFather->stats_facturerec['nb'];
+							$this->stats_facturerec['rows'] += $pFather->stats_facturerec['rows'];
+							$this->stats_facturerec['qty'] += $pFather->stats_facturerec['qty'] * $qtyCoef;
+						}
+					}
+				}
+			}
+
+			$parameters = array('socid' => $socid);
+			$reshook = $hookmanager->executeHooks('loadStatsCustomerInvoiceRec', $parameters, $this, $action);
+			if ($reshook > 0) {
+				$this->stats_facturerec = $hookmanager->resArray['stats_facturerec'];
 			}
 
 			return 1;
@@ -4896,14 +4971,14 @@ class Product extends CommonObject
 		}
 
 		if (!empty($conf->accounting->enabled)) {
-			if ($this->status) {
+			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				$label .= '<br>';
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
 			}
-			if ($this->status_buy) {
+			if ($this->status_buy && isset($this->accountancy_code_buy)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				if (empty($this->status)) {
 					$label .= '<br>';

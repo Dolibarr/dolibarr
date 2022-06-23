@@ -699,6 +699,8 @@ class Lettering extends BookKeeping
 			return $grouped_payments;
 		}
 
+		$save_payment_by_element = null;
+		$save_element_by_payment = null;
 		if ($element_id == 0) {
 			// Save list when is the begin of recursive function
 			$save_payment_by_element = $payment_by_element;

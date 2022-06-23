@@ -31,7 +31,7 @@
 // $parameters, $object, $action must be defined for the hook.
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
-// $uploaddir may be defined (example to $conf->projet->dir_output."/";)
+// $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
 
@@ -455,7 +455,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (!empty($conf->projet->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
+					if (!empty($conf->project->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
 						$objecttmp->fetch_projet();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -1468,6 +1468,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 						$trackid = 'leav'.$objecttmp->id;
 
+						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
 						// Sending email

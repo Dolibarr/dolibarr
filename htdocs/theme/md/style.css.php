@@ -394,7 +394,7 @@ textarea:focus {
 	/* v6 box-shadow: 0 0 4px #8091BF; */
 	border: 1px solid #aaa !important;
 }
-input:focus, textarea:focus, button:focus, select:focus {
+input:focus, textarea:focus, button:focus:not(.button_search_x):not(.button_search):not(.button_removefilter), select:focus {
 	border-bottom: 1px solid #666;
 }
 
@@ -403,7 +403,8 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 120px;
@@ -487,7 +488,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 textarea {
 	border-radius: 0;
@@ -529,6 +530,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	background-color: #eee;
 	white-space: normal;
 	color: #888 !important;
+	height: 60px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -1162,6 +1164,7 @@ div.divsearchfield {
 	white-space: nowrap;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -1662,7 +1665,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 250px; }
+.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -1966,6 +1969,9 @@ td.showDragHandle {
 	padding-<?php print $left; ?>: 229px;
 	padding-top: 16px;
 <?php } ?>
+}
+.bodyforlist #id-right {
+	padding-bottom: 4px;
 }
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
@@ -2393,6 +2399,11 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
 	object-fit: contain;
+}
+
+img.photokanban, div.photokanban {
+	padding: 0;
+	border: none;
 }
 
 div.photoref .fa, div.photoref .fas, div.photoref .far {
@@ -3566,7 +3577,7 @@ td.border, div.tagtable div div.border {
 	left: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -3579,7 +3590,7 @@ td.border, div.tagtable div div.border {
 	right: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -4106,7 +4117,8 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	border-bottom: 1px solid var(--colortopbordertitle1);
+	/* border-bottom: 1px solid var(--colortopbordertitle1); */
+	border-bottom: none;
 }
 
 div.liste_titre {
@@ -4160,7 +4172,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4185,7 +4197,7 @@ div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
-div .tdtop {
+div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	padding-top: 8px !important;
 	padding-bottom: 0px !important;
@@ -4378,6 +4390,9 @@ span.dashboardlineko {
 }
 a.valignmiddle.dashboardlineindicator {
 	line-height: 30px;
+}
+.height30 {
+	height: 30px !important;
 }
 
 tr.box_titre {
@@ -4656,9 +4671,8 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
-
 
 
 /*
@@ -4892,9 +4906,10 @@ table.dp {
 	vertical-align:middle;
 	cursor: pointer;
 }
-.datenowlink
-{
+.datenowlink {
 	color: rgb(<?php print $colortextlink; ?>);
+	font-size: 0.8em;
+	opacity: 0.7;
 }
 
 .categtextwhite, .treeview .categtextwhite.hover {
@@ -4953,7 +4968,7 @@ span[phptag] {
 	color: #000 !important;
 	text-shadow: none;
 }
-.bordertransp {
+.bordertransp:not(.nobordertransp) {
 	background-color: transparent;
 	background-image: none;
 	border: 1px solid #aaa;
@@ -5172,10 +5187,11 @@ td.gtaskname {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
+.treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 
@@ -6101,6 +6117,17 @@ span.select2.select2-container.select2-container--default {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
 }
 
 
@@ -7273,6 +7300,14 @@ div.clipboardCPValue.hidewithsize {
 	div.divButAction {
 		margin-bottom: 0.5em;
 	}
+	
+	div#card-errors {
+		max-width: unset;
+	}
+	
+	#dolpaymenttable {
+		padding: 5px;
+	}
 }
 
 
@@ -7311,3 +7346,4 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+

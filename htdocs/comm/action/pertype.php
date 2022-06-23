@@ -45,6 +45,8 @@ if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 
 $action = GETPOST('action', 'aZ09');
 
+$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
+
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
 $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
@@ -110,10 +112,7 @@ if (GETPOST('search_actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
-}
-if ($actioncode == '' && empty($actioncodearray)) {
-	$actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
@@ -145,7 +144,7 @@ $begin_d = 1;
 $end_d = 53;
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
-	$status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$status = ((empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
@@ -421,7 +420,7 @@ $massactionbutton = '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 

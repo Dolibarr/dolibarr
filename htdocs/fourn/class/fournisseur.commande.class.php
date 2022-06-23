@@ -218,7 +218,7 @@ class CommandeFournisseur extends CommonOrder
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
 		'ref_supplier' =>array('type'=>'varchar(255)', 'label'=>'RefOrderSupplierShort', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'searchall'=>1),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>45),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'date_approve' =>array('type'=>'datetime', 'label'=>'DateApprove', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
 		'date_approve2' =>array('type'=>'datetime', 'label'=>'DateApprove2', 'enabled'=>1, 'visible'=>3, 'position'=>64),
@@ -243,7 +243,7 @@ class CommandeFournisseur extends CommonOrder
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>3, 'position'=>175),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>3, 'position'=>180),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>0, 'position'=>190),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>1, 'visible'=>3, 'position'=>200),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>3, 'position'=>200),
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>1, 'visible'=>3, 'position'=>205),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLocation', 'enabled'=>1, 'visible'=>3, 'position'=>210),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>0, 'position'=>215),
@@ -253,7 +253,7 @@ class CommandeFournisseur extends CommonOrder
 		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'!empty($conf->multicurrency->enabled)', 'visible'=>-1, 'position'=>235),
 		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'!empty($conf->multicurrency->enabled)', 'visible'=>-1, 'position'=>240),
 		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>46),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>1, 'notnull'=>1, 'position'=>46),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>1000, 'index'=>1),
 		'tms'=>array('type'=>'datetime', 'label'=>"DateModificationShort", 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>700),
@@ -3750,9 +3750,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

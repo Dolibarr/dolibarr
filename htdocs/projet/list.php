@@ -67,7 +67,7 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
 	$permissiontoadd = $user->rights->projet->creer;
-	$uploaddir = $conf->projet->dir_output;
+	$uploaddir = $conf->project->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
@@ -898,7 +898,7 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -914,7 +914,7 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -936,7 +936,7 @@ if (!empty($arrayfields['c.assigned']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1, 0);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100 nowrapoption', 1, 0);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {

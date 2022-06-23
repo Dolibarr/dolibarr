@@ -296,8 +296,8 @@ class Propal extends CommonObject
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>40),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>23),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>24),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>23),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>24),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'datep' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
@@ -317,7 +317,7 @@ class Propal extends CommonObject
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
-		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>161),
@@ -327,7 +327,7 @@ class Propal extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>180),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>1, 'visible'=>-1, 'position'=>191),
+		'fk_warehouse' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Fk warehouse', 'enabled'=>'$conf->stock->enabled', 'visible'=>-1, 'position'=>191),
 		'fk_availability' =>array('type'=>'integer', 'label'=>'Availability', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
 		'fk_delivery_address' =>array('type'=>'integer', 'label'=>'DeliveryAddress', 'enabled'=>1, 'visible'=>0, 'position'=>200), // deprecated
 		'fk_input_reason' =>array('type'=>'integer', 'label'=>'InputReason', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
@@ -490,7 +490,6 @@ class Propal extends CommonObject
 			$line->subprice = -$remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefined
 			$line->qty = 1;
-			$line->remise = 0;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
@@ -736,7 +735,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -936,7 +934,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -1370,7 +1367,7 @@ class Propal extends CommonObject
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$object->fk_delivery_address = '';
 
-				/*if (!empty($conf->projet->enabled))
+				/*if (!empty($conf->project->enabled))
 				{
 					$project = new Project($db);
 					if ($this->fk_project > 0 && $project->fetch($this->fk_project)) {
@@ -1520,6 +1517,7 @@ class Propal extends CommonObject
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
+		$sql .= ", p.date_signature as dates";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
@@ -1603,6 +1601,7 @@ class Propal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
+				$this->date_signature = $this->db->jdate($obj->dates); // Signature date
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
@@ -1900,14 +1899,15 @@ class Propal extends CommonObject
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$i] = $line;
-				//dol_syslog("1 ".$line->fk_product);
-				//print "xx $i ".$this->lines[$i]->fk_product;
+
 				$i++;
 			}
 
@@ -3993,6 +3993,7 @@ class PropaleLigne extends CommonObjectLine
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+
 	/**
 	 * 	Class line Contructor
 	 *
@@ -4131,9 +4132,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent) || !is_numeric($this->remise_percent)) {
 			$this->remise_percent = 0;
@@ -4363,9 +4361,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->price)) {
 			$this->price = 0; // TODO A virer
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0; // TODO A virer
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

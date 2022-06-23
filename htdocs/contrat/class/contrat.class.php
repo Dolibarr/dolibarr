@@ -232,8 +232,8 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
@@ -871,9 +871,11 @@ class Contrat extends CommonObject
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$pos] = $line;
@@ -1056,7 +1058,7 @@ class Contrat extends CommonObject
 						if (count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$originforcontact = 'commande';
-								$originidforcontact = $value->id;
+								$originidforcontact = $value;
 								break; // We take first one
 							}
 						}
@@ -2124,7 +2126,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Return list of other contracts for same company than current contract
+	 *  Return list of other contracts for the same company than current contract
 	 *
 	 *	@param	string		$option					'all' or 'others'
 	 *	@param	array		$status					sort contracts having these status
@@ -2136,7 +2138,7 @@ class Contrat extends CommonObject
 	{
 		$tab = array();
 
-		$sql = "SELECT c.rowid, c.ref";
+		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		if (!empty($product_categories)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
@@ -2157,12 +2159,12 @@ class Contrat extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$contrat = new Contrat($this->db);
 				$contrat->fetch($obj->rowid);
-				$tab[] = $contrat;
+				$tab[$contrat->id] = $contrat;
 				$i++;
 			}
 			return $tab;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2688,6 +2690,7 @@ class ContratLigne extends CommonObjectLine
 	public $date_cloture; // date end real
 
 	public $tva_tx;
+	public $vat_src_code;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type; // Local tax 1 type
@@ -2743,6 +2746,7 @@ class ContratLigne extends CommonObjectLine
 	public $fk_user_cloture;
 
 	public $commentaire;
+
 
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
@@ -2988,7 +2992,6 @@ class ContratLigne extends CommonObjectLine
 				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
-				$this->remise = $obj->remise;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
 				$this->price_ht = $obj->price_ht;
@@ -3046,7 +3049,6 @@ class ContratLigne extends CommonObjectLine
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);
 		$this->remise_percent = trim($this->remise_percent);
-		$this->remise = trim($this->remise);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);

@@ -752,7 +752,7 @@ class Expedition extends CommonObject
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = dol_clone($this, 1);
+					//$mouvS->origin = dol_clone($this, 1);
 					$mouvS->setOrigin($this->element, $this->id);
 
 					if (empty($obj->edbrowid)) {
@@ -1244,10 +1244,11 @@ class Expedition extends CommonObject
 					$mouvS->origin = null;
 					// get lot/serial
 					$lotArray = null;
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 						if (!is_array($lotArray)) {
-							$error++; $this->errors[] = "Error ".$this->db->lasterror();
+							$error++;
+							$this->errors[] = "Error ".$this->db->lasterror();
 						}
 					}
 
@@ -1257,7 +1258,8 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0) {
-							$error++; $this->errors = $this->errors + $mouvS->errors;
+							$error++;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					} else {
@@ -1266,7 +1268,8 @@ class Expedition extends CommonObject
 						foreach ($lotArray as $lot) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
-								$error++; $this->errors = $this->errors + $mouvS->errors;
+								$error++;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
 								break;
 							}
 						}
@@ -1441,7 +1444,8 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0) {
-							$error++; $this->errors = $this->errors + $mouvS->errors;
+							$error++;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 					} else {
@@ -1450,7 +1454,8 @@ class Expedition extends CommonObject
 						foreach ($lotArray as $lot) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
-								$error++; $this->errors = $this->errors + $mouvS->errors;
+								$error++;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
 								break;
 							}
 						}
@@ -2069,69 +2074,6 @@ class Expedition extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Update/create delivery method.
-	 *
-	 *  @param	string      $id     id method to activate
-	 *
-	 *  @return void
-	 */
-	public function update_delivery_method($id = '')
-	{
-		// phpcs:enable
-		if ($id == '') {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-			$sql .= " VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
-			$resql = $this->db->query($sql);
-		} else {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-			$sql .= " code='".$this->db->escape($this->update['code'])."'";
-			$sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
-			$sql .= ",description='".$this->db->escape($this->update['description'])."'";
-			$sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-			$sql .= " WHERE rowid=".((int) $id);
-			$resql = $this->db->query($sql);
-		}
-		if ($resql < 0) {
-			dol_print_error($this->db, '');
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Activate delivery method.
-	 *
-	 *  @param      int      $id     id method to activate
-	 *  @return void
-	 */
-	public function activ_delivery_method($id)
-	{
-		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
-		$sql .= " WHERE rowid = ".((int) $id);
-
-		$resql = $this->db->query($sql);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  DesActivate delivery method.
-	 *
-	 *  @param      int      $id     id method to desactivate
-	 *
-	 *  @return void
-	 */
-	public function disable_delivery_method($id)
-	{
-		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
-		$sql .= " WHERE rowid= ".((int) $id);
-
-		$resql = $this->db->query($sql);
-	}
-
-
 	/**
 	 * Forge an set tracking url
 	 *
@@ -2258,7 +2200,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						} else {
 							// line with batch detail
@@ -2268,7 +2211,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -2432,7 +2376,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						} else {
 							// line with batch detail
@@ -2442,7 +2387,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -2835,7 +2781,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$this->db->begin();
 
 		// delete batch expedition line
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
 			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 

@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (!empty($conf->project->enabled) && $user->hasRight('project', 'lire')) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -92,7 +92,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -133,7 +133,7 @@ function contact_prepare_head(Contact $object)
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");
 	}
@@ -170,11 +170,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 

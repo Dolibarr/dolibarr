@@ -53,6 +53,11 @@ class pdf_standard extends ModelePDFMovement
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -70,44 +75,23 @@ class pdf_standard extends ModelePDFMovement
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * @var Societe Issuer
+	 * Issuer
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
+
+
+	public $wref;
+	public $posxidref;
+	public $posxdatemouv;
+	public $posxdesc;
+	public $posxlabel;
+	public $posxtva;
+	public $posxqty;
+	public $posxup;
+	public $posxunit;
+	public $posxdiscount;
+	public $postotalht;
 
 
 	/**
@@ -126,7 +110,7 @@ class pdf_standard extends ModelePDFMovement
 		$this->name = "stdmouvement";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Page size for A4 format
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -144,7 +128,7 @@ class pdf_standard extends ModelePDFMovement
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
+		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 
@@ -174,11 +158,6 @@ class pdf_standard extends ModelePDFMovement
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 	}
 
 
@@ -194,10 +173,12 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param		int				$hideref			Do not show ref
 	 *	@return		int         						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+
+		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -207,7 +188,7 @@ class pdf_standard extends ModelePDFMovement
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load traductions files required by page
+		// Load traductions files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
 		/**
@@ -395,19 +376,6 @@ class pdf_standard extends ModelePDFMovement
 				}
 
 				$num = $this->db->num_rows($resql);
-
-				$arrayofselected = is_array($toselect) ? $toselect : array();
-
-				$i = 0;
-				$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-				if ($msid) {
-					$texte = $langs->trans('StockMovementForId', $msid);
-				} else {
-					$texte = $langs->trans("ListOfStockMovements");
-					if ($id) {
-						$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
-					}
-				}
 			}
 
 			// Definition of $dir and $file
@@ -492,7 +460,7 @@ class pdf_standard extends ModelePDFMovement
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
@@ -504,7 +472,8 @@ class pdf_standard extends ModelePDFMovement
 
 				// Show list of product of the MouvementStock
 
-				$nexY += 5;
+				$nexY = $tab_top - 1;
+
 				$nexY = $pdf->GetY();
 				$nexY += 10;
 
@@ -705,6 +674,9 @@ class pdf_standard extends ModelePDFMovement
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
 							}
 						}
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

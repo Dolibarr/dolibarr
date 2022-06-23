@@ -89,7 +89,6 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -186,7 +185,13 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$texte .= '</td>';
 
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';

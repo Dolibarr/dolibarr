@@ -62,7 +62,7 @@ class box_activity extends ModeleBoxes
 		// FIXME: Pb into some status
 		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((!empty($conf->facture->enabled) && $user->rights->facture->lire)
+		$this->hidden = !((isModEnabled('facture') && $user->rights->facture->lire)
 			|| (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			|| (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			);
@@ -278,7 +278,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 
@@ -329,7 +329,7 @@ class box_activity extends ModeleBoxes
 			if (!empty($data)) {
 				$j = 0;
 				while ($j < count($data)) {
-					$billurl = "search_status=2&amp;paye=1&amp;year=".$data[$j]->annee;
+					$billurl = "search_status=2&amp;paye=1";
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="left" width="16"',
 						'tooltip' => $langs->trans('Bills').'&nbsp;'.$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
@@ -339,7 +339,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
-						'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0)." ".$data[$j]->annee,
+						'text' => $langs->trans("Bills")."&nbsp;".$facturestatic->LibStatut(1, $data[$j]->fk_statut, 0),
 					);
 
 					$this->info_box_contents[$line][2] = array(

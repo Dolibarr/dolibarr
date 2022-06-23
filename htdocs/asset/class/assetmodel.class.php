@@ -105,7 +105,6 @@ class AssetModel extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1'),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2', 'validate'=>'1',),
 		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
-		'fk_pays' =>array('type'=>'integer:Ccountry:core/class/ccountry.class.php', 'label'=>'Country', 'enabled'=>1, 'visible'=>1, 'position'=>50),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>300, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>301, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -129,6 +128,7 @@ class AssetModel extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $asset_depreciation_options;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent

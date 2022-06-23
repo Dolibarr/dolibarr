@@ -358,6 +358,10 @@ if ($nolinesbefore) {
 		if (!empty($conf->service->enabled) && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
+			if (!empty($conf->global->INVOICE_REC_DATE_TO_YES)) {
+				$line->date_start_fill = 1;
+				$line->date_end_fill = 1;
+			}
 			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
 			echo ' - ';
 			echo $langs->trans('AutoFillDateTo').' ';
@@ -948,11 +952,14 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			var discount = parseFloat($('option:selected', this).attr('data-discount'));
 			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
 
-			console.log("We find supplier price :"+up+" qty: "+qty+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
+			/* var tva_tx = $('option:selected', this).data('tvatx'); */
+
+			console.log("We find supplier price :"+up+" qty: "+qty+" tva_tx="+tva_tx+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
 
 			jQuery("#price_ht").val(up);
-			if (jQuery("#qty").val() < qty)
-			{
+			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
+
+			if (jQuery("#qty").val() < qty)	{
 				jQuery("#qty").val(qty);
 			}
 			if (jQuery("#remise_percent").val() < discount)

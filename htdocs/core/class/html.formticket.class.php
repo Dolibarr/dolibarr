@@ -47,6 +47,9 @@ class FormTicket
 	 */
 	public $db;
 
+	/**
+	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
 	public $track_id;
 
 	/**
@@ -73,6 +76,7 @@ class FormTicket
 	public $ispublic; // To show information or not into public form
 
 	public $withtitletopic;
+	public $withtopicreadonly;
 	public $withcompany; // affiche liste déroulante company
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -83,6 +87,11 @@ class FormTicket
 	public $withref; // Show ref field
 
 	public $withcancel;
+
+	public $type_code;
+	public $category_code;
+	public $severity_code;
+
 
 	/**
 	 *
@@ -113,7 +122,7 @@ class FormTicket
 		$this->withcompany = $conf->societe->enabled ? 1 : 0;
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withthreadid=0;
+		//$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -280,6 +289,7 @@ class FormTicket
 		}
 
 		// If ticket created from another object
+		$subelement = '';
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -331,15 +341,15 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 				print '</td></tr>';
 			} else {
-				if ($this->withthreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
+				if ($this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
 			}
 		}
 
-		if ($conf->knowledgemanagement->enabled) {
+		if (!empty($conf->knowledgemanagement->enabled)) {
 			// KM Articles
 			print '<tr id="KWwithajax"></tr>';
 			print '<!-- Script to manage change of ticket group -->
@@ -408,7 +418,7 @@ class FormTicket
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
-		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_8, '90%');
+		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_8, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -426,7 +436,7 @@ class FormTicket
 		}
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
 
@@ -481,6 +491,11 @@ class FormTicket
 				$out .= $langs->trans("NoAttachedFiles").'<br>';
 			}
 			if ($this->withfile == 2) { // Can add other files
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
 				$out .= '<input type="submit" class="button smallpaddingimp reposition" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
@@ -605,7 +620,7 @@ class FormTicket
 		}
 
 		if ($subelement != 'project') {
-			if (!empty($conf->projet->enabled) && !$this->ispublic) {
+			if (!empty($conf->project->enabled) && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -628,11 +643,11 @@ class FormTicket
 
 		print '<br>';
 
-		print $form->buttonsSaveCancel((($this->withthreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+		print $form->buttonsSaveCancel((($this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
 		/*
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
+		print '<input type="submit" class="button" name="add" value="'.$langs->trans(($this->withreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1204,7 +1219,7 @@ class FormTicket
 			dol_delete_dir_recursive($upload_dir);
 		}
 
-		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+		$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 		unset($_SESSION["listofpaths".$keytoavoidconflict]);
 		unset($_SESSION["listofnames".$keytoavoidconflict]);
 		unset($_SESSION["listofmimes".$keytoavoidconflict]);
@@ -1262,12 +1277,12 @@ class FormTicket
 		$listofpaths = array();
 		$listofnames = array();
 		$listofmimes = array();
-		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+		$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
-					$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
 			}
 		}
@@ -1365,6 +1380,9 @@ class FormTicket
 
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
+			$ticketstat = new Ticket($this->db);
+			$res = $ticketstat->fetch('', '', $this->track_id);
+
 			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -1395,17 +1413,17 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
-			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch('', '', $this->track_id);
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
 				$contacts = $ticketstat->getInfosTicketInternalContact();
 				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+
+				$sendto = array();
 
 				// Build array to display recipient list
 				if (is_array($contacts) && count($contacts) > 0) {
@@ -1416,7 +1434,7 @@ class FormTicket
 					}
 				}
 
-				if ($ticketstat->origin_email && !in_array($this->dao->origin_email, $sendto)) {
+				if ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
 					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 
@@ -1457,7 +1475,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
@@ -1494,7 +1512,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1506,7 +1524,7 @@ class FormTicket
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 			$doleditor->Create();
 			print '</td></tr>';
 		}

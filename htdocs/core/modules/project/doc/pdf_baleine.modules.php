@@ -146,7 +146,6 @@ class pdf_baleine extends ModelePDFProjects
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -196,11 +195,11 @@ class pdf_baleine extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->project->dir_output;
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -470,6 +469,9 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
 						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

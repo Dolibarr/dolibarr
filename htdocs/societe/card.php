@@ -84,8 +84,8 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm	= GETPOST('confirm', 'alpha');
 
@@ -689,6 +689,27 @@ if (empty($reshook)) {
 				if ($result >= 0 && !$error) {
 					$db->commit();
 
+					if ($backtopagejsfields) {
+						llxHeader('', '', '');
+
+						$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+						$dol_openinpopup = $tmpbacktopagejsfields[0];
+
+						$retstring = '<script>';
+						$retstring .= 'jQuery(document).ready(function() {
+												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
+												console.log(\'id = '.$object->id.'\');
+												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->id.'\');
+												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->name.'\');
+												window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
+				 							});';
+						$retstring .= '</script>';
+						print $retstring;
+
+						llxFooter();
+						exit;
+					}
+
 					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
@@ -704,14 +725,8 @@ if (empty($reshook)) {
 							$url = DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 						}
 
-						// TODO @LDR
-						if ($dol_openinpopup && $backtopagejsfields) {
-							print 'TODO Set js var of parent with id, then close popup.';
-							exit;
-						} else {
-							header("Location: ".$url);
-							exit;
-						}
+						header("Location: ".$url);
+						exit;
 					}
 				} else {
 					$db->rollback();
@@ -939,6 +954,7 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error('', $object->error);
+		exit(-1);
 	}
 }
 
@@ -1139,6 +1155,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOST('forme_juridique_code');
+
+		// We set multicurrency_code if enabled
+		if (!empty($conf->multicurrency->enabled)) {
+			$object->multicurrency_code = GETPOST('multicurrency_code') ? GETPOST('multicurrency_code') : $conf->currency;
+		}
 		/* Show create form */
 
 		$linkback = "";
@@ -1293,8 +1314,102 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 		}
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
+
 		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		/* Disabled. Must be implenteted by keeping the input text but calling ajax on a keydown of the input and output
+		   data of duplicate into a div under the input. We need to keep the widgetForTranslation also for some countries.
+		 */
+		/*
+		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+			$("#name").select2({
+				ajax: {
+				  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
+				  dataType: "json",
+				  delay: 250,
+				  data: function (params) {
+						return {
+							newcompany: params.term // search term
+						};
+				  },
+				  processResults: function (data, params) {
+					  return {
+						results: data
+					  };
+				  },
+				  cache: true
+				},
+
+				placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: select2arrayoflanguage,
+				containerCssClass: ":all:",
+				selectionCssClass: ":all:",
+				tags: true,
+				templateResult: formatCustomer,
+				templateSelection: formatCustomerSelection
+			});
+
+			function formatCustomer (Customer) {
+				if(Customer.label === undefined) {
+					return Customer.text;
+				}
+
+				if(Customer.logo !== null ) {
+					logo = \'<img src="\';
+					logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
+					logo += \'" /></div>\';
+				} else {
+					logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
+				}
+
+				var $container = $("<div class=\'select2-result-repository clearfix\'>" +
+					 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
+					  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
+						"<div class=\'select2-result-repository__title\'></div>" +
+						"<div class=\'select2-result-repository__name_alias\'></div>" +
+						"<div class=\'select2-result-repository__code_client\'></div>" +
+						"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
+						"<div class=\'select2-result-repository__companies_info\'>" +
+						  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
+						  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
+						  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
+						  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
+						"</div>" +
+					  "</div>" +
+					"</div>"
+				);
+
+				$container.find(".select2-result-repository__title").text(Customer.label);
+				$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
+				$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
+				$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
+				$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
+				$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
+				$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
+				$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
+				$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
+				$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
+				$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
+				$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
+
+				return $container;
+			}
+
+			function formatCustomerSelection (selection) {
+				return selection.label || selection.text;
+			}
+		});
+		</script>
+		';
+		*/
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
@@ -1608,8 +1723,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Capital
 		print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 		print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
-		print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+		} else {
+			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+		}
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
@@ -1657,7 +1775,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
 			print '</td></tr>';
 		}
 
@@ -1864,6 +1982,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$tmparray = getCountry($object->country_id, 'all');
 					$object->country_code = $tmparray['code'];
 					$object->country = $tmparray['label'];
+				}
+
+				// We set multicurrency_code if enabled
+				if (!empty($conf->multicurrency->enabled)) {
+					$object->multicurrency_code = GETPOST('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code;
 				}
 			}
 
@@ -2133,19 +2256,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
-			print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+			print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-			print '<td>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '<td>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail / Web
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-			print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" name="email" id="email" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL) : $object->email).'"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="email" id="email" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL) : $object->email).'"></td></tr>';
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
+			// Social network
 			if (!empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
@@ -2153,9 +2277,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 						print '<td colspan="3">';
 						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].'"></span>';
+							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.(empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth500 widthcentpercentminusx" maxlength="80" value="'.(empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key]).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
@@ -2298,7 +2422,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
 			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+			if (!empty($conf->multicurrency->enabled)) {
+				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+			} else {
+				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+			}
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2353,7 +2481,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
 				print '</td></tr>';
 			}
 
@@ -2386,7 +2514,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 				}
 				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-				print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+				print '<tr><td>';
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
+				print '<input type="file" class="flat" name="photo" id="photoinput">';
+				print '</td></tr>';
 				print '</table>';
 			}
 			print '</td>';
@@ -2563,7 +2698,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
 				if ($object->$key) {
 					if ($object->id_prof_check($i, $object) > 0) {
-						print ' &nbsp; '.$object->id_prof_url($i, $object);
+						if (!empty($object->id_prof_url($i, $object))) {
+							print ' &nbsp; '.$object->id_prof_url($i, $object);
+						}
 					} else {
 						print ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
 					}
@@ -2776,7 +2913,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Capital
 		print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 		if ($object->capital) {
-			print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+			if (!empty($conf->multicurrency->enabled) && !empty($object->multicurrency_code)) {
+				print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
+			} else {
+				print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+			}
 		} else {
 			print '&nbsp;';
 		}
@@ -2989,7 +3130,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

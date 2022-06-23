@@ -126,7 +126,7 @@ function ticket_prepare_head($object)
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	}
 	$head[$h][1] = $langs->trans('Events');
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -304,9 +304,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	$sql = '';
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
+
 		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -567,7 +567,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
 
-	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
+	if (isModEnabled('agenda') || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';

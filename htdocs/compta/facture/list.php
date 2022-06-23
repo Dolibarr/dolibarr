@@ -141,7 +141,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-
 $option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
@@ -216,8 +215,8 @@ $arrayfields = array(
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>41),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>40),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>41),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
@@ -245,7 +244,7 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
+	'total_pa' => array('label' => ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
 	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
@@ -257,7 +256,7 @@ $arrayfields = array(
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
-if (getDolGlobalString("INVOICE_USE_SITUATION") && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+if (getDolGlobalString("INVOICE_USE_SITUATION") && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 	$arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0, 'position'=>86);
 }
 // Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
@@ -472,10 +471,10 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$totalpaye = $objecttmp->getSommePaiement();
+				$totalpaid = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
-				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
@@ -1092,7 +1091,7 @@ if ($resql) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
 	if (!empty($search_fac_rec_source_title)) {
-		$param .= '&$search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
+		$param .= '&search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 	}
 
 	// Add $param from extra fields
@@ -1112,7 +1111,7 @@ if ($resql) {
 	if (!empty($user->rights->facture->paiement)) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
-	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
+	if (!empty($conf->prelevement->enabled) && !empty($user->rights->prelevement->bons->creer)) {
 			$langs->load("withdrawals");
 			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}

@@ -533,11 +533,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
 				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -927,7 +927,7 @@ if ($ispaymentok) {
 			}
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -1051,8 +1051,10 @@ if ($ispaymentok) {
 				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
+				$totalpaid = $FinalPaymentAmt;
+
 				if ($currencyCodeType == $conf->currency) {
-					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
@@ -1078,7 +1080,9 @@ if ($ispaymentok) {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 
-						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->setPaid($don->id);
+						}
 					}
 				}
 

@@ -1174,3 +1174,6 @@ ConfirmAllocateCommercial=Az értékesítési képviselő megerősítésének ho
 ConfirmAllocateCommercialQuestion=Biztosan hozzá szeretné rendelni az %s kiválasztott rekordo(ka)t?
 CommercialsAffected=Az értékesítési képviselők érintettek
 CommercialAffected=Az értékesítési képviselő érintett
+YourMessage=Az üzeneted
+YourMessageHasBeenReceived=Üzenete megérkezett. A lehető leghamarabb válaszolunk vagy felvesszük Önnel a kapcsolatot.
+UrlToCheck=Az ellenőrizendő URL

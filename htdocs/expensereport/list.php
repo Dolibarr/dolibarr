@@ -580,14 +580,14 @@ if ($resql) {
 	if (!empty($arrayfields['d.date_valid']['checked'])) {
 		print '<td class="liste_titre" align="center">';
 		//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-		//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
+		//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
 		print '</td>';
 	}
 	// Date approve
 	if (!empty($arrayfields['d.date_approve']['checked'])) {
 		print '<td class="liste_titre" align="center">';
 		//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-		//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
+		//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
 		print '</td>';
 	}
 	// Amount with no tax

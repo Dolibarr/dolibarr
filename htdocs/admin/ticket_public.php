@@ -89,7 +89,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 		}
 	}
 
-	$topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'nohtml');
+	$topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'alphanohtml');
 	if (!empty($topic_interface)) {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
 	} else {
@@ -375,7 +375,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTextHomeLabelAdmin").'</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '<td class="center">';
@@ -387,7 +387,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTextHelpMessageLabelAdmin").'</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '<td class="center">';
@@ -408,7 +408,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 
 	print '<br><br>';
 
-	print_fiche_titre($langs->trans("Emails"));
+	print load_fiche_titre($langs->trans("Emails"));
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -434,7 +434,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '</tr>';

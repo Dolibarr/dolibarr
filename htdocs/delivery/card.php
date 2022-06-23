@@ -43,7 +43,7 @@ if (!empty($conf->expedition_bon->enabled)) {
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -328,7 +328,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			// Thirdparty
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if (0) {    // Do not change on shipment

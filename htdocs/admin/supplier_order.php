@@ -464,8 +464,7 @@ print "</td></tr>\n";
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
-if ($conf->banque->enabled)
-{
+if (isModEnabled('banque')) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
@@ -506,10 +505,10 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
@@ -521,7 +520,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
 print '<td></td>';
 print '<td class="center">';
-if ($conf->reception->enabled) {
+if (isModEnabled('reception')) {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
 } else {
 	if ($conf->use_javascript_ajax) {

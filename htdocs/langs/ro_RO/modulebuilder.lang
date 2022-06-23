@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Acest instrument trebuie folosit numai de utilizatori sau dezvoltatori experimentați. Oferă utilități pentru a construi sau edita propriul modul. Documentația pentru <a href="%s" target="_blank" rel="noopener noreferrer">dezvoltarea manuală alternativă se găseşte aici</a>.
-EnterNameOfModuleDesc=Introduceți numele modulului/aplicației care va fi creat, fără spații. Utilizați majusculă pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Introduceți numele obiectului de creat fără spații. Utilizează majusculă pentru a separa cuvintele (De exemplu: MyObject, Student, Profesor ...). Se va genera și fișierul clasă CRUD, dar și fișierul API, paginile de listare/adăugare/editare/ștergere ale obiectului și fișierele SQL.
+EnterNameOfModuleDesc=Introdu numele modulului/aplicației de creat fără spații. Foloseşte majuscule pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Introdu numele obiectului de creat fără spații. Foloseşte majuscule pentru a separa cuvinte (De exemplu: MyObject, Student, Teacher...). Se vor genera fișierul clasă CRUD, dar și fișierul API, paginile de listă/adăugare/editare/ștergere obiect și fișierele SQL.
+EnterNameOfDictionaryDesc=Introdu numele dicționarului de creat fără spații. Foloseşte majuscule pentru a separa cuvintele (de exemplu: MyDic...). Se va genera fişierul clasă, dar şi fişierul SQL.
 ModuleBuilderDesc2=Calea unde sunt generate/editate modulele (primul director pentru module externe definite în %s): <strong>%s</strong>
 ModuleBuilderDesc3=Module generate/editabile găsite: <strong>%s</strong>
 ModuleBuilderDesc4=Un modul este detectat ca "editabil" atunci când fișierul <strong>%s</strong> există în directorul rădăcină al modulului
 NewModule=Modul nou
 NewObjectInModulebuilder=Obiect nou
+NewDictionary=Dicţionar nou
 ModuleKey=Cheie modul
 ObjectKey=Cheie obiect
+DicKey=Cheie dicţionar
 ModuleInitialized=Modulul a fost inițializat
 FilesForObjectInitialized=Fișierele pentru noul obiect "%s" au fost inițializate
 FilesForObjectUpdated=Fișierele pentru obiectul "%s" au fost actualizate (fișierele .sql și fișierul .class.php)
@@ -127,9 +130,9 @@ UseSpecificEditorURL = Utilizează un URL specificat de editor
 UseSpecificFamily = Utilizează o familie specifică
 UseSpecificAuthor = Utilizează un autor specific
 UseSpecificVersion = Utilizează o versiune iniţială specifică
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
-IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeRefGeneration=Referința obiectului trebuie să fie generată automat prin reguli de numerotare personalizate 
+IncludeRefGenerationHelp=Bifează această opțiune dacă vrei să incluzi cod pentru a gestiona automat generarea referinței folosind reguli de numerotare personalizate
+IncludeDocGeneration=Vreau să generez documente din șabloane pentru obiect
 IncludeDocGenerationHelp=Dacă bifaţi, va fi generat cod pentru a adăuga o casetă "Generare document" în înregistrarea respectivă. 
 ShowOnCombobox=Afişează valoare în combox
 KeyForTooltip=Cheie pentru tooltip

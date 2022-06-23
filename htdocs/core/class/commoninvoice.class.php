@@ -93,12 +93,17 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
 	public $sumpayed;
 	public $sumpayed_multicurrency;
 	public $sumdeposit;
 	public $sumdeposit_multicurrency;
 	public $sumcreditnote;
 	public $sumcreditnote_multicurrency;
+	public $remaintopay;
 
 
 	/**
@@ -163,17 +168,18 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 *    	Return amount (with tax) of all deposits invoices used by invoice.
-	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
+   *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
 	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
 	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
-		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
+		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 			// FACTURE_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
 			return 0.0;
-		}
+		}*/
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
@@ -737,17 +743,17 @@ abstract class CommonInvoice extends CommonObject
 				if ($row[0] == 0) {
 					$now = dol_now();
 
-					$totalpaye = $this->getSommePaiement();
+					$totalpaid = $this->getSommePaiement();
 					$totalcreditnotes = $this->getSumCreditNotesUsed();
 					$totaldeposits = $this->getSumDepositsUsed();
-					//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+					//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
 					// We can also use bcadd to avoid pb with floating points
 					// For example print 239.2 - 229.3 - 9.9; does not return 0.
-					//$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					if (empty($amount)) {
-						$amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					}
 
 					if (is_numeric($amount) && $amount != 0) {
@@ -843,7 +849,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function buildZATCAQRString()
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$tmplang = new Translate('', $conf);
 		$tmplang->setDefaultLang('en_US');
@@ -880,8 +886,8 @@ abstract class CommonInvoice extends CommonObject
 		*/
 
 		// Using TLV format
-		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
-		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
+		$s = pack('C1', 1).pack('C1', strlen($mysoc->name)).$mysoc->name;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
@@ -892,6 +898,101 @@ abstract class CommonInvoice extends CommonObject
 
 		$s = base64_encode($s);
 
+		return $s;
+	}
+
+
+	/**
+	 * Build string for QR-Bill (Switzerland)
+	 *
+	 * @return	string			String for Switzerland QR Code if QR-Bill
+	 */
+	public function buildSwitzerlandQRString()
+	{
+		global $conf, $mysoc;
+
+		$tmplang = new Translate('', $conf);
+		$tmplang->setDefaultLang('en_US');
+		$tmplang->load("main");
+
+		$pricewithtaxstring = price2num($this->total_ttc, 2, 1);
+		$pricetaxstring = price2num($this->total_tva, 2, 1);
+
+		$complementaryinfo = '';
+		/*
+		 Example: //S1/10/10201409/11/190512/20/1400.000-53/30/106017086/31/180508/32/7.7/40/2:10;0:30
+		 /10/ Numéro de facture – 10201409
+		 /11/ Date de facture – 12.05.2019
+		 /20/ Référence client – 1400.000-53
+		 /30/ Numéro IDE pour la TVA – CHE-106.017.086 TVA
+		 /31/ Date de la prestation pour la comptabilisation de la TVA – 08.05.2018
+		 /32/ Taux de TVA sur le montant total de la facture – 7.7%
+		 /40/ Conditions – 2% d’escompte à 10 jours, paiement net à 30 jours
+		 */
+		$datestring = dol_print_date($this->date, '%y%m%d');
+		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
+		//$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+		$complementaryinfo = '//S1/10/'.str_replace('/', '', $this->ref).'/11/'.$datestring;
+		if ($this->ref_client) {
+			$complementaryinfo .= '/20/'.$this->ref_client;
+		}
+		if ($this->thirdparty->vat_number) {
+			$complementaryinfo .= '/30/'.$this->thirdparty->vat_number;
+		}
+
+		// Header
+		$s .= "SPC\n";
+		$s .= "0200\n";
+		$s .= "1\n";
+		if ($this->fk_account > 0) {
+			// Bank BAN if country is LI or CH
+			// TODO Add
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$s .= $bankaccount->iban."\n";
+		} else {
+			$s .= "\n";
+		}
+		// Seller
+		$s .= "S\n";
+		$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+		$addresslinearray = explode("\n", $mysoc->address);
+		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+		$s .= dol_trunc($mysoc->zip, 16, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->town, 35, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		// Final seller
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		$s .= "\n";
+		// Amount of payment (to do?)
+		$s .= price($pricewithtaxstring, 0, 'none', 0, 0, 2)."\n";
+		$s .= ($this->multicurrency_code ? $this->multicurrency_code : $conf->currency)."\n";
+		// Buyer
+		$s .= "S\n";
+		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
+		$addresslinearray = explode("\n", $this->thirdparty->address);
+		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
+		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
+		$s .= dol_trunc($this->thirdparty->zip, 16, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->town, 35, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc($this->thirdparty->country_code, 2, 'right', 'UTF-8', 1)."\n";
+		// ID of payment
+		$s .= "NON\n";			// NON or QRR
+		$s .= "\n";				// QR Code if previous field is QRR
+		if ($complementaryinfo) {
+			$s .= $complementaryinfo."\n";
+		} else {
+			$s .= "\n";
+		}
+		$s .= "EPD\n";
+		$s .= "\n";
+		//var_dump($s);exit;
 		return $s;
 	}
 }
@@ -1079,4 +1180,6 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 
 	public $fk_user_author;
 	public $fk_user_modif;
+
+	public $fk_accounting_account;
 }
