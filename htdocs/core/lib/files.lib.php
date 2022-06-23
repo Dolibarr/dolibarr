@@ -1717,7 +1717,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1) {
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0, $object);
+						$sharefile = 0;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
@@ -1725,13 +1727,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', '', 'warnings');
 							}
 						}
-					}
-
-					// Update table of files
-					if ($donotupdatesession == 1) {
-						$sharefile = 0;
-						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', $sharefile);
 					}
 
 					$nbok++;
