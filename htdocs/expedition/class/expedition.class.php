@@ -1244,7 +1244,7 @@ class Expedition extends CommonObject
 					$mouvS->origin = null;
 					// get lot/serial
 					$lotArray = null;
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 						if (!is_array($lotArray)) {
 							$error++;
@@ -2781,7 +2781,7 @@ class ExpeditionLigne extends CommonObjectLine
 		$this->db->begin();
 
 		// delete batch expedition line
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
 			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 

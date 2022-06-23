@@ -569,7 +569,7 @@ print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
-if ($conf->productbatch->enabled) {
+if (isModEnabled('productbatch')) {
 	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
 print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
@@ -601,7 +601,7 @@ print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
 print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
-if ($conf->productbatch->enabled) {
+if (isModEnabled('productbatch')) {
 	print '<td>';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
 	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
@@ -643,7 +643,7 @@ foreach ($listofdata as $key => $val) {
 		print '<td>';
 		print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print $val['batch'];
 			print '</td>';

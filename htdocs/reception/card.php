@@ -1244,7 +1244,7 @@ if ($action == 'create') {
 				if (!empty($extrafields)) {
 					//var_dump($line);
 					$colspan = 5;
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						$colspan += 3;
 					}
 					$recLine = new CommandeFournisseurDispatch($db);

@@ -806,7 +806,7 @@ END;
 					print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
 					print '<td>';
 
-					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 					$doleditor->Create();
 
 					print '</td>';

@@ -86,8 +86,33 @@ class Project extends CommonObject
 	 */
 	public $title;
 
+	/**
+	 * @var int Date start
+	 * @deprecated
+	 * @see $date_start
+	 */
+	public $dateo;
+
+	/**
+	 * @var int Date start
+	 */
 	public $date_start;
+
+	/**
+	 * @var int Date end
+	 * @deprecated
+	 * @see $date_end
+	 */
+	public $datee;
+
+	/**
+	 * @var int Date end
+	 */
 	public $date_end;
+
+	/**
+	 * @var int Date close
+	 */
 	public $date_close;
 
 	public $socid; // To store id of thirdparty
@@ -694,12 +719,12 @@ class Project extends CommonObject
 	 * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...
 	 * 	@param		string		$tablename		name of table associated of the type
 	 * 	@param		string		$datefieldname	name of date field for filter
-	 *  @param		int			$dates			Start date
-	 *  @param		int			$datee			End date
+	 *  @param		int			$date_start		Start date
+	 *  @param		int			$date_end		End date
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
 	 * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
 	 */
-	public function get_element_list($type, $tablename, $datefieldname = '', $dates = '', $datee = '', $projectkey = 'fk_projet')
+	public function get_element_list($type, $tablename, $datefieldname = '', $date_start = '', $date_end = '', $projectkey = 'fk_projet')
 	{
 		// phpcs:enable
 
@@ -729,28 +754,28 @@ class Project extends CommonObject
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
 
-		if ($dates > 0 && $type == 'loan') {
-			$sql .= " AND (dateend > '".$this->db->idate($dates)."' OR dateend IS NULL)";
-		} elseif ($dates > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		if ($date_start > 0 && $type == 'loan') {
+			$sql .= " AND (dateend > '".$this->db->idate($date_start)."' OR dateend IS NULL)";
+		} elseif ($date_start > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($date_start)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		if ($datee > 0 && $type == 'loan') {
-			$sql .= " AND (datestart < '".$this->db->idate($datee)."' OR datestart IS NULL)";
-		} elseif ($datee > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
+		if ($date_end > 0 && $type == 'loan') {
+			$sql .= " AND (datestart < '".$this->db->idate($date_end)."' OR datestart IS NULL)";
+		} elseif ($date_end > 0 && ($type != 'project_task')) {	// For table project_taks, we want the filter on date apply on project_time_spent table
 			if (empty($datefieldname) && !empty($this->table_element_date)) {
 				$datefieldname = $this->table_element_date;
 			}
 			if (empty($datefieldname)) {
 				return 'Error this object has no date field defined';
 			}
-			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($datee)."' OR ".$datefieldname." IS NULL)";
+			$sql .= " AND (".$datefieldname." <= '".$this->db->idate($date_end)."' OR ".$datefieldname." IS NULL)";
 		}
 
 		$parameters = array(
@@ -758,8 +783,8 @@ class Project extends CommonObject
 			'type' => $type,
 			'tablename' => $tablename,
 			'datefieldname'  => $datefieldname,
-			'dates' => $dates,
-			'datee' => $datee,
+			'dates' => $date_start,
+			'datee' => $date_end,
 			'fk_projet' => $projectkey,
 			'ids' => $ids,
 		);

@@ -80,8 +80,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$mask= !empty($conf->global->EXPEDITION_RIBERA_MASK)?$conf->global->EXPEDITION_RIBERA_MASK:"";
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.getDolGlobalString('EXPEDITION_RIBERA_MASK').'">', $tooltip, 1, 1).'</td>';
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -126,12 +125,12 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+		$mask = getDolGlobalString('EXPEDITION_RIBERA_MASK');
 
-
-		if (empty($conf->global->EXPEDITION_RIBERA_MASK)) {
+		if (empty($mask)) {
 			$this->error = 'NotConfigured';
 			return 0;
-		} else $mask = $conf->global->EXPEDITION_RIBERA_MASK;
+		}
 
 		$date = $shipment->date_expedition;
 

@@ -747,7 +747,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 		print '</td>';
-		if ($conf->stock->enabled) {
+		if (isModEnabled('stock')) {
 			// Available
 			print '<td align="right">';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -756,7 +756,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 		// Lot - serial
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Batch");
@@ -787,11 +787,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<input type="submit" class="button buttongen button-add" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelinebutton" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
-			if ($conf->stock->enabled) {
+			if (isModEnabled('stock')) {
 				print '<td></td>';
 			}
 			// Lot - serial
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				print '<td></td>';
 			}
 			// Action
@@ -909,7 +909,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td>';
 					print '</td>';
 					// Stock
-					if ($conf->stock->enabled) {
+					if (isModEnabled('stock')) {
 						print '<td class="nowraponall right">';
 						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
 							print img_warning($langs->trans('StockTooLow')).' ';
@@ -918,7 +918,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 					}
 					// Lot
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						print '<td></td>';
 					}
 					// Action delete line
@@ -965,12 +965,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 
 						// Stock
-						if ($conf->stock->enabled) {
+						if (isModEnabled('stock')) {
 							print '<td></td>';
 						}
 
 						// Lot Batch
-						if ($conf->productbatch->enabled) {
+						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($line2['batch'] != '') {
 								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
@@ -1033,12 +1033,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 
 						// Stock
-						if ($conf->stock->enabled) {
+						if (isModEnabled('stock')) {
 							print '<td></td>';
 						}
 
 						// Lot / Batch
-						if ($conf->productbatch->enabled) {
+						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batch-'.$line->id.'-'.$i) ? GETPOST('batch-'.$line->id.'-'.$i) : '');
@@ -1121,7 +1121,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Batch");
@@ -1149,7 +1149,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<input type="submit" class="button buttongen button-cancel" name="canceladdproducelinebutton" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
 			// Lot - serial
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				print '<td></td>';
 			}
 			// Action
@@ -1236,7 +1236,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					print '<td>'; // Warehouse
 					print '</td>';
-					if ($conf->productbatch->enabled) {
+					if (isModEnabled('productbatch')) {
 						print '<td></td>'; // Lot
 					}
 
@@ -1277,7 +1277,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 						}
 						print '</td>';
-						if ($conf->productbatch->enabled) {
+						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($line2['batch'] != '') {
 								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
@@ -1324,7 +1324,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
 						}
 						print '</td>';
-						if ($conf->productbatch->enabled) {
+						if (isModEnabled('productbatch')) {
 							print '<td>';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');

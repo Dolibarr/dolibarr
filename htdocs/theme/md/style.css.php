@@ -530,6 +530,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	background-color: #eee;
 	white-space: normal;
 	color: #888 !important;
+	height: 60px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -1163,6 +1164,7 @@ div.divsearchfield {
 	white-space: nowrap;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -4669,9 +4671,8 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
-
 
 
 /*
@@ -7298,6 +7299,14 @@ div.clipboardCPValue.hidewithsize {
 	
 	div.divButAction {
 		margin-bottom: 0.5em;
+	}
+	
+	div#card-errors {
+		max-width: unset;
+	}
+	
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 

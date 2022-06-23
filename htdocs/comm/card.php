@@ -1121,7 +1121,7 @@ if ($object->id > 0) {
 	 * Latest contracts
 	 */
 	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1191,7 +1191,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
@@ -1409,6 +1409,7 @@ if ($object->id > 0) {
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
+		$sql .= ', f.entity';
 		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
@@ -1475,7 +1476,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
