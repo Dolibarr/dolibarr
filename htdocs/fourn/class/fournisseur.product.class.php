@@ -415,7 +415,7 @@ class ProductFournisseur extends Product
 					$productfournisseurprice = new ProductFournisseurPrice($this->db);
 					$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 					if ($res > 0) {
-						foreach($options as $key=>$value) {
+						foreach ($options as $key=>$value) {
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
@@ -514,7 +514,7 @@ class ProductFournisseur extends Product
 						$productfournisseurprice = new ProductFournisseurPrice($this->db);
 						$res = $productfournisseurprice->fetch($this->product_fourn_price_id);
 						if ($res > 0) {
-							foreach($options as $key=>$value) {
+							foreach ($options as $key=>$value) {
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
