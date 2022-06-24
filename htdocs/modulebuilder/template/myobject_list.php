@@ -334,7 +334,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order($sortfield, $sortorder);
 
 /* If a group by is required
 $sql .= " GROUP BY ";
@@ -564,7 +563,7 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 }
 foreach ($object->fields as $key => $val) {
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {

@@ -600,7 +600,7 @@ class Reception extends CommonObject
 						$inventorycode = '';
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
 
-						if ($result < 0) {
+						if (intval($result) < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -614,7 +614,7 @@ class Reception extends CommonObject
 						$inventorycode = '';
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
 
-						if ($result < 0) {
+						if (intval($result) < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);

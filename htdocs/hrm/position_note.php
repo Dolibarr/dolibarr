@@ -96,7 +96,7 @@ llxHeader('', $langs->trans('Position'), $help_url);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
-	$head = PositionCardPrepareHead($object);
+	$head = positionCardPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("Notes"), -1, $object->picto);
 

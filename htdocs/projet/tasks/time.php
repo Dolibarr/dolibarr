@@ -258,8 +258,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 
 			$object->fetch($id_temp, $ref);
 
-			$object->timespent_note = GETPOST("timespent_note_line", 'alpha');
-			$object->timespent_old_duration = GETPOST("old_duration");
+			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
+			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
@@ -285,8 +285,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);
 
 			$object->timespent_id = GETPOST("lineid", 'int');
-			$object->timespent_note = GETPOST("timespent_note_line");
-			$object->timespent_old_duration = GETPOST("old_duration");
+			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
+			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
@@ -1255,10 +1255,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="massaction" value="confirm_createinter">';
 
 			if ($projectstatic->thirdparty->id > 0) {
+				print '<br>';
 				print '<table class="noborder centpercent">';
 				print '<tr>';
 				print '<td class="titlefield">';
-				print $langs->trans('InterToUse');
+				print img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans('InterToUse');
 				print '</td>';
 				print '<td>';
 				$forminter = new FormIntervention($db);
@@ -1267,7 +1268,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '</tr>';
 				print '</table>';
 
-				print '<br>';
 				print '<div class="center">';
 				print '<input type="submit" class="button" id="createinter" name="createinter" value="'.$langs->trans('GenerateInter').'">  ';
 				print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
@@ -1782,7 +1782,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (!empty($arrayfields['t.note']['checked'])) {
 				print '<td class="small">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
-					print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
+					print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
 				} else {
 					print dol_nl2br($task_time->note);
 				}
@@ -1791,7 +1791,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$totalarray['nbfield']++;
 				}
 			} elseif ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
-				print '<input type="hidden" name="timespent_note_line" value="'.$task_time->note.'">';
+				print '<input type="hidden" name="timespent_note_line" value="'.dol_escape_htmltag($task_time->note).'">';
 			}
 
 			// Time spent
@@ -1820,9 +1820,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Value spent
 			if (!empty($arrayfields['value']['checked'])) {
 				$langs->load("salaries");
+				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 
 				print '<td class="nowraponall right">';
-				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 				print '<span class="amount" title="'.$langs->trans("THM").': '.price($task_time->thm).'">';
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</span>';
@@ -1884,7 +1884,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 					if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
 						print '&nbsp;';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_split('', 'class="pictofixedwidth"');
 						print '</a>';
 					}
@@ -1996,13 +1996,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="tdoverflowmax300">';
 					if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
-						print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
+						print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
 					print '</td>';
 				} elseif ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
-					print '<input type="hidden" name="timespent_note_line" value="'.$task_time->note.'">';
+					print '<input type="hidden" name="timespent_note_line" rows="'.ROWS_1.'" value="'.dol_escape_htmltag($task_time->note).'">';
 				}
 
 				// Time spent
@@ -2020,8 +2020,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Value spent
 				if (!empty($arrayfields['value']['checked'])) {
 					print '<td class="right">';
+					print '<span class="amount">';
 					$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT', 1);
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
+					print '</span>';
 					print '</td>';
 				}
 
@@ -2132,13 +2134,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="small tdoverflowmax300"">';
 					if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
-						print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
+						print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
 					print '</td>';
 				} elseif ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
-					print '<input type="hidden" name="timespent_note_line_2" value="'.$task_time->note.'">';
+					print '<input type="hidden" name="timespent_note_line_2" value="'.dol_escape_htmltag($task_time->note).'">';
 				}
 
 				// Time spent
@@ -2156,8 +2158,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Value spent
 				if (!empty($arrayfields['value']['checked'])) {
 					print '<td class="right">';
+					print '<span class="amount">';
 					$value = 0;
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
+					print '</span>';
 					print '</td>';
 				}
 
@@ -2166,7 +2170,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="right">';
 					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) {
+						print '<span class="amount">';
 						print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
+						print '</span>';
 					}
 					print '</td>';
 				}

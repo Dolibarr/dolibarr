@@ -60,6 +60,11 @@ class ExtraFields
 	 */
 	public $attribute_choice;
 
+	/**
+	 * @var array array to store extrafields definition
+	 * @deprecated
+	 */
+	public $attribute_list;
 
 	/**
 	 * @var array New array to store extrafields definition

@@ -358,6 +358,10 @@ if ($nolinesbefore) {
 		if (!empty($conf->service->enabled) && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
+			if (!empty($conf->global->INVOICE_REC_DATE_TO_YES)) {
+				$line->date_start_fill = 1;
+				$line->date_end_fill = 1;
+			}
 			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
 			echo ' - ';
 			echo $langs->trans('AutoFillDateTo').' ';
