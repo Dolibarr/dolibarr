@@ -852,7 +852,7 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 	if ($massactionbutton) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
@@ -862,6 +862,12 @@ if ($resql) {
 
 	// Lines with input filters
 	print '<tr class="liste_titre_filter">';
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre center maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
 	if (!empty($arrayfields['p.rowid']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" name="search_id" size="4" value="'.dol_escape_htmltag($search_id).'">';
@@ -1115,14 +1121,18 @@ if ($resql) {
 		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
 		print '</td>';
 	}
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
-
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre center maxwidthsearch">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	if (!empty($arrayfields['p.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
 	}
@@ -1275,7 +1285,9 @@ if ($resql) {
 	if (!empty($arrayfields['p.tobuy']['checked'])) {
 		print_liste_field_titre($arrayfields['p.tobuy']['label'], $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
 	print "</tr>\n";
 
 
@@ -1352,6 +1364,18 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 
+		// Action column
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 		// Ref
 		if (!empty($arrayfields['p.rowid']['checked'])) {
 			print '<td class="nowraponall">';
@@ -1895,16 +1919,18 @@ if ($resql) {
 			}
 		}
 
-		// Action
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		// Action column
+		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
 		}
-		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
