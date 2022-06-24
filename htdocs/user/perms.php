@@ -282,7 +282,7 @@ print '</tr>'."\n";
 print '</table>';
 
 print '</div>';
-
+print '<br>';
 
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));

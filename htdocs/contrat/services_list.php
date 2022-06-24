@@ -486,7 +486,7 @@ $morefilter = '';
 $moreforfilter = '';
 
 // If the user can view categories of products
-if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if (isModEnabled('categorie') && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');

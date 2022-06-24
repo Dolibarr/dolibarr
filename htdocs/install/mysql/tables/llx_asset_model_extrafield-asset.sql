@@ -1,4 +1,5 @@
--- Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- ========================================================================
+-- Copyright (C) 2022      OpenDSI              <support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,15 +13,15 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
+-- ========================================================================
+--
+-- Table for extrafields of fixed asset model
+--
 
-create table llx_asset_type
+CREATE TABLE llx_asset_model_extrafields
 (
-  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
-  entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
-  tms                                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  label                                 varchar(50) NOT NULL,
-  accountancy_code_asset                varchar(32),
-  accountancy_code_depreciation_asset   varchar(32),
-  accountancy_code_depreciation_expense varchar(32),
-  note                                  text
-)ENGINE=innodb;
+    rowid           integer     AUTO_INCREMENT PRIMARY KEY,
+    tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object       integer     NOT NULL,
+    import_key      varchar(14)                          		-- import key
+) ENGINE=innodb;

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
- * Copyright (C) 2019	  Nicolas ZABOURI       <info@inovea-conseil.com>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,8 @@ $ve = GETPOST("ve", 'alpha');
 $brref = GETPOST('brref', 'alpha');
 $oldbankreceipt = GETPOST('oldbankreceipt', 'alpha');
 $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
+$rel = GETPOST("rel", 'alphanohtml');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $fieldid = (!empty($ref) ? $ref : $id);
@@ -112,7 +115,7 @@ $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id
 
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
-if ($_GET["rel"] == 'prev') {
+if ($rel == 'prev') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -130,7 +133,7 @@ if ($_GET["rel"] == 'prev') {
 			$found = true;
 		}
 	}
-} elseif ($_GET["rel"] == 'next') {
+} elseif ($rel == 'next') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -237,10 +240,10 @@ if (empty($numref)) {
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
-	$nbtotalofrecords = '';
+	$totalnboflines = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
+		$totalnboflines = $db->num_rows($result);
 	}
 
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
@@ -399,9 +402,8 @@ if (empty($numref)) {
 
 	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $morehtmlright, '');
-	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
-	print "<form method=\"post\" action=\"releve.php\">";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 

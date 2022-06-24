@@ -52,7 +52,7 @@ if (!empty($conf->commande->enabled)) {
 	}
 	print '<br>';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	print '<div id="invoice"></div>';
 	print img_picto('', 'globe').'  <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";

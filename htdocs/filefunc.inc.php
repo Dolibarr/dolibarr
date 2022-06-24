@@ -294,8 +294,9 @@ $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
 if ($suburi == '/') {
 	$suburi = ''; // If $suburi is /, it is now ''
 }
-define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
-
+if (!defined('DOL_URL_ROOT')) {
+	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
+}
 //print DOL_MAIN_URL_ROOT.'-'.DOL_URL_ROOT."\n";
 
 // Define prefix MAIN_DB_PREFIX

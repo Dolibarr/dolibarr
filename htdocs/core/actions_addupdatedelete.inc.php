@@ -137,14 +137,14 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
-			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+			if (isModEnabled('categorie') && method_exists($object, 'setCategories')) {
 				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 
-			if (!empty($noback)) {
+			if (empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}
@@ -244,7 +244,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		}
 
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			$categories = GETPOST('categories', 'array');
 			if (method_exists($object, 'setCategories')) {
 				$object->setCategories($categories);
@@ -266,7 +266,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$action = 'view';
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			if ($urltogo) {
+			if ($urltogo && !$noback) {
 				header("Location: " . $urltogo);
 				exit;
 			}
@@ -320,7 +320,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
-		if (!empty($noback)) {
+		if (empty($noback)) {
 			header("Location: " . $backurlforlist);
 			exit;
 		}
@@ -366,7 +366,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
 
-		if (!empty($noback)) {
+		if (empty($noback)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		}
@@ -507,7 +507,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 				$newid = $result;
 			}
 
-			if (!empty($noback)) {
+			if (empty($noback)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $newid); // Open record of new object
 				exit;
 			}

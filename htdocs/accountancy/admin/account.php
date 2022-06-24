@@ -350,6 +350,8 @@ if ($resql) {
 	    	</script>';
 	}
 
+	$newcardbutton = '';
+
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

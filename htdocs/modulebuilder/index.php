@@ -73,7 +73,7 @@ $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
 
 // Security check
-if (empty($conf->modulebuilder->enabled)) {
+if (!isModEnabled('modulebuilder')) {
 	accessforbidden();
 }
 if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {

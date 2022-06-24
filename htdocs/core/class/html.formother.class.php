@@ -700,11 +700,14 @@ class FormOther
 							print ' selected';
 						}
 
-						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						$labeltoshow = $lines[$i]->projectref;
+						//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 						if (empty($lines[$i]->public)) {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 						} else {
-							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+							$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 						}
 
 						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
@@ -738,12 +741,14 @@ class FormOther
 						print ' disabled';
 					}
 
-					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
-					$labeltoshow .= ' '.$lines[$i]->projectlabel;
+					$labeltoshow = $lines[$i]->projectref;
+					//$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public)) {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'project', 'class="pictofixedwidth"').$labeltoshow;
 					} else {
-						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						//$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						$labeltoshow = img_picto($lines[$i]->projectlabel, 'projectpub', 'class="pictofixedwidth"').$labeltoshow;
 					}
 					if ($lines[$i]->id) {
 						$labeltoshow .= ' > ';

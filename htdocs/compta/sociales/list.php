@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2020      Pierre Ardoin     	<mapiolca@me.com>
- * Copyright (C) 2020	   Tobias Sekan		    <tobias.sekan@startmail.com>
- * Copyright (C) 2021      Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2016       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,23 +34,24 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 
-$action				= GETPOST('action', 'aZ09');
-$massaction			= GETPOST('massaction', 'alpha');
-$confirm			= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
 
-$search_ref			= GETPOST('search_ref', 'int');
+$search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
-$search_amount		= GETPOST('search_amount', 'alpha');
-$search_status		= GETPOST('search_status', 'int');
+$search_typeid = GETPOST('search_typeid', 'int');
+$search_amount = GETPOST('search_amount', 'alpha');
+$search_status = GETPOST('search_status', 'int');
 $search_date_startday = GETPOST('search_date_startday', 'int');
 $search_date_startmonth = GETPOST('search_date_startmonth', 'int');
 $search_date_startyear = GETPOST('search_date_startyear', 'int');
@@ -70,11 +71,11 @@ $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $se
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_users = GETPOST('search_users');
 $search_type = GETPOST('search_type', 'int');
-$search_account				= GETPOST('search_account', 'int');
+$search_account = GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST('sortfield', 'aZ09comma');
-$sortorder			= GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -93,26 +94,13 @@ if (!$sortorder) {
 
 $filtre = GETPOST("filtre", 'int');
 
-if (!GETPOSTISSET('search_typeid')) {
-	$newfiltre = str_replace('filtre=', '', $filtre);
-	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val) {
-		$part = explode(':', $val);
-		if ($part[0] == 'cs.fk_type') {
-			$search_typeid = $part[1];
-		}
-	}
-} else {
-	$search_typeid = GETPOST('search_typeid', 'int');
-}
-
 $arrayfields = array(
 	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->project->enabled))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
@@ -191,7 +179,7 @@ $formother = new FormOther($db);
 $bankstatic = new Account($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$projectstatic = new Project($db);
 }
 
@@ -199,7 +187,7 @@ llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
@@ -209,7 +197,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (cs.fk_account = ba.rowid)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pay ON (cs.fk_mode_reglement = pay.id)';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
@@ -223,7 +211,7 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	if ($search_project_ref != '') {
 		$sql .= natural_search("p.ref", $search_project_ref);
 	}
@@ -259,7 +247,7 @@ if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
 $sql .= $db->order($sortfield, $sortorder);
@@ -387,6 +375,9 @@ if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 	llxFooter();
 	$db->close();
 }
+
+$moreforfilter = '';
+$massactionbutton = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -551,7 +542,9 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $
 print '</tr>';
 
 $i = 0;
-		$totalarray = $TLoadedUsers = array();
+$totalarray = $TLoadedUsers = array();
+$totalarray['nbfield'] = 0;
+$totalarray['val']['totalttcfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -560,7 +553,7 @@ while ($i < min($num, $limit)) {
 	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
 
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;

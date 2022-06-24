@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -524,7 +524,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -631,7 +631,7 @@ if ($id > 0 || $ref) {
 				print '</td></tr>';
 			}
 
-			if ($conf->productbatch->enabled) {
+			if (isModEnabled('productbatch')) {
 				print '<tr><td class="">'.$langs->trans("ManageLotSerial").'</td><td>';
 				print $object->getLibStatut(0, 2);
 				print '</td></tr>';

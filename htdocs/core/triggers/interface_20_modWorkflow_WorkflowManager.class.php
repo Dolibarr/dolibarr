@@ -91,7 +91,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Order to invoice
 		if ($action == 'ORDER_CLOSE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE)) {
+			if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE)) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$newobject = new Facture($this->db);
 
