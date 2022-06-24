@@ -8366,7 +8366,7 @@ class Form
             </dt>
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul class="'.$htmlname.$pos.'">
+                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>
