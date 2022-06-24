@@ -474,14 +474,10 @@ if ($result && $action == "dl" && !$error) {
 	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
 	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
 	if (!empty($projectid)) {
-		$sql = 'SELECT t.ref FROM '.MAIN_DB_PREFIX.'projet as t';
-		$sql .= ' WHERE t.rowid = '.((int) $db->sanitize($projectid));
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$zipname .= '_'.$obj->ref;
-		} else {
-			dol_print_error($db);
+		$project = new Project($db);
+		$project->fetch($projectid);
+		if ($project->ref) {
+			$zipname .= '_'.$project->ref;
 		}
 	}
 	$zipname .='_export.zip';
