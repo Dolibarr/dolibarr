@@ -3698,21 +3698,23 @@ if ($action == 'create') {
 		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
-	// Template to use by default
-	print '<tr><td>'.$langs->trans('Model').'</td>';
-	print '<td colspan="2">';
-	print img_picto('', 'pdf', 'class="pictofixedwidth"');
-	include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-	$liste = ModelePDFFactures::liste_modeles($db);
-	if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) {
-		// Hidden conf
-		$paramkey = 'FACTURE_ADDON_PDF_'.$object->type;
-		$preselected = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
-	} else {
-		$preselected = $conf->global->FACTURE_ADDON_PDF;
+	// Document model
+	$list = ModelePDFFactures::liste_modeles($db);
+	if (!empty($list) && count($list) > 1) {
+		print '<tr class="field_model">';
+		print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+		print '<td class="valuefieldcreate" colspan="2">';
+		print img_picto('', 'pdf', 'class="pictofixedwidth"');
+		if (!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) {
+			// Hidden conf
+			$paramkey    = 'FACTURE_ADDON_PDF_'.$object->type;
+			$preselected = !empty($conf->global->$paramkey) ? $conf->global->$paramkey : $conf->global->FACTURE_ADDON_PDF;
+		} else {
+			$preselected = $conf->global->FACTURE_ADDON_PDF;
+		}
+		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+		print "</td></tr>";
 	}
-	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-	print "</td></tr>";
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {

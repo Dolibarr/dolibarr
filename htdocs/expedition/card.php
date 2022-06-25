@@ -1005,12 +1005,13 @@ if ($action == 'create') {
 			}
 
 			// Document model
-			include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 			$list = ModelePdfExpedition::liste_modeles($db);
-			if (count($list) > 1) {
-				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
-				print '<td colspan="3">';
-				print $form->selectarray('model', $list, $conf->global->EXPEDITION_ADDON_PDF);
+			if (!empty($list) && count($list) > 1) {
+				print '<tr class="field_model">';
+				print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+				print '<td class="valuefieldcreate" colspan="3">';
+				$preselected = $conf->global->EXPEDITION_ADDON_PDF;
+				print $form->selectarray('model', $list, $preselected);
 				print "</td></tr>\n";
 			}
 

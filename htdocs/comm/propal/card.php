@@ -1798,15 +1798,17 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	// Template to use by default
-	print '<tr class="field_model">';
-	print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
-	print '<td class="valuefieldcreate">';
-	print img_picto('', 'pdf', 'class="pictofixedwidth"');
-	$liste = ModelePDFPropales::liste_modeles($db);
-	$preselected = (!empty($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT) ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
-	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
-	print "</td></tr>";
+	// Document model
+	$list = ModelePDFPropales::liste_modeles($db);
+	if (!empty($list) && count($list) > 1) {
+		print '<tr class="field_model">';
+		print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+		print '<td class="valuefieldcreate">';
+		print img_picto('', 'pdf', 'class="pictofixedwidth"');
+		$preselected = (!empty($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT) ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
+		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+		print "</td></tr>";
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {

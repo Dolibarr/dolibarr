@@ -938,13 +938,16 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-		// Model
-		print '<tr>';
-		print '<td>'.$langs->trans("DefaultModel").'</td>';
-		print '<td>';
-		$liste = ModelePDFFicheinter::liste_modeles($db);
-		print $form->selectarray('model', $liste, $conf->global->FICHEINTER_ADDON_PDF);
-		print "</td></tr>";
+		// Document model
+		$list = ModelePDFFicheinter::liste_modeles($db);
+		if (!empty($list) && count($list) > 1) {
+			print '<tr class="field_model">';
+			print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+			print '<td class="valuefieldcreate">';
+			$preselected = $conf->global->FICHEINTER_ADDON_PDF;
+			print $form->selectarray('model', $list, $preselected);
+			print "</td></tr>";
+		}
 
 		// Public note
 		print '<tr>';

@@ -1301,15 +1301,16 @@ if ($action == 'create') {
 	}
 	print '</td></tr>';
 
-
-	// Model
-	print '<tr>';
-	print '<td>'.$langs->trans("DefaultModel").'</td>';
-	print '<td colspan="2">';
+	// Document model
 	$list = ModelePDFSupplierProposal::liste_modeles($db);
-	$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
-	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-	print "</td></tr>";
+	if (!empty($list) && count($list) > 1) {
+		print '<tr class="field_model">';
+		print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+		print '<td class="valuefieldcreate" colspan="2">';
+		$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
+		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print "</td></tr>\n";
+	}
 
 	// Project
 	if (!empty($conf->project->enabled)) {

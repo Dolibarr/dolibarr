@@ -706,7 +706,7 @@ class FormFile
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
-			if (!empty($modellist)) {
+			if (!empty($modellist) && count($modellist) > 1) {
 				asort($modellist);
 				$out .= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
 				if (is_array($modellist) && count($modellist) == 1) {    // If there is only one element

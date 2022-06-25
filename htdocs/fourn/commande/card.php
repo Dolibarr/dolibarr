@@ -1767,6 +1767,18 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	// Document model
+	$list = ModelePDFSuppliersOrders::liste_modeles($db);
+	if (!empty($list) && count($list) > 1) {
+		print '<tr class="field_model">';
+		print '<td class="titlefieldcreate">'.$langs->trans("DefaultModel").'</td>';
+		print '<td class="valuefieldcreate">';
+		print img_picto('', 'pdf', 'class="pictofixedwidth"');
+		$preselected = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
+		print "</td></tr>";
+	}
+
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
 		print '<tr>';
