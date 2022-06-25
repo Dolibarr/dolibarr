@@ -205,8 +205,8 @@ if (empty($error) && !empty($xml)) {
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
-			if ($constname && $conf->global->$constname != '') {
-				$value = $conf->global->$constname;
+			if ($constname && getDolGlobalString($constname) != '') {
+				$value = getDolGlobalString($constname);
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -388,7 +388,9 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</table>';
 		$out .= '</div>';
 	} else {
-		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
+		print '<div class="error">';
+		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
+		print '</div><br>';
 		$error++;
 	}
 
