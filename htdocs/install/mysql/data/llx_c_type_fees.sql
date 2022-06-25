@@ -35,7 +35,14 @@
 insert into llx_c_type_fees (code,label,active) values ('TF_OTHER',    'Other',  1);
 insert into llx_c_type_fees (code,label,active) values ('TF_TRIP',     'Transportation',   1);
 insert into llx_c_type_fees (code,label,active) values ('TF_LUNCH',    'Lunch',  1);
-
+insert into llx_c_type_fees (code,label,active) values ('TF_METRO',    'Subway',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_TRAIN',    'Train',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_BUS',    'Bus',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_CAR',    'Car',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_PEAGE',    'Toll',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_ESSENCE',    'Fuel',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_HOTEL',    'Hotel',  1);
+insert into llx_c_type_fees (code,label,active) values ('TF_TAXI',    'Cab',  1);
 
 INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_KME',    'ExpLabelKm', 1);
 INSERT INTO llx_c_type_fees (code, label, active) VALUES('EX_FUE',    'ExpLabelFuelCV', 0);

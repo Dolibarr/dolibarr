@@ -648,4 +648,11 @@ ALTER TABLE llx_paiement MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_payment_donation MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar(255);
 
-
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_METRO',    'Subway',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_TRAIN',    'Train',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_BUS',    'Bus',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_CAR',    'Car',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_PEAGE',    'Toll',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_ESSENCE',    'Fuel',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_HOTEL',    'Hotel',  1);
+INSERT INTO llx_c_type_fees (code,label,active) VALUES ('TF_TAXI',    'Cab',  1);
