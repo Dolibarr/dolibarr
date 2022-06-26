@@ -135,7 +135,7 @@ CardContent=Content of your member card
 # Text of email templates
 ThisIsContentOfYourMembershipRequestWasReceived=We want to let you know that your membership request was received.<br><br>
 ThisIsContentOfYourMembershipWasValidated=We want to let you know that your membership was validated with the following information:<br><br>
-ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded.<br><br>
+ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
 ThisIsContentOfSubscriptionReminderEmail=We want to let you know that your subscription is about to expire or has already expired (__MEMBER_LAST_SUBSCRIPTION_DATE_END__). We hope you will renew it.<br><br>
 ThisIsContentOfYourCard=This is a summary of the information we have about you. Please contact us if anything is incorrect.<br><br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the notification email received in case of auto-inscription of a guest
