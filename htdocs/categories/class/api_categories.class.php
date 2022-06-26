@@ -49,7 +49,7 @@ class Categories extends DolibarrApi
 		2 => 'customer',
 		3 => 'member',
 		4 => 'contact',
-		5 => 'bank_account',
+		5 => 'account',
 		6 => 'project',
 		7 => 'user',
 		8 => 'bank_line',
