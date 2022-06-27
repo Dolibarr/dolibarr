@@ -680,7 +680,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
-						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->labelm)) {
 							$labeltoshow = $objp->labelm;
 						}
 
