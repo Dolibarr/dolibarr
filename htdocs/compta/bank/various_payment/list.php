@@ -290,7 +290,7 @@ if ($result) {
 	}
 
 	// must be place behind the last "header(...)" call
-	llxHeader();
+	llxHeader('', $langs->trans("VariousPayments"));
 
 	$i = 0;
 	$total = 0;

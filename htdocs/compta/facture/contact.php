@@ -100,7 +100,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
  * View
  */
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('ContactsAddresses');
+$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 

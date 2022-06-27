@@ -1428,8 +1428,12 @@ if (empty($reshook)) {
  *	View
  */
 
-$title = $langs->trans('Order')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewOrder");
+}
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);

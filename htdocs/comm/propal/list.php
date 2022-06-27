@@ -491,8 +491,9 @@ $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
 
+$title = $langs->trans('ListOfProposals');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-//llxHeader('',$langs->trans('Proposal'),$help_url);
+llxHeader('', $title, $help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -750,7 +751,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $langs->trans('Proposal'), $help_url);
+//	llxHeader('', $langs->trans('Proposal'), $help_url);
 
 	$param = '&search_status='.urlencode($search_status);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

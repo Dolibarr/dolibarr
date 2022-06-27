@@ -98,11 +98,6 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->facture->creer || $u
 /*
  * View
  */
-
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('ContactsAddresses');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
@@ -120,6 +115,10 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetch_thirdparty();
 
 		$alreadypaid = $object->getSommePaiement();
+
+		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
+		$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+		llxHeader('', $title, $helpurl);
 
 		$head = facturefourn_prepare_head($object);
 

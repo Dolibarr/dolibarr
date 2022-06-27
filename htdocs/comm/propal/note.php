@@ -81,8 +81,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$title = $langs->trans('Proposal')." - ".$langs->trans('Notes');
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+
 llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {

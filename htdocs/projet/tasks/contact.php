@@ -140,13 +140,19 @@ if (!empty($project_ref) && !empty($withproject)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref . ' - ' . $langs->trans("Contacts");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 
 /* *************************************************************************** */
@@ -162,7 +168,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
-		$result = $projectstatic->fetch($object->fk_project);
 		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}

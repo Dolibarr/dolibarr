@@ -90,7 +90,7 @@ if ($object->id > 0) {
  * View
  */
 
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Documents');
+$title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 

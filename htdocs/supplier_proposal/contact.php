@@ -98,10 +98,6 @@ if ($action == 'addcontact' && $permissiontoedit) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('ContactsAddresses');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
@@ -119,6 +115,10 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
+
+		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
+		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+		llxHeader('', $title, $help_url);
 
 		$head = supplier_proposal_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CommRequest"), -1, 'supplier_proposal');

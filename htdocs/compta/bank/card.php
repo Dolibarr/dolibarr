@@ -329,17 +329,15 @@ if (!empty($conf->accounting->enabled)) {
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-$title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
-
-llxHeader("", $title, $help_url);
-
 
 // Creation
 
 if ($action == 'create') {
 	$object = new Account($db);
+
+	$title = $langs->trans("NewFinancialAccount");
+	llxHeader("", $title, $help_url);
 
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
@@ -604,6 +602,9 @@ if ($action == 'create') {
 			$object->fetch(0, GETPOST("ref"));
 			$_GET["id"] = $object->id;
 		}
+
+		$title = $object->ref." - ".$langs->trans("Card");
+		llxHeader("", $title, $help_url);
 
 		// Show tabs
 		$head = bank_prepare_head($object);
