@@ -4633,7 +4633,7 @@ class Product extends CommonObject
 				);
 
 				// Recursive call if there is childs to child
-				if (is_array($desc_pere['childs'])) {
+				if (isset($desc_pere['childs']) and is_array($desc_pere['childs'])) {
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
 					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
 				}
