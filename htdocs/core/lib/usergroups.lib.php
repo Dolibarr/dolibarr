@@ -455,6 +455,27 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
 
+	//Dark mode
+	if ($foruserprofile) {
+		//Nothing
+	} else {
+		$listofdarkmodes = array(
+			'0' => $langs->trans("AlwaysDisabled"),
+			'1' => $langs->trans("AccordingToBrowser"),
+			'2' => $langs->trans("AlwaysEnabled")
+		);
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0);
+		} else {
+			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
+		}
+		print '</tr>';
+	}
+
+
 	// TopMenuDisableImages
 	if ($foruserprofile) {
 		/*
