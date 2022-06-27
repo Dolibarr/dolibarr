@@ -1653,7 +1653,7 @@ if ($action == 'create') {
 	$shipping_method_id = 0;
 	if ($socid > 0) {
 		print '<td class="valuefieldcreate">';
-		print $soc->getNomUrl(1);
+		print $soc->getNomUrl(1, 'customer');
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
