@@ -120,7 +120,7 @@ foreach ($list as $key) {
 }
 print '</select>';
 print ajax_combobox('provider');
-print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Name").'">';
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
 print '<br>';
 print '<br>';
