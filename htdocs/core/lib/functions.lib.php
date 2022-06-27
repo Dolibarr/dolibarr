@@ -10476,14 +10476,14 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$TCompiledAttr[] = $key.'="'.$value.'"';
 	}
 
-	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
 
 	$parameters = array(
-		'TCompiledAttr' => $TCompiledAttr,
-		'compiledAttributes' => $compiledAttributes,
+		'TCompiledAttr' => $TCompiledAttr,				// array
+		'compiledAttributes' => $compiledAttributes,	// string
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,
