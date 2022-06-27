@@ -296,7 +296,7 @@ class Paiement extends CommonObject
 		$note = ($this->note_private ? $this->note_private : $this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
+		$sql .= " VALUES (".$invoice->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
 		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((float) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
