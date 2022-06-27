@@ -1188,8 +1188,10 @@ if ($action == 'create') {
 					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$quantityToBeDelivered = 0;
 					} else {
-						if (isset($quantityAsked) and isset($quantityDelivered)) {
-							$quantityToBeDelivered = is_float($quantityAsked) - is_float($quantityDelivered);
+						if (is_numeric($quantityDelivered)) {
+							$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+						} else {
+							$quantityToBeDelivered = $quantityAsked;
 						}
 					}
 
