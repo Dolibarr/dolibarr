@@ -169,13 +169,13 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
-	 * @var Project The related project
+	 * @var Project 	The related project object
 	 * @see fetch_projet()
 	 */
 	public $project;
 
 	/**
-	 * @var int The related project ID
+	 * @var int 		The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
@@ -188,24 +188,24 @@ abstract class CommonObject
 
 	/**
 	 * @deprecated
-	 * @see fk_project
+	 * @see $fk_project
 	 */
 	public $fk_projet;
 
 	/**
-	 * @var Contact a related contact
+	 * @var Contact 	A related contact object
 	 * @see fetch_contact()
 	 */
 	public $contact;
 
 	/**
-	 * @var int The related contact ID
+	 * @var int 		The related contact ID
 	 * @see fetch_contact()
 	 */
 	public $contact_id;
 
 	/**
-	 * @var Societe A related thirdparty
+	 * @var Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -254,7 +254,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int The object's status
+	 * @var int The object's status. Prefer use of status.
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -264,6 +264,7 @@ abstract class CommonObject
 	 * @see setStatut()
 	 */
 	public $status;
+
 
 	/**
 	 * @var string
@@ -318,6 +319,7 @@ abstract class CommonObject
 	 * @see getFullAddress(), $region_id, $region_code
 	 */
 	public $region;
+
 
 	/**
 	 * @var int
@@ -518,6 +520,24 @@ abstract class CommonObject
 	 */
 	public $date_modification; // Date last change (tms field)
 
+	/**
+	 * @var string	User id of author
+	 * @deprecated
+	 */
+	public $user_author;
+	/**
+	 * @var string	User id of validation
+	 * @deprecated
+	 */
+	public $user_valid;
+
+	/**
+	 * @var string	User id of last modifier
+	 * @deprecated
+	 */
+	public $user_modification;
+
+
 	public $next_prev_filter;
 
 	/**
@@ -534,6 +554,7 @@ abstract class CommonObject
 	 * @var	float	Amount already paid (used to show correct status)
 	 */
 	public $alreadypaid;
+
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
