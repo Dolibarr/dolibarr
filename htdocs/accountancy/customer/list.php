@@ -646,6 +646,21 @@ if ($result) {
 				$objp->code_sell_t = '';
 				$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
 			}
+
+			// For credit note invoice, if origin invoice is a deposit invoice, force also on specific customer deposit account
+			if (!empty($objp->fk_facture_source)) {
+				$invoiceSource = new Facture($db);
+				$invoiceSource->fetch($objp->fk_facture_source);
+
+				if ($objp->ftype == $facture_static::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture_static::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new AccountingAccount($db);
+					$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+					$objp->code_sell_l = $accountdeposittoventilated->ref;
+					$objp->code_sell_p = '';
+					$objp->code_sell_t = '';
+					$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+				}
+			}
 		}
 
 		if (!empty($objp->code_sell_p)) {
