@@ -804,9 +804,13 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("Shipment");
+if ($action == 'create2') {
+	$title = $langs->trans("CreateShipment");
+}
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+llxHeader('', $title, 'Expedition', $help_url);
 
 if (empty($action)) {
 	$action = 'view';

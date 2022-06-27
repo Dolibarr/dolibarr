@@ -730,9 +730,13 @@ if (!empty($conf->stock->enabled)) {
 	$formproduct = new FormProduct($db);
 }
 
-llxHeader('', $langs->trans("UserCard"));
+$help_url = '';
 
 if ($action == 'create' || $action == 'adduserldap') {
+
+	$title = $langs->trans("NewUser");
+	llxHeader('', $title, $help_url);
+
 	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
@@ -1349,6 +1353,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 		}
+
+		$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+		$title = $person_name." - ".$langs->trans('Card');
+		llxHeader('', $title, $help_url);
 
 		// Show tabs
 		if ($mode == 'employee') { // For HRM module development

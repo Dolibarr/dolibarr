@@ -702,15 +702,20 @@ if ($action == 'confirm_generateinter') {
 /*
  * View
  */
-
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
-llxHeader("", $langs->trans("Task"));
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
+//$result = $projectstatic->fetch($object->fk_project);
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+$title = $object->ref . ' - ' . $langs->trans("TimeSpent");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*

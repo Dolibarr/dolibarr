@@ -285,8 +285,10 @@ $formpropal = new FormPropal($db);
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 
+$title = $langs->trans('ListOfSupplierProposals');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-//llxHeader('',$langs->trans('CommRequest'),$help_url);
+
+llxHeader('', $title, $help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -467,7 +469,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $langs->trans('CommRequest'), $help_url);
+//	llxHeader('', $langs->trans('CommRequest'), $help_url);
 
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
