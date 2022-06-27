@@ -2799,8 +2799,8 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Cancel order
-				if ($object->statut == Commande::STATUS_VALIDATED && (!empty($usercanclose) || !empty($usercancancel))) {
-					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"].'?action=cancel&amp;token='.newToken().'&amp;id='.$object->id, '');
+				if ($object->statut == Commande::STATUS_VALIDATED && !empty($usercancancel)) {
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
 				}
 
 				// Delete order
