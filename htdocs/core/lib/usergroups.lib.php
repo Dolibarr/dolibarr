@@ -472,6 +472,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		} else {
 			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
 		}
+		print $form->textwithpicto('', $langs->trans("DoesNotWorkWithAllThemes"));
 		print '</tr>';
 	}
 

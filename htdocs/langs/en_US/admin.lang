@@ -2282,3 +2282,4 @@ DarkThemeMode=Dark theme mode
 AlwaysDisabled=Always disabled
 AccordingToBrowser=According to browser
 AlwaysEnabled=Always Enabled
+DoesNotWorkWithAllThemes=Will not work with all themes
