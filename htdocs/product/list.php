@@ -1206,7 +1206,7 @@ if ($resql) {
 	if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 		print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", "", $param, '', $sortfield, $sortorder, 'right ');
 	}
-	if (!empty($arrayfields['p.desiredstock']['checked']) ) {
+	if (!empty($arrayfields['p.desiredstock']['checked'])) {
 		print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"], "p.desiredstock", "", $param, '', $sortfield, $sortorder, 'right ');
 	}
 	if (!empty($arrayfields['p.stock']['checked'])) {
