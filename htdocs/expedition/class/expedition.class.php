@@ -933,7 +933,7 @@ class Expedition extends CommonObject
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+			if (!empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)) {
 				$product = new Product($this->db);
 				$product->fetch($fk_product);
 
