@@ -1217,10 +1217,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -2739,7 +2739,7 @@ if ($action == 'create' && $usercancreate) {
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
 						if ($user->rights->ficheinter->creer) {
-							print dolGetButtonAction('', $langs->trans('AddInterventionGR'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
+							print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 						} else {
 							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 						}
