@@ -8402,8 +8402,6 @@ abstract class CommonObject
 				$photo = '';
 				$file = $val['name'];
 
-				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
-
 				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
 				if (image_format_supported($file) >= 0) {
 					$nbphoto++;
