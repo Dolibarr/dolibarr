@@ -2187,105 +2187,107 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			// Accountancy sell code
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancySellCode");
-			print '</td><td>';
-			if (!empty($conf->accounting->enabled)) {
-				if (!empty($object->accountancy_code_sell)) {
-					$accountingaccount = new AccountingAccount($db);
-					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
-
-					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
-				}
-			} else {
-				print $object->accountancy_code_sell;
-			}
-			print '</td></tr>';
-
-			// Accountancy sell code intra-community
-			if ($mysoc->isInEEC()) {
+			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+				// Accountancy sell code
 				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancySellIntraCode");
+				print $langs->trans("ProductAccountancySellCode");
 				print '</td><td>';
 				if (!empty($conf->accounting->enabled)) {
-					if (!empty($object->accountancy_code_sell_intra)) {
-						$accountingaccount2 = new AccountingAccount($db);
-						$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
+					if (!empty($object->accountancy_code_sell)) {
+						$accountingaccount = new AccountingAccount($db);
+						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
 
-						print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 					}
 				} else {
-					print $object->accountancy_code_sell_intra;
+					print $object->accountancy_code_sell;
+				}
+				print '</td></tr>';
+
+				// Accountancy sell code intra-community
+				if ($mysoc->isInEEC()) {
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancySellIntraCode");
+					print '</td><td>';
+					if (!empty($conf->accounting->enabled)) {
+						if (!empty($object->accountancy_code_sell_intra)) {
+							$accountingaccount2 = new AccountingAccount($db);
+							$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
+
+							print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_sell_intra;
+					}
+					print '</td></tr>';
+				}
+
+				// Accountancy sell code export
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancySellExportCode");
+				print '</td><td>';
+				if (!empty($conf->accounting->enabled)) {
+					if (!empty($object->accountancy_code_sell_export)) {
+						$accountingaccount3 = new AccountingAccount($db);
+						$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
+
+						print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_sell_export;
+				}
+				print '</td></tr>';
+
+				// Accountancy buy code
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancyBuyCode");
+				print '</td><td>';
+				if (!empty($conf->accounting->enabled)) {
+					if (!empty($object->accountancy_code_buy)) {
+						$accountingaccount4 = new AccountingAccount($db);
+						$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
+
+						print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_buy;
+				}
+				print '</td></tr>';
+
+				// Accountancy buy code intra-community
+				if ($mysoc->isInEEC()) {
+					print '<tr><td class="nowrap">';
+					print $langs->trans("ProductAccountancyBuyIntraCode");
+					print '</td><td>';
+					if (!empty($conf->accounting->enabled)) {
+						if (!empty($object->accountancy_code_buy_intra)) {
+							$accountingaccount5 = new AccountingAccount($db);
+							$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
+
+							print $accountingaccount5->getNomUrl(0, 1, 1, '', 1);
+						}
+					} else {
+						print $object->accountancy_code_buy_intra;
+					}
+					print '</td></tr>';
+				}
+
+				// Accountancy buy code export
+				print '<tr><td class="nowrap">';
+				print $langs->trans("ProductAccountancyBuyExportCode");
+				print '</td><td>';
+				if (!empty($conf->accounting->enabled)) {
+					if (!empty($object->accountancy_code_buy_export)) {
+						$accountingaccount6 = new AccountingAccount($db);
+						$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);
+
+						print $accountingaccount6->getNomUrl(0, 1, 1, '', 1);
+					}
+				} else {
+					print $object->accountancy_code_buy_export;
 				}
 				print '</td></tr>';
 			}
-
-			// Accountancy sell code export
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancySellExportCode");
-			print '</td><td>';
-			if (!empty($conf->accounting->enabled)) {
-				if (!empty($object->accountancy_code_sell_export)) {
-					$accountingaccount3 = new AccountingAccount($db);
-					$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
-
-					print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
-				}
-			} else {
-				print $object->accountancy_code_sell_export;
-			}
-			print '</td></tr>';
-
-			// Accountancy buy code
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancyBuyCode");
-			print '</td><td>';
-			if (!empty($conf->accounting->enabled)) {
-				if (!empty($object->accountancy_code_buy)) {
-					$accountingaccount4 = new AccountingAccount($db);
-					$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
-
-					print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
-				}
-			} else {
-				print $object->accountancy_code_buy;
-			}
-			print '</td></tr>';
-
-			// Accountancy buy code intra-community
-			if ($mysoc->isInEEC()) {
-				print '<tr><td class="nowrap">';
-				print $langs->trans("ProductAccountancyBuyIntraCode");
-				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
-					if (!empty($object->accountancy_code_buy_intra)) {
-						$accountingaccount5 = new AccountingAccount($db);
-						$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
-
-						print $accountingaccount5->getNomUrl(0, 1, 1, '', 1);
-					}
-				} else {
-					print $object->accountancy_code_buy_intra;
-				}
-				print '</td></tr>';
-			}
-
-			// Accountancy buy code export
-			print '<tr><td class="nowrap">';
-			print $langs->trans("ProductAccountancyBuyExportCode");
-			print '</td><td>';
-			if (!empty($conf->accounting->enabled)) {
-				if (!empty($object->accountancy_code_buy_export)) {
-					$accountingaccount6 = new AccountingAccount($db);
-					$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);
-
-					print $accountingaccount6->getNomUrl(0, 1, 1, '', 1);
-				}
-			} else {
-				print $object->accountancy_code_buy_export;
-			}
-			print '</td></tr>';
 
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
