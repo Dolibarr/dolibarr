@@ -469,8 +469,6 @@ if ($resql) {
 		exit;
 	}
 
-	//  llxHeader('', $langs->trans('CommRequest'), $help_url);
-
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);

@@ -787,8 +787,6 @@ if ($resql) {
 		exit;
 	}
 
-	//  llxHeader('', $langs->trans('Proposal'), $help_url);
-
 	$param = '&search_status='.urlencode($search_status);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
