@@ -719,7 +719,6 @@ if (!empty($conf->stock->enabled)) {
 $help_url = '';
 
 if ($action == 'create' || $action == 'adduserldap') {
-
 	$title = $langs->trans("NewUser");
 	llxHeader('', $title, $help_url);
 

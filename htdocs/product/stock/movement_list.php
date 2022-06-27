@@ -639,7 +639,6 @@ if ($msid) {
 		} else {
 			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
 		}
-
 	}
 }
 llxHeader("", $title, $help_url);
