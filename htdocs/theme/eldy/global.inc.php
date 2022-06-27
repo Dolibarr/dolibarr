@@ -7255,6 +7255,8 @@ span.clipboardCPValue.hidewithsize {
 	display: inline-block;
 	color: transparent;
 	white-space: nowrap;
+	overflow-x: hidden;
+	vertical-align: middle;
 }
 div.clipboardCPValue.hidewithsize {
 	width: 0 !important;
