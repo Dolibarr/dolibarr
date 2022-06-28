@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank accoun
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)

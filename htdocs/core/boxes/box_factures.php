@@ -185,7 +185,7 @@ class box_factures extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($date, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 

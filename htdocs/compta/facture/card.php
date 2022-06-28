@@ -3093,7 +3093,7 @@ if ($action == 'create') {
 		// If thirdparty known and not a predefined invoiced without a recurring rule
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
-		print $soc->getNomUrl(1);
+		print $soc->getNomUrl(1, 'customer');
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		// Outstanding Bill
 		$arrayoutstandingbills = $soc->getOutstandingBills();

@@ -716,7 +716,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datelastresult)) {
 		print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		if (empty($object->datelastrun)) {
+			print $langs->trans('CronNone');
+		} else {
+			// In progress
+		}
 	}
 	print "</td></tr>";
 

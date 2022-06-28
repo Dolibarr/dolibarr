@@ -42,6 +42,34 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
+
+if (!function_exists('utf8_encode')) {
+	/**
+	 * Implement utf8_encode for PHP that does not support it.
+	 *
+	 * @param	mixed	$elements		PHP Object to json encode
+	 * @return 	string					Json encoded string
+	 */
+	function utf8_encode($elements)
+	{
+		return mb_convert_encoding($elements, 'UTF-8', 'ISO-8859-1');
+	}
+}
+
+if (!function_exists('utf8_decode')) {
+	/**
+	 * Implement utf8_decode for PHP that does not support it.
+	 *
+	 * @param	mixed	$elements		PHP Object to json encode
+	 * @return 	string					Json encoded string
+	 */
+	function utf8_decode($elements)
+	{
+		return mb_convert_encoding($elements, 'ISO-8859-1', 'UTF-8');
+	}
+}
+
+
 /**
  * Return dolibarr global constant string value
  * @param string $key key to return value, return '' if not set
@@ -6431,6 +6459,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case = 1, $color = 0)
 {
 	global $langs;
+
 	$result = 'unknown';
 	$classname = '';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
@@ -10448,14 +10477,14 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$TCompiledAttr[] = $key.'="'.$value.'"';
 	}
 
-	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
 
 	$parameters = array(
-		'TCompiledAttr' => $TCompiledAttr,
-		'compiledAttributes' => $compiledAttributes,
+		'TCompiledAttr' => $TCompiledAttr,				// array
+		'compiledAttributes' => $compiledAttributes,	// string
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,
