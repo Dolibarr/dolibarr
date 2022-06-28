@@ -49,8 +49,6 @@ if ($action == 'presend') {
 		// Special case
 		if ($object->element == 'invoice_supplier') {
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-		} elseif ($object->element == 'societe') {
-			$fileparams = dol_most_recent_file($diroutput.'/'.$ref);
 		} else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
@@ -102,8 +100,6 @@ if ($action == 'presend') {
 			}
 			if ($object->element == 'invoice_supplier') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			} elseif ($object->element == 'societe') {
-				$fileparams = dol_most_recent_file($diroutput.'/'.$ref);
 			} else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
