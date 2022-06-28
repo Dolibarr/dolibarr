@@ -33,11 +33,6 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
  */
 class Lettering extends BookKeeping
 {
-	/**
-	 * @var BookKeeping[] 	Bookkeeping cached
-	 */
-	public static $bookkeeping_cached = array();
-
 	public static $doc_type_infos = array(
 		'customer_invoice' => array(
 			'payment_table' => 'paiement',
@@ -45,6 +40,21 @@ class Lettering extends BookKeeping
 			'doc_payment_table' => 'paiement_facture',
 			'doc_payment_table_fk_payment' => 'fk_paiement',
 			'doc_payment_table_fk_doc' => 'fk_facture',
+			'linked_info' => array(
+				array(
+					'table' => 'paiement_facture',
+					'fk_doc' => 'fk_facture',
+					'fk_link' => 'fk_paiement',
+					'prefix' => 'p',
+				),
+				array(
+					'table' => 'societe_remise_except',
+					'fk_doc' => 'fk_facture_source',
+					'fk_link' => 'fk_facture',
+					'prefix' => 'a',
+					'is_fk_link_is_also_fk_doc' => true,
+				),
+			),
 		),
 		'supplier_invoice' => array(
 			'payment_table' => 'paiementfourn',
@@ -52,6 +62,21 @@ class Lettering extends BookKeeping
 			'doc_payment_table' => 'paiementfourn_facturefourn',
 			'doc_payment_table_fk_payment' => 'fk_paiementfourn',
 			'doc_payment_table_fk_doc' => 'fk_facturefourn',
+			'linked_info' => array(
+				array(
+					'table' => 'paiementfourn_facturefourn',
+					'fk_doc' => 'fk_facturefourn',
+					'fk_link' => 'fk_paiementfourn',
+					'prefix' => 'p',
+				),
+				array(
+					'table' => 'societe_remise_except',
+					'fk_doc' => 'fk_invoice_supplier_source',
+					'fk_link' => 'fk_invoice_supplier',
+					'prefix' => 'a',
+					'is_fk_link_is_also_fk_doc' => true,
+				),
+			),
 		),
 	);
 
@@ -267,17 +292,8 @@ class Lettering extends BookKeeping
 
 		$sql = "SELECT DISTINCT ab2.lettering_code" .
 			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping As ab" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu2 ON bu2.url_id = bu.url_id" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.fk_doc = bu2.fk_bank" .
+			" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account" .
 			" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")" .
-			" AND ab.doc_type = 'bank'" .
-			" AND ab2.doc_type = 'bank'" .
-			" AND bu.type = 'company'" .
-			" AND bu2.type = 'company'" .
-			" AND ab.subledger_account != ''" .
-			" AND ab2.subledger_account != ''" .
-			" AND ab.lettering_code IS NULL" .
 			" AND ab2.lettering_code != ''" .
 			" ORDER BY ab2.lettering_code DESC" .
 			" LIMIT 1 ";
@@ -285,7 +301,7 @@ class Lettering extends BookKeeping
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
+			$lettre = (empty($obj->lettering_code) ? $lettre : $obj->lettering_code);
 			if (!empty($obj->lettering_code)) {
 				$lettre++;
 			}
@@ -426,6 +442,10 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$nb_lettering = 0;
 		$grouped_lines = $this->getLinkedLines($bookkeeping_ids);
+		if (!is_array($grouped_lines)) {
+			return -2;
+		}
+
 		foreach ($grouped_lines as $lines) {
 			$group_error = 0;
 			$total = 0;
@@ -498,7 +518,7 @@ class Lettering extends BookKeeping
 		// Get all bookkeeping lines
 		$sql = "SELECT DISTINCT ab.doc_type, ab.fk_doc";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		if (empty($bookkeeping_ids)) {
+		if (!empty($bookkeeping_ids)) {
 			// Get all bookkeeping lines of piece number
 			$sql .= " LEFT JOIN (";
 			$sql .= "   SELECT DISTINCT piece_num";
@@ -509,7 +529,7 @@ class Lettering extends BookKeeping
 		}
 		$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " AND ab.fk_doc > 0";
-		if (empty($bookkeeping_ids)) $sql .= " AND pn.piece_num IS NOT NULL";
+		if (!empty($bookkeeping_ids)) $sql .= " AND pn.piece_num IS NOT NULL";
 		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
@@ -525,7 +545,7 @@ class Lettering extends BookKeeping
 		}
 		$this->db->free($resql);
 
-		if (empty($bookkeeping_lines)) {
+		if (empty($bookkeeping_lines_by_type)) {
 			return array();
 		}
 
@@ -547,41 +567,44 @@ class Lettering extends BookKeeping
 				continue;
 			}
 
-			// Get all payment ids from bookkeeping lines
-			$payment_ids = $this->getPaymentIds($bookkeeping_lines_by_type[$doc_type], $doc_type);
-			if (!is_array($payment_ids)) {
+			// Get all document ids grouped
+			$doc_grouped = $this->getLinkedDocumentByGroup($bookkeeping_lines_by_type[$doc_type], $doc_type);
+			if (!is_array($doc_grouped)) {
 				return -1;
 			}
 
-			// Get all payment ids grouped
-			$payment_grouped = $this->getLinkedPaymentByGroup($payment_ids, $doc_type);
-			if (!is_array($payment_grouped)) {
-				return -1;
-			}
+			// Group all lines by document/piece number
+			foreach ($doc_grouped as $doc_ids) {
+				$bank_ids = $this->getBankLinesFromFkDocAndDocType($doc_ids, $doc_type);
+				if (!is_array($bank_ids)) {
+					return -1;
+				}
 
-			// Group all lines by payments/piece number
-			foreach ($payment_grouped as $payment_ids) {
 				// Get all bookkeeping lines linked
-				$sql = "SELECT DISTINCT ab.id, ab.piece_num, ab.debit, ab.credit, ab.lettering_code";
+				$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.debit, ab.credit, ab.lettering_code";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+				if (!empty($bank_ids)) {
+					$sql .= " LEFT JOIN (";
+					$sql .= "   SELECT DISTINCT ab.piece_num";
+					$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+					$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
+					$sql .= "   AND ab.doc_type = 'bank'";
+					$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+					$sql .= " ) AS bpn ON bpn.piece_num = ab.piece_num";
+				}
 				$sql .= " LEFT JOIN (";
 				$sql .= "   SELECT DISTINCT ab.piece_num";
 				$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p ON p." . $doc_type_info['payment_table_fk_bank'] . " = ab.fk_doc";
-				$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-				$sql .= "   AND ab.doc_type = 'bank'";
-				$sql .= "   AND p.rowid IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
-				$sql .= " ) AS bpn ON bpn.piece_num = ab.piece_num";
-				$sql .= " LEFT JOIN (";
-				$sql .= "   SELECT DISTINCT ab.piece_num";
-				$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_doc'] . " = ab.fk_doc";
 				$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 				$sql .= "   AND ab.doc_type = '" . $this->db->escape($doc_type) . "'";
-				$sql .= "   AND dp." . $doc_type_info['doc_payment_table_fk_payment'] . " IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
+				$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $doc_ids)) . ")";
 				$sql .= " ) AS dpn ON dpn.piece_num = ab.piece_num";
 				$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-				$sql .= " AND (bpn.piece_num IS NOT NULL OR dpn.piece_num IS NOT NULL)";
+				$sql .= " AND (";
+				if (!empty($bank_ids)) {
+					$sql .= "bpn.piece_num IS NOT NULL OR ";
+				}
+				$sql .= "dpn.piece_num IS NOT NULL)";
 				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
@@ -634,6 +657,7 @@ class Lettering extends BookKeeping
 			$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
 			$sql .= " WHERE p." . $doc_type_info['payment_table_fk_bank'] . " IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+			$sql .= " AND dp." . $doc_type_info['doc_payment_table_fk_doc'] . " > 0";
 
 			dol_syslog(__METHOD__ . " - Get all fk_doc by doc_type from list of bank ids for '" . $doc_type . "'", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -652,22 +676,23 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 * Get all payment ids of the document ids and document type provided
+	 * Get all bank ids from list of document ids of a type
 	 *
-	 * @param	array			$fk_docs		List of document id
+	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all payment ids
+	 * @return	array|int						<0 if error otherwise all all bank ids from list of document ids of a type
 	 */
-	public function getPaymentIds($fk_docs, $doc_type)
+	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
 	{
-		dol_syslog(__METHOD__ . " - fk_docs=" . json_encode($fk_docs) . ", doc_type=$doc_type", LOG_DEBUG);
 		global $langs;
 
+		dol_syslog(__METHOD__ . " - bank_ids=".json_encode($document_ids) . ", doc_type=$doc_type", LOG_DEBUG);
+
 		// Clean parameters
-		$fk_docs = is_array($fk_docs) ? $fk_docs : array();
+		$document_ids = is_array($document_ids) ? $document_ids : array();
 		$doc_type = trim($doc_type);
 
-		if (empty($fk_docs)) {
+		if (empty($document_ids)) {
 			return array();
 		}
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
@@ -677,44 +702,46 @@ class Lettering extends BookKeeping
 		}
 
 		$doc_type_info = self::$doc_type_infos[$doc_type];
+		$bank_ids = array();
 
 		// Get all fk_doc by doc_type from bank ids
-		$sql = "SELECT DISTINCT " . $doc_type_info['doc_payment_table_fk_payment'] . " AS fk_payment";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'];
-		$sql .= " WHERE " . $doc_type_info['doc_payment_table_fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $fk_docs)) . ")";
+		$sql = "SELECT DISTINCT p." . $doc_type_info['payment_table_fk_bank'] . " AS fk_doc";
+		$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['payment_table'] . " AS p";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS dp ON dp." . $doc_type_info['doc_payment_table_fk_payment'] . " = p.rowid";
+		$sql .= " WHERE dp." . $doc_type_info['doc_payment_table_fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
+		$sql .= " AND p." . $doc_type_info['payment_table_fk_bank'] . " > 0";
 
-		dol_syslog(__METHOD__ . " - Get all fk_doc by doc_type from list of bank ids for '" . $doc_type . "'", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " - Get all bank ids from list of document ids of a type '" . $doc_type . "'", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			return -1;
 		}
 
-		$payment_ids = array();
 		while ($obj = $this->db->fetch_object($resql)) {
-			$payment_ids[$obj->fk_payment] = $obj->fk_payment;
+			$bank_ids[$obj->fk_doc] = $obj->fk_doc;
 		}
 		$this->db->free($resql);
 
-		return $payment_ids;
+		return $bank_ids;
 	}
 
 	/**
-	 * Get all linked payment ids by group
+	 * Get all linked document ids by group and type
 	 *
-	 * @param	array			$payment_ids	List of payment id
+	 * @param	array			$document_ids	List of document id
 	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
-	 * @return	array|int						<0 if error otherwise all linked payment ids by group
+	 * @return	array|int						<0 if error otherwise all linked document ids by group and type [ [ 'doc_type' => [ doc_id, ... ], ... ], ... ]
 	 */
-	public function getLinkedPaymentByGroup($payment_ids, $doc_type)
+	public function getLinkedDocumentByGroup($document_ids, $doc_type)
 	{
 		global $langs;
 
 		// Clean parameters
-		$payment_ids = is_array($payment_ids) ? $payment_ids : array();
+		$document_ids = is_array($document_ids) ? $document_ids : array();
 		$doc_type = trim($doc_type);
 
-		if (empty($payment_ids)) {
+		if (empty($document_ids)) {
 			return array();
 		}
 		if (!is_array(self::$doc_type_infos[$doc_type])) {
@@ -725,95 +752,104 @@ class Lettering extends BookKeeping
 
 		$doc_type_info = self::$doc_type_infos[$doc_type];
 
-		// Get payment lines
-		$sql = "SELECT DISTINCT pe2." . $doc_type_info['doc_payment_table_fk_payment'] . " AS fk_payment, pe2." . $doc_type_info['doc_payment_table_fk_doc'] . " AS fk_doc";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS pe";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $doc_type_info['doc_payment_table'] . " AS pe2 ON pe2." . $doc_type_info['doc_payment_table_fk_doc'] . " = pe." . $doc_type_info['doc_payment_table_fk_doc'];
-		$sql .= " WHERE pe." . $doc_type_info['doc_payment_table_fk_payment'] . " IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
+		// Get document lines
+		$current_document_ids = array();
+		$link_by_element = array();
+		$element_by_link = array();
+		foreach ($doc_type_info['linked_info'] as $linked_info) {
+			$sql = "SELECT DISTINCT tl2." . $linked_info['fk_link'] . " AS fk_link, tl2." . $linked_info['fk_doc'] . " AS fk_doc";
+			$sql .= " FROM " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . $linked_info['table'] . " AS tl2 ON tl2." . $linked_info['fk_link'] . " = tl." . $linked_info['fk_link'];
+			$sql .= " WHERE tl." . $linked_info['fk_doc'] . " IN (" . $this->db->sanitize(implode(',', $document_ids)) . ")";
 
-		dol_syslog(__METHOD__ . " - Get payment lines", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->errors[] = "Error " . $this->db->lasterror();
-			return -1;
+			dol_syslog(__METHOD__ . " - Get document lines", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = "Error " . $this->db->lasterror();
+				return -1;
+			}
+
+			$is_fk_link_is_also_fk_doc = !empty($linked_info['is_fk_link_is_also_fk_doc']);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$current_document_ids[$obj->fk_doc] = $obj->fk_doc;
+
+				$link_key = $linked_info['prefix'] . $obj->fk_link;
+				$element_by_link[$link_key][$obj->fk_doc] = $obj->fk_doc;
+				$link_by_element[$obj->fk_doc][$link_key] = $link_key;
+				if ($is_fk_link_is_also_fk_doc) {
+					$element_by_link[$link_key][$obj->fk_link] = $obj->fk_link;
+					$link_by_element[$obj->fk_link][$link_key] = $link_key;
+				}
+			}
+			$this->db->free($resql);
 		}
 
-		$current_payment_ids = array();
-		$payment_by_element = array();
-		$element_by_payment = array();
-		while ($obj = $this->db->fetch_object($resql)) {
-			$current_payment_ids[$obj->fk_payment] = $obj->fk_payment;
-			$element_by_payment[$obj->fk_payment][$obj->fk_doc] = $obj->fk_doc;
-			$payment_by_element[$obj->fk_doc][$obj->fk_payment] = $obj->fk_payment;
-		}
-		$this->db->free($resql);
-
-		if (count(array_diff($payment_ids, $current_payment_ids))) {
-			return $this->getLinkedPaymentByGroup($current_payment_ids, $doc_type);
+		if (count(array_diff($document_ids, $current_document_ids))) {
+			return $this->getLinkedDocumentByGroup($current_document_ids, $doc_type);
 		}
 
-		return $this->getGroupElements($payment_by_element, $element_by_payment);
+		return $this->getGroupElements($link_by_element, $element_by_link);
 	}
 
 	/**
-	 * Get payment ids grouped by payment id and element id in common
+	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array	&$payment_by_element	List of payment ids by element id
-	 * @param	array	&$element_by_payment	List of element ids by payment id
-	 * @param	int		$element_id				Element Id (used for recursive function)
-	 * @param	array	&$current_group			Current group (used for recursive function)
-	 * @return	array							List of payment ids grouped by payment id and element id in common
+	 * @param	array	&$link_by_element	List of payment ids by link key
+	 * @param	array	&$element_by_link	List of element ids by link key
+	 * @param	string	$link_key			Link key (used for recursive function)
+	 * @param	array	&$current_group		Current group (used for recursive function)
+	 * @return	array						List of element ids grouped by link or element in common
 	 */
-	public function getGroupElements(&$payment_by_element, &$element_by_payment, $element_id = 0, &$current_group = array())
+	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
 	{
-		$grouped_payments = array();
-		if ($element_id > 0 && !isset($payment_by_element[$element_id])) {
-			// Return if specific element id not found
-			return $grouped_payments;
+		$grouped_elements = array();
+		if (!empty($link_key) && !isset($element_by_link[$link_key])) {
+			// Return if specific link key not found
+			return $grouped_elements;
 		}
 
-		if ($element_id == 0) {
+		if (empty($link_key)) {
 			// Save list when is the begin of recursive function
-			$save_payment_by_element = $payment_by_element;
-			$save_element_by_payment = $element_by_payment;
+			$save_link_by_element = $link_by_element;
+			$save_element_by_link = $element_by_link;
 		}
 
 		do {
 			// Get current element id, get this payment id list and delete the entry
-			$current_element_id = $element_id > 0 ? $element_id : array_keys($payment_by_element)[0];
-			$payment_ids = $payment_by_element[$current_element_id];
-			unset($payment_by_element[$current_element_id]);
+			$current_link_key = !empty($link_key) ? $link_key : array_keys($element_by_link)[0];
+			$element_ids = $element_by_link[$current_link_key];
+			unset($element_by_link[$current_link_key]);
 
-			foreach ($payment_ids as $payment_id) {
-				// Continue if payment id in not found
-				if (!isset($element_by_payment[$payment_id])) continue;
+			foreach ($element_ids as $element_id) {
+				// Continue if element id in not found
+				if (!isset($link_by_element[$element_id])) continue;
 
-				// Set the payment in the current group
-				$current_group[$payment_id] = $payment_id;
+				// Set the element in the current group
+				$current_group[$element_id] = $element_id;
 
-				// Get current element ids, get this payment id list and delete the entry
-				$element_ids = $element_by_payment[$payment_id];
-				unset($element_by_payment[$payment_id]);
+				// Get current link keys, get this element id list and delete the entry
+				$link_keys = $link_by_element[$element_id];
+				unset($link_by_element[$element_id]);
 
-				// Set payment id on the current group for each element id of the payment
-				foreach ($element_ids as $id) {
-					$this->getGroupElements($payment_by_element, $element_by_payment, $id, $current_group);
+				// Set element id on the current group for each link key of the element
+				foreach ($link_keys as $key) {
+					$this->getGroupElements($link_by_element, $element_by_link, $key, $current_group);
 				}
 			}
 
-			if ($element_id == 0) {
+			if (empty($link_key)) {
 				// Save current group and reset the current group when is the begin of recursive function
-				$grouped_payments[] = $current_group;
+				$grouped_elements[] = $current_group;
 				$current_group = array();
 			}
-		} while(!empty($payment_by_element) && $element_id == 0);
+		} while(!empty($element_by_link) && empty($link_key));
 
-		if ($element_id == 0) {
+		if (empty($link_key)) {
 			// Restore list when is the begin of recursive function
-			$payment_by_element = $save_payment_by_element;
-			$element_by_payment = $save_element_by_payment;
+			$link_by_element = $save_link_by_element;
+			$element_by_link = $save_element_by_link;
 		}
 
-		return $grouped_payments;
+		return $grouped_elements;
 	}
 }
