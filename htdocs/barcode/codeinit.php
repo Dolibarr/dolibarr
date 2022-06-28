@@ -281,12 +281,17 @@ print '<br>';
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="mode" value="label">';
-print '<input type="hidden" name="action" value="initbarcodeproducts">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-
 print '<br>';
+
+
+
+// Example 1 : Adding jquery code
+print '<script type="text/javascript">
+function confirm_erase() {
+	return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
+}
+</script>';
+
 
 // For thirdparty
 if (isModEnabled('societe')) {
@@ -351,13 +356,6 @@ if ($conf->product->enabled || $conf->product->service) {
 	print '<input type="hidden" name="mode" value="label">';
 	print '<input type="hidden" name="action" value="initbarcodeproducts">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
-	// Example 1 : Adding jquery code
-	print '<script type="text/javascript">
-	function confirm_erase() {
-		return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
-	}
-	</script>';
 
 	$nbproductno = $nbproducttotal = 0;
 
