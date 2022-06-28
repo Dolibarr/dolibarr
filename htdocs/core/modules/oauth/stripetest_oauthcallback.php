@@ -89,7 +89,8 @@ if (GETPOST('state')) {
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token SET service = 'StripeTest".$db->escape($keyforprovider ? '-'.$keyforprovider : '')."', entity=".$conf->entity;
+$servicesuffix = ($keyforprovider ? '-'.$keyforprovider : '');
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token SET service = 'StripeTest".$db->escape($servicesuffix)."', entity = ".((int) $conf->entity);
 $db->query($sql);
 
 // access type needed to have oauth provider refreshing token
