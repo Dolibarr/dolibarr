@@ -199,6 +199,7 @@ AmountOfSubscriptions=Montant des cotisations
 TurnoverOrBudget=Chiffre affaire (pour société) ou Budget (asso ou collectivité)
 DefaultAmount=Montant par défaut de la cotisation
 CanEditAmount=Le visiteur peut modifier / choisir le montant de sa cotisation
+AmountIsLowerToMinimumNotice=sur un dû total de %s
 AnyAmountWithAdvisedAmount=Montant libre avec un montant recommandé de %s %s
 AnyAmountWithoutAdvisedAmount=Montant libre
 CanEditAmountShort=Montant libre

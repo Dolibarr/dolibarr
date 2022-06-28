@@ -202,6 +202,7 @@ AmountOfSubscriptions=Amount collected from contributions
 TurnoverOrBudget=Turnover (for a company) or Budget (for a foundation)
 DefaultAmount=Default amount of contribution
 CanEditAmount=Visitor can choose/edit amount of its contribution
+AmountIsLowerToMinimumNotice=sur un dû total de %s
 MEMBER_NEWFORM_PAYONLINE=Jump on integrated online payment page
 ByProperties=By nature
 MembersStatisticsByProperties=Members statistics by nature

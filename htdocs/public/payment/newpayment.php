@@ -1500,7 +1500,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$amount = $adht->amount;
 		}
 
-		$amount = price2num($amount, 'MT');
+		$amount = max(0, price2num($amount, 'MT'));
 	}
 
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1611,57 +1611,22 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	// Amount
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	if (empty($amount)) {
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ' ('.$langs->trans("ToComplete");
-		}
-		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
-		}
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ')';
-		}
+	// This place no longer allows amount edition
+	if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
+		print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
-	$valtoshow = '';
-	if (empty($amount) || !is_numeric($amount)) {
-		$valtoshow = price2num(GETPOST("newamount", 'alpha'), 'MT');
-		// force default subscription amount to value defined into constant...
-		if (empty($valtoshow)) {
-			if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			} else {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			}
-		}
+	if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $amount) {
+		$amount = max(0, $conf->global->MEMBER_MIN_AMOUNT, $amount);
 	}
-	if (empty($amount) || !is_numeric($amount)) {
-		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-		}
-		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
-		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled="disabled">';
-			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-		} else {
-			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
-		}
-		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	} else {
-		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-			$amount = $valtoshow;
-		}
-		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
-		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
-		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+	print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
+	$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $adht->caneditamount;
+	$minimumamount = empty($conf->global->MEMBER_MIN_AMOUNT)? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount > $amount);
+	if(!$caneditamount && $minimumamount > $amount) {	
+		print ' '. $langs->trans("AmountIsLowerToMinimumNotice", price($adht->amount, 1, $langs, 1, -1, -1, $currency));
 	}
+	
+	print '<input type="hidden" name="amount" value="'.$amount.'">';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
