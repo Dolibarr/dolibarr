@@ -3258,7 +3258,7 @@ class Propal extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
-		$sql .= " c.datec, c.date_valid as datev, c.date_signature, c.date_cloture as dateo,";
+		$sql .= " c.datec, c.date_valid as datev, c.date_signature, c.date_cloture,";
 		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_signature, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
 		$sql .= " WHERE c.rowid = ".((int) $id);
@@ -3274,7 +3274,7 @@ class Propal extends CommonObject
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_validation   = $this->db->jdate($obj->datev);
 				$this->date_signature    = $this->db->jdate($obj->date_signature);
-				$this->date_cloture      = $this->db->jdate($obj->dateo);
+				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 
 				$cuser = new User($this->db);
 				$cuser->fetch($obj->fk_user_author);

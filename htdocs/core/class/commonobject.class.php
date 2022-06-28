@@ -521,21 +521,44 @@ abstract class CommonObject
 	public $date_modification; // Date last change (tms field)
 
 	/**
-	 * @var string	User id of author
-	 * @deprecated
+	 * @var User|int	User author/creation
+	 * @TODO Merge with user_creation
 	 */
 	public $user_author;
 	/**
-	 * @var string	User id of validation
-	 * @deprecated
+	 * @var User|int	User author/creation
+	 * @TODO Remove type id
 	 */
-	public $user_valid;
+	public $user_creation;
+	/**
+	 * @var int			User id author/creation
+	 */
+	public $user_creation_id;
 
 	/**
-	 * @var string	User id of last modifier
-	 * @deprecated
+	 * @var User|int	User of validation
+	 * @TODO Merge with user_validation
+	 */
+	public $user_valid;
+	/**
+	 * @var User|int	User of validation
+	 * @TODO Remove type id
+	 */
+	public $user_validation;
+	/**
+	 * @var int			User id of validation
+	 */
+	public $user_validation_id;
+
+	/**
+	 * @var User|int	User last modifier
+	 * @TODO Remove type id
 	 */
 	public $user_modification;
+	/**
+	 * @var int			User id last modifier
+	 */
+	public $user_modification_id;
 
 
 	public $next_prev_filter;

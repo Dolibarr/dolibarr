@@ -3876,7 +3876,7 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
+		$sql = "SELECT s.rowid, s.nom as name, s.datec, tms as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.rowid = ".((int) $id);
@@ -3888,21 +3888,12 @@ class Societe extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 
 				$this->ref = $obj->name;
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
-				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 
 			$this->db->free($result);
