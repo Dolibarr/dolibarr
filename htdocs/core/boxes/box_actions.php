@@ -108,7 +108,7 @@ class box_actions extends ModeleBoxes
 			if (!$user->rights->agenda->allactions->read) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
-			$sql .= " ORDER BY a.datec DESC";
+			$sql .= " ORDER BY a.datep DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
