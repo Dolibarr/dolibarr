@@ -347,8 +347,8 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Update record
 	 *
-	 * @param User $user Use making update
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User $user 		User making update
+	 * @return int             	<0 if KO (-2 = duplicate), >0 if OK
 	 */
 	public function update($user)
 	{
@@ -378,6 +378,12 @@ class AccountingAccount extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -2;
+			}
+
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;

@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorr
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Accounting entries
