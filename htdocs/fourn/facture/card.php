@@ -1707,7 +1707,7 @@ if (empty($reshook)) {
 		$action = '';
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setProject($user, $projectid);
+		$result = $object->setProject($projectid);
 	} elseif ($action == 'confirm_edit' && $confirm == 'yes' && $usercancreate) {
 		// Set invoice to draft status
 		$object->fetch($id);

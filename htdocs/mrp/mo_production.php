@@ -1007,6 +1007,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$disable = 'disabled';
 						}
 
+						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
+
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
 
@@ -1440,7 +1442,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						data: {
 							action: "updateselectwarehousebybatch",
 							permissiontoproduce: <?php echo $permissiontoproduce ?>,
-							batch_id: $(this).val(),
+							batch: $(this).val(),
 							product_id: $("input[name='" + product_element_name + "']").val()
 						}
 					}).done(function (data) {
