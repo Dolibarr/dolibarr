@@ -1596,7 +1596,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 				print '</td><td class="CTableRow2">';
 				print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
 				print "</td></tr>\n";
-			} elseif ($action == dopayment) {
+			} elseif ($action == 'dopayment') {
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewMemberType");
 				print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 				print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
