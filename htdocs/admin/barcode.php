@@ -322,16 +322,6 @@ print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 if (empty($conf->use_javascript_ajax)) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	if ($module->encodingIsSupported($obj->encoding)) {
-		// Build barcode on disk (not used, this is done to make debug easier)
-		$result = $module->writeBarCode($obj->example, $obj->encoding, 'Y');
-		// Generate on the fly and output barcode with generator
-		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&amp;generator='.urlencode($obj->coder).'&amp;code='.urlencode($obj->example).'&amp;encoding='.urlencode($obj->encoding);
-		//print $url;
-		print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
-	} else {
-		print $langs->trans("FormatNotSupportedByGenerator");
-	}
 	print '<input type="hidden" name="action" value="updateengine">';
 }
 
