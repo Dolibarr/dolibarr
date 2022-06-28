@@ -2514,17 +2514,17 @@ if ($action == 'create' && $usercancreate) {
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
 			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-			print '<td class="valuefield nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+			print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 			print '</tr>';
 
 			// Multicurrency Amount VAT
 			print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-			print '<td class="valuefield nowrap">'.price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+			print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_tva, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 			print '</tr>';
 
 			// Multicurrency Amount TTC
 			print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-			print '<td class="valuefield nowrap">'.price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+			print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_ttc, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 			print '</tr>';
 		}
 
@@ -2534,23 +2534,23 @@ if ($action == 'create' && $usercancreate) {
 			$alert = ' '.img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->order_min_amount));
 		}
 		print '<tr><td class="titlefieldmiddle">'.$langs->trans('AmountHT').'</td>';
-		print '<td class="valuefield">'.price($object->total_ht, 1, '', 1, -1, -1, $conf->currency).$alert.'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->total_ht, 1, '', 1, -1, -1, $conf->currency).$alert.'</td>';
 
 		// Total VAT
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td class="valuefield">'.price($object->total_tva, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td class="valuefield nowrap right amountcard">'.price($object->total_tva, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
 
 		// Amount Local Taxes
 		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 		// Localtax1
 			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-			print '<td class="valuefield">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<td class="valuefield nowrap right amountcard">'.price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 		// Localtax2 IRPF
 			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-			print '<td class="valuefield">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<td class="valuefield nowrap right amountcard">'.price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Total TTC
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="valuefield">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="valuefield nowrap right amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td></tr>';
 
 		// Statut
 		//print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
