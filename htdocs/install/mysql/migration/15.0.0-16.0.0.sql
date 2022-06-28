@@ -648,4 +648,5 @@ ALTER TABLE llx_paiement MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_payment_donation MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar(255);
 
-
+-- Allow users to make subscriptions of any amount during membership subscription 
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount varchar(3) DEFAULT 0 AFTER amount;

@@ -692,16 +692,31 @@ if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
 
 	// Clean the amount
 	$amount = price2num($amount);
-
+	$adht = new AdherentType($db);
+	$adht->fetch($typeid);
+	$caneditamount = $adht->caneditamount;
+	$showedamount = $amount>0? $amount: 0;
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
-	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
-	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$amount.'">';
-	} else {
-		print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$amount.'">';
-		print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$amount.'">';
+	print '<tr><td>'.$langs->trans("Subscription");
+	if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
+		print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
-	print ' '.$langs->trans("Currency".$conf->currency);
+	print '</td><td class="nowrap">';
+	
+	if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
+	}
+
+	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $caneditamount) {
+		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
+		print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
+		print $amount>0? $langs->trans("AnyAmountWithAdvisedAmount", $amount, $langs->trans("Currency".$conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
+		print '</span>';
+	} else {
+		print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$showedamount.'">';
+		print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$showedamount.'">';
+		print ' '.$langs->trans("Currency".$conf->currency);
+	}
 	print '</td></tr>';
 }
 
