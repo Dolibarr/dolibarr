@@ -733,7 +733,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
 	 * @param 	array 								$accountingAccount 	Array of Account account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array       											Accounting accounts suggested
+	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
