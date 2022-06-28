@@ -321,7 +321,8 @@ print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 if (empty($conf->use_javascript_ajax)) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" id="form_engine">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';if ($module->encodingIsSupported($obj->encoding)) {
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	if ($module->encodingIsSupported($obj->encoding)) {
 		// Build barcode on disk (not used, this is done to make debug easier)
 		$result = $module->writeBarCode($obj->example, $obj->encoding, 'Y');
 		// Generate on the fly and output barcode with generator
