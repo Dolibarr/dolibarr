@@ -581,6 +581,13 @@ class SMTPs
 					// The error here just means the ID/password combo doesn't work.
 					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
 					break;
+				case 'XOAUTH2':
+					$xxxx = 'token ?';
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.$xxxx, '235');
+					if (!$_retVal) {
+						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
+					}
+					break;
 				case 'LOGIN':	// most common case
 				default:
 					$_retVal = $this->socket_send_str('AUTH LOGIN', '334');
@@ -590,7 +597,7 @@ class SMTPs
 						// User name will not return any error, server will take anything we give it.
 						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
 						// The error here just means the ID/password combo doesn't work.
-						// There is not a method to determine which is the problem, ID or password
+						// There is no method to determine which is the problem, ID or password
 						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
 					}
 					break;
