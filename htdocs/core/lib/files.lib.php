@@ -2977,7 +2977,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for import module
 		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
-	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_temp)){
+	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_temp)) {
 			// Wrapping for recruitment module
 		$accessallowed = $user->rights->$modulepart->recruitmentjobposition->read;
 		$original_file = $conf->recruitment->dir_output .'/'. $original_file;
