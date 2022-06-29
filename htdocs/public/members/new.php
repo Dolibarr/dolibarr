@@ -476,7 +476,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 
-if (!empty($conf->global->MEMBER_NEWFORM_FORCETYPE) || $action == 'create') {
+if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEWFORM_FORCETYPE) || $action == 'create') {
 	print '<input type="hidden" name="action" value="add" />';
 	print '<br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
