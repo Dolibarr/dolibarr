@@ -1622,10 +1622,10 @@ if ($source == 'member' || $source == 'membersubscription') {
 	print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
 	$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $adht->caneditamount;
 	$minimumamount = empty($conf->global->MEMBER_MIN_AMOUNT)? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount > $amount);
-	if(!$caneditamount && $minimumamount > $amount) {	
+	if (!$caneditamount && $minimumamount > $amount) {
 		print ' '. $langs->trans("AmountIsLowerToMinimumNotice", price($adht->amount, 1, $langs, 1, -1, -1, $currency));
 	}
-	
+
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";

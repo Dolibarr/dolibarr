@@ -702,7 +702,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 		}
 		print '</td><td class="nowrap">';
-		
+
 		if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 		}
@@ -753,7 +753,7 @@ else {  // Show the table of membership types
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
-	
+
 		print '<br><div class="div-table-responsive">';
 		print '<table class="tagtable liste">'."\n";
 		print '<input type="hidden" name="action" value="create">';
@@ -766,7 +766,7 @@ else {  // Show the table of membership types
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
-		
+
 		$i = 0;
 		while ($i < $num) {
 			$objp = $db->fetch_object($result);
@@ -780,16 +780,14 @@ else {  // Show the table of membership types
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));
 			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
-			if($objp->subscription) {
+			if ($objp->subscription) {
 				print $displayedamount.' '.strtoupper($conf->currency);
 				if ($caneditamount && $displayedamount>0) {
 					print $form->textwithpicto('', $langs->transnoentities("CanEditAmountShortForValues"), 1, 'help', '', 0, 3);
-				}
-				elseif ($caneditamount) {
+				} elseif ($caneditamount) {
 					print $langs->transnoentities("CanEditAmountShort");
 				}
-			}
-			else {
+			} else {
 				print "–"; // No subscription required
 			}
 			print '</span></td>';
