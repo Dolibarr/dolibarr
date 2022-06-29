@@ -106,7 +106,7 @@ print '<input type="hidden" name="action" value="add">';
 
 $head = oauthadmin_prepare_head();
 
-print dol_get_fiche_head($head, 'services', '', -1, 'technic');
+print dol_get_fiche_head($head, 'services', '', -1, '');
 
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
