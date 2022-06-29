@@ -168,10 +168,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
 			$result = $object->update($user);
+
 			if ($result > 0) {
 				$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id);
 				header("Location: " . $urltogo);
 				exit();
+			} elseif ($result == -2) {
+				setEventMessages($langs->trans("ErrorAccountNumberAlreadyExists", $object->account_number), null, 'errors');
 			} else {
 				setEventMessages($object->error, null, 'errors');
 			}

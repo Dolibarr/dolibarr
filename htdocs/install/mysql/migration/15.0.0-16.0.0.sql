@@ -648,5 +648,7 @@ ALTER TABLE llx_paiement MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_payment_donation MODIFY COLUMN ext_payment_id varchar(255);
 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar(255);
 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);
+
 -- Allow users to make subscriptions of any amount during membership subscription 
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount varchar(3) DEFAULT 0 AFTER amount;

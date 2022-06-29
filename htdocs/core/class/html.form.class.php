@@ -4784,7 +4784,7 @@ class Form
 	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
 	 *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @param	string					$morecss			More CSS
-	 *    @return	string
+	 *    @return	string|array
 	 *    @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -5848,12 +5848,13 @@ class Form
 	/**
 	 *  Retourne la liste des devises, dans la langue de l'utilisateur
 	 *
-	 *  @param	string	$selected    preselected currency code
-	 *  @param  string	$htmlname    name of HTML select list
-	 *  @param  string  $mode        0 = Add currency symbol into label, 1 = Add 3 letter iso code
+	 *  @param	string	$selected   preselected currency code
+	 *  @param  string	$htmlname   name of HTML select list
+	 *  @param  string  $mode       0 = Add currency symbol into label, 1 = Add 3 letter iso code
+	 *  @param	string	$useempty	'1'=Allow empty value
 	 * 	@return	string
 	 */
-	public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0)
+	public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0, $useempty = '')
 	{
 		global $conf, $langs, $user;
 
@@ -5866,6 +5867,9 @@ class Form
 		}
 
 		$out .= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($useempty) {
+			$out .= '<option value="-1" selected></option>';
+		}
 		foreach ($langs->cache_currencies as $code_iso => $currency) {
 			$labeltoshow = $currency['label'];
 			if ($mode == 1) {

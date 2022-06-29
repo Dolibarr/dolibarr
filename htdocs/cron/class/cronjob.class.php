@@ -1032,10 +1032,11 @@ class Cronjob extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
-				$this->user_modification = $obj->fk_user_mod;
-				$this->user_creation = $obj->fk_user_author;
 			}
 			$this->db->free($resql);
 

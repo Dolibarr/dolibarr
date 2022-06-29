@@ -371,6 +371,8 @@ class Categorie extends CommonObject
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
 				$this->date_modification = $this->db->jdate($res['tms']);
+				$this->user_creation_id = (int) $res['fk_user_creat'];
+				$this->user_modification_id = (int) $res['fk_user_modif'];
 				$this->user_creation = (int) $res['fk_user_creat'];
 				$this->user_modification = (int) $res['fk_user_modif'];
 
