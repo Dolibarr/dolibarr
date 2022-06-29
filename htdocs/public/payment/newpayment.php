@@ -1627,6 +1627,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	}
 
 	print '<input type="hidden" name="amount" value="'.$amount.'">';
+	print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
