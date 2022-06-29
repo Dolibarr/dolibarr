@@ -108,6 +108,7 @@ $search_accept_conference_suggestions = GETPOST('search_accept_conference_sugges
 $search_accept_booth_suggestions = GETPOST('search_accept_booth_suggestions', 'int');
 $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
@@ -201,6 +202,7 @@ $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>-1, 'position'=>120);
 $arrayfields['opp_weighted_amount'] = array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'position'=> 116, 'enabled'=>(empty($conf->global->PROJECT_USE_OPPORTUNITIES) ? 0 : 1), 'position'=>106);
+$arrayfields['u.login'] = array('label'=>"Author", 'checked'=>1, 'position'=>165);
 // Force some fields according to search_usage filter...
 if (GETPOST('search_usage_opportunity')) {
 	//$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not require, filter on search_opp_status is enough
@@ -285,6 +287,7 @@ if (empty($reshook)) {
 		$search_accept_booth_suggestions = '';
 		$search_price_registration = '';
 		$search_price_booth = '';
+		$search_login = '';
 		$toselect = array();
 		$search_array_options = array();
 		$search_category_array = array();
@@ -390,10 +393,11 @@ $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as statu
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid,";
-$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth,";
+$sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " country.code as country_code,";
-$sql .= " cls.code as opp_status_code";
+$sql .= " cls.code as opp_status_code,";
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -415,6 +419,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) &&is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -543,6 +548,9 @@ if ($search_price_registration != '') {
 }
 if ($search_price_booth != '') {
 	$sql .= natural_search('p.price_booth', $search_price_booth, 1);
+}
+if ($search_login) {
+	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -734,6 +742,9 @@ if ($search_price_registration != '') {
 }
 if ($search_price_booth != '') {
 	$param .= '&search_price_booth='.urlencode($search_price_booth);
+}
+if ($search_login) {
+	$param .= '&search_login='.urlencode($search_login);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -999,6 +1010,12 @@ if (!empty($arrayfields['p.price_booth']['checked'])) {
 	print '<input type="text" class="flat" name="search_price_booth" size="4" value="'.$search_price_booth.'">';
 	print '</td>';
 }
+if (!empty($arrayfields['u.login']['checked'])) {
+	// Author
+	print '<td class="liste_titre" align="center">';
+	print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1104,6 +1121,9 @@ if (!empty($arrayfields['p.price_registration']['checked'])) {
 if (!empty($arrayfields['p.price_booth']['checked'])) {
 	print_liste_field_titre($arrayfields['p.price_booth']['label'], $_SERVER["PHP_SELF"], 'p.price_booth', "", $param, '', $sortfield, $sortorder, 'right ');
 }
+if (!empty($arrayfields['u.login']['checked'])) {
+	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1124,6 +1144,8 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
+
+$userstatic = new User($db);
 
 $i = 0;
 $totalarray = array(
@@ -1471,6 +1493,33 @@ while ($i < min($num, $limit)) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.price_booth';
+			}
+		}
+		// Author
+		$userstatic->id = $obj->fk_user_creat;
+		$userstatic->login = $obj->login;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
+		$userstatic->entity = $obj->entity;
+		$userstatic->photo = $obj->photo;
+		$userstatic->office_phone = $obj->office_phone;
+		$userstatic->office_fax = $obj->office_fax;
+		$userstatic->user_mobile = $obj->user_mobile;
+		$userstatic->job = $obj->job;
+		$userstatic->gender = $obj->gender;
+
+		if (!empty($arrayfields['u.login']['checked'])) {
+			print '<td class="center tdoverflowmax200">';
+			if ($userstatic->id) {
+				print $userstatic->getNomUrl(-1);
+			} else {
+				print '&nbsp;';
+			}
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 		// Extra fields
