@@ -582,8 +582,10 @@ class SMTPs
 					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
 					break;
 				case 'XOAUTH2':
-					$xxxx = 'token ?';
-					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.$xxxx, '235');
+					// "user=$email\1auth=Bearer $token\1\1"
+					$token = 'xxx';
+					$xxxx = "user=".$this->_smtpsID."\1auth=Bearer ".$token."\1\1";
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($xxxx), '235');
 					if (!$_retVal) {
 						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
 					}
