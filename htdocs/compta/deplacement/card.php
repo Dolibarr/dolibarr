@@ -84,7 +84,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 		}
 	}
 } elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer) {
-	$result = $object->delete($id);
+	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: index.php");
 		exit;
