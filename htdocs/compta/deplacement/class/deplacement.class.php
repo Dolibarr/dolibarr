@@ -473,7 +473,7 @@ class Deplacement extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
-		$sql .= ' c.tms';
+		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -484,18 +484,11 @@ class Deplacement extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

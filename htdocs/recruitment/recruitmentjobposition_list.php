@@ -558,7 +558,7 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['nbapplications']['checked'])) {
-	print '<th class="liste_titre right">'.$langs->trans("Applications").'</th>';
+	print '<th class="liste_titre right">'.$langs->trans("RecruitmentCandidatures").'</th>';
 	$totalarray['nbfield']++;
 }
 // Action column

@@ -1882,8 +1882,11 @@ class Commande extends CommonOrder
 				$this->status = $obj->fk_statut;
 
 				$this->user_author_id = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_valid = $obj->fk_user_valid;
-				$this->user_modification = $obj->fk_user_modif;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_modification    = $obj->fk_user_modif;
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->total_localtax1;
@@ -2264,8 +2267,8 @@ class Commande extends CommonOrder
 		}
 		$sql .= ' ed.fk_origin_line = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
-		if ($this->fk_product > 0) {
-			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
+		if ($fk_product > 0) {
+			$sql .= ' AND cd.fk_product = '.((int) $fk_product);
 		}
 		if ($filtre_statut >= 0) {
 			$sql .= ' AND e.fk_statut >= '.((int) $filtre_statut);

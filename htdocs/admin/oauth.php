@@ -43,6 +43,8 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
+$provider = GETPOST('provider', 'aZ09');
+$label = GETPOST('label', 'aZ09');
 
 
 /*
@@ -52,21 +54,28 @@ $action = GETPOST('action', 'aZ09');
 if ($action == 'update') {
 	$error = 0;
 
-	foreach ($list as $constname) {
-		$constvalue = GETPOST($constname[1], 'alpha');
-		if (!dolibarr_set_const($db, $constname[1], $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-		$constvalue = GETPOST($constname[2], 'alpha');
-		if (!dolibarr_set_const($db, $constname[2], $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null);
+	if (GETPOST('add') && $provider && $provider != '-1') {		// $provider is OAUTH_XXX
+		$constname = strtoupper($provider).($label ? '-'.$label : '').'_ID';
+		dolibarr_set_const($db, $constname, 'ToComplete', 'chaine', 0, '', $conf->entity);
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		foreach ($conf->global as $key => $val) {
+			if (!empty($val) && preg_match('/^OAUTH_.+_ID$/', $key)) {
+				$constvalue = str_replace('_ID', '', $key);
+				if (!dolibarr_set_const($db, $constvalue.'_ID', GETPOST($constvalue.'_ID'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+				// If we reset this provider, we also remove the secret
+				if (!dolibarr_set_const($db, $constvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("SetupSaved"), null);
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 	}
 }
 
@@ -92,15 +101,57 @@ print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
+
+print '<select name="provider" id="provider">';
+print '<option name="-1" value="-1">'.$langs->trans("Type").'</option>';
+foreach ($list as $key) {
+	$supported = 0;
+	$keyforsupportedoauth2array = $key[0];
+
+	if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
+		$supported = 1;
+	}
+	if (!$supported) {
+		continue; // show only supported
+	}
+
+	$i++;
+	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">'.$supportedoauth2array[$keyforsupportedoauth2array]['name'].'</option>'."\n";
+}
+print '</select>';
+print ajax_combobox('provider');
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'">';
+print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
+print '<br>';
+print '<br>';
+
+
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 $i = 0;
 
+//var_dump($list);
+foreach ($conf->global as $key => $val) {
+	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
+		$provider = preg_replace('/_ID$/', '', $key);
+		$listinsetup[] = array($provider.'_NAME', $provider.'_ID', $provider.'_SECRET', 'OAUTH Provider '.str_replace('OAUTH_', '', $provider));
+	}
+}
+
 // $list is defined into oauth.lib.php to the list of supporter OAuth providers.
-foreach ($list as $key) {
+foreach ($listinsetup as $key) {
 	$supported = 0;
-	$keyforsupportedoauth2array = $key[0];
+	$keyforsupportedoauth2array = $key[0];						// May be OAUTH_GOOGLE_NAME or OAUTH_GOOGLE_xxx_NAME
+	$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+	if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+		$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+	} else {
+		$keyforprovider = '';
+	}
+	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 	if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
 		$supported = 1;
@@ -117,10 +168,15 @@ foreach ($list as $key) {
 	print '<td>';
 	print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
 	print $label;
+	if ($keyforprovider) {
+		print ' (<b>'.$keyforprovider.'</b>)';
+	} else {
+		print ' (<b>'.$langs->trans("NoName").'</b>)';
+	}
 	print '</td>';
 	print '<td>';
-	if (!empty($supportedoauth2array[$keyforsupportedoauth2array]['urlforapp'])) {
-		print $langs->trans($supportedoauth2array[$keyforsupportedoauth2array]['urlforapp']);
+	if (!empty($supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials'])) {
+		print $langs->trans("OAUTH_URL_FOR_CREDENTIAL", $supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials']);
 	}
 	print '</td>';
 	print '</tr>';
@@ -140,13 +196,13 @@ foreach ($list as $key) {
 
 	// Api Id
 	print '<tr class="oddeven value">';
-	print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
+	print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
 	print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
 	print '</td></tr>';
 
 	// Api Secret
 	print '<tr class="oddeven value">';
-	print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
+	print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
 	print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
 	print '</td></tr>';
 }

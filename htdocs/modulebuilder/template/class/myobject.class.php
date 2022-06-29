@@ -441,7 +441,7 @@ class MyObject extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= " WHERE t.entity IN (".getEntity($this->table_element).")";
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
@@ -915,7 +915,8 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT rowid, date_creation as datec, tms as datem,";
+		$sql = "SELECT rowid,";
+		$sql .= " date_creation as datec, tms as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
@@ -927,28 +928,15 @@ class MyObject extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if (!empty($obj->fk_user_creat)) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-
-				if (!empty($obj->fk_user_modif)) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
-
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = $this->db->jdate($obj->datev);
+					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 

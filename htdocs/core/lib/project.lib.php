@@ -650,7 +650,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				if ($showproject) {
 					// Project ref
-					print "<td>";
+					print '<td class="nowraponall">';
 					//if ($showlineingray) print '<i>';
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project, $projectsArrayId) || !empty($user->rights->projet->all->lire)) {
 						print $projectstatic->getNomUrl(1);
@@ -701,21 +701,21 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.description']['checked'])) {
-					print "<td>";
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($lines[$i]->description).'">';
 					print $lines[$i]->description;
 					print "</td>\n";
 				}
 
 				// Date start
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.dateo']['checked'])) {
-					print '<td class="center">';
+					print '<td class="center nowraponall">';
 					print dol_print_date($lines[$i]->date_start, 'dayhour');
 					print '</td>';
 				}
 
 				// Date end
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
-					print '<td class="center">';
+					print '<td class="center nowraponall">';
 					print dol_print_date($lines[$i]->date_end, 'dayhour');
 					if ($taskstatic->hasDelay()) {
 						print img_warning($langs->trans("Late"));
@@ -2549,8 +2549,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$projectstatic->ref = $objp->ref;
 				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
-				$projectstatic->datee = $db->jdate($objp->datee);
-				$projectstatic->dateo = $db->jdate($objp->dateo);
+				$projectstatic->date_end = $db->jdate($objp->datee);
+				$projectstatic->date_start = $db->jdate($objp->dateo);
 
 				print '<tr class="oddeven">';
 

@@ -42,6 +42,34 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
+
+if (!function_exists('utf8_encode')) {
+	/**
+	 * Implement utf8_encode for PHP that does not support it.
+	 *
+	 * @param	mixed	$elements		PHP Object to json encode
+	 * @return 	string					Json encoded string
+	 */
+	function utf8_encode($elements)
+	{
+		return mb_convert_encoding($elements, 'UTF-8', 'ISO-8859-1');
+	}
+}
+
+if (!function_exists('utf8_decode')) {
+	/**
+	 * Implement utf8_decode for PHP that does not support it.
+	 *
+	 * @param	mixed	$elements		PHP Object to json encode
+	 * @return 	string					Json encoded string
+	 */
+	function utf8_decode($elements)
+	{
+		return mb_convert_encoding($elements, 'ISO-8859-1', 'UTF-8');
+	}
+}
+
+
 /**
  * Return dolibarr global constant string value
  * @param string $key key to return value, return '' if not set
@@ -132,6 +160,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'order_supplier':
 			$element = 'supplier_order';
 			break; // "/fourn/class/fournisseur.commande.class.php"
+		case 'invoice_supplier':
+			$element = 'supplier_invoice';
+			break; // "/fourn/class/fournisseur.facture.class.php"
 	}
 
 	if (is_object($mc)) {
@@ -742,7 +773,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			// - posted value not empty, or
 			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
-			if ($out != '') {		// $out = '0' or 'abc', it is a search criteria to keep
+			if ($out != '' && isset($user)) {// $out = '0' or 'abc', it is a search criteria to keep
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname] = $out;
 			}
 		}
@@ -2246,6 +2277,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	}
 
+	// Show address and email
 	if (method_exists($object, 'getBannerAddress') && !in_array($object->element, array('product', 'bookmark', 'ecm_directories', 'ecm_files'))) {
 		$moreaddress = $object->getBannerAddress('refaddress', $object);
 		if ($moreaddress) {
@@ -2950,6 +2982,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	//$rep .= '</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);
+
 		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
 		if ($reshook > 0) {
 			$rep = '';
@@ -3912,7 +3945,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'world', 'private',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3963,7 +3996,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas', 'workstation'=>'pallet', 'world'=>'globe', 'private'=>'user-lock',
+				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
@@ -5464,7 +5497,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
  *
  *		@param	float				$amount			Amount to format
  *		@param	integer				$form			Type of format, HTML or not (not by default)
- *		@param	Translate|string	$outlangs		Object langs for output
+ *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
  *		@param	int					$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int					$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
@@ -5487,25 +5520,31 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	$nbdecimal = $rounding;
 
-	// Output separators by default (french)
-	$dec = ',';
-	$thousand = ' ';
-
-	// If $outlangs not forced, we use use language
-	if (!is_object($outlangs)) {
-		$outlangs = $langs;
-	}
-
-	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
-	}
-	if ($thousand == 'None') {
+	if ($outlangs === 'none') {
+		// Use international separators
+		$dec = '.';
 		$thousand = '';
-	} elseif ($thousand == 'Space') {
+	} else {
+		// Output separators by default (french)
+		$dec = ',';
 		$thousand = ' ';
+
+		// If $outlangs not forced, we use use language
+		if (!is_object($outlangs)) {
+			$outlangs = $langs;
+		}
+
+		if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $outlangs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($outlangs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $outlangs->transnoentitiesnoconv("SeparatorThousand");
+		}
+		if ($thousand == 'None') {
+			$thousand = '';
+		} elseif ($thousand == 'Space') {
+			$thousand = ' ';
+		}
 	}
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
@@ -5544,7 +5583,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 	// Add symbol of currency if requested
 	$cursymbolbefore = $cursymbolafter = '';
-	if ($currency_code) {
+	if ($currency_code && is_object($outlangs)) {
 		if ($currency_code == 'auto') {
 			$currency_code = $conf->currency;
 		}
@@ -6420,6 +6459,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case = 1, $color = 0)
 {
 	global $langs;
+
 	$result = 'unknown';
 	$classname = '';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
@@ -10437,14 +10477,14 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$TCompiledAttr[] = $key.'="'.$value.'"';
 	}
 
-	$compiledAttributes = !empty($TCompiledAttr) ?implode(' ', $TCompiledAttr) : '';
+	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
 
 	$parameters = array(
-		'TCompiledAttr' => $TCompiledAttr,
-		'compiledAttributes' => $compiledAttributes,
+		'TCompiledAttr' => $TCompiledAttr,				// array
+		'compiledAttributes' => $compiledAttributes,	// string
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,

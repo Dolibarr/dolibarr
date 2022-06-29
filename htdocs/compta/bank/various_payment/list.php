@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019	Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2022	Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
@@ -34,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -75,6 +77,7 @@ if (empty($search_datev_start)) {
 if (empty($search_datev_end)) {
 	$search_datev_end = GETPOST("search_datev_end", 'int');
 }
+$search_type_id = GETPOST('search_type_id', 'int');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -94,19 +97,6 @@ if (!$sortorder) {
 
 $filtre = GETPOST("filtre", 'alpha');
 
-if (!GETPOST('typeid')) {
-	$newfiltre = str_replace('filtre=', '', $filtre);
-	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val) {
-		$part = explode(':', $val);
-		if ($part[0] == 'v.fk_typepayment') {
-			$typeid = $part[1];
-		}
-	}
-} else {
-	$typeid = GETPOST('typeid');
-}
-
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_ref = '';
 	$search_label = '';
@@ -120,7 +110,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_bank_entry = '';
 	$search_accountancy_account = '';
 	$search_accountancy_subledger = '';
-	$typeid = '';
+	$search_type_id = '';
 }
 
 $search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
@@ -265,8 +255,8 @@ if ($search_accountancy_account > 0) {
 if ($search_accountancy_subledger > 0) {
 	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
 }
-if ($typeid > 0) {
-	$sql .= " AND v.fk_typepayment=".((int) $typeid);
+if ($search_type_id > 0) {
+	$sql .= " AND v.fk_typepayment=".((int) $search_type_id);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -324,8 +314,8 @@ if ($resql) {
 	if ($search_datev_end) {
 		$param .= '&search_datev_end='.urlencode($search_datev_end);
 	}
-	if ($typeid > 0) {
-		$param .= '&typeid='.urlencode($typeid);
+	if ($search_type_id > 0) {
+		$param .= '&search_type_id='.urlencode($search_type_id);
 	}
 	if ($search_amount_deb) {
 		$param .= '&search_amount_deb='.urlencode($search_amount_deb);
@@ -375,6 +365,7 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$moreforfilter= '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -427,7 +418,7 @@ if ($resql) {
 	// Payment type
 	if ($arrayfields['type']['checked']) {
 		print '<td class="liste_titre center">';
-		$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16, 1, 'maxwidth100');
+		$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100');
 		print '</td>';
 	}
 
@@ -544,6 +535,8 @@ if ($resql) {
 
 
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val']['total_cred'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -656,7 +649,7 @@ if ($resql) {
 		if ($arrayfields['account']['checked']) {
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$obj->accountancy_label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
