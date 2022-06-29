@@ -51,7 +51,7 @@ class Conf
 	public $use_javascript_ajax;
 	//! To store if javascript/ajax is enabked
 	public $disable_compute;
-	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
+	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
 	//! Used to store current css (from theme)
