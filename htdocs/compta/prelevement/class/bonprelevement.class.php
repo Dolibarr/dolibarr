@@ -1908,14 +1908,14 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
 			/*
-			$XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
-			$XML_CREDITOR .= '					<MndtRltdInf>'.$CrLf;
-			$XML_CREDITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
-			$XML_CREDITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
-			$XML_CREDITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
-			$XML_CREDITOR .= '					</MndtRltdInf>'.$CrLf;
-			$XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
-			*/
+			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
+			 $XML_CREDITOR .= '					<MndtRltdInf>'.$CrLf;
+			 $XML_CREDITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
+			 $XML_CREDITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
+			 $XML_CREDITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
+			 $XML_CREDITOR .= '					</MndtRltdInf>'.$CrLf;
+			 $XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
+			 */
 			//$XML_CREDITOR .= '				<ChrgBr>SLEV</ChrgBr>'.$CrLf;
 			$XML_CREDITOR .= '				<CdtrAgt>'.$CrLf;
 			$XML_CREDITOR .= '					<FinInstnId>'.$CrLf;
@@ -2195,17 +2195,17 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
 				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
-				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
-				$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
-				$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
-				$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
-				$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
-				$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
-				$XML_SEPA_INFO .= '						</Othr>'.$CrLf;
-				$XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
-				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
-				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
+				 $XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
+				 $XML_SEPA_INFO .= '						<Othr>'.$CrLf;
+				 $XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
+				 $XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
+				 $XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
+				 $XML_SEPA_INFO .= '						</Othr>'.$CrLf;
+				 $XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
+				 $XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
 			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
@@ -2343,59 +2343,59 @@ class BonPrelevement extends CommonObject
 		}
 
 		/*
-		if ($mode == 'direct_debit') {
-			$sql = "SELECT b.rowid, f.datedue as datefin";
-			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " WHERE f.entity IN (".getEntity('facture').")";
-			$sql .= " AND f.total_ttc > 0";
-		} else {
-			$sql = "SELECT b.rowid, f.datedue as datefin";
-			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-			$sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
-			$sql .= " AND f.total_ttc > 0";
-		}
+		 if ($mode == 'direct_debit') {
+		 $sql = "SELECT b.rowid, f.datedue as datefin";
+		 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		 $sql .= " WHERE f.entity IN (".getEntity('facture').")";
+		 $sql .= " AND f.total_ttc > 0";
+		 } else {
+		 $sql = "SELECT b.rowid, f.datedue as datefin";
+		 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		 $sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
+		 $sql .= " AND f.total_ttc > 0";
+		 }
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$langs->load("banks");
-			$now = dol_now();
+		 $resql = $this->db->query($sql);
+		 if ($resql) {
+		 $langs->load("banks");
+		 $now = dol_now();
 
-			$response = new WorkboardResponse();
-			if ($mode == 'direct_debit') {
-				$response->warning_delay = $conf->prelevement->warning_delay / 60 / 60 / 24;
-				$response->label = $langs->trans("PendingDirectDebitToComplete");
-				$response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
-				$response->url = DOL_URL_ROOT.'/compta/prelevement/index.php?leftmenu=checks&mainmenu=bank';
-			} else {
-				$response->warning_delay = $conf->paymentbybanktransfer->warning_delay / 60 / 60 / 24;
-				$response->label = $langs->trans("PendingCreditTransferToComplete");
-				$response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
-				$response->url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php?leftmenu=checks&mainmenu=bank';
-			}
-			$response->img = img_object('', "payment");
+		 $response = new WorkboardResponse();
+		 if ($mode == 'direct_debit') {
+		 $response->warning_delay = $conf->prelevement->warning_delay / 60 / 60 / 24;
+		 $response->label = $langs->trans("PendingDirectDebitToComplete");
+		 $response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
+		 $response->url = DOL_URL_ROOT.'/compta/prelevement/index.php?leftmenu=checks&mainmenu=bank';
+		 } else {
+		 $response->warning_delay = $conf->paymentbybanktransfer->warning_delay / 60 / 60 / 24;
+		 $response->label = $langs->trans("PendingCreditTransferToComplete");
+		 $response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
+		 $response->url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php?leftmenu=checks&mainmenu=bank';
+		 }
+		 $response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
+		 while ($obj = $this->db->fetch_object($resql)) {
+		 $response->nbtodo++;
 
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->withdraw->warning_delay)) {
-					$response->nbtodolate++;
-				}
-			}
+		 if ($this->db->jdate($obj->datefin) < ($now - $conf->withdraw->warning_delay)) {
+		 $response->nbtodolate++;
+		 }
+		 }
 
-			$response->nbtodo = 0;
-			$response->nbtodolate = 0;
-			// Return workboard only if quantity is not 0
-			if ($response->nbtodo) {
-				return $response;
-			} else {
-				return 0;
-			}
-		} else {
-			dol_print_error($this->db);
-			$this->error = $this->db->error();
-			return -1;
-		}
-		*/
+		 $response->nbtodo = 0;
+		 $response->nbtodolate = 0;
+		 // Return workboard only if quantity is not 0
+		 if ($response->nbtodo) {
+		 return $response;
+		 } else {
+		 return 0;
+		 }
+		 } else {
+		 dol_print_error($this->db);
+		 $this->error = $this->db->error();
+		 return -1;
+		 }
+		 */
 		return 0;
 	}
 }
