@@ -1257,9 +1257,10 @@ class Form
 	 *  @param	array	$ajaxoptions			Options for ajax_autocompleter
 	 * 	@param  bool	$multiple				add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 *  @param	array	$excludeids				Exclude IDs from the select combo
+	 * 	@param	int		$showcode				Show code
 	 * 	@return	string							HTML string with select box for thirdparty.
 	 */
-	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array())
+	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1284,7 +1285,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
+			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '').($showcode ? '&showcode='.urlencode($showcode) : '');
 
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
@@ -1303,7 +1304,7 @@ class Form
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
-			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids);
+			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
 		}
 
 		return $out;
@@ -1328,9 +1329,10 @@ class Form
 	 *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param	array	$excludeids		Exclude IDs from the select combo
+	 * 	@param	int		$showcode		Show code in list
 	 * 	@return	string					HTML string with
 	 */
-	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array())
+	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1442,13 +1444,15 @@ class Form
 				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.($textifempty ? $textifempty : '&nbsp;').'</span>').'">'.$textifempty.'</option>'."\n";
 			}
 
+			$companytemp = new Societe($this->db);
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
-					if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+					if ($showcode || !empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 						if (($obj->client) && (!empty($obj->code_client))) {
 							$label = $obj->code_client.' - ';
 						}
@@ -1468,7 +1472,17 @@ class Form
 						$label .= ' - '.$obj->tva_intra.'';
 					}
 
+					$labelhtml = $label;
+
 					if ($showtype) {
+						$companytemp->id = $obj->rowid;
+						$companytemp->client = $obj->client;
+						$companytemp->fournisseur = $obj->fournisseur;
+						$tmptype = $companytemp->getTypeUrl(1, '', 0, 'span');
+						if ($tmptype) {
+							$labelhtml .= ' '.$tmptype;
+						}
+
 						if ($obj->client || $obj->fournisseur) {
 							$label .= ' (';
 						}
@@ -1487,20 +1501,22 @@ class Form
 					}
 
 					if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
+						$s = ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
-							$label .= ', '.$langs->trans('Country'.$obj->country_code);
+							$s .= ', '.$langs->trans('Country'.$obj->country_code);
 						}
+						$label .= $s;
+						$labelhtml .= $s;
 					}
 
 					if (empty($outputmode)) {
 						if (in_array($obj->rowid, $selected)) {
-							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+							$out .= '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($labelhtml).'">'.$label.'</option>';
 						} else {
-							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+							$out .= '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.$label.'</option>';
 						}
 					} else {
-						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
+						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label, 'labelhtml'=>$labelhtml));
 					}
 
 					$i++;
