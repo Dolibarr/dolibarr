@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,38 +47,47 @@ $action = GETPOST('action', 'aZ09');
 $provider = GETPOST('provider', 'aZ09');
 $label = GETPOST('label', 'aZ09');
 
+$error = 0;
+
 
 /*
  * Actions
  */
 
-if ($action == 'update') {
-	$error = 0;
-
-	if (GETPOST('add') && $provider && $provider != '-1') {		// $provider is OAUTH_XXX
+if ($action == 'add') {		// $provider is OAUTH_XXX
+	if ($provider && $provider != '-1') {
 		$constname = strtoupper($provider).($label ? '-'.$label : '').'_ID';
-		dolibarr_set_const($db, $constname, 'ToComplete', 'chaine', 0, '', $conf->entity);
-	} else {
-		foreach ($conf->global as $key => $val) {
-			if (!empty($val) && preg_match('/^OAUTH_.+_ID$/', $key)) {
-				$constvalue = str_replace('_ID', '', $key);
-				if (!dolibarr_set_const($db, $constvalue.'_ID', GETPOST($constvalue.'_ID'), 'chaine', 0, '', $conf->entity)) {
-					$error++;
-				}
-				// If we reset this provider, we also remove the secret
-				if (!dolibarr_set_const($db, $constvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
-					$error++;
-				}
-			}
-		}
 
-		if (!$error) {
-			setEventMessages($langs->trans("SetupSaved"), null);
+		if (getDolGlobalString($constname)) {
+			setEventMessages($langs->trans("AOAuthEntryForThisProviderAndLabelAlreadyHasAKey"), null, 'errors');
+			$error++;
 		} else {
-			setEventMessages($langs->trans("Error"), null, 'errors');
+			dolibarr_set_const($db, $constname, 'ToComplete', 'chaine', 0, '', $conf->entity);
+			setEventMessages($langs->trans("OAuthProviderAdded"), null);
 		}
 	}
 }
+if ($action == 'update') {
+	foreach ($conf->global as $key => $val) {
+		if (!empty($val) && preg_match('/^OAUTH_.+_ID$/', $key)) {
+			$constvalue = str_replace('_ID', '', $key);
+			if (!dolibarr_set_const($db, $constvalue.'_ID', GETPOST($constvalue.'_ID'), 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+			// If we reset this provider, we also remove the secret
+			if (!dolibarr_set_const($db, $constvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null);
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 
 /*
  * View
@@ -92,7 +102,7 @@ print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="action" value="add">';
 
 $head = oauthadmin_prepare_head();
 
@@ -102,8 +112,8 @@ print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
 
-print '<select name="provider" id="provider">';
-print '<option name="-1" value="-1">'.$langs->trans("Type").'</option>';
+print '<select name="provider" id="provider" class="minwidth150">';
+print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
 foreach ($list as $key) {
 	$supported = 0;
 	$keyforsupportedoauth2array = $key[0];
@@ -122,9 +132,15 @@ print '</select>';
 print ajax_combobox('provider');
 print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
+print '</form>';
+
 print '<br>';
 print '<br>';
 
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
