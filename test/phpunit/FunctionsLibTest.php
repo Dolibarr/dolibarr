@@ -167,6 +167,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testNum2Alpha
+	 *
+	 * @return void
+	 */
+	public function testNum2Alpha()
+	{
+		$result = num2Alpha(0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A', 'Check num2Alpha 0');
+
+		$result = num2Alpha(5);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'F', 'Check num2Alpha 5');
+
+		$result = num2Alpha(26);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'AA', 'Check num2Alpha 26');
+	}
+
+	/**
 	 * testIsValidEmail
 	 *
 	 * @return void

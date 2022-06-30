@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-IdAgenda=Αναγνωριστικού συμβάντος
+IdAgenda=Αναγνωριστικό συμβάντος
 Actions=Ενέργειες
 Agenda=Ημερολόγιο
 TMenuAgenda=Ημερολόγιο
@@ -35,37 +35,39 @@ AgendaAutoActionDesc= Εδώ μπορείτε να ορίσετε τα γεγο�
 AgendaSetupOtherDesc= Αυτή η σελίδα παρέχει επιλογές που επιτρέπουν την εξαγωγή των συμβάντων Dolibarr σε ένα εξωτερικό ημερολόγιο (Thunderbird, Google Calendar κ.λπ.)
 AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
 ActionsEvents=Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
-EventRemindersByEmailNotEnabled=Οι υπενθυμίσεις συμβάντων μέσω ηλεκτρονικού ταχυδρομείου δεν ενεργοποιήθηκαν στη ρύθμιση μονάδας %s.
+EventRemindersByEmailNotEnabled=Οι υπενθυμίσεις συμβάντων μέσω email δεν ενεργοποιήθηκαν στη ρύθμιση της μονάδας %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Το τρίτο μέρος %s δημιουργήθηκε
-COMPANY_MODIFYInDolibarr=Τρίτο μέρος %s τροποποιήθηκε
+COMPANY_MODIFYInDolibarr=Το τρίτο μέρος  %s τροποποιήθηκε
 COMPANY_DELETEInDolibarr=Το τρίτο μέρος %s διαγράφηκε
-ContractValidatedInDolibarr=Συμβόλαιο %s επικυρώθηκε
+ContractValidatedInDolibarr=Η σύμβαση %s επικυρώθηκε
 CONTRACT_DELETEInDolibarr=Η σύμβαση %s διαγράφηκε
-PropalClosedSignedInDolibarr=Πρόσφορα %s υπεγράφη
-PropalClosedRefusedInDolibarr=Πρόσφορα %s απορρίφθηκε
+PropalClosedSignedInDolibarr=Η προσφορά %s υπεγράφη
+PropalClosedRefusedInDolibarr=Η πρόσφορα %s απορρίφθηκε
 PropalValidatedInDolibarr=Η πρόταση %s επικυρώθηκε
-PropalClassifiedBilledInDolibarr=Πρόταση %s ταξινομούνται χρεωθεί
+PropalBackToDraftInDolibarr=Επιστροφή της προσφοράς %s σε κατάσταση προσχεδίου
+PropalClassifiedBilledInDolibarr=Η προσφορά %s ταξινομήθηκε ως τιμολογημένη
 InvoiceValidatedInDolibarr=Το τιμολόγιο %s επικυρώθηκε
 InvoiceValidatedInDolibarrFromPos=Το τιμολόγιο επικυρώθηκε από το  POS
 InvoiceBackToDraftInDolibarr=Τιμολόγιο %s θα επιστρέψει στην κατάσταση του σχεδίου
 InvoiceDeleteDolibarr=Τιμολόγιο %s διαγράφεται
-InvoicePaidInDolibarr=Τιμολόγιο %s άλλαξε σε καταβληθεί
-InvoiceCanceledInDolibarr=Τιμολόγιο %s ακυρώθηκε
-MemberValidatedInDolibarr=Μέλος %s επικυρωθεί
+InvoicePaidInDolibarr=Το τιμολόγιο %s άλλαξε σε πληρωμένο
+InvoiceCanceledInDolibarr=Το τιμολόγιο %s ακυρώθηκε
+MemberValidatedInDolibarr=Το μέλος %s επικυρώθηκε
 MemberModifiedInDolibarr=Το μέλος %s τροποποιήθηκε
 MemberResiliatedInDolibarr=Το μέλος %s τερματίστηκε
-MemberDeletedInDolibarr=Μέλος %s διαγράφηκε
-MemberSubscriptionAddedInDolibarr=Εγγραφή %s για μέλος %s προστέθηκε
-MemberSubscriptionModifiedInDolibarr=Συνδρομή %s για τροποποιημένο μέλος %s
+MemberDeletedInDolibarr=Το μέλος %s διαγράφηκε
+MemberSubscriptionAddedInDolibarr=Προστέθηκε συνδρομή %s για το μέλος %s
+MemberSubscriptionModifiedInDolibarr=Η συνδρομή %s για το μέλος %s τροποποιήθηκε
 MemberSubscriptionDeletedInDolibarr=Η συνδρομή %s για το μέλος %s διαγράφηκε
 ShipmentValidatedInDolibarr=Η αποστολή %s επικυρώθηκε
-ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομείται χρεώνεται
+ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομήθηκε ως τιμολογημένη
 ShipmentUnClassifyCloseddInDolibarr=Η αποστολή %s ταξινομήθηκε εκ νέου
 ShipmentBackToDraftInDolibarr=Η αποστολή %s επιστρέφει στην κατάσταση του σχεδίου
 ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
 ShipmentCanceledInDolibarr=Η αποστολή %s ακυρώθηκε
 ReceptionValidatedInDolibarr=Η λήψη %s επικυρώθηκε
+ReceptionClassifyClosedInDolibarr=Η παραλαβή %s ταξινομήθηκε ως κλειστή
 OrderCreatedInDolibarr=Παραγγελία %s
 OrderValidatedInDolibarr=Η παραγγελία %s επικυρώθηκε
 OrderDeliveredInDolibarr=Παραγγελία %s κατατάσσεται παραδοτέα
@@ -74,10 +76,10 @@ OrderBilledInDolibarr=Παραγγελία %s κατατάσσεται χρεω�
 OrderApprovedInDolibarr=Παραγγελία %s εγκρίθηκε
 OrderRefusedInDolibarr=Παραγγελία %s απορριφθεί
 OrderBackToDraftInDolibarr=Παραγγελία %s θα επιστρέψει στην κατάσταση σχέδιο
-ProposalSentByEMail=Εμπορική πρόταση %s αποστέλλεται μέσω ηλεκτρονικού ταχυδρομείου
-ContractSentByEMail=Η σύμβαση %s αποστέλλεται μέσω ηλεκτρονικού ταχυδρομείου
-OrderSentByEMail=Παραγγελία πώλησης %s μέσω ηλεκτρονικού ταχυδρομείου
-InvoiceSentByEMail=Το τιμολόγιο πελατών %s στάλθηκε μέσω ηλεκτρονικού ταχυδρομείου
+ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε μέσω email
+ContractSentByEMail=Η σύμβαση %s στάλθηκε μέσω email
+OrderSentByEMail=Η παραγγελία πωλήσεων %s στάλθηκε με email
+InvoiceSentByEMail=Το τιμολόγιο πελάτη %s στάλθηκε μέσω email
 SupplierOrderSentByEMail=Παραγγελία αγοράς %s αποστέλλεται μέσω ηλεκτρονικού ταχυδρομείου
 ORDER_SUPPLIER_DELETEInDolibarr=Η εντολή αγοράς %s διαγράφηκε
 SupplierInvoiceSentByEMail=Τιμολόγιο πωλητή %s αποστέλλεται μέσω ηλεκτρονικού ταχυδρομείου
@@ -87,7 +89,7 @@ InterventionSentByEMail=Η παρέμβαση %s στάλθηκε με ηλεκ�
 ProposalDeleted=Η προσφορά διαγράφηκε
 OrderDeleted=Η παραγγελία διαγράφηκε
 InvoiceDeleted=Το τιμολόγιο διαγράφηκε
-DraftInvoiceDeleted=Το πρόχειρο τιμολόγιο διαγράφηκε
+DraftInvoiceDeleted=Το προσχέδιο τιμολογίου διαγράφηκε
 CONTACT_CREATEInDolibarr=Η επαφή %s δημιουργήθηκε
 CONTACT_MODIFYInDolibarr=Η επαφή %s τροποποιήθηκε
 CONTACT_DELETEInDolibarr=Η επαφή %s διαγράφηκε
@@ -133,7 +135,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> για να περιορίσετε 
 AgendaUrlOptions4=<b>logint = %s</b> για να περιορίσετε την έξοδο σε ενέργειες που έχουν εκχωρηθεί στο χρήστη <b>%s</b> (ιδιοκτήτης και άλλοι).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> για να περιορίσετε την έξοδο σε ενέργειες που σχετίζονται με το έργο <b>__PROJECT_ID__</b> .
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
-AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> για να συμπεριλάβετε εκδηλώσεις διακοπών.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> για να συμπεριλάβει εκδηλώσεις εορτών.
 AgendaShowBirthdayEvents=Γενέθλια επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολ.

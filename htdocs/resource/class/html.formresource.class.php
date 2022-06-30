@@ -101,13 +101,6 @@ class FormResource
 		}
 
 		if ($resourcestat) {
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
-				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
-				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
-			} else {
-				$out .= ajax_combobox($htmlname);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) {
@@ -146,6 +139,13 @@ class FormResource
 				}
 			}
 			$out .= '</select>'."\n";
+
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
+				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+			} else {
+				$out .= ajax_combobox($htmlname);
+			}
 
 			if ($outputmode != 2) {
 				$out .= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';

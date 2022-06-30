@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Ρύθμιση μονάδας ταινιών
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Προσφέρετε στους πελάτες σας μια σελίδα διαδικτυακών πληρωμών για πληρωμές με πιστωτικές/χρεωστικές κάρτες μέσω του <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Αυτό μπορεί να χρησιμοποιηθεί για να επιτρέψετε στους πελάτες σας να πραγματοποιούν πληρωμές για συγκεκριμένο σκοπό ή για πληρωμές που σχετίζονται με ένα συγκεκριμένο αντικείμενο του Dolibarr (τιμολόγιο, παραγγελία, ...)
 StripeOrCBDoPayment=Πληρώστε με πιστωτική κάρτα ή Stripe
 FollowingUrlAreAvailableToMakePayments=Μετά από τις διευθύνσεις URL είναι διαθέσιμοι να προσφέρουν μια σελίδα σε έναν πελάτη να προβεί σε πληρωμή σε Dolibarr αντικείμενα
 PaymentForm=Έντυπο πληρωμής
@@ -68,4 +68,4 @@ ToOfferALinkForTestWebhook=Σύνδεση με τη ρύθμιση Stripe WebHoo
 ToOfferALinkForLiveWebhook=Σύνδεση στη ρύθμιση Stripe WebHook για κλήση του IPN (ζωντανή λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των ισχυρών κανόνων ελέγχου ταυτότητας πελατών, η δημιουργία μιας κάρτας πρέπει να γίνει από το Backe Office. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των κανόνων ισχυρού ελέγχου ταυτότητας πελατών, η δημιουργία κάρτας πρέπει να γίνει από την υποστηριξη του Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s

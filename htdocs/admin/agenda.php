@@ -173,6 +173,9 @@ if (!empty($triggers)) {
 		if ($module == 'contact') {
 			$module = 'societe';
 		}
+		if ($module == 'facturerec') {
+			$module = 'facture';
+		}
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);

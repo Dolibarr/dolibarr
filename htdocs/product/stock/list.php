@@ -677,7 +677,7 @@ while ($i < min($num, $limit)) {
 			}
 		} else {
 			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 		}
 		print '</td>';
 		if (!$i) {

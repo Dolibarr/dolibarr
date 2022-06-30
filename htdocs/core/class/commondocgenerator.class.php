@@ -65,6 +65,26 @@ abstract class CommonDocGenerator
 	 */
 	public $scandir;
 
+	public $page_hauteur;
+	public $page_largeur;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
+
+	public $option_logo;
+	public $option_tva;
+	public $option_multilang;
+	public $option_freetext;
+	public $option_draft_watermark;
+
+	public $option_modereg;
+	public $option_condreg;
+	public $option_escompte;
+	public $option_credit_note;
+
+	public $emetteur;
+
 
 	/**
 	 *	Constructor
@@ -427,8 +447,9 @@ abstract class CommonDocGenerator
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
-			$array_key.'_ref'=>$object->ref,
-			$array_key.'_ref_ext'=>$object->ref_ext,
+			$array_key.'_ref' => (property_exists($object, 'ref') ? $object->ref : ''),
+			$array_key.'_label' => (property_exists($object, 'label') ? $object->label : ''),
+			$array_key.'_ref_ext' => (property_exists($object, 'ref_ext') ? $object->ref_ext : ''),
 			$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
 			$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 			$array_key.'_source_invoice_ref'=>$invoice_source->ref,
@@ -449,7 +470,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 			$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
-			$array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
+			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
 			$array_key.'_bank_iban'=>$bank_account->iban,
 			$array_key.'_bank_bic'=>$bank_account->bic,
@@ -592,6 +613,7 @@ abstract class CommonDocGenerator
 			'line_product_label'=>(empty($line->product_label) ? '' : $line->product_label),
 			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
 			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
+			'line_product_desc'=>(empty($line->product_desc) ? '' : $line->product_desc),
 
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
@@ -813,25 +835,38 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Object		$object    		Dolibarr Object
 	 * @param   Translate	$outputlangs    Language object for output
-	 * @param   boolean		$recursive    	Want to fetch child array or child object
+	 * @param   boolean|int	$recursive    	Want to fetch child array or child object.
 	 * @return	array						Array of substitution key->code
 	 */
-	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = true)
+	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = 1)
 	{
 		// phpcs:enable
 		$array_other = array();
 		if (!empty($object)) {
 			foreach ($object as $key => $value) {
+				if (in_array($key, array('db', 'fields', 'lines', 'modelpdf', 'model_pdf'))) {		// discard some properties
+					continue;
+				}
 				if (!empty($value)) {
 					if (!is_array($value) && !is_object($value)) {
 						$array_other['object_'.$key] = $value;
-					}
-					if (is_array($value) && $recursive) {
-						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
+					} elseif (is_array($value) && $recursive) {
+						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
+						foreach ($tmparray as $key2 => $value2) {
+							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						}
+					} elseif (is_object($value) && $recursive) {
+						$tmparray = $this->get_substitutionarray_each_var_object($value, $outputlangs, 0);
+						foreach ($tmparray as $key2 => $value2) {
+							$array_other['object_'.$key.'_'.preg_replace('/^object_/', '', $key2)] = $value2;
+						}
 					}
 				}
 			}
 		}
+
+		//var_dump($array_other);
+
 		return $array_other;
 	}
 

@@ -350,8 +350,8 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, ';
-		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description, ';
+		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, ';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
@@ -370,7 +370,6 @@ class FichinterRec extends Fichinter
 				$objp = $this->db->fetch_object($result);
 
 				$line = new FichinterLigne($this->db);
-
 				$line->id = $objp->rowid;
 				$line->label = $objp->custom_label; // Label line
 				$line->desc = $objp->description; // Description line
@@ -378,7 +377,7 @@ class FichinterRec extends Fichinter
 				$line->product_ref = $objp->product_ref; // Ref product
 				$line->product_label = $objp->product_label; // Label product
 				$line->product_desc = $objp->product_desc; // Description product
-				$line->fk_product_type = $objp->fk_product_type; // Type of product
+				$line->fk_product_type = $objp->fk_product_type; // Type in product
 				$line->qty = $objp->qty;
 				$line->duree = $objp->duree;
 				$line->duration = $objp->duree;
@@ -390,8 +389,6 @@ class FichinterRec extends Fichinter
 				$line->fk_product = $objp->fk_product;
 				$line->date_start = $objp->date_start;
 				$line->date_end = $objp->date_end;
-				$line->date_start = $objp->date_start;
-				$line->date_end = $objp->date_end;
 				$line->info_bits = $objp->info_bits;
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
@@ -400,10 +397,6 @@ class FichinterRec extends Fichinter
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
-
-				// Ne plus utiliser
-				$line->price = $objp->price;
-				$line->remise = $objp->remise;
 
 				$this->lines[$i] = $line;
 

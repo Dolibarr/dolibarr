@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Εισαγάγετε το όνομα της ενότητας / εφαρμογής για να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Εισαγάγετε το όνομα του αντικειμένου που θέλετε να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyObject, Student, Teacher ...). Θα δημιουργηθεί το αρχείο κλάσης CRUD, αλλά και το αρχείο API, οι σελίδες που θα απαριθμήσουν / προσθέσουν / επεξεργαστούν / διαγράψουν το αντικείμενο και τα αρχεία SQL.
+ModuleBuilderDesc=Αυτό το εργαλείο πρέπει να χρησιμοποιείται μόνο από έμπειρους χρήστες ή προγραμματιστές. Παρέχει βοηθητικά προγράμματα για να δημιουργήσετε ή να επεξεργαστείτε τη δική σας ενότητα. Η τεκμηρίωση για εναλλακτικό τρόπο ανάπτυξης <a href="%s" target="_blank" rel="noopener noreferrer"> είναι εδώ </a>.
+EnterNameOfModuleDesc=Εισάγετε το όνομα της ενότητας/εφαρμογής που θέλετε να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Εισάγετε το όνομα του αντικειμένου που θέλετε να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyObject, Student, Teacher...). Θα δημιουργηθούν, το αρχείο κλάσης CRUD αλλά και το αρχείο API, οι σελίδες για λίστα/προσθήκη/επεξεργασία/διαγραφή αντικειμένου και αρχεία SQL.
+EnterNameOfDictionaryDesc=Εισάγετε το όνομα του λεξικού που θέλετε να δημιουργήσετε χωρίς κενά. Χρησιμοποιήστε κεφαλαία για να διαχωρίσετε λέξεις (Για παράδειγμα: MyDico...). Θα δημιουργηθεί το αρχείο κλάσης, αλλά και το αρχείο SQL.
 ModuleBuilderDesc2=Διαδρομή όπου παράγονται / επεξεργάζονται μονάδες (πρώτος κατάλογος για εξωτερικές μονάδες που ορίζονται στο %s): <strong>%s</strong>
 ModuleBuilderDesc3=Παραγόμενα / επεξεργάσιμα δομοστοιχεία βρέθηκαν: <strong>%s</strong>
 ModuleBuilderDesc4=Μια ενότητα ανιχνεύεται ως &#39;επεξεργάσιμη&#39; όταν το αρχείο <strong>%s</strong> υπάρχει στη ρίζα του καταλόγου μονάδων
 NewModule=Νέο Άρθρωμα
 NewObjectInModulebuilder=Νέο αντικείμενο
+NewDictionary=Νέο λεξικό
 ModuleKey=Πλήκτρο μονάδας
 ObjectKey=Πλήκτρο αντικειμένου
+DicKey=Κλειδί λεξικού
 ModuleInitialized=Η ενότητα αρχικοποιήθηκε
 FilesForObjectInitialized=Τα αρχεία για νέο αντικείμενο &#39;%s&#39; έχουν αρχικοποιηθεί
 FilesForObjectUpdated=Τα αρχεία για το αντικείμενο &#39;%s&#39; ενημερώνονται (αρχείο .sql και αρχείο .class.php)
@@ -27,7 +30,7 @@ DangerZone=Επικίνδυνη ζώνη
 BuildPackage=Δημιουργία πακέτου
 BuildPackageDesc=Μπορείτε να δημιουργήσετε ένα πακέτο zip της αίτησής σας έτσι ώστε να είστε έτοιμοι να το διανείμετε σε οποιοδήποτε Dolibarr. Μπορείτε επίσης να το διανείμετε ή να το πουλήσετε στην αγορά όπως το <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Δημιουργία εγγράφων
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
+ModuleIsNotActive=Αυτή η ενότητα δεν έχει ενεργοποιηθεί ακόμα. Μεταβείτε στο %s για να το ενεργοποιήσετε ή κάντε κλικ εδώ
 ModuleIsLive=Αυτή η ενότητα έχει ενεργοποιηθεί. Οποιαδήποτε αλλαγή μπορεί να σπάσει ένα τρέχον ζωντανό χαρακτηριστικό.
 DescriptionLong=Μεγάλη περιγραφή
 EditorName=Όνομα του συντάκτη
@@ -40,7 +43,7 @@ PageForCreateEditView=Σελίδα PHP για δημιουργία / επεξε�
 PageForAgendaTab=Σελίδα PHP για καρτέλα συμβάντος
 PageForDocumentTab=PHP σελίδα για καρτέλα έγγραφο
 PageForNoteTab=Σελίδα PHP για την καρτέλα σημείωσης
-PageForContactTab=PHP page for contact tab
+PageForContactTab=Σελίδα PHP για καρτέλα επαφών
 PathToModulePackage=Διαδρομή προς φερμουάρ του πακέτου ενότητας / εφαρμογής
 PathToModuleDocumentation=Διαδρομή αρχείου τεκμηρίωσης ενότητας / εφαρμογής (%s)
 SpaceOrSpecialCharAreNotAllowed=Δεν επιτρέπονται χώροι ή ειδικοί χαρακτήρες.
@@ -52,7 +55,7 @@ LanguageFile=Αρχείο για τη γλώσσα
 ObjectProperties=Ιδιότητες αντικειμένου
 ConfirmDeleteProperty=Είστε βέβαιοι ότι θέλετε να διαγράψετε την ιδιότητα <strong>%s</strong> ; Αυτό θα αλλάξει τον κώδικα στην τάξη PHP, αλλά και θα αφαιρέσει τη στήλη από τον ορισμό πίνακα του αντικειμένου.
 NotNull=Οχι κενό
-NotNullDesc=1 = Ορίστε τη βάση δεδομένων σε NOT NULL. -1 = Να επιτρέπονται οι τιμές null και η δύναμη να είναι NULL αν είναι άδειες (&#39;&#39; ή 0).
+NotNullDesc=1=Ορίστε τη βάση δεδομένων σε NOT NULL, 0=Να επιτρέπονται null τιμές, -1=Να επιτρέπονται null τιμές επιβάλλοντας την τιμή σε NULL εάν είναι κενή ('' ή 0)
 SearchAll=Χρησιμοποιείται για την αναζήτηση όλων
 DatabaseIndex=Δείκτης βάσης δεδομένων
 FileAlreadyExists=Το αρχείο%s ήδη υπάρχει 
@@ -84,8 +87,8 @@ ListOfDictionariesEntries=Λίστα καταχωρήσεων λεξικών
 ListOfPermissionsDefined=Λίστα καθορισμένων δικαιωμάτων
 SeeExamples=Δείτε παραδείγματα εδώ
 EnabledDesc=Προϋπόθεση να είναι ενεργό αυτό το πεδίο (Παραδείγματα: 1 ή $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+VisibleDesc=Είναι ορατό το πεδίο; (Παραδείγματα: 0=Ποτέ δεν είναι ορατό, 1=Ορατό στη λίστα και δημιουργία/ενημέρωση/προβολή φορμών, 2=Ορατό μόνο στη λίστα, 3=Ορατό μόνο στη φόρμα δημιουργίας/ενημέρωσης/προβολής (όχι στη λίστα), 4=Ορατό στη λίστα και ενημέρωση/προβολή μόνο φόρμας (όχι δημιουργία), 5=Ορατό μόνο στη φόρμα προβολής και λίστας (όχι δημιουργία, όχι ενημέρωση). <br> <br> Η χρήση αρνητικής τιμής σημαίνει ότι το πεδίο δεν εμφανίζεται από προεπιλογή στη λίστα, αλλά μπορεί να επιλεγεί για προβολή). <br> <br> Μπορεί να είναι μια έκφραση, για παράδειγμα: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Εμφανίστε αυτό το πεδίο σε συμβατά έγγραφα PDF, μπορείτε να διαχειριστείτε τη θέση με το πεδίο "Position". <br> Επί του παρόντος, γνωστά μοντέλα συμβατών PDF είναι: eratosthene (παραγγελίες), espadon (αποστολές), sponge (τιμολόγια), cyan (προσφορές), cornas (παραγγελίες προμηθευτή) <br> <br> <strong> Για έγγραφα: </strong> <br> 0 = δεν εμφανίζονται <br> 1 = εμφανίζονται <br> 2 = εμφανίζονται μόνο αν δεν είναι κενά <br> <br> <strong> Για τις γραμμές εγγράφου: </strong> <br> 0 = δεν εμφανίζονται <br> 1 = εμφανίζονται σε μια στήλη <br> 3 = εμφανιζονται στη στήλη περιγραφής της γραμμής μετά την περιγραφή <br> 4 = εμφανίζονται στη στήλη περιγραφής μετά την περιγραφή μόνο αν δεν είναι κενή
 DisplayOnPdf=Εμφάνιση σε PDF
 IsAMeasureDesc=Μπορεί η τιμή του πεδίου να συσσωρευτεί για να πάρει ένα σύνολο σε λίστα; (Παραδείγματα: 1 ή 0)
 SearchAllDesc=Χρησιμοποιείται το πεδίο για την αναζήτηση από το εργαλείο γρήγορης αναζήτησης; (Παραδείγματα: 1 ή 0)
@@ -94,11 +97,11 @@ LanguageDefDesc=Εισαγάγετε σε αυτό το αρχείο όλα τα
 MenusDefDesc=Καθορίστε εδώ τα μενού που παρέχονται από την ενότητα σας
 DictionariesDefDesc=Καθορίστε εδώ τα λεξικά που παρέχονται από την ενότητα σας
 PermissionsDefDesc=Καθορίστε εδώ τα νέα δικαιώματα που παρέχονται από την ενότητα σας
-MenusDefDescTooltip=Τα μενού που παρέχονται από την ενότητα / εφαρμογή σας καθορίζονται στα αρχεία <strong>$ this-&gt; menus</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και η ενότητα ενεργοποιηθεί εκ νέου), τα μενού είναι επίσης ορατά στον επεξεργαστή μενού που είναι διαθέσιμος στους χρήστες διαχειριστή στο %s.
+MenusDefDescTooltip=Τα μενού που παρέχονται από την ενότητα/εφαρμογή σας ορίζονται στον πίνακα <strong> $this->menus </strong> στο αρχείο περιγραφής της ενότητας. Μπορείτε να επεξεργαστείτε αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br> <br> Σημείωση: Μόλις καθοριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα μενού είναι επίσης ορατά στο πρόγραμμα επεξεργασίας μενού που είναι διαθέσιμο στους διαχειριστές στο %s.
 DictionariesDefDescTooltip=Τα λεξικά που παρέχονται από την υπομονάδα / εφαρμογή σας καθορίζονται στη συστοιχία <strong>$ this-&gt; λεξικά</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα λεξικά είναι επίσης ορατά στην περιοχή εγκατάστασης σε χρήστες διαχειριστή στο %s.
 PermissionsDefDescTooltip=Τα δικαιώματα που παρέχονται από την ενότητα/εφαρμογή σας καθορίζονται στη συστοιχία <strong> $ this-> rights </strong> στην ενότητα περιγραφής αρχείου. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br> <br> Σημείωση: Μόλις οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα δικαιώματα είναι ορατά στην προεπιλεγμένη ρύθμιση %s.
 HooksDefDesc=Ορίστε στην <b>ιδιότητα module_parts [&#39;hooks&#39;]</b> , στον περιγραφέα της μονάδας, το πλαίσιο των άγκιστρων που θέλετε να διαχειριστείτε (η λίστα των πλαισίων μπορεί να βρεθεί από μια αναζήτηση στο &#39; <b>initHooks</b> &#39; <b>(</b> &#39;in core code). <br> Επεξεργαστείτε το αρχείο αγκίστρου για να προσθέσετε τον κώδικα των αγκιστρωμένων λειτουργιών σας (οι συναρπαστικές λειτουργίες μπορούν να βρεθούν με μια αναζήτηση στο &#39; <b>executeHooks</b> &#39; στον βασικό κώδικα).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
+TriggerDefDesc=Καθορίστε στο αρχείο ενεργοποίησης τον κώδικα που θέλετε να εκτελείτε όταν εκτελείται ένα επαγγελματικό συμβάν εκτός της ενότητας (συμβάντα που ενεργοποιούνται από άλλες ενότητες).
 SeeIDsInUse=Δείτε τα αναγνωριστικά που χρησιμοποιούνται στην εγκατάσταση σας
 SeeReservedIDsRangeHere=Δείτε το φάσμα των αποκλειστικών αναγνωριστικών
 ToolkitForDevelopers=Εργαλειοθήκη για προγραμματιστές Dolibarr
@@ -106,11 +109,11 @@ TryToUseTheModuleBuilder=Αν έχετε γνώσεις SQL και PHP, μπορ
 SeeTopRightMenu=Βλέπω <span class="fa fa-bug"></span> στο πάνω δεξιό μενού
 AddLanguageFile=Προσθήκη αρχείου γλώσσας
 YouCanUseTranslationKey=Μπορείτε να χρησιμοποιήσετε εδώ ένα κλειδί που είναι το κλειδί μετάφρασης που βρίσκεται στο αρχείο γλώσσας (δείτε την καρτέλα &quot;Γλώσσες&quot;)
-DropTableIfEmpty=(Destroy table if empty)
+DropTableIfEmpty=(Διαγράψτε τον πίνακα αν είναι άδειος)
 TableDoesNotExists=Ο πίνακας %s δεν υπάρχει
 TableDropped=Ο πίνακας %s διαγράφηκε
 InitStructureFromExistingTable=Δημιουργήστε τη συμβολοσειρά συστοιχιών δομής ενός υπάρχοντος πίνακα
-UseAboutPage=Απενεργοποιήστε τη σελίδα περίπου
+UseAboutPage=Μην δημιουργήσετε τη σελίδα Πληροφορίες
 UseDocFolder=Απενεργοποίηση του φακέλου τεκμηρίωσης
 UseSpecificReadme=Χρησιμοποιήστε ένα συγκεκριμένο ReadMe
 ContentOfREADMECustomized=Σημείωση: Το περιεχόμενο του αρχείου README.md έχει αντικατασταθεί από τη συγκεκριμένη τιμή που έχει οριστεί στη ρύθμιση του ModuleBuilder.
@@ -127,21 +130,26 @@ UseSpecificEditorURL = Χρησιμοποιήστε μια συγκεκριμέ�
 UseSpecificFamily = Χρησιμοποιήστε μια συγκεκριμένη οικογένεια
 UseSpecificAuthor = Χρησιμοποιήστε έναν συγκεκριμένο συντάκτη
 UseSpecificVersion = Χρησιμοποιήστε μια συγκεκριμένη αρχική έκδοση
-IncludeRefGeneration=Η αναφορά του αντικειμένου πρέπει να δημιουργείται αυτόματα
-IncludeRefGenerationHelp=Ελέγξτε αν θέλετε να συμπεριλάβετε κώδικα για να διαχειριστείτε την αυτόματη παραγωγή της αναφοράς
-IncludeDocGeneration=Θέλω να δημιουργήσω κάποια έγγραφα από το αντικείμενο
+IncludeRefGeneration=Η αναφορά του αντικειμένου πρέπει να δημιουργείται αυτόματα από προσαρμοσμένους κανόνες αρίθμησης
+IncludeRefGenerationHelp=Επιλέξτε αυτό εάν θέλετε να συμπεριλάβετε κώδικα για τη διαχείριση της αυτόματης δημιουργίας αναφοράς χρησιμοποιώντας προσαρμοσμένους κανόνες αρίθμησης
+IncludeDocGeneration=Θέλω να δημιουργήσω ορισμένα έγγραφα από πρότυπα για το αντικείμενο
 IncludeDocGenerationHelp=Εάν το ελέγξετε αυτό, θα δημιουργηθεί κάποιος κώδικας για να προσθέσετε ένα πλαίσιο &quot;Δημιουργία εγγράφου&quot; στην εγγραφή.
 ShowOnCombobox=Δείξτε την αξία σε συνδυασμό
 KeyForTooltip=Κλειδί για επεξήγηση εργαλείου
-CSSClass=CSS for edit/create form
-CSSViewClass=CSS for read form
-CSSListClass=CSS for list
+CSSClass=CSS για επεξεργασία/δημιουργία φόρμας
+CSSViewClass=CSS για φόρμα ανάγνωσης
+CSSListClass=CSS για λίστα
 NotEditable=Δεν είναι δυνατή η επεξεργασία
 ForeignKey=Ξένο κλειδί
-TypeOfFieldsHelp=Τύπος πεδίων: <br> varchar (99), διπλό (24,8), πραγματικό, κείμενο, html, datetime, timestamp, ακέραιος, ακέραιος: ClassName: relativepath / to / classfile.class.php [: 1 [: filter] προσθέτουμε ένα κουμπί + μετά το σύνθετο για να δημιουργήσουμε την εγγραφή, το &#39;φίλτρο&#39; μπορεί να είναι &#39;status = 1 AND fk_user = __USER_ID ΚΑΙ η οντότητα IN (__SHARED_ENTITIES__)&#39; για παράδειγμα)
+TypeOfFieldsHelp=Τύπος πεδίων: <br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br> '1' σημαίνει ότι προσθέτουμε ένα κουμπί + μετά τον συνδυασμό για να δημιουργήσουμε την εγγραφή <br> 'φίλτρο' είναι μια συνθήκη sql, για παράδειγμα:'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
 AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
-TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
-ImportExportProfiles=Import and export profiles
-ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+TableNotEmptyDropCanceled=Ο πίνακας δεν είναι άδειος. Η διαγραφή ακυρώθηκε.
+ModuleBuilderNotAllowed=Το εργαλείο δημιουργίας ενοτήτων είναι διαθέσιμο αλλά δεν επιτρέπεται στον χρήστη σας.
+ImportExportProfiles=Εισαγωγή και εξαγωγή προφίλ
+ValidateModBuilderDesc=Ορίστε το σε 1 εάν θέλετε να καλείται η μέθοδος $this->validateField() του αντικειμένου για την επικύρωση του περιεχομένου του πεδίου κατά την εισαγωγή ή την ενημέρωση. Ορίστε 0 εάν δεν απαιτείται επικύρωση.
+WarningDatabaseIsNotUpdated=Προειδοποίηση: Η βάση δεδομένων δεν ενημερώνεται αυτόματα, πρέπει να διαγράψετε τους πίνακες και να απενεργοποιήσετε-ενεργοποιήσετε την ενότητα για την αναδημιουργία πινάκων
+LinkToParentMenu=Γονικό μενού (fk_xxxxmenu)
+ListOfTabsEntries=Λίστα καταχωρήσεων καρτελών
+TabsDefDesc=Ορίστε εδώ τις καρτέλες που παρέχονται από την ενότητα σας
+TabsDefDescTooltip=Οι καρτέλες που παρέχονται από την ενότητα/εφαρμογή σας ορίζονται στον πίνακα <strong> $this->tabs </strong> στο αρχείο περιγραφής της ενότητας. Μπορείτε να επεξεργαστείτε μη αυτόματα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή.

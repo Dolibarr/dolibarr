@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Gosod modiwl Cleient FTP neu SFTP
+NewFTPClient=Gosodiad cysylltiad FTP/FTPS newydd
+FTPArea=Ardal FTP/FTPS
+FTPAreaDesc=Mae'r sgrin hon yn dangos golwg o weinydd FTP et SFTP.
+SetupOfFTPClientModuleNotComplete=Mae'n ymddangos bod gosodiad y modiwl cleient FTP neu SFTP yn anghyflawn
+FTPFeatureNotSupportedByYourPHP=Nid yw eich PHP yn cefnogi swyddogaethau FTP neu SFTP
+FailedToConnectToFTPServer=Wedi methu cysylltu â'r gweinydd (gweinydd %s, porthladd %s)
+FailedToConnectToFTPServerWithCredentials=Wedi methu mewngofnodi i'r gweinydd gyda mewngofnodi/cyfrinair diffiniedig
+FTPFailedToRemoveFile=Wedi methu tynnu ffeil <b> %s </b> .
+FTPFailedToRemoveDir=Wedi methu dileu cyfeiriadur <b> %s </b> : gwirio caniatadau a bod y cyfeiriadur yn wag.
+FTPPassiveMode=Modd goddefol
+ChooseAFTPEntryIntoMenu=Dewiswch wefan FTP/SFTP o'r ddewislen...
+FailedToGetFile=Wedi methu cael ffeiliau %s

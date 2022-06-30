@@ -145,7 +145,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->bank->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
 		}
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."6=Project";
 		}
 		if (!empty($conf->user->enabled)) {
@@ -157,7 +157,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."9=Warehouse";
 		}
-		if (!empty($conf->agenda->enabled)) {
+		if (isModEnabled('agenda')) {
 			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
 		}
 		if (!empty($conf->website->enabled)) {
@@ -379,10 +379,10 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 		$this->export_label[$r] = 'CatProjectsList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->projet->enabled)';
+		$this->export_enabled[$r] = '!empty($conf->project->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
-		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"List:societe:nom:rowid", 's.nom'=>"Text");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>"Text");
 		$this->export_entities_array[$r] = array('p.rowid'=>'project', 'p.ref'=>'project', 's.rowid'=>"company", 's.nom'=>"company"); // We define here only fields that use another picto
 
 		$keyforselect = 'projet';
@@ -481,6 +481,7 @@ class modCategorie extends DolibarrModules
 					'cp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
 			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_product'=>"rowid or ref");
+			$this->import_updatekeys_array[$r] = array('cp.fk_categorie' => 'Category', 'cp.fk_product' => 'ProductRef');
 		}
 
 		// 1 Suppliers
@@ -567,7 +568,7 @@ class modCategorie extends DolibarrModules
 		// 5 Bank accounts, TODO ?
 
 		// 6 Projects
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 			$this->import_label[$r] = "CatProjectsLinks"; // Translation key

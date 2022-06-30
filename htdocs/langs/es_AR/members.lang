@@ -81,7 +81,6 @@ MoreActions=Acción complementaria al registrarse
 MoreActionBankDirect=Crear una registro en la cuenta bancaria
 MoreActionBankViaInvoice=Crear una factura y un pago en cuenta bancaria
 MoreActionInvoiceOnly=Crea una factura sin pago
-LinkToGeneratedPages=Generar tarjetas de visita
 LinkToGeneratedPagesDesc=Esta pantalla te permite generar archivos PDF con la carta de presentación para todos sus miembros o un miembro en particular.
 DocForAllMembersCards=Generar cartas de presentación para todos los miembros.
 DocForOneMemberCards=Generar cartas de presentación para un miembro en particular

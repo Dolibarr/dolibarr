@@ -122,11 +122,11 @@ if (empty($reshook)) {
 	// Action add group
 	if ($action == 'add') {
 		if ($caneditperms) {
-			if (!GETPOST("nom", "nohtml")) {
+			if (!GETPOST("nom", "alphanohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= GETPOST("nom", 'nohtml');
+				$object->name	= GETPOST("nom", 'alphanohtml');
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name = GETPOST("nom", 'nohtml');
+			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
@@ -257,7 +257,7 @@ $formfile = new FormFile($db);
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
-	print dol_set_focus('#nom');
+	dol_set_focus('#nom');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

@@ -74,3 +74,5 @@ JobClosedTextCanceled=Jobpositionen er lukket.
 ExtrafieldsJobPosition=Supplerende attributter (jobstillinger)
 ExtrafieldsApplication=Supplerende attributter (jobansøgninger)
 MakeOffer=Giv et tilbud
+WeAreRecruiting=Vi rekrutterer. Dette er en liste over ledige stillinger, der skal besættes...
+NoPositionOpen=Ingen ledige stillinger i øjeblikket

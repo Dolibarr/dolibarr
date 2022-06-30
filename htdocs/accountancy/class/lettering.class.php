@@ -266,14 +266,14 @@ class Lettering extends BookKeeping
 		$sql .= " ORDER BY ab2.lettering_code DESC";
 		$sql .= " LIMIT 1 ";
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resqla = $this->db->query($sql);
+		if ($resqla) {
+			$obj = $this->db->fetch_object($resqla);
 			$lettre = (empty($obj->lettering_code) ? 'AAA' : $obj->lettering_code);
 			if (!empty($obj->lettering_code)) {
 				$lettre++;
 			}
-			$this->db->free($result);
+			$this->db->free($resqla);
 		} else {
 			$this->errors[] = 'Error'.$this->db->lasterror();
 			$error++;
@@ -281,14 +281,14 @@ class Lettering extends BookKeeping
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
 		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND lettering_code IS NULL AND subledger_account != ''";
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
+		$resqlb = $this->db->query($sql);
+		if ($resqlb) {
+			$obj = $this->db->fetch_object($resqlb);
 			if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
 				$this->errors[] = 'Total not exacts '.round(abs($obj->deb), 2).' vs '.round(abs($obj->cred), 2);
 				$error++;
 			}
-			$this->db->free($result);
+			$this->db->free($resqlb);
 		} else {
 			$this->errors[] = 'Erreur sql'.$this->db->lasterror();
 			$error++;
@@ -699,6 +699,8 @@ class Lettering extends BookKeeping
 			return $grouped_payments;
 		}
 
+		$save_payment_by_element = null;
+		$save_element_by_payment = null;
 		if ($element_id == 0) {
 			// Save list when is the begin of recursive function
 			$save_payment_by_element = $payment_by_element;

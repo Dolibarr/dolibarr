@@ -154,7 +154,6 @@ class pdf_strato extends ModelePDFContract
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 0; // Available in several languages
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
@@ -438,6 +437,9 @@ class pdf_strato extends ModelePDFContract
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
 						}
 
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

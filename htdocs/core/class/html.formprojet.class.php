@@ -191,14 +191,9 @@ class FormProjets
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
-				$out .= $comboenhancement;
 				$morecss .= ' minwidth100';
 			}
-
 			if (empty($option_only)) {
 				$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlid.'" name="'.$htmlname.'">';
 			}
@@ -284,6 +279,15 @@ class FormProjets
 				if (empty($option_only)) {
 					$out .= '</select>';
 				}
+
+				// Use select2 selector
+				if (!empty($conf->use_javascript_ajax)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
+					$out .= $comboenhancement;
+					$morecss .= ' minwidth100';
+				}
+
 				if (empty($nooutput)) {
 					print $out;
 					return '';

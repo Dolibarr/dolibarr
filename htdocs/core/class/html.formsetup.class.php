@@ -240,10 +240,24 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return 	void|null
+	 * @return	 int        -1 if KO, 1 if OK
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
 		if (empty($this->items)) {
 			return null;
 		}
@@ -265,11 +279,13 @@ class FormSetup
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupSaved"), null);
 			}
+			return 1;
 		} else {
 			$this->db->rollback();
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupNotSaved"), null, 'errors');
 			}
+			return -1;
 		}
 	}
 
@@ -406,7 +422,7 @@ class FormSetup
 
 		if (!array($this->items)) { return false; }
 		foreach ($this->items as $item) {
-			$item->reloadValueFromConf();
+			$item->loadValueFromConf();
 		}
 
 		return true;
@@ -571,8 +587,11 @@ class FormSetupItem
 	/** @var string $fieldValue  */
 	public $fieldValue;
 
+	/** @var string $defaultFieldValue  */
+	public $defaultFieldValue = null;
+
 	/** @var array $fieldAttr  fields attribute only for compatible fields like input text */
-	public $fieldAttr;
+	public $fieldAttr = array();
 
 	/** @var bool|string set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too */
 	public $fieldOverride = false;
@@ -632,17 +651,33 @@ class FormSetupItem
 		$this->entity = $conf->entity;
 
 		$this->confKey = $confKey;
-		$this->fieldValue = $conf->global->{$this->confKey};
+		$this->loadValueFromConf();
 	}
 
 	/**
-	 * reload conf value from databases
-	 * @return null
+	 * load conf value from databases
+	 * @return bool
+	 */
+	public function loadValueFromConf()
+	{
+		global $conf;
+		if (isset($conf->global->{$this->confKey})) {
+			$this->fieldValue = $conf->global->{$this->confKey};
+			return true;
+		} else {
+			$this->fieldValue = null;
+			return false;
+		}
+	}
+
+	/**
+	 * reload conf value from databases is an aliase of loadValueFromConf
+	 * @deprecated
+	 * @return bool
 	 */
 	public function reloadValueFromConf()
 	{
-		global $conf;
-		$this->fieldValue = $conf->global->{$this->confKey};
+		return $this->loadValueFromConf();
 	}
 
 
@@ -652,8 +687,22 @@ class FormSetupItem
 	 */
 	public function saveConfValue()
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfValue', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
 		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
-			return call_user_func($this->saveCallBack);
+			return call_user_func($this->saveCallBack, $this);
 		}
 
 		// Modify constant only if key was posted (avoid resetting key to the null value)
@@ -761,6 +810,12 @@ class FormSetupItem
 			return $this->fieldInputOverride;
 		}
 
+		// Set default value
+		if (is_null($this->fieldValue)) {
+			$this->fieldValue = $this->defaultFieldValue;
+		}
+
+
 		$this->fieldAttr['name'] = $this->confKey;
 		$this->fieldAttr['id'] = 'setup-'.$this->confKey;
 		$this->fieldAttr['value'] = $this->fieldValue;
@@ -777,6 +832,8 @@ class FormSetupItem
 			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
 			$out.= $this->generateInputFieldHtml();
+		} elseif ($this->type== 'color') {
+			$out.=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
@@ -795,12 +852,20 @@ class FormSetupItem
 				$out.= $this->form->select_produits($selected, $this->confKey, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, $this->cssClass, 0, '', null, 1);
 			}
 		} else {
-			if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
-
-			$out.= '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+			$out.= $this->generateInputFieldText();
 		}
 
 		return $out;
+	}
+
+	/**
+	 * generatec default input field
+	 * @return string
+	 */
+	public function generateInputFieldText()
+	{
+		if (empty($this->fieldAttr)) { $this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass); }
+		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
 	/**
@@ -999,6 +1064,8 @@ class FormSetupItem
 			$out.= $this->generateOutputFieldSelect();
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
+		} elseif ($this->type== 'color') {
+			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			$out.= ajax_constantonoff($this->confKey);
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
@@ -1013,6 +1080,7 @@ class FormSetupItem
 			}
 			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
 			$result = $c->fetch($this->fieldValue);
 			if ($result < 0) {
@@ -1071,6 +1139,22 @@ class FormSetupItem
 		return $outPut;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function generateOutputFieldColor()
+	{
+		$this->fieldAttr['disabled']=null;
+		return $this->generateInputField();
+	}
+	/**
+	 * @return string
+	 */
+	public function generateInputFieldColor()
+	{
+		$this->fieldAttr['type']= 'color';
+		return $this->generateInputFieldText();
+	}
 
 	/**
 	 * @return string
@@ -1096,6 +1180,16 @@ class FormSetupItem
 	public function setAsString()
 	{
 		$this->type = 'string';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as color
+	 * @return self
+	 */
+	public function setAsColor()
+	{
+		$this->type = 'color';
 		return $this;
 	}
 

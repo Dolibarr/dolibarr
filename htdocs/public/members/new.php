@@ -57,7 +57,6 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -430,7 +429,7 @@ if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewMemberForm"));
 
 	// Si on a pas ete redirige
-	print '<br>';
+	print '<br><br>';
 	print '<div class="center">';
 	print $langs->trans("NewMemberbyWeb");
 	print '</div>';
@@ -448,7 +447,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
-$extrafields->fetch_name_optionals_label('adherent'); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewSubscription"));
@@ -564,8 +563,8 @@ print '<input type="text" name="email" maxlength="255" class="minwidth200" value
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 	print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1", "nohtml").'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("PasswordAgain").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2", "nohtml").'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass1", "none", 2)).'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("PasswordAgain").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
 }
 // Gender
 print '<tr><td>'.$langs->trans("Gender").'</td>';

@@ -225,10 +225,10 @@ if ($resql) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '');
 	print '</td>';
 	print '<td class="liste_titre right">';
@@ -276,7 +276,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'right '
 	);
 	print_liste_field_titre(
 		'OrderCreation',
@@ -286,7 +287,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'center '
 	);
 	print_liste_field_titre(
 		'Status',
@@ -333,15 +335,15 @@ if ($resql) {
 			print '<td>'.$txt.'</td>';
 
 			// Amount
-			print '<td>'.price($obj->total_ttc).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 			// Date
 			if ($obj->dc) {
-				$date = dol_print_date($db->jdate($obj->dc), 'dayhour');
+				$date = dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel');
 			} else {
 				$date = '-';
 			}
-			print '<td>'.$date.'</td>';
+			print '<td class="center">'.$date.'</td>';
 
 			// Statut
 			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';

@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP Client module setup
-NewFTPClient=New FTP connection setup
-FTPArea=FTP Area
-FTPAreaDesc=This screen show you content of a FTP server view
-SetupOfFTPClientModuleNotComplete=Setup of FTP client module seems to be not complete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP functions
-FailedToConnectToFTPServer=Failed to connect to FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to FTP server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b> (Check permissions and that directory is empty).
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=Налаштування модуля клієнта FTP або SFTP
+NewFTPClient=Нове налаштування з’єднання FTP/FTPS
+FTPArea=Зона FTP/FTPS
+FTPAreaDesc=Цей екран показує вигляд сервера FTP та SFTP.
+SetupOfFTPClientModuleNotComplete=Налаштування клієнтського модуля FTP або SFTP здається неповним
+FTPFeatureNotSupportedByYourPHP=Ваш PHP не підтримує функції FTP або SFTP
+FailedToConnectToFTPServer=Не вдалося підключитися до сервера (сервер %s, порт %s)
+FailedToConnectToFTPServerWithCredentials=Не вдалося ввійти на сервер із визначеним логіном/паролем
+FTPFailedToRemoveFile=Не вдалося видалити файл <b> %s </b> .
+FTPFailedToRemoveDir=Не вдалося видалити каталог <b> %s </b> : перевірте дозволи та переконайтеся, що каталог порожній.
+FTPPassiveMode=Пасивний режим
+ChooseAFTPEntryIntoMenu=Виберіть у меню сайт FTP/SFTP...
+FailedToGetFile=Не вдалося отримати файли %s

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Acest instrument trebuie folosit numai de utilizatori sau dezvoltatori experimentați. Oferă utilități pentru a construi sau edita propriul modul. Documentația pentru <a href="%s" target="_blank" rel="noopener noreferrer">dezvoltarea manuală alternativă se găseşte aici</a>.
-EnterNameOfModuleDesc=Introduceți numele modulului/aplicației care va fi creat, fără spații. Utilizați majusculă pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Introduceți numele obiectului de creat fără spații. Utilizează majusculă pentru a separa cuvintele (De exemplu: MyObject, Student, Profesor ...). Se va genera și fișierul clasă CRUD, dar și fișierul API, paginile de listare/adăugare/editare/ștergere ale obiectului și fișierele SQL.
+EnterNameOfModuleDesc=Introdu numele modulului/aplicației de creat fără spații. Foloseşte majuscule pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Introdu numele obiectului de creat fără spații. Foloseşte majuscule pentru a separa cuvinte (De exemplu: MyObject, Student, Teacher...). Se vor genera fișierul clasă CRUD, dar și fișierul API, paginile de listă/adăugare/editare/ștergere obiect și fișierele SQL.
+EnterNameOfDictionaryDesc=Introdu numele dicționarului de creat fără spații. Foloseşte majuscule pentru a separa cuvintele (de exemplu: MyDic...). Se va genera fişierul clasă, dar şi fişierul SQL.
 ModuleBuilderDesc2=Calea unde sunt generate/editate modulele (primul director pentru module externe definite în %s): <strong>%s</strong>
 ModuleBuilderDesc3=Module generate/editabile găsite: <strong>%s</strong>
 ModuleBuilderDesc4=Un modul este detectat ca "editabil" atunci când fișierul <strong>%s</strong> există în directorul rădăcină al modulului
 NewModule=Modul nou
 NewObjectInModulebuilder=Obiect nou
+NewDictionary=Dicţionar nou
 ModuleKey=Cheie modul
 ObjectKey=Cheie obiect
+DicKey=Cheie dicţionar
 ModuleInitialized=Modulul a fost inițializat
 FilesForObjectInitialized=Fișierele pentru noul obiect "%s" au fost inițializate
 FilesForObjectUpdated=Fișierele pentru obiectul "%s" au fost actualizate (fișierele .sql și fișierul .class.php)
@@ -52,7 +55,7 @@ LanguageFile=Fișier pentru limbă
 ObjectProperties=Proprietăţi obiect
 ConfirmDeleteProperty=Sigur doriți să ștergeți proprietatea <strong>%s</strong>? Acest lucru va schimba codul în clasa PHP, dar va elimina și coloana din definiția tabelului de obiect.
 NotNull=Nu NUL
-NotNullDesc=1 = Setează baza de date la NOT NULL. -1 = Permite valorile null și valoarea forțată la NULL dacă este goală ('' sau 0).
+NotNullDesc=1=Setare baza de date la NOT NULL, 0=Permite valori nule, -1=Permite valori nule forțând valoarea la NULL dacă este goală ('' sau 0)
 SearchAll=Folosit pentru "căutare tot"
 DatabaseIndex=Indexul bazei de date
 FileAlreadyExists=Fișierul %s există deja
@@ -94,7 +97,7 @@ LanguageDefDesc=Introdu în aceste fișiere, toate cheile de traducere și tradu
 MenusDefDesc=Defineşte aici meniurile generate de modulul tău
 DictionariesDefDesc=Defineşte aici dicţionarele furnizate de modulul tău
 PermissionsDefDesc=Defineşte aici noile permisiuni furnizate de modulul tău
-MenusDefDescTooltip=Meniurile furnizate de modulul/aplicația dvs. sunt definite în tabloul <strong>$this->menus</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat.<br><br> Notă: odată definit (și reactivat modulul), meniurile sunt vizibile și în editorul de meniu disponibil pentru administratori la %s.
+MenusDefDescTooltip=Meniurile furnizate de modul/aplicație sunt definite în matricea <strong>$this->menus</strong> în fișierul descriptor al modulului. Poți edita manual acest fișier sau utiliza editorul încorporat. <br><br>Notă: Odată definite (și modulul reactivat), meniurile sunt vizibile și în editorul de meniu disponibil utilizatorilor administratori în %s.
 DictionariesDefDescTooltip=Dicționarele furnizate de modulul/aplicația dvs. sunt definite în tabloul <strong>$ this->dictionaries</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat.<br><br> Notă: Modulul o dată definit (și reactivat), dicționarele lui sunt vizibile și în zona de configurare pentru administratori la %s.
 PermissionsDefDescTooltip= Permisiunile furnizate de modulul/aplicația dvs. sunt definite în matricea <strong>$ this->rights</strong> în fișierul de descriere al modulului. Puteți edita manual acest fișier sau puteți utiliza editorul încorporat. <br><br>Notă: Modulul o dată definit (și reactivat), permisiunile sunt vizibile în configurarea de bază a permisiunilor %s.
 HooksDefDesc=Definiți în proprietatea <b>module_parts['hooks'] </b>, în descriptorul modulului, contextul de cârlige pe care doreşti să îl gestionezi (lista de contexte poate fi găsită printr-o căutare după '<b>initHooks(</b>' în codul nucleu) <br> Editează fișierul cârlig hook pentru a adăuga cod cu funcțiile tale (funcțiile care pot fi legate pot fi găsite printr-o căutare după '<b>executeHooks</b>' în codul nucleu).
@@ -110,7 +113,7 @@ DropTableIfEmpty=(Distruge tabelul dacă este gol)
 TableDoesNotExists=Tabelul %s nu există
 TableDropped=Tabelul %s a fost șters
 InitStructureFromExistingTable=Construiți șirul de structură al unui tabel existent
-UseAboutPage=Dezactivați pagina Despre
+UseAboutPage=Nu genera pagina Despre
 UseDocFolder=Dezactivați dosarul de documentare
 UseSpecificReadme=Utilizați un anumit ReadMe
 ContentOfREADMECustomized=Notă: Conținutul fișierului README.md a fost înlocuit cu valoarea specifică definită la configurarea ModuleBuilder. 
@@ -127,9 +130,9 @@ UseSpecificEditorURL = Utilizează un URL specificat de editor
 UseSpecificFamily = Utilizează o familie specifică
 UseSpecificAuthor = Utilizează un autor specific
 UseSpecificVersion = Utilizează o versiune iniţială specifică
-IncludeRefGeneration=Referinţa obiectului trebuie să fie generată automat
-IncludeRefGenerationHelp=Bifează aceasta dacă vrei să incluzi cod de management pentru generarea automată a referinţei
-IncludeDocGeneration=Vreau să generez documente din obiect
+IncludeRefGeneration=Referința obiectului trebuie să fie generată automat prin reguli de numerotare personalizate 
+IncludeRefGenerationHelp=Bifează această opțiune dacă vrei să incluzi cod pentru a gestiona automat generarea referinței folosind reguli de numerotare personalizate
+IncludeDocGeneration=Vreau să generez documente din șabloane pentru obiect
 IncludeDocGenerationHelp=Dacă bifaţi, va fi generat cod pentru a adăuga o casetă "Generare document" în înregistrarea respectivă. 
 ShowOnCombobox=Afişează valoare în combox
 KeyForTooltip=Cheie pentru tooltip
@@ -138,10 +141,15 @@ CSSViewClass=CSS pentru vizualizare formular
 CSSListClass=CSS pentru listă
 NotEditable=Needitabil
 ForeignKey=Cheie străină
-TypeOfFieldsHelp=Tip de câmpuri: <br>varchar (99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php [: 1 [: filter]] ( '1' înseamnă că adăugăm un buton + după combo pentru a crea înregistrarea, 'filtru' poate fi 'status = 1 ȘI fk_user = __USER_ID ȘI entity IN (__SHARED_ENTITIES__)', de exemplu) 
+TypeOfFieldsHelp=Tip de câmpuri:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1” înseamnă că adăugăm un buton + după combo pentru a crea înregistrarea<br> 'filter' este o condiție sql, de exemplu: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Convertor ASCII la HTML
 AsciiToPdfConverter=Convertor ASCII la PDF
 TableNotEmptyDropCanceled=Tabelul nu este gol. Operaţiunea de drop a fost anulată. 
 ModuleBuilderNotAllowed=Generatorul de module este disponibil, dar nu-ţi este permis să-l utilizezi.
 ImportExportProfiles=Profile import şi export
-ValidateModBuilderDesc=Introdu 1 dacă acest câmp trebuie validat cu $this->validateField() sau 0 dacă este necesară validarea
+ValidateModBuilderDesc=Setează la 1 dacă vrei ca metoda $this->validateField() a obiectului să fie apelată pentru a valida conținutul câmpului în timpul inserării sau actualizării. Setează la 0 dacă nu este necesară validarea.
+WarningDatabaseIsNotUpdated=Atenţie: baza de date nu este actualizată automat, trebuie să distrugi tabelele și să dezactivezi modulul pentru a recrea tabelele
+LinkToParentMenu=Meniu părinte (fk_xxxxmenu)
+ListOfTabsEntries=Listă tab-uri
+TabsDefDesc=Defineşte aici tab-urile furnizate de modulul tău
+TabsDefDescTooltip=Tab-urile furnizate de modulul/aplicația ta sunt definite în matricea <strong>$this->tabs</strong> în fișierul descriptor al modulului. Poți edita manual acest fișier sau poți utiliza editorul încorporat. 

@@ -39,6 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+if (!empty($conf->ficheinter->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+}
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -98,6 +101,10 @@ if (!empty($conf->commande->enabled)) {
 }
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$supplierorderstatic = new CommandeFournisseur($db);
+}
+
+if (!empty($conf->ficheinter->enabled)) {
+	$fichinterstatic = new Fichinter($db);
 }
 
 llxHeader("", $langs->trans("CommercialArea"));
@@ -508,7 +515,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
  * Draft interventionals
  */
 if (!empty($conf->ficheinter->enabled)) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
+	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -524,22 +536,46 @@ if (!empty($conf->ficheinter->enabled)) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
+
 	$resql = $db->query($sql);
 	if ($resql) {
+		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
+
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
-		$langs->load("fichinter");
-		$num = $db->num_rows($resql);
+
 		if ($num) {
 			$i = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
+
+				$fichinterstatic->id=$obj->rowid;
+				$fichinterstatic->ref=$obj->ref;
+				$fichinterstatic->statut=$obj->fk_statut;
+
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
+				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
+				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+				print '<td class="nowrap tdoverflowmax100">';
+				print $fichinterstatic->getNomUrl(1);
+				print "</td>";
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'customer');
+				print '</td></tr>';
 				$i++;
 			}
 		}
@@ -634,7 +670,11 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 				print $s;
 
 				print '</td>';
-				print '<td class="right nowrap tddate">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
+
+				$datem = $db->jdate($objp->tms);
+				print '<td class="right nowrap tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+				print dol_print_date($datem, 'day', 'tzuserrel');
+				print '</td>';
 				print '</tr>';
 
 				$i++;
@@ -725,7 +765,11 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 				print $s;
 
 				print '</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+
+				$datem = $db->jdate($objp->dm);
+				print '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+				print dol_print_date($datem, 'day', 'tzuserrel');
+				print '</td>';
 				print '</tr>';
 
 				$i++;
@@ -922,7 +966,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
+				$datem = $db->jdate($obj->dp);
+				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("Date").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
+				print dol_print_date($datem, 'day', 'tzserver');
+				print '</td>';
 				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 
@@ -1039,7 +1086,11 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dv), 'day').'</td>';
+				$datem = $db->jdate($obj->dv);
+				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("DateValue").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
+				print dol_print_date($datem, 'day', 'tzserver');
+				print '</td>';
+
 				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>';
 

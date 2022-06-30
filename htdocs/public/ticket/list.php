@@ -220,7 +220,7 @@ if ($action == "view_ticketlist") {
 		$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 		$filter = array();
-		$param = 'action=view_ticketlist';
+		$param = '&action=view_ticketlist';
 		if (!empty($entity) && !empty($conf->multicompany->enabled)) {
 			$param .= '&entity='.$entity;
 		}
@@ -362,7 +362,7 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->dao->element)."'";
+		$sql .= " AND tc.element='".$db->escape($object->element)."'";
 		$sql .= " AND tc.active=1)";
 		$sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
 		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
@@ -398,7 +398,7 @@ if ($action == "view_ticketlist") {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+				print_barre_liste($langs->trans('TicketList'), $page, '/public/ticket/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
@@ -659,9 +659,9 @@ if ($action == "view_ticketlist") {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 							if (!empty($arrayfields["ef.".$key]['checked'])) {
 								print '<td';
-								$align = $extrafields->getAlignFlag($key);
-								if ($align) {
-									print ' align="'.$align.'"';
+								$cssstring = $extrafields->getAlignFlag($key, $object->table_element);
+								if ($cssstring) {
+									print ' class="'.$cssstring.'"';
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
@@ -706,7 +706,7 @@ if ($action == "view_ticketlist") {
 			}
 		}
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';

@@ -528,7 +528,7 @@ class Productbatch extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."product_lot as pl";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = pl.fk_product";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock AS ps ON ps.rowid = pb.fk_product_stock AND ps.fk_product = ".((int) $fk_product);
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {

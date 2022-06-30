@@ -49,7 +49,7 @@ function dolSaveMasterFile($filemaster)
 		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
 	}
 
-		return $result;
+	return $result;
 }
 
 /**
@@ -291,11 +291,12 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl the index.php page redirect to (used only if $fileindex is provided)
  * @param	string		$filewrapper			Full path of file wrapper.php
+ * @param	Website		$object					Object website
  * @return	boolean								True if OK
  */
-function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
+function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
-	global $conf;
+	global $conf, $db;
 
 	$result1 = false;
 	$result2 = false;
@@ -319,6 +320,44 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		$result1 = file_put_contents($fileindex, $indexcontent);
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		}
+
+		if (is_object($object) && $object->fk_default_home > 0) {
+			$objectpage = new WebsitePage($db);
+			$objectpage->fetch($object->fk_default_home);
+
+			// Create a version for sublanguages
+			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+				if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && is_object($object) && !empty($object->otherlang)) {
+					$dirname = dirname($fileindex);
+					foreach (explode(',', $object->otherlang) as $sublang) {
+						// Avoid to erase main alias file if $sublang is empty string
+						if (empty(trim($sublang))) continue;
+						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
+
+						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.
+						$relpath = '..';
+						$indexcontent = '<?php'."\n";
+						$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
+						$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+						$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once '".$relpath."/master.inc.php'; } // Load master if not already loaded\n";
+						$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+						$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
+						$indexcontent .= "}\n";
+						$indexcontent .= "include_once '".$relpath."/".basename($filetpl)."'\n";	// use .. instead of .
+						$indexcontent .= '// END PHP ?>'."\n";
+						$result = file_put_contents($fileindexsub, $indexcontent);
+						if ($result === false) {
+							dol_syslog("Failed to write file ".$fileindexsub, LOG_WARNING);
+						}
+						if (!empty($conf->global->MAIN_UMASK)) {
+							@chmod($fileindexsub, octdec($conf->global->MAIN_UMASK));
+						}
+					}
+				}
+			}
 		}
 	} else {
 		$result1 = true;
@@ -491,7 +530,7 @@ function dolSaveReadme($file, $content)
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
 	}
 
-		return $result;
+	return $result;
 }
 
 
@@ -545,9 +584,9 @@ function showWebsiteTemplates(Website $website)
 					while (($subdir = readdir($handle)) !== false) {
 						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
 							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
-							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+								$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
-							// Disable not stable themes (dir ends with _exp or _dev)
+								// Disable not stable themes (dir ends with _exp or _dev)
 							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
 								continue;
 							}
@@ -555,38 +594,38 @@ function showWebsiteTemplates(Website $website)
 								continue;
 							}
 
-							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+								print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
-							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+								$file = $dirtheme."/".$subdirwithoutzip.".jpg";
+								$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
 							if (!file_exists($file)) {
 								$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 							}
 
-							$originalfile = basename($file);
-							$entity = $conf->entity;
-							$modulepart = 'doctemplateswebsite';
-							$cache = '';
-							$title = $file;
+								$originalfile = basename($file);
+								$entity = $conf->entity;
+								$modulepart = 'doctemplateswebsite';
+								$cache = '';
+								$title = $file;
 
-							$ret = '';
-							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+								$ret = '';
+								$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
 							if (!empty($urladvanced)) {
 								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 							} else {
 								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 							}
-							print $ret;
-							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
-							print '</a>';
+								print $ret;
+								print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+								print '</a>';
 
-							print '<br>';
-							print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
-							print '</div>';
+								print '<br>';
+								print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
+								print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
+								print '</div>';
 
-							$i++;
+								$i++;
 						}
 					}
 				}

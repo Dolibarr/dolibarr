@@ -71,45 +71,22 @@ class pdf_standard extends ModelePDFStock
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
 	 * Issuer
 	 * @var Societe
 	 */
 	public $emetteur;
+
+	public $wref;
+	public $posxdesc;
+	public $posxlabel;
+	public $posxtva;
+	public $posxqty;
+	public $posxup;
+	public $posxunit;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tabTitleHeight;
 
 
 	/**
@@ -174,12 +151,6 @@ class pdf_standard extends ModelePDFStock
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->tva_array = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 
 		$this->tabTitleHeight = 11;
 	}
@@ -488,6 +459,9 @@ class pdf_standard extends ModelePDFStock
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
 							}
 						}
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

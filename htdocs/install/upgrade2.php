@@ -1422,11 +1422,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 		if ($select_resql) {
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
-			$var = true;
 
 			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
-				$var = !$var;
 				$select_obj = $db->fetch_object($select_resql);
 
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
@@ -2013,7 +2011,7 @@ function migrate_modeles($db, $langs, $conf)
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-	if (!empty($conf->facture->enabled)) {
+	if (isModEnabled('facture')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -4115,6 +4113,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/export/export_excel.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
+		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
 		'/categories/class/api_category.class.php',

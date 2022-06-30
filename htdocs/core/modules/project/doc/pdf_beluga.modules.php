@@ -138,6 +138,14 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	public $emetteur;
 
+	public $posxref;
+	public $posxdate;
+	public $posxsociete;
+	public $posxamountht;
+	public $posxamountttc;
+	public $posstatut;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -174,7 +182,6 @@ class pdf_beluga extends ModelePDFProjects
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -235,11 +242,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->project->dir_output;
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -480,7 +487,7 @@ class pdf_beluga extends ModelePDFProjects
 					}
 
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, $projectField);
+					$elementarray = $object->get_element_list($key, $tablename, $datefieldname, '', '', $projectField);
 
 					$num = count($elementarray);
 					if ($num >= 0) {
@@ -493,7 +500,7 @@ class pdf_beluga extends ModelePDFProjects
 						$pdf->SetXY($this->posxref, $curY);
 						$pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
 
-						$selectList = $formproject->select_element($tablename, $project->thirdparty->id, '', -2, $projectField);
+						$selectList = $formproject->select_element($tablename, $object->thirdparty->id, '', -2, $projectField);
 						$nexY = $pdf->GetY() + 1;
 						$curY = $nexY;
 						$pdf->SetXY($this->posxref, $curY);
@@ -736,6 +743,9 @@ class pdf_beluga extends ModelePDFProjects
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 				}
 
@@ -791,8 +801,6 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
-		global $conf, $mysoc;
-
 		$heightoftitleline = 10;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -807,24 +815,6 @@ class pdf_beluga extends ModelePDFProjects
 
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size);
-
-		$pdf->SetXY($this->posxref, $tab_top + 1);
-		$pdf->MultiCell($this->posxlabel - $this->posxref, 3, $outputlangs->transnoentities("Tasks"), '', 'L');
-
-		$pdf->SetXY($this->posxlabel, $tab_top + 1);
-		$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
-
-		$pdf->SetXY($this->posxworkload, $tab_top + 1);
-		$pdf->MultiCell($this->posxprogress - $this->posxworkload, 3, $outputlangs->transnoentities("PlannedWorkloadShort"), 0, 'R');
-
-		$pdf->SetXY($this->posxprogress, $tab_top + 1);
-		$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, '%', 0, 'R');
-
-		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, '', 0, 'C');
-
-		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

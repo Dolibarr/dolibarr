@@ -257,7 +257,7 @@ llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-factur
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -857,7 +857,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->datec), 'dayhour');
 				print '</td>';
 				if (!$i) {
@@ -865,7 +865,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->tms), 'dayhour');
 				print '</td>';
 				if (!$i) {

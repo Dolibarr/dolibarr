@@ -127,6 +127,13 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $model_pdf;
 
+	/**
+	 * Invoice lines
+	 * @var FactureFournisseurLigneRec[]
+	 */
+	public $lines = array();
+
+
 	/* Override fields in CommonObject
 	public $entity;
 	public $date_creation;
@@ -174,7 +181,7 @@ class FactureFournisseurRec extends CommonInvoice
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'ref_supplier' =>array('type'=>'varchar(180)', 'label'=>'RefSupplier', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>20),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>30),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'suspended' =>array('type'=>'integer', 'label'=>'Suspended', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
@@ -188,8 +195,8 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>85),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
@@ -557,7 +564,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
 		$sql .= ', f.total_tva, f.total_ht, f.total_ttc';
 		$sql .= ', f.fk_user_author, f.fk_user_modif';
-		$sql .= ', f.fk_projet, f.fk_account';
+		$sql .= ', f.fk_projet as fk_project, f.fk_account';
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
@@ -603,7 +610,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->total_ttc                = $obj->total_ttc;
 				$this->user_author              = $obj->fk_user_author;
 				$this->user_modif               = $obj->fk_user_modif;
-				$this->fk_project               = $obj->fk_projet;
+				$this->fk_project               = $obj->fk_project;
 				$this->fk_account               = $obj->fk_account;
 				$this->mode_reglement_id        = $obj->fk_mode_reglement;
 				$this->mode_reglement_code      = $obj->mode_reglement_code;

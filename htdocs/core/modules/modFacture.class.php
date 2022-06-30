@@ -134,7 +134,7 @@ class modFacture extends DolibarrModules
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
 				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
+				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with EmailTemplateCode must exists. The version in the language of the thirdparty will be used in priority to update the PDF of the sent invoice).',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,
@@ -222,6 +222,274 @@ class modFacture extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
+
+
+		// Imports
+		//--------
+		$r = 1;
+
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "Invoices"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('f' => MAIN_DB_PREFIX.'facture', 'extra' => MAIN_DB_PREFIX.'facture_extrafields');
+		$this->import_tables_creator_array[$r] = array('f' => 'fk_user_author'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'f.ref' => 'InvoiceRef*',
+			'f.ref_ext' => 'ExternalRef',
+			'f.ref_int' => 'ExternalRef',
+			'f.ref_client' => 'CutomerRef',
+			'f.type' => 'Type*',
+			'f.fk_soc' => 'Customer*',
+			'f.datec' => 'InvoiceDateCreation',
+			'f.datef' => 'DateInvoice',
+			'f.date_valid' => 'Validation Date',
+			'f.paye' => 'InvoicePaid',
+			'f.remise_percent' => 'RemisePercent',
+			'f.remise_absolue' => 'RemiseAbsolue',
+			'f.remise' => 'Remise',
+			'f.total_tva' => 'TotalVAT',
+			'f.total_ht' => 'TotalHT',
+			'f.total_ttc' => 'TotalTTC',
+			'f.fk_statut' => 'InvoiceStatus',
+			'f.fk_user_modif' => 'Modifier Id',
+			'f.fk_user_valid' => 'Validator Id',
+			'f.fk_user_closing' => 'Closer Id',
+			'f.fk_facture_source' => 'Invoice Source Id',
+			'f.fk_projet' => 'Project Id',
+			'f.fk_account' => 'Bank Account',
+			'f.fk_currency' => 'Currency*',
+			'f.fk_cond_reglement' => 'Payment Condition',
+			'f.fk_mode_reglement' => 'Payment Mode',
+			'f.date_lim_reglement' => 'DateMaxPayment',
+			'f.note_public' => 'InvoiceNote',
+			'f.note_private' => 'NotePrivate',
+			'f.model_pdf' => 'Model'
+		);
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->import_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->import_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facture');
+		$this->import_regex_array[$r] = array('f.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency');
+		$import_sample = array(
+			'f.ref' => '(PROV0001)',
+			'f.ref_ext' => '',
+			'f.ref_int' => '',
+			'f.ref_client' => '',
+			'f.type' => '0',
+			'f.fk_soc' => '80LIMIT',
+			'f.datec' => '2021-11-24',
+			'f.datef' => '2021-11-24',
+			'f.date_valid' => '2021-11-24',
+			'f.paye' => '1',
+			'f.remise_percent' => '0',
+			'f.remise_absolue' => '0',
+			'f.remise' => '0',
+			'f.total_tva' => '21',
+			'f.total_ht' => '100',
+			'f.total_ttc' => '121',
+			'f.fk_statut' => '1',
+			'f.fk_user_modif' => '',
+			'f.fk_user_valid' => '',
+			'f.fk_user_closing' => '',
+			'f.fk_facture_source' => '',
+			'f.fk_projet' => '',
+			'f.fk_account' => '',
+			'f.fk_currency' => 'EUR',
+			'f.fk_cond_reglement' => '30D',
+			'f.fk_mode_reglement' => 'VIR',
+			'f.date_lim_reglement' => '2021-12-24',
+			'f.note_public' => '',
+			'f.note_private' => '',
+			'f.model_pdf' => 'crabe',
+			'f.multicurrency_code' => 'EUR',
+			'f.multicurrency_tx' => '1',
+			'f.multicurrency_total_ht' => '100',
+			'f.multicurrency_total_tva' => '21',
+			'f.multicurrency_total_ttc' => '121'
+		);
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = array('f.ref' => 'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'f.fk_soc' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/societe/class/societe.class.php',
+				'class' => 'Societe',
+				'method' => 'fetch',
+				'element' => 'ThirdParty'
+			),
+			'f.fk_projet' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/projet/class/project.class.php',
+				'class' => 'Project',
+				'method' => 'fetch',
+				'element' => 'facture'
+			),
+			'f.fk_cond_reglement' => array(
+				'rule' => 'fetchidfromcodeorlabel',
+				'file' => '/compta/facture/class/paymentterm.class.php',
+				'class' => 'PaymentTerm',
+				'method' => 'fetch',
+				'element' => 'c_payment_term'
+			)
+		);
+
+		//Import Supplier Invoice Lines
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = "InvoiceLine"; // Translation key
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facturedet', 'extra' => MAIN_DB_PREFIX.'facturedet_extrafields');
+		$this->import_fields_array[$r] = array(
+			'fd.fk_facture' => 'InvoiceRef*',
+			'fd.fk_parent_line' => 'FacParentLine',
+			'fd.fk_product' => 'IdProduct',
+			'fd.label' => 'Label',
+			'fd.description' => 'LineDescription*',
+			'fd.vat_src_code' => 'Vat Source Code',
+			'fd.tva_tx' => 'LineVATRate*',
+			// localtax1_tx
+			// localtax1_type
+			// localtax2_tx
+			// localtax2_type
+			'fd.qty' => 'LineQty',
+			'fd.remise_percent' => 'Reduc. (%)',
+			// remise
+			// fk_remise_except
+			// subprice
+			// price
+			'fd.total_ht' => 'LineTotalHT',
+			'fd.total_tva' => 'LineTotalVAT',
+			// total_localtax1
+			// total_localtax2
+			'fd.total_ttc' => 'LineTotalTTC',
+			'fd.product_type' => 'TypeOfLineServiceOrProduct',
+			'fd.date_start' => 'Start Date',
+			'fd.date_end' => 'End Date',
+			// info_bits
+			// buy_price_ht
+			// fk_product_fournisseur_price
+			// specia_code
+			// rang
+			// fk_contract_line
+			'fd.fk_unit' => 'Unit',
+			// fk_code_ventilation
+			// situation_percent
+			// fk_prev_id
+			// fk_user_author
+			// fk_user_modif
+			// ref_ext
+		);
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->import_fields_array[$r]['fd.multicurrency_code'] = 'Currency';
+			$this->import_fields_array[$r]['fd.multicurrency_subprice'] = 'CurrencyRate';
+			$this->import_fields_array[$r]['fd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->import_fields_array[$r]['fd.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->import_fields_array[$r]['fd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		}
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_det' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'facturedet');
+		$this->import_regex_array[$r] = array(
+			'fd.fk_product' => 'rowid@'.MAIN_DB_PREFIX.'product',
+			'fd.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
+		);
+		$import_sample = array(
+			'fd.fk_facture' => '(PROV00001)',
+			'fd.fk_parent_line' => '',
+			'fd.fk_product' => '',
+			'fd.label' => '',
+			'fd.description' => 'Test product',
+			'fd.vat_src_code' => '',
+			'fd.tva_tx' => '21',
+			// localtax1_tx
+			// localtax1_type
+			// localtax2_tx
+			// localtax2_type
+			'fd.qty' => '1',
+			'fd.remise_percent' => '0',
+			// remise
+			// fk_remise_except
+			// subprice
+			// price
+			'fd.total_ht' => '100',
+			'fd.total_tva' => '21',
+			// total_localtax1
+			// total_localtax2
+			'fd.total_ttc' => '121',
+			'fd.product_type' => '0',
+			'fd.date_start' => '',
+			'fd.date_end' => '',
+			// info_bits
+			// buy_price_ht
+			// fk_product_fournisseur_price
+			// specia_code
+			// rang
+			// fk_contract_line
+			'fd.fk_unit' => '',
+			// fk_code_ventilation
+			// situation_percent
+			// fk_prev_id
+			// fk_user_author
+			// fk_user_modif
+			// ref_ext
+			'fd.multicurrency_code' => 'EUR',
+			'fd.multicurrency_tx' => '21',
+			'fd.multicurrency_total_ht' => '100',
+			'fd.multicurrency_total_tva' => '21',
+			'fd.multicurrency_total_ttc' => '121'
+		);
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = array(
+			'fd.rowid' => 'Row Id',
+			'fd.fk_facture' => 'Invoice Id'
+		);
+		$this->import_convertvalue_array[$r] = array(
+			'fd.fk_facture' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/compta/facture/class/facture.class.php',
+				'class' => 'Facture',
+				'method' => 'fetch',
+				'element' => 'facture'
+			),
+			'fd.fk_projet' => array(
+				'rule' => 'fetchidfromref',
+				'file' => '/projet/class/project.class.php',
+				'class' => 'Project',
+				'method' => 'fetch',
+				'element' => 'facture'
+			),
+		);
 
 
 		// Exports

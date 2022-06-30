@@ -101,7 +101,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "cp.rowid";
+	$sortfield = "cp.ref";
 }
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -625,7 +625,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_debut']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
-		$formother->select_year($search_year_start, 'search_year_start', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_start, 'search_year_start', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -633,7 +633,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
-		$formother->select_year($search_year_end, 'search_year_end', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_end, 'search_year_end', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -654,7 +654,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
-		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
+		print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -662,7 +662,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.tms']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
-		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
+		print $formother->selectyear($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
 	}
 

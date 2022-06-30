@@ -273,9 +273,9 @@ if ($action == 'add' && !$cancel) {
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$result = $object->fetch($id);
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
-	if (empty($totalpaye)) {
+	if (empty($totalpaid)) {
 		$db->begin();
 
 		$ret = $object->delete($user);
@@ -540,7 +540,7 @@ if ($action == 'create') {
 if ($id > 0) {
 	$head = vat_prepare_head($object);
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	// Clone confirmation
 	if ($action === 'clone') {
@@ -580,7 +580,7 @@ if ($id > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -683,7 +683,7 @@ if ($id > 0) {
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		$num = $db->num_rows($resql);
 		$i = 0;
@@ -735,7 +735,7 @@ if ($id > 0) {
 				}
 				print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				print "</tr>";
-				$totalpaye += $objp->amount;
+				$totalpaid += $objp->amount;
 				$i++;
 			}
 		} else {
@@ -744,10 +744,10 @@ if ($id > 0) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaye;
+		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -810,7 +810,7 @@ if ($id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
 		}
 
-		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaye)) {
+		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaid)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
@@ -853,7 +853,7 @@ if ($id > 0) {
 		/*
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

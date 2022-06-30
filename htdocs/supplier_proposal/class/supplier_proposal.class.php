@@ -331,7 +331,6 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->subprice = -$remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Id produit predefini
 			$supplier_proposalligne->qty = 1;
-			$supplier_proposalligne->remise = 0;
 			$supplier_proposalligne->remise_percent = 0;
 			$supplier_proposalligne->rang = -1;
 			$supplier_proposalligne->info_bits = 2;
@@ -3005,9 +3004,6 @@ class SupplierProposalLine extends CommonObjectLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

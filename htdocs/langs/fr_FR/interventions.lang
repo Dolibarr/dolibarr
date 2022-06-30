@@ -66,3 +66,5 @@ RepeatableIntervention=Modèle d'intervention
 ToCreateAPredefinedIntervention=Pour créer une intervention prédéfinie ou récurrente, créez une intervention standard et convertissez-la en modèle d'intervention
 ConfirmReopenIntervention=Êtes-vous sur de vouloir ré-ouvrir l'intervention <b>%s</b> ?
 GenerateInter=Générer intervention
+FichinterNoContractLinked=L'intervention %s a été créée sans contrat lié.
+ErrorFicheinterCompanyDoesNotExist=L'entreprise n'existe pas. L'intervention n'a pas été créée.

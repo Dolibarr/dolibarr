@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2011-2014 Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2021	   Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+if (!empty($conf->accounting->enabled)) {
+	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 $hookmanager = new HookManager($db);
 
@@ -48,6 +51,7 @@ $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -123,6 +127,9 @@ if ($year) {
 if ($search_sc_type) {
 	$param .= '&search_sc_type='.urlencode($search_sc_type);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 $num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -137,16 +144,18 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 
 $sql = "SELECT c.id, c.libelle as type_label,";
 $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
-$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
-$sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
+$sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.login, u.admin, u.statut,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " aj.label as account_journal";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON ba.fk_accountancy_journal = aj.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = cs.fk_user";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity IN (".getEntity("tax").")";
@@ -253,7 +262,7 @@ if (!$resql) {
 $i = 0;
 $total = 0;
 $totalnb = 0;
-$totalpaye = 0;
+$totalpaid = 0;
 
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -278,7 +287,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdoverflowmax300">'.$obj->label.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->label_sc).'" class="tdoverflowmax300">'.$obj->label_sc.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {
@@ -297,8 +306,7 @@ while ($i < min($num, $limit)) {
 		$userstatic->admin = $obj->admin;
 		$userstatic->login = $obj->login;
 		$userstatic->email = $obj->email;
-		$userstatic->socid = $obj->fk_soc;
-		$userstatic->statut = $obj->status;
+		$userstatic->statut = $obj->statut;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 	}
@@ -327,13 +335,16 @@ while ($i < min($num, $limit)) {
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
-			$accountstatic->accountancy_number = $obj->account_number;
-			$accountstatic->accountancy_journal = $obj->accountancy_journal;
 			$accountstatic->label = $obj->blabel;
 			$accountstatic->iban = $obj->iban;
 			$accountstatic->bic = $obj->bic;
 			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$accountstatic->clos = $obj->clos;
+
+			if (!empty($conf->accounting->enabled)) {
+				$accountstatic->account_number = $obj->account_number;
+				$accountstatic->accountancy_journal = $obj->account_journal;
+			}
 			print $accountstatic->getNomUrl(1);
 		} else {
 			print '&nbsp;';
@@ -346,8 +357,8 @@ while ($i < min($num, $limit)) {
 
 	// Paid
 	print '<td class="right">';
-	if ($obj->totalpaye) {
-		print '<span class="amount">'.price($obj->totalpaye).'</span>';
+	if ($obj->totalpaid) {
+		print '<span class="amount">'.price($obj->totalpaid).'</span>';
 	}
 	print '</td>';
 
@@ -356,8 +367,7 @@ while ($i < min($num, $limit)) {
 	print '</tr>';
 
 	$total = $total + $obj->total;
-	$totalnb = $totalnb + $obj->nb;
-	$totalpaye = $totalpaye + $obj->totalpaye;
+	$totalpaid = $totalpaid + $obj->totalpaid;
 	$i++;
 }
 
@@ -373,7 +383,7 @@ if (!empty($conf->banque->enabled)) {
 	print '<td></td>';
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price($totalpaye)."</td>";
+print '<td class="liste_total right">'.price($totalpaid)."</td>";
 print '<td></td>';
 print "</tr>";
 

@@ -9,6 +9,7 @@ ErrorBadMXDomain=電子郵件 %s 似乎不正確（網域沒有有效的 MX 記�
 ErrorBadUrl=網址 %s 不正確
 ErrorBadValueForParamNotAString=您的參數值錯誤。一般在轉譯遺失時產生。
 ErrorRefAlreadyExists=參考<b>%s</b>已經存在。
+ErrorTitleAlreadyExists=標題 <b> %s </b> 已經存在。
 ErrorLoginAlreadyExists=登入者%s已經存在。
 ErrorGroupAlreadyExists=群組%s已經存在。
 ErrorEmailAlreadyExists=電子郵件 %s 已存在。
@@ -27,9 +28,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=此聯絡人已被定義為以下類�
 ErrorCashAccountAcceptsOnlyCashMoney=這是一個現金帳戶的銀行帳戶，所以只接受現金支付的類型。
 ErrorFromToAccountsMustDiffers=來源和目標的銀行帳戶必須是不同的。
 ErrorBadThirdPartyName=合作方名稱的值不正確
-ForbiddenBySetupRules=Forbidden by setup rules
+ForbiddenBySetupRules=已被設定中的規則禁止
 ErrorProdIdIsMandatory=%s是強制性的
-ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
+ErrorAccountancyCodeCustomerIsMandatory=客戶%s的會計科目代號是必需的
 ErrorBadCustomerCodeSyntax=客戶代碼語法錯誤
 ErrorBadBarCodeSyntax=條碼語法錯誤。可能是您設定了錯誤的條碼類型，或者您定義了與掃描值不匹配的條碼遮罩編號。
 ErrorCustomerCodeRequired=需要客戶代碼
@@ -66,7 +67,7 @@ ErrorDestinationAlreadyExists=檔案名稱<b>%s</b>已存在
 ErrorPartialFile=伺服器未完整的收到檔案。
 ErrorNoTmpDir=臨時指示%s不存在。
 ErrorUploadBlockedByAddon=PHP / Apache的插件已阻擋上傳。
-ErrorFileSizeTooLarge=檔案太大。
+ErrorFileSizeTooLarge=檔案過大或未提供檔案。
 ErrorFieldTooLong=欄位%s太長。
 ErrorSizeTooLongForIntType=位數超過int類型（最大位數%s）
 ErrorSizeTooLongForVarcharType=位數超過字串類型（最大位數%s）
@@ -276,7 +277,16 @@ ErrorNotInDictionaryPaymentConditions=不在支付條款類別中，請修改。
 ErrorIsNotADraft=%s 不是草案狀態
 ErrorExecIdFailed=無法執行命令“id”
 ErrorBadCharIntoLoginName=登錄名稱中的未核准字元
-ErrorRequestTooLarge=Error, request too large
+ErrorRequestTooLarge=錯誤，請求太大
+ErrorNotApproverForHoliday=您不是休假 %s 的批准人
+ErrorAttributeIsUsedIntoProduct=此屬性用於一個或多個產品變異
+ErrorAttributeValueIsUsedIntoProduct=此屬性值用於一個或多個產品變異
+ErrorPaymentInBothCurrency=錯誤，所有金額必須輸入於同一列
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=您嘗試從貨幣 %s 的帳戶支付貨幣 %s 的發票
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=您的PHP參數upload_max_filesize（%s）高於PHP參數post_max_size（%s）。這不是相同的設定。
@@ -289,7 +299,7 @@ WarningPassIsEmpty=警告，資料庫密碼是空的。這是一個安全漏洞�
 WarningConfFileMustBeReadOnly=警告，您的設定檔案（ <b>htdocs / conf / conf.php</b> ）可能會被Web伺服器器覆蓋。這是一個嚴重的安全漏洞。對於Web伺服器使用的操作系統用戶，需將檔案權限修改為唯讀模式。如果對磁碟使用Windows和FAT格式，則必須知道此檔案系統不允許在檔案上加入權限，因此不能保證完全安全。
 WarningsOnXLines=關於<b>%s</b>來源記錄的警告
 WarningNoDocumentModelActivated=沒有啟動用於產生文件的模型。預設情況下將選擇一個模型直到您檢查模組設定。
-WarningLockFileDoesNotExists=警告，安裝完成後，必須通過在資料夾<b>%s</b>中增加檔案<b>install.lock</b>來禁用安裝/遷移工具。忽略此檔案的建立會帶來嚴重的安全風險。
+WarningLockFileDoesNotExists=警告，安裝設定完成後，必須在資料夾<b>%s</b>中增加檔案<b>install.lock</b>來停用安裝/遷移工具。忽略此檔案的建立會帶來嚴重的安全風險。
 WarningUntilDirRemoved=只要存在此漏洞（或在設定->其他設定中增加常數MAIN_REMOVE_INSTALL_WARNING），所有安全警告（僅管理員用戶可見）將保持活動狀態。
 WarningCloseAlways=警告，即使來源元件和目標元件之間的數量不同，也將關閉。請謹慎啟用此功能。
 WarningUsingThisBoxSlowDown=警告，使用此框會嚴重降低顯示此框所有頁面的速度。
@@ -312,13 +322,18 @@ WarningAvailableOnlyForHTTPSServers=僅在使用 HTTPS 安全連線時可用。
 WarningModuleXDisabledSoYouMayMissEventHere=模組 %s 尚未啟用。所以你可能會在這裡錯過很多事件。
 WarningPaypalPaymentNotCompatibleWithStrict=數值 'Strict' 使得線上支付功能無法正常工作。改用“Lax”。
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = 數值無效
 RequireAtLeastXString = 至少需要%s個字元
 RequireXStringMax = 最多 %s 個字元
 RequireAtLeastXDigits = 需要至少%s位數
 RequireXDigitsMax = 最多%s位數
-RequireValidNumeric = Requires a numeric value
+RequireValidNumeric = 需要一個數值
 RequireValidEmail = 電子郵件地址無效
 RequireMaxLength = 長度需要小於%s個字元
 RequireMinLength = 長度必須大於%s個字元
@@ -332,3 +347,12 @@ BadSetupOfField = 欄位設定錯誤
 BadSetupOfFieldClassNotFoundForValidation = 欄位設定錯誤:沒有發現可驗證的Class
 BadSetupOfFieldFileNotFound = 欄位設定錯誤:未找到要包含的檔案
 BadSetupOfFieldFetchNotCallable = 欄位設定錯誤:無法在Class上調用獲取
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

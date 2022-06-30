@@ -9,6 +9,7 @@ ErrorBadMXDomain=O correo electrónico %s parece incorrecto (O dominio non ten u
 ErrorBadUrl=URL %s é incorrecta
 ErrorBadValueForParamNotAString=Valor incorrecto para o seu parámetro. Xeralmente aparece cando falta a tradución
 ErrorRefAlreadyExists=A referencia <b>%s</b> xa existe
+ErrorTitleAlreadyExists=O título <b> %s </b> xa existe.
 ErrorLoginAlreadyExists=O login %s xa existe.
 ErrorGroupAlreadyExists=O grupo %s xa existe.
 ErrorEmailAlreadyExists=O correo electrónico %s xa existe
@@ -66,7 +67,7 @@ ErrorDestinationAlreadyExists=Outro ficheiro co mesmo nome <b>%s</b> xa existe
 ErrorPartialFile=Ficheiro non recibido completamente polo servidor.
 ErrorNoTmpDir=Non existe o directorio temporal %s.
 ErrorUploadBlockedByAddon=Subida bloqueada por un plugin PHP/Apache.
-ErrorFileSizeTooLarge=O tamaño do ficheiro é grande de mais.
+ErrorFileSizeTooLarge=O tamaño do ficheiro é grande de mais ou non se proporcionou o ficheiro.
 ErrorFieldTooLong=Campo %s e longo de mais.
 ErrorSizeTooLongForIntType=Tamaño demasiado longo para o tipo int (máximo %s caracteres)
 ErrorSizeTooLongForVarcharType=Tamaño demasiado longo para o tipo de cadea (máximo %s caracteres)
@@ -277,6 +278,15 @@ ErrorIsNotADraft=%s non é un borrador
 ErrorExecIdFailed=Non se pode executar o comando "id" 
 ErrorBadCharIntoLoginName=Carácter non autorizado no nome de inicio de sesión
 ErrorRequestTooLarge=Erro, a solicitude é longa de mais
+ErrorNotApproverForHoliday=No es o que aproba a baixa %s
+ErrorAttributeIsUsedIntoProduct=Este atributo úsase nunha ou máis variantes do produto
+ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo úsase nunha ou máis variantes do produto
+ErrorPaymentInBothCurrency=Erro, todas as cantidades deben introducirse na mesma columna
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Tenta pagar facturas na moeda %s desde unha conta coa moeda %s
+ErrorInvoiceLoadThirdParty=Non se pode cargar o obxecto de terceiros para a factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Chave de terceiros "%s" non definida para a factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=O estado real do obxecto non permite eliminar a liña
+ErrorAjaxRequestFailed=Produciuse un erro na solicitude
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
@@ -312,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Dispoñible só se usa conexión segura HTTP
 WarningModuleXDisabledSoYouMayMissEventHere=Non foi activado o módulo %s . Pode que perda moitos eventos aquí
 WarningPaypalPaymentNotCompatibleWithStrict=O valor "Estricto" fai que as funcións de pago en liña non funcionen correctamente. Use "Laxo" no seu lugar. 
 
+<<<<<<< CABECEIRA
+=======
+<<<<<<< CABECEIRA
+<<<<<<< CABECEIRA
+>>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor non válido
 RequireAtLeastXString = Require polo menos %s caracter(es)
@@ -332,3 +347,12 @@ BadSetupOfField = Erro de configuración do campo
 BadSetupOfFieldClassNotFoundForValidation = Erro de configuración do campo: Non se atopou a clase para validación 
 BadSetupOfFieldFileNotFound = Erro de configuración do campo: Non se atopou o ficheiro para a súa inclusión 
 BadSetupOfFieldFetchNotCallable = Erro de configuración do campo: A recuperación non se pode chamar na clase
+<<<<<<< CABECEIRA
+=======
+=======
+=======
+>>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
+>>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
+>>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git

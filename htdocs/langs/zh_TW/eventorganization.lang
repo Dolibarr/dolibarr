@@ -37,17 +37,18 @@ EventOrganization=活動組織
 Settings=設定
 EventOrganizationSetupPage = 活動組織設定頁面
 EVENTORGANIZATION_TASK_LABEL = 當專案驗證時自動地建立任務標籤
-EVENTORGANIZATION_TASK_LABELTooltip = 當您驗證一個有組織的活動，有些任務可以自動在專案中建立<br> <br>例如：<br>發送會議呼叫<br>發送展位呼叫<br>接收會議呼叫<br>接收展位呼叫<br>為參與者打開訂閱活動<br>向演講者發送活動提醒 <br> 向展位主持人發送活動提醒 <br> 向與會者發送活動提醒
+EVENTORGANIZATION_TASK_LABELTooltip = 當您驗證一個有組織的活動，有些任務可以自動在專案中建立<br> <br>例如：<br>發送會議呼叫<br>發送展位呼叫<br>驗證建議會議<br>驗證展位應用<br>為參與者打開訂閱活動<br>向演講者發送活動提醒 <br> 向展位主持人發送活動提醒 <br> 向與會者發送活動提醒
+EVENTORGANIZATION_TASK_LABELTooltip2=如果您不需要自動建立任務，請留空。
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = 有人建議會議時自動建立增加到合作方的類別
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = 當合作方推薦展位時自動建立增加到合作方的類別
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = 收到會議建議後要發送的電子郵件模板。
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = 收到展位建議後要發送的電子郵件模板。
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = 支付展位註冊費用後發送的電子郵件模板。
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = 支付報名費後發送的電子郵件模板。
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 用於向演講者批次"發送電子郵件"使的電子郵件模板
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 用於向參與者批次"發送電子郵件"使的電子郵件模板
+EVENTORGANIZATION_FILTERATTENDEES_CAT = 使用表單建立/增加參與者,將清單限制於合作方類別中的合作方
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = 使用表單建立/增加參與者,將清單限制於合作方類別中的合作方類型
 
 #
 # Object
@@ -84,14 +85,14 @@ PriceOfRegistration=註冊價格
 PriceOfRegistrationHelp=註冊或參加活動的費用
 PriceOfBooth=展位認購價
 PriceOfBoothHelp=展位認購價
-EventOrganizationICSLink=Link ICS for conferences
+EventOrganizationICSLink=連結會議的ICS
 ConferenceOrBoothInformation=會議或展位資訊
 Attendees=參與者
 ListOfAttendeesOfEvent=活動項目參與者名單
 DownloadICSLink = 下載 ICS連結
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+EVENTORGANIZATION_SECUREKEY = 用於建議會議之公共註冊頁面安全金鑰種子
 SERVICE_BOOTH_LOCATION = 關於展位位置發票行的服務
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 關於參與者訂閱會議發票行的服務
 NbVotes=票數
 #
 # Status
@@ -165,3 +166,4 @@ EmailCompanyForInvoice=公司電子郵件（用於發票，如果與參與者電
 ErrorSeveralCompaniesWithEmailContactUs=已找到幾家收到此電子郵件的公司，因此我們無法自動驗證您的註冊。請以 %s 聯繫我們進行手動驗證
 ErrorSeveralCompaniesWithNameContactUs=已找到數家具有此名稱的公司，因此我們無法自動驗證您的註冊。請以 %s 聯繫我們進行手動驗證
 NoPublicActionsAllowedForThisEvent=本次活動不對外公開任何公開活動
+MaxNbOfAttendees=參加人數上限

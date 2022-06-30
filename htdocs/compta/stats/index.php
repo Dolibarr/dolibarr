@@ -144,6 +144,8 @@ llxHeader();
 
 $form = new Form($db);
 
+$exportlink="";
+$namelink="";
 // Affiche en-tete du rapport
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover");
@@ -253,6 +255,11 @@ $sql .= " ORDER BY dm";
 //print $sql;
 
 $minyearmonth = $maxyearmonth = 0;
+
+$cum = array();
+$cum_ht = array();
+$total_ht = array();
+$total = array();
 
 $result = $db->query($sql);
 if ($result) {
@@ -394,6 +401,12 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		}
 		$case = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage - 1), "%Y-%m");
+
+		$total_ht[$annee]=0;
+		$total[$annee]=0;
+		$cum_ht[$case]=0;
+		$cum[$case]=0;
+
 
 		if ($annee >= $year_start) {	// We ignore $annee < $year_start, we loop on it to be able to make delta, nothing is output.
 			if ($modecompta == 'CREANCES-DETTES') {

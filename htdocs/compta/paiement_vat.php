@@ -194,7 +194,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
@@ -290,7 +290,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$totalrecu += $objp->amount;
 		$i++;
 	}
 	if ($i > 1) {

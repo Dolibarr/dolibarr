@@ -82,7 +82,7 @@ $form = new Form($db);
 
 /*
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('intracommreport');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 */
 

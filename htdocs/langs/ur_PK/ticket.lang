@@ -90,10 +90,10 @@ TicketPublicAccess=ایک عوامی انٹرفیس جس کے لیے کسی شن
 TicketSetupDictionaries=ٹکٹ کی قسم، شدت اور تجزیاتی کوڈ لغات سے قابل ترتیب ہیں۔
 TicketParamModule=ماڈیول متغیر سیٹ اپ
 TicketParamMail=ای میل سیٹ اپ
-TicketEmailNotificationFrom=سے اطلاعی ای میل
-TicketEmailNotificationFromHelp=ٹکٹ کے پیغام کے جواب میں مثال کے طور پر استعمال کیا جاتا ہے۔
-TicketEmailNotificationTo=نوٹیفکیشنز کو ای میل کریں۔
-TicketEmailNotificationToHelp=اس ایڈریس پر ای میل اطلاعات بھیجیں۔
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=ٹکٹ بنانے کے بعد ٹیکسٹ میسج بھیجا گیا۔
 TicketNewEmailBodyHelp=یہاں بیان کردہ متن عوامی انٹرفیس سے ایک نیا ٹکٹ بنانے کی تصدیق کرنے والے ای میل میں داخل کیا جائے گا۔ ٹکٹ کی مشاورت سے متعلق معلومات خود بخود شامل ہوجاتی ہیں۔
 TicketParamPublicInterface=عوامی انٹرفیس سیٹ اپ
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=ٹکٹ میں نیا پیغام/تبصرہ �
 TicketsPublicNotificationNewMessageHelp=جب عوامی انٹرفیس سے نیا پیغام شامل کیا جائے تو ای میل بھیجیں ( تفویض کردہ صارف کو یا نوٹیفیکیشن ای میل کو (اپ ڈیٹ) اور/یا نوٹیفیکیشن ای میل کو)
 TicketPublicNotificationNewMessageDefaultEmail=نوٹیفیکیشن ای میل پر (اپ ڈیٹ)
 TicketPublicNotificationNewMessageDefaultEmailHelp=ہر نئے پیغام کی اطلاع کے لیے اس پتے پر ایک ای میل بھیجیں اگر ٹکٹ کے لیے کوئی صارف تفویض نہیں کیا گیا ہے یا صارف کے پاس کوئی معلوم ای میل نہیں ہے۔
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=صعودی تاریخ کے حساب سے ترتیب دیں۔
 OrderByDateDesc=نزولی تاریخ کے مطابق ترتیب دیں۔
 ShowAsConversation=گفتگو کی فہرست کے بطور دکھائیں۔
 MessageListViewType=ٹیبل لسٹ کے بطور دکھائیں۔
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=وصول کنندہ خالی ہے�
 TicketGoIntoContactTab=براہ کرم انہیں منتخب کرنے کے لیے "رابطے" ٹیب میں جائیں۔
 TicketMessageMailIntro=تعارف
 TicketMessageMailIntroHelp=یہ متن صرف ای میل کے شروع میں شامل کیا گیا ہے اور محفوظ نہیں کیا جائے گا۔
-TicketMessageMailIntroLabelAdmin=ای میل بھیجتے وقت پیغام کا تعارف
-TicketMessageMailIntroText=ہیلو، <br> ٹکٹ پر ایک نیا جواب بھیجا گیا جس سے آپ رابطہ کرتے ہیں۔ یہ پیغام ہے: <br>
-TicketMessageMailIntroHelpAdmin=یہ متن ٹکٹ کے جواب کے متن سے پہلے داخل کیا جائے گا۔
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=دستخط
 TicketMessageMailSignatureHelp=یہ متن صرف ای میل کے آخر میں شامل کیا گیا ہے اور محفوظ نہیں کیا جائے گا۔
-TicketMessageMailSignatureText= <p> مخلص، </p> <p> -- </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=جوابی ای میل کے دستخط
 TicketMessageMailSignatureHelpAdmin=یہ متن جوابی پیغام کے بعد داخل کیا جائے گا۔
 TicketMessageHelp=ٹکٹ کارڈ پر پیغام کی فہرست میں صرف یہ متن محفوظ کیا جائے گا۔
@@ -238,9 +252,16 @@ TicketChangeStatus=حیثیت تبدیل کریں۔
 TicketConfirmChangeStatus=حالت کی تبدیلی کی تصدیق کریں: %s؟
 TicketLogStatusChanged=حالت بدل گئی: %s سے %s
 TicketNotNotifyTiersAtCreate=بنانے پر کمپنی کو مطلع نہ کریں۔
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=ان پڑھ
 TicketNotCreatedFromPublicInterface=دستیاب نہیں ہے. ٹکٹ عوامی انٹرفیس سے نہیں بنایا گیا تھا۔
 ErrorTicketRefRequired=ٹکٹ کا حوالہ نام درکار ہے۔
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=یہ ایک خودکار ای میل ہے اس بات کی ت
 TicketNewEmailBodyCustomer=یہ ایک خودکار ای میل ہے اس بات کی تصدیق کرنے کے لیے کہ ابھی آپ کے اکاؤنٹ میں ایک نیا ٹکٹ بنایا گیا ہے۔
 TicketNewEmailBodyInfosTicket=ٹکٹ کی نگرانی کے لیے معلومات
 TicketNewEmailBodyInfosTrackId=ٹکٹ ٹریکنگ نمبر: %s
-TicketNewEmailBodyInfosTrackUrl=آپ اوپر دیے گئے لنک پر کلک کرکے ٹکٹ کی پیشرفت دیکھ سکتے ہیں۔
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=آپ درج ذیل لنک پر کلک کرکے مخصوص انٹرفیس میں ٹکٹ کی پیشرفت دیکھ سکتے ہیں۔
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=براہ کرم اس ای میل کا براہ راست جواب نہ دیں! انٹرفیس میں جواب دینے کے لیے لنک کا استعمال کریں۔
 TicketPublicInfoCreateTicket=یہ فارم آپ کو ہمارے انتظامی نظام میں سپورٹ ٹکٹ ریکارڈ کرنے کی اجازت دیتا ہے۔
 TicketPublicPleaseBeAccuratelyDescribe=براہ کرم مسئلہ کی درست وضاحت کریں۔ ہمیں آپ کی درخواست کی درست شناخت کرنے کی اجازت دینے کے لیے زیادہ سے زیادہ معلومات فراہم کریں۔
@@ -291,6 +313,10 @@ NewUser=نیا صارف
 NumberOfTicketsByMonth=ہر ماہ ٹکٹوں کی تعداد
 NbOfTickets=ٹکٹوں کی تعداد
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=ٹکٹ %s اپ ڈیٹ ہو گیا۔
 TicketNotificationEmailBody=یہ آپ کو مطلع کرنے کے لیے ایک خودکار پیغام ہے کہ ٹکٹ %s کو ابھی اپ ڈیٹ کیا گیا ہے۔
 TicketNotificationRecipient=اطلاع وصول کنندہ

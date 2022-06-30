@@ -1465,6 +1465,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if ($command) {
 					$sql .= " AND command = '".$this->db->escape($command)."'";
 				}
+				if ($parameters) {
+					$sql .= " AND params = '".$this->db->escape($parameters)."'";
+				}
 				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
 
 				$now = dol_now();

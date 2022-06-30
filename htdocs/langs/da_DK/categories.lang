@@ -90,6 +90,7 @@ CategorieRecursivHelp=Hvis indstillingen er aktiveret, tilføjes et produkt i en
 AddProductServiceIntoCategory=Tilføj følgende produkt/tjeneste
 AddCustomerIntoCategory=Tildel kategori til kunde
 AddSupplierIntoCategory=Tildel kategori til leverandør
+AssignCategoryTo=Tildel kategori til
 ShowCategory=Vis tag/kategori
 ByDefaultInList=Som standard i liste
 ChooseCategory=Vælg kategori

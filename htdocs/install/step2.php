@@ -295,8 +295,8 @@ if ($action == "set") {
 					 // MySQL
 					if ($choix == 1 && preg_match('/^--\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
-						//print var_dump($versioncommande);
-						//print var_dump($versionarray);
+						//var_dump($versioncommande);
+						//var_dump($versionarray);
 						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande, $versionarray) <= 0) {
 							// Version qualified, delete SQL comments
@@ -307,8 +307,8 @@ if ($action == "set") {
 					 // PGSQL
 					if ($choix == 2 && preg_match('/^--\sPOSTGRESQL\sV([0-9\.]+)/i', $buf, $reg)) {
 						$versioncommande = explode('.', $reg[1]);
-						//print var_dump($versioncommande);
-						//print var_dump($versionarray);
+						//var_dump($versioncommande);
+						//var_dump($versionarray);
 						if (count($versioncommande) && count($versionarray)
 						&& versioncompare($versioncommande, $versionarray) <= 0) {
 							// Version qualified, delete SQL comments

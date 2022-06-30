@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -448,9 +448,9 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
+		$title = $langs->trans('SupplierProposals').' - '.$soc->name;
 	} else {
-		$title = $langs->trans('ListOfSupplierProposals');
+		$title = $langs->trans('SupplierProposals');
 	}
 
 	$num = $db->num_rows($resql);

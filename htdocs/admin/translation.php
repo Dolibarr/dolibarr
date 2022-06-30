@@ -444,9 +444,9 @@ if ($mode == 'overwrite') {
 
 if ($mode == 'searchkey') {
 	$nbempty = 0;
-	/*var_dump($langcode);
-	 var_dump($transkey);
-	 var_dump($transvalue);*/
+	//var_dump($langcode);
+	//var_dump($transkey);
+	//var_dump($transvalue);
 	if (empty($langcode) || $langcode == '-1') {
 		$nbempty++;
 	}

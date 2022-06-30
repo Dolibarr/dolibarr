@@ -59,7 +59,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 	if ($usercancreate) {

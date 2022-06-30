@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
-BoxDolibarrStateBoard=Statistics on main business objects in database
+BoxDolibarrStateBoard=Στατιστικά για τα κύρια επιχειρηματικά αντικείμενα στη βάση δεδομένων
 BoxLoginInformation=πληροφορίες σύνδεσης
 BoxLastRssInfos=Πληροφορίες RSS
 BoxLastProducts=Τελευταία %s Προϊόντα / Υπηρεσίες
@@ -23,7 +23,7 @@ BoxLastMembersSubscriptions=Τελευταίες συνδρομές μελών
 BoxFicheInter=Τελευταίες παρεμβάσεις
 BoxCurrentAccounts=Άνοιξε το ισοζύγιο των λογαριασμών
 BoxTitleMemberNextBirthdays=Γενέθλια αυτού του μήνα (μέλη)
-BoxTitleMembersByType=Μέλη ανά τύπο
+BoxTitleMembersByType=Μέλη ανά τύπο και κατάσταση
 BoxTitleMembersSubscriptionsByYear=Συνδρομές μελών ανά έτος
 BoxTitleLastRssInfos=Τα %s πιο πρόσφατα νέα από %s
 BoxTitleLastProducts=Προϊόντα / Υπηρεσίες: τελευταία τροποποίηση %s
@@ -110,7 +110,7 @@ SuspenseAccountNotDefined=Ο λογαριασμός Suspense δεν έχει ο�
 BoxLastCustomerShipments=Τελευταίες αποστολές πελάτη
 BoxTitleLastCustomerShipments=Τελευταίες %s αποστολές πελάτη
 NoRecordedShipments=Καμία καταγεγραμμένη αποστολή πελάτη
-BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
+BoxCustomersOutstandingBillReached=Πελάτες που έχουν φτάσει το όριο μέγιστου οφειλόμενου
 # Pages
 UsersHome=Αρχικοί χρήστες και ομάδες
 MembersHome=Αρχική Συνδρομή

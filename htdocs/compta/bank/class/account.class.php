@@ -146,6 +146,12 @@ class Account extends CommonObject
 	public $iban_prefix;
 
 	/**
+	 * Address of the bank
+	 * @var string
+	 */
+	public $domiciliation;
+
+	/**
 	 * XML SEPA format: place Payment Type Information (PmtTpInf) in Credit Transfer Transaction Information (CdtTrfTxInf)
 	 * @var int
 	 */
@@ -1200,7 +1206,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	tms		$date_end	Date until we want to get bank account sold
+	 *	@param	int		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */

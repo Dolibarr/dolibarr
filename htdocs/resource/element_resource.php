@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -165,7 +165,7 @@ if (empty($reshook)) {
 					$objstat->errors[] = $objstat->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -241,7 +241,7 @@ if (empty($reshook)) {
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -349,7 +349,7 @@ if (!$ret) {
 			// Thirdparty
 			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
 				//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 				$morehtmlref .= $langs->trans('Project').': ';
@@ -517,7 +517,7 @@ if (!$ret) {
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$fichinter->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->commande->creer) {

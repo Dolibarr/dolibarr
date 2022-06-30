@@ -440,7 +440,7 @@ if (!file_exists($conffile)) {
 		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$allowupgrade = false;
 		}
-		if (defined("MAIN_NOT_INSTALLED")) {
+		if (getDolGlobalInt("MAIN_NOT_INSTALLED")) {
 			$allowupgrade = false;
 		}
 		if (GETPOST('allowupgrade')) {

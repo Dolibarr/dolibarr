@@ -185,11 +185,11 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools',
+			'fk_menu'=>'fk_mainmenu=agenda',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'tools',
+			'mainmenu'=>'agenda',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -201,10 +201,10 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_add',
 			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
@@ -216,10 +216,10 @@ class modResource extends DolibarrModules
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +199,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
@@ -254,6 +255,7 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
+	$total_ttc = 0;
 	$totalrecu = 0;
 
 	while ($i < $num) {
@@ -291,7 +293,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$totalrecu += $objp->amount;
 		$i++;
 	}
 	if ($i > 1) {

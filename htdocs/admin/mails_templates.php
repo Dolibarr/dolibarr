@@ -57,6 +57,7 @@ $langs->loadLangs($langsArray);
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
+$mode = GETPOST('mode', 'aZ09');
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'alpha');
@@ -168,8 +169,6 @@ $tabhelp[25] = array(
 );
 
 
-$elementList = array();
-
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
 // Add all and none after the sort
@@ -186,7 +185,7 @@ if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->re
 if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$elementList['project'] = img_picto('', 'project', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
 if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {
@@ -195,7 +194,7 @@ if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {
 if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
-if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
 if (!empty($conf->expedition->enabled)) {
@@ -225,7 +224,7 @@ if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
 	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
@@ -404,7 +403,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfiles', 'private', 'position', 'entity'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 				$i++;
 			}
@@ -434,7 +433,14 @@ if (empty($reshook)) {
 			// Modifie valeur des champs
 			$i = 0;
 			foreach ($listfieldmodify as $field) {
-				$keycode = $listfieldvalue[$i];
+				if ($field == 'entity') {
+					// entity not present on listfieldmodify array
+					$keycode = $field;
+					$_POST[$keycode] = $conf->entity;
+				} else {
+					$keycode = $listfieldvalue[$i];
+				}
+
 				if ($field == 'lang') {
 					$keycode = 'langcode';
 				}
@@ -458,9 +464,6 @@ if (empty($reshook)) {
 				if ($field == 'content_lines') {
 					$_POST['content_lines'] = $_POST['content_lines-'.$rowid];
 				}
-				if ($field == 'entity') {
-					$_POST[$keycode] = $conf->entity;
-				}
 
 				if ($i) {
 					$sql .= ", ";
@@ -482,7 +485,7 @@ if (empty($reshook)) {
 				} elseif (in_array($keycode, array('joinfiles', 'private', 'position'))) {
 					$sql .= (int) GETPOST($keycode, 'int');
 				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'nohtml'))."'";
+					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
 				}
 
 				$i++;
@@ -619,15 +622,17 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
-			if ($skey != '') {
-				$param .= '&search_'.$key.'[]='.urlencode($skey);
+if (!empty($search) && is_array($search)) {
+	foreach ($search as $key => $val) {
+		if (is_array($search[$key]) && count($search[$key])) {
+			foreach ($search[$key] as $skey) {
+				if ($skey != '') {
+					$param .= '&search_'.$key.'[]='.urlencode($skey);
+				}
 			}
+		} elseif ($search[$key] != '') {
+			$param .= '&search_'.$key.'='.urlencode($search[$key]);
 		}
-	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
 if ($optioncss != '') {

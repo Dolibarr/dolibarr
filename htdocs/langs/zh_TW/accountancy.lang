@@ -62,10 +62,10 @@ MainAccountForSubscriptionPaymentNotDefined=未在"設定"中定義訂閱付款�
 AccountancyArea=會計區域
 AccountancyAreaDescIntro=會計模組的使用要數個步驟才能完成：
 AccountancyAreaDescActionOnce=接下來的動作通常只執行一次，或一年一次…
-AccountancyAreaDescActionOnceBis=下一步驟可在未來節省您的時間當製作日誌時(寫入記錄至日記帳及總分類帳)建議您正確的預設會計帳戶
+AccountancyAreaDescActionOnceBis=您應該完成當在會計帳戶中傳送資料時自動建議預設正確會計帳戶的下一個步驟以在未來節省您的時間
 AccountancyAreaDescActionFreq=接下來的動作在大型公司一般是每個月、每週或每天執行…
 
-AccountancyAreaDescJournalSetup=步驟%s: 從選單%s您的日記帳清單中建立或檢查內容 
+AccountancyAreaDescJournalSetup=步驟 %s：從選單 %s 檢查日記帳清單的內容
 AccountancyAreaDescChartModel=步驟%s: 確認會計項目表模組是否存在，或者從%s選單建立新的。
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
@@ -73,7 +73,7 @@ AccountancyAreaDescVat=步驟%s：為每個營業稅稅率定義會計科目。�
 AccountancyAreaDescDefault=步驟%s：定義預設會計帳戶。為此，請使用選單條目%s。
 AccountancyAreaDescExpenseReport=步驟%s：為每種費用報表定義預設會計科目。為此，請使用選單條目%s。
 AccountancyAreaDescSal=步驟%s：定義用於支付工資的預設會計科目。為此，請使用選單條目%s。
-AccountancyAreaDescContrib=步驟%s：定義特殊費用（雜項稅）的預設會計科目。為此，請使用選單條目%s。
+AccountancyAreaDescContrib=步驟%s：定義稅費（特別費用）的預設會計科目。為此，請使用選單條目%s。
 AccountancyAreaDescDonation=步驟%s：定義捐贈的預設會計帳戶。為此，請使用選單條目%s。
 AccountancyAreaDescSubscription=步驟%s：定義會員訂閱的預設記帳帳戶。為此，請使用選單條目%s。
 AccountancyAreaDescMisc=步驟%s：為其他交易定義強制性預設帳戶和預設記帳帳戶。為此，請使用選單條目%s。
@@ -112,7 +112,7 @@ MenuAccountancyClosure=關閉
 MenuAccountancyValidationMovements=驗證動作
 ProductsBinding=產品會計項目
 TransferInAccounting=會計轉移
-RegistrationInAccounting=會計註冊
+RegistrationInAccounting=會計記錄
 Binding=關聯到各式會計項目
 CustomersVentilation=客戶發票的關聯
 SuppliersVentilation=供應商發票綁定
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
 ValidTransaction=驗證交易
-WriteBookKeeping=在總帳中記錄交易
+WriteBookKeeping=在會計中記錄交易
 Bookkeeping=總帳
 BookkeepingSubAccount=子分類帳
 AccountBalance=帳戶餘額
@@ -160,8 +160,8 @@ ACCOUNTING_MANAGE_ZERO=允許在會計帳戶末尾管理不同數量的零。一
 BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
 ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢,損失搜尋部份數值的能力）
-ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
+ACCOUNTING_DATE_START_BINDING=定義開始綁定和轉移會計的日期。小於此日期，交易將不會轉入會計。
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=在會計轉帳時，預設選擇為週期顯示
 
 ACCOUNTING_SELL_JOURNAL=銷售日記帳
 ACCOUNTING_PURCHASE_JOURNAL=採購日記帳
@@ -181,7 +181,8 @@ ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計科目
 DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=會計帳戶預設註冊客戶存款
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -203,7 +204,7 @@ Docref=參考
 LabelAccount=標籤帳戶
 LabelOperation=標籤操作
 Sens=方向
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
+AccountingDirectionHelp=對於客戶的會計帳戶，使用貸方記錄您收到的付款 <br> 對於供應商的會計帳戶，使用借方記錄您的付款
 LetteringCode=字元編碼
 Lettering=字元
 Codejournal=日記帳
@@ -223,12 +224,12 @@ DeleteMvt=從會計中刪除一些操作行
 DelMonth=刪除月份
 DelYear=刪除年度
 DelJournal=刪除日記帳
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=這將刪除會計年度/月和/或特定日記帳的所有操作行（至少需要一個標準）。您必須重新使用功能“%s”才能將已刪除的記錄恢復到分類帳中。
+ConfirmDeleteMvtPartial=這將從會計中刪除交易（與同一交易相關的所有操作行將被刪除）
 FinanceJournal=財務日記帳
 ExpenseReportsJournal=費用報表日記帳
 DescFinanceJournal=財務日記帳包含由銀行帳戶支出的全部付款資料。
-DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Journals and Ledger.
+DescJournalOnlyBindedVisible=這是與會計帳戶綁定的記錄顯示，可以記錄到日記帳和分類帳中。
 VATAccountNotDefined=營業稅帳戶未定義
 ThirdpartyAccountNotDefined=未定義的合作方科目
 ProductAccountNotDefined=產品會計科目未定義
@@ -237,7 +238,7 @@ BankAccountNotDefined=銀行帳戶沒有定義
 CustomerInvoicePayment=客戶發票的付款
 ThirdPartyAccount=合作方帳戶
 NewAccountingMvt=新交易
-NumMvts=交易筆數
+NumMvts=交易編號
 ListeMvts=移動清單
 ErrorDebitCredit=借方金額不等貸方金額
 AddCompteFromBK=新增各式會計科目到大類
@@ -246,9 +247,9 @@ DescThirdPartyReport=在此處查詢合作方客戶和供應商及其會計帳�
 ListAccounts=各式會計科目清單
 UnknownAccountForThirdparty=未知的合作方科目。我們將使用%s
 UnknownAccountForThirdpartyBlocking=未知的合作方科目。阻止錯誤
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=未定義子分類帳帳戶或合作方與用戶未知。我們將使用 %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=未知合作方與付款中未定義分類帳。我們會將分類帳帳戶值保留為空。
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=未定義子分類帳帳戶或合作方與用戶未知。阻塞錯誤。
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=未定義的未知合作方帳戶和等待帳戶。封鎖錯誤
 PaymentsNotLinkedToProduct=付款未連結到任何產品/服務
 OpeningBalance=初期餘額
@@ -278,30 +279,31 @@ DescVentilExpenseReportMore=如果您在費用報表類型上設定會計帳戶�
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
 Closure=年度關閉
-DescClosure=請在此處查詢依照月份的未經驗證活動數和已經開放的會計年度
-OverviewOfMovementsNotValidated=第1步/未驗證移動總覽。 （需要關閉一個會計年度）
-AllMovementsWereRecordedAsValidated=所有動作均記錄為已驗證
-NotAllMovementsCouldBeRecordedAsValidated=並非所有動作都可以記錄為已驗證
-ValidateMovements=驗證動作
+DescClosure=請在此處查詢依照月份的未驗證與未鎖定移動數
+OverviewOfMovementsNotValidated=未驗證和未鎖定的移動概覽
+AllMovementsWereRecordedAsValidated=所有動作都被記錄為已驗證並鎖定
+NotAllMovementsCouldBeRecordedAsValidated=並非所有動作都可以記錄為已驗證與已鎖定
+ValidateMovements=驗證與鎖定記錄...
 DescValidateMovements=禁止修改，刪除任何文字內容。所有條目都必須經過驗證，否則將無法結案
 
 ValidateHistory=自動關聯
-AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+AutomaticBindingDone=自動綁定完成 (%s) - 某些記錄無法自動綁定 (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=錯誤，您不能刪除此會計項目，因為已使用
-MvtNotCorrectlyBalanced=動作未正確平衡。借方= %s |貸方= %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=平衡中
 FicheVentilation=關聯卡片
 GeneralLedgerIsWritten=交易已紀錄到總帳中
 GeneralLedgerSomeRecordWasNotRecorded=某些交易未記錄。若沒有其他錯誤，這可能是因為已被記錄。
-NoNewRecordSaved=沒有交易可記錄
+NoNewRecordSaved=沒有更多記錄要轉移
 ListOfProductsWithoutAccountingAccount=清單中的產品沒有指定任何會計項目
 ChangeBinding=修改關聯性
 Accounted=計入總帳
 NotYetAccounted=尚未轉入會計
 ShowTutorial=顯示教程
 NotReconciled=未對帳
-WarningRecordWithoutSubledgerAreExcluded=警告，所有未定義子分類帳帳戶的操作都將被過濾並從該檢視中排除
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=綁定選項
@@ -324,14 +326,15 @@ ErrorAccountingJournalIsAlreadyUse=此日記帳已使用
 AccountingAccountForSalesTaxAreDefinedInto=注意：銷項稅額的會計項目定義到選單 <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=條目數
 NumberOfAccountancyMovements=移動次數
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_SALES=停用銷售中的會計綁定和轉移（會計中不考慮客戶發票）
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=停用採購中的會計綁定和轉移（會計中不考慮供應商發票）
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=停用費用報表中的會計綁定和轉移（會計中不考慮費用報表）
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
-ConfirmExportFile=Confirmation of the generation of the accounting export file ?
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=驗證與鎖定的日期
+ConfirmExportFile=確定要產生會計匯出檔案 ?
 ExportDraftJournal=匯出日記帳草稿
 Modelcsv=匯出模式
 Selectmodelcsv=選擇匯出模型
@@ -343,15 +346,15 @@ Modelcsv_ciel=匯出Sage50, Ciel Compta或Compta Evo.(XIMPORT格式)
 Modelcsv_quadratus=匯出為Quadratus QuadraCompta
 Modelcsv_ebp=匯出為EBP
 Modelcsv_cogilog=匯出為Cogilog
-Modelcsv_agiris=Export for Agiris Isacompta
+Modelcsv_agiris=Agiris Isacompta匯出
 Modelcsv_LDCompta=LD Compta（v9）（測試）匯出
 Modelcsv_LDCompta10=LD Compta用之匯出（v10及更高版本）
 Modelcsv_openconcerto=匯出為OpenConcerto（測試）
 Modelcsv_configurable=匯出為可設置CSV
 Modelcsv_FEC=匯出為FEC
-Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
+Modelcsv_FEC2=匯出FEC（日期產生寫入/文件已反轉）
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
-Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Winfic匯出-eWinfic-WinSis Compta
 Modelcsv_Gestinumv3=匯出為Gestinum (v3)
 Modelcsv_Gestinumv5=匯出為Gestinum (v5)
 Modelcsv_charlemagne=匯出為Aplim Charlemagne
@@ -394,6 +397,21 @@ Range=會計項目範圍
 Calculated=已計算
 Formula=公式
 
+## Reconcile
+Unlettering=不協調
+AccountancyNoLetteringModified=未修改協調
+AccountancyOneLetteringModifiedSuccessfully=一個協調成功地修改
+AccountancyLetteringModifiedSuccessfully=%s 協調已成功地修改
+AccountancyNoUnletteringModified=無不協調被修改
+AccountancyOneUnletteringModifiedSuccessfully=成功地修改了一個不協調
+AccountancyUnletteringModifiedSuccessfully=%s 不協調已成功地修改
+
+## Confirm box
+ConfirmMassUnlettering=批次不協調確認
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=批次刪除確認
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=某些必要的設定步驟沒有完成，請完成它們
 ErrorNoAccountingCategoryForThisCountry=此國家 %s 沒有會計項目大類可用(查閱首頁-設定-各式分類)
@@ -406,6 +424,9 @@ Binded=關聯行數
 ToBind=關聯行
 UseMenuToSetBindindManualy=尚未綁定的行，請使用選單<a href="%s">%s</a>手動進行綁定
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=抱歉此模組不相容於情況發票的實驗功能
+AccountancyErrorMismatchLetterCode=協調代碼不匹配
+AccountancyErrorMismatchBalanceAmount=餘額（%s）不等於0
+AccountancyErrorLetteringBookkeeping=交易發生錯誤：%s
 
 ## Import
 ImportAccountingEntries=會計條目

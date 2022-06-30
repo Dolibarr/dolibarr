@@ -67,7 +67,6 @@ MoreActions=Action complémentaire sur l'enregistrement
 MoreActionBankDirect=Créer une entrée directe sur un compte bancaire
 MoreActionBankViaInvoice=Créer une facture et un paiement sur un compte bancaire
 MoreActionInvoiceOnly=Créer une facture sans paiement
-LinkToGeneratedPages=Générer des cartes de visite
 LinkToGeneratedPagesDesc=Cet écran vous permet de générer des fichiers PDF avec des cartes de visite pour tous vos membres ou un membre particulier.
 DocForAllMembersCards=Générer des cartes de visite pour tous les membres
 DocForOneMemberCards=Générer des cartes de visite pour un membre particulier

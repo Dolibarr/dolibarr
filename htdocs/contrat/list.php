@@ -693,7 +693,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 		print '</br>';
 		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
+		print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
 		print '</td>';
 }
 // Status
@@ -995,6 +995,18 @@ while ($i < min($num, $limit)) {
 	print "</tr>\n";
 	$i++;
 }
+
+// If no record found
+if ($num == 0) {
+	$colspan = 4;	// Include the 4 columns of status
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 $db->free($resql);
 
 $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);

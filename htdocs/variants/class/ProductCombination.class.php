@@ -169,7 +169,6 @@ class ProductCombination
 		}
 
 		if (empty($combination_price_levels)) {
-
 			/**
 			 * for auto retrocompatibility with last behavior
 			 */

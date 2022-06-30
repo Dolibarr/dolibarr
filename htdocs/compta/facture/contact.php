@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -52,7 +52,7 @@ if ($user->socid) {
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	$ret = $object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $result = restrictedArea($user, 'facture', $object->id);
@@ -122,7 +122,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$head = facture_prepare_head($object);
 
-		$totalpaye = $object->getSommePaiement();
+		$totalpaid = $object->getSommePaiement();
 
 		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
@@ -171,13 +171,13 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 		print dol_get_fiche_end();
 
-		print '<br>';
+		//print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Tipo de liña (0=producto, 1=servizo)
 FileWithDataToImport=Ficheiro cos datos a importar
 FileToImport=Ficheiro orixe a importar
 FileMustHaveOneOfFollowingFormat=O ficheiro de importación debe conter un dos seguintes formatos
-DownloadEmptyExample=Descargue un ficheiro de padrón con información de contido do campo 
-StarAreMandatory=* son campos obrigatorios 
+DownloadEmptyExample=Descargue un ficheiro de modelo con exemplos e información sobre campos que pode importar
+StarAreMandatory=No ficheiro de modelo, todos os campos cun * son campos obrigatorios
 ChooseFormatOfFileToImport=Escolla o formato de ficheiro que desexa importar e prema na imaxe %s para seleccionalo...
 ChooseFileToImport=Escolla o ficheiro de importación e faga clic na imaxe %s para seleccionalo como ficheiro orixe de importación...
 SourceFileFormat=Formato do ficheiro orixe
@@ -135,3 +135,6 @@ NbInsert=Número de liñas engadidas: %s
 NbUpdate=Número de liñas actualizadas: %s
 MultipleRecordFoundWithTheseFilters=Atopáronse varios rexistros con estes filtros: %s
 StocksWithBatch=Existencias e localización (almacén) de produtos con número de lote/serie
+WarningFirstImportedLine=A(s) primeira(s) liña(s) non se importará(n) coa selección actual
+NotUsedFields=Campos da base de datos non utilizados
+SelectImportFieldsSource = Escolla os campos do ficheiro de orixe que quere importar e o seu campo de destino na base de datos escollendo os campos de cada caixa de selección ou seleccione un perfil de importación predefinido:

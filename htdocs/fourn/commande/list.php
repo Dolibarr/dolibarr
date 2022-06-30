@@ -209,6 +209,12 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
+$permissiontoread = ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
+$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$permissiontodelete = ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
+$permissiontovalidate = $permissiontoadd;
+$permissiontoapprove = ($user->rights->fournisseur->commande->approuver || $user->rights->supplier_order->approuver);
+
 
 /*
  * Actions
@@ -302,9 +308,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'CommandeFournisseur';
 	$objectlabel = 'SupplierOrders';
-	$permissiontoread = $user->rights->fournisseur->commande->lire;
-	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
-	$permissiontovalidate = $user->rights->fournisseur->commande->creer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -321,7 +324,7 @@ if (empty($reshook)) {
 						$result = $objecttmp->valid($user);
 						if ($result >= 0) {
 							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
+							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $permissiontoapprove && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
 								$result = $objecttmp->approve($user);
 								setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
 							} else {
@@ -711,7 +714,7 @@ $formorder = new FormOrder($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("ListOfSupplierOrders");
+$title = $langs->trans("SuppliersOrders");
 if ($socid > 0) {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);
@@ -1096,7 +1099,7 @@ if ($resql) {
 	);
 
 	if ($permissiontovalidate) {
-		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
+		if ($permissiontoapprove && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
 		} else {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
@@ -1106,7 +1109,7 @@ if ($resql) {
 	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
-	if ($user->rights->fournisseur->commande->supprimer) {
+	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
@@ -1119,7 +1122,7 @@ if ($resql) {
 		$url .= '&socid='.((int) $socid);
 		$url .= '&backtopage='.urlencode(DOL_URL_ROOT.'/fourn/commande/list.php?socid='.((int) $socid));
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer));
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', $permissitiontoadd);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1532,7 +1535,9 @@ if ($resql) {
 	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	$totalarray['val']['cf.total_ht'] = 0;
 	$totalarray['val']['cf.total_ttc'] = 0;
-	while ($i < min($num, $limit)) {
+
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$notshippable = 0;
@@ -1855,6 +1860,17 @@ if ($resql) {
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	$db->free($resql);
 
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
@@ -1876,8 +1892,8 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
-	$delallowed = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
 
 	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

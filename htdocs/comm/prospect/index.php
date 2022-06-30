@@ -169,7 +169,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Actions commerciales a faire
  */
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	show_array_actions_to_do(10);
 }
 
