@@ -108,6 +108,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
+                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
 					  $(this).parent().parent().find(\'dd ul\').toggleClass("open");
