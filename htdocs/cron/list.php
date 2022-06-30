@@ -436,8 +436,8 @@ print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
+//print '<td class="liste_titre">&nbsp;</td>';
+//print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -453,13 +453,13 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronTask", '', '', "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
+//print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
+//print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -497,6 +497,8 @@ if ($num > 0) {
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
 		$object->lastresult = $obj->lastresult;
+		$object->datestart = $db->jdate($obj->datestart);
+		$object->dateend = $db->jdate($obj->dateend);
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
@@ -557,6 +559,7 @@ if ($num > 0) {
 		}
 		print '</td>';
 
+		/*
 		print '<td class="center">';
 		if (!empty($obj->datestart)) {
 			print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver');
@@ -568,6 +571,7 @@ if ($num > 0) {
 			print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver');
 		}
 		print '</td>';
+		*/
 
 		print '<td class="right">';
 		if (!empty($obj->nbrun)) {
@@ -598,7 +602,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Return code of last run
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
 				print $obj->lastresult;
@@ -609,13 +613,16 @@ if ($num > 0) {
 		print '</td>';
 
 		// Output of last run
-		print '<td class="small">';
+		print '<td class="small minwidth150">';
 		if (!empty($obj->lastoutput)) {
-			print dol_trunc(nl2br($obj->lastoutput), 50);
+			print '<div class="twolinesmax classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
+			print dol_trunc(dolGetFirstLineOfText($obj->lastoutput, 2), 100);
+			print '</div>';
 		}
 		print '</td>';
 
-		print '<td class="center">';
+		// Next run
+		print '<td class="center minwidth100">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

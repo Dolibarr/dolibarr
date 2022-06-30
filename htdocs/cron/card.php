@@ -389,7 +389,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print "<input type=\"text\" class=\"quatrevingtpercent\" name=\"params\" value=\"".$object->params."\" /> ";
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -398,7 +398,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
+	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -471,7 +471,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datestart)) {
 		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -483,7 +483,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
+		print $form->selectDate(-1, 'dateend', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,7 +514,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>';
+	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";

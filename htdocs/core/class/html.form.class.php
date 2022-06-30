@@ -6302,24 +6302,24 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 *  @param	string		$prefix			Prefix for fields name
-	 *  @param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
-	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
-	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
-	 *	@param	string		$form_name 		Not used
-	 *	@param	int			$d				1=Show days, month, years
-	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
-	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
-	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
-	 *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
-	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
-	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
-	 *  @param	string 		$placeholder    Placeholder
-	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
-	 * 	@return string                      Html for selectDate
+	 *  @param  integer|string  $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param	string			$prefix			Prefix for fields name
+	 *  @param	int				$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 *	@param	int				$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
+	 *	@param	int				$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 *	@param	string			$form_name 		Not used
+	 *	@param	int				$d				1=Show days, month, years
+	 * 	@param	int				$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
+	 * 	@param 	int				$disabled		Disable input fields
+	 *  @param  int				$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 *  @param	string			$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
+	 *  @param  datetime    	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
+	 *  @param  string      	$openinghours   Specify hour start and hour end for the select ex 8,20
+	 *  @param  int         	$stepminutes    Specify step for minutes between 1 and 30
+	 *  @param	string			$labeladddateof Label to use for the $adddateof parameter.
+	 *  @param	string 			$placeholder    Placeholder
+	 *  @param	mixed			$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * 	@return string          	            Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
 	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
