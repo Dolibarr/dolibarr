@@ -891,7 +891,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print img_picto('', 'object_contact');
 				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
 				print '</td></tr>';
-      }
+			}
 
 			//Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -1189,8 +1189,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print img_picto('', 'object_contact');
 				print $form->selectcontacts(0, $fk_parent, 'fk_parent', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), 1, '', false, 0, 1);
 				print '</td></tr>';
-      }
-      
+			}
+
 			//Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
