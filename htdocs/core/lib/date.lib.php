@@ -322,20 +322,28 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
  * Generate a SQL string to make a filter into a range (for second of date until last second of date).
  * This method allows to maje SQL request that will deal correctly the timezone of server.
  *
- * @param      string	$datefield			Name of SQL field where apply sql date filter
- * @param      int		$day_date			Day date
- * @param      int		$month_date			Month date
- * @param      int		$year_date			Year date
- * @param	   int      $excludefirstand	Exclude first and
- * @param	   mixed	$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 											Note: In database, dates are always fot the server TZ.
- * @return     string	$sqldate			String with SQL filter
+ * @param      string		$datefield			Name of SQL field where apply sql date filter
+ * @param      int|string	$day_date			Day date (Can be 0 or '' for filter on a month)
+ * @param      int|string	$month_date			Month date (Can be 0 or '' for filter on a year)
+ * @param      int|string	$year_date			Year date
+ * @param	   int      	$excludefirstand	Exclude first and
+ * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ * 												Note: In database, dates are always fot the server TZ.
+ * @return     string		$sqldate			String with SQL filter
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
 	global $db;
-	$sqldate = "";
+	$sqldate = '';
+
+	$day_date = intval($day_date);
+	$month_date = intval($month_date);
+	$year_date = intval($year_date);
+
 	if ($month_date > 0) {
+		if ($month_date > 12) {	// protection for bad value of month
+			return " AND 1 = 2";
+		}
 		if ($year_date > 0 && empty($day_date)) {
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
 			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";

@@ -136,9 +136,6 @@ print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventory
 print '</td>';
 print '</tr>';
 
-// Extrafield template
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-
 print '</table>';
 
 print dol_get_fiche_end();

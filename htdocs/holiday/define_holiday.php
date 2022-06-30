@@ -35,6 +35,8 @@ $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
+$massaction = GETPOST('massaction', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');

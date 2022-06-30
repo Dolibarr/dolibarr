@@ -297,7 +297,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>145),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>145),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -443,7 +443,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->entity = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_projet = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
+			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
+			$this->fk_projet = $this->fk_project;
 			$this->note_public = GETPOST('note_public', 'restricthtml') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private = GETPOST('note_private', 'restricthtml') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
@@ -2354,20 +2355,21 @@ class FactureFournisseur extends CommonInvoice
 			$info_bits = 0;
 		}
 
-		if ($idproduct) {
-			$product = new Product($this->db);
-			$result = $product->fetch($idproduct);
-			$product_type = $product->type;
-		} else {
-			$product_type = $type;
-		}
-
 		//Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new SupplierInvoiceLine($this->db);
 		$line->fetch($id);
 		$line->fetch_optionals();
 
 		$staticline = clone $line;
+
+		if ($idproduct) {
+			$product = new Product($this->db);
+			$result = $product->fetch($idproduct);
+			$product_type = $product->type;
+		} else {
+			$idproduct = $staticline->fk_product;
+			$product_type = $type;
+		}
 
 		$line->oldline = $staticline;
 		$line->context = $this->context;

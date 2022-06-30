@@ -47,6 +47,8 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');

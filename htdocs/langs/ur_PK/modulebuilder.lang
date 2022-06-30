@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=یہ ٹول صرف تجربہ کار صارفین یا ڈویلپرز کے ذریعہ استعمال کیا جانا چاہئے۔ یہ آپ کے اپنے ماڈیول کو بنانے یا اس میں ترمیم کرنے کے لیے افادیت فراہم کرتا ہے۔ متبادل <a href="%s" target="_blank" rel="noopener noreferrer"> مینوئل ڈویلپمنٹ کے لیے دستاویزات یہاں </a> ہے۔
-EnterNameOfModuleDesc=بغیر اسپیس کے تخلیق کرنے کے لیے ماڈیول/ایپلی کیشن کا نام درج کریں۔ الفاظ کو الگ کرنے کے لیے بڑے حروف کا استعمال کریں (مثال کے طور پر: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=بغیر اسپیس کے تخلیق کرنے کے لیے آبجیکٹ کا نام درج کریں۔ الفاظ کو الگ کرنے کے لیے بڑے کا استعمال کریں (مثال کے طور پر: MyObject، طالب علم، استاد...)۔ CRUD کلاس فائل، بلکہ API فائل، آبجیکٹ کی فہرست/شامل/ترمیم/حذف کرنے کے لیے صفحات اور SQL فائلیں تیار کی جائیں گی۔
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=وہ راستہ جہاں ماڈیولز تیار/ترمیم کیے جاتے ہیں (بیرونی ماڈیولز کے لیے پہلی ڈائریکٹری %s میں بیان کی گئی ہے): <strong> %s </strong>
 ModuleBuilderDesc3=تیار کردہ/ قابل تدوین ماڈیولز ملے: <strong> %s </strong>
 ModuleBuilderDesc4=جب فائل <strong> %s </strong> ماڈیول ڈائرکٹری کے روٹ میں موجود ہوتی ہے تو ایک ماڈیول کو 'ایڈیٹ ایبل' کے طور پر پایا جاتا ہے۔
 NewModule=نیا ماڈیول
 NewObjectInModulebuilder=نیا اعتراض
+NewDictionary=New dictionary
 ModuleKey=ماڈیول کلید
 ObjectKey=آبجیکٹ کلید
+DicKey=Dictionary key
 ModuleInitialized=ماڈیول شروع کر دیا گیا۔
 FilesForObjectInitialized=نئی آبجیکٹ '%s' کے لیے فائلیں شروع کی گئیں۔
 FilesForObjectUpdated=آبجیکٹ '%s' کے لیے فائلیں اپ ڈیٹ ہو گئیں (.sql فائلیں اور .class.php فائل)

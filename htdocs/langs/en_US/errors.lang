@@ -285,8 +285,9 @@ ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s 
 ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
 ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
-ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by current object status
 ErrorAjaxRequestFailed=Request failed
+ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -321,12 +322,8 @@ WarningCreateSubAccounts=Warning, you can't create directly a sub account, you m
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
-
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
+ 
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
@@ -347,12 +344,3 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

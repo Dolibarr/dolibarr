@@ -166,7 +166,7 @@ class box_last_ticket extends ModeleBoxes
 
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateCreation").': '.dol_print_date($datec, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel'),
 					);
 					$r++;

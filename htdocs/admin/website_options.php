@@ -112,7 +112,7 @@ if ($action == 'edit') {
 	foreach ($arrayofparameters as $key => $val) {
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
 	}
 
 	print '</table>';
@@ -130,7 +130,7 @@ if ($action == 'edit') {
 	foreach ($arrayofparameters as $key => $val) {
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>'.$conf->global->$key.'</td></tr>';
+		print '</td><td>'.getDolGlobalString($key).'</td></tr>';
 	}
 
 	print '</table>';

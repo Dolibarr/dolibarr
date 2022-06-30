@@ -92,7 +92,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
-		if (!empty($conf->resource->enabled)) {
+		if (isModEnabled('resource')) {
 			include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 			$formresource = new FormResource($db);
 
@@ -104,14 +104,14 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		}
 	}
 
-	if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
+	if (isModEnabled('societe') && !empty($user->rights->societe->lire)) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
 
-	if (!empty($conf->projet->enabled) && !empty($user->rights->projet->lire)) {
+	if (isModEnabled('projet') && !empty($user->rights->projet->lire)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
@@ -423,7 +423,7 @@ function actions_prepare_head($object)
 	$h++;
 
 	// Tab to link resources
-	if ($conf->resource->enabled) {
+	if (isModEnabled('resource')) {
 		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$resource = new DolResource($db);
 

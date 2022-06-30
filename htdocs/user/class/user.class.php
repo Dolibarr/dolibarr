@@ -700,14 +700,13 @@ class User extends CommonObject
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
 		global $conf;
-
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
 			'member' => 'adherent',	// We must check $user->rights->adherent...
 			'mo' => 'mrp',
 			'order' => 'commande',
-			'product' => 'produit',	// We must check $user->rights->produit...
+			//'product' => 'produit',	// We must check $user->rights->produit...
 			'project' => 'projet',
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
@@ -721,14 +720,24 @@ class User extends CommonObject
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'facturerec' => 'facture'
 		);
+
 		if (!empty($moduletomoduletouse[$module])) {
 			$module = $moduletomoduletouse[$module];
 		}
 
+		$moduleRightsMapping = array(
+			'product' => 'produit',	// We must check $user->rights->produit...
+		);
+
+		$rightsPath = $module;
+		if (!empty($moduleRightsMapping[$rightsPath])) {
+			$rightsPath = $moduleRightsMapping[$rightsPath];
+		}
+
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
-		$tmp = explode('@', $module, 2);
+		$tmp = explode('@', $rightsPath, 2);
 		if (! empty($tmp[1])) {
-			$module = $tmp[1];
+			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];
 		}
@@ -749,49 +758,49 @@ class User extends CommonObject
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
 		}
-
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2);
-		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
+		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
+		//var_dump($this->rights);
+		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
 
 		if ($permlevel2) {
-			if (!empty($this->rights->$module->$permlevel1)) {
-				if (!empty($this->rights->$module->$permlevel1->$permlevel2)) {
-					return $this->rights->$module->$permlevel1->$permlevel2;
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				if (!empty($this->rights->$rightsPath->$permlevel1->$permlevel2)) {
+					return $this->rights->$rightsPath->$permlevel1->$permlevel2;
 				}
 				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 				// instead of "read", "write", "delete"
-				if ($permlevel2 == 'read' && !empty($this->rights->$module->$permlevel1->lire)) {
-					return $this->rights->$module->lire;
+				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
+					return $this->rights->$rightsPath->lire;
 				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->creer)) {
-					return $this->rights->$module->create;
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
+					return $this->rights->$rightsPath->create;
 				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->create)) {
-					return $this->rights->$module->create;
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
+					return $this->rights->$rightsPath->create;
 				}
-				if ($permlevel2 == 'delete' && !empty($this->rights->$module->$permlevel1->supprimer)) {
-					return $this->rights->$module->supprimer;
+				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
+					return $this->rights->$rightsPath->supprimer;
 				}
 			}
 		} else {
-			if (!empty($this->rights->$module->$permlevel1)) {
-				return $this->rights->$module->$permlevel1;
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				return $this->rights->$rightsPath->$permlevel1;
 			}
 			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 			// instead of "read", "write", "delete"
-			if ($permlevel1 == 'read' && !empty($this->rights->$module->lire)) {
-				return $this->rights->$module->lire;
+			if ($permlevel1 == 'read' && !empty($this->rights->$rightsPath->lire)) {
+				return $this->rights->$rightsPath->lire;
 			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$module->creer)) {
-				return $this->rights->$module->create;
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
+				return $this->rights->$rightsPath->create;
 			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$module->create)) {
-				return $this->rights->$module->create;
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
+				return $this->rights->$rightsPath->create;
 			}
-			if ($permlevel1 == 'delete' && !empty($this->rights->$module->supprimer)) {
-				return $this->rights->$module->supprimer;
+			if ($permlevel1 == 'delete' && !empty($this->rights->$rightsPath->supprimer)) {
+				return $this->rights->$rightsPath->supprimer;
 			}
 		}
 
@@ -2805,13 +2814,6 @@ class User extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('userdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2926,7 +2928,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
+		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2971,13 +2973,27 @@ class User extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+
+		$label = '';
+		if (!empty($this->photo)) {
+			//$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			//$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
+			$return .= $label;
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if ($this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';

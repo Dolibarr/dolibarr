@@ -128,7 +128,8 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 
-				array_multisort($label, SORT_ASC, $countryArray);
+				$array1_sort_order = SORT_ASC;
+				array_multisort($label, $array1_sort_order, $countryArray);
 
 				foreach ($countryArray as $row) {
 					$label = dol_trunc($row['label'], $maxlength, 'middle');

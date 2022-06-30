@@ -333,7 +333,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->addline(
 						$request_data->desc,
@@ -400,7 +400,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->updateline(
 						$lineid,

@@ -7,7 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automātiski izveidojiet pārdošanas pasū
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc komerciāla piedāvājuma parakstīšanas (jaunajā rēķinā būs tāda pati summa kā piedāvājumā)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automātiski izveidot klienta rēķinu pēc līguma apstiprināšanas
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc pārdošanas pasūtījuma slēgšanas (jaunajam rēķinam būs tāda pati summa kā pasūtījumam)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Izveidojot biļeti, automātiski izveidojiet iejaukšanos.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasificējiet saistītā avota priekšlikumu kā rēķinu, kad pārdošanas pasūtījums ir iestatīts uz rēķinu (un ja pasūtījuma summa ir vienāda ar parakstītā saistītā priekšlikuma kopējo summu)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasificēt saistīto avota priekšlikumu kā rēķinu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā parakstītā saistītā piedāvājuma kopējā summa)
