@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Javascript must not be disabled to have this featur
 ErrorPasswordsMustMatch=Both typed passwords must match each other
 ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
 ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
+ErrorHtmlInjectionForField=Field <b>%s</b>: The value '<b>%s</b>' contains a malicious data not allowed
 ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
 ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorsOnXLines=%s errors found
