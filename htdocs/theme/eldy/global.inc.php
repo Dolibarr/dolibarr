@@ -2739,6 +2739,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print " background-position-y: 3px;\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
