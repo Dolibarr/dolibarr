@@ -869,7 +869,7 @@ class Cronjob extends CommonObject
 
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
-		$object->label = $langs->trans("CopyOf").' '.$object->label;
+		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';

@@ -33,10 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "cron", "bills", "members"));
 
-if (!$user->rights->cron->read) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
@@ -87,6 +83,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
+// Security
+if (!$user->rights->cron->read) {
+	accessforbidden();
+}
+
+$permissiontoread = $user->rights->cron->read;
+$permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
+$permissiontodelete = $user->rights->cron->delete;
+$permissiontoexecute = $user->rights->cron->execute;
 
 
 /*
@@ -129,7 +134,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete jobs
-	if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 		//Delete cron task
 		$object = new Cronjob($db);
 		$object->id = $id;
@@ -141,7 +146,7 @@ if (empty($reshook)) {
 	}
 
 	// Execute jobs
-	if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute) {
+	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
@@ -196,9 +201,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'CronJob';
 	$objectlabel = 'CronJob';
-	$permissiontoread = $user->rights->cron->read;
-	$permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	if ($massaction && $permissiontoadd) {
@@ -353,7 +355,7 @@ if ($action == 'execute') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
 }
 
-if ($action == 'delete') {
+if ($action == 'delete' && empty($toselect)) {	// Used when we make a delete on 1 line (not used for mass delete)
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.$param, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
 }
 
@@ -386,7 +388,6 @@ if ($optioncss != '') {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
