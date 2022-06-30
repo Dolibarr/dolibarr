@@ -650,3 +650,11 @@ ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);
 
+ALTER TABLE llx_cronjob MODIFY COLUMN label varchar(255) NOT NULL;
+
+-- We need to keep only the PurgeDeleteTemporaryFilesShort with params = 'tempfilsold+logfiles'
+DELETE FROM llx_cronjob WHERE label = 'PurgeDeleteTemporaryFilesShort' AND params = 'tempfilesold';
+
+ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
+ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
+

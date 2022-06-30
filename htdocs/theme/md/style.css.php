@@ -2702,7 +2702,7 @@ div.mainmenu.menu {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
-	                }';
+	                }'."\n";
 			} else {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
@@ -2715,6 +2715,7 @@ div.mainmenu.menu {
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
