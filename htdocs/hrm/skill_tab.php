@@ -317,6 +317,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
 		print '<input type="hidden" name="action" value="addSkill">';
+		print '<input type="hidden" name="token" value="'.currentToken().'">';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		print '<tr><td style="width:90%">' . $langs->trans('AddSkill') . '</td><td style="width:10%"></td></tr>';
@@ -336,6 +337,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<form name="saveSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
+		print '<input type="hidden" name="token" value="'.currentToken().'">';
 		print '<input type="hidden" name="action" value="saveSkill">';
 	}
 	print '<div class="div-table-responsive-no-min">';
