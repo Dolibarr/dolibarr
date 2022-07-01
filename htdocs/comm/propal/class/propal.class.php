@@ -2059,7 +2059,7 @@ class Propal extends CommonObject
 			$error = 0;
 
 			$this->db->begin();
-			
+
 			if (!empty($this->duree_validite) {
 				$fin_validite = $date + ($this->duree_validite * 24 * 3600);
 				$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."',fin_validite = '".$this->db->idate($fin_validite)."'";
