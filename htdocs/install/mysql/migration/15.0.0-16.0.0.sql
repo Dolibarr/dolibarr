@@ -51,7 +51,8 @@
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
 
-
+ALTER TABLE llx_entrepot ADD COLUMN barcode  varchar(180) DEFAULT NULL;
+ALTER TABLE llx_entrepot ADD COLUMN fk_barcode_type integer      DEFAULT NULL;
 
 ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
