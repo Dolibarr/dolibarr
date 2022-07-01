@@ -59,6 +59,8 @@ if (empty($user->admin)) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+$reg = array();
+
 if ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
