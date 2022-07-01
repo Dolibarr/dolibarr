@@ -118,6 +118,9 @@ if ($action == 'set_default') {
 
 $form = new Form($db);
 
+dol_mkdir(DOL_DATA_ROOT.'/doctemplates/users');
+dol_mkdir(DOL_DATA_ROOT.'/doctemplates/usergroups');
+
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
