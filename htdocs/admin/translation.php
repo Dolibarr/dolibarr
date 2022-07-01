@@ -554,7 +554,7 @@ if ($mode == 'searchkey') {
 			break;
 		}
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
-		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.(isset($langsenfileonly->tab_translate[$key]) ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.(!empty($langsenfileonly->tab_translate[$key]) ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 		print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
 		print dol_escape_htmltag($val);
 		print '</span>';
