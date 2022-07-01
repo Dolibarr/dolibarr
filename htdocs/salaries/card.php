@@ -709,6 +709,19 @@ if ($id) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
+		echo "<script>		
+		window.onload = () => {			
+			$('#clone_date_start').change(() => {	
+				const date = $('#clone_date_start').val();
+				let nextMonth = parseInt(date.substr(0, 2)) + 1;
+				nextMonth = nextMonth < 10 ? '0' + nextMonth : nextMonth;
+				const endOfMonth = nextMonth + date.substr(2);
+				$('#clone_date_end').val(endOfMonth);
+			});
+			
+		}
+		</script>";
+
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 	}
