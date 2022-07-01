@@ -2059,11 +2059,12 @@ class Propal extends CommonObject
 			$error = 0;
 
 			$this->db->begin();
-
-			$fin_validite = $date + ($this->duree_validite * 24 * 3600);
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."',fin_validite = '".$this->db->idate($fin_validite)."'";
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
+			
+			if (!empty($this->duree_validite) {
+				$fin_validite = $date + ($this->duree_validite * 24 * 3600);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."',fin_validite = '".$this->db->idate($fin_validite)."'";
+				$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
+			}
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
