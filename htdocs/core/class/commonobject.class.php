@@ -7399,8 +7399,10 @@ abstract class CommonObject
 		}
 
 		// Format output value differently according to properties of field
-		if ($key == 'ref' && method_exists($this, 'getNomUrl')) {
-			$value = $this->getNomUrl(1, '', 0, '', 1);
+		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
+				$value = $this->getNomUrl(1, '', 0, '', 1);
+			}
 		} elseif ($key == 'status' && method_exists($this, 'getLibStatut')) {
 			$value = $this->getLibStatut(3);
 		} elseif ($type == 'date') {
