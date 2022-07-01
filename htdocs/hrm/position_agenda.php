@@ -141,7 +141,7 @@ if ($object->id > 0) {
 	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
-	$head = PositionCardPrepareHead($object);
+	$head = positionCardPrepareHead($object);
 
 
 	print dol_get_fiche_head($head, 'agenda', $langs->trans("Agenda"), -1, $object->picto);

@@ -530,6 +530,7 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	background-color: #eee;
 	white-space: normal;
 	color: #888 !important;
+	height: 60px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -1163,6 +1164,7 @@ div.divsearchfield {
 	white-space: nowrap;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -2700,7 +2702,7 @@ div.mainmenu.menu {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
-	                }';
+	                }'."\n";
 			} else {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
@@ -2713,6 +2715,7 @@ div.mainmenu.menu {
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
@@ -3053,6 +3056,7 @@ span.vsmenudisabled, font.vsmenudisabled {
 	text-align: <?php print $left; ?>;
 	font-weight: normal;
 	color: #aaa;
+	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -4669,9 +4673,8 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
-
 
 
 /*
@@ -6118,6 +6121,17 @@ ul.select2-results__options li {
 	font-size: 0.95em;
 }
 
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
@@ -7012,6 +7026,8 @@ span.clipboardCPValue.hidewithsize {
 	display: inline-block;
 	color: transparent;
 	white-space: nowrap;
+	overflow-x: hidden;
+	vertical-align: middle;
 }
 div.clipboardCPValue.hidewithsize {
 	width: 0 !important;
@@ -7279,14 +7295,22 @@ div.clipboardCPValue.hidewithsize {
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
 	}
-	
-		
+
+
 	.underbanner.underbanner-before-box {
 		border-bottom: none;
 	}
-	
+
 	div.divButAction {
 		margin-bottom: 0.5em;
+	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 

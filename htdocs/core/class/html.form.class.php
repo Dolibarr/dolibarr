@@ -1257,9 +1257,10 @@ class Form
 	 *  @param	array	$ajaxoptions			Options for ajax_autocompleter
 	 * 	@param  bool	$multiple				add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 *  @param	array	$excludeids				Exclude IDs from the select combo
+	 * 	@param	int		$showcode				Show code
 	 * 	@return	string							HTML string with select box for thirdparty.
 	 */
-	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array())
+	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array(), $showcode = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1284,7 +1285,7 @@ class Form
 			}
 
 			// mode 1
-			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
+			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '').($showcode ? '&showcode='.urlencode($showcode) : '');
 
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
@@ -1303,7 +1304,7 @@ class Form
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
-			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids);
+			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
 		}
 
 		return $out;
@@ -1328,9 +1329,10 @@ class Form
 	 *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param	array	$excludeids		Exclude IDs from the select combo
+	 * 	@param	int		$showcode		Show code in list
 	 * 	@return	string					HTML string with
 	 */
-	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array())
+	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1442,13 +1444,15 @@ class Form
 				$out .= '<option value="-1" data-html="'.dol_escape_htmltag('<span class="opacitymedium">'.($textifempty ? $textifempty : '&nbsp;').'</span>').'">'.$textifempty.'</option>'."\n";
 			}
 
+			$companytemp = new Societe($this->db);
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
-					if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+					if ($showcode || !empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 						if (($obj->client) && (!empty($obj->code_client))) {
 							$label = $obj->code_client.' - ';
 						}
@@ -1468,7 +1472,17 @@ class Form
 						$label .= ' - '.$obj->tva_intra.'';
 					}
 
+					$labelhtml = $label;
+
 					if ($showtype) {
+						$companytemp->id = $obj->rowid;
+						$companytemp->client = $obj->client;
+						$companytemp->fournisseur = $obj->fournisseur;
+						$tmptype = $companytemp->getTypeUrl(1, '', 0, 'span');
+						if ($tmptype) {
+							$labelhtml .= ' '.$tmptype;
+						}
+
 						if ($obj->client || $obj->fournisseur) {
 							$label .= ' (';
 						}
@@ -1487,20 +1501,22 @@ class Form
 					}
 
 					if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-						$label .= ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
+						$s = ($obj->address ? ' - '.$obj->address : '').($obj->zip ? ' - '.$obj->zip : '').($obj->town ? ' '.$obj->town : '');
 						if (!empty($obj->country_code)) {
-							$label .= ', '.$langs->trans('Country'.$obj->country_code);
+							$s .= ', '.$langs->trans('Country'.$obj->country_code);
 						}
+						$label .= $s;
+						$labelhtml .= $s;
 					}
 
 					if (empty($outputmode)) {
 						if (in_array($obj->rowid, $selected)) {
-							$out .= '<option value="'.$obj->rowid.'" selected>'.$label.'</option>';
+							$out .= '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($labelhtml).'">'.$label.'</option>';
 						} else {
-							$out .= '<option value="'.$obj->rowid.'">'.$label.'</option>';
+							$out .= '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.$label.'</option>';
 						}
 					} else {
-						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label));
+						array_push($outarray, array('key'=>$obj->rowid, 'value'=>$label, 'label'=>$label, 'labelhtml'=>$labelhtml));
 					}
 
 					$i++;
@@ -4749,7 +4765,7 @@ class Form
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) {
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			}
 			print '</form>';
 		} else {
@@ -4784,7 +4800,7 @@ class Form
 	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
 	 *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @param	string					$morecss			More CSS
-	 *    @return	string
+	 *    @return	string|array
 	 *    @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $markafterid = 0, $outputmode = 0, $include = 0, $morecss = '')
@@ -4901,9 +4917,11 @@ class Form
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
+	 *     @param	string			$labelbuttonyes		Label for Yes
+	 *     @param	string			$labelbuttonno		Label for No
 	 *     @return 	string      		    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
+	public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0, $labelbuttonyes = 'Yes', $labelbuttonno = 'No')
 	{
 		global $langs, $conf;
 
@@ -5012,7 +5030,7 @@ class Form
 								$more .= ' checked="checked"';
 							}
 							$more .= ' /> ';
-							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'">'.$selval.'</label>';
+							$more .= '<label for="'.dol_escape_htmltag($input['name'].$selkey).'" class="valignmiddle">'.$selval.'</label>';
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
@@ -5118,6 +5136,7 @@ class Form
             				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
 			}
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5125,7 +5144,7 @@ class Form
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
-                        "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
+                        "'.dol_escape_js($langs->transnoentities($labelbuttonyes)).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
                         	var inputok = '.json_encode($inputok).';	/* List of fields into form */
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
@@ -5148,7 +5167,7 @@ class Form
             				if (pageyes.length > 0) { location.href = urljump; }
                             $(this).dialog("close");
                         },
-                        "'.dol_escape_js($langs->transnoentities("No")).'": function() {
+                        "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
                         	var options = "&token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
@@ -5213,7 +5232,7 @@ class Form
 			$formconfirm .= '<tr class="valid">';
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
 			$formconfirm .= '<td class="valid center">';
-			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
+			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly', $labelbuttonyes, $labelbuttonno);
 			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
 			$formconfirm .= '</tr>'."\n";
@@ -5845,12 +5864,13 @@ class Form
 	/**
 	 *  Retourne la liste des devises, dans la langue de l'utilisateur
 	 *
-	 *  @param	string	$selected    preselected currency code
-	 *  @param  string	$htmlname    name of HTML select list
-	 *  @param  string  $mode        0 = Add currency symbol into label, 1 = Add 3 letter iso code
+	 *  @param	string	$selected   preselected currency code
+	 *  @param  string	$htmlname   name of HTML select list
+	 *  @param  string  $mode       0 = Add currency symbol into label, 1 = Add 3 letter iso code
+	 *  @param	string	$useempty	'1'=Allow empty value
 	 * 	@return	string
 	 */
-	public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0)
+	public function selectCurrency($selected = '', $htmlname = 'currency_id', $mode = 0, $useempty = '')
 	{
 		global $conf, $langs, $user;
 
@@ -5863,6 +5883,9 @@ class Form
 		}
 
 		$out .= '<select class="flat maxwidth200onsmartphone minwidth300" name="'.$htmlname.'" id="'.$htmlname.'">';
+		if ($useempty) {
+			$out .= '<option value="-1" selected></option>';
+		}
 		foreach ($langs->cache_currencies as $code_iso => $currency) {
 			$labeltoshow = $currency['label'];
 			if ($mode == 1) {
@@ -6279,24 +6302,24 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 *  @param	string		$prefix			Prefix for fields name
-	 *  @param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
-	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
-	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
-	 *	@param	string		$form_name 		Not used
-	 *	@param	int			$d				1=Show days, month, years
-	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
-	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
-	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
-	 *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
-	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
-	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
-	 *  @param	string 		$placeholder    Placeholder
-	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
-	 * 	@return string                      Html for selectDate
+	 *  @param  integer|string  $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param	string			$prefix			Prefix for fields name
+	 *  @param	int				$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 *	@param	int				$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
+	 *	@param	int				$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 *	@param	string			$form_name 		Not used
+	 *	@param	int				$d				1=Show days, month, years
+	 * 	@param	int				$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
+	 * 	@param 	int				$disabled		Disable input fields
+	 *  @param  int				$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 *  @param	string			$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
+	 *  @param  datetime    	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
+	 *  @param  string      	$openinghours   Specify hour start and hour end for the select ex 8,20
+	 *  @param  int         	$stepminutes    Specify step for minutes between 1 and 30
+	 *  @param	string			$labeladddateof Label to use for the $adddateof parameter.
+	 *  @param	string 			$placeholder    Placeholder
+	 *  @param	mixed			$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
+	 * 	@return string          	            Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
 	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
@@ -8844,9 +8867,11 @@ class Form
 	 *  @param	int      	$useempty		1=Add empty line
 	 *  @param	int			$addjscombo		1=Add js beautifier on combo box
 	 *  @param	string		$morecss		More CSS
-	 *	@return	string						See option
+	 *  @param	string		$labelyes		Label for Yes
+	 *  @param	string		$labelno		Label for No
+	 *  @return	string						See option
 	 */
-	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '')
+	public function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0, $addjscombo = 0, $morecss = '', $labelyes = 'Yes', $labelno = 'No')
 	{
 		global $langs;
 
@@ -8857,6 +8882,7 @@ class Form
 			$no = "0";
 		}
 
+
 		$disabled = ($disabled ? ' disabled' : '');
 
 		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
@@ -8864,12 +8890,12 @@ class Form
 			$resultyesno .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
 		}
 		if (("$value" == 'yes') || ($value == 1)) {
-			$resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans($labelyes).'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'">'.$langs->trans($labelno).'</option>'."\n";
 		} else {
 			$selected = (($useempty && $value != '0' && $value != 'no') ? '' : ' selected');
-			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
+			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans($labelyes).'</option>'."\n";
+			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans($labelno).'</option>'."\n";
 		}
 		$resultyesno .= '</select>'."\n";
 
@@ -9361,7 +9387,14 @@ class Form
 				if ($object->photo) {
 					$ret .= '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</label><br><br></td></tr>';
 				}
-				$ret .= '<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'></td></tr>';
+				$ret .= '<tr><td class="tdoverflow">';
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$ret .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
+				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture ? ' capture="'.$capture.'"' : '').'>';
+				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}
 		} else {

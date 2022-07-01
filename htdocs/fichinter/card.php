@@ -1062,9 +1062,7 @@ if ($action == 'create') {
 		print '</form>';
 	}
 } elseif ($id > 0 || !empty($ref)) {
-	/*
-	 * Affichage en mode visu
-	  */
+	// View mode
 
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -1201,7 +1199,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES)) {
 		// Date Start
@@ -1230,7 +1228,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea');
 	print '</td><td>';
-	print $form->editfieldval("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea:8:80');
+	print $form->editfieldval("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea:8');
 	print '</td>';
 	print '</tr>';
 
@@ -1435,7 +1433,7 @@ if ($action == 'create') {
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_2, '90%');
 					$doleditor->Create();
 
 					$objectline = new FichinterLigne($db);

@@ -389,7 +389,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print "<input type=\"text\" class=\"quatrevingtpercent\" name=\"params\" value=\"".$object->params."\" /> ";
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -398,7 +398,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
+	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -471,7 +471,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datestart)) {
 		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -483,7 +483,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
+		print $form->selectDate(-1, 'dateend', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,7 +514,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>';
+	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
@@ -716,7 +716,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datelastresult)) {
 		print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		if (empty($object->datelastrun)) {
+			print $langs->trans('CronNone');
+		} else {
+			// In progress
+		}
 	}
 	print "</td></tr>";
 
@@ -764,7 +768,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Clone").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
 		if (empty($object->status)) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';

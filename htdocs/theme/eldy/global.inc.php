@@ -22,6 +22,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
+	--colorbackgrey: #f0f0f0;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -72,6 +73,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
 				--colorbackmobilemenu: #080808;
+				--colorbackgrey: #0f0f0f;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -273,8 +275,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	/* background-color: var(--colorbacktitle1); */
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
 
@@ -1044,6 +1045,7 @@ div.divsearchfield {
 	overflow: auto;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -2737,6 +2739,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print " background-position-y: 3px;\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
@@ -3089,7 +3092,10 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
-	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa;
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	color: #aaa;
+	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -4816,7 +4822,7 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
 
 
@@ -7253,6 +7259,8 @@ span.clipboardCPValue.hidewithsize {
 	display: inline-block;
 	color: transparent;
 	white-space: nowrap;
+	overflow-x: hidden;
+	vertical-align: middle;
 }
 div.clipboardCPValue.hidewithsize {
 	width: 0 !important;
@@ -7613,6 +7621,14 @@ div.clipboardCPValue.hidewithsize {
 	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
 		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
 		border-bottom: 1px solid var(--colortopbordertitle1) !important;
+	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
 	}
 }
 

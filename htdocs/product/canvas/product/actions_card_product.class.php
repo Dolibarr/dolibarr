@@ -32,6 +32,8 @@ class ActionsCardProduct
 	public $canvas;
 	public $card;
 
+	public $object;
+
 	//! Template container
 	public $tpl = array();
 
@@ -98,13 +100,13 @@ class ActionsCardProduct
 		$this->tpl['canvas'] = $this->canvas;
 
 		// id
-		$this->tpl['id'] = $this->id;
+		$this->tpl['id'] = $this->object->id;
 
 		// Ref
-		$this->tpl['ref'] = $this->ref;
+		$this->tpl['ref'] = $this->object->ref;
 
 		// Label
-		$this->tpl['label'] = $this->label;
+		$this->tpl['label'] = $this->object->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -113,12 +115,12 @@ class ActionsCardProduct
 		$this->tpl['status'] = $this->object->getLibStatut(2);
 
 		// Note
-		$this->tpl['note'] = nl2br($this->note);
+		$this->tpl['note'] = nl2br($this->object->note_private);
 
 		if ($action == 'create') {
 			// Price
-			$this->tpl['price'] = $this->price;
-			$this->tpl['price_min'] = $this->price_min;
+			$this->tpl['price'] = $this->object->price;
+			$this->tpl['price_min'] = $this->object->price_min;
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
@@ -149,7 +151,7 @@ class ActionsCardProduct
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		if ($action == 'create') {
@@ -169,8 +171,8 @@ class ActionsCardProduct
 			$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
 			$this->tpl['status_buy'] = $form->selectarray('statut_buy', $statutarray, $this->object->status_buy);
 
-			$this->tpl['description'] = $this->description;
-			$this->tpl['note'] = $this->note;
+			$this->tpl['description'] = $this->object->description;
+			$this->tpl['note'] = $this->object->note;
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));

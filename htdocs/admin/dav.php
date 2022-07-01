@@ -105,7 +105,7 @@ if ($action == 'edit') {
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
 			print $form->selectyesno($key, $conf->global->$key, 1);
 		} else {
-			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
+			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'">';
 		}
 		print '</td></tr>';
 	}

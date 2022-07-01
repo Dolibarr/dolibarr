@@ -829,6 +829,11 @@ class FormMail extends Form
 						$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 					}
 					if ($this->withfile == 2) {
+						$maxfilesizearray = getMaxFileSizeArray();
+						$maxmin = $maxfilesizearray['maxmin'];
+						if ($maxmin > 0) {
+							$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+						}
 						// Can add other files
 						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) {
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';

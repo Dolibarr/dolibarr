@@ -172,7 +172,7 @@ class PropaleStats extends Stats
 	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return	array				Array with amount by month
 	 */
-	public function getAmountByMonth($year, $format)
+	public function getAmountByMonth($year, $format = 0)
 	{
 		global $user;
 

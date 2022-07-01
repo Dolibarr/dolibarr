@@ -729,16 +729,21 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
-	$formother->selectProjectTasks(GETPOST('task_parent'), !empty($projectid) ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
+
+	$contactsofproject = (empty($object->id) ? '' : $object->getListContactId('internal'));
 
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		if ($projectid > 0 || $object->id > 0) {
+			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		} else {
+			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		}
 	}
 	print '</td></tr>';
 
