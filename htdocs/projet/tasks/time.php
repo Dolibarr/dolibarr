@@ -73,6 +73,7 @@ $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_valuebilled = GETPOST('search_valuebilled', 'int');
+$search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -164,6 +165,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_task_label = '';
 	$search_user = 0;
 	$search_valuebilled = '';
+	$search_thirdparty = '';
 	$toselect = array();
 	$search_array_options = array();
 	$action = '';
@@ -1071,6 +1073,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Definition of fields for list
 		$arrayfields = array();
 		$arrayfields['t.task_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
+		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("Thirdparty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			$arrayfields['t.task_ref'] = array('label'=>$langs->trans("RefTask"), 'checked'=>1);
 			$arrayfields['t.task_label'] = array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
@@ -1112,6 +1115,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_duration != '') {
 			$param .= '&amp;search_field2='.urlencode($search_duration);
+		}
+		if ($search_thirdparty != '') {
+			$param .= '&amp;search_thirdparty='.urlencode($search_thirdparty);
 		}
 		if ($optioncss != '') {
 			$param .= '&optioncss='.urlencode($optioncss);
@@ -1624,6 +1630,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if (!empty($arrayfields['t.task_date']['checked'])) {
 			print_liste_field_titre($arrayfields['t.task_date']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
 		}
+		if (!empty($arrayfields['p.fk_soc']['checked'])) {
+			print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+		}
 		if (!empty($allprojectforuser)) {
 			print_liste_field_titre("Project", $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		}
@@ -1712,6 +1721,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+			}
+
+			if (!empty($arrayfields['p.fk_soc']['checked'])) {
 			}
 
 			// Task ref
