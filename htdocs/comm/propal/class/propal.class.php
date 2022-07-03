@@ -1444,7 +1444,7 @@ class Propal extends CommonObject
 
 		// Clear fields
 		$object->user_author = $user->id;
-		$object->user_valid = '';
+		$object->user_valid = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);

@@ -521,6 +521,11 @@ abstract class CommonObject
 	public $date_modification; // Date last change (tms field)
 
 	/**
+	 * @var integer|string $date_cloture;
+	 */
+	public $date_cloture; // Date closing (tms field)
+
+	/**
 	 * @var User|int	User author/creation
 	 * @TODO Merge with user_creation
 	 */
@@ -549,6 +554,10 @@ abstract class CommonObject
 	 * @var int			User id of validation
 	 */
 	public $user_validation_id;
+	/**
+	 * @var int			User id closing object
+	 */
+	public $user_closing_id;
 
 	/**
 	 * @var User|int	User last modifier
