@@ -34,8 +34,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adm
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
 
-if (!$user->admin) 
-{
+if (!$user->admin) {
 	accessforbidden();
 }
 
@@ -48,14 +47,12 @@ $error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); 	// Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) 
-{
+if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit')) 
-{
+|| ($action == 'updateedit')) {
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME",    GETPOST("nom", 'alphanohtml'),         'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'alphanohtml'),     'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN",    GETPOST("town", 'alphanohtml'),        'chaine', 0, '', $conf->entity);
@@ -70,8 +67,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE",    GETPOST("code", 'alphanohtml'),        'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE",    GETPOST("note", 'restricthtml'),       'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && !$error) 
-	{
+	if ($action != 'updateedit' && !$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -122,7 +118,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
-// Name of Accountant Company 
+// Name of Accountant Company
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 print '<input name="nom" id="name" class="minwidth200" value="'.dol_escape_htmltag(GETPOSTISSET('nom') ? GETPOST('nom', 'alphanohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
