@@ -799,7 +799,7 @@ if ($id > 0 || !empty($ref)) {
 							print ' '.img_warning($langs->trans("StockTooLow"));
 							if (!empty($conf->global->STOCK_CORRECT_STOCK_IN_SHIPMENT)) {
 								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
-								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode($nbPiece).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id).'').'">'.$langs->trans("CorrectStock").'</a>';
+								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode($nbPiece).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id)).'">'.$langs->trans("CorrectStock").'</a>';
 							}
 						}
 						print '</td>';
