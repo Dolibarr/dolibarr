@@ -112,7 +112,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 	}
 
 	//Si le nom est bien entré
-	if (GETPOST('nom', 'nohtml')) {
+	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
 			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
@@ -124,7 +124,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';

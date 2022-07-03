@@ -68,7 +68,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array(
 		'family'=>'create',
 		'position'=>20,
-		'enabled'=>(!empty($conf->commande->enabled) && !empty($conf->facture->enabled)),
+		'enabled'=>(!empty($conf->commande->enabled) && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
@@ -91,7 +91,7 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array(
 		'family'=>'classify_proposal',
 		'position'=>31,
-		'enabled'=>(!empty($conf->propal->enabled) && !empty($conf->facture->enabled)),
+		'enabled'=>(!empty($conf->propal->enabled) && isModEnabled('facture')),
 		'picto'=>'propal',
 		'warning'=>''
 	),
@@ -112,7 +112,7 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
 		'family'=>'classify_order',
 		'position'=>42,
-		'enabled'=>(!empty($conf->facture->enabled) && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled('facture') && !empty($conf->commande->enabled)),
 		'picto'=>'order',
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
@@ -165,7 +165,7 @@ $workflowcodes = array(
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
-		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
+		'enabled' => !empty($conf->expedition->enabled) && !empty($conf->facture->enabled),
 		'picto' => 'shipment'
 	),
 
@@ -173,13 +173,13 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
 		'position' => 75,
-		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
 		'position' => 76,
-		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 );

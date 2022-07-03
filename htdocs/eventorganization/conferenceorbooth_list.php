@@ -382,7 +382,7 @@ if ($projectid > 0) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("Categories").'</td><td class="valuefield">';
 		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";

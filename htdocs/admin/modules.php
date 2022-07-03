@@ -1212,7 +1212,7 @@ if ($mode == 'deploy') {
 				});
 				</script>'."\n";
 				// MAX_FILE_SIZE doit précéder le champ input de type file
-				print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
+				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';

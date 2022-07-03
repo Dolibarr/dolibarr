@@ -60,6 +60,11 @@ class ExtraFields
 	 */
 	public $attribute_choice;
 
+	/**
+	 * @var array array to store extrafields definition
+	 * @deprecated
+	 */
+	public $attribute_list;
 
 	/**
 	 * @var array New array to store extrafields definition
@@ -1268,10 +1273,12 @@ class ExtraFields
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
-					foreach ($data as $data_key => $data_value) {
-						$out .= '<option value="'.$data_key.'"';
-						$out .= ($value == $data_key ? ' selected' : '');
-						$out .= '>'.$data_value.'</option>';
+					if (is_array($data)) {
+						foreach ($data as $data_key => $data_value) {
+							$out .= '<option value="'.$data_key.'"';
+							$out .= ($value == $data_key ? ' selected' : '');
+							$out .= '>'.$data_value.'</option>';
+						}
 					}
 				}
 			}
@@ -1709,7 +1716,9 @@ class ExtraFields
 			$toprint = array();
 			if (is_array($value_arr)) {
 				foreach ($value_arr as $keyval => $valueval) {
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					if (!empty($valueval)) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
+					}
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -2066,7 +2075,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
-						$value_key = implode($value_arr, ',');
+						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = '';
 					}

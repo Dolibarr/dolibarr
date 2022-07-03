@@ -148,6 +148,7 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+					$productstatic->date_modification = $datem;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
@@ -190,7 +191,7 @@ class box_produits extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

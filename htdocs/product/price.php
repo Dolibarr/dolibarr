@@ -1798,14 +1798,14 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 					// Price HT
 					print '<td class="right">';
 					if (empty($objp->price_by_qty)) {
-						print price($objp->price);
+						print '<span class="amount">'.price($objp->price).'</span>';
 					}
 					print "</td>";
 					// Price TTC
 					print '<td class="right">';
 					if (empty($objp->price_by_qty)) {
 						$price_ttc = $objp->price_ttc;
-						print price($price_ttc);
+						print '<span class="amount">'.price($price_ttc).'<span>';
 					}
 					print "</td>";
 					if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
@@ -2175,9 +2175,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 				//. vatrate($tva_tx, true, $line->recuperableonly) .
 				print "</td>";
-				print '<td class="right">'.price($line->price)."</td>";
+				print '<td class="right"><span class="amount">'.price($line->price)."</span></td>";
 
-				print '<td class="right">'.price($line->price_ttc)."</td>";
+				print '<td class="right"><span class="amount">'.price($line->price_ttc)."</span></td>";
 				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 					print '<td class="right">'.price($resultarray[2]).'</td>';
 				}
@@ -2357,7 +2357,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
-				print '<td>' . $line->ref_customer . '</td>';
+				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">';
@@ -2379,9 +2379,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
 
 				print "</td>";
-				print '<td class="right">'.price($line->price)."</td>";
+				print '<td class="right"><span class="amount">'.price($line->price)."</span></td>";
 
-				print '<td class="right">'.price($line->price_ttc)."</td>";
+				print '<td class="right"><span class="amount">'.price($line->price_ttc)."</span></td>";
 				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';

@@ -193,7 +193,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
 	<?php } ?>
 }
+
 .info-box-sm .info-box-icon {
+	height: 80px;
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;

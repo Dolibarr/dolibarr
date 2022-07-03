@@ -73,7 +73,7 @@ $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
 
 // Security check
-if (empty($conf->modulebuilder->enabled)) {
+if (!isModEnabled('modulebuilder')) {
 	accessforbidden();
 }
 if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {
@@ -2278,6 +2278,13 @@ if ($module == 'initmodule') {
 					if (!empty($moduleobj->editor_url)) {
 						print '<a href="'.$moduleobj->editor_url.'" class="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
 					}
+					print '</td></tr>';
+
+					print '<tr><td>';
+					print $langs->trans("Picto");
+					print '</td><td>';
+					print $moduleobj->picto;
+					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
 					print '</td></tr>';
 
 					print '<tr><td>';

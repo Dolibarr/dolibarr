@@ -140,7 +140,7 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
 			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';

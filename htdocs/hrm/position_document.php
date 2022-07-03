@@ -113,7 +113,7 @@ if ($object->id) {
 	/*
 	 * Show tabs
 	 */
-	$head = PositionCardPrepareHead($object);
+	$head = positionCardPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'document', $langs->trans("Document"), -1, $object->picto);
 
