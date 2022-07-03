@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php'; // Ship
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // supplier invoice
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
-require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php"; // reception
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php'; // reception
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 //require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
 //require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse report
