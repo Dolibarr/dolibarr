@@ -8096,8 +8096,13 @@ abstract class CommonObject
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
+						if ($tpl_context != "public") {	// Public page : red dot instead of fieldrequired characters
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
+								$out .= ' fieldrequired';
+							}
+						}
+						$out .= '">';
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
@@ -8107,10 +8112,6 @@ abstract class CommonObject
 								$out .= '&nbsp;<span style="color: red">*</span>';
 							}
 						} else {
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= ' fieldrequired';
-							}
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
