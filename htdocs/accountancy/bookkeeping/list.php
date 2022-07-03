@@ -132,6 +132,7 @@ $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
+$optioncss = GETPOST('optioncss', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -206,7 +207,7 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 
 $accountancyexport = new AccountancyExport($db);
 $listofformat = $accountancyexport->getType();
-$formatexportset = $conf->global->ACCOUNTING_EXPORT_MODELCSV;
+$formatexportset = getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV');
 if (empty($listofformat[$formatexportset])) {
 	$formatexportset = 1;
 }
@@ -912,6 +913,8 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
+
+$moreforfilter = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook

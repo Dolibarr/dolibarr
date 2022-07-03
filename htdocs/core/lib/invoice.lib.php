@@ -254,7 +254,7 @@ function supplier_invoice_rec_prepare_head($object)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -882,7 +882,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 	$result = '';
 
-	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 		$tmpinvoice = new Facture($db);
 
 		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";

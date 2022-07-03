@@ -171,18 +171,18 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 }
 
-DisplayPositionCard($object);
+
+displayPositionCard($object);
+
 
 /**
  * 		Show the card of a position
  *
  * 		@param	Position		 $object		  Position object
- *
  * 		@return void
  */
-function DisplayPositionCard(&$object)
+function displayPositionCard(&$object)
 {
-
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
 
 	$id = $object->id;
@@ -245,7 +245,7 @@ function DisplayPositionCard(&$object)
 		$res = $object->fetch_optionals();
 
 
-		$head = PositionCardPrepareHead($object);
+		$head = positionCardPrepareHead($object);
 		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto);
 
 		$formconfirm = '';
