@@ -34,3 +34,10 @@ dolibarr/htdocs/comm/propal.php
 
 dolibarr/htdocs/core/modules/facture/mod_facture_mercure.php  
     l 133		=> Préfixe devant la numérotation des acomptes (pour gestion prpre des règements)
+
+
+//Suivi depuis le 04/07/2022 après la montée de version 14 ://
+
+dolibarr/htdocs/expensereport/class/expensereport.class.php
+    l 1259 - 1268 - 1269 - 1276 =>  Fix la validation d'une NDF créée depuis une entité
+                                    avec l'entité maître.
