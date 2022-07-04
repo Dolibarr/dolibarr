@@ -71,7 +71,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
@@ -236,7 +236,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if( ! $result ) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
@@ -270,7 +270,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if ( ! $result ) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
@@ -338,7 +338,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if ( ! $result ) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if( ! DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
@@ -405,7 +405,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
@@ -438,7 +438,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
@@ -461,7 +461,7 @@ class Receptions extends DolibarrApi
 	/**
 	 * Delete reception
 	 *
-	 * @param   int     $id         Shipment ID
+	 * @param   int     $id         Reception ID
 	 *
 	 * @return  array
 	 */
@@ -472,7 +472,7 @@ class Receptions extends DolibarrApi
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
@@ -486,7 +486,7 @@ class Receptions extends DolibarrApi
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'Shipment deleted'
+				'message' => 'Reception deleted'
 			)
 		);
 	}
@@ -497,7 +497,7 @@ class Receptions extends DolibarrApi
 	 * This may record stock movements if module stock is enabled and option to
 	 * decrease stock on reception is on.
 	 *
-	 * @param   int $id             Shipment ID
+	 * @param   int $id             Reception ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
 	 *
 	 * @url POST    {id}/validate
@@ -517,7 +517,7 @@ class Receptions extends DolibarrApi
 		}
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
@@ -529,7 +529,7 @@ class Receptions extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Shipment: '.$this->reception->error);
+			throw new RestException(500, 'Error when validating Reception: '.$this->reception->error);
 		}
 
 		// Reload reception
@@ -562,11 +562,11 @@ class Receptions extends DolibarrApi
 				throw new RestException(401);
 		}
 		if(empty($id)) {
-				throw new RestException(400, 'Shipment ID is mandatory');
+				throw new RestException(400, 'Reception ID is mandatory');
 		}
 		$result = $this->reception->fetch($id);
 		if( ! $result ) {
-				throw new RestException(404, 'Shipment not found');
+				throw new RestException(404, 'Reception not found');
 		}
 
 		$result = $this->reception->classifyBilled(DolibarrApiAccess::$user);
@@ -640,7 +640,7 @@ class Receptions extends DolibarrApi
 
 		$result = $this->reception->fetch($id);
 		if (!$result) {
-			throw new RestException(404, 'Shipment not found');
+			throw new RestException(404, 'Reception not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->commande->id)) {
