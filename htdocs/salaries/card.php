@@ -711,12 +711,17 @@ if ($id) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		echo "<script>		
 		window.onload = () => {			
-			$('#clone_date_start').change(() => {	
+			$('#clone_date_start').change(() => {			
 				const date = $('#clone_date_start').val();
-				let nextMonth = parseInt(date.substr(0, 2)) + 1;
-				nextMonth = nextMonth < 10 ? '0' + nextMonth : nextMonth;
-				const endOfMonth = nextMonth + date.substr(2);
-				$('#clone_date_end').val(endOfMonth);
+				const days = parseInt(date.split('/')[1]);
+				if (days === 1){
+					const year = date.split('/')[2];
+					const month = date.split('/')[0];					
+					const dateEnd = new Date(year, parseInt(month), 0);					
+					$('#clone_date_end').val(month  + '/' + dateEnd.getDate() + '/' + dateEnd.getFullYear());
+				}else{
+					$('#clone_date_end').val('');
+				}
 			});
 			
 		}
