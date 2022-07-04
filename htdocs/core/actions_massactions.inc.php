@@ -791,7 +791,6 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							'HT',
 							0,
 							$product_type,
-							
 							//we have define the max rank for each line which makes it possible not to have a duplicate on the rank field in the case of several orders
 							//-1 will give us the right number
 							-1, // rank
