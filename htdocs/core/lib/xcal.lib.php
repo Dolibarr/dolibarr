@@ -377,8 +377,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
 					//$tmpevent['category'] = '';
 					$tmpevent['desc'] = $event->description;
-					$tmpevent['image'] = $event->image;
-
+					$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
 					$event = $tmpevent;
 				}
 
