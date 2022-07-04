@@ -4949,7 +4949,10 @@ class Form
 			foreach ($formquestion as $key => $input) {
 				if (is_array($input) && !empty($input)) {
 					if ($input['type'] == 'hidden') {
-						$more .= '<input type="hidden" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'" value="'.dol_escape_htmltag($input['value']).'">'."\n";
+						$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
+						$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
+
+						$more .= '<input type="hidden" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'" value="'.dol_escape_htmltag($input['value']).'" class="'.$morecss.'"'.$moreattr.'>'."\n";
 					}
 				}
 			}
