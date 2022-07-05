@@ -646,7 +646,7 @@ if ($mode == 'login') {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
 	}
 	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'">' . img_delete($langs->trans("Delete")) . '</a>';
+		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
 		if (file_exists($conf->mycompany->dir_output . '/logos/' . $conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
 			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . $conf->global->MAIN_LOGIN_BACKGROUND) . '">';
