@@ -457,7 +457,8 @@ if (!file_exists($conffile)) {
 			while (($file = readdir($handle)) !== false) {
 				$reg = array();
 				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
-					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2])) {
+					//var_dump(DOL_VERSION." ".$reg[2]." ".version_compare(DOL_VERSION, $reg[2]));
+					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2]) >= 0) {
 						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
 					}
 				}
