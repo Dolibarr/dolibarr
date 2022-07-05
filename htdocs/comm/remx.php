@@ -425,12 +425,12 @@ if ($socid > 0) {
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -563,12 +563,12 @@ if ($socid > 0) {
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("DiscountOfferedBy").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -736,12 +736,12 @@ if ($socid > 0) {
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
@@ -896,12 +896,12 @@ if ($socid > 0) {
 			print '<td class="nowrap">'.$langs->trans("ConsumedBy").'</td>';
 			print '<td class="right">'.$langs->trans("AmountHT").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountHT").'</td>';
+				print '<td class="right toverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountHT")).'">'.$langs->trans("MulticurrencyAmountHT").'</td>';
 			}
 			print '<td class="right">'.$langs->trans("VATRate").'</td>';
 			print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td class="right">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
+				print '<td class="right tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("MulticurrencyAmountTTC")).'">'.$langs->trans("MulticurrencyAmountTTC").'</td>';
 			}
 			print '<td width="100" class="center">'.$langs->trans("Author").'</td>';
 			print '<td width="50">&nbsp;</td>';
