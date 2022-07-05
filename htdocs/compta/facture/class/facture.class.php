@@ -2870,7 +2870,7 @@ class Facture extends CommonInvoice
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'facture/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".$this->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
@@ -2882,8 +2882,8 @@ class Facture extends CommonInvoice
 					$newref = dol_sanitizeFileName($num);
 
                     $upload_dir = $conf->facture->multidir_output[$this->entity];
-                    if($this->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
-                    else $upload_dir= str_replace('facture','invoice',$upload_dir);
+                    //if($this->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
+                    //else $upload_dir= str_replace('facture','invoice',$upload_dir);
                     $dirsource = $upload_dir.'/'.$oldref;
                     $dirdest = $upload_dir.'/'.$newref;
 
