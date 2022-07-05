@@ -91,6 +91,7 @@ WorkstationSetup = Configuration du module Poste de travail
 WorkstationSetupPage = Configuration du module Poste de travail 
 WorkstationList=Liste des postes de travail
 WorkstationCreate=Ajouter un nouveau poste de travail
+DefaultWorkstation=Poste de travail par défaut
 ConfirmEnableWorkstation=Voulez-vous vraiment activer le poste de travail <b>%s</b>?
 EnableAWorkstation=Activer le module Poste de travail
 ConfirmDisableWorkstation=Voulez-vous vraiment désactiver la station de travail <b>%s</b>?
