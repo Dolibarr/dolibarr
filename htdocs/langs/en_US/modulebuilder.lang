@@ -10,6 +10,7 @@ ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</
 NewModule=New module
 NewObjectInModulebuilder=New object
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Module key
 ObjectKey=Object key
 DicKey=Dictionary key

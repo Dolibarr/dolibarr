@@ -2089,16 +2089,18 @@ if ($module == 'initmodule') {
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print '<br>';
 
-	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
+	print '<span class="opacitymedium">'.$langs->trans("ModuleName").'</span> <input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" autofocus>';
 	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc")).'<br>';
 
-
-
-	print '<input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
-	print '<input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
-	print '<input type="text" name="version" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
-	print '<input type="text" name="idmodule" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'"><br>';
-	print $langs->trans("Family").' <select name="family">';
+	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span> <input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
+	print '<span class="opacitymedium">';
+	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
+	print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+	print '</span>';
+	print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("Version").'</span> <input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
+	print '<span class="opacitymedium">'.$langs->trans("Family").'</span> ';
+	print '<select name="family" id="family" class="minwidth400">';
 	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
 	print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
 	print '<option value="srm">'.$langs->trans("ModuleFamilySrm").'</option>';
@@ -2112,7 +2114,14 @@ if ($module == 'initmodule') {
 	print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
 	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
 	print '</select><br>';
-	print '<input type="text" name="idpicto" value="generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'"><br>';
+	print ajax_combobox("family");
+	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> <input type="text" name="idpicto" value="generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print $form->textwithpicto('', $langs->trans("Example").': generic, globe, ... any font awesome code');
+	print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("Description").'</span> <input type="text" name="description" value="" class="minwidth500"><br>';
+
+	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span> <input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span> <input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
@@ -2277,8 +2286,10 @@ if ($module == 'initmodule') {
 					print $langs->trans("Numero");
 					print '</td><td>';
 					print $moduleobj->numero;
+					print '<span class="opacitymedium">';
 					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
 					print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+					print '</span>';
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -2301,6 +2312,19 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '<tr><td>';
+					print $langs->trans("Picto");
+					print '</td><td>';
+					print $moduleobj->picto;
+					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+					print '</td></tr>';
+
+					print '<tr><td>';
+					print $langs->trans("Description");
+					print '</td><td>';
+					print $moduleobj->getDesc();
+					print '</td></tr>';
+
+					print '<tr><td>';
 					print $langs->trans("EditorName");
 					print '</td><td>';
 					print $moduleobj->editor_name;
@@ -2312,19 +2336,6 @@ if ($module == 'initmodule') {
 					if (!empty($moduleobj->editor_url)) {
 						print '<a href="'.$moduleobj->editor_url.'" class="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
 					}
-					print '</td></tr>';
-
-					print '<tr><td>';
-					print $langs->trans("Picto");
-					print '</td><td>';
-					print $moduleobj->picto;
-					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
-					print '</td></tr>';
-
-					print '<tr><td>';
-					print $langs->trans("Description");
-					print '</td><td>';
-					print $moduleobj->getDesc();
 					print '</td></tr>';
 
 					print '</table>';
