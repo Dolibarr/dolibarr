@@ -1149,8 +1149,10 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;
-		$this->user_valid = '';
+		$this->user_author = $user->id;		// deprecated
+		$this->user_author_id = $user->id;
+		$this->user_valid = 0;				// deprecated
+		$this->user_valid_id = 0;
 		$this->date = $now;
 
 		// Set ref
