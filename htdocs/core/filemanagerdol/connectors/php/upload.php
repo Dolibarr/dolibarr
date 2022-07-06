@@ -42,14 +42,14 @@ function SendError($number, $text)
 
 
 // Check if this uploader has been enabled.
-if (!$Config['Enabled']) {
+if (empty($Config['Enabled'])) {
 	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "filemanagerdol/connectors/php/config.php" file');
 }
 
 $sCommand = 'QuickUpload';
 
-// The file type (from the QueryString, by default 'File').
-$sType = isset($_GET['Type']) ? $_GET['Type'] : 'File';
+// The file type (from the QueryString, by default 'File', can be 'Image' or 'Media').
+$sType = GETPOSTISSET('Type') ? GETPOST('Type') : 'File';
 
 $sCurrentFolder = "/";
 
@@ -71,5 +71,5 @@ if (!IsAllowedType($sType)) {
 // Get the CKEditor Callback
 $CKEcallback = $_GET['CKEditorFuncNum'];
 
-//modify the next line adding in the new param
+// Get uploaded filr and move it at correct place. Note: Some tests on file name are also included into this function
 FileUpload($sType, $sCurrentFolder, $sCommand, $CKEcallback);

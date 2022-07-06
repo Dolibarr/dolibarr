@@ -237,63 +237,69 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		}
 		*/
 
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-		$isImageValid = image_format_supported($sFileName) > 0 ? true : false;
+		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
+		$isImageValid = (image_format_supported($sFileName) >= 0 ? true : false);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
 
 
 		// Check if it is an allowed extension.
-		if (!$sErrorNumber && IsAllowedExt($sExtension, $resourceType)) {
-			$iCounter = 0;
+		if (!$sErrorNumber) {
+			if (IsAllowedExt($sExtension, $resourceType)) {
+				$iCounter = 0;
 
-			while (true) {
-				$sFilePath = $sServerDir.$sFileName;
-
-				if (is_file($sFilePath)) {
-					$iCounter++;
-					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
-					$sErrorNumber = '201';
-				} else {
-					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					dol_move_uploaded_file($oFile['tmp_name'], $sFilePath, 0, 0);
+				while (true) {
+					$sFilePath = $sServerDir.$sFileName;
 
 					if (is_file($sFilePath)) {
-						if (isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload']) {
-							break;
+						$iCounter++;
+						$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
+						$sErrorNumber = '201';
+					} else {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						dol_move_uploaded_file($oFile['tmp_name'], $sFilePath, 0, 0);
+
+						if (is_file($sFilePath)) {
+							if (isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload']) {
+								break;
+							}
+
+							$permissions = '0777';
+							if (isset($Config['ChmodOnUpload']) && $Config['ChmodOnUpload']) {
+								$permissions = (string) $Config['ChmodOnUpload'];
+							}
+							$permissionsdec = octdec($permissions);
+							dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
+							$oldumask = umask(0);
+							chmod($sFilePath, $permissionsdec);
+							umask($oldumask);
 						}
 
-						$permissions = '0777';
-						if (isset($Config['ChmodOnUpload']) && $Config['ChmodOnUpload']) {
-							$permissions = (string) $Config['ChmodOnUpload'];
-						}
-						$permissionsdec = octdec($permissions);
-						dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
-						$oldumask = umask(0);
-						chmod($sFilePath, $permissionsdec);
-						umask($oldumask);
+						break;
 					}
-
-					break;
 				}
-			}
 
-			if (file_exists($sFilePath)) {
-				//previous checks failed, try once again
-				if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
-					@unlink($sFilePath);
-					$sErrorNumber = '202';
-				} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
-					@unlink($sFilePath);
-					$sErrorNumber = '202';
+				if (file_exists($sFilePath)) {
+					//previous checks failed, try once again
+					if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+						dol_syslog("commands.php IsImageValid is ko");
+						@unlink($sFilePath);
+						$sErrorNumber = '202';
+					} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
+						dol_syslog("commands.php DetectHtml is ko");
+						@unlink($sFilePath);
+						$sErrorNumber = '202';
+					}
 				}
+			} else {
+				$sErrorNumber = '202';
 			}
-		} else {
-			$sErrorNumber = '202';
 		}
 	} else {
-		$sErrorNumber = '202';
+		$sErrorNumber = '203';
 	}
 
 
