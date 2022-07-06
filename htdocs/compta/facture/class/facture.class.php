@@ -124,6 +124,12 @@ class Facture extends CommonInvoice
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int ID
+	 */
+	public $fk_user_modif;
+
+
 	public $date; // Date invoice
 	public $datem;
 
@@ -1935,7 +1941,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.datec as datec';
 		$sql .= ', f.date_valid as datev';
 		$sql .= ', f.tms as datem';
-		$sql .= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
+		$sql .= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.fk_user_modif, f.model_pdf, f.last_main_doc';
 		$sql .= ', f.fk_facture_source, f.fk_fac_rec_source';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql .= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
@@ -2023,8 +2029,10 @@ class Facture extends CommonInvoice
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author; // deprecated
 				$this->user_valid           = $obj->fk_user_valid; // deprecated
-				$this->fk_user_author = $obj->fk_user_author;
+				$this->user_modification    = $obj->fk_user_modif; // deprecated
+				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
+				$this->fk_user_modif        = $obj->fk_user_modif;
 				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
@@ -5415,7 +5423,7 @@ class Facture extends CommonInvoice
 
 		$langs->load("bills");
 
-		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('facture')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}

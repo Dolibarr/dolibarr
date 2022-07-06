@@ -195,7 +195,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>85),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>85),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -564,7 +564,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
 		$sql .= ', f.total_tva, f.total_ht, f.total_ttc';
 		$sql .= ', f.fk_user_author, f.fk_user_modif';
-		$sql .= ', f.fk_projet, f.fk_account';
+		$sql .= ', f.fk_projet as fk_project, f.fk_account';
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
@@ -610,7 +610,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->total_ttc                = $obj->total_ttc;
 				$this->user_author              = $obj->fk_user_author;
 				$this->user_modif               = $obj->fk_user_modif;
-				$this->fk_project               = $obj->fk_projet;
+				$this->fk_project               = $obj->fk_project;
 				$this->fk_account               = $obj->fk_account;
 				$this->mode_reglement_id        = $obj->fk_mode_reglement;
 				$this->mode_reglement_code      = $obj->mode_reglement_code;

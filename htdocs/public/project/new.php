@@ -81,7 +81,7 @@ $object = new Project($db);
 $user->loadDefaultValues();
 
 // Security check
-if (empty($conf->projet->enabled)) {
+if (empty($conf->project->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
 

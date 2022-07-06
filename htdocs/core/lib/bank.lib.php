@@ -27,6 +27,7 @@
  * \brief      Ensemble de fonctions de base pour le module banque
  */
 
+
 /**
  * Prepare array with list of tabs
  *
@@ -273,13 +274,13 @@ function checkSwiftForAccount($account)
  *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkIbanForAccount($account)
+function checkIbanForAccount(Account $account)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
 	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
-	$iban = new IBAN($ibantocheck);
+	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
 
 	if ($check) {

@@ -67,7 +67,7 @@ $action = GETPOST('action', 'aZ09');
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $emailcompany = GETPOST("emailcompany");
-$note_public = GETPOST('note_public', "nohtml");
+$note_public = GETPOST('note_public', "restricthtml");
 
 // Getting id from Post and decoding it
 $type = GETPOST('type', 'aZ09');

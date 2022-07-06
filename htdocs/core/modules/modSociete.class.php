@@ -832,8 +832,18 @@ class modSociete extends DolibarrModules
 			's.note_public' => "My public note"
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.rowid' => 'Id'
+			's.rowid' => 'Id',
+			's.lastname' => "Lastname",
 		);
+		if (!empty($conf->socialnetworks->enabled)) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 
 		// Import Bank Accounts
 		$r++;

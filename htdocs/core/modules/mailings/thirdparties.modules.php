@@ -117,6 +117,10 @@ class mailing_thirdparties extends MailingTargets
 				$addFilter .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
 				$addDescription = $langs->trans('DefaultLang')."=";
 			}
+			if (GETPOST('filter_lang_thirdparties', 'alpha')) {
+				$addFilter .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('filter_lang_thirdparties', 'alpha'))."%'";
+				$addDescription = $langs->trans('DefaultLang')."=";
+			}
 
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
@@ -315,8 +319,8 @@ class mailing_thirdparties extends MailingTargets
 		// Choose language
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 		$formadmin = new FormAdmin($this->db);
-		$s .= $langs->trans("DefaultLang").': ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
 
 		return $s;
 	}

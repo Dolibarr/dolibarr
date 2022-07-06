@@ -766,7 +766,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {
@@ -926,7 +927,8 @@ if ($socid > 0) {
 				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dc);
 			}
 			$db->free($resql2);
-			array_multisort($tab_sqlobjOrder, SORT_DESC, $tab_sqlobj);
+			$array1_sort_order = SORT_DESC;
+			array_multisort($tab_sqlobjOrder, $array1_sort_order, $tab_sqlobj);
 
 			$num = count($tab_sqlobj);
 			if ($num > 0) {

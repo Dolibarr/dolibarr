@@ -137,7 +137,7 @@ $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
@@ -234,7 +234,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Tasks';
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
-	$uploaddir = $conf->projet->dir_output.'/tasks';
+	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -648,7 +648,7 @@ if ($id > 0 || !empty($ref)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -729,16 +729,21 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
-	$formother->selectProjectTasks(GETPOST('task_parent'), !empty($projectid) ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
+
+	$contactsofproject = (empty($object->id) ? '' : $object->getListContactId('internal'));
 
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		if ($projectid > 0 || $object->id > 0) {
+			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		} else {
+			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		}
 	}
 	print '</td></tr>';
 

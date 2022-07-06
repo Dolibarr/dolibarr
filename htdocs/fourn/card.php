@@ -70,7 +70,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('suppliercard', 'globalcard'));
+$hookmanager->initHooks(array('thirdpartysupplier', 'globalcard'));
 
 // Security check
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
@@ -147,6 +147,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$result = $object->insertExtraFields('COMPANY_MODIFY');
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
@@ -170,6 +171,7 @@ if ($id > 0 && empty($object->id)) {
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
 		dol_print_error($db, $object->error);
+		exit(-1);
 	}
 }
 
@@ -881,7 +883,7 @@ if ($object->id > 0) {
 		}
 
 		// Add action
-		if (!empty($conf->agenda->enabled) && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
+		if (isModEnabled('agenda') && !empty($conf->global->MAIN_REPEATTASKONEACHTAB) && $object->status == 1) {
 			if ($user->rights->agenda->myactions->create) {
 				print dolGetButtonAction('', $langs->trans('AddAction'), 'default', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;socid='.$object->id, '');
 			} else {

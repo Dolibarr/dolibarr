@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=Acest atribut este utilizat în una sau mai mult
 ErrorAttributeValueIsUsedIntoProduct=Această valoare de atribut este utilizată în una sau mai multe variante de produs
 ErrorPaymentInBothCurrency=Eroare, toate sumele trebuiesc introduse în aceiaşi coloană
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Încerci să plăteşti facturile în moneda %s dintr-un cont cu moneda%s 
+ErrorInvoiceLoadThirdParty=Nu se poate încărca obiectul terț pentru factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Cheia pentru terțul "%s" nu este setată pentru factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Ștergerea liniei nu este permisă de starea curentă a obiectului
+ErrorAjaxRequestFailed=Solicitare eşuată
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Disponibil numai dacă se utilizează conexi
 WarningModuleXDisabledSoYouMayMissEventHere=Modulul %s nu a fost activat. Este posibil să pierdeți o mulțime de evenimente aici. 
 WarningPaypalPaymentNotCompatibleWithStrict=Valoarea 'Strictă' face ca funcțiile de plată online să nu funcționeze corect. Folosiți în schimb 'Lax'.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valoare invalidă
 RequireAtLeastXString = Necesită cel puţin %s caracter(e)
@@ -338,3 +347,12 @@ BadSetupOfField = Eroare setare invalidă a câmpului
 BadSetupOfFieldClassNotFoundForValidation = Eroare setare valoare câmp : Clasa nu a fost găsită pentru validare
 BadSetupOfFieldFileNotFound = Eroare setare valoare câmp : Fișierul nu a fost găsit pentru includere
 BadSetupOfFieldFetchNotCallable = Eroare setare valoare câmp : Operaţia fetch nu este apelabilă din clasă
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
+>>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git

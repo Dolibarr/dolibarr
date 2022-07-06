@@ -42,6 +42,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks για έλεγχο
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Αριθμός ημερών πριν από την κατάσταση ακύρωσης μιας συνεργασίας όταν έχει λήξει μια συνδρομή
 ReferingWebsiteCheck=Έλεγχος αναφοράς ιστότοπου
 ReferingWebsiteCheckDesc=Μπορείτε να ενεργοποιήσετε μια δυνατότητα για να ελέγχετε ότι οι συνεργάτες σας έχουν προσθέσει έναν σύνδεσμο backlink του ιστότοπου σας στον δικό τους ιστότοπο.
+PublicFormRegistrationPartnerDesc=Το Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL/ιστότοπο για να επιτρέπετε σε εξωτερικούς επισκέπτες η αίτηση συμμετοχής στο πρόγραμμα συνεργασίας.
 
 #
 # Object
@@ -60,6 +61,11 @@ ConfirmClosePartnershipAsk=Είστε σίγουροι ότι θέλετε να 
 PartnershipType=Τύπος συνεργασίας
 PartnershipRefApproved=Εγκρίθηκε η συνεργασία %s
 KeywordToCheckInWebsite=Εάν θέλετε να ελέγξετε ότι μια δεδομένη λέξη-κλειδί υπάρχει στον ιστότοπο κάθε συνεργάτη, ορίστε αυτήν τη λέξη-κλειδί εδώ
+PartnershipDraft=Προσχέδιο
+PartnershipAccepted=Αποδεκτή
+PartnershipRefused=Απορρίφθηκε
+PartnershipCanceled=Ακυρώθηκε
+PartnershipManagedFor=Συνεργάτες είναι
 
 #
 # Template Mail
@@ -83,12 +89,6 @@ CountLastUrlCheckError=Αριθμός σφαλμάτων για τον τελε�
 LastCheckBacklink=Ημερομηνία τελευταίου ελέγχου διεύθυνσης URL
 ReasonDeclineOrCancel=Λόγος απόρριψης
 
-#
-# Status
-#
-PartnershipDraft=Προσχέδιο
-PartnershipAccepted=Αποδεκτή
-PartnershipRefused=Απορρίφθηκε
-PartnershipCanceled=Ακυρώθηκε
-PartnershipManagedFor=Συνεργάτες είναι
+NewPartnershipRequest=Νέο αίτημα συνεργασίας
+NewPartnershipRequestDesc=Αυτή η φόρμα σάς επιτρέπει να ζητήσετε να συμμετάσχετε σε ένα από τα προγράμματα συνεργασίας μας. Εάν χρειάζεστε βοήθεια για να συμπληρώσετε αυτήν τη φόρμα, επικοινωνήστε μέσω email <b> %s </b> .
 

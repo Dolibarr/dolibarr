@@ -343,11 +343,11 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {

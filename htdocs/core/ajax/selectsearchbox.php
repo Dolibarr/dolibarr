@@ -89,10 +89,10 @@ if (!empty($conf->mrp->enabled) && $user->rights->mrp->read && empty($conf->glob
 	$arrayresult['searchintomo'] = array('position'=>35, 'shortcut'=>'', 'img'=>'object_mrp', 'label'=>$langs->trans("SearchIntoMO", $search_boxvalue), 'text'=>img_picto('', 'object_mrp', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMO", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/mrp/mo_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
-if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire) {
+if (!empty($conf->project->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->rights->projet->lire) {
 	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire) {
+if (!empty($conf->project->enabled) && empty($conf->global->MAIN_SEARCHFORM_TASK_DISABLED) && $user->rights->projet->lire) {
 	$arrayresult['searchintotasks'] = array('position'=>45, 'img'=>'object_projecttask', 'label'=>$langs->trans("SearchIntoTasks", $search_boxvalue), 'text'=>img_picto('', 'object_projecttask', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTasks", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/tasks/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
 
@@ -105,7 +105,7 @@ if (!empty($conf->commande->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUS
 if (!empty($conf->expedition->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED) && $user->rights->expedition->lire) {
 	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
+if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
 	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
@@ -120,7 +120,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 }
 
 // Customer payments
-if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
+if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
 	$arrayresult['searchintocustomerpayments'] = array(
 		'position'=>170,
 		'img'=>'object_payment',

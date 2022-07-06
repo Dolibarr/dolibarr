@@ -38,6 +38,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
         fk_user_creat integer NOT NULL, 
         fk_user_modif integer, 
+        position INTEGER NOT NULL DEFAULT 0,
         import_key varchar(14), 
         status integer NOT NULL
         -- END MODULEBUILDER FIELDS

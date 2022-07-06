@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,6 +255,7 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
+	$total_ttc = 0;
 	$totalrecu = 0;
 
 	while ($i < $num) {

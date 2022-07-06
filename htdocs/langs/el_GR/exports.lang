@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
 FileMustHaveOneOfFollowingFormat=Το αρχείο για εισαγωγή πρέπει να έχει μία από τις ακόλουθες μορφές
-DownloadEmptyExample=Λήψη αρχείου προτύπου με πληροφορίες περιεχομένου πεδίου
-StarAreMandatory=* είναι υποχρεωτικά πεδία
+DownloadEmptyExample=Κάντε λήψη ενός προτύπου αρχείου με παραδείγματα και πληροφορίες για πεδία που μπορείτε να εισαγάγετε
+StarAreMandatory=Στο πρότυπο αρχείο, όλα τα πεδία με * είναι υποχρεωτικά.
 ChooseFormatOfFileToImport=Επιλέξτε τη μορφή αρχείου που θα χρησιμοποιηθεί ως μορφή αρχείου εισαγωγής κάνοντας κλικ στο εικονίδιο %s για να το επιλέξετε ...
 ChooseFileToImport=Μεταφορτώστε το αρχείο και κάντε κλικ στο εικονίδιο %s για να επιλέξετε αρχείο ως αρχείο εισαγωγής πηγής ...
 SourceFileFormat=Source file format
@@ -135,3 +135,6 @@ NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
 StocksWithBatch=Αποθέματα και τοποθεσία (αποθήκη) προϊόντων με αριθμό παρτίδας/σειράς
+WarningFirstImportedLine=Οι πρώτες γραμμές δεν θα εισαχθούν με την τρέχουσα επιλογή
+NotUsedFields=Τα πεδία της βάσης δεδομένων που δεν χρησιμοποιούνται
+SelectImportFieldsSource = Επιλέξτε τα πεδία αρχείου προέλευσης που θέλετε να εισαγάγετε και το πεδίο προορισμού τους στη βάση δεδομένων επιλέγοντας τα πεδία σε κάθε επιλεγμένο πλαίσιο ή επιλέξτε ένα προκαθορισμένο προφίλ εισαγωγής:

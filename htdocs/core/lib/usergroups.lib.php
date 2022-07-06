@@ -72,7 +72,7 @@ function user_prepare_head(User $object)
 	$head[$h][2] = 'guisetup';
 	$h++;
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		if (empty($conf->global->AGENDA_EXT_NB)) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
@@ -372,7 +372,12 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</th></tr>';
 	}
 
-	print '<tr><td colspan="'.$colspan.'">';
+	print '<tr><td colspan="'.$colspan.'" class="center">';
+
+	if (!empty($conf->global->MAIN_FORCETHEME)) {
+		$langs->load("errors");
+		print $langs->trans("WarningThemeForcedTo", $conf->global->MAIN_FORCETHEME);
+	}
 
 	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 

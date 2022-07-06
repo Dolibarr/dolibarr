@@ -218,3 +218,5 @@ XExternalUserCreated=%s utilizator(i) externi creaţi
 ForceMemberNature=Impune natura membrului (Persoană fizică sau Presoană juridică)
 CreateDolibarrLoginDesc=Crearea unui cont de utilizator pentru membri le permite să se conecteze la aplicație. În funcție de drepturile acordate, aceștia vor putea, de exemplu, să își consulte sau să modifice fișa ei înșiși.
 CreateDolibarrThirdPartyDesc=Un terț este persoana juridică care va fi utilizată pe factură dacă decideți să generați factura pentru fiecare contribuție. O veți putea crea mai târziu în timpul procesului de înregistrare a contribuției. 
+MemberFirstname=Prenume membru
+MemberLastname=Nume membru

@@ -424,3 +424,6 @@ PMPExpected=Várható PMP
 ExpectedValuation=Várható értékelés
 PMPReal=Valós PMP
 RealValuation=Valódi értékelés
+ConfirmEditExtrafield = Válassza ki a módosítani kívánt extra mezőt
+ConfirmEditExtrafieldQuestion = Biztosan módosítani szeretné ezt az extramezőt?
+ModifyValueExtrafields = Extra mező értékének módosítása

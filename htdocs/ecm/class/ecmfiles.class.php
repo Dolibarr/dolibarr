@@ -569,7 +569,7 @@ class EcmFiles extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				$line->ref = $obj->ref;
+				$line->ref = $obj->rowid;
 				$line->label = $obj->label;
 				$line->share = $obj->share;
 				$line->entity = $obj->entity;

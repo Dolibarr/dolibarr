@@ -550,7 +550,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account type
 	if (!empty($arrayfields['accountype']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
 		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
 		if (!$i) {

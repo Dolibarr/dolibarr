@@ -169,13 +169,13 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
-	 * @var Project The related project
+	 * @var Project 	The related project object
 	 * @see fetch_projet()
 	 */
 	public $project;
 
 	/**
-	 * @var int The related project ID
+	 * @var int 		The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
@@ -187,19 +187,25 @@ abstract class CommonObject
 	public $projet;
 
 	/**
-	 * @var Contact a related contact
+	 * @deprecated
+	 * @see $fk_project
+	 */
+	public $fk_projet;
+
+	/**
+	 * @var Contact 	A related contact object
 	 * @see fetch_contact()
 	 */
 	public $contact;
 
 	/**
-	 * @var int The related contact ID
+	 * @var int 		The related contact ID
 	 * @see fetch_contact()
 	 */
 	public $contact_id;
 
 	/**
-	 * @var Societe A related thirdparty
+	 * @var Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -248,7 +254,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int The object's status
+	 * @var int The object's status. Prefer use of status.
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -258,6 +264,7 @@ abstract class CommonObject
 	 * @see setStatut()
 	 */
 	public $status;
+
 
 	/**
 	 * @var string
@@ -272,7 +279,7 @@ abstract class CommonObject
 	public $country_id;
 
 	/**
-	 * @var string
+	 * @var string		The ISO country code on 2 chars.
 	 * @see getFullAddress(), isInEEC(), country
 	 */
 	public $country_code;
@@ -312,6 +319,7 @@ abstract class CommonObject
 	 * @see getFullAddress(), $region_id, $region_code
 	 */
 	public $region;
+
 
 	/**
 	 * @var int
@@ -512,6 +520,56 @@ abstract class CommonObject
 	 */
 	public $date_modification; // Date last change (tms field)
 
+	/**
+	 * @var integer|string $date_cloture;
+	 */
+	public $date_cloture; // Date closing (tms field)
+
+	/**
+	 * @var User|int	User author/creation
+	 * @TODO Merge with user_creation
+	 */
+	public $user_author;
+	/**
+	 * @var User|int	User author/creation
+	 * @TODO Remove type id
+	 */
+	public $user_creation;
+	/**
+	 * @var int			User id author/creation
+	 */
+	public $user_creation_id;
+
+	/**
+	 * @var User|int	User of validation
+	 * @TODO Merge with user_validation
+	 */
+	public $user_valid;
+	/**
+	 * @var User|int	User of validation
+	 * @TODO Remove type id
+	 */
+	public $user_validation;
+	/**
+	 * @var int			User id of validation
+	 */
+	public $user_validation_id;
+	/**
+	 * @var int			User id closing object
+	 */
+	public $user_closing_id;
+
+	/**
+	 * @var User|int	User last modifier
+	 * @TODO Remove type id
+	 */
+	public $user_modification;
+	/**
+	 * @var int			User id last modifier
+	 */
+	public $user_modification_id;
+
+
 	public $next_prev_filter;
 
 	/**
@@ -528,6 +586,7 @@ abstract class CommonObject
 	 * @var	float	Amount already paid (used to show correct status)
 	 */
 	public $alreadypaid;
+
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -1659,13 +1718,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) {
+		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0);
 		if ($force_thirdparty_id) {
 			$idtofetch = $force_thirdparty_id;
 		}
@@ -4285,7 +4344,7 @@ abstract class CommonObject
 		if ($elementTable == 'commande_fournisseur_dispatch') {
 			$fieldstatus = "status";
 		}
-		if (is_array($this->fields) && array_key_exists('status', $this->fields)) {
+		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
 		}
 
@@ -6148,7 +6207,7 @@ abstract class CommonObject
 								//var_dump($this->oldcopy);exit;
 								if (is_object($this->oldcopy)) {		// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
 									//var_dump($this->oldcopy->array_options[$key]); var_dump($this->array_options[$key]);
-									if ($this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
+									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {	// If old value crypted in database is same than submited new value, it means we don't change it, so we don't update.
 										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									} else {
 										// var_dump($algo);
@@ -6845,15 +6904,15 @@ abstract class CommonObject
 			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
+			foreach ($param['options'] as $keyb => $valb) {
+				if ((string) $keyb == '') {
 					continue;
 				}
-				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
+				if (strpos($valb, "|") !== false) list($valb, $parent) = explode('|', $valb);
+				$out .= '<option value="'.$keyb.'"';
+				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>'.$val.'</option>';
+				$out .= '>'.$valb.'</option>';
 			}
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
@@ -7002,12 +7061,12 @@ abstract class CommonObject
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, $morecss, 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
-			foreach ($param['options'] as $keyopt => $val) {
+			foreach ($param['options'] as $keyopt => $valopt) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$valopt.'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -7349,8 +7408,10 @@ abstract class CommonObject
 		}
 
 		// Format output value differently according to properties of field
-		if ($key == 'ref' && method_exists($this, 'getNomUrl')) {
-			$value = $this->getNomUrl(1, '', 0, '', 1);
+		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
+				$value = $this->getNomUrl(1, '', 0, '', 1);
+			}
 		} elseif ($key == 'status' && method_exists($this, 'getLibStatut')) {
 			$value = $this->getLibStatut(3);
 		} elseif ($type == 'date') {
@@ -7556,11 +7617,15 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
-							$object->fetch($value, '', '', '', 0, 1, 1);
+							$result = $object->fetch($value, '', '', '', 0, 1, 1);
 						} else {
-							$object->fetch($value);
+							$result = $object->fetch($value);
 						}
-						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						if ($result > 0) {
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
+						} else {
+							$value = '';
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -8000,7 +8065,11 @@ abstract class CommonObject
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
+							if (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) {
+								$value = price2num($value);
+							} elseif (isset($this->array_options['options_'.$key])) {
+								$value = $this->array_options['options_'.$key];
+							}
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
@@ -8027,8 +8096,13 @@ abstract class CommonObject
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
+						if ($tpl_context != "public") {	// Public page : red dot instead of fieldrequired characters
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
+								$out .= ' fieldrequired';
+							}
+						}
+						$out .= '">';
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
@@ -8038,10 +8112,6 @@ abstract class CommonObject
 								$out .= '&nbsp;<span style="color: red">*</span>';
 							}
 						} else {
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= ' fieldrequired';
-							}
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
@@ -8387,8 +8457,6 @@ abstract class CommonObject
 			foreach ($filearray as $key => $val) {
 				$photo = '';
 				$file = $val['name'];
-
-				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
 				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
 				if (image_format_supported($file) >= 0) {
