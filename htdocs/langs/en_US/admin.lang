@@ -2277,9 +2277,9 @@ INVOICE_ADD_ZATCA_QR_CODEMore=Some Arabic countries need this QR Code on their i
 INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices
 UrlSocialNetworksDesc=Url link of social network. Use {socialid} for the variable part that contains the social network ID.
 IfThisCategoryIsChildOfAnother=If this category is a child of another one
-
 DarkThemeMode=Dark theme mode
 AlwaysDisabled=Always disabled
 AccordingToBrowser=According to browser
 AlwaysEnabled=Always Enabled
 DoesNotWorkWithAllThemes=Will not work with all themes
+NoName=No name

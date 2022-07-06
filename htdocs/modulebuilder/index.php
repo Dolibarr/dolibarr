@@ -71,6 +71,12 @@ $file = GETPOST('file', 'alpha');
 $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
+$editorname= GETPOST('editorname', 'alpha');
+$editorurl= GETPOST('editorurl', 'alpha');
+$version= GETPOST('version', 'alpha');
+$family= GETPOST('family', 'alpha');
+$picto= GETPOST('idpicto', 'alpha');
+$idmodule= GETPOST('idmodule', 'alpha');
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
@@ -334,7 +340,13 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'Mon module'=>$modulename,
 				'mon module'=>$modulename,
 				'htdocs/modulebuilder/template'=>strtolower($modulename),
-				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+				'Editor name'=>$editorname,
+				'https://www.example.com'=>$editorurl,
+				'1.0'=>$version,
+				'idpicto'=>(empty($picto)) ? 'generic' : $picto,
+				"modulefamily" =>$family,
+				500000=>$idmodule
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
@@ -350,7 +362,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
 			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+				$arrayreplacement['modulefamily'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -2075,10 +2087,32 @@ if ($module == 'initmodule') {
 	print '<input type="hidden" name="module" value="initmodule">';
 
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
-	print $langs->trans("EnterNameOfModuleDesc").'<br>';
 	print '<br>';
 
-	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'"><br>';
+	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
+	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc")).'<br>';
+
+
+
+	print '<input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '<input type="text" name="version" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
+	print '<input type="text" name="idmodule" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'"><br>';
+	print $langs->trans("Family").' <select name="family">';
+	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
+	print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
+	print '<option value="srm">'.$langs->trans("ModuleFamilySrm").'</option>';
+	print '<option value="financial">'.$langs->trans("ModuleFamilyFinancial").'</option>';
+	print '<option value="products">'.$langs->trans("ModuleFamilyProducts").'</option>';
+	print '<option value="projects">'.$langs->trans("ModuleFamilyProjects").'</option>';
+	print '<option value="ecm">'.$langs->trans("ModuleFamilyECM").'</option>';
+	print '<option value="technic">'.$langs->trans("ModuleFamilyTechnic").'</option>';
+	print '<option value="portal">'.$langs->trans("ModuleFamilyPortal").'</option>';
+	print '<option value="interface">'.$langs->trans("ModuleFamilyInterface").'</option>';
+	print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
+	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
+	print '</select><br>';
+	print '<input type="text" name="idpicto" value="generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'"><br>';
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
@@ -2278,6 +2312,13 @@ if ($module == 'initmodule') {
 					if (!empty($moduleobj->editor_url)) {
 						print '<a href="'.$moduleobj->editor_url.'" class="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
 					}
+					print '</td></tr>';
+
+					print '<tr><td>';
+					print $langs->trans("Picto");
+					print '</td><td>';
+					print $moduleobj->picto;
+					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
 					print '</td></tr>';
 
 					print '<tr><td>';

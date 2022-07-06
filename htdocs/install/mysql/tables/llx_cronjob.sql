@@ -24,7 +24,7 @@ CREATE TABLE llx_cronjob
 	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 			datetime,
 	jobtype			varchar(10) NOT NULL,		-- 'method', 'function' or 'command'
-  	label 			text NOT NULL,
+  	label 			varchar(255) NOT NULL,
 	command			varchar(255),
   	classesname 	varchar(255),				-- when jobtype is 'method', name of the class file containing the method.
   	objectname		varchar(255),

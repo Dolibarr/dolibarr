@@ -1717,7 +1717,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1) {
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0, $object);
+						$sharefile = 0;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
@@ -2977,6 +2979,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for import module
 		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
+	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_temp)) {
+			// Wrapping for recruitment module
+		$accessallowed = $user->rights->$modulepart->recruitmentjobposition->read;
+		$original_file = $conf->recruitment->dir_output .'/'. $original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
 		$accessallowed = 1;
