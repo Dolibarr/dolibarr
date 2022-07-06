@@ -57,7 +57,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 
 // Product or sub-bom
 print '<td class="linecoldescription">'.$langs->trans('Description');
-if (!empty($conf->global->BOM_SUB_BOM)) {
+if (!empty($conf->global->BOM_SUB_BOM) && $filtertype != 1) {
 	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 }
@@ -80,15 +80,20 @@ if($filtertype != 1) {
 // Efficiency
 	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+
 } else {
 
 	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 
 	if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+
+	// Cost
+	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';
 }
 
-// Cost
-print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+
 
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim

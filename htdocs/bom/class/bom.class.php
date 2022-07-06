@@ -1140,15 +1140,23 @@ class BOM extends CommonObject
 						}
 					}
 				} else {
+
+					if($line->duration_unit == 's') $qty =  $line->qty / 3600;
+					if($line->duration_unit == 'i') $qty = $line->qty / 60;
+					if($line->duration_unit == 'd') $qty = $line->qty * 24;
+					if($line->duration_unit == 'w') $qty = $line->qty * 24 * 7;
+					if($line->duration_unit == 'm') $qty = $line->qty * 730.484;
+					if($line->duration_unit == 'y') $qty = $line->qty * 365 * 24;
+
 					if($conf->workstation->enabled){
 						if($tmpproduct->fk_default_workstation) {
 							$workstation = new Workstation($this->db);
 							$workstation->fetch($tmpproduct->fk_default_workstation);
 
-							$line->total_cost = price2num($line->qty * $workstation->thm_operator_estimated, 'MT');
+							$line->total_cost = price2num($qty * $workstation->thm_operator_estimated, 'MT');
 						}
 					} else {
-						$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
+						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
 					}
 
 					$this->total_cost += $line->total_cost;
