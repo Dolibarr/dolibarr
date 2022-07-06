@@ -208,6 +208,7 @@ class DoliDBMysqli extends DoliDB
 		try {
 			$result = $this->db->select_db($database);
 		} catch (Exception $e) {
+			// Nothing done on error
 		}
 		return $result;
 	}
