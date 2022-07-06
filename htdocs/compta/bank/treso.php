@@ -57,6 +57,11 @@ $hookmanager->initHooks(array('banktreso', 'globalcard'));
 /*
  * View
  */
+
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
+
 $societestatic = new Societe($db);
 $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
@@ -80,9 +85,6 @@ if (GETPOST("account") || GETPOST("ref")) {
 		$_GET["account"] = $object->id;
 	}
 
-	$title = $object->ref.' - '.$langs->trans("PlannedTransactions");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
 
 	// Onglets
 	$head = bank_prepare_head($object);

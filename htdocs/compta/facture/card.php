@@ -2840,10 +2840,8 @@ if (!empty($conf->projet->enabled)) {
 
 $now = dol_now();
 
-$title = $object->ref." - ".$langs->trans('Card');
-if ($action == 'create') {
-	$title = $langs->trans("NewBill");
-}
+$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Card');
+
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);

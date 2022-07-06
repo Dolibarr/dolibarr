@@ -1529,10 +1529,7 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $object->ref." - ".$langs->trans('Card');
-if ($action == 'create') {
-	$title = $langs->trans("NewOrderSupplier");
-}
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Card');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 

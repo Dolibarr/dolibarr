@@ -75,9 +75,8 @@ if (GETPOST('addbox')) {
 /*
  * View
  */
-$title = $langs->trans("MenuUsersAndGroups");
-$help_url = '';
-llxHeader('', $title, $help_url);
+
+llxHeader();
 
 
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');

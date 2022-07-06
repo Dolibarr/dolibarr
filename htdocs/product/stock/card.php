@@ -279,13 +279,8 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $langs->trans("WarehouseCard");
-if ($action == 'create') {
-	$title = $langs->trans("NewWarehouse");
-}
-
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $title, $help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 
 if ($action == 'create') {

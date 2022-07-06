@@ -77,7 +77,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $object->ref." - ".$langs->trans('Notes');
+$title = $langs->trans('Order')." - ".$langs->trans('Notes');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 llxHeader('', $title, $help_url);
 

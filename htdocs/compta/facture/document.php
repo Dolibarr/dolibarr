@@ -100,7 +100,8 @@ if (empty($object->id)) {
 	exit;
 }
 
-$title = $object->ref." - ".$langs->trans('Documents');
+$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
+
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);

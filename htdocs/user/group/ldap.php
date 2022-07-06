@@ -92,9 +92,7 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-$title = $object->name." - ".$langs->trans('LDAP');
-$help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader();
 
 $head = group_prepare_head($object);
 

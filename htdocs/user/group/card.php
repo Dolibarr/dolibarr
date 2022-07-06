@@ -246,13 +246,8 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $object->name.' - '.$langs->trans("Card");
-if ($action == 'create') {
-	$title = $langs->trans("NewGroup");
-}
 
-llxHeader('', $title, $help_url);
-
+llxHeader('', $langs->trans("GroupCard"));
 
 $form = new Form($db);
 $fuserstatic = new User($db);
