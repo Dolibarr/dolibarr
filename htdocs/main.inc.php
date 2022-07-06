@@ -1349,7 +1349,7 @@ if (!function_exists("llxHeader")) {
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
@@ -1368,6 +1368,12 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+
+		$parameters = array('help_url' => $help_url);
+		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
+		if ($reshook > 0) {
+			$help_url = $hookmanager->resPrint;
+		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
