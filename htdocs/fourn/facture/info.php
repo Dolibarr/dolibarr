@@ -53,17 +53,14 @@ $object = new FactureFournisseur($db);
  */
 
 $form = new Form($db);
-
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Info');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
-
 $object->fetch($id, $ref);
 $object->fetch_thirdparty();
-
 $object->info($object->id);
-
 $alreadypaid = $object->getSommePaiement();
+
+$title = $object->ref." - ".$langs->trans('Info');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');

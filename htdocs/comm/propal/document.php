@@ -104,7 +104,7 @@ if ($object->id > 0) {
 /*
  * View
  */
-$title = $langs->trans('Proposal')." - ".$langs->trans('Documents');
+$title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 llxHeader('', $title, $help_url);
 

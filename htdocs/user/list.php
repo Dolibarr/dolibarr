@@ -473,8 +473,8 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 // Output page
 // --------------------------------------------------------------------
-
-llxHeader('', $langs->trans("ListOfUsers"), $help_url);
+$title = $langs->trans("ListOfUsers");
+llxHeader('', $title, $help_url);
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

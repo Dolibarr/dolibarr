@@ -113,7 +113,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->info($object->id);
 }
 
-$title = $langs->trans("SupplierOrder").' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
+$title = $object->ref.' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }

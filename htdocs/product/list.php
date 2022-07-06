@@ -381,16 +381,14 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("ProductsAndServices");
+$title = $langs->trans("ListOfProductsAndServices");
 
 if ($search_type != '' && $search_type != '-1') {
 	if ($search_type == 1) {
-		$texte = $langs->trans("Services");
+		$title = $langs->trans("ListOfServices");
 	} else {
-		$texte = $langs->trans("Products");
+		$title = $langs->trans("ListOfProducts");
 	}
-} else {
-	$texte = $langs->trans("ProductsAndServices");
 }
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
@@ -783,7 +781,7 @@ if ($resql) {
 		$picto = 'service';
 	}
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "Information";
 	$modelmail = "product";

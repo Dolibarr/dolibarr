@@ -1831,7 +1831,10 @@ if (!empty($conf->projet->enabled)) {
 
 $now = dol_now();
 
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewSupplierInvoice");
+}
 $help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
 llxHeader('', $title, $help_url);
 
@@ -1839,7 +1842,7 @@ llxHeader('', $title, $help_url);
 if ($action == 'create') {
 	$facturestatic = new FactureFournisseur($db);
 
-	print load_fiche_titre($langs->trans('NewBill'), '', 'supplier_invoice');
+	print load_fiche_titre($langs->trans('NewSupplierInvoice'), '', 'supplier_invoice');
 
 	dol_htmloutput_events();
 
