@@ -1140,17 +1140,17 @@ class BOM extends CommonObject
 						}
 					}
 				} else {
-					if(!($conf->workstation->enabled)) {
-						$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
-					} else {
-
-						if($tmpproduct->fk_default_workstation){
+					if($conf->workstation->enabled){
+						if($tmpproduct->fk_default_workstation) {
 							$workstation = new Workstation($this->db);
 							$workstation->fetch($tmpproduct->fk_default_workstation);
 
 							$line->total_cost = price2num($line->qty * $workstation->thm_operator_estimated, 'MT');
 						}
+					} else {
+						$line->total_cost = price2num($line->qty * $tmpproduct->cost_price, 'MT');
 					}
+
 					$this->total_cost += $line->total_cost;
 				}
 			}

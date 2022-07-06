@@ -210,7 +210,26 @@ jQuery(document).ready(function() {
 				   if (editor) { editor.focus(); }
 			}
 			}
+
 	});
+	<?php if($filtertype == 1) { ?>
+	$('#idprod:nth-child(2)').change(function(){
+			var idproduct = $(this).val();
+
+			console.log(idproduct);
+			$.ajax({
+				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php',1); ?>"
+				,type: 'POST'
+				,data: {
+					'action': 'getDurationUnitByProduct'
+					,'idproduct' : idproduct
+				}
+			}).done(function(data) {
+				var data = JSON.parse(data);
+				$('#duration_unit').val(data).change();;
+			});
+	});
+	<?php } ?>
 });
 
 </script>
