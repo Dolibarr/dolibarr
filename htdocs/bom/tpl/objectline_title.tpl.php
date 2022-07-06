@@ -38,6 +38,10 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+global $filtertype;
+if(empty($filtertype))	$filtertype = 0;
+
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
 
@@ -62,21 +66,30 @@ print '</td>';
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
-}
+if($filtertype != 1) {
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
+	}
 
 // Qty frozen
-print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
+	print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
 
 // Disable stock change
-print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
+	print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
 
 // Efficiency
-print '<td class="linecolefficiency right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
+	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
+
+} else {
+
+	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+
+	if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+}
 
 // Cost
 print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
+
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 

@@ -38,11 +38,13 @@ if (empty($object) || !is_object($object)) {
 }
 
 
-global $forceall;
+global $forceall, $filtertype;
 
 if (empty($forceall)) {
 	$forceall = 0;
 }
+
+if(empty($filtertype))	$filtertype = 0;
 
 
 // Define colspan for the button 'Add'
@@ -108,27 +110,46 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if($filtertype != 1) {
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$coldisplay++;
+		print '<td class="nobottom linecoluseunit left">';
+		print '</td>';
+	}
+
 	$coldisplay++;
-	print '<td class="nobottom linecoluseunit left">';
+	print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOSTISSET("qty_frozen") ? (GETPOST('qty_frozen', 'int') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')) . '>';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOSTISSET('disablestockchange') ? (GETPOST("disable_stock_change", 'int') ? ' checked="checked"' : '') : ($line->disable_stock_change ? ' checked="checked"' : '')) . '">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecollost right">';
+	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . $line->efficiency . '"></td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolcostprice right">';
+	print '</td>';
+} else {
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolcostprice right">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolcostprice right">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolcostprice right">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolcostprice right">';
 	print '</td>';
 }
-
-$coldisplay++;
-print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOSTISSET("qty_frozen") ? (GETPOST('qty_frozen', 'int') ? ' checked="checked"' : '') : ($line->qty_frozen ? ' checked="checked"' : '')).'>';
-print '</td>';
-
-$coldisplay++;
-print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOSTISSET('disablestockchange') ? (GETPOST("disable_stock_change", 'int') ? ' checked="checked"' : '') : ($line->disable_stock_change ? ' checked="checked"' : '')).'">';
-print '</td>';
-
-$coldisplay++;
-print '<td class="nobottom nowrap linecollost right">';
-print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="'.$line->efficiency.'"></td>';
-
-$coldisplay++;
-print '<td class="nobottom nowrap linecolcostprice right">';
-print '</td>';
 
 $coldisplay += $colspan;
 print '<td class="nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';

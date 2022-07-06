@@ -36,10 +36,15 @@ if (empty($object) || !is_object($object)) {
 }
 
 
-global $forceall, $forcetoshowtitlelines;
+global $forceall, $forcetoshowtitlelines, $filtertype;
 
 if (empty($forceall)) {
 	$forceall = 0;
+}
+
+if(empty($filtertype))	$filtertype = 0;
+if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->STOCK_SUPPORT_SERVICES)) {
+	$filtertype = -1;
 }
 
 
@@ -53,6 +58,7 @@ $objectline = new BOMLine($this->db);
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
 
 $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
+
 if ($nolinesbefore) {
 	print '<tr class="liste_titre nodrag nodrop">';
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -62,16 +68,25 @@ if ($nolinesbefore) {
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-		print '<td class="linecoluseunit left">';
-		print '<span id="title_units">';
-		print $langs->trans('Unit');
-		print '</span></td>';
+
+	if($filtertype != 1) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			print '<td class="linecoluseunit left">';
+			print '<span id="title_units">';
+			print $langs->trans('Unit');
+			print '</span></td>';
+		}
+		print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+		print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
+		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	}
-	print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
-	print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
-	print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
-	print '<td class="linecoledit" colspan="'.$colspan.'">&nbsp;</td>';
+	else {
+		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+		if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+		print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
+	}
+
+	print '<td class="linecoledit" colspan="' . $colspan . '">&nbsp;</td>';
 	print '</tr>';
 }
 print '<tr class="pair nodrag nodrop nohoverpair'.(($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create').'">';
@@ -88,14 +103,14 @@ print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-	if (!empty($conf->global->BOM_SUB_BOM)) {
+	if($filtertype == 1){
+		print $langs->trans("Service");
+	}
+	elseif (!empty($conf->global->BOM_SUB_BOM)) {
 		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';
-	$filtertype = 0;
-	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->STOCK_SUPPORT_SERVICES)) {
-		$filtertype = -1;
-	}
+
 	$statustoshow = -1;
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 		// hide products in closed warehouse, but show products for internal transfer
@@ -106,7 +121,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 
 	echo '</span>';
 }
-if (!empty($conf->global->BOM_SUB_BOM)) {
+if (!empty($conf->global->BOM_SUB_BOM) && $filtertype!=1) {
 	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
 	// TODO Add component to select a BOM
 	$form->select_bom();
@@ -118,35 +133,53 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if($filtertype != 1) {
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$coldisplay++;
+		print '<td class="nobottom linecoluseunit left">';
+		print '</td>';
+	}
+
 	$coldisplay++;
-	print '<td class="nobottom linecoluseunit left">';
+	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '') . '">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecollost right">';
+	print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="' . ((GETPOSTISSET("efficiency") && $action == 'addline') ? GETPOST("efficiency", 'alpha') : 1) . '">';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecolcost right">';
+	print '&nbsp;';
+	print '</td>';
+} else {
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecolcost right">';
+	print '&nbsp;';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecolcost right">';
+	print '&nbsp;';
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="bordertop nobottom nowrap linecolcost right">';
+	print '&nbsp;';
 	print '</td>';
 }
 
-$coldisplay++;
-print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '').'>';
-print '</td>';
+	$coldisplay += $colspan;
+	print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="' . $colspan . '">';
+	print '<input type="submit" class="button button-add" name="addline" id="addline" value="' . $langs->trans('Add') . '">';
+	print '</td>';
+	print '</tr>';
 
-$coldisplay++;
-print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '').'">';
-print '</td>';
-
-$coldisplay++;
-print '<td class="bordertop nobottom nowrap linecollost right">';
-print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="'.((GETPOSTISSET("efficiency") && $action == 'addline') ?GETPOST("efficiency", 'alpha') : 1).'">';
-print '</td>';
-
-$coldisplay++;
-print '<td class="bordertop nobottom nowrap linecolcost right">';
-print '&nbsp;';
-print '</td>';
-
-$coldisplay += $colspan;
-print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
-print '<input type="submit" class="button button-add" name="addline" id="addline" value="'.$langs->trans('Add').'">';
-print '</td>';
-print '</tr>';
 
 if (is_object($objectline)) {
 	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1, 'line');
