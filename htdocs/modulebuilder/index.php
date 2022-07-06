@@ -2074,11 +2074,34 @@ if ($module == 'initmodule') {
 	print '<input type="hidden" name="action" value="initmodule">';
 	print '<input type="hidden" name="module" value="initmodule">';
 
-	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
-	print $langs->trans("EnterNameOfModuleDesc").'<br>';
+	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';	
 	print '<br>';
 
-	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'"><br>';
+	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'">';
+	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc")).'<br>';
+
+	
+
+	print '<input type="text" name="companyname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("Name of company")).'"><br>';
+	print '<input type="text" name="companyurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("URL of company")).'"><br>';
+	print '<input type="text" name="version" value="1.0.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
+	print '<input type="text" name="idmodule" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("The number ID of module")).'"><br>';
+	//print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("Familly")).'"><br>';
+	print $langs->trans("Family").' <select>';
+	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
+    print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
+    print '<option value="srm">'.$langs->trans("ModuleFamilySrm").'</option>';
+    print '<option value="financial">'.$langs->trans("ModuleFamilyFinancial").'</option>';
+    print '<option value="products">'.$langs->trans("ModuleFamilyProducts").'</option>';
+    print '<option value="projects">'.$langs->trans("ModuleFamilyProjects").'</option>';
+    print '<option value="ecm">'.$langs->trans("ModuleFamilyECM").'</option>';
+    print '<option value="technic">'.$langs->trans("ModuleFamilyTechnic").'</option>';
+    print '<option value="portal">'.$langs->trans("ModuleFamilyPortal").'</option>';
+    print '<option value="interface">'.$langs->trans("ModuleFamilyInterface").'</option>';
+    print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
+    print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
+	print '</select><br>';
+	print '<input type="text" name="idpicto" value="generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto ID")).'"><br>';	
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
