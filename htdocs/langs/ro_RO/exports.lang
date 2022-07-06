@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Tip de linie (0= produs, 1= serviciu)
 FileWithDataToImport=Fişiere cu date de import
 FileToImport=Fişierul sursă de import
 FileMustHaveOneOfFollowingFormat=Fișierul de import trebuie să aibă unul din următoarele formate
-DownloadEmptyExample=Descărcare fișier șablon cu informații despre conținutul câmpului
-StarAreMandatory=* sunt câmpuri obligatorii
+DownloadEmptyExample=Descarcă un fișier șablon cu exemple și informații despre câmpurile pe care le poți importa
+StarAreMandatory=În fișierul șablon, toate câmpurile cu * sunt câmpuri obligatorii
 ChooseFormatOfFileToImport=Alegeți formatul de fișier care va fi utilizat ca format de fișier de import făcând clic pe pictograma %s pentru selecţie...
 ChooseFileToImport=Încărcați fișierul, apoi dați clic pe pictograma %s pentru a selecta fișierul ca sursă de import...
 SourceFileFormat=Format fişier sursă
@@ -135,3 +135,6 @@ NbInsert=Număr linii inserate: %s
 NbUpdate=Număr linii actualizate: %s
 MultipleRecordFoundWithTheseFilters=Au fost găsite mai multe înregistrări cu ajutorul acestor filtre: %s
 StocksWithBatch=Stocuri și locație (depozit) a produselor cu număr de lot/serie
+WarningFirstImportedLine=Prima lini(e) nu va fi importată din selecţia curentă
+NotUsedFields=Câmpuri bază de date care nu sunt utilizate
+SelectImportFieldsSource = Alege câmpurile fișierului sursă pe care vrei să le imporţi și câmpul lor țintă în baza de date, alegând câmpurile din fiecare casetă de selectare sau selectează un profil de import predefinit:

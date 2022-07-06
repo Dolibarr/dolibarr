@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Type de ligne (0=produit, 1=service)
 FileWithDataToImport=Fichier contenant les données à importer
 FileToImport=Fichier source à importer
 FileMustHaveOneOfFollowingFormat=Le fichier à importer doit avoir un des formats suivants
-DownloadEmptyExample=Télécharger fichier vierge exemple
-StarAreMandatory=* sont des champs obligatoires
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Choisissez le format de fichier à importer en cliquant sur le pictogramme %s pour le sélectionner…
 ChooseFileToImport=Ajoutez le fichier à importer puis cliquez sur le pictogramme %s pour le sélectionner comme fichier source d'import…
 SourceFileFormat=Format du fichier source
@@ -135,3 +135,6 @@ NbInsert=Nombre de lignes insérées: %s
 NbUpdate=Nombre de lignes mises à jour: %s
 MultipleRecordFoundWithTheseFilters=Plusieurs enregistrements ont été trouvés avec ces filtres: %s
 StocksWithBatch=Stocks et entrepôts des produits avec numéro de lot/série
+WarningFirstImportedLine=The first line(s) will not be imported with the current selection
+NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

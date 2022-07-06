@@ -424,3 +424,6 @@ PMPExpected=Αναμενόμενο PMP
 ExpectedValuation=Αναμενόμενη Αποτίμηση
 PMPReal=Πραγματικό PMP
 RealValuation=Πραγματική Αποτίμηση
+ConfirmEditExtrafield = Επιλέξτε το επιπλέον πεδίο που θέλετε να τροποποιήσετε
+ConfirmEditExtrafieldQuestion = Είστε σιγουροι ότι θέλετε να τροποποιήσετε αυτό το επιπλέον πεδίο;
+ModifyValueExtrafields = Τροποποίηση της τιμής ενός επιπλέον πεδίου

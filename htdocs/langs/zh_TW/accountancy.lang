@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=會計帳戶預設註冊客戶存款
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -289,7 +290,7 @@ ValidateHistory=自動關聯
 AutomaticBindingDone=自動綁定完成 (%s) - 某些記錄無法自動綁定 (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=錯誤，您不能刪除此會計項目，因為已使用
-MvtNotCorrectlyBalanced=動作未正確平衡。借方= %s |貸方= %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=平衡中
 FicheVentilation=關聯卡片
 GeneralLedgerIsWritten=交易已紀錄到總帳中

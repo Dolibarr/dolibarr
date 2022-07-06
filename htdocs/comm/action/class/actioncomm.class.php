@@ -1145,8 +1145,16 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = '".$this->db->escape($this->type_id)."'";
+			$sql .= ", fk_action = ".(int) $this->type_id;
+			if (empty($this->type_code)) {
+				$cactioncomm = new CActionComm($this->db);
+				$result = $cactioncomm->fetch($this->type_id);
+				if ($result >= 0 && !empty($cactioncomm->code)) {
+					$this->type_code = $cactioncomm->code;
+				}
+			}
 		}
+		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -1440,21 +1448,10 @@ class ActionComm extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->id;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_mod) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_mod);
-					$this->user_modification = $muser;
-				}
-
-				$this->date_creation = $this->db->jdate($obj->datec);
-				if (!empty($obj->fk_user_mod)) {
-					$this->date_modification = $this->db->jdate($obj->datem);
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {
@@ -2505,14 +2502,16 @@ class ActionComm extends CommonObject
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event
+	 * @param int		$usermodid	The user who modified the percent
 	 * @return int					1 when update of the event was suscessfull, otherwise -1
 	 */
-	public function updatePercent($id, $percent)
+	public function updatePercent($id, $percent, $usermodid = 0)
 	{
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
+		if ($usermodid > 0) $sql .= ", fk_user_mod = ".$usermodid;
 		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {

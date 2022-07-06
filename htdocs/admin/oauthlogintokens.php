@@ -129,7 +129,7 @@ print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 $head = oauthadmin_prepare_head();
 
-print dol_get_fiche_head($head, 'tokengeneration', '', -1, 'technic');
+print dol_get_fiche_head($head, 'tokengeneration', '', -1, '');
 
 if (GETPOST('error')) {
 	setEventMessages(GETPOST('error'), null, 'errors');
@@ -138,19 +138,32 @@ if (GETPOST('error')) {
 if ($mode == 'setup' && $user->admin) {
 	print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
-	foreach ($list as $key) {
+	//var_dump($list);
+	foreach ($conf->global as $key => $val) {
+		if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
+			$provider = preg_replace('/_ID$/', '', $key);
+			$listinsetup[] = array($provider.'_NAME', $provider.'_ID', $provider.'_SECRET', 'OAUTH Provider '.str_replace('OAUTH_', '', $provider));
+		}
+	}
+
+	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+
+	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
+	foreach ($listinsetup as $key) {
 		$supported = 0;
-		$keyforsupportedoauth2array = $key[0];
-
-		if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
-			$supported = 1;
+		$keyforsupportedoauth2array = $key[0];						// May be OAUTH_GOOGLE_NAME or OAUTH_GOOGLE_xxx_NAME
+		$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
+		$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+		if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+			$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+		} else {
+			$keyforprovider = '';
 		}
-		if (!$supported) {
-			continue; // show only supported
-		}
+		$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+		$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
 
-		$OAUTH_SERVICENAME = empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+		$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
 
 		// Define $shortscope, $urltorenew, $urltodelete, $urltocheckperms
 		// TODO Use array $supportedoauth2array
@@ -158,6 +171,8 @@ if ($mode == 'setup' && $user->admin) {
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
 			$shortscope = 'user,public_repo';
+
+			// Note: github does not accept csrf key inside the state parameter (only know values)
 			$urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://github.com/settings/applications/';
@@ -177,17 +192,18 @@ if ($mode == 'setup' && $user->admin) {
 				$shortscope.=',gmail_full';
 			}
 
-			$oauthstateanticsrf = bin2hex(random_bytes(128/8));
-			$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
-
 			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'-'.$oauthstateanticsrf.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_TEST_NAME') {
+			$shortscope = 'none';
+
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
 			$urltocheckperms = '';
 		} elseif ($keyforsupportedoauth2array == 'OAUTH_STRIPE_LIVE_NAME') {
+			$shortscope = 'none';
+
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
 			$urltocheckperms = '';
@@ -196,7 +212,7 @@ if ($mode == 'setup' && $user->admin) {
 			$urltodelete = '';
 			$urltocheckperms = '';
 		}
-
+		$urltorenew .= '&keyforprovider='.$keyforprovider;
 
 		// Show value of token
 		$tokenobj = null;
@@ -220,7 +236,6 @@ if ($mode == 'setup' && $user->admin) {
 		if (is_object($tokenobj)) {
 			$expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
 		}
-
 		if ($key[1] != '' && $key[2] != '') {
 			if (is_object($tokenobj)) {
 				$refreshtoken = $tokenobj->getRefreshToken();
@@ -249,6 +264,11 @@ if ($mode == 'setup' && $user->admin) {
 		print '<th class="titlefieldcreate">';
 		print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
 		print $langs->trans($keyforsupportedoauth2array);
+		if ($keyforprovider) {
+			print ' (<b>'.$keyforprovider.'</b>)';
+		} else {
+			print ' (<b>'.$langs->trans("NoName").'</b>)';
+		}
 		print '</th>';
 		print '<th></th>';
 		print '<th></th>';
@@ -299,9 +319,11 @@ if ($mode == 'setup' && $user->admin) {
 		//var_dump($key);
 		print $langs->trans("Token").'</td>';
 		print '<td colspan="2">';
+
 		if (is_object($tokenobj)) {
 			//var_dump($tokenobj);
-			print $tokenobj->getAccessToken().'<br>';
+			$tokentoshow = $tokenobj->getAccessToken();
+			print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'<br>';
 			//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 			//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 			//var_dump($tokenobj->getExtraParams());
@@ -317,9 +339,10 @@ if ($mode == 'setup' && $user->admin) {
 			print '<tr class="oddeven">';
 			print '<td'.($key['required'] ? ' class="required"' : '').'>';
 			//var_dump($key);
-			print $langs->trans("TOKEN_REFRESH").'</td>';
+			print $langs->trans("TOKEN_REFRESH");
+			print '</td>';
 			print '<td colspan="2">';
-			print yn($refreshtoken);
+			print '<span class="" title="'.dol_escape_htmltag($refreshtoken).'">'.showValueWithClipboardCPButton($refreshtoken, 1, dol_trunc($refreshtoken, 32)).'</span>';
 			print '</td>';
 			print '</tr>';
 
@@ -327,7 +350,8 @@ if ($mode == 'setup' && $user->admin) {
 			print '<tr class="oddeven">';
 			print '<td'.($key['required'] ? ' class="required"' : '').'>';
 			//var_dump($key);
-			print $langs->trans("TOKEN_EXPIRED").'</td>';
+			print $langs->trans("TOKEN_EXPIRED");
+			print '</td>';
 			print '<td colspan="2">';
 			print yn($expire);
 			print '</td>';
@@ -337,7 +361,8 @@ if ($mode == 'setup' && $user->admin) {
 			print '<tr class="oddeven">';
 			print '<td'.($key['required'] ? ' class="required"' : '').'>';
 			//var_dump($key);
-			print $langs->trans("TOKEN_EXPIRE_AT").'</td>';
+			print $langs->trans("TOKEN_EXPIRE_AT");
+			print '</td>';
 			print '<td colspan="2">';
 			print $expiredat;
 			print '</td>';
@@ -399,17 +424,18 @@ if ($mode == 'userconf' && $user->admin) {
 	print '<th>'.$langs->trans("NumberOfCopy").'</th>';
 	print '<th class="center">'.$langs->trans("Delete").'</th>';
 	print "</tr>\n";
-	$sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
+	$sql = "SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."printing as p, ".MAIN_DB_PREFIX."user as u WHERE p.userid = u.rowid";
 	$resql = $db->query($sql);
-	while ($row = $db->fetch_array($resql)) {
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
-		print '<td>'.$row['login'].'</td>';
-		print '<td>'.$row['module'].'</td>';
-		print '<td>'.$row['driver'].'</td>';
-		print '<td>'.$row['printer_name'].'</td>';
-		print '<td>'.$row['printer_location'].'</td>';
-		print '<td>'.$row['printer_id'].'</td>';
-		print '<td>'.$row['copy'].'</td>';
+		print '<td>'.$obj->login.'</td>';
+		print '<td>'.$obj->module.'</td>';
+		print '<td>'.$obj->driver.'</td>';
+		print '<td>'.$obj->printer_name.'</td>';
+		print '<td>'.$obj->printer_location.'</td>';
+		print '<td>'.$obj->printer_id.'</td>';
+		print '<td>'.$obj->copy.'</td>';
 		print '<td class="center">'.img_picto($langs->trans("Delete"), 'delete').'</td>';
 		print "</tr>\n";
 	}

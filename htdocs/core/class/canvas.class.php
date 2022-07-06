@@ -151,7 +151,7 @@ class Canvas
 	public function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		if (method_exists($this->control, 'assign_values')) {
+		if (is_object($this->control) && method_exists($this->control, 'assign_values')) {
 			$this->control->assign_values($action, $id, $ref);
 		}
 	}

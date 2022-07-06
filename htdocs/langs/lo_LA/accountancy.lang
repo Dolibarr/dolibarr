@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=ບັນຊີບັນຊີເພື່ອລົ�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=ບັນຊີບັນຊີເພື່ອລົງທະບຽນການສະັກໃຊ້
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=ບັນຊີບັນຊີໂດຍມາດຕະຖານເພື່ອລົງທະບຽນເງິນcustomerາກຂອງລູກຄ້າ
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=ບັນຊີບັນຊີຕາມມາດຕະຖານສໍາລັບຜະລິດຕະພັນທີ່ຊື້ມາ (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=ບັນຊີການບັນຊີຕາມມາດຕະຖານສໍາລັບຜະລິດຕະພັນທີ່ຊື້ມາໃນ EEC (ໃຊ້ຖ້າບໍ່ໄດ້ກໍານົດໄວ້ໃນແຜ່ນຜະລິດຕະພັນ)
@@ -289,7 +290,7 @@ ValidateHistory=ຜູກມັດອັດຕະໂນມັດ
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=ການເຄື່ອນໄຫວບໍ່ສົມດຸນຖືກຕ້ອງ. ເດບິດ = %s | ສິນເຊື່ອ = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=ການດຸ່ນດ່ຽງ
 FicheVentilation=ບັດຜູກມັດ
 GeneralLedgerIsWritten=ທຸລະ ກຳ ຖືກຂຽນໄວ້ໃນປື້ມບັນຊີ

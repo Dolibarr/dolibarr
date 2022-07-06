@@ -62,6 +62,11 @@ class StockTransfer extends CommonObject
 	 */
 	public $picto = 'stock';
 
+	public $date_prevue_depart;
+	public $date_prevue_arrivee;
+	public $date_reelle_depart;
+	public $date_reelle_arrivee;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -357,8 +362,8 @@ class StockTransfer extends CommonObject
 	/**
 	 * Used to sort lines by rank
 	 *
-	 * @param $a	1st element to test
-	 * @param $b	1st element to test
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
 	public function cmp($a, $b)
@@ -855,27 +860,11 @@ class StockTransfer extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

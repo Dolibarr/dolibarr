@@ -32,6 +32,18 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+
+-- Missing in v16 or lower
+
+
+
+
+-- v17
+
+ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
 CREATE TABLE llx_expeditiondet_dispatch
 (
     rowid             integer AUTO_INCREMENT PRIMARY KEY,

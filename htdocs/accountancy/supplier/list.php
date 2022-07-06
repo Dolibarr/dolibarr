@@ -161,8 +161,8 @@ if (empty($reshook)) {
 
 	// Mass actions
 	$objectclass = 'AccountingAccount';
-	$permissiontoread = $user->rights->accounting->read;
-	$permissiontodelete = $user->rights->accounting->delete;
+	$permissiontoread = $user->hasRight('accounting', 'read');
+	$permissiontodelete = $user->hasRight('accounting', 'delete');
 	$uploaddir = $conf->accounting->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -477,7 +477,7 @@ if ($result) {
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
 
-	if ($msg) {
+	if (!empty($msg)) {
 		print $msg.'<br>';
 	}
 

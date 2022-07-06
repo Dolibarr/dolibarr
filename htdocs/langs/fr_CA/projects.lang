@@ -4,7 +4,6 @@ ProjectId=Id de projet
 ProjectLabel=Étiquette du projet
 ProjectsArea=Zone de projets
 ProjectStatus=L'état du projet
-PrivateProject=Contacts de projet
 AllAllowedProjects=Tout le projet que je peux lire (mine + public)
 ProjectsPublicDesc=Cette vue présente tous les projets que vous êtes autorisé à lire.
 TasksOnProjectsPublicDesc=Cette vue présente toutes les tâches sur les projets que vous êtes autorisé à lire.

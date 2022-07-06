@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -386,20 +386,24 @@ if (empty($reshook)) {
 		if (!$error) {    // Update list of contacts
 			// Si déjà un user assigné on le supprime des contacts
 			if ($useroriginassign > 0) {
-				$internal_contacts = $object->listeContact(-1, 'internal');
-
+				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 				foreach ($internal_contacts as $key => $contact) {
-					if ($contact['code'] == "SUPPORTTEC" && $contact['id'] == $useroriginassign) {
-					}
-					{
-						//print "user à effacer : ".$useroriginassign;
-						$object->delete_contact($contact['rowid']);
+					if ($contact['id'] !== $usertoassign) {
+						$result = $object->delete_contact($contact['rowid']);
+						if ($result<0) {
+							$error++;
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
 					}
 				}
 			}
 
-			if ($usertoassign > 0) {
-				$object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
+			if ($usertoassign > 0 && $usertoassign!==$useroriginassign) {
+				$result = $object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
+				if ($result<0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 			}
 		}
 
@@ -408,8 +412,8 @@ if (empty($reshook)) {
 			$object->fetch_user($usertoassign);
 			//$log_action = $langs->trans('TicketLogAssignedTo', $object->user->getFullName($langs));
 
-			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 
+			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
 			header("Location: card.php?track_id=".$object->track_id."&action=view");
 			exit;
 		} else {
@@ -692,7 +696,7 @@ if (empty($reshook)) {
 $userstat = new User($db);
 $form = new Form($db);
 $formticket = new FormTicket($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -945,7 +949,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->ticket->write) {
@@ -1051,7 +1055,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="action" value="assign_user">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			//print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
-			print $form->select_dolusers($user->id, 'fk_user_assign', 1);
+			print $form->select_dolusers(empty($object->fk_user_assign)?$user->id:$object->fk_user_assign, 'fk_user_assign', 1);
 			print ' <input type="submit" class="button small" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
 			print '</form>';
 		}
@@ -1121,7 +1125,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<div class="underbanner clearboth"></div>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 			print '<table class="border tableforfield centpercent noborderbottom">';

@@ -94,9 +94,11 @@ if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage med
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
-	print '</a>';
+	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
+		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+		print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+		print '</a>';
+	}
 }
 
 print "<script>

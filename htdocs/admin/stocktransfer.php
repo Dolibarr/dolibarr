@@ -174,10 +174,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'stock');
 
 // Configuration header
 $head = stocktransferAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "stocktransfer@stocktransfer");
+print dol_get_fiche_head($head, 'settings', '', -1, "stocktransfer@stocktransfer");
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</span>';
+print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</span>';
 
 
 /*if ($action == 'edit')
@@ -194,7 +194,7 @@ echo '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</s
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
 	}
 	print '</table>';
 
@@ -217,7 +217,7 @@ echo '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</s
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.$conf->global->$key.'</td></tr>';
+			print '</td><td>'.getDolGlobalString($key).'</td></tr>';
 		}
 
 		print '</table>';
@@ -478,7 +478,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

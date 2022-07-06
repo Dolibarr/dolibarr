@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=இந்த கருவியை அனுபவம் வாய்ந்த பயனர்கள் அல்லது டெவலப்பர்கள் மட்டுமே பயன்படுத்த வேண்டும். இது உங்கள் சொந்த தொகுதியை உருவாக்க அல்லது திருத்துவதற்கான பயன்பாடுகளை வழங்குகிறது. மாற்று <a href="%s" target="_blank" rel="noopener noreferrer"> கைமுறை மேம்பாட்டிற்கான ஆவணம் இங்கே </a> .
-EnterNameOfModuleDesc=இடைவெளிகள் இல்லாமல் உருவாக்க தொகுதி/பயன்பாட்டின் பெயரை உள்ளிடவும். சொற்களைப் பிரிக்க பெரிய எழுத்தைப் பயன்படுத்தவும் (எடுத்துக்காட்டாக: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=இடங்கள் இல்லாமல் உருவாக்க பொருளின் பெயரை உள்ளிடவும். சொற்களைப் பிரிக்க பெரிய எழுத்தைப் பயன்படுத்தவும் (உதாரணமாக: MyObject, Student, Teacher...). CRUD கிளாஸ் கோப்பு, ஆனால் API கோப்பு, பட்டியலிட/சேர்க்க/திருத்த/நீக்கப் பக்கங்கள் மற்றும் SQL கோப்புகள் உருவாக்கப்படும்.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=தொகுதிகள் உருவாக்கப்படும்/திருத்தப்படும் பாதை (வெளிப்புற தொகுதிகளுக்கான முதல் அடைவு %s என வரையறுக்கப்பட்டுள்ளது): <strong> %s </strong>
 ModuleBuilderDesc3=உருவாக்கப்பட்ட/திருத்தக்கூடிய தொகுதிகள் கண்டறியப்பட்டன: <strong> %s </strong>
 ModuleBuilderDesc4=தொகுதி கோப்பகத்தின் மூலத்தில் <strong> %s </strong> கோப்பு இருக்கும்போது ஒரு தொகுதி 'எடிட் செய்யக்கூடியது' எனக் கண்டறியப்பட்டது.
 NewModule=புதிய தொகுதி
 NewObjectInModulebuilder=புதிய பொருள்
+NewDictionary=New dictionary
 ModuleKey=தொகுதி விசை
 ObjectKey=பொருள் விசை
+DicKey=Dictionary key
 ModuleInitialized=தொகுதி துவக்கப்பட்டது
 FilesForObjectInitialized=புதிய ஆப்ஜெக்ட் '%s'க்கான கோப்புகள் துவக்கப்பட்டன
 FilesForObjectUpdated=ஆப்ஜெக்ட் '%s'க்கான கோப்புகள் புதுப்பிக்கப்பட்டன (.sql கோப்புகள் மற்றும் .class.php கோப்பு)
