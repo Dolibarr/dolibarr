@@ -801,7 +801,7 @@ $sql_order .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);
 $listorder = explode(',', $sortorder);
 foreach ($listfield as $key => $value) {
-$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
+	$sql_order .= $listfield[$key] . ' ' . ($listorder[$key] ? $listorder[$key] : 'DESC') . ',';
 }
 $sql_order .= ' f.rowid DESC ';
 
