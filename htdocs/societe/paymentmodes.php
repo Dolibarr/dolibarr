@@ -681,7 +681,7 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 
-llxHeader('', $title, $help_url);
+llxHeader();
 
 $head = societe_prepare_head($object);
 

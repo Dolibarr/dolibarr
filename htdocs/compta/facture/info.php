@@ -65,7 +65,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
 
 $form = new Form($db);
 
-$title = $object->ref." - ".$langs->trans('Info');
+$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);

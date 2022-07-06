@@ -148,11 +148,7 @@ $formother = new FormOther($db);
 $arrayofjs = array();
 $arrayofcss = array();
 
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('ExtSites');
-$help_url = '';
-
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';

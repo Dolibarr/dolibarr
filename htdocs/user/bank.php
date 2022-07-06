@@ -259,10 +259,7 @@ $form = new Form($db);
 
 $childids = $user->getAllChildIds(1);
 
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('BankAccounts');
-$help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
 

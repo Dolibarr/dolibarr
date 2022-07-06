@@ -1022,24 +1022,15 @@ if (!empty($conf->accounting->enabled)) {
 
 
 $title = $langs->trans('ProductServiceCard');
-
 $help_url = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	if ($action == 'create') {
-		$title = $langs->trans("NewProduct");
-	} else {
-		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
-	}
+	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	if ($action == 'create') {
-		$title = $langs->trans("NewService");
-	} else {
-		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
-	}
+	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
 llxHeader('', $title, $help_url);

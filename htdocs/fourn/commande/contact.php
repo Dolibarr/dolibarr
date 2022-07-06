@@ -99,6 +99,10 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $
 /*
  * View
  */
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('ContactsAddresses');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
+
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
@@ -116,10 +120,6 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
-
-		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
-		$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-		llxHeader('', $title, $help_url);
 
 		$head = ordersupplier_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');

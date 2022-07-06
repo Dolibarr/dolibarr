@@ -96,7 +96,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
-$title = $object->ref." - ".$langs->trans('Documents');
+$title = $langs->trans('Order')." - ".$langs->trans('Documents');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 llxHeader('', $title, $help_url);
 

@@ -178,11 +178,8 @@ if (empty($reshook)) {
 /*
  * View
  */
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('Card');
-$help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader();
 
 // List of possible landing pages
 $tmparray = array('index.php'=>'Dashboard');

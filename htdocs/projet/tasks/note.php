@@ -110,18 +110,13 @@ if (empty($reshook)) {
 /*
  * View
  */
+
+llxHeader('', $langs->trans("Task"));
+
 $form = new Form($db);
 $userstatic = new User($db);
 
 $now = dol_now();
-
-$title = $object->ref . ' - ' . $langs->trans("Notes");
-if (!empty($withproject)) {
-	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
-}
-$help_url = '';
-
-llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');

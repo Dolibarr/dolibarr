@@ -48,15 +48,18 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 /*
  *	View
  */
+
 $form = new Form($db);
+
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Info');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
+
 $object = new SupplierProposal($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
-$object->info($object->id);
 
-$title = $object->ref." - ".$langs->trans('Info');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
+$object->info($object->id);
 
 
 $head = supplier_proposal_prepare_head($object);

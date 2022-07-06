@@ -62,10 +62,7 @@ if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
 
 $form = new Form($db);
 
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('Info');
-$help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader();
 
 $head = user_prepare_head($object);
 

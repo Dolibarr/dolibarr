@@ -72,6 +72,10 @@ if (empty($reshook)) {
 /*
  * View
  */
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Notes');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
+
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
@@ -83,10 +87,6 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
-
-		$title = $object->ref." - ".$langs->trans('Notes');
-		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-		llxHeader('', $title, $help_url);
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {

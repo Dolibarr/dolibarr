@@ -194,6 +194,11 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
+
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
+
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -244,10 +249,6 @@ if (empty($numref)) {
 	if ($result) {
 		$numrows = $db->num_rows($result);
 		$i = 0;
-
-		$title = $object->ref.' - '.$langs->trans("AccountStatements");
-		$helpurl = "";
-		llxHeader('', $title, $helpurl);
 
 		// Onglets
 		$head = bank_prepare_head($object);

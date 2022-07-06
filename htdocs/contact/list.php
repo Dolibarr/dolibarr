@@ -132,31 +132,31 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 }
 $offset = $limit * $page;
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+$titre = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 if ($type == "p") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactprospectlist';
 	}
-	$title .= '  ('.$langs->trans("ThirdPartyProspects").')';
+	$titre .= '  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche = "card.php";
 }
 if ($type == "c") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactcustomerlist';
 	}
-	$title .= '  ('.$langs->trans("ThirdPartyCustomers").')';
+	$titre .= '  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche = "card.php";
 } elseif ($type == "f") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactsupplierlist';
 	}
-	$title .= ' ('.$langs->trans("ThirdPartySuppliers").')';
+	$titre .= ' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche = "card.php";
 } elseif ($type == "o") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactotherlist';
 	}
-	$title .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
+	$titre .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche = "";
 }
 
@@ -344,6 +344,8 @@ $contactstatic = new Contact($db);
 if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
 	$contactstatic->loadCacheOfProspStatus();
 }
+
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 // Select every potentiels, and note each potentiels which fit in search parameters
 $tab_level = array();
@@ -707,7 +709,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "contact";

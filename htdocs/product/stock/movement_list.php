@@ -630,18 +630,14 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 $i = 0;
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 if ($msid) {
-	$title = $langs->trans('StockMovementForId', $msid);
+	$texte = $langs->trans('StockMovementForId', $msid);
 } else {
-	$title = $langs->trans("ListOfStockMovements");
+	$texte = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		if (!empty($object->ref)) {
-			$title .= ' ('.$object->ref.')';
-		} else {
-			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
-		}
+		$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
 }
-llxHeader("", $title, $help_url);
+llxHeader("", $texte, $help_url);
 
 /*
  * Show tab only if we ask a particular warehouse
@@ -901,9 +897,9 @@ if ($id > 0) {
 }
 
 if ($id > 0) {
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 } else {
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 }
 
 // Add code for pre mass action (confirmation or email presend form)
