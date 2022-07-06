@@ -650,5 +650,7 @@ ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar
 
 ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
 
+ALTER TABLE llx_bom_bomline ADD COLUMN duration_unit varchar(6) DEFAULT NULL;
+
 
 

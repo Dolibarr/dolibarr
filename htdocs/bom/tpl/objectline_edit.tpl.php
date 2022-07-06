@@ -31,6 +31,9 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
+
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
@@ -45,6 +48,8 @@ if (empty($forceall)) {
 }
 
 if(empty($filtertype))	$filtertype = 0;
+
+$formproduct = new FormProduct($object->db);
 
 
 // Define colspan for the button 'Add'
@@ -135,20 +140,18 @@ if($filtertype != 1) {
 } else {
 
 	$coldisplay++;
-	print '<td class="nobottom nowrap linecolcostprice right">';
+	print '<td class="nobottom nowrap linecolunit right">';
+	print  $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
+	print '</td>';
+
+	$coldisplay++;
+	print '<td class="nobottom nowrap linecolworkstation right">';
 	print '</td>';
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolcostprice right">';
 	print '</td>';
 
-	$coldisplay++;
-	print '<td class="nobottom nowrap linecolcostprice right">';
-	print '</td>';
-
-	$coldisplay++;
-	print '<td class="nobottom nowrap linecolcostprice right">';
-	print '</td>';
 }
 
 $coldisplay += $colspan;

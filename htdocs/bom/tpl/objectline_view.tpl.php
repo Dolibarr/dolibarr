@@ -135,7 +135,16 @@ if($filtertype != 1) {
 	//Unité
 	print '<td class="linecolunit nowrap right">';
 	$coldisplay++;
-	echo $product->duration_unit;
+	if ($line->qty > 1) {
+		$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+	} elseif ($product->duration_value > 0) {
+		$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+	}
+	if(!empty($line->duration_unit)){
+		print (isset($dur[$line->duration_unit]) ? "&nbsp;".$langs->trans($dur[$line->duration_unit])."&nbsp;" : '');
+	} else {
+		print (!empty($product->duration_unit) && isset($dur[$product->duration_unit]) ? "&nbsp;" . $langs->trans($dur[$product->duration_unit]) . "&nbsp;" : '');
+	}
 	print '</td>';
 
 	//Poste de travail

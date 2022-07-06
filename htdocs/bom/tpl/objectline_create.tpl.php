@@ -29,6 +29,8 @@
  * $forceall (0 by default, 1 for supplier invoices/orders)
  */
 
+require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
@@ -47,6 +49,7 @@ if (!empty($object->element) && $object->element == 'contrat' && empty($conf->gl
 	$filtertype = -1;
 }
 
+$formproduct = new FormProduct($object->db);
 
 // Define colspan for the button 'Add'
 $colspan = 3; // Columns: total ht + col edit + col delete
@@ -159,12 +162,12 @@ if($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolcost right">';
-	print '&nbsp;';
+	print '<td class="bordertop nobottom nowrap linecolunit right">';
+	print  $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
 	print '</td>';
 
 	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolcost right">';
+	print '<td class="bordertop nobottom nowrap linecolworkstation right">';
 	print '&nbsp;';
 	print '</td>';
 

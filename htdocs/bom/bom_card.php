@@ -167,7 +167,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-
+		$duration_unit = GETPOST('duration_unit','alphanohtml');
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -191,6 +191,7 @@ if (empty($reshook)) {
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
 			$bomline->efficiency = $efficiency;
+			$bomline->duration_unit = $duration_unit;
 
 			// Rang to use
 			$rangmax = $object->line_max(0);
@@ -225,6 +226,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
+		$duration_unit = GETPOST('duration_unit','alphanohtml');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -237,6 +239,7 @@ if (empty($reshook)) {
 		$bomline->qty_frozen = (int) $qty_frozen;
 		$bomline->disable_stock_change = (int) $disable_stock_change;
 		$bomline->efficiency = $efficiency;
+		$bomline->duration_unit = $duration_unit;
 
 		$result = $bomline->update($user);
 		if ($result <= 0) {
@@ -577,7 +580,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Form to add new line
 			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
-					// Add products/services form
+					// Add products form
 
 
 					$parameters = array();
@@ -601,7 +604,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$filtertype = 1;
 
-
 		$res = $object->fetchLinesbytype(1);
 		$object->calculateCosts();
 
@@ -609,7 +611,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
 
 
-			print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
+			print '	<form name="addservice" id="addservice" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     		<input type="hidden" name="token" value="' . newToken() . '">
     		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
     		<input type="hidden" name="mode" value="">
@@ -633,11 +635,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Form to add new line
 			if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 				if ($action != 'editline') {
-					// Add products/services form
-
-
+					// Add services form
 					$parameters = array();
-					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('formAddObjectServiceLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 					if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					if (empty($reshook))
 						$object->formAddObjectLine(1, $mysoc, null, '/bom/tpl');
