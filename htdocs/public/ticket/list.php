@@ -659,9 +659,9 @@ if ($action == "view_ticketlist") {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 							if (!empty($arrayfields["ef.".$key]['checked'])) {
 								print '<td';
-								$align = $extrafields->getAlignFlag($key);
-								if ($align) {
-									print ' align="'.$align.'"';
+								$cssstring = $extrafields->getAlignFlag($key, $object->table_element);
+								if ($cssstring) {
+									print ' class="'.$cssstring.'"';
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;

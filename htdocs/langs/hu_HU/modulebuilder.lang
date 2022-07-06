@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Ezt az eszközt csak tapasztalt felhasználók vagy fejlesztők használhatják. Segédprogramokat biztosít saját modul létrehozásához vagy szerkesztéséhez. Az alternatív <a href="%s" target="_blank" rel="noopener noreferrer">kézi fejlesztés dokumentációja itt</a> található.
-EnterNameOfModuleDesc=Írja be a létrehozandó modul/alkalmazás nevét szóközök nélkül. Használjon nagybetűt a szavak elválasztásához (például: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Írja be a létrehozandó objektum nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: Saját tárgy, Tanuló, Tanár...). Létrejön a CRUD osztályfájl, de az API fájl, az objektum listázásához/adásához/szerkesztéséhez/törléséhez szükséges oldalak és az SQL-fájlok is.
+EnterNameOfModuleDesc=Írja be a létrehozandó modul/alkalmazás nevét szóközök nélkül. Használjon nagybetűket a szavak elválasztásához (például: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Írja be a létrehozandó objektum nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: Saját tárgy, Tanuló, Tanár...). Létrejön a CRUD osztályfájl, de az API fájl, az objektumok listázásához/adásához/szerkesztéséhez/törléséhez szükséges oldalak és SQL-fájlok is.
+EnterNameOfDictionaryDesc=Írja be a létrehozandó szótár nevét szóközök nélkül. A szavak elválasztásához használjon nagybetűt (például: MyDico...). Létrejön az osztályfájl, de az SQL fájl is.
 ModuleBuilderDesc2=A modulok létrehozásának/szerkesztésének elérési útja (első könyvtár a külső modulok számára, a(z) %s-ben): <strong>%s</strong>
 ModuleBuilderDesc3=Létrehozott/szerkeszthető modulok találhatók: <strong>%s</strong>
 ModuleBuilderDesc4=A modul „szerkeszthetőként” észlelhető, ha a(z) <strong>%s</strong> fájl létezik a modul könyvtárának gyökérkönyvtárában
 NewModule=Új modul
 NewObjectInModulebuilder=Új objektum
+NewDictionary=Új szótár
 ModuleKey=Modulkulcs
 ObjectKey=Objektumkulcs
+DicKey=Szótár kulcsa
 ModuleInitialized=A modul inicializálva
 FilesForObjectInitialized=Az új objektum '%s' fájljai inicializálva
 FilesForObjectUpdated=A '%s' objektum fájlok frissítve (.sql fájlok és .class.php fájl)

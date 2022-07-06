@@ -26,7 +26,7 @@ EventOrganizationDescriptionLong= イベントの構成を管理する（提案�
 EventOrganizationMenuLeft = 開催済イベント
 EventOrganizationConferenceOrBoothMenuLeft = 会議またはブース
 
-PaymentEvent=イベントの支払い
+PaymentEvent=イベントの支払
 
 #
 # Admin page
@@ -68,7 +68,7 @@ YourOrganizationEventConfRequestWasReceived = 会議要求は受信済
 YourOrganizationEventBoothRequestWasReceived = ブースの要望は受信済み
 EventOrganizationEmailAskConf = 会議の要求
 EventOrganizationEmailAskBooth = ブースのご要望
-EventOrganizationEmailBoothPayment = ブースのお支払い
+EventOrganizationEmailBoothPayment = ブースのお支払
 EventOrganizationEmailRegistrationPayment = イベントへの登録
 EventOrganizationMassEmailAttendees = 参加者へのコミュニケーション
 EventOrganizationMassEmailSpeakers = 話者とのコミュニケーション
@@ -134,8 +134,8 @@ DateMustBeAfterThan=%sは必ず%sの後
 NewSubscription=登録
 OrganizationEventConfRequestWasReceived=会議への提案を受け取った
 OrganizationEventBoothRequestWasReceived=ブースのご要望をいただいた
-OrganizationEventPaymentOfBoothWasReceived=ブースの支払いが記録された
-OrganizationEventPaymentOfRegistrationWasReceived=イベント登録の支払いが記録された
+OrganizationEventPaymentOfBoothWasReceived=ブースの支払が記録された
+OrganizationEventPaymentOfRegistrationWasReceived=イベント登録の支払が記録された
 OrganizationEventBulkMailToAttendees=これは、参加者としてのイベントへの参加を思い出させるものだ。
 OrganizationEventBulkMailToSpeakers=これは、スピーカーとしてのイベントへの参加を思い出させるものだ。
 OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライヤー、またはパートナー）へのリンク
@@ -157,10 +157,10 @@ VoteError = 投票中にエラーが発生した。もう一度やり直し願�
 SubscriptionOk = 登録は検証済
 ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確定
 Attendee = 参加者
-PaymentConferenceAttendee = 会議参加者の支払い
-PaymentBoothLocation = ブースの場所の支払い
+PaymentConferenceAttendee = 会議参加者の支払
+PaymentBoothLocation = ブースの場所の支払
 DeleteConferenceOrBoothAttendee=出席者を削除する
-RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と支払いは既に記録されている
+RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と支払は既に記録されている
 EmailAttendee=参加者の電子メール
 EmailCompanyForInvoice=法人の電子メール（請求書に対して、参加者の電子メールと異なる場合）
 ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。

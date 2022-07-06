@@ -67,7 +67,7 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
@@ -297,7 +297,7 @@ if (empty($reshook)) {
 	$permissiontoread = $user->rights->projet->lire;
 	$permissiontodelete = $user->rights->projet->supprimer;
 	$permissiontoadd = $user->rights->projet->creer;
-	$uploaddir = $conf->projet->dir_output;
+	$uploaddir = $conf->project->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
@@ -936,7 +936,7 @@ if (!empty($arrayfields['c.assigned']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1, 0);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100 nowrapoption', 1, 0);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {

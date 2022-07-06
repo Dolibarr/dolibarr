@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2020  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
+ * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
@@ -36,11 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if ($conf->contrat->enabled) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
@@ -65,6 +65,7 @@ $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
+$note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
 
 $error = 0;
@@ -79,6 +80,7 @@ $hookmanager->initHooks(array('interventioncard', 'globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
+$objectsrc = null;
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -392,11 +394,15 @@ if (empty($reshook)) {
 							}
 						}
 					} else {
-						$mesg = $srcobject->error;
+						$langs->load("errors");
+						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+						$action = 'create';
 						$error++;
 					}
 				} else {
-					$mesg = $object->error;
+					$langs->load("errors");
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'create';
 					$error++;
 				}
 			} else {
@@ -420,12 +426,14 @@ if (empty($reshook)) {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
 						$action = 'create';
+						$error++;
 					}
 				}
 			}
 		} else {
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 			$action = 'create';
+			$error++;
 		}
 	} elseif ($action == 'update' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;
@@ -776,10 +784,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if ($conf->contrat->enabled) {
+if (!empty($conf->contrat->enabled)) {
 	$formcontract = new FormContract($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -900,7 +908,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$formproject = new FormProjets($db);
 
 			$langs->load("project");
@@ -920,7 +928,7 @@ if ($action == 'create') {
 		}
 
 		// Contract
-		if ($conf->contrat->enabled) {
+		if (isModEnabled('contrat')) {
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
@@ -1054,9 +1062,7 @@ if ($action == 'create') {
 		print '</form>';
 	}
 } elseif ($id > 0 || !empty($ref)) {
-	/*
-	 * Affichage en mode visu
-	  */
+	// View mode
 
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -1153,7 +1159,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ficheinter->creer) {
@@ -1193,7 +1199,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES)) {
 		// Date Start
@@ -1222,12 +1228,12 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea');
 	print '</td><td>';
-	print $form->editfieldval("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea:8:80');
+	print $form->editfieldval("Description", 'description', $object->description, $object, $user->rights->ficheinter->creer, 'textarea:8');
 	print '</td>';
 	print '</tr>';
 
 	// Contract
-	if ($conf->contrat->enabled) {
+	if (!empty($conf->contrat->enabled)) {
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
@@ -1427,7 +1433,7 @@ if ($action == 'create') {
 
 					// Editeur wysiwyg
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', $objp->description, '', 164, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_2, '90%');
 					$doleditor->Create();
 
 					$objectline = new FichinterLigne($db);
@@ -1510,7 +1516,7 @@ if ($action == 'create') {
 				// editeur wysiwyg
 				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, !empty($conf->global->FCKEDITOR_ENABLE_DETAILS), ROWS_2, '90%');
 					$doleditor->Create();
 				}
 
@@ -1651,7 +1657,7 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->facture->creer) {

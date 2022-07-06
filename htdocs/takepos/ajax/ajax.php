@@ -103,7 +103,7 @@ if ($action == 'getProducts') {
 				'rowid' => $thirdparty->id,
 				'name' => $thirdparty->name,
 				'barcode' => $thirdparty->barcode,
-		  'object' => 'thirdparty'
+				'object' => 'thirdparty'
 			);
 			echo json_encode($rows);
 			exit;
@@ -267,6 +267,7 @@ if ($action == 'getProducts') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$rows = array();
+
 		while ($obj = $db->fetch_object($resql)) {
 			$objProd = new Product($db);
 			$objProd->fetch($obj->rowid);
@@ -303,17 +304,23 @@ if ($action == 'getProducts') {
 			$parameters=array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-
 			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
 			if ($reshook > 0) {
 				// replace
-				$row = $hookmanager->resArray;
+				if (count($hookmanager->resArray)) {
+					$row = $hookmanager->resArray;
+				} else {
+					$row = array();
+				}
 			} else {
 				// add
-				$rows[] = $hookmanager->resArray;
+				if (count($hookmanager->resArray)) {
+					$rows[] = $hookmanager->resArray;
+				}
+				$rows[] = $row;
 			}
-			$rows[] = $row;
 		}
+
 		echo json_encode($rows);
 	} else {
 		echo 'Failed to search product : '.$db->lasterror();

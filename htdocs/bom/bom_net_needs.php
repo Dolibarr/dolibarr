@@ -188,7 +188,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
 	$viewlink .= dolGetButtonTitle($langs->trans('TreeStructure'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
-	print load_fiche_titre($langs->trans("BillOfMaterials"), $viewlink, 'cubes');
+	print load_fiche_titre($langs->trans("BOMNetNeeds"), $viewlink, '');
 
 	/*
 	 * Lines

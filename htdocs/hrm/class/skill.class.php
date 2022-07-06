@@ -119,7 +119,7 @@ class Skill extends CommonObject
 		'required_level' => array('type'=>'integer', 'label'=>'requiredLevel', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0,),
 		'date_validite' => array('type'=>'integer', 'label'=>'date_validite', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>0,),
 		'temps_theorique' => array('type'=>'double(24,8)', 'label'=>'temps_theorique', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>0,),
-		'skill_type' => array('type'=>'integer', 'label'=>'SkillType', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'knowHow', '1'=>'HowToBe', '9'=>'knowledge'), 'default'=>0),
+		'skill_type' => array('type'=>'integer', 'label'=>'SkillType', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'css'=>'minwidth200', 'arrayofkeyval'=>array('0'=>'TypeKnowHow', '1'=>'TypeHowToBe', '9'=>'TypeKnowledge'), 'default'=>0),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
 	);
@@ -924,27 +924,11 @@ class Skill extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -1123,9 +1107,9 @@ class Skill extends CommonObject
 		global $langs;
 		$result = '';
 		switch ($code) {
-			case 0 : $result = $langs->trans("knowHow"); break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("HowToBe"); break; // "Savoir être"
-			case 9 : $result = $langs->trans("knowledge"); break; //"Savoir"
+			case 0 : $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
+			case 1 : $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
+			case 9 : $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
 		}
 		return $result;
 	}

@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Regnskabskonto til registrering af donationer
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskabskonto for at registrere abonnementer
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Regnskabskonto er som standard for at registrere kundeindbetaling
+UseAuxiliaryAccountOnCustomerDeposit=Brug underkonti på kundeindskudslinjer
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskabskonto som standard for de købte produkter (bruges hvis ikke defineret i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskabskonto som standard for de købte produkter i EØF (brugt, hvis ikke defineret i produktarket)
@@ -289,7 +290,7 @@ ValidateHistory=Automatisk Bogføring
 AutomaticBindingDone=Automatiske bindinger udført (%s) - Automatisk binding er ikke mulig for nogle poster (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl. Du kan ikke slette denne regnskabskonto, fordi den er i brug
-MvtNotCorrectlyBalanced=Bevægelsen er ikke korrekt afbalanceret. Debet = %s | Kredit = %s
+MvtNotCorrectlyBalanced=Bevægelse ikke korrekt afbalanceret. Debet = %s & Kredit = %s
 Balancing=Balancing
 FicheVentilation=Bogførings Oversigt
 GeneralLedgerIsWritten=Transaktionerne er blevet bogført

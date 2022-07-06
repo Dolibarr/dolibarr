@@ -86,7 +86,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 
 	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
 	print "<br>";
-} elseif ($conf->accounting->enabled) {
+} elseif (!empty($conf->accounting->enabled)) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)

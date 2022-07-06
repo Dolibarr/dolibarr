@@ -240,7 +240,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
-	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
+	//print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
 	$parentfortableentity = '';
@@ -536,8 +536,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->facture->creer) {
 					$deleteok = 0;
 				}
-			} elseif ($feature == 'payment') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
-				if (!$user->rights->facture->creer) {
+			} elseif ($feature == 'payment') {
+				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
@@ -774,7 +774,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject)) {
-			if (!empty($conf->projet->enabled) && empty($user->rights->projet->all->lire)) {
+			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -795,7 +795,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask)) {
-			if (!empty($conf->projet->enabled) && empty($user->rights->projet->all->lire)) {
+			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;
@@ -976,4 +976,71 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		llxFooter();
 	}
 	exit(0);
+}
+
+
+/**
+ *	Return the max allowed for file upload.
+ *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
+ *
+ *  @return	array		Array with all max size for file upload
+ */
+function getMaxFileSizeArray()
+{
+	global $conf;
+
+	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$maxphp = @ini_get('upload_max_filesize'); // In unknown
+	if (preg_match('/k$/i', $maxphp)) {
+		$maxphp = preg_replace('/k$/i', '', $maxphp);
+		$maxphp = $maxphp * 1;
+	}
+	if (preg_match('/m$/i', $maxphp)) {
+		$maxphp = preg_replace('/m$/i', '', $maxphp);
+		$maxphp = $maxphp * 1024;
+	}
+	if (preg_match('/g$/i', $maxphp)) {
+		$maxphp = preg_replace('/g$/i', '', $maxphp);
+		$maxphp = $maxphp * 1024 * 1024;
+	}
+	if (preg_match('/t$/i', $maxphp)) {
+		$maxphp = preg_replace('/t$/i', '', $maxphp);
+		$maxphp = $maxphp * 1024 * 1024 * 1024;
+	}
+	$maxphp2 = @ini_get('post_max_size'); // In unknown
+	if (preg_match('/k$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+		$maxphp2 = $maxphp2 * 1;
+	}
+	if (preg_match('/m$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+		$maxphp2 = $maxphp2 * 1024;
+	}
+	if (preg_match('/g$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+		$maxphp2 = $maxphp2 * 1024 * 1024;
+	}
+	if (preg_match('/t$/i', $maxphp2)) {
+		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+	}
+	// Now $max and $maxphp and $maxphp2 are in Kb
+	$maxmin = $max;
+	$maxphptoshow = $maxphptoshowparam = '';
+	if ($maxphp > 0) {
+		$maxmin = min($maxmin, $maxphp);
+		$maxphptoshow = $maxphp;
+		$maxphptoshowparam = 'upload_max_filesize';
+	}
+	if ($maxphp2 > 0) {
+		$maxmin = min($maxmin, $maxphp2);
+		if ($maxphp2 < $maxphp) {
+			$maxphptoshow = $maxphp2;
+			$maxphptoshowparam = 'post_max_size';
+		}
+	}
+	//var_dump($maxphp.'-'.$maxphp2);
+	//var_dump($maxmin);
+
+	return array('max'=>$max, 'maxmin'=>$maxmin, 'maxphptoshow'=>$maxphptoshow, 'maxphptoshowparam'=>$maxphptoshowparam);
 }

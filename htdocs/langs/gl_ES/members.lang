@@ -218,3 +218,5 @@ XExternalUserCreated=%s usuarios externos creados
 ForceMemberNature=Natureza do membro  (física ou xurídica) 
 CreateDolibarrLoginDesc=A creación dun inicio de sesión de usuario para os membros permítelles conectarse á aplicación. Dependendo das autorizacións concedidas, poderán, por exemplo, consultar eles mesmos o seu ficheiro. 
 CreateDolibarrThirdPartyDesc=Un terceiro é a persoa xurídica que se usará na factura se decide xerar factura por cada achega. Poderá crealo máis tarde durante o proceso de gravación da achega. 
+MemberFirstname=Nome do membro
+MemberLastname=Apelido do membro

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004-2020 Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@open-dsi.fr>
- * Copyright (C) 2021      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -53,6 +53,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$lineid = GETPOST('lineid', 'int');
 
 $fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
@@ -332,7 +333,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $bankaccountstatic = new Account($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -406,7 +407,7 @@ if ($action == 'create') {
 	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		// Associated project
@@ -539,7 +540,7 @@ if ($id > 0) {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->tax->charges->creer) {
@@ -551,11 +552,11 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', 0, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1);
 				}
 			} else {
 				if (!empty($object->fk_project)) {

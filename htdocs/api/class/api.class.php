@@ -88,9 +88,9 @@ class DolibarrApi
 		// phpcs:enable
 		// TODO Use type detected in $object->fields
 		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
-			return checkVal($value, 'restricthtml');
+			return sanitizeVal($value, 'restricthtml');
 		} else {
-			return checkVal($value, 'alphanohtml');
+			return sanitizeVal($value, 'alphanohtml');
 		}
 	}
 

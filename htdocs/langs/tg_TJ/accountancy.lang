@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Ҳисоби баҳисобгирӣ барои бақ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Ҳисоби баҳисобгирӣ барои бақайдгирии обунаҳо
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Ҳисоби баҳисобгирӣ бо нобаёнӣ барои бақайдгирии пасандози муштарӣ
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти харидашуда (агар дар варақаи маҳсулот муайян нашуда бошад) истифода мешавад
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Ҳисоби баҳисобгирии муҳосибӣ барои маҳсулоти харидашуда дар EEC (агар дар варақаи маҳсулот муайян нашуда бошад)
@@ -289,7 +290,7 @@ ValidateHistory=Ба таври худкор пайваст кунед
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Хато, шумо наметавонед ин ҳисоби баҳисобгириро нест кунед, зеро он истифода мешавад
-MvtNotCorrectlyBalanced=Ҳаракат дуруст тавозун нашудааст. Дебет = %s | Кредит = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Тавозун
 FicheVentilation=Корти ҳатмӣ
 GeneralLedgerIsWritten=Амалиётҳо дар дафтар навишта мешаванд

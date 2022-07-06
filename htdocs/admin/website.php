@@ -95,7 +95,7 @@ $tabfield[1] = "ref,description,virtualhost,position,date_creation";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
-$tabfieldvalue[1] = "ref,description,virtualhost,position";
+$tabfieldvalue[1] = "ref,description,virtualhost,position,entity";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert = array();

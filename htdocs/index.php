@@ -145,7 +145,6 @@ $boxstatFromHook = '';
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 // Dolibarr Working Board with weather
-
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
@@ -156,21 +155,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	// Number of actions to do (late)
-	if (!empty($conf->agenda->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->rights->agenda->myactions->read) {
+	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->rights->agenda->myactions->read) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$board = new ActionComm($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of project opened
-	if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->rights->projet->lire) {
+	if (!empty($conf->project->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->rights->projet->lire) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$board = new Project($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of tasks to do (late)
-	if (!empty($conf->projet->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire) {
+	if (!empty($conf->project->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$board = new Task($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -229,7 +228,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of invoices customers (paid)
-	if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->facture->lire) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$board = new Facture($db);
 		$dashboardlines[$board->element] = $board->load_board($user);

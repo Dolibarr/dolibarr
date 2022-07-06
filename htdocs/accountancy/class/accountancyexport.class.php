@@ -111,7 +111,7 @@ class AccountancyExport
 	 */
 	public function getType()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$listofexporttypes = array(
 			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
@@ -137,7 +137,7 @@ class AccountancyExport
 		);
 
 		// allow modules to define export formats
-		global $hookmanager;
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
 
 		ksort($listofexporttypes, SORT_NUMERIC);

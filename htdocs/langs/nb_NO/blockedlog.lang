@@ -52,6 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Liste over land der bruken av denne module
 OnlyNonValid=Ikke gyldig
 TooManyRecordToScanRestrictFilters=For mange poster å skanne/analysere. Vennligst begrens listen med mer restriktive filtre.
 RestrictYearToExport=Begrens måned/år å eksportere
-BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogEnabled=System for å spore hendelser inn i uforanderlige logger er aktivert
 BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
 BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

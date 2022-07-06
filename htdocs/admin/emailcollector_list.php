@@ -205,7 +205,7 @@ $form = new Form($db);
 $now = dol_now();
 
 $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("EmailCollector"));
+$title = $langs->trans('EmailCollectors');
 $morejs = array();
 $morecss = array();
 
@@ -279,7 +279,7 @@ foreach ($object->fields as $key => $val) {
 	$sql .= "t.".$db->escape($key).", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 	}

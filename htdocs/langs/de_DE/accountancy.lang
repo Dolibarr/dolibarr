@@ -50,7 +50,7 @@ CountriesExceptMe=Alle Länder außer %s
 AccountantFiles=Belegdokumente exportieren
 ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (CSV-Liste und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet werden.
 ExportAccountingSourceDocHelp2=Um Ihre Journale zu exportieren, verwenden Sie den Menüeintrag %s - %s.
-VueByAccountAccounting=Ansicht nach Buchhaltungskonto
+VueByAccountAccounting=Ansicht nach Buchungskonto
 VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 
 MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
@@ -91,7 +91,7 @@ TheJournalCodeIsNotDefinedOnSomeBankAccount=Eine erforderliche Einrichtung wurde
 Selectchartofaccounts=Aktiven Kontenplan wählen
 ChangeAndLoad=ändern & laden
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
-AccountAccounting=Buchhaltungskonto
+AccountAccounting=Buchungskonto
 AccountAccountingShort=Konto
 SubledgerAccount=Nebenbuchkonto
 SubledgerAccountLabel=Nebenbuchkonto-Bezeichnung
@@ -99,7 +99,7 @@ ShowAccountingAccount=Buchhaltungskonten anzeigen
 ShowAccountingJournal=Buchhaltungsjournal anzeigen
 ShowAccountingAccountInLedger=Buchhaltungskonto im Hauptbuch anzeigen
 ShowAccountingAccountInJournals=Buchhaltungskonto in Journalen anzeigen
-AccountAccountingSuggest=Vorgeschlagenes Buchhaltungskonto
+AccountAccountingSuggest=Vorgeschlagenes Buchungskonto
 MenuDefaultAccounts=Standardkonten
 MenuBankAccounts=Bankkonten
 MenuVatAccounts=Umsatzsteuerkonten
@@ -108,8 +108,8 @@ MenuExpenseReportAccounts=Spesenkonten
 MenuLoanAccounts=Darlehens-Konten
 MenuProductsAccounts=Produkterlöskonten
 MenuClosureAccounts=Abschlusskonten
-MenuAccountancyClosure=Abschluss
-MenuAccountancyValidationMovements=Buchungen validieren
+MenuAccountancyClosure=Jahresabschluss
+MenuAccountancyValidationMovements=Buchungen freigeben
 ProductsBinding=Produktkonten
 TransferInAccounting=Übernahme in die Buchhaltung
 RegistrationInAccounting=Erfassung in der Buchhaltung
@@ -123,7 +123,7 @@ ValidTransaction=Transaktion bestätigen
 WriteBookKeeping=Transaktionen in der Buchhaltung erfassen
 Bookkeeping=Hauptbuch
 BookkeepingSubAccount=Nebenbuch
-AccountBalance=Saldo Sachkonten
+AccountBalance=Summen und Salden
 ObjectsRef=Quellreferenz
 CAHTF=Gesamtbetrag Lieferant vor Steuern
 TotalExpenseReport=Gesamtausgaben Spesenabrechnung
@@ -131,8 +131,8 @@ InvoiceLines=Rechnungszeilen verbinden
 InvoiceLinesDone=verbundene Rechnungszeilen
 ExpenseReportLines=Noch nicht zugeordnete Zeilen aus Spesenabrechnungen
 ExpenseReportLinesDone=Zugeordnete Zeilen aus Spesenabrechnungen
-IntoAccount=Buchhaltungskonto zuordnen
-TotalForAccount=Buchhaltungskonto Summe
+IntoAccount=Buchungskonto zuordnen
+TotalForAccount=Buchungskonto Summe
 
 
 Ventilate=zuordnen
@@ -179,9 +179,10 @@ TransitionalAccount=Überweisungskonto
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Buchhaltungskonto in Wartestellung
 DONATION_ACCOUNTINGACCOUNT=Buchhaltungskonto für Spenden
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Buchhaltungskonto für Abonnements
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Buchungskonto für Abonnements
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standard-Buchhaltungskonto zur Registrierung der Kundeneinzahlung
+UseAuxiliaryAccountOnCustomerDeposit=Für Kundenzahlungen Unterkonten verwenden
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard-Buchhaltungskonto für gekaufte Produkte \n(wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Standardmäßig Buchhaltungskonto für die gekauften Produkte in der EU (wird verwendet, wenn nicht im Produktblatt definiert)
@@ -201,15 +202,15 @@ Doctype=Dokumententyp
 Docdate=Datum
 Docref=Referenz
 LabelAccount=Konto-Beschriftung
-LabelOperation=Bezeichnung der Operation
+LabelOperation=Buchungstext
 Sens=Richtung
-AccountingDirectionHelp=Verwenden Sie für ein Buchhaltungskonto eines Kunden Guthaben, um eine Zahlung zu erfassen, die Sie erhalten haben. <br> Verwenden Sie für ein Buchhaltungskonto eines Lieferanten Debit, um eine von Ihnen geleistete Zahlung zu erfassen
+AccountingDirectionHelp=Verwenden Sie für ein Buchhaltungskonto eines Kunden "Haben", um eine Zahlung zu erfassen, die Sie erhalten haben. <br> Verwenden Sie für ein Buchhaltungskonto eines Lieferanten "Soll", um eine von Ihnen geleistete Zahlung zu erfassen
 LetteringCode=Beschriftungscode
 Lettering=Beschriftung
 Codejournal=Journal
 JournalLabel=Journal-Bezeichnung
 NumPiece=Teilenummer
-TransactionNumShort=Anz. Buchungen
+TransactionNumShort=Buchungsnr.
 AccountingCategory=Benutzerdefinierte Gruppe
 GroupByAccountAccounting=Gruppieren nach Hauptbuchkonto
 GroupBySubAccountAccounting=Gruppieren nach Nebenbuchkonto
@@ -279,17 +280,17 @@ DescVentilDoneExpenseReport=Liste der Aufwendungen aus Spesenabrechnungen und ih
 
 Closure=Jahresabschluss
 DescClosure=Informieren Sie sich hier über die Anzahl der Buchungen pro Monat, die noch nicht validiert und festgeschrieben sind.
-OverviewOfMovementsNotValidated=Übersicht der nicht validierten und festgeschriebenen Buchungen
+OverviewOfMovementsNotValidated=Übersicht der noch nicht festgeschriebenen Buchungen
 AllMovementsWereRecordedAsValidated=Alle Buchungen wurden als validiert und festgeschrieben aufgezeichnet
 NotAllMovementsCouldBeRecordedAsValidated=Nicht alle Buchungen konnten als validiert und festgeschrieben erfasst werden
-ValidateMovements=Datensatz validieren und sperren...
-DescValidateMovements=Jegliche Änderung oder Löschung des Schreibens, Beschriftens und Löschens ist untersagt. Alle Eingaben für eine Übung müssen validiert werden, da sonst ein Abschluss nicht möglich ist
+ValidateMovements=Buchungen festschreiben...
+DescValidateMovements=Es sind danach keinerlei Änderungen oder Löschungen mehr möglich. Alle Buchungssätze müssen festgeschrieben werden, andernfalls ist kein Abschluss möglich
 
-ValidateHistory=automatisch zuordnen
+ValidateHistory=Automatisch zuordnen
 AutomaticBindingDone=Automatische Zuordnungen durchgeführt (%s) - Automatische Zuordnung für einige Datensätze nicht möglich (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchhaltungskonto nicht löschen, da es benutzt wird.
-MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
+MvtNotCorrectlyBalanced=Buchungssalden nicht ausgeglichen. Soll = %s & Haben = %s
 Balancing=Abschluss
 FicheVentilation=Zuordnungs Karte
 GeneralLedgerIsWritten=Transaktionen werden ins Hauptbuch geschrieben
@@ -331,8 +332,8 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Ü
 
 ## Export
 NotifiedExportDate=Exportierte Zeilen als exportiert kennzeichnen <span class="warning">(um eine Zeile zu ändern, müssen Sie die gesamte Transaktion löschen und erneut in die Buchhaltung übertragen)</span>
-NotifiedValidationDate=Validieren und sperren der exportierten Einträge <span class="warning">(gleiche Wirkung wie die "Abschluss"-Funktion, Änderungen und Löschungen der Zeilen sind DEFINITIV NICHT möglich)</span>
-DateValidationAndLock=Datumsvalidierung und Sperre
+NotifiedValidationDate=Festschreiben der exportierten Einträge <span class="warning">(gleiche Wirkung wie die "Abschluss"-Funktion, Änderungen und Löschungen der Zeilen sind DEFINITIV NICHT möglich)</span>
+DateValidationAndLock=Datum Festschreibung
 ConfirmExportFile=Bestätigung der Generierung der Buchhaltungsexportdatei ?
 ExportDraftJournal=Entwurfsjournal exportieren
 Modelcsv=Datenformat für den Export

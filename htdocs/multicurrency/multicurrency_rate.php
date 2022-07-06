@@ -66,7 +66,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "cr.date_sync";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortorder) $sortorder = "DESC";
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
@@ -106,13 +106,27 @@ if (!$user->admin || empty($conf->multicurrency->enabled)) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
  */
 
 if ($action == "create") {
-	if (!empty($rateinput)) {
+	if (empty($multicurrency_code) || $multicurrency_code == '-1') {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, "errors");
+		$error++;
+	}
+	if ($rateinput === '0') {
+		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
+		$error++;
+	} elseif (empty($rateinput)) {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, "errors");
+		$error++;
+	}
+
+	if (!$error) {
 		$currencyRate_static = new CurrencyRate($db);
 		$currency_static = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
@@ -129,8 +143,6 @@ if ($action == "create") {
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
 			setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
 		}
-	} else {
-		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 	}
 }
 
@@ -261,7 +273,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<td> '.$langs->trans('Currency').'</td>';
 	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
 
-	print ' <td>'.$langs->trans('Rate').'</td>';
+	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
 
 	print '<td>';
@@ -280,7 +292,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 
 
-$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
+$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -496,7 +508,8 @@ if ($resql) {
 			// code
 			if (! empty($arrayfields['m.code']['checked'])) {
 				print '<td class="tdoverflowmax200">';
-				print $obj->code." ".$obj->name;
+				print $obj->code;
+				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
 				print "</td>\n";
 
 				if (! $i) $totalarray['nbfield']++;
