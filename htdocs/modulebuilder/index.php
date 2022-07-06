@@ -344,7 +344,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'Editor name'=>$editorname,
 				'https://www.example.com'=>$editorurl,
 				'1.0'=>$version,
-				'idpicto'=>$picto,
+				'idpicto'=>(empty($picto)) ? 'generic' : $picto,
 				"modulefamily" =>$family,
 				500000=>$idmodule
 			);
