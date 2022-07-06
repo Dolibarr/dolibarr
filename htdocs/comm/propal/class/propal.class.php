@@ -1411,6 +1411,9 @@ class Propal extends CommonObject
 							$line->subprice = $pu_ht;
 							$line->tva_tx = $tva_tx;
 							$line->remise_percent = $remise_percent;
+							// Update also cost price
+							$result = $object->defineBuyPrice($line->subprice, $line->remise_percent, $line->fk_product);
+							if ($result > 0)	$line->pa_ht = $result;
 						}
 					}
 				}
