@@ -92,14 +92,14 @@ class DoliDBMysqli extends DoliDB
 		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
 		$this->db = $this->connect($host, $user, $pass, '', $port);
 
-		if ($this->db->connect_errno) {
-			$this->connected = false;
-			$this->ok = false;
-			$this->error = $this->db->connect_error;
-			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
-		} else {
+		if ($this->db && empty($this->db->connect_errno)) {
 			$this->connected = true;
 			$this->ok = true;
+		} else {
+			$this->connected = false;
+			$this->ok = false;
+			$this->error = empty($this->db) ? 'Failed to connect' : $this->db->connect_error;
+			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
 		}
 
 		// If server connection is ok, we try to connect to the database
@@ -204,7 +204,12 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-		return $this->db->select_db($database);
+		$result = false;
+		try {
+			$result = $this->db->select_db($database);
+		} catch (Exception $e) {
+		}
+		return $result;
 	}
 
 
@@ -216,7 +221,7 @@ class DoliDBMysqli extends DoliDB
 	 * @param   string  $passwd Password
 	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
 	 * @param   integer $port 	Port of database server
-	 * @return  mysqli  		Database access object
+	 * @return  mysqli|null		Database access object
 	 * @see close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -228,7 +233,13 @@ class DoliDBMysqli extends DoliDB
 		// Can also be
 		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
-		return new mysqli($host, $login, $passwd, $name, $port);
+		$tmp = false;
+		try {
+			$tmp = new mysqli($host, $login, $passwd, $name, $port);
+		} catch (Exception $e) {
+			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
+		}
+		return $tmp;
 	}
 
 	/**

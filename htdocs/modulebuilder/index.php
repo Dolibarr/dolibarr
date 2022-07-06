@@ -2281,6 +2281,13 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '<tr><td>';
+					print $langs->trans("Picto");
+					print '</td><td>';
+					print $moduleobj->picto;
+					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+					print '</td></tr>';
+
+					print '<tr><td>';
 					print $langs->trans("Description");
 					print '</td><td>';
 					print $moduleobj->getDesc();

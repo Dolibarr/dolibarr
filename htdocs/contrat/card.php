@@ -1285,9 +1285,8 @@ if ($action == 'create') {
 		// Print form confirm
 		print $formconfirm;
 
-		/*
-		 *   Contrat
-		 */
+
+		// Contract
 		if (!empty($object->brouillon) && $user->rights->contrat->creer) {
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';

@@ -234,6 +234,12 @@ abstract class Stats
 	}
 
 	/**
+	 * @param	int     $year           year number
+	 * @return 	int						value
+	 */
+	protected abstract function getAverageByMonth($year);
+
+	/**
 	 * Return average of entity by month for several years
 	 *
 	 * @param	int		$endyear		Start year

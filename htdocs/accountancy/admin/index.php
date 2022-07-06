@@ -358,7 +358,7 @@ foreach ($list as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="right">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+	print '<input type="text" class="maxwidth50 right" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 
 	print '</td>';
 	print '</tr>';

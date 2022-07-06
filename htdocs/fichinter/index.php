@@ -149,7 +149,7 @@ if ($resql) {
 	foreach ($listofstatus as $status) {
 		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
-			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
+			print '<td>'.$fichinterstatic->LibStatut($status, 0).'</td>';
 			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
 			print $fichinterstatic->LibStatut($status, 3);
 			print '</a>';

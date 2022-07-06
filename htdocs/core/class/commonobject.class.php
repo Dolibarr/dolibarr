@@ -169,13 +169,13 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
-	 * @var Project The related project
+	 * @var Project 	The related project object
 	 * @see fetch_projet()
 	 */
 	public $project;
 
 	/**
-	 * @var int The related project ID
+	 * @var int 		The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
@@ -188,24 +188,24 @@ abstract class CommonObject
 
 	/**
 	 * @deprecated
-	 * @see fk_project
+	 * @see $fk_project
 	 */
 	public $fk_projet;
 
 	/**
-	 * @var Contact a related contact
+	 * @var Contact 	A related contact object
 	 * @see fetch_contact()
 	 */
 	public $contact;
 
 	/**
-	 * @var int The related contact ID
+	 * @var int 		The related contact ID
 	 * @see fetch_contact()
 	 */
 	public $contact_id;
 
 	/**
-	 * @var Societe A related thirdparty
+	 * @var Societe 	A related thirdparty object
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
@@ -254,7 +254,7 @@ abstract class CommonObject
 	public $newref;
 
 	/**
-	 * @var int The object's status
+	 * @var int The object's status. Prefer use of status.
 	 * @see setStatut()
 	 */
 	public $statut;
@@ -264,6 +264,7 @@ abstract class CommonObject
 	 * @see setStatut()
 	 */
 	public $status;
+
 
 	/**
 	 * @var string
@@ -318,6 +319,7 @@ abstract class CommonObject
 	 * @see getFullAddress(), $region_id, $region_code
 	 */
 	public $region;
+
 
 	/**
 	 * @var int
@@ -518,6 +520,56 @@ abstract class CommonObject
 	 */
 	public $date_modification; // Date last change (tms field)
 
+	/**
+	 * @var integer|string $date_cloture;
+	 */
+	public $date_cloture; // Date closing (tms field)
+
+	/**
+	 * @var User|int	User author/creation
+	 * @TODO Merge with user_creation
+	 */
+	public $user_author;
+	/**
+	 * @var User|int	User author/creation
+	 * @TODO Remove type id
+	 */
+	public $user_creation;
+	/**
+	 * @var int			User id author/creation
+	 */
+	public $user_creation_id;
+
+	/**
+	 * @var User|int	User of validation
+	 * @TODO Merge with user_validation
+	 */
+	public $user_valid;
+	/**
+	 * @var User|int	User of validation
+	 * @TODO Remove type id
+	 */
+	public $user_validation;
+	/**
+	 * @var int			User id of validation
+	 */
+	public $user_validation_id;
+	/**
+	 * @var int			User id closing object
+	 */
+	public $user_closing_id;
+
+	/**
+	 * @var User|int	User last modifier
+	 * @TODO Remove type id
+	 */
+	public $user_modification;
+	/**
+	 * @var int			User id last modifier
+	 */
+	public $user_modification_id;
+
+
 	public $next_prev_filter;
 
 	/**
@@ -534,6 +586,7 @@ abstract class CommonObject
 	 * @var	float	Amount already paid (used to show correct status)
 	 */
 	public $alreadypaid;
+
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -4291,7 +4344,7 @@ abstract class CommonObject
 		if ($elementTable == 'commande_fournisseur_dispatch') {
 			$fieldstatus = "status";
 		}
-		if (is_array($this->fields) && array_key_exists('status', $this->fields)) {
+		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
 		}
 
@@ -6854,15 +6907,15 @@ abstract class CommonObject
 			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
+			foreach ($param['options'] as $keyb => $valb) {
+				if ((string) $keyb == '') {
 					continue;
 				}
-				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
+				if (strpos($valb, "|") !== false) list($valb, $parent) = explode('|', $valb);
+				$out .= '<option value="'.$keyb.'"';
+				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-				$out .= '>'.$val.'</option>';
+				$out .= '>'.$valb.'</option>';
 			}
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
@@ -7031,12 +7084,12 @@ abstract class CommonObject
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, $morecss, 0, '100%');
 		} elseif ($type == 'radio') {
 			$out = '';
-			foreach ($param['options'] as $keyopt => $val) {
+			foreach ($param['options'] as $keyopt => $valopt) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$valopt.'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -7396,8 +7449,10 @@ abstract class CommonObject
 		}
 
 		// Format output value differently according to properties of field
-		if ($key == 'ref' && method_exists($this, 'getNomUrl')) {
-			$value = $this->getNomUrl(1, '', 0, '', 1);
+		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
+				$value = $this->getNomUrl(1, '', 0, '', 1);
+			}
 		} elseif ($key == 'status' && method_exists($this, 'getLibStatut')) {
 			$value = $this->getLibStatut(3);
 		} elseif ($type == 'date') {
@@ -8126,8 +8181,13 @@ abstract class CommonObject
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
+						if ($tpl_context != "public") {	// Public page : red dot instead of fieldrequired characters
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
+								$out .= ' fieldrequired';
+							}
+						}
+						$out .= '">';
 						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
@@ -8137,10 +8197,6 @@ abstract class CommonObject
 								$out .= '&nbsp;<span style="color: red">*</span>';
 							}
 						} else {
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= ' fieldrequired';
-							}
-							$out .= '">';
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
 								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							} else {
@@ -8486,8 +8542,6 @@ abstract class CommonObject
 			foreach ($filearray as $key => $val) {
 				$photo = '';
 				$file = $val['name'];
-
-				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
 
 				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
 				if (image_format_supported($file) >= 0) {
