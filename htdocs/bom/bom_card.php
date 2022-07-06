@@ -546,15 +546,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 * Lines
 	 */
 
-
 	if (!empty($object->table_element_line)) {
 
-		print load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
-
-		$res = $object->fetchLinesbytype(0);
+		//Products
+		$res = $object->fetchLinesbytypeproduct(0);
 		$object->calculateCosts();
 
 		if($res > 0) {
+
+			print load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
 
 			print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     	<input type="hidden" name="token" value="' . newToken() . '">
@@ -602,9 +602,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		}
 
+		//Services
 		$filtertype = 1;
-
-		$res = $object->fetchLinesbytype(1);
+		$res = $object->fetchLinesbytypeproduct(1);
 		$object->calculateCosts();
 
 		if($res > 0) {

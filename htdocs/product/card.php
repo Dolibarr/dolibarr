@@ -2496,7 +2496,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if($object->isService() && $conf->workstation->enabled) {
 				$workstation = new Workstation($db);
-				$workstation->fetch($object->fk_default_workstation);
+				$res = $workstation->fetch($object->fk_default_workstation);
 
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');

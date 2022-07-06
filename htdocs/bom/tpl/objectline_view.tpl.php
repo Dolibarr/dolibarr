@@ -129,32 +129,29 @@ if($filtertype != 1) {
 	echo $line->efficiency;
 	print '</td>';
 } else {
-	$product = new Product($object->db);
-	$res = $product->fetch($line->fk_product);
-
 	//Unité
 	print '<td class="linecolunit nowrap right">';
 	$coldisplay++;
 	if ($line->qty > 1) {
 		$dur = array("s"=>$langs->trans("Seconds"), "i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-	} elseif ($product->duration_value > 0) {
+	} elseif ($tmpproduct->duration_value > 0) {
 		$dur = array("s"=>$langs->trans("Second"), "i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 	}
 	if(!empty($line->duration_unit)){
 		print (isset($dur[$line->duration_unit]) ? "&nbsp;".$langs->trans($dur[$line->duration_unit])."&nbsp;" : '');
 	} else {
-		print (!empty($product->duration_unit) && isset($dur[$product->duration_unit]) ? "&nbsp;" . $langs->trans($dur[$product->duration_unit]) . "&nbsp;" : '');
+		print (!empty($tmpproduct->duration_unit) && isset($dur[$tmpproduct->duration_unit]) ? "&nbsp;" . $langs->trans($dur[$tmpproduct->duration_unit]) . "&nbsp;" : '');
 	}
 	print '</td>';
 
 	//Poste de travail
 	if($conf->workstation->enabled) {
 		$workstation = new Workstation($object->db);
-		$workstation->fetch($product->fk_default_workstation);
+		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
 		print '<td class="linecolunit nowrap right">';
 		$coldisplay++;
-		echo $workstation->getNomUrl();
+		if($res > 0) echo $workstation->getNomUrl();
 		print '</td>';
 	}
 }

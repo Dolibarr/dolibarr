@@ -17,8 +17,8 @@
  */
 
 /**
- *	\file       htdocs/public/ticket/ajax/ajax.php
- *	\brief      Ajax component for Ticket.
+ *	\file       htdocs/bom/ajax/ajax.php
+ *	\brief      Ajax component for BOM.
  */
 
 if (!defined('NOTOKENRENEWAL')) {

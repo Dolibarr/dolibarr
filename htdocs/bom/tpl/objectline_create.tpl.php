@@ -163,7 +163,7 @@ if($filtertype != 1) {
 } else {
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("duration_unit", "time", (GETPOSTISSET('duration_value') ? GETPOST('duration_value', 'alpha') : 'h'), 0, 1);
+	print  $formproduct->selectMeasuringUnits("duration_unit", "time", 'h', 0, 1);
 	print '</td>';
 
 	$coldisplay++;
@@ -196,8 +196,6 @@ jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod").change(function()
 	{
-		console.log("#idprod change triggered");
-
 		  /* To set focus */
 		  if (jQuery('#idprod').val() > 0)
 			{
@@ -212,11 +210,11 @@ jQuery(document).ready(function() {
 			}
 
 	});
+
+	//change unit selected if we change service selected
 	<?php if($filtertype == 1) { ?>
 	$('#idprod:nth-child(2)').change(function(){
 			var idproduct = $(this).val();
-
-			console.log(idproduct);
 			$.ajax({
 				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php',1); ?>"
 				,type: 'POST'

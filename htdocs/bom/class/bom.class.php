@@ -401,11 +401,13 @@ class BOM extends CommonObject
 	}
 
 	/**
-	 * Load object lines in memory from the database
+	 * Load object lines in memory from the database by type of product
 	 *
+	 * 	@param int    $typeproduct   0 type product, 1 type service
+
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchLinesbytype($type = 0)
+	public function fetchLinesbytypeproduct($typeproduct = 0)
 	{
 		$this->lines = array();
 
@@ -421,7 +423,7 @@ class BOM extends CommonObject
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
 		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
-		$sql .= " AND p.fk_product_type = ". $type;
+		$sql .= " AND p.fk_product_type = ". $typeproduct;
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
 		}
@@ -1141,6 +1143,7 @@ class BOM extends CommonObject
 					}
 				} else {
 
+					//Convert qty to hour
 					if($line->duration_unit == 's') $qty =  $line->qty / 3600;
 					if($line->duration_unit == 'i') $qty = $line->qty / 60;
 					if($line->duration_unit == 'd') $qty = $line->qty * 24;
@@ -1151,9 +1154,13 @@ class BOM extends CommonObject
 					if($conf->workstation->enabled){
 						if($tmpproduct->fk_default_workstation) {
 							$workstation = new Workstation($this->db);
-							$workstation->fetch($tmpproduct->fk_default_workstation);
+							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
-							$line->total_cost = price2num($qty * $workstation->thm_operator_estimated, 'MT');
+							if($res > 0) $line->total_cost = price2num($qty * $workstation->thm_operator_estimated, 'MT');
+							else {
+								$this->error = $workstation->error;
+								return -3;
+							}
 						}
 					} else {
 						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
