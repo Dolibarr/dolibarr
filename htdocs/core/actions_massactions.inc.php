@@ -641,7 +641,9 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 	$lastref = '';
 
 	$db->begin();
-	$nbOrders = is_array($orders) ?  count($orders) : 1;
+	
+	$nbOrders = is_array($orders) ? count($orders) : 1;
+	
 	foreach ($orders as $id_order) {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
