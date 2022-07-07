@@ -1281,6 +1281,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Accounting Report
+			/*
 			$accouting_module_activated = !empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled);
 			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
 				$start = dol_getdate((int) $object->date_start);
@@ -1290,7 +1291,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				if (!empty($object->date_end)) $url .= '&amp;date_stopday='.$end['mday'].'&amp;date_stopmonth='.$end['mon'].'&amp;date_stopyear='.$end['year'];
 				print dolGetButtonAction('', $langs->trans('ExportAccountingReportButtonLabel'), 'default', $url, '');
 			}
-
+			*/
+			
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
