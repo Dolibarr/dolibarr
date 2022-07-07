@@ -258,7 +258,7 @@ llxHeader('', $langs->trans("CronTask"));
 
 $head = cron_prepare_head($object);
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("CronTask"), '', 'title_setup');
 }
 

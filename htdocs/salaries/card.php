@@ -457,7 +457,7 @@ if ($id > 0) {
 }
 
 // Create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$year_current = strftime("%Y", dol_now());
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;

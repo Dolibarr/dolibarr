@@ -728,7 +728,7 @@ if ($action == 'create2') {
 }
 
 // Mode creation.
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$recept = new Reception($db);
 
 	print load_fiche_titre($langs->trans("CreateReception"));

@@ -138,7 +138,7 @@ $help_url = '';
 llxHeader('', $title, $help_url);
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("AssetModel")), '', 'object_' . $object->picto);
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';

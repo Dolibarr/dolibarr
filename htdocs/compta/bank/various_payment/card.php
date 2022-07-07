@@ -335,7 +335,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 }
 
 // Create mode
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript">';

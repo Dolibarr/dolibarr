@@ -1389,7 +1389,7 @@ $ecmfilesstatic = new EcmFiles($db);
 $formexpensereport = new FormExpenseReport($db);
 
 // Create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewTrip"), '', 'trip');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="create">';

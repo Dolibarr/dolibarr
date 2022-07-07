@@ -923,7 +923,7 @@ $arrayrecurrulefreq = array(
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$contact = new Contact($db);
 
 	$socpeopleassigned = GETPOST("socpeopleassigned", 'array');

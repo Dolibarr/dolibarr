@@ -144,7 +144,7 @@ $h++;
 $hselected = 'card';
 
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	/*
 	 * Fact bookmark creation mode
 	 */

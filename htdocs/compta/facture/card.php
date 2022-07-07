@@ -2888,7 +2888,7 @@ llxHeader('', $title, $help_url);
 
 // Mode creation
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$facturestatic = new Facture($db);
 	$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 

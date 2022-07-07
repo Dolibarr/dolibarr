@@ -285,7 +285,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewWarehouse"), '', 'stock');
 
 	dol_set_focus('input[name="libelle"]');
