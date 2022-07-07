@@ -602,6 +602,8 @@ class ProductCombination
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 		$prodcomb = new ProductCombination($this->db);
 
+		$features = array_filter($features);
+
 		foreach ($features as $attr => $attr_val) {
 			$actual_comp[$attr] = $attr_val;
 		}
