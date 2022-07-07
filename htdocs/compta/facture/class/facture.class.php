@@ -3140,6 +3140,7 @@ class Facture extends CommonInvoice
 		} else {
 			$num = $this->ref;
 		}
+
 		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num) {
@@ -3147,7 +3148,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= " SET ref='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
+			$sql .= " SET ref = '".$this->db->escape($num)."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (!empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {	// If option enabled, we force invoice date
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
@@ -4383,7 +4384,6 @@ class Facture extends CommonInvoice
 
 			$mybool = false;
 
-
 			$file = $addon.'.php';
 			$classname = $addon;
 
@@ -4421,7 +4421,9 @@ class Facture extends CommonInvoice
 			}
 
 			$obj = new $classname();
+
 			$numref = $obj->getNextValue($soc, $this, $mode);
+
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
