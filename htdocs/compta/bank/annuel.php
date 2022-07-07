@@ -60,11 +60,6 @@ if (!$year_start) {
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 // Get account informations
@@ -81,6 +76,11 @@ if (!empty($ref)) {
 $annee = '';
 $totentrees = array();
 $totsorties = array();
+
+$title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
+
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
