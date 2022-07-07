@@ -5148,8 +5148,9 @@ class Form
                     closeOnEscape: false,
                     buttons: {
                         "'.dol_escape_js($langs->transnoentities($labelbuttonyes)).'": function() {
-                        	var options = "&token='.urlencode(newToken()).'";
+							var options = "token='.urlencode(newToken()).'";
                         	var inputok = '.json_encode($inputok).';	/* List of fields into form */
+							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
                          	if (inputok.length>0) {
                          		$.each(inputok, function(i, inputname) {
@@ -5166,12 +5167,20 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
-            				if (pageyes.length > 0) { location.href = urljump; }
+							if (pageyes.length > 0) {
+								console.log(page);
+								console.log(pageyes);
+								console.log(options);
+								var post = $.post(
+									pageyes,
+									options,
+									() => {location.assign(page)}
+								);
+							}
                             $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
-                        	var options = "&token='.urlencode(newToken()).'";
+                        	var options = "token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
                          	if (inputko.length>0) {
@@ -5183,9 +5192,15 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
-                         	//alert(urljump);
-            				if (pageno.length > 0) { location.href = urljump; }
+							if (pageno.length > 0) {
+								console.log(pageno);
+								console.log(options);
+								var post = $.post(
+									pageno,
+									options,
+									() => {location.assign(page)}
+								);
+							}
                             $(this).dialog("close");
                         }
                     }
