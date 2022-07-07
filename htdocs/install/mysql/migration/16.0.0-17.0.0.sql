@@ -35,6 +35,7 @@
 
 -- Missing in v16 or lower
 
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
 
 
