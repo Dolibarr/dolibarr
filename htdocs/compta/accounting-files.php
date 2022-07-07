@@ -196,7 +196,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) and empty($projectid)) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
