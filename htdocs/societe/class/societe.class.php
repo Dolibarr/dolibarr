@@ -3790,7 +3790,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 		}
-		
+
 		//Verify NIF if country is DZ
 		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
 		if ($idprof == 1 && $soc->country_code == 'DZ') {
