@@ -1293,7 +1293,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print dolGetButtonAction('', $langs->trans('ExportAccountingReportButtonLabel'), 'default', $url, '');
 			}
 			*/
-			
+
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
