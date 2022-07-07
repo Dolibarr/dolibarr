@@ -5182,6 +5182,7 @@ class Form
                         "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
                         	var options = "token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
+							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
                          	if (inputko.length>0) {
                          		$.each(inputko, function(i, inputname) {
