@@ -550,42 +550,47 @@ $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 
-$sql = 'SELECT';
+$sql_select = "SELECT";
+$sql_select_count = "SELECT COUNT(f.rowid)";
 if ($sall || $search_product_category > 0 || $search_user > 0) {
-	$sql = 'SELECT DISTINCT';
+	$sql_select .= " DISTINCT";
+	$sql_select_count = "SELECT COUNT(DISTINCT f.rowid)";
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
-$sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
-$sql .= ' f.fk_user_author,';
-$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
-$sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
-$sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
-$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
-$sql .= ' typent.code as typent_code,';
-$sql .= ' state.code_departement as state_code, state.nom as state_name,';
-$sql .= ' country.code as country_code,';
-$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
-$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+$sql_select_count .= " as nbtotalofrecords";
+$sql_fields = "";
+$sql_fields .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+$sql_fields .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
+$sql_fields .= ' f.fk_user_author,';
+$sql_fields .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
+$sql_fields .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql_fields .= ' f.paye as paye, f.fk_statut, f.close_code,';
+$sql_fields .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
+$sql_fields .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
+$sql_fields .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql_fields .= ' typent.code as typent_code,';
+$sql_fields .= ' state.code_departement as state_code, state.nom as state_name,';
+$sql_fields .= ' country.code as country_code,';
+$sql_fields .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sql_fields .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$sall) {
-	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
+	$sql_fields .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
 if ($search_categ_cus && $search_categ_cus != -1) {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
+	$sql_fields .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql_fields .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	}
 }
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+$sql_fields .= $hookmanager->resPrint;
+$sql  = "";
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
@@ -798,50 +803,53 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sql_group_by = "";
 if (!$sall) {
-	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
-	$sql .= ' f.localtax1, f.localtax2,';
-	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
-	$sql .= ' f.paye, f.fk_statut, f.close_code,';
-	$sql .= ' f.datec, f.tms, f.date_closing,';
-	$sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
-	$sql .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht,';
-	$sql .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
-	$sql .= ' typent.code,';
-	$sql .= ' state.code_departement, state.nom,';
-	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
-	if ($search_categ_cus && $search_categ_cus != -1) {
-		$sql .= ", cc.fk_categorie, cc.fk_soc";
+	$sql_group_by .= ' GROUP BY f.rowid, f.ref, ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
+	$sql_group_by .= ' f.localtax1, f.localtax2,';
+	$sql_group_by .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
+	$sql_group_by .= ' f.paye, f.fk_statut, f.close_code,';
+	$sql_group_by .= ' f.datec, f.tms, f.date_closing,';
+	$sql_group_by .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
+	$sql_group_by .= ' f.fk_user_author, f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht,';
+	$sql_group_by .= ' f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+	$sql_group_by .= ' s.rowid, s.nom, s.name_alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql_group_by .= ' typent.code,';
+	$sql_group_by .= ' state.code_departement, state.nom,';
+	$sql_group_by .= ' country.code,';
+	$sql_group_by .= " p.rowid, p.ref, p.title,";
+	$sql_group_by .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
+	if ($search_categ_cus && $search_categ_cus!=-1) {
+		$sql_group_by .= ", cc.fk_categorie, cc.fk_soc";
 	}
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+			$sql_group_by .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 		}
 	}
 	// Add GroupBy from hooks
 	$parameters = array('all' => !empty($all) ? $all : 0, 'fieldstosearchall' => $fieldstosearchall);
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
+	$sql_group_by .= $hookmanager->resPrint;
 } else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
 // Add HAVING from hooks
+$sql_having = "";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+$sql_having .= empty($hookmanager->resPrint) ? '' : ' HAVING 1=1 '.$hookmanager->resPrint;
 
-$sql .= ' ORDER BY ';
+$sql_order  = "";
+$sql_order .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);
 $listorder = explode(',', $sortorder);
 foreach ($listfield as $key => $value) {
-	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
+	$sql_order .= $listfield[$key] . ' ' . ($listorder[$key] ? $listorder[$key] : 'DESC') . ',';
 }
-$sql .= ' f.rowid DESC ';
+$sql_order .= ' f.rowid DESC ';
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -850,13 +858,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$nbtotalofrecords = $db->num_rows($result);
 	*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	if ($sall || $search_product_category > 0 || $search_user > 0) {
-		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(DISTINCT f.rowid) as nbtotalofrecords FROM', $sql);
-	} else {
-		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(f.rowid) as nbtotalofrecords FROM', $sql);
-		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid/', '', $sqlforcount);
-	}
-	$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
+	//if ($sall || $search_product_category > 0 || $search_user > 0) {
+	//	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(DISTINCT f.rowid) as nbtotalofrecords FROM', $sql);
+	//} else {
+	//	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(f.rowid) as nbtotalofrecords FROM', $sql);
+	//	$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid/', '', $sqlforcount);
+	//}
+	//$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
+	$sqlforcount = $sql_select_count . $sql .$sql_having . $sql_order;
 
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
@@ -869,6 +878,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
+$sql = $sql_select . $sql_fields . $sql . $sql_group_by . $sql_having . $sql_order;
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
@@ -976,10 +986,10 @@ if ($resql) {
 		$param .= '&search_type='.urlencode($search_type);
 	}
 	if ($search_company) {
-		$param .= '&search_societe='.urlencode($search_company);
+		$param .= '&search_company='.urlencode($search_company);
 	}
 	if ($search_company_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_company_alias);
+		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
