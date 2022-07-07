@@ -2271,6 +2271,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 
 			$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'holiday', 0, '', '', '', img_picto('', 'holiday', 'class="pictofixedwidth"'));
 			$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=create", $langs->trans("New"), 1, $user->rights->holiday->write, '', $mainmenu);
+			$newmenu->add("/holiday/card_group.php?mainmenu=hrm&leftmenu=holiday&action=request", $langs->trans("NewHolidayForGroup"), 1, ($user->rights->holiday->writeall && $user->rights->holiday->readall), '', $mainmenu, 'holiday_sm');
 			$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("List"), 1, $user->rights->holiday->read, '', $mainmenu);
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "holiday") {
 				$newmenu->add("/holiday/list.php?search_status=1&mainmenu=hrm&leftmenu=holiday", $langs->trans("DraftCP"), 2, $user->rights->holiday->read, '', $mainmenu, 'holiday_sm');
