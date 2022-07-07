@@ -137,7 +137,7 @@ if ($reshook < 0) {
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || GETPOST('valid')) { // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';
 	$search_label = '';
 	$sall = '';
@@ -669,6 +669,8 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$filters .= '&limit='.urlencode($limit);
 }
+if (!empty($includeproductswithoutdesiredqty)) $filters .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
+if (!empty($salert)) $filters .= '&salert='.urlencode($salert);
 
 $param = (isset($type) ? '&type='.urlencode($type) : '');
 $param .= '&fourn_id='.urlencode($fourn_id).'&search_label='.urlencode($search_label).'&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty).'&salert='.urlencode($salert).'&draftorder='.urlencode($draftorder);
@@ -676,6 +678,8 @@ $param .= '&search_ref='.urlencode($search_ref);
 $param .= '&mode='.urlencode($mode);
 $param .= '&fk_supplier='.urlencode($fk_supplier);
 $param .= '&fk_entrepot='.urlencode($fk_entrepot);
+if (!empty($includeproductswithoutdesiredqty)) $param .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
+if (!empty($salert)) $param .= '&salert='.urlencode($salert);
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
