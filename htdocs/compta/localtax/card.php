@@ -145,7 +145,7 @@ $title = $langs->trans("LT".$object->ltt)." - ".$langs->trans("Card");
 $help_url = '';
 llxHeader('', $title, $helpurl);
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";

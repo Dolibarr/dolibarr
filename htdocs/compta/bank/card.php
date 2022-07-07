@@ -336,7 +336,7 @@ $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Ba
 
 // Creation
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$object = new Account($db);
 
 	$title = $langs->trans("NewFinancialAccount");

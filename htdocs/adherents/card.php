@@ -920,7 +920,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 
 	// Create mode
-	if ($action == 'create') {
+	if ($action == 'create' || (empty($action) && empty($id))) {
 		$object->canvas = $canvas;
 		$object->state_id = GETPOST('state_id', 'int');
 

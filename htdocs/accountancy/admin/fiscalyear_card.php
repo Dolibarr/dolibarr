@@ -154,7 +154,7 @@ $help_url = "EN:Module_Double_Entry_Accounting";
 
 llxHeader('', $title, $help_url);
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
