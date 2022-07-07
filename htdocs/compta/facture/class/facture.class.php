@@ -5078,6 +5078,7 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
