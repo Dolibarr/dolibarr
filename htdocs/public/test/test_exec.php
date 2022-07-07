@@ -85,7 +85,7 @@ print '<br><br>'."\n";
 print "*** TEST READ OF /test.txt FILE AND LS /dev/std*<br>\n";
 
 exec('cat /test.txt; ls /dev/std*; sleep 1;', $out, $ret);
-print $ret."<br>\n";
+print "ret=".$ret."<br>\n";
 print_r($out);
 print '<br>';
 
@@ -97,5 +97,5 @@ print "*** TRY TO RUN CLAMDSCAN<br>\n";
 $ret = 0;
 $out = null;
 exec('/usr/bin/clamdscan --fdpass filethatdoesnotexists.php', $out, $ret);
-print $ret."<br>\n";
+print "ret=".$ret."<br>\n";
 print_r($out);
