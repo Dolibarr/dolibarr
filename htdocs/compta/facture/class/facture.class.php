@@ -124,6 +124,12 @@ class Facture extends CommonInvoice
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int ID
+	 */
+	public $fk_user_modif;
+
+
 	public $date; // Date invoice
 	public $datem;
 
@@ -161,7 +167,7 @@ class Facture extends CommonInvoice
 	public $revenuestamp;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
 	 * ! Closing when no payment: replaced, abandoned
 	 * @var string Close code
 	 */
@@ -418,7 +424,10 @@ class Facture extends CommonInvoice
 	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandonned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandonned - bad
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandonned remain - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandonned remain - bank charge
+	const CLOSECODE_OTHER = 'other'; // Abandonned remain - other
+
 	const CLOSECODE_ABANDONED = 'abandon'; // Abandonned - other
 	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
 
@@ -1935,7 +1944,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.datec as datec';
 		$sql .= ', f.date_valid as datev';
 		$sql .= ', f.tms as datem';
-		$sql .= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
+		$sql .= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.fk_user_modif, f.model_pdf, f.last_main_doc';
 		$sql .= ', f.fk_facture_source, f.fk_fac_rec_source';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql .= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
@@ -2023,8 +2032,10 @@ class Facture extends CommonInvoice
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author; // deprecated
 				$this->user_valid           = $obj->fk_user_valid; // deprecated
-				$this->fk_user_author = $obj->fk_user_author;
+				$this->user_modification    = $obj->fk_user_modif; // deprecated
+				$this->fk_user_author       = $obj->fk_user_author;
 				$this->fk_user_valid        = $obj->fk_user_valid;
+				$this->fk_user_modif        = $obj->fk_user_modif;
 				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
@@ -3129,6 +3140,7 @@ class Facture extends CommonInvoice
 		} else {
 			$num = $this->ref;
 		}
+
 		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num) {
@@ -3136,7 +3148,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= " SET ref='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
+			$sql .= " SET ref = '".$this->db->escape($num)."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (!empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {	// If option enabled, we force invoice date
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
@@ -4373,7 +4385,6 @@ class Facture extends CommonInvoice
 
 			$mybool = false;
 
-
 			$file = $addon.'.php';
 			$classname = $addon;
 
@@ -4411,7 +4422,9 @@ class Facture extends CommonInvoice
 			}
 
 			$obj = new $classname();
+
 			$numref = $obj->getNextValue($soc, $this, $mode);
+
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
@@ -5447,6 +5460,7 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {

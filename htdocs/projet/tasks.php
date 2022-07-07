@@ -402,9 +402,12 @@ $projectstatic = new Project($db);
 $taskstatic = new Task($db);
 $userstatic = new User($db);
 
-$title = $langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
+}
+if ($action == 'create') {
+	$title = $langs->trans("NewTask");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
@@ -729,16 +732,21 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Project
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project');
-	$formother->selectProjectTasks(GETPOST('task_parent'), !empty($projectid) ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
+
+	$contactsofproject = (empty($object->id) ? '' : $object->getListContactId('internal'));
 
 	// Assigned to
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
 		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		if ($projectid > 0 || $object->id > 0) {
+			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
+		} else {
+			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		}
 	}
 	print '</td></tr>';
 

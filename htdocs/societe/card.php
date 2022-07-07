@@ -954,14 +954,17 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error('', $object->error);
+		exit(-1);
 	}
 }
 
 $title = $langs->trans("ThirdParty");
+if ($action == 'create') {
+	$title = $langs->trans("NewThirdParty");
+}
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
-
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
@@ -2513,7 +2516,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 				}
 				//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-				print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+				print '<tr><td>';
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
+				print '<input type="file" class="flat" name="photo" id="photoinput">';
+				print '</td></tr>';
 				print '</table>';
 			}
 			print '</td>';

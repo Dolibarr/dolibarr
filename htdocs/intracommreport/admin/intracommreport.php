@@ -117,7 +117,7 @@ foreach ($list_DEB as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';
@@ -181,7 +181,7 @@ foreach ($list_DES as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';

@@ -74,6 +74,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$nbignored = 0;
 	$langs->load("mails");
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
 	$listofobjectid = array();
 	$listofobjectthirdparties = array();
@@ -1055,6 +1056,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 			if (in_array($objecttmp->element, array('societe', 'member'))) {
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
+			} elseif (in_array($objecttmp->element, array('action'))) {
+				$result = $objecttmp->delete();
 			} else {
 				$result = $objecttmp->delete($user);
 			}

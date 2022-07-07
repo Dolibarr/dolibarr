@@ -51,12 +51,12 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -65,7 +65,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
 
 $form = new Form($db);
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
+$title = $object->ref." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);

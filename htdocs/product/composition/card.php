@@ -380,6 +380,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>'."\n";
 
 		$totalsell = 0;
+		$total = 0;
 		if (count($prods_arbo))	{
 			foreach ($prods_arbo as $value)	{
 				$productstatic->fetch($value['id']);
@@ -418,7 +419,7 @@ if ($id > 0 || !empty($ref)) {
 
 					$unitline = price2num(($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MU');
 					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
-					$total += $totalline;
+					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
 					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
@@ -680,7 +681,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
-						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->labelm)) {
 							$labeltoshow = $objp->labelm;
 						}
 

@@ -483,6 +483,7 @@ $title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
 	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
+
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte";
 
 llxHeader("", $title, $help_url);
@@ -996,7 +997,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1280,6 +1281,19 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 
+			// Accounting Report
+			/*
+			$accouting_module_activated = !empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled);
+			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
+				$start = dol_getdate((int) $object->date_start);
+				$end = dol_getdate((int) $object->date_end);
+				$url = DOL_URL_ROOT.'/compta/accounting-files.php?projectid='.$object->id;
+				if (!empty($object->date_start)) $url .= '&amp;date_startday='.$start['mday'].'&amp;date_startmonth='.$start['mon'].'&amp;date_startyear='.$start['year'];
+				if (!empty($object->date_end)) $url .= '&amp;date_stopday='.$end['mday'].'&amp;date_stopmonth='.$end['mon'].'&amp;date_stopyear='.$end['year'];
+				print dolGetButtonAction('', $langs->trans('ExportAccountingReportButtonLabel'), 'default', $url, '');
+			}
+			*/
+			
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {

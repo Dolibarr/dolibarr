@@ -192,12 +192,18 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref;
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
@@ -205,7 +211,7 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetchComments();
 	}
 
-	$result = $projectstatic->fetch($object->fk_project);
+
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}

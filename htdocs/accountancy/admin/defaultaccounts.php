@@ -141,7 +141,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'setdisableauxiliaryaccountoncustomerdeposit') {
+if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
 	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -201,7 +201,8 @@ foreach ($list_account_main as $key) {
 	print '</td>';
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	$key_value = getDolGlobalString($key);
+	print $formaccounting->select_account($key_value, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
 	print '</td>';
 	print '</tr>';
 }
@@ -265,16 +266,15 @@ print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUS
 print '</td>';
 print '</tr>';
 
-
-if (!empty($conf->societe->enabled)) {
+if (!empty($conf->societe->enabled) && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') != '-1') {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=0">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}

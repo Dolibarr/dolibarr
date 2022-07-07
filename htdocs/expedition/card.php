@@ -429,10 +429,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -804,9 +804,13 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("Shipment");
+if ($action == 'create2') {
+	$title = $langs->trans("CreateShipment");
+}
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+llxHeader('', $title, 'Expedition', $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -982,7 +986,7 @@ if ($action == 'create') {
 			print "</td></tr>\n";
 
 			// Other attributes
-			$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
+			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $expe, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1178,7 +1182,7 @@ if ($action == 'create') {
 
 					// Qty already shipped
 					print '<td class="center">';
-					$quantityDelivered = $object->expeditions[$line->id];
+					$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
 					print $quantityDelivered;
 					print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
 					print ''.$unit_order.'</td>';
@@ -1188,14 +1192,18 @@ if ($action == 'create') {
 					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$quantityToBeDelivered = 0;
 					} else {
-						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+						if (is_numeric($quantityDelivered)) {
+							$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+						} else {
+							$quantityToBeDelivered = $quantityAsked;
+						}
 					}
 
 					$warehouseObject = null;
 					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
-						$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
+						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
 						$deliverableQty = min($quantityToBeDelivered, $stock);
 						if ($deliverableQty < 0) {
 							$deliverableQty = 0;
@@ -2100,7 +2108,7 @@ if ($action == 'create') {
 			//if ($filter) $sql.= $filter;
 			$sql .= " ORDER BY obj.fk_product";
 
-			dol_syslog("get list of shipment lines", LOG_DEBUG);
+			dol_syslog("expedition/card.php get list of shipment lines", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
