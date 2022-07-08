@@ -856,12 +856,10 @@ class Reception extends CommonObject
 		if (!empty($conf->productbatch->enabled)) {
 			$langs->load("errors");
 			if (!empty($product->status_batch) && empty($batch)) {
-				$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
-				setEventMessages($this->error, $this->errors, 'errors');
+				$this->errors[] = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
 				return -1;
 			} elseif (empty($product->status_batch) && !empty($batch)) {
-				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
-				setEventMessages($this->error, $this->errors, 'errors');
+				$this->errors[] = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
 				return -1;
 			}
 		}
