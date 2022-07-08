@@ -765,7 +765,7 @@ class Reception extends CommonObject
 				return -1;
 			}
 		}
-		unset ($product);
+		unset($product);
 
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
