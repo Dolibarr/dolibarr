@@ -255,7 +255,7 @@ if (empty($reshook) && $action == 'add') {
 	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
-		// email a peu pres correct et le login n'existe pas
+		// E-mail looks OK and login does not exist
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
 		$adh->public      = $public;
@@ -373,6 +373,16 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!$mailfile->sendfile()) {
 					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+				}
+			}
+
+			// Auto-create thirdparty on member creation
+			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+				$company = new Societe($db);
+				$result = $company->create_from_member($adh);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
 				}
 			}
 
