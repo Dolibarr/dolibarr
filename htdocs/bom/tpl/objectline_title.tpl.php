@@ -87,7 +87,7 @@ if($filtertype != 1) {
 
 	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 
-	if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+	if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';

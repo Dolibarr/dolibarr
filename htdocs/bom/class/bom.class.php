@@ -1157,7 +1157,7 @@ class BOM extends CommonObject
 							$workstation = new Workstation($this->db);
 							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
-							if($res > 0) $line->total_cost = price2num($qty * $workstation->thm_operator_estimated, 'MT');
+							if($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 							else {
 								$this->error = $workstation->error;
 								return -3;

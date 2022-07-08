@@ -160,7 +160,7 @@ if (empty($reshook)) {
 				$idprod = $bom_child->fk_product;
 			}
 		} else {
-			$idprod = (int) GETPOST('idprod', 'int');
+			$idprod = (!empty(GETPOST('idprodservice', 'int')) ? GETPOST('idprodservice', 'int') : (int) GETPOST('idprod', 'int'));
 		}
 
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
@@ -205,6 +205,7 @@ if (empty($reshook)) {
 				$action = '';
 			} else {
 				unset($_POST['idprod']);
+				unset($_POST['idprodservice']);
 				unset($_POST['qty']);
 				unset($_POST['qty_frozen']);
 				unset($_POST['disable_stock_change']);
@@ -247,6 +248,7 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			unset($_POST['idprod']);
+			unset($_POST['idprodservice']);
 			unset($_POST['qty']);
 			unset($_POST['qty_frozen']);
 			unset($_POST['disable_stock_change']);
