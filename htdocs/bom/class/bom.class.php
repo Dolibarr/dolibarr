@@ -1144,8 +1144,9 @@ class BOM extends CommonObject
 				} else {
 
 					//Convert qty to hour
-					if($line->duration_unit == 's') $qty =  $line->qty / 3600;
+					if($line->duration_unit == 's') $qty = $line->qty / 3600;
 					if($line->duration_unit == 'i') $qty = $line->qty / 60;
+					if($line->duration_unit == 'h') $qty = $line->qty;
 					if($line->duration_unit == 'd') $qty = $line->qty * 24;
 					if($line->duration_unit == 'w') $qty = $line->qty * 24 * 7;
 					if($line->duration_unit == 'm') $qty = $line->qty * 730.484;

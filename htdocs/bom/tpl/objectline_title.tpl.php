@@ -64,7 +64,7 @@ if (!empty($conf->global->BOM_SUB_BOM) && $filtertype != 1) {
 print '</td>';
 
 // Qty
-print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
 if($filtertype != 1) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
