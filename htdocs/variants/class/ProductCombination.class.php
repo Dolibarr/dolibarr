@@ -602,7 +602,7 @@ class ProductCombination
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 		$prodcomb = new ProductCombination($this->db);
 
-		$features = array_filter($features, function($v) {
+		$features = array_filter($features, function ($v) {
 			return !empty($v);
 		});
 
