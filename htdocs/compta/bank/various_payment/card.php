@@ -304,9 +304,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 /*
  *	View
  */
-
-llxHeader("", $langs->trans("VariousPayment"));
-
 $form = new Form($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
@@ -323,6 +320,13 @@ if ($id) {
 		exit;
 	}
 }
+
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewVariousPayment");
+}
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 $options = array();
 

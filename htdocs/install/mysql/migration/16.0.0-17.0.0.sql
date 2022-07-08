@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 15.0.0 or higher.
+-- when current version is 16.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -31,6 +31,18 @@
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- Missing in v16 or lower
+
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
+
+
+
+-- v17
+
+ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
 -- Allow users to make subscriptions of any amount during membership subscription 
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount varchar(3) DEFAULT 0 AFTER amount;

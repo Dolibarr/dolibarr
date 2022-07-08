@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 
 // Load translation files required by the page
-$langsLoad=array('projects', 'bills', 'orders');
+$langsLoad=array('projects', 'bills', 'orders', 'companies');
 if (!empty($conf->eventorganization->enabled)) {
 	$langsLoad[]='eventorganization';
 }
@@ -73,6 +73,7 @@ $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'int');
 $search_valuebilled = GETPOST('search_valuebilled', 'int');
+$search_company = GETPOST('$search_company', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -161,6 +162,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_creation = '';
 	$search_date_update = '';
 	$search_task_ref = '';
+	$search_company = '';
 	$search_task_label = '';
 	$search_user = 0;
 	$search_valuebilled = '';
@@ -700,15 +702,20 @@ if ($action == 'confirm_generateinter') {
 /*
  * View
  */
-
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
-llxHeader("", $langs->trans("Task"));
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
+//$result = $projectstatic->fetch($object->fk_project);
+$arrayofselected = is_array($toselect) ? $toselect : array();
+
+$title = $object->ref . ' - ' . $langs->trans("TimeSpent");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*
@@ -1071,6 +1078,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Definition of fields for list
 		$arrayfields = array();
 		$arrayfields['t.task_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
+		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("ThirdParty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			$arrayfields['t.task_ref'] = array('label'=>$langs->trans("RefTask"), 'checked'=>1);
 			$arrayfields['t.task_label'] = array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
@@ -1103,6 +1111,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_task_ref != '') {
 			$param .= '&search_task_ref='.urlencode($search_task_ref);
+		}
+		if ($search_company != '') {
+			$param .= '&amp;$search_company='.urlencode($search_company);
 		}
 		if ($search_task_label != '') {
 			$param .= '&search_task_label='.urlencode($search_task_label);
@@ -1304,6 +1315,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
+		$sql .= " p.fk_soc,";
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1312,13 +1324,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as pt ON pt.rowid = t.fk_task";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON  t.fk_user = u.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = pt.fk_projet";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+
 		// Add table from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		$sql .= ", ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-
+		$sql .= " WHERE  1 = 1 ";
 		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 			// Limit on one task
 			$sql .= " AND t.fk_task =".((int) $object->id);
@@ -1338,6 +1353,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_task_ref) {
 			$sql .= natural_search('pt.ref', $search_task_ref);
+		}
+		if ($search_company) {
+			$sql .= natural_search('s.nom', $search_company);
 		}
 		if ($search_task_label) {
 			$sql .= natural_search('pt.label', $search_task_label);
@@ -1572,6 +1590,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print $formother->selectyear($search_year, 'search_year', 1, 20, 5);
 			print '</td>';
 		}
+		// Thirdparty
+		if (!empty($arrayfields['p.fk_soc']['checked'])) {
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
+		}
+
 		if (!empty($allprojectforuser)) {
 			print '<td class="liste_titre"></td>';
 		}
@@ -1623,6 +1646,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<tr class="liste_titre">';
 		if (!empty($arrayfields['t.task_date']['checked'])) {
 			print_liste_field_titre($arrayfields['t.task_date']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+		}
+		if (!empty($arrayfields['p.fk_soc']['checked'])) {
+			print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
 		}
 		if (!empty($allprojectforuser)) {
 			print_liste_field_titre("Project", $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
@@ -1691,6 +1717,23 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				} else {
 					print dol_print_date(($date2 ? $date2 : $date1), ($task_time->task_date_withhour ? 'dayhour' : 'day'));
 				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Thirdparty
+			if (!empty($arrayfields['p.fk_soc']['checked'])) {
+				print '<td class="nowrap">';
+				if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+					$tmpsociete = new Societe($db);
+					$tmpsociete->fetch($task_time->fk_soc);
+					$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+				} else {
+					$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+				}
+				print $tmpsociete->getNomUrl(1);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

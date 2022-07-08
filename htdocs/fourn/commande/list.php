@@ -93,6 +93,7 @@ $search_product_category = GETPOST('search_product_category', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
@@ -181,6 +182,7 @@ $checkedtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
+	's.name_alias'=>array('label'=>"AliasNameShort", 'position'=>47, 'checked'=>0),
 	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>47, 'checked'=>1),
 	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>47, 'checked'=>1),
 	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
@@ -246,6 +248,7 @@ if (empty($reshook)) {
 		$search_ref = '';
 		$search_refsupp = '';
 		$search_company = '';
+		$search_company_alias = '';
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -657,6 +660,9 @@ if (empty($reshook)) {
 			if ($search_company) {
 				$param .= '&search_company='.urlencode($search_company);
 			}
+			if ($search_company_alias) {
+				$param .= '&search_company_alias='.urlencode($search_company_alias);
+			}
 			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) {
 				$param .= '&search_user='.urlencode($search_user);
@@ -741,7 +747,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
@@ -803,6 +809,9 @@ if ($sall) {
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
+if ($search_company_alias) {
+	$sql .= natural_search('s.name_alias', $search_company_alias);
+}
 if ($search_request_author) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_request_author);
 }
@@ -860,6 +869,9 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_company_alias) {
+	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
@@ -1031,6 +1043,9 @@ if ($resql) {
 	}
 	if ($search_company) {
 		$param .= '&search_company='.urlencode($search_company);
+	}
+	if ($search_company_alias) {
+		$param .= '&search_company_alias='.urlencode($search_company_alias);
 	}
 	if ($search_user > 0) {
 		$param .= '&search_user='.urlencode($search_user);
@@ -1275,6 +1290,10 @@ if ($resql) {
 	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 		print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_company" value="'.$search_company.'"></td>';
 	}
+	// Alias
+	if (!empty($arrayfields['s.name_alias']['checked'])) {
+		print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_company_alias" value="'.$search_company_alias.'"></td>';
+	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_town" value="'.$search_town.'"></td>';
@@ -1446,6 +1465,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['s.name_alias']['checked'])) {
+		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1623,7 +1645,17 @@ if ($resql) {
 			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
 			$thirdpartytmp->email = $obj->email;
-			print $thirdpartytmp->getNomUrl(1, 'supplier');
+			$thirdpartytmp->name_alias = $obj->alias;
+			print $thirdpartytmp->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+			print '</td>'."\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		//alias
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			print $obj->alias;
 			print '</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

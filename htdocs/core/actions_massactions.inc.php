@@ -74,6 +74,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$nbignored = 0;
 	$langs->load("mails");
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
 	$listofobjectid = array();
 	$listofobjectthirdparties = array();

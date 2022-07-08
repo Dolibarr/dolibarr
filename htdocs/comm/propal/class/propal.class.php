@@ -1444,7 +1444,7 @@ class Propal extends CommonObject
 
 		// Clear fields
 		$object->user_author = $user->id;
-		$object->user_valid = '';
+		$object->user_valid = 0;
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + ($object->duree_validite * 24 * 3600);
@@ -2614,8 +2614,22 @@ class Propal extends CommonObject
 
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
+		if (empty($conf->global->PROPALE_KEEP_OLD_SIGNATURE_INFO)) {
+			$date_signature = $now;
+			$fk_user_signature = $user->id;
+		} else {
+			$this->info($this->id);
+			if (!isset($this->date_signature) || $this->date_signature == '') {
+				$date_signature = $now;
+				$fk_user_signature = $user->id;
+			} else {
+				$date_signature = $this->date_signature;
+				$fk_user_signature = $this->user_signature->id;
+			}
+		}
+
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($date_signature)."', fk_user_signature=".$fk_user_signature;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -2662,7 +2676,7 @@ class Propal extends CommonObject
 				$this->oldcopy= clone $this;
 				$this->statut = $status;
 				$this->status = $status;
-				$this->date_signature = $now;
+				$this->date_signature = $date_signature;
 				$this->note_private = $newprivatenote;
 			}
 

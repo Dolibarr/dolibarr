@@ -150,6 +150,8 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
+
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_MODIFY','Customer order modified','Executed when a customer order is set modified','commande',5);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILL_MODIFY','Customer invoice modified','Executed when a customer invoice is modified','facture',7);

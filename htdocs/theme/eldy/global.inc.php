@@ -871,6 +871,9 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
+.classfortooltiponclick .fa-question-circle {
+	cursor: pointer;
+}
 .cursormove {
 	cursor: move;
 }

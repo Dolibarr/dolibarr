@@ -590,7 +590,7 @@ class Fichinter extends CommonObject
 			$sql .= " SET fk_statut = 1";
 			$sql .= ", ref = '".$this->db->escape($num)."'";
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
-			$sql .= ", fk_user_valid = ".((int) $user->id);
+			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND fk_statut = 0";
@@ -1204,7 +1204,7 @@ class Fichinter extends CommonObject
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = '';
+		$this->user_valid         = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
 		$this->ref_client         = '';

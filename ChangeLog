@@ -2,6 +2,13 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 17.0.0 compared to 16.0.0 *****
+
+For developers or integrators:
+------------------------------
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
 
 
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****

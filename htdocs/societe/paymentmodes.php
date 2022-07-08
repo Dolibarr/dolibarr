@@ -683,7 +683,7 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 
-llxHeader();
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -1624,7 +1624,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</table>';
 	print '</div>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1785,7 +1785,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print '</table>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<table class="border centpercent">';

@@ -508,7 +508,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User signature
-	if (!empty($object->user_signature)) {
+	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -526,7 +526,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature);
+			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -563,7 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing)) {
+	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
 		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
 			$object->user_closing = $object->user_cloture;
 		}
@@ -584,7 +584,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing);
+			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -624,7 +624,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User conciliate
-	if (!empty($object->user_rappro)) {
+	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -642,7 +642,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro);
+			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
