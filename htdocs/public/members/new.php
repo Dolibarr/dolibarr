@@ -674,15 +674,17 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	}
 
 	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = 0;
 		$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$adht = new AdherentType($db);
+		$adht->fetch($typeid);
+		$caneditamount = $adht->caneditamount;
 
 		// Set amount for the subscription:
 		// - First check the amount of the member type.
 		$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 		$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
-		// - If not found, take the default amount
-		if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+		// - If not found, take the default amount only of the user is authorized to edit it
+		if ($caneditamount && empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 			$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 		}
 		// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
@@ -692,9 +694,6 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 		// Clean the amount
 		$amount = price2num($amount);
-		$adht = new AdherentType($db);
-		$adht->fetch($typeid);
-		$caneditamount = $adht->caneditamount;
 		$showedamount = $amount>0? $amount: 0;
 		// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
 		print '<tr><td>'.$langs->trans("Subscription");
