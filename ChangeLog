@@ -118,6 +118,7 @@ NEW: VAT Report by month - Show detail by rate and also by code
 NEW: Ticket triggers: allow to automatically send messages on new tickets
 NEW: Accountancy - Add hidden feature for accounting reconciliation
 NEW: Can store the session into database (instead of beeing managed by PHP)
+NEW: Added MMK currency (Myanmar Kyat)
 
  Modules
 NEW: Module Partnership Management
