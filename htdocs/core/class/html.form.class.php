@@ -5174,7 +5174,7 @@ class Form
 								var post = $.post(
 									pageyes,
 									options,
-									() => {location.assign(page)}
+									(data) => {$("body").html(data)}
 								);
 							}
                             $(this).dialog("close");
@@ -5199,7 +5199,7 @@ class Form
 								var post = $.post(
 									pageno,
 									options,
-									() => {location.assign(page)}
+									(data) => {$("body").html(data)}
 								);
 							}
                             $(this).dialog("close");
