@@ -7167,6 +7167,8 @@ function dol_textishtml($msg, $option = 0)
 		}
 		return false;
 	} else {
+		// Remove all urls because 'http://aa?param1=abc&amp;param2=def' must not be used inside detection
+		$msg = preg_replace('/https?:\/\/[^"\'\s]+/i', '', $msg);
 		if (preg_match('/<html/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<body/i', $msg)) {
@@ -7188,6 +7190,7 @@ function dol_textishtml($msg, $option = 0)
 		} elseif (preg_match('/<h[0-9]>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/&[A-Z0-9]{1,6};/i', $msg)) {
+			// TODO If content is 'A link https://aaa?param=abc&amp;param2=def', it return true but must be false
 			return true; // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		} elseif (preg_match('/&#[0-9]{2,3};/i', $msg)) {
 			return true; // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
@@ -7829,6 +7832,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				if (! $msgishtml) {
 					$valueishtml = dol_textishtml($value, 1);
+					var_dump("valueishtml=".$valueishtml);
 
 					if ($valueishtml) {
 						$text = dol_htmlentitiesbr($text);
