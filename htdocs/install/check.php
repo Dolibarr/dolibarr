@@ -454,11 +454,12 @@ if (!file_exists($conffile)) {
 		$migrationscript = array();
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
+			$versiontousetoqualifyscript = preg_replace('/-.*/', '', DOL_VERSION);
 			while (($file = readdir($handle)) !== false) {
 				$reg = array();
 				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
-					//var_dump(DOL_VERSION." ".$reg[2]." ".version_compare(DOL_VERSION, $reg[2]));
-					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2]) >= 0) {
+					//var_dump(DOL_VERSION." ".$reg[2]." ".$versiontousetoqualifyscript." ".version_compare($versiontousetoqualifyscript, $reg[2]));
+					if (!empty($reg[2]) && version_compare($versiontousetoqualifyscript, $reg[2]) >= 0) {
 						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
 					}
 				}

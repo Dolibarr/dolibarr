@@ -340,7 +340,7 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("CreateMvts"));
 
 	$object = new BookKeeping($db);

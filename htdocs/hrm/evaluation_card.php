@@ -255,7 +255,7 @@ print '<script type="text/javascript" language="javascript">
 </script>';
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewEval"), '', 'object_' . $object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

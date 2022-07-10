@@ -241,7 +241,7 @@ llxHeader('', $title, '');
 
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	if (GETPOST('fk_bom', 'int') > 0) {
 		$titlelist = $langs->trans("ToConsume");
 		if ($objectbom->bomtype == 1) {

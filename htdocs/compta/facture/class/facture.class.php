@@ -3140,6 +3140,7 @@ class Facture extends CommonInvoice
 		} else {
 			$num = $this->ref;
 		}
+
 		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num) {
@@ -3147,7 +3148,7 @@ class Facture extends CommonInvoice
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= " SET ref='".$num."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
+			$sql .= " SET ref = '".$this->db->escape($num)."', fk_statut = ".self::STATUS_VALIDATED.", fk_user_valid = ".($user->id > 0 ? $user->id : "null").", date_valid = '".$this->db->idate($now)."'";
 			if (!empty($conf->global->FAC_FORCE_DATE_VALIDATION)) {	// If option enabled, we force invoice date
 				$sql .= ", datef='".$this->db->idate($this->date)."'";
 				$sql .= ", date_lim_reglement='".$this->db->idate($this->date_lim_reglement)."'";
@@ -3819,6 +3820,7 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		} else {
+			$this->errors[]='status of invoice must be Draft to allow use of ->addline()';
 			dol_syslog(get_class($this)."::addline status of invoice must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
@@ -4383,7 +4385,6 @@ class Facture extends CommonInvoice
 
 			$mybool = false;
 
-
 			$file = $addon.'.php';
 			$classname = $addon;
 
@@ -4421,7 +4422,9 @@ class Facture extends CommonInvoice
 			}
 
 			$obj = new $classname();
+
 			$numref = $obj->getNextValue($soc, $this, $mode);
+
 
 			/**
 			 * $numref can be empty in case we ask for the last value because if there is no invoice created with the
@@ -5449,8 +5452,6 @@ class Facture extends CommonInvoice
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->db->begin();
-
 		// Select all action comm reminder
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
@@ -5539,20 +5540,92 @@ class Facture extends CommonInvoice
 						}
 
 						if (!$error && $to) {
+							$this->db->begin();
+
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 
 							$trackid = 'inv'.$tmpinvoice->id;
+							$sendcontext = 'standard';
+
 							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 							// Sending Mail
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
+
+								// Add a line into event table
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								// Insert record of emails sent
+								$actioncomm = new ActionComm($this->db);
+
+								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+								$actioncomm->contact_id = 0;
+
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK';
+								$actioncomm->note_private = $sendContent;
+								$actioncomm->fk_project = $tmpinvoice->fk_project;
+								$actioncomm->datep = dol_now();
+								$actioncomm->datef = $actioncomm->datep;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->authorid = $user->id; // User saving action
+								$actioncomm->userownerid = $user->id; // Owner of action
+								// Fields when action is an email (content should be added into note)
+								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_from = $from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								//$actioncomm->email_tocc = $sendtocc;
+								//$actioncomm->email_tobcc = $sendtobcc;
+								//$actioncomm->email_subject = $subject;
+								$actioncomm->errors_to = $errors_to;
+
+								//$actioncomm->extraparams = $extraparams;
+
+								$actioncomm->create($user);
 							} else {
 								$errormesg = $cMailFile->error.' : '.$to;
 								$error++;
+
+								// Add a line into event table
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								// Insert record of emails sent
+								$actioncomm = new ActionComm($this->db);
+
+								$actioncomm->type_code = 'AC_OTH_AUTO'; // Event insert into agenda automatically
+								$actioncomm->socid = $tmpinvoice->thirdparty->id; // To link to a company
+								$actioncomm->contact_id = 0;
+
+								$actioncomm->code = 'AC_EMAIL';
+								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
+								$actioncomm->note_private = $errormesg;
+								$actioncomm->fk_project = $tmpinvoice->fk_project;
+								$actioncomm->datep = dol_now();
+								$actioncomm->datef = $actioncomm->datep;
+								$actioncomm->percentage = -1; // Not applicable
+								$actioncomm->authorid = $user->id; // User saving action
+								$actioncomm->userownerid = $user->id; // Owner of action
+								// Fields when action is an email (content should be added into note)
+								$actioncomm->email_msgid = $cMailFile->msgid;
+								$actioncomm->email_from = $from;
+								$actioncomm->email_sender = '';
+								$actioncomm->email_to = $to;
+								//$actioncomm->email_tocc = $sendtocc;
+								//$actioncomm->email_tobcc = $sendtobcc;
+								//$actioncomm->email_subject = $subject;
+								$actioncomm->errors_to = $errors_to;
+
+								//$actioncomm->extraparams = $extraparams;
+
+								$actioncomm->create($user);
 							}
+
+							$this->db->commit();	// We always commit
 						}
 
 						if ($errormesg) {
@@ -5570,10 +5643,8 @@ class Facture extends CommonInvoice
 
 		if (!$error) {
 			$this->output .= 'Nb of emails sent : '.$nbMailSend;
-			$this->db->commit();
 			return 0;
 		} else {
-			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}
@@ -5581,8 +5652,9 @@ class Facture extends CommonInvoice
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
+	 *
 	 * @param 	boolean 	$allow_validated_drafts			return true if the invoice has been validated before returning to DRAFT state.
-	 * @return boolean
+	 * @return 	array										return array
 	 */
 	public function willBeLastOfSameType($allow_validated_drafts = false)
 	{
@@ -5606,10 +5678,10 @@ class Facture extends CommonInvoice
 					$is_last_of_same_type = $is_last_of_same_type || (!strpos($this->ref, 'PROV') && $this->status == self::STATUS_DRAFT);
 				}
 
-				return [$is_last_of_same_type, $last_date];
+				return array($is_last_of_same_type, $last_date);
 			} else {
 				// element is first of type to be validated
-				return [true];
+				return array(true);
 			}
 		} else {
 			dol_print_error($this->db);

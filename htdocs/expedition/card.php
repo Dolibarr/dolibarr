@@ -835,7 +835,7 @@ if ($action == 'create2') {
 }
 
 // Mode creation.
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$expe = new Expedition($db);
 
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');

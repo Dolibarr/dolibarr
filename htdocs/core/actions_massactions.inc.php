@@ -669,6 +669,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	}
 }
 
+
 if (!$error && $massaction == 'cancelorders') {
 	$db->begin();
 

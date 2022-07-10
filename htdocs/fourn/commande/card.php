@@ -1547,7 +1547,7 @@ llxHeader('', $title, $help_url);
 
 $now = dol_now();
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans('NewOrderSupplier'), '', 'supplier_order');
 
 	dol_htmloutput_events();

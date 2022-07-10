@@ -630,10 +630,11 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN lastname
 ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN email_company varchar(128) after email;
 
 
-ALTER TABLE llx_c_email_template ADD COLUMN email_from varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
+ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 
 ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
 

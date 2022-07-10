@@ -36,6 +36,11 @@
 
 ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
+ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 
 
 -- v17

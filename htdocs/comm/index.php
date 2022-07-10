@@ -127,6 +127,7 @@ if ($tmp) {
 /*
  * Draft customer proposals
  */
+
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -224,6 +225,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 /*
  * Draft supplier proposals
  */
+
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -320,6 +322,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 /*
  * Draft customer orders
  */
+
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -404,7 +407,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			}
 		}
 
-		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoOrder");
 		finishSimpleTable(true);
 
 		$db->free($resql);
@@ -417,6 +420,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 /*
  * Draft purchase orders
  */
+
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -501,7 +505,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			}
 		}
 
-		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoOrder");
 		finishSimpleTable(true);
 
 		$db->free($resql);

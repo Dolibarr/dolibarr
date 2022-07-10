@@ -1017,7 +1017,7 @@ if ($result > 0) {
 }
 
 // Create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
 
 	$soc = new Societe($db);
