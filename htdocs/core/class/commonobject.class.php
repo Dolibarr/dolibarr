@@ -602,6 +602,8 @@ abstract class CommonObject
 
 
 	// No constructor as it is an abstract class
+
+
 	/**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
@@ -647,6 +649,7 @@ abstract class CommonObject
 		}
 		return -1;
 	}
+
 
 	/**
 	 * Method to output saved errors
@@ -5530,7 +5533,9 @@ abstract class CommonObject
 	 * Index a file into the ECM database
 	 *
 	 * @param	string	$destfull				Full path of file to index
-	 * @param	int		$update_main_doc_field	Update field main_doc file into table of object
+	 * @param	int		$update_main_doc_field	Update field main_doc fied into the table of object.
+	 * 											This param is set when called for a document generation if document generator hase
+	 * 											->update_main_doc_field set and returns ->result['fullpath'].
 	 * @return	int								<0 if KO, >0 if OK
 	 */
 	public function indexFile($destfull, $update_main_doc_field)
