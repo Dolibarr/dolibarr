@@ -776,7 +776,9 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 						}
 
 						$objecttmp->context['createfromclone'];
+
 						$rankedLine = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
