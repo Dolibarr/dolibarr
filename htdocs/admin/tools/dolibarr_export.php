@@ -172,7 +172,7 @@ print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover"
 
 print '<table class="centpercent noborderbottom">';
 print '<tr>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -195,7 +195,7 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingrightimp">';
 
 print '<button id="btn" type="button" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
 
