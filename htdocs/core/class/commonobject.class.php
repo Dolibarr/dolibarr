@@ -8891,7 +8891,7 @@ abstract class CommonObject
 					}
 				}
 			} else {
-				$this->{$field} = !empty($obj->{$field}) ? $obj->{$field} : null;
+				$this->{$field} = isset($obj->{$field}) ? $obj->{$field} : null;
 			}
 		}
 
