@@ -105,10 +105,10 @@ if ($action == 'setvalue' && $user->admin) {
 		$error++;
 	}
 	if (GETPOSTISSET('STRIPE_LOCATION')) {
-	$result = dolibarr_set_const($db, "STRIPE_LOCATION", GETPOST('STRIPE_LOCATION', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+		$result = dolibarr_set_const($db, "STRIPE_LOCATION", GETPOST('STRIPE_LOCATION', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (!$result > 0) {
+			$error++;
+		}
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) {
