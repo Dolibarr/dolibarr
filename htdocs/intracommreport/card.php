@@ -156,7 +156,7 @@ if ($action == 'add' && $permissiontoadd) {
  */
 
 // Creation mode
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$title = $langs->trans("IntracommReportTitle");
 	llxHeader("", $title);
 	print load_fiche_titre($langs->trans("IntracommReportTitle"));
