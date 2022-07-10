@@ -2283,3 +2283,5 @@ AccordingToBrowser=According to browser
 AlwaysEnabled=Always Enabled
 DoesNotWorkWithAllThemes=Will not work with all themes
 NoName=No name
+ShowAdvancedOptions= Show advanced options
+HideAdvancedoptions= Hide advanced options
