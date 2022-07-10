@@ -320,6 +320,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		$nbOrders = is_array($orders) ? count($orders) : 1;
+
 		foreach ($orders as $id_order) {
 			$cmd = new Commande($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -455,10 +457,11 @@ if (empty($reshook)) {
 
 							$objecttmp->context['createfromclone'];
 
-							$rang = $lines[$i]->rang;
+							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
-							if (!empty($createbills_onebythird))
+							if (!empty($createbills_onebythird)) {
 								$rang = $TFactThirdNbLines[$cmd->socid];
+							}
 
 							$result = $objecttmp->addline(
 								$desc,

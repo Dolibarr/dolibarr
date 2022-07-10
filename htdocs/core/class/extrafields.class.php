@@ -2018,6 +2018,7 @@ class ExtraFields
 				}
 
 				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
+					//when unticking boolean field, it's not set in POST
 					continue;
 				}
 
