@@ -259,7 +259,7 @@ llxHeader('', $title, 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if ($action == 'create') {    // Create. Seems to no be used
+if ($action == 'create' || (empty($action) && empty($id))) {    // Create. Seems to no be used
 } else // View
 {
 	if ($object->id > 0) {

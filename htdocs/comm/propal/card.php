@@ -1537,7 +1537,7 @@ llxHeader('', $title, $help_url);
 $now = dol_now();
 
 // Add new proposal
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	$currency_code = $conf->currency;
 
 	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');

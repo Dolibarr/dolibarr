@@ -206,7 +206,7 @@ llxHeader('', $langs->trans("ECMNewSection"));
 $form = new Form($db);
 $formecm = new FormEcm($db);
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	//***********************
 	// Create
 	//***********************

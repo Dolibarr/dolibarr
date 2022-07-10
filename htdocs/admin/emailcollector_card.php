@@ -253,7 +253,7 @@ $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électro
 llxHeader('', 'EmailCollector', $help_url);
 
 // Part to create
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	print load_fiche_titre($langs->trans("NewEmailCollector", $langs->transnoentitiesnoconv("EmailCollector")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

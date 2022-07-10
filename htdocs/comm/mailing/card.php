@@ -704,7 +704,7 @@ llxHeader(
 	array()
 );
 
-if ($action == 'create') {
+if ($action == 'create' || (empty($action) && empty($id))) {
 	// EMailing in creation mode
 	print '<form name="new_mailing" action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
