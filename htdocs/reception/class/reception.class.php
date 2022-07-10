@@ -879,6 +879,7 @@ class Reception extends CommonObject
 		$line->status = 1;
 		$line->cost_price = $cost_price;
 		$line->fk_reception = $this->id;
+
 		$this->lines[$num] = $line;
 
 		return $num;
