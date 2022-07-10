@@ -43,6 +43,8 @@ ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
 
 -- v17
 
