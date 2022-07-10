@@ -386,7 +386,7 @@ if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("AddDonation"), '', 'object_donation');
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';

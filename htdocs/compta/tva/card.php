@@ -398,7 +398,7 @@ if ($id) {
 }
 
 // Form to enter VAT
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
 
 	if (!empty($conf->use_javascript_ajax)) {

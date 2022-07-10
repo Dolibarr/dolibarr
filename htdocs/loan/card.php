@@ -254,7 +254,7 @@ llxHeader("", $title, $help_url);
 
 
 // Create mode
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

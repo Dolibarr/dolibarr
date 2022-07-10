@@ -1899,7 +1899,7 @@ $help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Mó
 llxHeader('', $title, $help_url);
 
 // Mode creation
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$facturestatic = new FactureFournisseur($db);
 
 	print load_fiche_titre($langs->trans('NewBill'), '', 'supplier_invoice');

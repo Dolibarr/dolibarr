@@ -220,7 +220,7 @@ llxheader('', $title, $help_url);
 
 
 // Create mode
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans('NewAccountingAccount'));
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";

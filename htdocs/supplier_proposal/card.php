@@ -1138,7 +1138,7 @@ if (!empty($conf->project->enabled)) {
 $now = dol_now();
 
 // Add new askprice
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	print load_fiche_titre($langs->trans("NewAskPrice"), '', 'supplier_proposal');

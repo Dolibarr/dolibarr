@@ -979,7 +979,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
-	if ($action == 'create' || (empty($action) && empty($id))) {
+	if ($action == 'create') {
 		/*
 		 *  Creation
 		 */

@@ -341,7 +341,7 @@ llxHeader("", $title, $help_url);
 
 // Creation
 
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$object = new Account($db);
 
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');

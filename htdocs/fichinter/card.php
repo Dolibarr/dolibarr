@@ -796,7 +796,7 @@ $help_url = 'EN:Module_Interventions';
 
 llxHeader('', $langs->trans("Intervention"), $help_url);
 
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	// Create new intervention
 
 	$soc = new Societe($db);
