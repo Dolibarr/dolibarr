@@ -122,7 +122,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
-	$object->caneditamount = (int) GETPOST("caneditamount", 'int');
+	$object->caneditamount = GETPOSTINT("caneditamount");
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
