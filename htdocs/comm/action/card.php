@@ -1031,7 +1031,7 @@ if ($action == 'create') {
 
 	// Recurring event
 	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
-	if ($userepeatevent) {
+	if ($userepeatevent && !empty($object->recurid)) {
 		// Repeat
 		//print '<tr><td></td><td colspan="3" class="opacitymedium">';
 		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
