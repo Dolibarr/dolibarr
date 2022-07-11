@@ -774,7 +774,7 @@ if ($action == 'export_file') {
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
 		'type' => 'checkbox',
-		'label' => $langs->trans('NotifiedValidationDate'),
+		'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
 		'value' => $checked,
 	);
 
