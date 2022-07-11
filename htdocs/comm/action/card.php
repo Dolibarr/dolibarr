@@ -1031,15 +1031,16 @@ if ($action == 'create') {
 
 	// Recurring event
 	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
-	if ($userepeatevent && !empty($object->recurid)) {
+	if ($userepeatevent) {
 		// Repeat
 		//print '<tr><td></td><td colspan="3" class="opacitymedium">';
 		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
-		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
+		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
+		$reg = array();
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulefreq = $reg[1];
 		}
