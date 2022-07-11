@@ -52,4 +52,4 @@ ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after clos
 ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
 -- Allow users to make subscriptions of any amount during membership subscription 
-ALTER TABLE llx_adherent_type ADD COLUMN caneditamount varchar(3) DEFAULT 0 AFTER amount;
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
