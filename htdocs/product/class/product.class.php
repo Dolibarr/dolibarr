@@ -4681,7 +4681,17 @@ class Product extends CommonObject
 			while ($rec = $this->db->fetch_array($res)) {
 				if (!empty($alreadyfound[$rec['rowid']])) {
 					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
-					//continue;
+					$hasParentInSamePath = false;
+					while (($fathers = $rec['rowid']->getFather()) != -1) {
+						foreach ($fathers as $father) {
+							if ($father['rowid'] == $id) {
+								$hasParentInSamePath = true;
+								break;
+							}
+						}
+					}
+					if ($hasParentInSamePath)
+						continue;	// We discard this child if it is already found at a higher level in tree in the same branch.
 				}
 				$alreadyfound[$rec['rowid']] = 1;
 				$prods[$rec['rowid']] = array(
