@@ -4986,7 +4986,7 @@ abstract class CommonObject
 				}
 
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
-				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($line->description)); // Description is what to show on popup. We shown nothing if already into desc.
+				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
@@ -7495,33 +7495,35 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$value = ''; // value was used, so now we reste it to use it to build final output
+				$numrows = $this->db->num_rows($resql);
+				if ($numrows) {
+					$obj = $this->db->fetch_object($resql);
 
-				$obj = $this->db->fetch_object($resql);
+					// Several field into label (eq table:code|libelle:rowid)
+					$fields_label = explode('|', $InfoFieldList[1]);
 
-				// Several field into label (eq table:code|libelle:rowid)
-				$fields_label = explode('|', $InfoFieldList[1]);
-
-				if (is_array($fields_label) && count($fields_label) > 1) {
-					foreach ($fields_label as $field_toshow) {
-						$translabel = '';
-						if (!empty($obj->$field_toshow)) {
-							$translabel = $langs->trans($obj->$field_toshow);
+					if (is_array($fields_label) && count($fields_label) > 1) {
+						foreach ($fields_label as $field_toshow) {
+							$translabel = '';
+							if (!empty($obj->$field_toshow)) {
+								$translabel = $langs->trans($obj->$field_toshow);
+							}
+							if ($translabel != $field_toshow) {
+								$value .= dol_trunc($translabel, 18).' ';
+							} else {
+								$value .= $obj->$field_toshow.' ';
+							}
 						}
-						if ($translabel != $field_toshow) {
-							$value .= dol_trunc($translabel, 18).' ';
-						} else {
-							$value .= $obj->$field_toshow.' ';
-						}
-					}
-				} else {
-					$translabel = '';
-					if (!empty($obj->{$InfoFieldList[1]})) {
-						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
-					}
-					if ($translabel != $obj->{$InfoFieldList[1]}) {
-						$value = dol_trunc($translabel, 18);
 					} else {
-						$value = $obj->{$InfoFieldList[1]};
+						$translabel = '';
+						if (!empty($obj->{$InfoFieldList[1]})) {
+							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						}
+						if ($translabel != $obj->{$InfoFieldList[1]}) {
+							$value = dol_trunc($translabel, 18);
+						} else {
+							$value = $obj->{$InfoFieldList[1]};
+						}
 					}
 				}
 			} else {
