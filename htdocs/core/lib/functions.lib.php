@@ -10343,6 +10343,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
+ * @param bboolean  $isDropdown is dropdown button
  * @param int       $userRight  user action right
  * // phpcs:disable
  * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
@@ -10363,16 +10364,20 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * // phpcs:enable
  * @return string               html button
  */
-function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $isDropdown = false, $userRight = 1, $params = array())
 {
 	global $hookmanager, $action, $object, $langs;
 
-	$class = 'butAction';
-	if ($actionType == 'danger' || $actionType == 'delete') {
-		$class = 'butActionDelete';
-		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+	//var_dump($isDropdown);
+	if ($isDropdown)
+		$class = "dropdown-item";
+	else {
+		$class = 'butAction';
+		if ($actionType == 'danger' || $actionType == 'delete') {
+			$class = 'butActionDelete';
+			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		}
 	}
-
 	$attr = array(
 		'class' => $class,
 		'href' => empty($url) ? '' : $url,
