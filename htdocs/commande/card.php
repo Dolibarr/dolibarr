@@ -1803,8 +1803,10 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Other attributes
-	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
+	$parameters = array();
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 		$parameters['objectsrc'] =  $objectsrc;
+	}
 	$parameters['socid'] = $socid;
 
 	// Note that $action and $object may be modified by hook
