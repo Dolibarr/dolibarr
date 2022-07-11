@@ -5168,9 +5168,6 @@ class Form
                          		});
                          	}
 							if (pageyes.length > 0) {
-								console.log(page);
-								console.log(pageyes);
-								console.log(options);
 								var post = $.post(
 									pageyes,
 									options,
@@ -5194,8 +5191,6 @@ class Form
                          		});
                          	}
 							if (pageno.length > 0) {
-								console.log(pageno);
-								console.log(options);
 								var post = $.post(
 									pageno,
 									options,
