@@ -780,7 +780,9 @@ else {  // Show the table of membership types
 			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));
 			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
 			if ($objp->subscription) {
-				print $displayedamount.' '.strtoupper($conf->currency);
+				if ($displayedamount > 0 || !$caneditamount) {
+					print $displayedamount.' '.strtoupper($conf->currency);
+				}
 				if ($caneditamount && $displayedamount>0) {
 					print $form->textwithpicto('', $langs->transnoentities("CanEditAmountShortForValues"), 1, 'help', '', 0, 3);
 				} elseif ($caneditamount) {
