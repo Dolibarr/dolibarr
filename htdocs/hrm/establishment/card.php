@@ -159,7 +159,7 @@ $formcompany = new FormCompany($db);
 /*
  * Action create
  */
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEstablishment"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

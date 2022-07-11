@@ -194,7 +194,7 @@ $form = new Form($db);
 /*
  * Action create
 */
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

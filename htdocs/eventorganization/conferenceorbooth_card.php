@@ -166,7 +166,7 @@ $title = $langs->trans("ConferenceOrBooth");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$result = $projectstatic->fetch(GETPOST('fk_project'));
 } else {
 	$result = $projectstatic->fetch($object->fk_project);
@@ -392,7 +392,7 @@ if (!empty($withproject)) {
 }
 
 // Part to create
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBooth")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

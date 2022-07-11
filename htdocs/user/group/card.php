@@ -259,7 +259,7 @@ $fuserstatic = new User($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
 	dol_set_focus('#nom');

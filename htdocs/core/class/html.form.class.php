@@ -8550,7 +8550,7 @@ class Form
 					if (empty($conf->supplier_proposal->enabled)) {
 						continue; // Do not show if module disabled
 					}
-				} elseif ($objecttype == 'shipping' || $objecttype == 'shipment') {
+				} elseif ($objecttype == 'shipping' || $objecttype == 'shipment' || $objecttype == 'expedition') {
 					$tplpath = 'expedition';
 					if (empty($conf->expedition->enabled)) {
 						continue; // Do not show if module disabled
@@ -8668,6 +8668,11 @@ class Form
 					'perms'=>1,
 					'label'=>'LinkToProposal',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
+        'shipping'=>array(
+          'enabled'=>$conf->expedition->enabled,
+          'perms'=>1,
+          'label'=>'LinkToExpedition',
+          'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('shipping').')'),
 				'order'=>array(
 					'enabled'=>(!empty($conf->commande->enabled) ? $conf->commande->enabled : 0),
 					'perms'=>1,

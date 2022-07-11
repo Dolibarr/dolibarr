@@ -954,6 +954,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 						$i++;
 						$total += $obj->total_ht;
 						$total_ttc += $obj->total_ttc;
+						$totalam += $obj->am;
 						continue;
 					}
 

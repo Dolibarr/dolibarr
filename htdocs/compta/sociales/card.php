@@ -343,7 +343,7 @@ llxHeader("", $title, $help_url);
 
 
 // Form to create a social contribution
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';

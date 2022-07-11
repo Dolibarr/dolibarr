@@ -272,7 +272,7 @@ if ($result > 0) {
 	print '</tr>';
 
 
-	if ($action == 'create' || (empty($action) && empty($id))) {
+	if ($action == 'create') {
 		// $listofemails=$object->thirdparty_and_contact_email_array();
 		if ($object->email) {
 			$actions = array();

@@ -835,7 +835,7 @@ if ($action == 'create2') {
 }
 
 // Mode creation.
-if ($action == 'create' || (empty($action) && empty($id))) {
+if ($action == 'create') {
 	$expe = new Expedition($db);
 
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
@@ -2569,8 +2569,8 @@ if ($action == 'create' || (empty($action) && empty($id))) {
 
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright">';

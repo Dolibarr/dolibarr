@@ -661,3 +661,5 @@ DELETE FROM llx_cronjob WHERE label = 'PurgeDeleteTemporaryFilesShort' AND param
 
 ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
 ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;

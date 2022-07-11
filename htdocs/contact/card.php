@@ -626,7 +626,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	}
 
 	if ($user->rights->societe->contact->creer) {
-		if ($action == 'create' || (empty($action) && empty($id))) {
+		if ($action == 'create') {
 			/*
 			 * Fiche en mode creation
 			 */
