@@ -173,9 +173,10 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
  *
  * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
+ * @param	int		$amount		Amount of money to request for
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type, $ref)
+function showOnlinePaymentUrl($type, $ref, $amount='9.99')
 {
 	global $langs;
 
@@ -185,7 +186,7 @@ function showOnlinePaymentUrl($type, $ref)
 	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
@@ -199,11 +200,12 @@ function showOnlinePaymentUrl($type, $ref)
  * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
  * @param	string	$label		Text or HTML tag to display, if empty it display the URL
+ * @param	int		$amount		Amount of money to request for
  * @return	string			Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount='9.99')
 {
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$label = $label ? $label : $url;
 	return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$label.'</a>';
 }
@@ -215,7 +217,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '')
  * @param   int		$mode		      0=True url, 1=Url formated with colors
  * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
  * @param	string	$ref		      Ref of object
- * @param	int		$amount		      Amount (required and used for $type='free' only)
+ * @param	int		$amount		      Amount of money to request for
  * @param	string	$freetag	      Free tag (required and used for $type='free' only)
  * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string
