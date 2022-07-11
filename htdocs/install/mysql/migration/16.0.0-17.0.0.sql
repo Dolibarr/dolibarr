@@ -32,7 +32,6 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
-
 -- Missing in v16 or lower
 
 ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
@@ -54,5 +53,5 @@ ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after clos
 
 ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
-
-
+-- Allow users to make subscriptions of any amount during membership subscription 
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;

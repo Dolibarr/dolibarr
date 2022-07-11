@@ -122,6 +122,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = GETPOSTINT("caneditamount");
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -229,7 +230,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.vote, d.statut as status, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -276,6 +277,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
+		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
 		print '<th>&nbsp;</th>';
@@ -292,6 +294,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->status = $objp->status;
 			$membertype->subscription = $objp->subscription;
 			$membertype->amount = $objp->amount;
+			$membertype->caneditamount = $objp->caneditamount;
 
 			print '<tr class="oddeven">';
 			print '<td class="nowraponall">';
@@ -310,6 +313,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+			print '<td class="center">'.yn($objp->caneditamount).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer) {
@@ -378,6 +382,10 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("CanEditAmountShort").'</td><td>';
+	print $form->selectyesno("caneditamount", 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
