@@ -677,7 +677,8 @@ if (empty($reshook)) {
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
 					//fallback on the old configuration.
-					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
+					$langs->load("errors");
+					setEventMessages('<a href="'.DOL_URL_ROOT.'/adherents/admin/member_emails.php">'.$langs->trans('WarningMandatorySetupNotComplete').'</a>', null, 'errors');
 					$error++;
 				} else {
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
