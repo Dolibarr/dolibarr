@@ -544,7 +544,7 @@ if (empty($reshook)) {
 
 		$idoflineadded = 0;
 		// Group if enabled. Skip group if line already sent to the printer
-		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT) && $line->special_code != "4") {
+		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
