@@ -24,6 +24,7 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -1128,13 +1129,7 @@ class BOM extends CommonObject
 				} else {
 
 					//Convert qty to hour
-					if($line->duration_unit == 's') $qty = $line->qty / 3600;
-					if($line->duration_unit == 'i') $qty = $line->qty / 60;
-					if($line->duration_unit == 'h') $qty = $line->qty;
-					if($line->duration_unit == 'd') $qty = $line->qty * 24;
-					if($line->duration_unit == 'w') $qty = $line->qty * 24 * 7;
-					if($line->duration_unit == 'm') $qty = $line->qty * 730.484;
-					if($line->duration_unit == 'y') $qty = $line->qty * 365 * 24;
+					$qty = convertDurationtoHour($line->qty, $line->duration_unit);
 
 					if($conf->workstation->enabled){
 						if($tmpproduct->fk_default_workstation) {
