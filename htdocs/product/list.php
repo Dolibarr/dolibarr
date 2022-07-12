@@ -387,13 +387,13 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans("ListOfProductsAndServices");
+$title = $langs->trans("ProductsAndServices");
 
 if ($search_type != '' && $search_type != '-1') {
 	if ($search_type == 1) {
-		$title = $langs->trans("ListOfServices");
+		$title = $langs->trans("Services");
 	} else {
-		$title = $langs->trans("ListOfProducts");
+		$title = $langs->trans("Products");
 	}
 }
 
