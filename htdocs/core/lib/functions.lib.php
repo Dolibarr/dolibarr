@@ -3343,6 +3343,17 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			//ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
+	} elseif (strtoupper($countrycode) == "LU") {
+		// Luxembourg
+		if (dol_strlen($phone) == 10) {// fixe 6 chiffres +352_AA_BB_CC
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2);
+		} elseif (dol_strlen($phone) == 11) {// fixe 7 chiffres +352_AA_BB_CC_D
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 1);
+		} elseif (dol_strlen($phone) == 12) {// fixe 8 chiffres +352_AA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
+		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
@@ -5383,7 +5394,8 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 		print '</li>';
 	}
 	if ((int) $limit > 0 && empty($hideselectlimit)) {
-		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000,25000:25000';
+		$pagesizechoices = '10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000';
+		$pagesizechoices .= ',5000:5000,10000:10000,20000:20000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 		//$pagesizechoices.=',2:2';
 		if (!empty($conf->global->MAIN_PAGESIZE_CHOICES)) {
@@ -5457,9 +5469,10 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
  *  @param	boolean	$addpercent		Add a percent % sign in output
  *	@param	int		$info_bits		Miscellaneous information on vat (0=Default, 1=French NPR vat)
  *	@param	int		$usestarfornpr	-1=Never show, 0 or 1=Use '*' for NPR vat rates
+ *  @param	int		$html			Used for html output
  *  @return	string					String with formated amounts ('19,6' or '19,6%' or '8.5% (NPR)' or '8.5% *' or '19,6 (CODEX)')
  */
-function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
+function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0, $html = 0)
 {
 	$morelabel = '';
 
@@ -5467,9 +5480,11 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0)
 		$rate = str_replace('%', '', $rate);
 		$addpercent = true;
 	}
+	$reg = array();
 	if (preg_match('/\((.*)\)/', $rate, $reg)) {
 		$morelabel = ' ('.$reg[1].')';
 		$rate = preg_replace('/\s*'.preg_quote($morelabel, '/').'/', '', $rate);
+		$morelabel = ' '.($html ? '<span class="opacitymedium">' : '').'('.$reg[1].')'.($html ? '</span>' : '');
 	}
 	if (preg_match('/\*/', $rate)) {
 		$rate = str_replace('*', '', $rate);
@@ -7166,6 +7181,8 @@ function dol_textishtml($msg, $option = 0)
 		}
 		return false;
 	} else {
+		// Remove all urls because 'http://aa?param1=abc&amp;param2=def' must not be used inside detection
+		$msg = preg_replace('/https?:\/\/[^"\'\s]+/i', '', $msg);
 		if (preg_match('/<html/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<body/i', $msg)) {
@@ -7187,6 +7204,7 @@ function dol_textishtml($msg, $option = 0)
 		} elseif (preg_match('/<h[0-9]>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/&[A-Z0-9]{1,6};/i', $msg)) {
+			// TODO If content is 'A link https://aaa?param=abc&amp;param2=def', it return true but must be false
 			return true; // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		} elseif (preg_match('/&#[0-9]{2,3};/i', $msg)) {
 			return true; // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
@@ -7828,6 +7846,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				if (! $msgishtml) {
 					$valueishtml = dol_textishtml($value, 1);
+					//var_dump("valueishtml=".$valueishtml);
 
 					if ($valueishtml) {
 						$text = dol_htmlentitiesbr($text);

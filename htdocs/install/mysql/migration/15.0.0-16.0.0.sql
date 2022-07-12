@@ -51,7 +51,8 @@
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
 
-
+ALTER TABLE llx_entrepot ADD COLUMN barcode  varchar(180) DEFAULT NULL;
+ALTER TABLE llx_entrepot ADD COLUMN fk_barcode_type integer      DEFAULT NULL;
 
 ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
@@ -148,6 +149,8 @@ UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'Rec
 ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
+
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_MODIFY','Customer order modified','Executed when a customer order is set modified','commande',5);
@@ -627,10 +630,11 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN lastname
 ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN email_company varchar(128) after email;
 
 
-ALTER TABLE llx_c_email_template ADD COLUMN email_from varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
-ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
+ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 
 ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
 
@@ -650,3 +654,12 @@ ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN ext_payment_id varchar
 
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);
 
+ALTER TABLE llx_cronjob MODIFY COLUMN label varchar(255) NOT NULL;
+
+-- We need to keep only the PurgeDeleteTemporaryFilesShort with params = 'tempfilsold+logfiles'
+DELETE FROM llx_cronjob WHERE label = 'PurgeDeleteTemporaryFilesShort' AND params = 'tempfilesold';
+
+ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
+ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;

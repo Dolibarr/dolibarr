@@ -172,7 +172,7 @@ print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover"
 
 print '<table class="centpercent noborderbottom">';
 print '<tr>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -195,10 +195,27 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingrightimp">';
 
+print '<button id="btn" type="button" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
 
-print '<div id="div_container_sub_exportoptions">';
+print '<script type="text/javascript">
+
+function hideoptions(){
+	const btn = document.getElementById("btn");
+	const div = document.getElementById("div_container_sub_exportoptions");
+
+  	if (div.style.display === "none") {
+    	div.style.display = "block";
+		btn.innerText="'.$langs->trans("HideAdvancedoptions").'";
+  	} else {
+    	div.style.display = "none";
+		btn.innerText="'.$langs->trans("ShowAdvancedOptions").'";
+	}
+}
+</script>';
+
+print '<div id="div_container_sub_exportoptions" style="display: none;">';
 if (in_array($type, array('mysql', 'mysqli'))) {
 	print "<!--  Fieldset mysqldump -->\n";
 	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';

@@ -105,6 +105,7 @@ class ExtraFields
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
+		'ip'=>'ExtrafieldIP',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -156,9 +157,10 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int             $printable          Is extrafield displayed on PDF
+	 *  @param	array			$moreparams			More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -182,12 +184,12 @@ class ExtraFields
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
-			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help);
+			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help, $moreparams);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -217,9 +219,10 @@ class ExtraFields
 	 *	@param	string	$list				Into list view by default
 	 *  @param  string  $computed           Computed value
 	 *  @param	string	$help				Help on tooltip
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
+	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -243,7 +246,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'mail' || $type == 'ip') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -315,11 +318,12 @@ class ExtraFields
 	 *  @param	string			$langfile		Language file
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
-	 *  @param  int             $printable        Is extrafield displayed on PDF
+	 *  @param  int             $printable      Is extrafield displayed on PDF
+	 *  @param	array			$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return	int								<=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -354,6 +358,19 @@ class ExtraFields
 			$totalizable = 0;
 		}
 
+		$css = '';
+		if (!empty($moreparams) && !empty($moreparams['css'])) {
+			$css = $moreparams['css'];
+		}
+		$csslist = '';
+		if (!empty($moreparams) && !empty($moreparams['csslist'])) {
+			$csslist = $moreparams['csslist'];
+		}
+		$cssview = '';
+		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
+			$cssview = $moreparams['cssview'];
+		}
+
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
@@ -386,7 +403,10 @@ class ExtraFields
 			$sql .= " datec,";
 			$sql .= " enabled,";
 			$sql .= " help,";
-			$sql .= " totalizable";
+			$sql .= " totalizable,";
+			$sql .= " css,";
+			$sql .= " csslist,";
+			$sql .= " cssview";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -410,7 +430,10 @@ class ExtraFields
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
-			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE');
+			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
+			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
+			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -542,11 +565,12 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
-	 *  @param  int     $printable        Is extrafield displayed on PDF
+	 *  @param  int     $printable        	Is extrafield displayed on PDF
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		global $hookmanager;
 
@@ -572,7 +596,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'mail' || $type == 'ip') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -611,7 +635,7 @@ class ExtraFields
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -663,11 +687,12 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
-	 *  @param  int     $printable        Is extrafield displayed on PDF
+	 *  @param  int     $printable        	Is extrafield displayed on PDF
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return	int							<=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -698,6 +723,19 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+
+		$css = '';
+		if (!empty($moreparams) && !empty($moreparams['css'])) {
+			$css = $moreparams['css'];
+		}
+		$csslist = '';
+		if (!empty($moreparams) && !empty($moreparams['csslist'])) {
+			$csslist = $moreparams['csslist'];
+		}
+		$cssview = '';
+		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
+			$cssview = $moreparams['cssview'];
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
@@ -749,7 +787,10 @@ class ExtraFields
 			$sql .= " fk_user_modif,";
 			$sql .= " datec,";
 			$sql .= " enabled,";
-			$sql .= " help";
+			$sql .= " help,";
+			$sql .= " css,";
+			$sql .= " csslist,";
+			$sql .= " cssview";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
@@ -773,7 +814,10 @@ class ExtraFields
 			$sql .= " ".$user->id.",";
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= "'".$this->db->escape($enabled)."',";
-			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null");
+			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
+			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
+			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
@@ -952,7 +996,10 @@ class ExtraFields
 			}
 		}
 
+		//
+		// 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
 		if (empty($morecss)) {
+			// Add automatic css
 			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
 			} elseif ($type == 'datetime' || $type == 'link') {
@@ -975,6 +1022,10 @@ class ExtraFields
 				} else {
 					$morecss = 'minwidth400';
 				}
+			}
+			// If css forced in attribute, we use this one
+			if (!empty($this->attributes[$extrafieldsobjectkey]['css'][$key])) {
+				$morecss = $this->attributes[$extrafieldsobjectkey]['css'][$key];
 			}
 		}
 
@@ -1034,7 +1085,7 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
+		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -1594,6 +1645,8 @@ class ExtraFields
 			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
 		} elseif ($type == 'mail') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
+		} elseif ($type == 'ip') {
+			$value = dol_print_ip($value, 0);
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
@@ -2018,6 +2071,7 @@ class ExtraFields
 				}
 
 				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
+					//when unticking boolean field, it's not set in POST
 					continue;
 				}
 

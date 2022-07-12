@@ -120,8 +120,8 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("ListOfGroups");
+llxHeader('', $title, $help_url);
 
 $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";

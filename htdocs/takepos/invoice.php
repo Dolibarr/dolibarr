@@ -177,6 +177,7 @@ if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercu
 	}
 }
 
+
 /*
  * Actions
  */
@@ -278,7 +279,8 @@ if (empty($reshook)) {
 			$res = $invoice->validate($user);
 			if ($res < 0) {
 				$error++;
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				$langs->load("admin");
+				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)': $invoice->error, $invoice->errors, 1);
 			}
 		}
 

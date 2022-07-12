@@ -871,6 +871,9 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
+.classfortooltiponclick .fa-question-circle {
+	cursor: pointer;
+}
 .cursormove {
 	cursor: move;
 }
@@ -2739,6 +2742,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print " background-position-y: 3px;\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
@@ -3091,7 +3095,10 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
-	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa;
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	color: #aaa;
+	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -5092,6 +5099,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
+	z-index: 1000;
 }
 
 .exampleapachesetup {

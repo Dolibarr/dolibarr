@@ -129,7 +129,7 @@ print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
 $head = oauthadmin_prepare_head();
 
-print dol_get_fiche_head($head, 'tokengeneration', '', -1, 'technic');
+print dol_get_fiche_head($head, 'tokengeneration', '', -1, '');
 
 if (GETPOST('error')) {
 	setEventMessages(GETPOST('error'), null, 'errors');
