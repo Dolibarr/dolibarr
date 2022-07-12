@@ -58,10 +58,6 @@ $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
 $objcanvas = GETPOST("objcanvas", "alpha");
 $comefromclone = GETPOST("comefromclone", "alpha");
 
-if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
-	accessforbidden();
-}
-
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -499,7 +495,7 @@ if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 	$titlenew = $langs->trans("NewLead");
 }
 
-if ($action == 'create' && $user->rights->projet->creer) {
+if (($action == 'create' || (empty($action) && empty($id))) && $user->rights->projet->creer) {
 	/*
 	 * Create
 	 */
@@ -1441,8 +1437,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Hook to add more things on page
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-} else {
-	print $langs->trans("RecordNotFound");
 }
 
 // End of page

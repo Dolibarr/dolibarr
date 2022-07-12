@@ -669,7 +669,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 
-if ($action == 'create' && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
+if (($action == 'create' || (empty($action) && empty($id))) && $user->rights->projet->creer && (empty($object->thirdparty->id) || $userWrite > 0)) {
 	if ($id > 0 || !empty($ref)) {
 		print '<br>';
 	}

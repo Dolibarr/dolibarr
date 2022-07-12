@@ -2671,10 +2671,9 @@ if ($action == 'create') {
 /*
  * Action bar
  */
+if ($action != 'create' && $action != 'edit' && $action != 'editline' && !empty($action)) {
+	print '<div class="tabsAction">';
 
-print '<div class="tabsAction">';
-
-if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 
@@ -2814,9 +2813,9 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-}
 
-print '</div>';
+	print '</div>';
+}
 
 
 // Select mail models is same action as presend
@@ -2832,7 +2831,7 @@ if ($action != 'presend') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit') {
+	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit' && !empty($action)) {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
