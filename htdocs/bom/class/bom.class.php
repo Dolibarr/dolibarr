@@ -444,7 +444,7 @@ class BOM extends CommonObject
 				$i++;
 			}
 
-			return 1;
+			return $num_rows;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->errors[] = $this->error;
