@@ -44,6 +44,10 @@ $usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
 if (empty($usedolheader)) {
 	header("Content-type: text/html; charset=UTF8");
+
+	// Security options
+	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 	?>
 	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	<html>

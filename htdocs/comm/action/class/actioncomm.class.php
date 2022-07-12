@@ -374,6 +374,16 @@ class ActionComm extends CommonObject
 	public $status;
 
 	/**
+	 * Properties to manage the recurring events
+	 */
+	public $recurid;
+	public $recurrule;
+	public $recurdateend;
+
+	public $calling_duration;
+
+
+	/**
 	 * Typical value for a event that is in a todo state
 	 */
 	const EVENT_TODO = 0;
