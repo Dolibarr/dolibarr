@@ -1103,7 +1103,7 @@ class Website extends CommonObject
 		}
 
 		$line = "\n-- For Dolibarr v14+ --;\n";
-		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->lang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
 		fputs($fp, $line);
@@ -1146,7 +1146,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
-			return -1;
+			return -2;
 		}
 
 		dol_delete_dir_recursive($conf->website->dir_temp."/".$object->ref);
@@ -1155,14 +1155,14 @@ class Website extends CommonObject
 		$filename = basename($pathtofile);
 		if (!preg_match('/^website_(.*)-(.*)$/', $filename, $reg)) {
 			$this->errors[] = 'Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
-			return -1;
+			return -3;
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
 
 		if (!empty($result['error'])) {
 			$this->errors[] = 'Failed to unzip file '.$pathtofile.'.';
-			return -1;
+			return -4;
 		}
 
 		$arrayreplacement = array();
@@ -1211,7 +1211,7 @@ class Website extends CommonObject
 		// Load sql record
 		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
 		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile;
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.$runsql.')';
 			$error++;
 		}
 

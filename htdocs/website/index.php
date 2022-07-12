@@ -2307,6 +2307,7 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 
 			if (!$error) {
 				$result = $object->importWebSite($fileofzip);
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'importsite';
@@ -4688,7 +4689,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			try {
 				$res = include $filephp;
 				if (empty($res)) {
-					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page ith this ID.";
 				}
 			} catch (Exception $e) {
 				print $e->getMessage();
