@@ -285,17 +285,17 @@ class ActionComm extends CommonObject
 
 	// Properties for links to other objects
 	/**
-	 * @var int Id of linked object
+	 * @var int 		Id of linked object
 	 */
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int Id of record alternative for API
+	 * @var int 		Id of record alternative for API
 	 */
 	public $elementid;
 
 	/**
-	 * @var string Type of record. This if property ->element of object linked to.
+	 * @var string 		Type of record. This if property ->element of object linked to.
 	 */
 	public $elementtype;
 
