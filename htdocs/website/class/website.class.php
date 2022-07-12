@@ -977,8 +977,8 @@ class Website extends CommonObject
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
-		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2);
+		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
 
 		// Copy files into medias/image
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
