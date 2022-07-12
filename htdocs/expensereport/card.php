@@ -138,7 +138,7 @@ $candelete = 0;
 if (!empty($user->rights->expensereport->supprimer)) {
 	$candelete = 1;
 }
-if ($object->statut == ExpenseReport::STATUS_DRAFT && !empty($user->rights->expensereport->write) && in_array($object->fk_user_author, $childids)) {
+if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
 	$candelete = 1;
 }
 

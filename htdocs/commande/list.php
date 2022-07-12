@@ -320,6 +320,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		$nbOrders = is_array($orders) ? count($orders) : 1;
+
 		foreach ($orders as $id_order) {
 			$cmd = new Commande($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -455,10 +457,11 @@ if (empty($reshook)) {
 
 							$objecttmp->context['createfromclone'];
 
-							$rang = $lines[$i]->rang;
+							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
 							//there may already be rows from previous orders
-							if (!empty($createbills_onebythird))
+							if (!empty($createbills_onebythird)) {
 								$rang = $TFactThirdNbLines[$cmd->socid];
+							}
 
 							$result = $objecttmp->addline(
 								$desc,
@@ -1374,7 +1377,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	if (GETPOST('autoselectall', 'int')) {
@@ -1391,6 +1394,14 @@ if ($resql) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre" align="middle">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1643,15 +1654,20 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="middle">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
-
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre" align="middle">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	// Fields title
 	print '<tr class="liste_titre">';
+
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1794,7 +1810,9 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print '</tr>'."\n";
 
 	$total = 0;
@@ -1874,6 +1892,18 @@ if ($resql) {
 		}
 
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+		}
 
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
@@ -2319,8 +2349,11 @@ if ($resql) {
 
 					$numlines = count($generic_commande->lines); // Loop on each line of order
 					for ($lig = 0; $lig < $numlines; $lig++) {
-						$reliquat = $generic_commande->lines[$lig]->qty - $generic_commande->expeditions[$generic_commande->lines[$lig]->id];
-
+						if (isset($generic_commande->expeditions[$generic_commande->lines[$lig]->id])) {
+							$reliquat =  $generic_commande->lines[$lig]->qty - $generic_commande->expeditions[$generic_commande->lines[$lig]->id];
+						} else {
+							$reliquat = $generic_commande->lines[$lig]->qty;
+						}
 						if ($generic_commande->lines[$lig]->product_type == 0 && $generic_commande->lines[$lig]->fk_product > 0) {  // If line is a product and not a service
 							$nbprod++; // order contains real products
 							$generic_product->id = $generic_commande->lines[$lig]->fk_product;
@@ -2435,13 +2468,15 @@ if ($resql) {
 		}
 
 		// Action column
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

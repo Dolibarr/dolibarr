@@ -774,7 +774,7 @@ if ($action == 'export_file') {
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
 		'type' => 'checkbox',
-		'label' => $langs->trans('NotifiedValidationDate'),
+		'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
 		'value' => $checked,
 	);
 
@@ -1131,6 +1131,10 @@ $line = new BookKeepingLine();
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {

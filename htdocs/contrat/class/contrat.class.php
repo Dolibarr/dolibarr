@@ -366,10 +366,11 @@ class Contrat extends CommonObject
 	 *  @param	int|string	$date_start		Date start (now if empty)
 	 *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param	string		$comment		Comment
+	 *  @param	int|string	$date_end		Date end
 	 *	@return	int							<0 if KO, >0 if OK
 	 *  @see ()
 	 */
-	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
+	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '', $date_end = '')
 	{
 		if (empty($date_start)) {
 			$date_start = dol_now();
@@ -387,7 +388,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
+				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;

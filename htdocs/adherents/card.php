@@ -634,7 +634,7 @@ if (empty($reshook)) {
 				exit;
 			}
 		} else {
-			$errmesg = $object->error;
+			setEventMessages($object->error, null, 'errors');
 		}
 	}
 
@@ -677,7 +677,8 @@ if (empty($reshook)) {
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
 					//fallback on the old configuration.
-					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
+					$langs->load("errors");
+					setEventMessages('<a href="'.DOL_URL_ROOT.'/adherents/admin/member_emails.php">'.$langs->trans('WarningMandatorySetupNotComplete').'</a>', null, 'errors');
 					$error++;
 				} else {
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -2028,9 +2029,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($useonlinepayment) {
 				print '<br>';
-
+				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
+					$amount = price(max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount));
+				}
+				if (empty($amount)) {
+					$amount = 0;
+				}
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('membersubscription', $object->ref);
+				print showOnlinePaymentUrl('membersubscription', $object->ref, $amount);
 			}
 
 			print '</div><div class="fichehalfright">';
