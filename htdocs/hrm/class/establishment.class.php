@@ -492,7 +492,7 @@ class Establishment extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$result .= $this->label;
 		}
 
 		$result .= $linkend;
