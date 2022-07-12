@@ -43,7 +43,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 global $filtertype;
-if(empty($filtertype))	$filtertype = 0;
+if (empty($filtertype))	$filtertype = 0;
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -105,7 +105,7 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if($filtertype != 1) {
+if ($filtertype != 1) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
@@ -137,7 +137,7 @@ if($filtertype != 1) {
 	} elseif ($tmpproduct->duration_value > 0) {
 		$dur = array("s"=>$langs->trans("Second"), "i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 	}
-	if(!empty($line->duration_unit)){
+	if (!empty($line->duration_unit)) {
 		print (isset($dur[$line->duration_unit]) ? "&nbsp;".$langs->trans($dur[$line->duration_unit])."&nbsp;" : '');
 	} else {
 		print (!empty($tmpproduct->duration_unit) && isset($dur[$tmpproduct->duration_unit]) ? "&nbsp;" . $langs->trans($dur[$tmpproduct->duration_unit]) . "&nbsp;" : '');
@@ -145,13 +145,13 @@ if($filtertype != 1) {
 	print '</td>';
 
 	//Poste de travail
-	if($conf->workstation->enabled) {
+	if ($conf->workstation->enabled) {
 		$workstation = new Workstation($object->db);
 		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
 		print '<td class="linecolunit nowrap right">';
 		$coldisplay++;
-		if($res > 0) echo $workstation->getNomUrl();
+		if ($res > 0) echo $workstation->getNomUrl();
 		print '</td>';
 	}
 }

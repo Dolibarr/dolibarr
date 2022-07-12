@@ -40,7 +40,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 global $filtertype;
-if(empty($filtertype))	$filtertype = 0;
+if (empty($filtertype))	$filtertype = 0;
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -66,28 +66,26 @@ print '</td>';
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
-if($filtertype != 1) {
+if ($filtertype != 1) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
 	}
 
-// Qty frozen
+	// Qty frozen
 	print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
 
-// Disable stock change
+	// Disable stock change
 	print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
 
-// Efficiency
+	// Efficiency
 	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
-
 } else {
-
 	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
 
-	if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+	if ($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';

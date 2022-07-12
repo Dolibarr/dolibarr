@@ -328,13 +328,13 @@ function convertDurationtoHour($duration_value, $duration_unit)
 {
 	$result = 0;
 
-	if($duration_unit == 's') $result = $duration_value / 3600;
-	if($duration_unit == 'i') $result = $duration_value / 60;
-	if($duration_unit == 'h') $result = $duration_value;
-	if($duration_unit == 'd') $result = $duration_value * 24;
-	if($duration_unit == 'w') $result = $duration_value * 24 * 7;
-	if($duration_unit == 'm') $result = $duration_value * 730.484;
-	if($duration_unit == 'y') $result = $duration_value * 365 * 24;
+	if ($duration_unit == 's') $result = $duration_value / 3600;
+	if ($duration_unit == 'i') $result = $duration_value / 60;
+	if ($duration_unit == 'h') $result = $duration_value;
+	if ($duration_unit == 'd') $result = $duration_value * 24;
+	if ($duration_unit == 'w') $result = $duration_value * 24 * 7;
+	if ($duration_unit == 'm') $result = $duration_value * 730.484;
+	if ($duration_unit == 'y') $result = $duration_value * 365 * 24;
 
 	return $result;
 }

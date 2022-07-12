@@ -434,7 +434,6 @@ class FormProduct
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
 		foreach ($this->cache_workstations as $id => $arraytypes) {
-
 			$label = $arraytypes['label'];
 
 			$out .= '<option value="'.$id.'"';

@@ -1098,7 +1098,7 @@ class BOM extends CommonObject
 				$tmpproduct->pmp = 0;
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
-				if($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
 					if (empty($line->fk_bom_child)) {
 						if ($result < 0) {
 							$this->error = $tmpproduct->error;
@@ -1127,16 +1127,15 @@ class BOM extends CommonObject
 						}
 					}
 				} else {
-
 					//Convert qty to hour
 					$qty = convertDurationtoHour($line->qty, $line->duration_unit);
 
-					if($conf->workstation->enabled){
-						if($tmpproduct->fk_default_workstation) {
+					if ($conf->workstation->enabled) {
+						if ($tmpproduct->fk_default_workstation) {
 							$workstation = new Workstation($this->db);
 							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
-							if($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
 							else {
 								$this->error = $workstation->error;
 								return -3;

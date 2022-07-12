@@ -44,7 +44,7 @@ if (empty($forceall)) {
 	$forceall = 0;
 }
 
-if(empty($filtertype))	$filtertype = 0;
+if (empty($filtertype))	$filtertype = 0;
 if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->STOCK_SUPPORT_SERVICES)) {
 	$filtertype = -1;
 }
@@ -72,7 +72,7 @@ if ($nolinesbefore) {
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
-	if($filtertype != 1) {
+	if ($filtertype != 1) {
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
@@ -82,10 +82,9 @@ if ($nolinesbefore) {
 		print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
 		print '<td class="linecoldisablestockchange right">' . $form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')) . '</td>';
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
-	}
-	else {
+	} else {
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-		if($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+		if ($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
 	}
 
@@ -106,10 +105,9 @@ print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-	if($filtertype == 1){
+	if ($filtertype == 1) {
 		print $langs->trans("Service");
-	}
-	elseif (!empty($conf->global->BOM_SUB_BOM)) {
+	} elseif (!empty($conf->global->BOM_SUB_BOM)) {
 		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';
@@ -118,8 +116,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 		// hide products in closed warehouse, but show products for internal transfer
 		$form->select_produits(GETPOST('idprod', 'int'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
-	}
-	else {
+	} else {
 		$form->select_produits(GETPOST('idprod', 'int'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 	}
 
@@ -137,7 +134,7 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
 print '</td>';
 
-if($filtertype != 1) {
+if ($filtertype != 1) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -213,11 +210,11 @@ jQuery(document).ready(function() {
 	});
 
 	//change unit selected if we change service selected
-	<?php if($filtertype == 1) { ?>
+	<?php if ($filtertype == 1) { ?>
 	$('#idprodservice').change(function(){
 			var idproduct = $(this).val();
 			$.ajax({
-				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php',1); ?>"
+				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
 				,type: 'POST'
 				,data: {
 					'action': 'getDurationUnitByProduct'

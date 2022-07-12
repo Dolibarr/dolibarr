@@ -1468,7 +1468,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if($type == 1  && $conf->workstation->enabled){
+		if ($type == 1  && $conf->workstation->enabled) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -2016,7 +2016,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				*/
 			}
 
-			if($object->isService() && $conf->workstation->enabled) {
+			if ($object->isService() && $conf->workstation->enabled) {
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
@@ -2505,7 +2505,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
-			if($object->isService() && $conf->workstation->enabled) {
+			if ($object->isService() && $conf->workstation->enabled) {
 				$workstation = new Workstation($db);
 				$res = $workstation->fetch($object->fk_default_workstation);
 

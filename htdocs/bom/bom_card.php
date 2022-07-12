@@ -167,7 +167,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$duration_unit = GETPOST('duration_unit','alphanohtml');
+		$duration_unit = GETPOST('duration_unit', 'alphanohtml');
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -227,7 +227,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$duration_unit = GETPOST('duration_unit','alphanohtml');
+		$duration_unit = GETPOST('duration_unit', 'alphanohtml');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -549,13 +549,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 */
 
 	if (!empty($object->table_element_line)) {
-
 		//Products
 		$res = $object->fetchLinesbytypeproduct(0);
 		$object->calculateCosts();
 
-		if($res > 0) {
-
+		if ($res > 0) {
 			print load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
 
 			print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
@@ -601,7 +599,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print "</form>\n";
 
 			mrpCollapseBomManagement();
-
 		}
 
 		//Services
@@ -609,7 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$res = $object->fetchLinesbytypeproduct(1);
 		$object->calculateCosts();
 
-		if($res > 0) {
+		if ($res > 0) {
 			print load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
 
 
