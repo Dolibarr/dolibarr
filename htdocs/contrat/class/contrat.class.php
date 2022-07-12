@@ -366,6 +366,7 @@ class Contrat extends CommonObject
 	 *  @param	int|string	$date_start		Date start (now if empty)
 	 *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param	string		$comment		Comment
+	 *  @param	int|string	$date_end		Date end
 	 *	@return	int							<0 if KO, >0 if OK
 	 *  @see ()
 	 */
