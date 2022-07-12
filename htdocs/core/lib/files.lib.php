@@ -755,10 +755,11 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	array	$excludefileext		Exclude some file extensions
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
 	global $conf;
 
@@ -802,10 +803,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 							}
 						}
 						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir);
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext);
 					}
 				} else {
 					$newfile = $file;
+
+					if (is_array($excludefileext)) {
+						$extension = pathinfo($file, PATHINFO_EXTENSION);
+						if (in_array($extension, $excludefileext)) {
+							//print "We exclude the file ".$file." because its extension is inside list ".join(', ', $excludefileext); exit;
+							continue;
+						}
+					}
+
 					// Replace destination filename with a new one
 					if (is_array($arrayreplacement)) {
 						foreach ($arrayreplacement as $key => $val) {
