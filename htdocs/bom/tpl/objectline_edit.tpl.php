@@ -47,7 +47,7 @@ if (empty($forceall)) {
 	$forceall = 0;
 }
 
-if(empty($filtertype))	$filtertype = 0;
+if (empty($filtertype))	$filtertype = 0;
 
 $formproduct = new FormProduct($object->db);
 
@@ -115,7 +115,7 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if($filtertype != 1) {
+if ($filtertype != 1) {
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
@@ -151,7 +151,6 @@ if($filtertype != 1) {
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolcostprice right">';
 	print '</td>';
-
 }
 
 $coldisplay += $colspan;

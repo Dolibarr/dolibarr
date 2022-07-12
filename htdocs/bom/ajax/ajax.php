@@ -66,11 +66,10 @@ $idproduct = GETPOST('idproduct', 'int');
 top_httphead();
 
 if ($action == 'getDurationUnitByProduct') {
-
 	$product = new Product($db);
 	$res = $product->fetch($idproduct);
 
-	if($res > 0){
+	if ($res > 0) {
 		$return = $product->duration_unit;
 	}
 
