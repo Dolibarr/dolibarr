@@ -214,7 +214,7 @@ jQuery(document).ready(function() {
 
 	//change unit selected if we change service selected
 	<?php if($filtertype == 1) { ?>
-	$('#idprod:nth-child(2)').change(function(){
+	$('#idprodservice').change(function(){
 			var idproduct = $(this).val();
 			$.ajax({
 				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php',1); ?>"
