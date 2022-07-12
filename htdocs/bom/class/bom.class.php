@@ -400,9 +400,11 @@ class BOM extends CommonObject
 		//associate to each line childbom if exist
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				$bom_child = new BOM($this->db);
-				$res = $bom_child->fetch($line->fk_bom_child);
-				if ($res > 0) $line->childBom[] = $bom_child;
+				if($line->fk_bom_child > 0) {
+					$bom_child = new BOM($this->db);
+					$res = $bom_child->fetch($line->fk_bom_child);
+					if ($res > 0) $line->childBom[] = $bom_child;
+				}
 			}
 		}
 
