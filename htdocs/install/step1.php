@@ -911,6 +911,8 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
 		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
+		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path
 		fputs($fp, "\n");

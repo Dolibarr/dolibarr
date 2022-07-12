@@ -179,6 +179,9 @@ if (empty($dolibarr_mailing_limit_sendbyweb)) {
 if (empty($dolibarr_mailing_limit_sendbycli)) {
 	$dolibarr_mailing_limit_sendbycli = 0;
 }
+if (empty($dolibarr_mailing_limit_sendbyday)) {
+	$dolibarr_mailing_limit_sendbyday = 0;
+}
 if (empty($dolibarr_strict_mode)) {
 	$dolibarr_strict_mode = 0; // For debug in php strict mode
 }
