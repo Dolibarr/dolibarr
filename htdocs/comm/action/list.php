@@ -947,9 +947,9 @@ while ($i < $imaxinloop) {
 			$event_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 			$event_more_class = 'event-past';
 		} else {
-			// today event
-			$event_color = $conf->global->AGENDA_EVENT_PROGRESS_COLOR;
-			$event_more_class = 'event-progress';
+			// current event
+			$event_color = $conf->global->AGENDA_EVENT_CURRENT_COLOR;
+			$event_more_class = 'event-current';
 		}
 	}
 
