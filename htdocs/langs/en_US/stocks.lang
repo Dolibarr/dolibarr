@@ -266,6 +266,7 @@ ProductBarcodeDoesNotExist=Product with barcode does not exist
 WarehouseId=Warehouse ID
 WarehouseRef=Warehouse Ref
 SaveQtyFirst=Save the real inventoried quantities first, before asking creation of the stock movement.
+ToStart=Start
 InventoryStartedShort=Started
 ErrorOnElementsInventory=Operation canceled for the following reason:
 ErrorCantFindCodeInInventory=Can't find the following code in inventory
