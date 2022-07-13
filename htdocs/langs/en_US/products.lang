@@ -427,3 +427,4 @@ RealValuation=Real Valuation
 ConfirmEditExtrafield = Select the extrafield you want modify
 ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
 ModifyValueExtrafields = Modify value of an extrafield
+WarningTransferBatchStockMouvToGlobal = If you want to deserialize this product, all its serialized stock will be transformed into global stock (without serial number)

@@ -1874,6 +1874,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
+					print '<span id="statusBatchWarning" class="warning" style="display: none;">'.img_warning().'&nbsp;'.$langs->trans("WarningTransferBatchStockMouvToGlobal").'</span>';
+
+					if($object->status_batch){
+						print '<script type="text/javascript">
+							$(document).ready(function() {
+                                console.log($("#statusBatchWarning"))
+                                $("#status_batch").on("change", function() {
+                                    if ($("#status_batch")[0].value == 0){
+                                        $("#statusBatchWarning").show()
+                                    } else {
+                                        $("#statusBatchWarning").hide()
+                                    }
+                                })
+							})</script>';
+					}
+
 					print '</td></tr>';
 					if (!empty($object->status_batch) || !empty($conf->use_javascript_ajax)) {
 						$langs->load("admin");
