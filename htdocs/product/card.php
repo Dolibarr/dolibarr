@@ -1876,7 +1876,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '<span id="statusBatchWarning" class="warning" style="display: none;">'.img_warning().'&nbsp;'.$langs->trans("WarningTransferBatchStockMouvToGlobal").'</span>';
 
-					if($object->status_batch){
+					if ($object->status_batch) {
 						print '<script type="text/javascript">
 							$(document).ready(function() {
                                 console.log($("#statusBatchWarning"))
