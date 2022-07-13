@@ -423,7 +423,7 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print $form->buttonsSaveCancel("Save", '');
+print '<div class="center"><input class="button button-save" type="submit" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 
 print '</form>';
 
