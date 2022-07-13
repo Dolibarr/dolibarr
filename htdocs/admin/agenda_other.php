@@ -117,8 +117,8 @@ if ($action == 'set') {
 		$errors[] = $db->lasterror();
 	}
 
-	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_progress_color', 'alphanohtml'));
-	$res = dolibarr_set_const($db, 'AGENDA_EVENT_PROGRESS_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
+	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_current_color', 'alphanohtml'));
+	$res = dolibarr_set_const($db, 'AGENDA_EVENT_CURRENT_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
 	if (!$res > 0) {
 		$error++;
 		$errors[] = $db->lasterror();
@@ -455,12 +455,12 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 print $formother->selectColor($conf->global->AGENDA_EVENT_PAST_COLOR, 'event_past_color');
 print '</td></tr>'."\n";
-// AGENDA_EVENT_PROGRESS_COLOR
+// AGENDA_EVENT_CURRENT_COLOR
 print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans('AGENDA_EVENT_PROGRESS_COLOR').'</td>'."\n";
+print '<td>'.$langs->trans('AGENDA_EVENT_CURRENT_COLOR').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
-print $formother->selectColor($conf->global->AGENDA_EVENT_PROGRESS_COLOR, 'event_progress_color');
+print $formother->selectColor($conf->global->AGENDA_EVENT_CURRENT_COLOR, 'event_current_color');
 print '</td></tr>'."\n";
 // AGENDA_EVENT_FUTURE_COLOR
 print '<tr class="oddeven">'."\n";
