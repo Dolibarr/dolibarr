@@ -373,6 +373,7 @@ class AccountancyExport
 
 	/**
 	 * Export format : COGILOG
+	 * Last review for this format : 2022-07-12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
 	 * @param array $objectLines data
 	 * @return void
@@ -380,27 +381,52 @@ class AccountancyExport
 	public function exportCogilog($objectLines)
 	{
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			$separator = ";";
-			$end_line = "\n";
+			if ($line->debit == 0 && $line->credit == 0) {
+				//unset($array[$line]);
+			} else {
+				$date = dol_print_date($line->doc_date, '%d%m%Y');
+				$separator = "\t";
+				$end_line = "\n";
 
-			print $line->code_journal.$separator;
-			print $date.$separator;
-			print $line->piece_num.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print ''.$separator;
-			print $line->label_operation.$separator;
-			print $date.$separator;
-			if ($line->sens == 'D') {
-				print price($line->debit).$separator;
-				print ''.$separator;
-			} elseif ($line->sens == 'C') {
-				print ''.$separator;
-				print price($line->credit).$separator;
+				$refInvoice = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
+
+				print $line->code_journal . $separator;
+				print $date . $separator;
+				print $refInvoice . $separator;
+				if (empty($line->subledger_account)) {
+					print length_accountg($line->numero_compte) . $separator;
+				} else {
+					print length_accounta($line->subledger_account) . $separator;
+				}
+				print '' . $separator;
+				print $line->label_operation . $separator;
+				print $date . $separator;
+				if ($line->sens == 'D') {
+					print price($line->debit) . $separator;
+					print '' . $separator;
+				} elseif ($line->sens == 'C') {
+					print '' . $separator;
+					print price($line->credit) . $separator;
+				}
+				print $line->doc_ref . $separator;
+				print $line->label_operation . $separator;
+				print $end_line;
 			}
-			print $line->doc_ref.$separator;
-			print $line->label_operation.$separator;
-			print $end_line;
 		}
 	}
 
