@@ -108,7 +108,6 @@ if ($action == 'set') {
 	if ($resultCreat<0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 	}
-
 } elseif ($action == 'setcolors') {
 	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_past_color', 'alphanohtml'));
 	$res = dolibarr_set_const($db, 'AGENDA_EVENT_PAST_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
@@ -136,8 +135,7 @@ if ($action == 'set') {
 	} else {
 		setEventMessage($langs->trans('SetupSaved'));
 	}
-}
-elseif ($action == 'specimen') {  // For orders
+} elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
 	$commande = new CommandeFournisseur($db);
