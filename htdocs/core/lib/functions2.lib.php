@@ -988,6 +988,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($date == '') {
 		$date = dol_now(); // We use local year and month of PHP server to search numbers
 	}
+	$now = new DateTime();
+	$now->setTimestamp($date);
+
 	// but we should use local year and month of user
 
 	// For debugging
@@ -1256,7 +1259,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = dol_string_nospecial($mask);
 	$maskLike = str_replace("%", "_", $maskLike);
 
-	$now = new DateTime();
 	$maskLike = preg_replace('/\{yyyy\}/i', $now->format('Y'), $maskLike);
 	$maskLike = preg_replace('/\{yy\}/i', $now->format('y'), $maskLike);
 	$maskLike = preg_replace('/\{y\}/i',  substr($now->format('y'), 1), $maskLike);
@@ -1323,7 +1325,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskLike = dol_string_nospecial($mask);
 		$maskLike = str_replace("%", "_", $maskLike);
 
-		$now = new DateTime();
 		$maskLike = preg_replace('/\{yyyy\}/i', $now->format('Y'), $maskLike);
 		$maskLike = preg_replace('/\{yy\}/i', $now->format('y'), $maskLike);
 		$maskLike = preg_replace('/\{y\}/i',  substr($now->format('y'), 1), $maskLike);
@@ -1358,7 +1359,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if ($sqlwhere) {
 			$sql .= ' AND '.$sqlwhere;
 		}
-
 		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -1394,7 +1394,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = dol_string_nospecial($mask);
 			$maskrefclient_maskLike = str_replace("%", "_", $maskrefclient_maskLike);
 
-			$now = new DateTime();
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), $now->format('Y'), $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), $now->format('y'), $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), substr($now->format('y'), 1), $maskrefclient_maskLike);
