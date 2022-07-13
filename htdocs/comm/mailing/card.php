@@ -808,7 +808,13 @@ if ($action == 'create') {
 					$linktoadminemailbefore = '<a href="'.DOL_URL_ROOT.'/admin/mails_emailing.php">';
 					$linktoadminemailend = '</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
-					setEventMessages($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), null, 'warnings');
+					$messagetoshow = $langs->trans("MailSendSetupIs2", '{s1}', '{s2}', '{s3}', '{s4}');
+					$messagetoshow = str_replace('{s1}', $linktoadminemailbefore, $messagetoshow);
+					$messagetoshow = str_replace('{s2}', $linktoadminemailend, $messagetoshow);
+					$messagetoshow = str_replace('{s3}', $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $messagetoshow);
+					$messagetoshow = str_replace('{s4}', $listofmethods['smtps'], $messagetoshow);
+					setEventMessages($messagetoshow, null, 'warnings');
+
 					if (!empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) {
 						setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					}
