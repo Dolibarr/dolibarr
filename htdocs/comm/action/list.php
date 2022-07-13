@@ -889,6 +889,7 @@ $i = 0;
 //$savnbfield = $totalarray['nbfield'];
 //$totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$today_start_date_time = dol_now();
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -923,7 +924,36 @@ while ($i < $imaxinloop) {
 		$actionstatic->fetchResources();
 	}
 
-	print '<tr class="oddeven">';
+	// get event color
+	$event_color = '';
+	$event_more_class = '';
+	$event_start_date_time = $actionstatic->datep;
+	if ($obj->fulldayevent) {
+		$today_start_date_time = dol_mktime(0, 0, 0, date('m', $today_start_date_time), date('d', $today_start_date_time), date('Y', $today_start_date_time));
+	}
+	if ($event_start_date_time > $today_start_date_time) {
+		// future event
+		$event_color = $conf->global->AGENDA_EVENT_FUTURE_COLOR;
+		$event_more_class = 'event-future';
+	} else {
+		// check event end date
+		$event_end_date_time = $db->jdate($obj->dp2);
+		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
+			// past event
+			$event_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
+			$event_more_class = 'event-past';
+		} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
+			// past event
+			$event_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
+			$event_more_class = 'event-past';
+		} else {
+			// today event
+			$event_color = $conf->global->AGENDA_EVENT_PROGRESS_COLOR;
+			$event_more_class = 'event-progress';
+		}
+	}
+
+	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '"' . ($event_color != '' ? ' style="background: #'.$event_color.';"' : '') . '>';
 
 	// Ref
 	if (!empty($arrayfields['a.id']['checked'])) {
