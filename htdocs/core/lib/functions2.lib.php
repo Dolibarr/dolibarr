@@ -1256,12 +1256,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = dol_string_nospecial($mask);
 	$maskLike = str_replace("%", "_", $maskLike);
 
+	$now = new DateTime();
+	$maskLike = preg_replace('/\{yyyy\}/i', $now->format('Y'), $maskLike);
+	$maskLike = preg_replace('/\{yy\}/i', $now->format('y'), $maskLike);
+	$maskLike = preg_replace('/\{y\}/i',  substr($now->format('y'),1), $maskLike);
+	$maskLike = preg_replace('/\{mm\}/i', $now->format('m'), $maskLike);
+	$maskLike = preg_replace('/\{dd\}/i', $now->format('d'), $maskLike);
+
 	// Replace protected special codes with matching number of _ as wild card caracter
-	$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
-	$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
-	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
-	$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
-	$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
 	if ($maskrefclient) {
 		$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
@@ -1320,12 +1322,15 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Define $maskLike
 		$maskLike = dol_string_nospecial($mask);
 		$maskLike = str_replace("%", "_", $maskLike);
+
+		$now = new DateTime();
+		$maskLike = preg_replace('/\{yyyy\}/i', $now->format('Y'), $maskLike);
+		$maskLike = preg_replace('/\{yy\}/i', $now->format('y'), $maskLike);
+		$maskLike = preg_replace('/\{y\}/i',  substr($now->format('y'),1), $maskLike);
+		$maskLike = preg_replace('/\{mm\}/i', $now->format('m'), $maskLike);
+		$maskLike = preg_replace('/\{dd\}/i', $now->format('d'), $maskLike);
+
 		// Replace protected special codes with matching number of _ as wild card caracter
-		$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
-		$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
-		$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
-		$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
-		$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 		$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), $counterpadded, $maskLike);
 		if ($maskrefclient) {
 			$maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), str_pad("", dol_strlen($maskrefclient), "_"), $maskLike);
@@ -1388,12 +1393,15 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			// Define $maskrefclient_maskLike
 			$maskrefclient_maskLike = dol_string_nospecial($mask);
 			$maskrefclient_maskLike = str_replace("%", "_", $maskrefclient_maskLike);
+
+			$now = new DateTime();
+			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), $now->format('Y'), $maskrefclient_maskLike);
+			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), $now->format('y'), $maskrefclient_maskLike);
+			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), substr($now->format('y'),1), $maskrefclient_maskLike);
+			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), $now->format('m'), $maskrefclient_maskLike);
+			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), $now->format('d'), $maskrefclient_maskLike);
+
 			// Replace protected special codes with matching number of _ as wild card caracter
-			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'), '____', $maskrefclient_maskLike);
-			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'), '__', $maskrefclient_maskLike);
-			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'), '_', $maskrefclient_maskLike);
-			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'), '__', $maskrefclient_maskLike);
-			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'), '__', $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskrefclient_maskLike);
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
