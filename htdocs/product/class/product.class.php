@@ -1221,6 +1221,41 @@ class Product extends CommonObject
 					}
 				}
 
+				if (!$this->hasbatch() && $this->oldcopy->hasbatch()){
+					// Selection of all product stock mouvements that contains batchs
+					$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'stock_mouvement sm';
+					$sql .= ' WHERE fk_product = '.$this->id;
+					$sql .= ' AND batch IS NOT NULL';
+
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						while ($obj = $this->db->fetch_object($resql)) {
+							$value = $obj->value;
+							$fk_entrepot = $obj->fk_entrepot;
+							$price = $obj->price;
+							$dlc = $obj->eatby;
+							$dluo = $obj->sellby;
+							$batch = $obj->batch;
+							$inventorycode = $obj->inventorycode;
+
+							//To know how to revert stockMouvement (add or remove)
+							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
+							$label = $langs->trans('BatchStockMouvementReverting');
+							$res = $this->correct_stock_batch($user, $fk_entrepot, $value, $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '',null, 0);
+							if($res > 0){
+								$label = $langs->trans('BatchStockMouvementAddInGlobal');
+								$addOremove = $addOremove == 0 ? 1 : 0;
+								$res = $this->correct_stock($user, $fk_entrepot, $value, $addOremove, $label, $price, $inventorycode, '',null, 0);
+								if($res < 0) {
+									$error++;
+								}
+							} else {
+								$error++;
+							}
+						}
+					}
+				}
+
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
