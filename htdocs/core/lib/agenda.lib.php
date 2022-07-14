@@ -45,7 +45,7 @@
  * @param	int		$usergroupid	Id of group to filter on users
  * @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   	$resourceid	    Preselected value of resource for filter on resource
- * @param	int   	$search_category Categorie action 
+ * @param	int     $search_category Categorie action
  * @return	void
  */
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0, $search_category = 0)
@@ -131,7 +131,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_action_category', $cate_arbo, $search_action_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth250', 1);
 		print '</div>';
 	}
-	
+
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
