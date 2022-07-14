@@ -76,7 +76,7 @@ if (GETPOST('search_actioncode', 'array')) {
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
-
+$search_category = GETPOST('search_category', 'int');
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
 $datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
 $datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');
@@ -225,6 +225,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$filter = '';
 	$filtert = '';
 	$usergroup = '';
+	$search_category = '';
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -435,6 +436,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
+if ($search_category > 0) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_actioncomm as cac ON cac.fk_actioncomm = a.id";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
@@ -451,6 +455,9 @@ if ($usergroup > 0) {
 }
 $sql .= " WHERE c.id = a.fk_action";
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+if ($search_category > 0) {
+	$sql .= " AND cac.fk_categorie = ".$search_category;
+}
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -725,7 +732,7 @@ if ($massactionbutton) {
 $i = 0;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_category );
 print '</div>';
 
 print '<div class="div-table-responsive">';
