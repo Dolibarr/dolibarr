@@ -419,6 +419,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	// We force the content charset
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	header("X-Content-Type-Options: nosniff");
+	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 	print '<!DOCTYPE HTML>'."\n";
 	print '<html>'."\n";
