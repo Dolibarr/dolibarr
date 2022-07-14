@@ -56,6 +56,7 @@ $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha
 $filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
 $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
 $showbirthday = empty($conf->use_javascript_ajax) ? GETPOST("showbirthday", "int") : 1;
+$search_category = GETPOST('search_category', 'int');
 
 // If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
@@ -670,6 +671,9 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncom
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
+if ($search_category > 0) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_actioncomm as cac ON cac.fk_actioncomm = a.id";
+}
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
@@ -683,6 +687,11 @@ if ($usergroup > 0) {
 }
 $sql .= ' WHERE a.fk_action = ca.id';
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+
+if ($search_category > 0) {
+	$sql .= " AND cac.fk_categorie = ".$search_category;
+}
+
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -1407,7 +1416,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_category);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
