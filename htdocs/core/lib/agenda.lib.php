@@ -45,9 +45,10 @@
  * @param	int		$usergroupid	Id of group to filter on users
  * @param	string	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   	$resourceid	    Preselected value of resource for filter on resource
+ * @param	int   	$search_category Categorie action 
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0, $search_category = 0)
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
@@ -121,6 +122,16 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</div>';
 	}
 
+	// Filter on categories tags
+	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire ) {
+		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		print '<div class="divsearchfield">';
+		$tmptitle = $langs->trans('IncludingActionWithTag');
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, null, 'parent', null, null, 1);
+		print img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_action_category', $cate_arbo, $search_action_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth250', 1);
+		print '</div>';
+	}
+	
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"])) {
 		// Status
 		print '<div class="divsearchfield">';
