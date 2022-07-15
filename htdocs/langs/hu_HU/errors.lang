@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=Ez az attribútum egy vagy több termékváltoza
 ErrorAttributeValueIsUsedIntoProduct=Ez az attribútumérték egy vagy több termékváltozatban használatos
 ErrorPaymentInBothCurrency=Hiba, minden összeget ugyanabba az oszlopba kell beírni
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Ön %s pénznemben próbálja kifizetni a számlákat %s pénznemű számláról
+ErrorInvoiceLoadThirdParty=Nem lehet betölteni harmadik féltől származó objektumot az „%s” számlához
+ErrorInvoiceLoadThirdPartyKey=Harmadik féltől származó „%s” kulcs nincs beállítva az „%s” számlához
+ErrorDeleteLineNotAllowedByObjectStatus=A sor törlését az objektum tényleges állapota nem teszi lehetővé
+ErrorAjaxRequestFailed=Kérés sikertelen
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=A PHP paraméter upload_max_filesize (%s) magasabb, mint a PHP post_max_size (%s) paramétere. Ez nem következetes beállítás.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Csak HTTPS biztonságos kapcsolat használat
 WarningModuleXDisabledSoYouMayMissEventHere=A %s modul nincs engedélyezve. Így sok eseményről lemaradhat itt.
 WarningPaypalPaymentNotCompatibleWithStrict=A 'Strict' érték miatt az online fizetési funkciók nem működnek megfelelően. Használja helyette a „Lax” szót.
 
+<<<<<<< FEJ
+=======
+<<<<<<< FEJ
+<<<<<<< FEJ
+>>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
 # Validate
 RequireValidValue = Az érték nem érvényes
 RequireAtLeastXString = Legalább %s karakter szükséges
@@ -338,3 +347,12 @@ BadSetupOfField = Hiba a mező rossz beállításában
 BadSetupOfFieldClassNotFoundForValidation = Hiba a mező rossz beállításában: Az osztály nem található az ellenőrzéshez
 BadSetupOfFieldFileNotFound = Hiba a mező rossz beállításában: A fájl nem található a felvételhez
 BadSetupOfFieldFetchNotCallable = Hiba a mező rossz beállításában: A lekérés nem hívható az osztályban
+<<<<<<< FEJ
+=======
+=======
+=======
+>>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
+>>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
+=======
+>>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
+>>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága

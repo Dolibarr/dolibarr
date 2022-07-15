@@ -34,6 +34,11 @@ if ($dolibarr_main_prod) {
  * View
  */
 
+header("Content-type: text/html; charset=UTF8");
+
+// Security options
+header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 ?>
 
 This is a form to test if a CSRF exists into a Dolibarr page.<br>

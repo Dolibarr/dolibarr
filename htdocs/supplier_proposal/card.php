@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -321,8 +321,20 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				if ($origin && $originid) {
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
+					$element = $subelement = $origin;
+					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+						$element = $regs[1];
+						$subelement = $regs[2];
+					}
+
+					// For compatibility
+					if ($element == 'order') {
+						$element = $subelement = 'commande';
+					}
+					if ($element == 'propal') {
+						$element = 'comm/propal';
+						$subelement = 'propal';
+					}
 
 					$object->origin = $origin;
 					$object->origin_id = $originid;
@@ -1110,7 +1122,10 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("SupplierProposalNew");
+}
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 
@@ -1119,7 +1134,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1129,7 +1144,7 @@ $now = dol_now();
 if ($action == 'create') {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewAskPrice"), '', 'supplier_proposal');
+	print load_fiche_titre($langs->trans("SupplierProposalNew"), '', 'supplier_proposal');
 
 	$soc = new Societe($db);
 	if ($socid > 0) {
@@ -1138,8 +1153,20 @@ if ($action == 'create') {
 
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
-		$element = 'supplier_proposal';
-		$subelement = 'supplier_proposal';
+		$element = $subelement = GETPOST('origin');
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+
+		// For compatibility
+		if ($element == 'order' || $element == 'commande') {
+			$element = $subelement = 'commande';
+		}
+		if ($element == 'propal') {
+			$element = 'comm/propal';
+			$subelement = 'propal';
+		}
 
 		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -1288,7 +1315,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 
 		$formproject = new FormProjets($db);
@@ -1531,7 +1558,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
@@ -1754,45 +1781,45 @@ if ($action == 'create') {
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="valuefield">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="valuefield">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="valuefield">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 	}
 
 	// Amount HT
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('AmountHT').'</td>';
-	print '<td class="valuefield">'.price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield nowrap right amountcard">'.price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	// Amount VAT
 	print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
-	print '<td class="valuefield">'.price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield nowrap right amountcard">'.price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 	// Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="valuefield nowrap">'.price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 	// Localtax2
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class="valuefield nowrap">'.price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+		print '<td class="valuefield nowrap right amountcard">'.price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td class="valuefield nowrap">'.price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield nowrap right amountcard">'.price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	print '</table>';

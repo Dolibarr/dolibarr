@@ -820,13 +820,6 @@ class BOM extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('bomdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -916,27 +909,11 @@ class BOM extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if (!empty($obj->fk_user_author)) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if (!empty($obj->fk_user_valid)) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if (!empty($obj->fk_user_cloture)) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = !empty($obj->datem) ? $this->db->jdate($obj->datem) : "";
-				$this->date_validation   = !empty($obj->datev) ? $this->db->jdate($obj->datev) : "";
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -958,8 +935,8 @@ class BOM extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1301,6 +1278,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
+
 	/**
 	 * Constructor
 	 *
@@ -1514,13 +1492,6 @@ class BOMLine extends CommonObjectLine
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('bomlinedao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1594,29 +1565,11 @@ class BOMLine extends CommonObjectLine
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
-
 			$this->db->free($result);
 		} else {
 			dol_print_error($this->db);

@@ -132,31 +132,32 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 }
 $offset = $limit * $page;
 
-$titre = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if ($type == "p") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactprospectlist';
 	}
-	$titre .= '  ('.$langs->trans("ThirdPartyProspects").')';
+	$title .= '  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche = "card.php";
 }
 if ($type == "c") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactcustomerlist';
 	}
-	$titre .= '  ('.$langs->trans("ThirdPartyCustomers").')';
+	$title .= '  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche = "card.php";
 } elseif ($type == "f") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactsupplierlist';
 	}
-	$titre .= ' ('.$langs->trans("ThirdPartySuppliers").')';
+	$title .= ' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche = "card.php";
 } elseif ($type == "o") {
 	if (empty($contextpage) || $contextpage == 'contactlist') {
 		$contextpage = 'contactotherlist';
 	}
-	$titre .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
+	$title .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche = "";
 }
 
@@ -344,8 +345,6 @@ $contactstatic = new Contact($db);
 if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
 	$contactstatic->loadCacheOfProspStatus();
 }
-
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 // Select every potentiels, and note each potentiels which fit in search parameters
 $tab_level = array();
@@ -583,7 +582,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -709,7 +708,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "contact";
@@ -772,7 +771,7 @@ print $hookmanager->resPrint;
 print '</div>';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -782,6 +781,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Lines for filter fields
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['p.rowid']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
@@ -934,15 +940,19 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
-
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>';
 
 // Ligne des titres
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['p.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
 }
@@ -1032,7 +1042,9 @@ if (!empty($arrayfields['p.statut']['checked'])) {
 if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 
@@ -1064,6 +1076,18 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50">';
@@ -1292,15 +1316,17 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

@@ -39,6 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+if (!empty($conf->ficheinter->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+}
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -100,6 +103,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$supplierorderstatic = new CommandeFournisseur($db);
 }
 
+if (!empty($conf->ficheinter->enabled)) {
+	$fichinterstatic = new Fichinter($db);
+}
+
 llxHeader("", $langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
@@ -120,6 +127,7 @@ if ($tmp) {
 /*
  * Draft customer proposals
  */
+
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -217,6 +225,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 /*
  * Draft supplier proposals
  */
+
 if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -313,6 +322,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 /*
  * Draft customer orders
  */
+
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -397,7 +407,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			}
 		}
 
-		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoOrder");
 		finishSimpleTable(true);
 
 		$db->free($resql);
@@ -410,6 +420,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 /*
  * Draft purchase orders
  */
+
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -494,7 +505,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			}
 		}
 
-		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoOrder");
 		finishSimpleTable(true);
 
 		$db->free($resql);
@@ -508,7 +519,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
  * Draft interventionals
  */
 if (!empty($conf->ficheinter->enabled)) {
-	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
+	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+	$sql .= ", s.logo, s.email, s.entity";
+	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (empty($user->rights->societe->client->voir) && !$socid) {
@@ -524,22 +540,46 @@ if (!empty($conf->ficheinter->enabled)) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
+
 	$resql = $db->query($sql);
 	if ($resql) {
+		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
+
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
-		$langs->load("fichinter");
-		$num = $db->num_rows($resql);
+
 		if ($num) {
 			$i = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
+
+				$fichinterstatic->id=$obj->rowid;
+				$fichinterstatic->ref=$obj->ref;
+				$fichinterstatic->statut=$obj->fk_statut;
+
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
+				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->client = $obj->client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+				$companystatic->fournisseur = $obj->fournisseur;
+				$companystatic->logo = $obj->logo;
+				$companystatic->email = $obj->email;
+				$companystatic->entity = $obj->entity;
+				$companystatic->canvas = $obj->canvas;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+				print '<td class="nowrap tdoverflowmax100">';
+				print $fichinterstatic->getNomUrl(1);
+				print "</td>";
+				print '<td class="nowrap tdoverflowmax100">';
+				print $companystatic->getNomUrl(1, 'customer');
+				print '</td></tr>';
 				$i++;
 			}
 		}

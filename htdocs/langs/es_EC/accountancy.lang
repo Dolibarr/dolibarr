@@ -164,7 +164,6 @@ DescVentilExpenseReportMore=Si configura una cuenta contable en el tipo de líne
 DescVentilDoneExpenseReport=Consulte aquí la lista de las líneas de informes de gastos y su cuenta contable de honorarios
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de escritura, letras y eliminaciones. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrar
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta de contabilidad porque se utiliza
-MvtNotCorrectlyBalanced=El movimiento no está correctamente equilibrado. Débito = %s | Crédito = %s
 Balancing=Balance
 FicheVentilation=Tarjeta obligatoria
 GeneralLedgerIsWritten=Las transacciones se escriben en el libro mayor

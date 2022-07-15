@@ -7,6 +7,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,11 +125,11 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -225,11 +226,11 @@ if (empty($reshook)) {
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
-		$object->domiciliation = trim(GETPOST("domiciliation", "nohtml"));
+		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
-		$object->owner_address = trim(GETPOST("owner_address", 'nohtml'));
+		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 
 		$object->ics = trim(GETPOST("ics", 'alpha'));
 		$object->ics_transfer = trim(GETPOST("ics_transfer", 'alpha'));
@@ -331,17 +332,15 @@ if (!empty($conf->accounting->enabled)) {
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-$title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
-
-llxHeader("", $title, $help_url);
-
 
 // Creation
 
 if ($action == 'create') {
 	$object = new Account($db);
+
+	$title = $langs->trans("NewFinancialAccount");
+	llxHeader("", $title, $help_url);
 
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
@@ -436,7 +435,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Tags-Categories
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 
@@ -457,7 +456,7 @@ if ($action == 'create') {
 	print '<td>';
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_4, '90%');
+	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -540,7 +539,7 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
 		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
-		if ($conf->paymentbybanktransfer->enabled) {
+		if (isModEnabled('paymentbybanktransfer')) {
 			print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
 			print '<td><input type="checkbox" class="flat minwidth150" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>&nbsp;';
 			print img_picto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp"), 'info');
@@ -613,6 +612,9 @@ if ($action == 'create') {
 			$object->fetch(0, GETPOST("ref"));
 			$_GET["id"] = $object->id;
 		}
+
+		$title = $object->ref." - ".$langs->trans("Card");
+		llxHeader("", $title, $help_url);
 
 		// Show tabs
 		$head = bank_prepare_head($object);
@@ -713,7 +715,7 @@ if ($action == 'create') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
@@ -777,14 +779,14 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 
-			if ($conf->prelevement->enabled) {
+			if (isModEnabled('prelevement')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';
 				print '<td>'.$object->ics.'</td>';
 				print '</tr>';
 			}
 
 			// TODO ICS is not used with bank transfer !
-			if ($conf->paymentbybanktransfer->enabled) {
+			if (isModEnabled('paymentbybanktransfer')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
 				print '</tr>';
@@ -966,7 +968,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -985,7 +987,7 @@ if ($action == 'create') {
 		print '<td>';
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_4, '95%');
+		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ?GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '95%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1082,12 +1084,12 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
 			print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOSTISSET('bic') ? GETPOST('bic',  'alphanohtml') : $object->bic).'"></td></tr>';
 
-			if ($conf->prelevement->enabled) {
+			if (isModEnabled('prelevement')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("ICS"), $langs->trans("ICS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("StandingOrder")).')').'</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alphanohtml') : $object->ics).'"></td></tr>';
 			}
 
-			if ($conf->paymentbybanktransfer->enabled) {
+			if (!empty(isModEnabled('paymentbybanktransfer'))) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 

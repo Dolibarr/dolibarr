@@ -43,6 +43,12 @@ class mod_facture_terre extends ModeleNumRefFactures
 	public $prefixinvoice = 'FA';
 
 	/**
+	 * Prefix for replacement invoices
+	 * @var string
+	 */
+	public $prefixreplacement = 'FA';
+
+	/**
 	 * Prefix for credit note
 	 * @var string
 	 */
@@ -65,7 +71,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
-		global $conf;
+		global $conf, $mysoc;
+
+		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
+			$this->prefixreplacement = 'IR';
+			$this->prefixdeposit = 'ID';
+			$this->prefixcreditnote = 'IC';
+		}
+
 		if (!empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX)) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
 		}

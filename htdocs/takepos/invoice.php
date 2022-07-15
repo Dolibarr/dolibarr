@@ -177,6 +177,7 @@ if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercu
 	}
 }
 
+
 /*
  * Actions
  */
@@ -204,7 +205,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed") {
+		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -278,7 +279,8 @@ if (empty($reshook)) {
 			$res = $invoice->validate($user);
 			if ($res < 0) {
 				$error++;
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				$langs->load("admin");
+				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)': $invoice->error, $invoice->errors, 1);
 			}
 		}
 
@@ -542,7 +544,7 @@ if (empty($reshook)) {
 
 		$idoflineadded = 0;
 		// Group if enabled. Skip group if line already sent to the printer
-		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT) && $line->special_code != "4") {
+		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
@@ -595,7 +597,7 @@ if (empty($reshook)) {
 		$localtax1_tx = get_localtax($tva_tx, 1, $customer, $mysoc, $tva_npr);
 		$localtax2_tx = get_localtax($tva_tx, 2, $customer, $mysoc, $tva_npr);
 
-		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
+		$invoice->addline($desc, $number, 1, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', 0, 0, 0, '', getDolGlobalInt('TAKEPOS_CHANGE_PRICE_HT') ? 'HT' : 'TTC', $number, 0, -1, 0, '', 0, 0, null, '', '', 0, 100, '', null, 0);
 		$invoice->fetch($placeid);
 	}
 
@@ -804,7 +806,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 1;
 			echo "<script>";
 			echo "var orderprinter1esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 1
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
@@ -836,7 +838,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 2;
 			echo "<script>";
 			echo "var orderprinter2esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 2
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
@@ -868,7 +870,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 3;
 			echo "<script>";
 			echo "var orderprinter3esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 3
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 3
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
@@ -913,7 +915,7 @@ if (empty($reshook)) {
 			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
 		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
+		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
 			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 		}
 	}
@@ -1444,7 +1446,11 @@ if ($placeid > 0) {
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
 				}
-				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'">';
+				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
+				if ($line->special_code == "4") {
+					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
 				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
 				if ($line->product_label) {
@@ -1483,7 +1489,11 @@ if ($placeid > 0) {
 			if ($line->special_code == "4") {
 				$htmlforlines .= ' order';
 			}
-			$htmlforlines .= '" id="'.$line->id.'">';
+			$htmlforlines .= '" id="'.$line->id.'"';
+			if ($line->special_code == "4") {
+				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
+			}
+			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';
 			if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";

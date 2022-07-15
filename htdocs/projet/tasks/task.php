@@ -120,6 +120,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
+		} else {
+			$action = 'edit';
 		}
 	} else {
 		$action = 'edit';
@@ -175,7 +177,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
-	$upload_dir = $conf->projet->dir_output;
+	$upload_dir = $conf->project->dir_output;
 	$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
 	$ret = dol_delete_file($file);
@@ -190,12 +192,18 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref;
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
@@ -203,7 +211,7 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetchComments();
 	}
 
-	$result = $projectstatic->fetch($object->fk_project);
+
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
@@ -331,7 +339,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
@@ -645,7 +653,7 @@ if ($id > 0 || !empty($ref)) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
-		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->rights->projet->lire);
 		$delallowed = ($user->rights->projet->creer);

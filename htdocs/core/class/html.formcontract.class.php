@@ -188,7 +188,7 @@ class FormContract
 		print '<input type="hidden" name="action" value="setcontract">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		$this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
-		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 }

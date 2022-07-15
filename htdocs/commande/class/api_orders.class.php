@@ -350,8 +350,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->addline(
 			$request_data->desc,
@@ -418,8 +418,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->updateline(
 			$lineid,

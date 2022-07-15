@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C)    2022	  Charlene Benke <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +41,10 @@ if ($action == 'presend') {
 
 	$object->fetch_projet();
 
-	if (!in_array($object->element, array('societe', 'user', 'member'))) {
+	$ref = dol_sanitizeFileName($object->ref);
+	if (!in_array($object->element, array('user', 'member'))) {
 		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
 
-		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// Special case
 		if ($object->element == 'invoice_supplier') {
@@ -58,11 +59,11 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-		$newlang = GETPOST('lang_id', 'aZ09');
-	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
+		if (GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
 	}
 
 	if (!empty($newlang)) {
@@ -81,10 +82,13 @@ if ($action == 'presend') {
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) {
+	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -212,7 +216,14 @@ if ($action == 'presend') {
 		$formmail->setSubstitFromObject($object, $langs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = "";
+	if (is_object($object) && is_object($object->thirdparty)) {
+		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';
+		$checkRead.='?tag='.(!empty($object->thirdparty->tag)?urlencode($object->thirdparty->tag):"");
+		$checkRead.='&securitykey='.(!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)?urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY):"");
+		$checkRead.='" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+		$substitutionarray['__CHECK_READ__'] = $checkRead;
+	}
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(

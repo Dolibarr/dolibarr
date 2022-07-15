@@ -172,7 +172,7 @@ print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover"
 
 print '<table class="centpercent noborderbottom">';
 print '<tr>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -195,10 +195,27 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingrightimp">';
 
+print '<button id="btn" type="button" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
 
-print '<div id="div_container_sub_exportoptions">';
+print '<script type="text/javascript">
+
+function hideoptions(){
+	const btn = document.getElementById("btn");
+	const div = document.getElementById("div_container_sub_exportoptions");
+
+  	if (div.style.display === "none") {
+    	div.style.display = "block";
+		btn.innerText="'.$langs->trans("HideAdvancedoptions").'";
+  	} else {
+    	div.style.display = "none";
+		btn.innerText="'.$langs->trans("ShowAdvancedOptions").'";
+	}
+}
+</script>';
+
+print '<div id="div_container_sub_exportoptions" style="display: none;">';
 if (in_array($type, array('mysql', 'mysqli'))) {
 	print "<!--  Fieldset mysqldump -->\n";
 	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';
@@ -439,7 +456,7 @@ if (in_array($type, array('pgsql'))) {
 	$prefix = 'pg_dump';
 	$ext = 'sql';
 }
-$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 print '<input type="text" name="filename_template" style="width: 90%" id="filename_template" value="'.$file.'" />';
 print '<br>';
 print '<br>';
@@ -559,10 +576,10 @@ print '</table>';
 print "</div> 	<!-- end div fichehalfleft -->\n";
 
 
-print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
+print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"));
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:480px; overflow: auto;"');
 print '<br>';
 
 print '</div>';
@@ -594,7 +611,7 @@ print load_fiche_titre($title);
 print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';
 $ext = 'zip';
-$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser');
 print '<input type="text" name="zipfilename_template" style="width: 90%" id="zipfilename_template" value="'.$file.'" /> <br>';
 print '<br>';
 
@@ -639,10 +656,10 @@ print '</div>';
 
 print '</div>';
 
-print '<div id="backupfileright" class="fichehalfright" style="height:250px; overflow: auto;">';
+print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
 print '</div>';

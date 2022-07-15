@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -227,11 +227,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $langs->trans('Order')." - ".$langs->trans('Shipments');
+$title = $object->ref." - ".$langs->trans('Shipments');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 llxHeader('', $title, $help_url);
 
@@ -287,7 +287,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
@@ -610,7 +610,7 @@ if ($id > 0 || !empty($ref)) {
 		 *  Lines or orders with quantity shipped and remain to ship
 		 *  Note: Qty shipped are already available into $object->expeditions[fk_product]
 		 */
-		print '<table class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
@@ -635,18 +635,19 @@ if ($id > 0 || !empty($ref)) {
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-
+			print '<thead>';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
-			print '<td class="center">'.$langs->trans("KeepToShip").'</td>';
+			print '<th>'.$langs->trans("Description").'</th>';
+			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
+			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
+			print '<th class="center">'.$langs->trans("KeepToShip").'</th>';
 			if (!empty($conf->stock->enabled)) {
-				print '<td class="center">'.$langs->trans("RealStock").'</td>';
+				print '<th class="center">'.$langs->trans("RealStock").'</th>';
 			} else {
-				print '<td>&nbsp;</td>';
+				print '<th>&nbsp;</th>';
 			}
 			print "</tr>\n";
+			print '</thead>';
 
 			$toBeShipped = array();
 			$toBeShippedTotal = 0;
@@ -797,6 +798,10 @@ if ($id > 0 || !empty($ref)) {
 						print $product->stock_reel;
 						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
 							print ' '.img_warning($langs->trans("StockTooLow"));
+							if (!empty($conf->global->STOCK_CORRECT_STOCK_IN_SHIPMENT)) {
+								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
+								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode($nbPiece).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id)).'">'.$langs->trans("CorrectStock").'</a>';
+							}
 						}
 						print '</td>';
 					} else {

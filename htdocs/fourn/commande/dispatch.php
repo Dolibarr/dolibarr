@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -505,10 +505,11 @@ $formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
+$title = $object->ref." - ".$langs->trans('OrderDispatch');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
 
-llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
@@ -553,7 +554,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {

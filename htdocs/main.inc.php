@@ -131,7 +131,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
-		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/update[^&].*set.+=/i', $val);	// the [^&] test is to avoir error when request is like action=update&...set...
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
@@ -183,7 +183,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-	if ($type == 1) {
+	if ($type == 1 || $type == 3) {
 		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
@@ -376,7 +376,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
+if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
@@ -480,10 +480,13 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
 	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
-	if ($rescomp > 0) {   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
-		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
-		header("Location: ".DOL_URL_ROOT."/install/index.php");
-		exit;
+	if ($rescomp > 0) {   // Programs have a version higher than database.
+		if (empty($conf->global->MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE) || $rescomp < 3) {
+			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
+			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
+			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			exit;
+		}
 	}
 }
 
@@ -1346,7 +1349,7 @@ if (!function_exists("llxHeader")) {
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
@@ -1365,6 +1368,12 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+
+		$parameters = array('help_url' => $help_url);
+		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
+		if ($reshook > 0) {
+			$help_url = $hookmanager->resPrint;
+		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -1752,7 +1761,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if (empty($disableforlogin) && (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -1780,7 +1789,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
 			if (!defined('NOBROWSERNOTIF') && !defined('NOREQUIREMENU') && !defined('NOLOGIN')) {
 				$enablebrowsernotif = false;
-				if (!empty($conf->agenda->enabled) && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+				if (isModEnabled('agenda') && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 					$enablebrowsernotif = true;
 				}
 				if ($conf->browser->layout == 'phone') {
@@ -1959,7 +1968,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		// Link to module builder
-		if (!empty($conf->modulebuilder->enabled)) {
+		if (isModEnabled('modulebuilder')) {
 			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
@@ -2247,7 +2256,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2400,6 +2409,14 @@ function printDropdownQuickadd()
 	$items = array(
 		'items' => array(
 			array(
+				"url" => "/adherents/card.php?action=create&amp;mainmenu=members",
+				"title" => "MenuNewMember@members",
+				"name" => "Adherent@members",
+				"picto" => "object_member",
+				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"position" => 5,
+			),
+			array(
 				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
@@ -2437,7 +2454,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2452,7 +2469,7 @@ function printDropdownQuickadd()
 				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
-				"picto" => "object_propal",
+				"picto" => "supplier_proposal",
 				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
 				"position" => 70,
 			),
@@ -2460,7 +2477,7 @@ function printDropdownQuickadd()
 				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
-				"picto" => "object_order",
+				"picto" => "supplier_order",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
 				"position" => 80,
 			),
@@ -2468,7 +2485,7 @@ function printDropdownQuickadd()
 				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
-				"picto" => "object_bill",
+				"picto" => "supplier_invoice",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
 				"position" => 90,
 			),
@@ -2487,6 +2504,14 @@ function printDropdownQuickadd()
 				"picto" => "object_service",
 				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
 				"position" => 110,
+			),
+			array(
+				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
+				"title" => "AddUser@users",
+				"name" => "User@users",
+				"picto" => "user",
+				"activation" => $user->rights->user->user->creer, // vs hooking
+				"position" => 500,
 			),
 		),
 	);
@@ -2513,7 +2538,8 @@ function printDropdownQuickadd()
 		foreach ($items['items'] as $key => $row) {
 			$position[$key] = $row['position'];
 		}
-		array_multisort($position, SORT_ASC, $items['items']);
+		$array1_sort_order = SORT_ASC;
+		array_multisort($position, $array1_sort_order, $items['items']);
 	}
 
 	foreach ($items['items'] as $item) {
@@ -3156,7 +3182,7 @@ if (!function_exists("llxFooter")) {
 			// Clean and save data
 			foreach ($user->lastsearch_values_tmp as $key => $val) {
 				unset($_SESSION['lastsearch_values_tmp_'.$key]); // Clean array to rebuild it just after
-				if (count($val) && empty($_POST['button_removefilter'])) {	// If there is search criteria to save and we did not click on 'Clear filter' button
+				if (count($val) && empty($_POST['button_removefilter']) && empty($_POST['button_removefilter_x'])) {
 					if (empty($val['sortfield'])) {
 						unset($val['sortfield']);
 					}
@@ -3344,7 +3370,7 @@ if (!function_exists("llxFooter")) {
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: 'notrequired' },	// for update
+												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3354,7 +3380,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: 'notrequired' },
+												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
 												});
 									  }
 								});

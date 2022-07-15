@@ -9,6 +9,7 @@ ErrorBadMXDomain=El correo electrónico %s parece incorrecto (el dominio no tien
 ErrorBadUrl=La URL %s es incorrecta
 ErrorBadValueForParamNotAString=Valor incorrecto para su parámetro. Generalmente aparece cuando no existe traducción.
 ErrorRefAlreadyExists=La referencia <b>%s</b> ya existe.
+ErrorTitleAlreadyExists=El título <b> %s </b> ya existe.
 ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorEmailAlreadyExists=El correo electrónico %s ya existe.
@@ -48,7 +49,7 @@ ErrorBadDateFormat=El valor '%s' tiene un formato de fecha no reconocido
 ErrorWrongDate=¡La fecha no es correcta!
 ErrorFailedToWriteInDir=Imposible escribir en el directorio %s
 ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta en email en %s líneas en archivo (ejemplo linea %s con email=%s)
-ErrorUserCannotBeDelete=No puede eliminarse el usuario. Es posible que esté asociado a items de Dolibarr
+ErrorUserCannotBeDelete=No puede eliminarse el usuario. Es posible que esté asociado a ítems de Dolibarr
 ErrorFieldsRequired=Algunos campos obligatorios se han dejado en blanco.
 ErrorSubjectIsRequired=El asunto del correo electrónico es obligatorio.
 ErrorFailedToCreateDir=Error en la creación de un directorio. Compruebe que el usuario del servidor Web tiene derechos de escritura en los directorios de documentos de Dolibarr. Si el  parámetro <b>safe_mode</b> está activo en este PHP, Compruebe que los archivos php Dolibarr pertenecen al usuario del servidor Web.
@@ -66,7 +67,7 @@ ErrorDestinationAlreadyExists=Ya existe otro archivo con el nombre <b> %s </b>.
 ErrorPartialFile=Archivo no recibido íntegramente por el servidor.
 ErrorNoTmpDir=Directorio temporal de recepción %s inexistente
 ErrorUploadBlockedByAddon=Subida bloqueada por un plugin PHP/Apache.
-ErrorFileSizeTooLarge=El tamaño del fichero es demasiado grande.
+ErrorFileSizeTooLarge=El tamaño del archivo es demasiado grande o no se ha proporcionado el archivo.
 ErrorFieldTooLong=El campo %s es demasiado largo.
 ErrorSizeTooLongForIntType=Longitud del campo demasiado largo para el tipo int (máximo %s cifras)
 ErrorSizeTooLongForVarcharType=Longitud del campo demasiado largo para el tipo cadena (máximo %s cifras)
@@ -276,7 +277,16 @@ ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de
 ErrorIsNotADraft=%s no es un borrador
 ErrorExecIdFailed=No se puede ejecutar el comando "id"
 ErrorBadCharIntoLoginName=Carácter no autorizado en el nombre de inicio de sesión
-ErrorRequestTooLarge=Error, request too large
+ErrorRequestTooLarge=Error, solicitud demasiado grande
+ErrorNotApproverForHoliday=Usted no es el aprobador del día libre %s
+ErrorAttributeIsUsedIntoProduct=Este atributo se utiliza en una o más variantes de producto
+ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo se utiliza en una o más variantes de producto
+ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
@@ -312,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Disponible solo si usa una conexión segura 
 WarningModuleXDisabledSoYouMayMissEventHere=El módulo %s no se ha habilitado. Así que puede perderse muchos eventos aquí.
 WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las funciones de pago en línea no funcionen correctamente. Utilice 'Lax' en su lugar.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor no válido
 RequireAtLeastXString = Requiere al menos %s carácter(es)
@@ -332,3 +347,12 @@ BadSetupOfField = Error de configuración incorrecta del campo
 BadSetupOfFieldClassNotFoundForValidation = Error de configuración incorrecta del campo: clase no encontrada para validación
 BadSetupOfFieldFileNotFound = Error de configuración incorrecta del campo: no se encontró el archivo para su inclusión
 BadSetupOfFieldFetchNotCallable = Error de configuración incorrecta del campo: la recuperación no se puede llamar en la clase
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

@@ -49,7 +49,7 @@ if (!empty($conf->supplier_proposal->enabled)) {
 if (!empty($conf->product->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -143,9 +143,9 @@ $usercandelete	= (($user->rights->fournisseur->commande->supprimer || $user->rig
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
 
 // Additional area permissions
-$usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
-$usercanorder			= $user->rights->fournisseur->commande->commander;
+$usercanapprove			= !empty($user->rights->fournisseur->commande->approuver) ? $user->rights->fournisseur->commande->approuver : 0;
+$usercanapprovesecond	= !empty($user->rights->fournisseur->commande->approve2) ? $user->rights->fournisseur->commande->approve2 : 0;
+$usercanorder			= !empty($user->rights->fournisseur->commande->commander) ? $user->rights->fournisseur->commande->commander : 0;
 if (empty($conf->reception->enabled)) {
 	$usercanreceive = $user->rights->fournisseur->commande->receptionner;
 } else {
@@ -160,7 +160,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 
 // Project permission
 $caneditproject = false;
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
 }
 
@@ -1534,11 +1534,14 @@ $form = new	Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $productstatic = new Product($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewOrderSupplier");
+}
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
@@ -1627,8 +1630,8 @@ if ($action == 'create') {
 		// Object source contacts list
 		$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 	} else {
-		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
-		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+		$cond_reglement_id 	= !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
+		$mode_reglement_id 	= !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
 
 		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) {
 			$currency_code = $societe->multicurrency_code;
@@ -1674,7 +1677,7 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($societe->id > 0) {
+	if (!empty($societe->id) && $societe->id > 0) {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
@@ -1696,7 +1699,7 @@ if ($action == 'create') {
 	}
 	print '</td>';
 
-	if ($societe->id > 0) {
+	if (!empty($societe->id) && $societe->id > 0) {
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
@@ -1746,13 +1749,13 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		print img_picto('', 'project').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -2034,7 +2037,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
@@ -2080,7 +2083,7 @@ if ($action == 'create') {
 	// Date
 	if ($object->methode_commande_id > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
-		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin) : '';
+		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin ? 'dayhour' : 'day') : '';
 		if ($object->hasDelay() && !empty($object->date_delivery) && !empty($object->date_commande)) {
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
@@ -2301,17 +2304,17 @@ if ($action == 'create') {
 	if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 	}
 
@@ -2321,27 +2324,29 @@ if ($action == 'create') {
 		$alert = ' '.img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
 	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
-	print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).$alert.'</td>';
+	print '<td class="nowrap right amountcard">'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).$alert.'</td>';
 	print '</tr>';
 
 	// Total VAT
-	print '<tr><td>'.$langs->trans("AmountVAT").'</td><td>'.price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+	print '<tr><td>'.$langs->trans("AmountVAT").'</td>';
+	print '<td class="nowrap right amountcard">'.price($object->total_tva, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { //Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td>'.price($object->total_localtax1, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<td class="nowrap right amountcard">'.price($object->total_localtax1, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { //Localtax2
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td>'.price($object->total_localtax2, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<td class="nowrap right amountcard">'.price($object->total_localtax2, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 
 	// Total TTC
-	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency).'</td>';
+	print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="nowrap right amountcard">'.price($object->total_ttc, '', $langs, 1, -1, -1, $conf->currency).'</td>';
 	print '</tr>';
 
 	print '</table>';
@@ -2573,7 +2578,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			//if (! empty($conf->facture->enabled))
+			//if (isModEnabled('facture'))
 			//{
 			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
 				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
@@ -2584,7 +2589,7 @@ if ($action == 'create') {
 
 			// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)
 			if ($usercancreate && $object->statut >= 2 && $object->statut != 7 && $object->billed != 1) {  // statut 2 means approved
-				if (empty($conf->facture->enabled)) {
+				if (!isModEnabled('facture')) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("ClassifyBilled").'</a>';
 				} else {
 					if (!empty($object->linkedObjectsIds['invoice_supplier'])) {

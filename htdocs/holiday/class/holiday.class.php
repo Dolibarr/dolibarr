@@ -99,6 +99,10 @@ class Holiday extends CommonObject
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var int 	Date approbation
+	 */
+	public $date_approbation;
 
 	/**
 	 * @var int 	Date for refuse
@@ -1111,11 +1115,11 @@ class Holiday extends CommonObject
 		$this->fetchByUser($fk_user, '', '');
 
 		foreach ($this->holiday as $infos_CP) {
-			if ($infos_CP['statut'] == 4) {
+			if ($infos_CP['statut'] == Holiday::STATUS_CANCELED) {
 				continue; // ignore not validated holidays
 			}
-			if ($infos_CP['statut'] == 5) {
-				continue; // ignore not validated holidays
+			if ($infos_CP['statut'] == Holiday::STATUS_REFUSED) {
+				continue; // ignore refused holidays
 			}
 			//var_dump("--");
 			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
@@ -2202,7 +2206,7 @@ class Holiday extends CommonObject
 		$sql .= " f.date_create as datec,";
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
-		//$sql .= " f.date_approve as datea,";
+		$sql .= " f.date_approve as datea,";
 		$sql .= " f.date_refuse as dater,";
 		$sql .= " f.fk_user_create as fk_user_creation,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
@@ -2225,21 +2229,17 @@ class Holiday extends CommonObject
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_approbation = $this->db->jdate($obj->datea);
 
-				$cuser = new User($this->db);
-				$cuser->fetch($obj->fk_user_author);
-				$this->user_creation = $cuser;
-
-				if ($obj->fk_user_creation) {
+				if (!empty($obj->fk_user_creation)) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_creation);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_valid) {
+				if (!empty($obj->fk_user_approve_done)) {
 					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
+					$vuser->fetch($obj->fk_user_approve_done);
 					$this->user_validation = $vuser;
 				}
-				if ($obj->fk_user_modification) {
+				if (!empty($obj->fk_user_modification)) {
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_modification);
 					$this->user_modification = $muser;
@@ -2252,7 +2252,7 @@ class Holiday extends CommonObject
 						$this->user_approve = $auser;
 					}
 				} else {
-					if ($obj->fk_user_approve_expected) {
+					if (!empty($obj->fk_user_approve_expected)) {
 						$auser = new User($this->db);
 						$auser->fetch($obj->fk_user_approve_expected);
 						$this->user_approve = $auser;

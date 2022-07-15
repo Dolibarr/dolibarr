@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Zadejte název modulu/aplikace pro vytvoření bez mezer. Použijte velká slova k oddělení slov (například: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Zadejte název objektu, který chcete vytvořit, bez mezer. Použijte velká písmena pro oddělení slov (například: MyObject, Student, Teacher ...). Bude vygenerován soubor třídy CRUD, ale také soubor API, stránky pro zápis / přidání / úpravy / odstranění objektů a souborů SQL.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Cesta, kde jsou moduly generovány/editovány (první adresář pro externí moduly definované v %s): <strong>%s</strong>
 ModuleBuilderDesc3=Generované / upravitelné moduly nalezené: <strong> %s </strong>
 ModuleBuilderDesc4=Modul je detekován jako "upravitelný", když soubor <strong> %s </strong> existuje v kořenovém adresáři modulu
 NewModule=Nový modul
 NewObjectInModulebuilder=Nový objekt
+NewDictionary=New dictionary
 ModuleKey=Klávesa modulu
 ObjectKey=Klíč objektu
+DicKey=Dictionary key
 ModuleInitialized=Modul byl inicializován
 FilesForObjectInitialized=Soubory pro nový objekt '%s' byly inicializovány
 FilesForObjectUpdated=Soubory pro aktualizaci objektu '%s' (soubory .sql a soubor .class.php)

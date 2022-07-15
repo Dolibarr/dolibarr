@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
@@ -683,7 +683,7 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
 
-llxHeader();
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -784,7 +784,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
 		if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
@@ -838,16 +838,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
 		$thirdTypeArray['customer'] = $langs->trans("customer");
-		if ($conf->propal->enabled && $user->rights->propal->lire) {
+		if (isModEnabled('propal') && $user->rights->propal->lire) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
-		if ($conf->commande->enabled && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if ($conf->facture->enabled && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
-		if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+		if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 			$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 		}
 	}
@@ -999,8 +999,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							print $companypaymentmodetemp->id;
 							print '</td>';
-							print '<td>';
-							print $companypaymentmodetemp->label;
+							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->label).'">';
+							print dol_escape_htmltag($companypaymentmodetemp->label);
 							print '</td>';
 							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
@@ -1624,7 +1624,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</table>';
 	print '</div>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1785,7 +1785,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print '</table>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<table class="border centpercent">';

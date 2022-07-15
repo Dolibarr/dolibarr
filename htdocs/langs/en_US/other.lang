@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...or build your own profile<br>(manual module selectio
 DemoFundation=Manage members of a foundation
 DemoFundation2=Manage members and bank account of a foundation
 DemoCompanyServiceOnly=Company or freelance selling service only
-DemoCompanyShopWithCashDesk=Manage a shop with a cash desk
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box
 DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
 DemoCompanyManufacturing=Company manufacturing products
 DemoCompanyAll=Company with multiple activities (all main modules)
@@ -304,3 +304,24 @@ ConfirmBtnCommonContent = Are you sure you want to "%s" ?
 ConfirmBtnCommonTitle = Confirm your action
 CloseDialog = Close
 Autofill = Autofill
+
+# externalsite
+ExternalSiteSetup=Setup link to external website
+ExternalSiteURL=External Site URL of HTML iframe content
+ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
+ExampleMyMenuEntry=My menu entry
+
+# FTP
+FTPClientSetup=FTP or SFTP Client module setup
+NewFTPClient=New FTP/FTPS connection setup
+FTPArea=FTP/FTPS Area
+FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
+SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
+FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
+FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
+FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
+FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
+FTPPassiveMode=Passive mode
+ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
+FailedToGetFile=Failed to get files %s

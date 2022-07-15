@@ -612,6 +612,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Delete all child tables
@@ -630,7 +632,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->deleteCommon($user, $trigger);
+			$result = $this->deleteCommon($user, $notrigger);
 			if ($result <= 0) {
 				$error++;
 			}

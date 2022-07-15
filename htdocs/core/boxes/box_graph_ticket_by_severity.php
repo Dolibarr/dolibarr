@@ -152,7 +152,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				}
 				foreach ($listofoppcode as $rowid => $code) {
 					$dataseries[] = array(
-						'label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_severity', 'code', 'label', $code),
 						'data' => (empty($data[$code]) ? 0 : $data[$code])
 					);
 				}

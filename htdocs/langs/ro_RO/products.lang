@@ -424,3 +424,6 @@ PMPExpected=PMP aşteptat
 ExpectedValuation=Evaluare așteptată
 PMPReal=PMP real
 RealValuation=Evaluare reală
+ConfirmEditExtrafield = Selectare extracâmp care se va modifica
+ConfirmEditExtrafieldQuestion = Eşti sigur că vrei să modifici acest extracâmp?
+ModifyValueExtrafields = Modificare valoare extracâmp

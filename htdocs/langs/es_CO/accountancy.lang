@@ -187,7 +187,6 @@ DescVentilDoneExpenseReport=Consulte aquí la lista de líneas de informes de ga
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de la escritura, las letras y las eliminaciones. Todas las entradas para un ejercicio deben ser validadas, de lo contrario no será posible cerrar
 AutomaticBindingDone=Enlaces automáticos realizados (%s) - El enlace automático no es posible para algunos registros (%s)
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta de contabilidad porque se usa
-MvtNotCorrectlyBalanced=Movimiento no equilibrado correctamente. Débito = %s | Crédito = %s
 Balancing=Equilibrio
 FicheVentilation=Tarjeta de encuadernación
 GeneralLedgerIsWritten=Las transacciones están escritas en el libro mayor.

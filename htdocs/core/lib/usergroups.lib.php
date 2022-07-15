@@ -72,7 +72,7 @@ function user_prepare_head(User $object)
 	$head[$h][2] = 'guisetup';
 	$h++;
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		if (empty($conf->global->AGENDA_EXT_NB)) {
 			$conf->global->AGENDA_EXT_NB = 5;
 		}
@@ -212,7 +212,7 @@ function group_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/group/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("GroupCard");
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'group';
 	$h++;
 
@@ -372,7 +372,12 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</th></tr>';
 	}
 
-	print '<tr><td colspan="'.$colspan.'">';
+	print '<tr><td colspan="'.$colspan.'" class="center">';
+
+	if (!empty($conf->global->MAIN_FORCETHEME)) {
+		$langs->load("errors");
+		print $langs->trans("WarningThemeForcedTo", $conf->global->MAIN_FORCETHEME);
+	}
 
 	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
 
@@ -450,6 +455,28 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
 
+	//Dark mode
+	if ($foruserprofile) {
+		//Nothing
+	} else {
+		$listofdarkmodes = array(
+			'0' => $langs->trans("AlwaysDisabled"),
+			'1' => $langs->trans("AccordingToBrowser"),
+			'2' => $langs->trans("AlwaysEnabled")
+		);
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0);
+		} else {
+			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
+		}
+		print $form->textwithpicto('', $langs->trans("DoesNotWorkWithAllThemes"));
+		print '</tr>';
+	}
+
+
 	// TopMenuDisableImages
 	if ($foruserprofile) {
 		/*
@@ -485,7 +512,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
 			//print ajax_constantonoff('THEME_TOPMENU_DISABLE_IMAGE', array(), null, 0, 0, 1);
-			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, $conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+			print $form->selectarray('THEME_TOPMENU_DISABLE_IMAGE', $listoftopmenumodes, isset($conf->global->THEME_TOPMENU_DISABLE_IMAGE)?$conf->global->THEME_TOPMENU_DISABLE_IMAGE:0);
 		} else {
 			$listoftopmenumodes[$conf->global->THEME_TOPMENU_DISABLE_IMAGE];
 			//print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);

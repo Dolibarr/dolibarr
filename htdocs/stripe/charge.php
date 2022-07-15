@@ -53,7 +53,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $result = restrictedArea($user, 'banque');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 /*
  * View
@@ -162,15 +162,15 @@ if (!$rowid) {
 			$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
 		}
 
-		if ($charge->payment_method_details->type == 'card') {
+		if (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'card') {
 			$type = $langs->trans("card");
-		} elseif ($charge->source->type == 'card') {
+		} elseif (isset($charge->source->type) && $charge->source->type == 'card') {
 			$type = $langs->trans("card");
-		} elseif ($charge->payment_method_details->type == 'three_d_secure') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'three_d_secure') {
 			$type = $langs->trans("card3DS");
-		} elseif ($charge->payment_method_details->type == 'sepa_debit') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'sepa_debit') {
 			$type = $langs->trans("sepadebit");
-		} elseif ($charge->payment_method_details->type == 'ideal') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'ideal') {
 			$type = $langs->trans("iDEAL");
 		}
 
@@ -206,6 +206,8 @@ if (!$rowid) {
 
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
+		} else {
+			$connect = '';
 		}
 
 		// Ref

@@ -678,20 +678,28 @@ $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
-// Count total nb of records
+// Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -700,6 +708,7 @@ if (!$resql) {
 }
 
 $num = $db->num_rows($resql);
+
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -722,7 +731,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $langs->trans("ThirdParty"), $help_url);
+llxHeader('', $title, $help_url);
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -860,8 +869,8 @@ if (GETPOST('delsoc')) {
 
 // List of mass actions available
 $arrayofmassactions = array(
-'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->creer) {
@@ -1338,10 +1347,10 @@ if (!empty($arrayfields['s.idprof4']['checked'])) {
 	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof4", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['s.idprof5']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"), $textprofid[5], 1, 0), $_SERVER["PHP_SELF"], "s.idprof5", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['s.idprof6']['checked'])) {
-	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[4], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
+	print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"), $textprofid[6], 1, 0), $_SERVER["PHP_SELF"], "s.idprof6", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['s.tva_intra']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
@@ -1574,7 +1583,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.email']['checked'])) {
-		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1668,7 +1677,8 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '<div class="inline-block">';
+		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 			$titlealt = 'default';

@@ -346,7 +346,7 @@ if ($action != 'edit') {
 	print $fulllink;
 }
 if ($action != 'edit') {
-	print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here.
+	print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here.
 }
 print '</td></tr>';
 

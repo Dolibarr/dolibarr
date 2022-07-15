@@ -23,6 +23,7 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
@@ -40,6 +41,11 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cron');
 }
 
 // For MultiCompany module.

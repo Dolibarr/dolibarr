@@ -915,7 +915,7 @@ if (!empty($id) || !empty($ref)) {
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 				print '<td class="nowrap center">';
-				if ($productCombinations || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				if (!empty($productCombinations) || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($prodstatic->id, $arrayofselected)) {
 						$selected = 1;

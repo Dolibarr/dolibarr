@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object->project = clone $projectstatic;
 
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -119,10 +119,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
-
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Task'));
+$title = $object->ref . ' - ' . $langs->trans("Documents");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$projectstatic->fetch_thirdparty();
@@ -245,7 +250,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

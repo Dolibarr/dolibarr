@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Ange namnet på modulen / programmet för att skapa utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Ange namnet på objektet som ska skapas utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyObject, Student, Lärare ...). CRUD klassfilen, men även API-filen, kommer sidor att lista / lägga till / redigera / ta bort objekt och SQL-filer genereras.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Vägen där moduler genereras / redigeras (första katalogen för externa moduler definierad i %s): <strong> %s </strong>
 ModuleBuilderDesc3=Genererade / redigerbara moduler hittades: <strong> %s </strong>
 ModuleBuilderDesc4=En modul detekteras som "redigerbar" när filen <strong> %s </strong> existerar i root av modulkatalogen
 NewModule=Ny modul
 NewObjectInModulebuilder=Nytt objekt
+NewDictionary=New dictionary
 ModuleKey=Modulnyckel
 ObjectKey=Objektnyckel
+DicKey=Dictionary key
 ModuleInitialized=Modul initialiserad
 FilesForObjectInitialized=Filer för nytt objekt '%s' initialiserades
 FilesForObjectUpdated=Filer för objekt '%s' uppdaterad (.sql-filer och .class.php-fil)

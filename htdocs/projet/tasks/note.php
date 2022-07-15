@@ -110,13 +110,18 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $userstatic = new User($db);
 
 $now = dol_now();
+
+$title = $object->ref . ' - ' . $langs->trans("Notes");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
@@ -235,7 +240,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

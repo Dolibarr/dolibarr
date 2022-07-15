@@ -146,6 +146,12 @@ class Account extends CommonObject
 	public $iban_prefix;
 
 	/**
+	 * Address of the bank
+	 * @var string
+	 */
+	public $domiciliation;
+
+	/**
 	 * XML SEPA format: place Payment Type Information (PmtTpInf) in Credit Transfer Transaction Information (CdtTrfTxInf)
 	 * @var int
 	 */
@@ -1200,7 +1206,7 @@ class Account extends CommonObject
 	 * 	Return current sold
 	 *
 	 * 	@param	int		$option		1=Exclude future operation date (this is to exclude input made in advance and have real account sold)
-	 *	@param	tms		$date_end	Date until we want to get bank account sold
+	 *	@param	int		$date_end	Date until we want to get bank account sold
 	 *	@param	string	$field		dateo or datev
 	 *	@return	int		current sold (value date <= today)
 	 */
@@ -1701,19 +1707,20 @@ class Account extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		// Example of IBAN FR7630001007941234567890185
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
 		$this->bank            = 'MyBank';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
-		$this->code_banque     = '123';
-		$this->code_guichet    = '456';
-		$this->number          = 'ABC12345';
-		$this->cle_rib         = '50';
+		$this->code_banque     = '30001';
+		$this->code_guichet    = '00794';
+		$this->number          = '12345678901';
+		$this->cle_rib         = '85';
 		$this->bic             = 'AA12';
-		$this->iban            = 'FR999999999';
-		$this->domiciliation   = 'My bank address';
+		$this->iban            = 'FR7630001007941234567890185';
+		$this->domiciliation   = 'Banque de France';
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
