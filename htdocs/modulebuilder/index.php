@@ -2779,8 +2779,10 @@ if ($module == 'initmodule') {
 
 						if (empty($forceddirread) && empty($dirread)) {
 							$result = dol_include_once($pathtoclass);
+							$stringofinclude = "dol_include_once(".$pathtoclass.")";
 						} else {
 							$result = @include_once $dirread.'/'.$pathtoclass;
+							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
 						}
 						if (class_exists($tabobj)) {
 							try {
@@ -2788,6 +2790,8 @@ if ($module == 'initmodule') {
 							} catch (Exception $e) {
 								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
 							}
+						} else {
+							print '<span class="warning">'.$langs->trans('Failed to find the class '.$tabobj.' despite the '.$stringofinclude).'</warning><br>';
 						}
 
 						if (!empty($tmpobjet)) {
@@ -3122,7 +3126,7 @@ if ($module == 'initmodule') {
 
 							print '</form>';
 						} else {
-							print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
+							print '<span class="warning">'.$langs->trans('Failed to init the object with the new '.$tabobj.'($db)').'</warning>';
 						}
 					} catch (Exception $e) {
 						print $e->getMessage();
