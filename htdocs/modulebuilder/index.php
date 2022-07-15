@@ -343,10 +343,10 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
 				'Editor name'=>$editorname,
 				'https://www.example.com'=>$editorurl,
-				'1.0'=>$version,
-				'idpicto'=>(empty($picto)) ? 'generic' : $picto,
+				'$this->version = \'1.0\''=>'$this->version = \''.$version.'\'',
+				'$this->picto = \'generic\';'=>(empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \''.$picto.'\';',
 				"modulefamily" =>$family,
-				500000=>$idmodule
+				'500000'=>$idmodule
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
@@ -382,7 +382,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	if (!$error) {
 		setEventMessages('ModuleInitialized', null);
 		$module = $modulename;
-		$modulename = '';
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
@@ -2115,8 +2114,8 @@ if ($module == 'initmodule') {
 	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
 	print '</select><br>';
 	print ajax_combobox("family");
-	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> <input type="text" name="idpicto" value="generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
-	print $form->textwithpicto('', $langs->trans("Example").': generic, globe, ... any font awesome code');
+	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> <input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 	print '<br>';
 	print '<span class="opacitymedium">'.$langs->trans("Description").'</span> <input type="text" name="description" value="" class="minwidth500"><br>';
 
@@ -2269,7 +2268,7 @@ if ($module == 'initmodule') {
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
+				print load_fiche_titre($form->textwithpicto($langs->trans("DescriptorFile"), $pathtofile), '', '');
 
 				if (!empty($moduleobj)) {
 					print '<div class="underbanner clearboth"></div>';
@@ -2347,7 +2346,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// Readme file
-					print load_fiche_titre($langs->trans("ReadmeFile"), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ReadmeFile"), $pathtofilereadme), '', '');
 
 					print '<!-- readme file -->';
 					if (dol_is_file($dirread.'/'.$pathtofilereadme)) {
@@ -2359,7 +2358,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// ChangeLog
-					print load_fiche_titre($langs->trans("ChangeLog"), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ChangeLog"), $pathtochangelog), '', '');
 
 					print '<!-- changelog file -->';
 					if (dol_is_file($dirread.'/'.$pathtochangelog)) {

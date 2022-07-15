@@ -3887,15 +3887,18 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
 			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fontawesome_', '', $pictowithouttext);
 			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+
 			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
 			if (!empty($pictowithouttextarray[1])) {
-				$fakey      = 'fa-'.$pictowithouttextarray[1];
-				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
-				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
-				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+				// Syntax is 'fontawesome_fakey_faprefix_facolor_fasize' or 'fa-fakey_faprefix_facolor_fasize'
+				$fakey      = 'fa-'.$pictowithouttextarray[0];
+				$fa         = empty($pictowithouttextarray[1]) ? 'fa' : $pictowithouttextarray[1];
+				$facolor    = empty($pictowithouttextarray[2]) ? '' : $pictowithouttextarray[2];
+				$fasize     = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
 			} else {
 				$fakey      = 'fa-'.$pictowithouttext;
 				$fa         = 'fa';
