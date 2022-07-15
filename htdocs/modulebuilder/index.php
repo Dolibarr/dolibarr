@@ -2796,6 +2796,7 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
+							print '<input type="hidden" name="page_y" value="">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread ? '@'.$dirread : '')).'">';
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
@@ -2984,8 +2985,8 @@ if ($module == 'initmodule') {
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td class="center tdstickyright tdstickyghostwhite">';
-										print '<input class="button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
-										print '<input class="button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+										print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+										print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
