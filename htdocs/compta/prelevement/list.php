@@ -256,9 +256,17 @@ if ($result) {
 			print '</a></td>';
 
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
-			print img_object($langs->trans("ShowBill"), "bill");
-			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->invoiceref."</a></td>\n";
+			$link_to_bill = '/compta/facture/card.php?facid=';
+			$link_title = 'Invoice';
+			$link_picto = 'bill';
+			if ($type == 'bank-transfer') {
+				$link_to_bill = '/fourn/facture/card.php?facid=';
+				$link_title = 'SupplierInvoice';
+				$link_picto = 'supplier_invoice';
+			}
+			print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
+			print img_object($langs->trans($link_title), $link_picto);
+			print '&nbsp;'.$obj->invoiceref."</td>\n";
 			print '</a>';
 			print '</td>';
 
@@ -266,7 +274,7 @@ if ($result) {
 			print $company->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+			print '<td class="center"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$company->id.'">'.$obj->code_client."</a></td>\n";
 
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
