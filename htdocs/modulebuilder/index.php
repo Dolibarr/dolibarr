@@ -1507,9 +1507,10 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$error++;
 	}*/
 
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
 	// Edit the class file to write properties
 	if (!$error) {
-		$moduletype = 'external';
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
 
 		if (is_numeric($object) && $object <= 0) {
@@ -1519,20 +1520,19 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 	// Edit sql with new properties
 	if (!$error) {
-		$moduletype = 'external';
-
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
+
 		if ($result <= 0) {
 			$error++;
 		}
 	}
 
 	if (!$error) {
+		clearstatcache(true);
+
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		setEventMessages($langs->trans('WarningDatabaseIsNotUpdated'), null);
-
-		clearstatcache(true);
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname.'&nocache='.time());

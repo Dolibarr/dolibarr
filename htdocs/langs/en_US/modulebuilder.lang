@@ -153,3 +153,4 @@ LinkToParentMenu=Parent menu (fk_xxxxmenu)
 ListOfTabsEntries=List of tab entries
 TabsDefDesc=Define here the tabs provided by your module
 TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
+BadValueForType=Bad value for type %s
