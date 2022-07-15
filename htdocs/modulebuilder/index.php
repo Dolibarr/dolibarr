@@ -2563,10 +2563,63 @@ if ($module == 'initmodule') {
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
 						$pathtocontact  = strtolower($module).'/'.strtolower($tabobj).'_contact.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.strtolower($tabobj).'Test.php';
-						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
-						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
-						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
-						$pathtosqlextrakey = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.key.sql';
+
+						// Try to load object class file
+						clearstatcache(true);
+						if (function_exists('opcache_invalidate')) {
+							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
+						}
+
+						if (empty($forceddirread) && empty($dirread)) {
+							$result = dol_include_once($pathtoclass);
+							$stringofinclude = "dol_include_once(".$pathtoclass.")";
+						} else {
+							$result = @include_once $dirread.'/'.$pathtoclass;
+							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
+						}
+						if (class_exists($tabobj)) {
+							try {
+								$tmpobjet = @new $tabobj($db);
+							} catch (Exception $e) {
+								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
+							}
+						} else {
+							print '<span class="warning">'.$langs->trans('Failed to find the class '.$tabobj.' despite the '.$stringofinclude).'</span><br><br>';
+						}
+
+						// Define path for sql file
+						$pathtosql = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'-'.strtolower($module).'.sql';
+						$result = dol_buildpath($pathtosql);
+						if (! dol_is_file($result)) {
+							$pathtosql = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
+							$result = dol_buildpath($pathtosql);
+							if (! dol_is_file($result)) {
+								$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($tabobj).'-'.strtolower($module).'.sql';
+								$result = dol_buildpath($pathtosql);
+								if (! dol_is_file($result)) {
+									$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+									$result = dol_buildpath($pathtosql);
+									if (! dol_is_file($result)) {
+										$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'.sql';
+										$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_extrafields.sql';
+										$result = dol_buildpath($pathtosql);
+									} else {
+										$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_extrafields-'.strtolower($module).'.sql';
+									}
+								} else {
+									$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields-'.strtolower($module).'.sql';
+								}
+							} else {
+								$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
+							}
+						} else {
+							$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields-'.strtolower($module).'.sql';
+						}
+						$pathtosqlroot = preg_replace('/\/llx_.*$/', '', $pathtosql);
+
+						$pathtosqlkey   = preg_replace('/\.sql$/', '.key.sql', $pathtosql);
+						$pathtosqlextrakey   = preg_replace('/\.sql$/', '.key.sql', $pathtosqlextra);
+
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
@@ -2597,6 +2650,10 @@ if ($module == 'initmodule') {
 
 						$urloflist = dol_buildpath('/'.$pathtolist, 1);
 						$urlofcard = dol_buildpath('/'.$pathtocard, 1);
+
+
+
+
 
 						print '<div class="fichehalfleft smallxxx">';
 						// Main DAO class file
@@ -2727,28 +2784,6 @@ if ($module == 'initmodule') {
 						print '</div>';
 
 						print '<br><br><br>';
-
-						clearstatcache(true);
-						if (function_exists('opcache_invalidate')) {
-							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
-						}
-
-						if (empty($forceddirread) && empty($dirread)) {
-							$result = dol_include_once($pathtoclass);
-							$stringofinclude = "dol_include_once(".$pathtoclass.")";
-						} else {
-							$result = @include_once $dirread.'/'.$pathtoclass;
-							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
-						}
-						if (class_exists($tabobj)) {
-							try {
-								$tmpobjet = @new $tabobj($db);
-							} catch (Exception $e) {
-								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
-							}
-						} else {
-							print '<span class="warning">'.$langs->trans('Failed to find the class '.$tabobj.' despite the '.$stringofinclude).'</warning><br>';
-						}
 
 						if (!empty($tmpobjet)) {
 							$reflector = new ReflectionClass($tabobj);
