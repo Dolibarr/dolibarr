@@ -871,6 +871,9 @@ textarea.centpercent {
 .cursorpointer {
 	cursor: pointer;
 }
+.classfortooltiponclick .fa-question-circle {
+	cursor: pointer;
+}
 .cursormove {
 	cursor: move;
 }
@@ -5096,6 +5099,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
+	z-index: 1000;
 }
 
 .exampleapachesetup {

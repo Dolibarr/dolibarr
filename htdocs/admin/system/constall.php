@@ -89,6 +89,7 @@ $configfileparameters = array(
 							'separator',
 							'?dolibarr_mailing_limit_sendbyweb',
 							'?dolibarr_mailing_limit_sendbycli',
+							'?dolibarr_mailing_limit_sendbyday',
 							'?dolibarr_strict_mode'
 						);
 $configfilelib = array(

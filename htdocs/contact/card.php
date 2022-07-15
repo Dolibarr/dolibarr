@@ -572,7 +572,6 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $c
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -623,7 +622,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Show tabs
 		$head = contact_prepare_head($object);
 
-		$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+		llxHeader('', $title, $help_url);
 	}
 
 	if ($user->rights->societe->contact->creer) {
@@ -643,8 +642,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country      = $tmparray['label'];
 			}
 
-			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 			$linkback = '';
+			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+
+			llxHeader('', $title, $help_url);
+
 			print load_fiche_titre($title, $linkback, 'address');
 
 			// Show errors

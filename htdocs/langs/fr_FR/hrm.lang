@@ -12,7 +12,7 @@ OpenEtablishment=Etablissement ouvert
 CloseEtablishment=Etablissement fermé
 # Dictionary
 DictionaryPublicHolidays=Congés - jours fériés
-DictionaryDepartment=GRH - Liste des départements
+DictionaryDepartment=GRH - Liste des départements organisationnels
 DictionaryFunction=GRH - Liste des fonctions
 # Module
 Employees=Salariés

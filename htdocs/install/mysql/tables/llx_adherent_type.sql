@@ -34,6 +34,7 @@ create table llx_adherent_type
   duration         varchar(6) DEFAULT NULL,                -- (minimal) duration of membership
   subscription     varchar(3) NOT NULL DEFAULT '1',        -- subscription with costs / fee or without / for free
   amount           double(24,8) DEFAULT NULL,              -- membership fee
+  caneditamount    integer DEFAULT 0,                      -- can member edit the amount of subscription
   vote             varchar(3) NOT NULL DEFAULT '1',        -- entitled to vote
   note             text,                                   -- description / comment 
   mail_valid       text                                    -- text for welcome email
