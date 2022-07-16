@@ -1485,8 +1485,8 @@ class User extends CommonObject
 		// Clean parameters
 		$this->setUpperOrLowerCase();
 
-		$this->civility_code = trim($this->civility_code);
-		$this->login = trim($this->login);
+		$this->civility_code = trim((string) $this->civility_code);
+		$this->login = trim((string) $this->login);
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
 		}
@@ -1848,47 +1848,45 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->civility_code = trim($this->civility_code);
-		$this->lastname     = trim($this->lastname);
-		$this->firstname    = trim($this->firstname);
-		$this->ref_employee    = trim($this->ref_employee);
-		$this->national_registration_number    = trim($this->national_registration_number);
-		$this->employee    	= $this->employee ? $this->employee : 0;
-		$this->login        = trim($this->login);
-		$this->gender       = trim($this->gender);
-		$this->pass         = trim($this->pass);
-		$this->api_key      = trim($this->api_key);
-		$this->address = $this->address ? trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ? trim($this->town) : trim($this->town);
+		$this->civility_code				= trim((string) $this->civility_code);
+		$this->lastname						= trim((string) $this->lastname);
+		$this->firstname					= trim((string) $this->firstname);
+		$this->ref_employee					= trim((string) $this->ref_employee);
+		$this->national_registration_number	= trim((string) $this->national_registration_number);
+		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
+		$this->login						= trim((string) $this->login);
+		$this->gender						= trim((string) $this->gender);
+		$this->pass							= trim((string) $this->pass);
+		$this->api_key						= trim((string) $this->api_key);
+		$this->address						= trim((string) $this->address);
+		$this->zip							= trim((string) $this->zip);
+		$this->town							= trim((string) $this->town);
 		$this->setUpperOrLowerCase();
-		$this->state_id = trim($this->state_id);
-		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
-		$this->office_phone = trim($this->office_phone);
-		$this->office_fax   = trim($this->office_fax);
-		$this->user_mobile  = trim($this->user_mobile);
-		$this->personal_mobile = trim($this->personal_mobile);
-		$this->email        = trim($this->email);
-		$this->personal_email = trim($this->personal_email);
 
-		$this->job = trim($this->job);
-		$this->signature    = trim($this->signature);
-		$this->note_public  = trim($this->note_public);
-		$this->note_private = trim($this->note_private);
-		$this->openid       = trim(empty($this->openid) ? '' : $this->openid); // Avoid warning
-		$this->admin        = $this->admin ? $this->admin : 0;
-		$this->address = empty($this->address) ? '' : $this->address;
-		$this->zip			= empty($this->zip) ? '' : $this->zip;
-		$this->town = empty($this->town) ? '' : $this->town;
-		$this->setUpperOrLowerCase();
-		$this->accountancy_code = trim($this->accountancy_code);
-		$this->color = empty($this->color) ? '' : $this->color;
-		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
-		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
-		$this->birth        = trim($this->birth);
-		$this->fk_warehouse = (int) $this->fk_warehouse;
+		$this->state_id						= ($this->state_id > 0 ? $this->state_id : 0);
+		$this->country_id					= ($this->country_id > 0 ? $this->country_id : 0);
+		$this->office_phone					= trim((string) $this->office_phone);
+		$this->office_fax					= trim((string) $this->office_fax);
+		$this->user_mobile					= trim((string) $this->user_mobile);
+		$this->personal_mobile				= trim((string) $this->personal_mobile);
+		$this->email						= trim((string) $this->email);
+		$this->personal_email				= trim((string) $this->personal_email);
+
+		$this->job							= trim((string) $this->job);
+		$this->signature					= trim((string) $this->signature);
+		$this->note_public					= trim((string) $this->note_public);
+		$this->note_private					= trim((string) $this->note_private);
+		$this->openid						= trim((string) $this->openid);
+		$this->admin						= ($this->admin > 0 ? $this->admin : 0);
+
+		$this->accountancy_code				= trim((string) $this->accountancy_code);
+		$this->color						= trim((string) $this->color);
+		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
+		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
+		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+		$this->birth						= empty($this->birth) ? '' : $this->birth;
+		$this->fk_warehouse					= (int) $this->fk_warehouse;
 
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
