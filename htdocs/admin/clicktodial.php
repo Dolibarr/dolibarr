@@ -96,7 +96,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS ? ' disabled="disabled"' : '').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.(getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS') ? ' disabled="disabled"' : '').' value="'.getDolGlobalString('CLICKTODIAL_URL').'"><br>';
 print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
