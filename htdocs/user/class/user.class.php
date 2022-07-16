@@ -2058,8 +2058,6 @@ class User extends CommonObject
 
 						$adh->pass = $this->pass;
 
-						//$adh->societe = (empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
-
 						$adh->address = $this->address;
 						$adh->town = $this->town;
 						$adh->zip = $this->zip;
@@ -2108,8 +2106,6 @@ class User extends CommonObject
 						$tmpobj->birth = $this->birth;
 
 						//$tmpobj->pass=$this->pass;
-
-						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
 
 						$tmpobj->email = $this->email;
 
