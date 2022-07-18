@@ -1221,7 +1221,7 @@ class Product extends CommonObject
 					}
 				}
 
-				if (!$this->hasbatch() && $this->oldcopy->hasbatch()){
+				if (!$this->hasbatch() && $this->oldcopy->hasbatch()) {
 					// Selection of all product stock mouvements that contains batchs
 					$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'stock_mouvement sm';
 					$sql .= ' WHERE fk_product = '.(int) $this->id;
@@ -1241,12 +1241,12 @@ class Product extends CommonObject
 							//To know how to revert stockMouvement (add or remove)
 							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
 							$label = $langs->trans('BatchStockMouvementReverting');
-							$res = $this->correct_stock_batch($user, $fk_entrepot, $value, $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '',null, 0);
-							if($res > 0){
+							$res = $this->correct_stock_batch($user, $fk_entrepot, $value, $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '', null, 0);
+							if ($res > 0) {
 								$label = $langs->trans('BatchStockMouvementAddInGlobal');
 								$addOremove = $addOremove == 0 ? 1 : 0;
-								$res = $this->correct_stock($user, $fk_entrepot, $value, $addOremove, $label, $price, $inventorycode, '',null, 0);
-								if($res < 0) {
+								$res = $this->correct_stock($user, $fk_entrepot, $value, $addOremove, $label, $price, $inventorycode, '', null, 0);
+								if ($res < 0) {
 									$error++;
 								}
 							} else {
