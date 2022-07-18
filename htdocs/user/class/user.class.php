@@ -416,9 +416,10 @@ class User extends CommonObject
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	int		$email       		If defined, email to used for search
+	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '')
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
 	{
 		global $conf, $user;
 
@@ -486,6 +487,8 @@ class User extends CommonObject
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
+		} elseif ($fk_socpeople > 0) {
+			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
 		} else {
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
@@ -2751,10 +2754,10 @@ class User extends CommonObject
 			if (empty($hidethirdpartylogo)) {
 				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.dol_string_nohtmltag($thirdpartystatic->name).')';
+			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
-		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
-		$label .= '<br><b>'.$langs->trans("Type").':</b> '.dol_string_nohtmltag($type);
+		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
+		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$label .= '</div>';
 		if ($infologin > 0) {
 			$label .= '<br>';
