@@ -7633,16 +7633,24 @@ abstract class CommonObject
 						}
 						if ($result > 0) {
 							if ($object->element === 'product') {
-								$getnomurlparam3 = (!isset($InfoFieldList[5]) ? 0 : $InfoFieldList[5]);
-								$getnomurlparam4 = (!isset($InfoFieldList[6]) ? -1 : $InfoFieldList[6]);
-								$getnomurlparam5 = (!isset($InfoFieldList[7]) ? 0 : $InfoFieldList[7]);
-								$getnomurlparam6 = (!isset($InfoFieldList[8]) ? '' : $InfoFieldList[8]);
-								$getnomurlparam7 = (!isset($InfoFieldList[9]) ? 0 : $InfoFieldList[9]);
+								$get_name_url_param_arr = array($getnomurlparam, $getnomurlparam2, 0, -1, 0, '', 0);
+								if (isset($val['get_name_url_params'])) {
+									$get_name_url_params = explode(':', $val['get_name_url_params']);
+									if (!empty($get_name_url_params)) {
+										$param_num_max = count($get_name_url_param_arr) - 1;
+										foreach ($get_name_url_params as $param_num => $param_value) {
+											if ($param_num > $param_num_max) {
+												break;
+											}
+											$get_name_url_param_arr[$param_num] = $param_value;
+										}
+									}
+								}
 
 								/**
 								 * @var Product $object
 								 */
-								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2, $getnomurlparam3, $getnomurlparam4, $getnomurlparam5, $getnomurlparam6, $getnomurlparam7);
+								$value = $object->getNomUrl($get_name_url_param_arr[0], $get_name_url_param_arr[1], $get_name_url_param_arr[2], $get_name_url_param_arr[3], $get_name_url_param_arr[4], $get_name_url_param_arr[5], $get_name_url_param_arr[6]);
 							} else {
 								$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 							}
