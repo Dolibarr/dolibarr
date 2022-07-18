@@ -32,10 +32,19 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
-
 -- Missing in v16 or lower
 
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
+ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
 
 -- v17
@@ -43,3 +52,6 @@
 ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
 ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+-- Allow users to make subscriptions of any amount during membership subscription 
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;

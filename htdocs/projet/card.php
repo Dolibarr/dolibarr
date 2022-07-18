@@ -483,6 +483,7 @@ $title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
 	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
+
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte";
 
 llxHeader("", $title, $help_url);
@@ -514,6 +515,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 
 	print dol_get_fiche_head();
@@ -805,7 +807,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if ($action == 'clone') {
 		$formquestion = array(
 			'text' => $langs->trans("ConfirmClone"),
-			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int') > 0 ?GETPOST('socid', 'int') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200')),
+			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int') > 0 ?GETPOST('socid', 'int') : $object->socid, 'socid', '', "None", 0, 0, null, 0, 'minwidth200 maxwidth250')),
 			array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
 			array('type' => 'checkbox', 'name' => 'clone_tasks', 'label' => $langs->trans("CloneTasks"), 'value' => true),
 			array('type' => 'checkbox', 'name' => 'move_date', 'label' => $langs->trans("CloneMoveDate"), 'value' => true),
@@ -814,7 +816,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			array('type' => 'checkbox', 'name' => 'clone_task_files', 'label' => $langs->trans("CloneTaskFiles"), 'value' => false)
 		);
 
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 300, 590);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 400, 590);
 	}
 
 
@@ -1279,6 +1281,19 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&amp;token='.newToken().'&amp;id='.$object->id.'&amp;mode=init#formmailbeforetitle', '');
 				}
 			}
+
+			// Accounting Report
+			/*
+			$accouting_module_activated = !empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled);
+			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
+				$start = dol_getdate((int) $object->date_start);
+				$end = dol_getdate((int) $object->date_end);
+				$url = DOL_URL_ROOT.'/compta/accounting-files.php?projectid='.$object->id;
+				if (!empty($object->date_start)) $url .= '&amp;date_startday='.$start['mday'].'&amp;date_startmonth='.$start['mon'].'&amp;date_startyear='.$start['year'];
+				if (!empty($object->date_end)) $url .= '&amp;date_stopday='.$end['mday'].'&amp;date_stopmonth='.$end['mon'].'&amp;date_stopyear='.$end['year'];
+				print dolGetButtonAction('', $langs->trans('ExportAccountingReportButtonLabel'), 'default', $url, '');
+			}
+			*/
 
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {

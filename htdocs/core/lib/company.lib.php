@@ -777,7 +777,7 @@ function isInEEC($object)
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
-	global $user;
+	global $user, $action, $hookmanager;
 
 	$i = -1;
 
@@ -791,8 +791,9 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 		print "\n";
 		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
-		print '<div class="div-table-responsive">';
-		print "\n".'<table class="noborder" width=100%>';
+
+		print '<div class="div-table-responsive">'."\n";
+		print '<table class="noborder centpercent">';
 
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
@@ -835,12 +836,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td>';
+						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1);
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end
@@ -877,6 +878,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		} else {
 			dol_print_error($db);
 		}
+
+		$parameters = array('sql'=>$sql, 'function'=>'show_projects');
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print "</table>";
 		print '</div>';
 

@@ -1121,7 +1121,8 @@ if ($object->id > 0) {
 	 * Latest contracts
 	 */
 	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
+		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1154,6 +1155,8 @@ if ($object->id > 0) {
 				$contrat->ref_customer = $objp->refcus;
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->statut = $objp->contract_status;
+				$contrat->last_main_doc = $objp->last_main_doc;
+				$contrat->model_pdf = $objp->model_pdf;
 				$contrat->fetch_lines();
 
 				$late = '';
@@ -1168,30 +1171,32 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
-				// Preview
-				$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
-				$file_list = null;
-				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
-				}
-				if (is_array($file_list)) {
-					// Defined relative dir to DOL_DATA_ROOT
-					$relativedir = '';
-					if ($filedir) {
-						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
-						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+				if (!empty($contrat->model_pdf)) {
+					// Preview
+					$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+					$file_list = null;
+					if (!empty($filedir)) {
+						$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 					}
-					// Get list of files stored into database for same relative directory
-					if ($relativedir) {
-						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
-
-						//var_dump($sortfield.' - '.$sortorder);
-						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+					if (is_array($file_list)) {
+						// Defined relative dir to DOL_DATA_ROOT
+						$relativedir = '';
+						if ($filedir) {
+							$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+							$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 						}
+						// Get list of files stored into database for same relative directory
+						if ($relativedir) {
+							completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+							//var_dump($sortfield.' - '.$sortorder);
+							if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+								$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+							}
+						}
+						$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 					}
-					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);

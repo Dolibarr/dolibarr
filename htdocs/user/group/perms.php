@@ -128,7 +128,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Permissions"));
+$title = $object->name." - ".$langs->trans('Permissions');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);

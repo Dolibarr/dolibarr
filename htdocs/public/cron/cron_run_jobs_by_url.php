@@ -93,7 +93,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
