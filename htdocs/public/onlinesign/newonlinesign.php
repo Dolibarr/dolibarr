@@ -126,7 +126,7 @@ $creditor = $mysoc->name;
 $type = $source;
 if ($source == 'proposal') {
 	$object = new Propal($db);
-	$object->fetch(0, $ref);
+	$object->fetch(0, $ref, '', $entity);
 } else {
 	accessforbidden('Bad value for source');
 	exit;

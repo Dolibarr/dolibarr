@@ -26,7 +26,7 @@
  */
 function showOnlineSignatureUrl($type, $ref)
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
 	$langs->loadLangs(array("payment", "paybox"));
