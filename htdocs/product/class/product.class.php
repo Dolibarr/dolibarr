@@ -1224,7 +1224,7 @@ class Product extends CommonObject
 				if (!$this->hasbatch() && $this->oldcopy->hasbatch()){
 					// Selection of all product stock mouvements that contains batchs
 					$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'stock_mouvement sm';
-					$sql .= ' WHERE fk_product = '.$this->id;
+					$sql .= ' WHERE fk_product = '.(int) $this->id;
 					$sql .= ' AND batch IS NOT NULL';
 
 					$resql = $this->db->query($sql);
