@@ -173,6 +173,9 @@ if ($result) {
 
 	$param = "&amp;statut=".urlencode($statut);
 	$param .= "&amp;search_bon=".urlencode($search_bon);
+	if ($type == 'bank-transfer') {
+		$param .= '&amp;type=bank-transfer';
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
@@ -284,7 +287,7 @@ if ($result) {
 			$link_to_tab = '/comm/card.php?socid=';
 			$link_code = $obj->code_client;
 			if ($type == 'bank-transfer') {
-				$link_to_tab = 'fourn/card.php?socid=';
+				$link_to_tab = '/fourn/card.php?socid=';
 				$link_code = $obj->code_fournisseur;
 			}
 			print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
