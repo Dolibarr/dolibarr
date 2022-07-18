@@ -2285,3 +2285,4 @@ DoesNotWorkWithAllThemes=Will not work with all themes
 NoName=No name
 ShowAdvancedOptions= Show advanced options
 HideAdvancedoptions= Hide advanced options
+CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is: 

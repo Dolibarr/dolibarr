@@ -127,7 +127,7 @@ class RecruitmentCandidature extends CommonObject
 		//'fk_recruitment_origin' => array('type'=>'integer:CRecruitmentOrigin:recruitment/class/crecruitmentorigin.class.php', 'label'=>'Origin', 'enabled'=>'1', 'position'=>45, 'visible'=>1, 'index'=>1),
 		'remuneration_requested' => array('type'=>'integer', 'label'=>'RequestedRemuneration', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
 		'remuneration_proposed' => array('type'=>'integer', 'label'=>'ProposedRemuneration', 'enabled'=>'1', 'position'=>81, 'notnull'=>0, 'visible'=>-1,),
-		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>3,),
+		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>500, 'notnull'=>0, 'visible'=>3, 'cssview'=>'wordbreak'),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'default'=>0, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Received', '3'=>'ContractProposed', '5'=>'ContractSigned', '8'=>'Refused', '9'=>'Canceled')),

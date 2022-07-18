@@ -360,6 +360,7 @@ $configfileparameters = array(
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_strict_mode' => 'Strict mode is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );

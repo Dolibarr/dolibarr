@@ -1301,10 +1301,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$action = 'presend';
 	}
 
+	// View mode
 	if (!empty($id) && $action != 'edit' && $action != 'create') {
 		$objsoc = new Societe($db);
-
-		// View mode
 
 		// Show errors
 		dol_htmloutput_errors(is_numeric($error) ? '' : $error, $errors);
@@ -1530,9 +1529,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($object->user_id) {
 			$dolibarr_user = new User($db);
 			$result = $dolibarr_user->fetch($object->user_id);
-			print $dolibarr_user->getLoginUrl(1);
+			print $dolibarr_user->getLoginUrl(-1);
 		} else {
-			print $langs->trans("NoDolibarrAccess");
+			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
+			if (!$object->user_id && $user->rights->user->user->creer) {
+				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
 		}
 		print '</td></tr>';
 
@@ -1563,10 +1565,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($user->rights->societe->contact->creer) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
-			}
-
-			if (!$object->user_id && $user->rights->user->user->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 
 			// Activer
