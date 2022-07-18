@@ -3033,6 +3033,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</td></tr>\n";
 		}
 
+		// Link user (you must create a contact to get a user)
+		/*
+		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+		if ($object->user_id) {
+			$dolibarr_user = new User($db);
+			$result = $dolibarr_user->fetch($object->user_id);
+			print $dolibarr_user->getLoginUrl(-1);
+		} else {
+			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
+			if (!$object->user_id && $user->rights->user->user->creer) {
+				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
+		}
+		print '</td></tr>';
+		*/
+
 		// Webservices url/key
 		if (!empty($conf->syncsupplierwebservices->enabled)) {
 			print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td>'.dol_print_url($object->webservices_url).'</td>';

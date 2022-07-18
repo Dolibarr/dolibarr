@@ -163,7 +163,7 @@ if ($resql) {
 		$companystatic->canvas = $obj->canvas;
 
 		$lastcreatedbox .= '<tr class="oddeven">';
-		$lastcreatedbox .= '<td class="nowraponall">';
+		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -171,17 +171,16 @@ if ($resql) {
 			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
 		}
 		$lastcreatedbox .= "</td>";
-		$lastcreatedbox .= '<td>'.$obj->login.'</td>';
-		$lastcreatedbox .= "<td>";
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.dol_escape_htmltag($obj->login).'</td>';
+		$texttoshow = '';
 		if ($obj->fk_soc) {
-			$lastcreatedbox .= $companystatic->getNomUrl(1);
+			$texttoshow .= $companystatic->getNomUrl(1);
 		} else {
-			$lastcreatedbox .= $langs->trans("InternalUser");
+			$texttoshow .= '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
 		}
 		if ($obj->ldap_sid) {
-			$lastcreatedbox .= ' ('.$langs->trans("DomainUser").')';
+			$texttoshow .= ' <span class="opacitymedium">('.$langs->trans("DomainUser").')</span>';
 		}
-
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
@@ -193,8 +192,9 @@ if ($resql) {
 				$entitystring = $mc->label;
 			}
 		}
-		$lastcreatedbox .= ($entitystring ? ' ('.$entitystring.')' : '');
-
+		$texttoshow .= ($entitystring ? ' <span class="opacitymedium">('.$entitystring.')</span>' : '');
+		$lastcreatedbox .= '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($texttoshow)).'">';
+		$lastcreatedbox .= $texttoshow;
 		$lastcreatedbox .= '</td>';
 		$lastcreatedbox .= '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 		$lastcreatedbox .= '<td class="right">';
