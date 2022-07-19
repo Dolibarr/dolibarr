@@ -30,7 +30,7 @@
  *  @param	string      $objectname		Name of object
  * 	@param	string		$newmask		New mask
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
- *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
+ *  @param	string		$addfieldentry	Array of 1 field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
  *  @see rebuildObjectSql()
@@ -40,7 +40,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	global $db, $langs;
 
 	if (empty($objectname)) {
-		return -1;
+		return -6;
 	}
 	if (empty($readdir)) {
 		$readdir = $destdir;
@@ -48,8 +48,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 	if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 		dol_print_error('', 'Bad parameter addfieldentry with a property arrayofkeyval defined but that is not an array.');
-		return -1;
+		return -7;
 	}
+
+	$error = 0;
 
 	// Check parameters
 	if (is_array($addfieldentry) && count($addfieldentry) > 0) {
@@ -62,8 +64,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			return -2;
 		}
 		if (!preg_match('/^(integer|price|sellist|varchar|double|text|html|duration)/', $addfieldentry['type'])
-			&& !preg_match('/^(boolean|real|date|datetime|timestamp)$/', $addfieldentry['type'])) {
-			setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
+			&& !preg_match('/^(boolean|smallint|real|date|datetime|timestamp|phone|mail|url|ip|password)$/', $addfieldentry['type'])) {
+			setEventMessages($langs->trans('BadValueForType', $addfieldentry['type']), null, 'errors');
 			return -2;
 		}
 	}
@@ -217,10 +219,14 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		dol_mkdir(dirname($pathoffiletoedittarget));
 
 		//file_put_contents($pathoffiletoedittmp, $contentclass);
-		file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
-		@chmod($pathoffiletoedittarget, octdec($newmask));
+		$result = file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
+		if ($result) {
+			@chmod($pathoffiletoedittarget, octdec($newmask));
+		} else {
+			$error++;
+		}
 
-		return $object;
+		return $error ? -1 : $object;
 	} catch (Exception $e) {
 		print $e->getMessage();
 		return -5;
@@ -257,12 +263,32 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 
 	// Edit .sql file
 	if ($moduletype == 'internal') {
-		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+		$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+			$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'-'.strtolower($module).'.sql';
+			if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+				$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+				if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+					$pathoffiletoeditsrc = '/../install/mysql/tables/llx_'.strtolower($module).'.sql';
+				}
+			}
+		}
 	} else {
-		$pathoffiletoeditsrc = $readdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
-		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql'.($readdir != $destdir ? '.new' : '');
+		$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql';
+		if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+			$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'-'.strtolower($module).'.sql';
+			if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+				$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+				if (! dol_is_file($readdir.$pathoffiletoeditsrc)) {
+					$pathoffiletoeditsrc = '/sql/llx_'.strtolower($module).'.sql';
+				}
+			}
+		}
 	}
+
+	// Complete path to be full path
+	$pathoffiletoedittarget = $destdir.$pathoffiletoeditsrc.($readdir != $destdir ? '.new' : '');
+	$pathoffiletoeditsrc = $readdir.$pathoffiletoeditsrc;
 
 	if (!dol_is_file($pathoffiletoeditsrc)) {
 		$langs->load("errors");
@@ -340,16 +366,13 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	} else {
 		$error++;
+		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
 	}
 
 	// Edit .key.sql file
-	if ($moduletype == 'internal') {
-		$pathoffiletoeditsrc = $readdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-		$pathoffiletoedittarget = $destdir.'/../install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
-	} else {
-		$pathoffiletoeditsrc = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql';
-		$pathoffiletoedittarget = $destdir.'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql'.($readdir != $destdir ? '.new' : '');
-	}
+	$pathoffiletoeditsrc = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoeditsrc);
+	$pathoffiletoedittarget = preg_replace('/\.sql$/', '.key.sql', $pathoffiletoedittarget);
+	$pathoffiletoedittarget = preg_replace('/\.sql.new$/', '.key.sql.new', $pathoffiletoedittarget);
 
 	$contentsql = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
@@ -378,10 +401,11 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	dol_mkdir(dirname($pathoffiletoedittarget));
 
 	$result2 = file_put_contents($pathoffiletoedittarget, $contentsql);
-	if ($result) {
+	if ($result2) {
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 	} else {
 		$error++;
+		setEventMessages($langs->trans("ErrorFailToCreateFile", $pathoffiletoedittarget), null, 'errors');
 	}
 
 	return $error ? -1 : 1;

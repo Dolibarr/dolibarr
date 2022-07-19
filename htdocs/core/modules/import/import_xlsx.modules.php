@@ -756,6 +756,15 @@ class ImportXlsx extends ModeleImports
 								}
 							}
 
+							// Check HTML injection
+							$inj = testSqlAndScriptInject($newval, 0);
+							if ($inj) {
+								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', $key, dol_trunc($newval, 100));
+								$this->errors[$error]['type'] = 'HTMLINJECTION';
+								$errorforthistable++;
+								$error++;
+							}
+
 							// Other tests
 							// ...
 						}

@@ -69,7 +69,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Notes');
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 

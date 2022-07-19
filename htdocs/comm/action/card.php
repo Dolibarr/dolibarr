@@ -1186,7 +1186,7 @@ if ($action == 'create') {
 		//print '<tr><td></td><td colspan="3" class="opacitymedium">';
 		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
-		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
+		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
@@ -1195,6 +1195,7 @@ if ($action == 'create') {
 		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
 		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
 
+		$reg1 = array();
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
 			$selectedrecurrulefreq = $reg1[1];
 		}

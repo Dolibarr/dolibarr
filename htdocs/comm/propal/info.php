@@ -59,7 +59,7 @@ restrictedArea($user, 'propal', $object->id);
 
 $form = new Form($db);
 
-$title = $langs->trans('Proposal')." - ".$langs->trans('Info');
+$title = $object->ref." - ".$langs->trans('Info');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 llxHeader('', $title, $help_url);
 
