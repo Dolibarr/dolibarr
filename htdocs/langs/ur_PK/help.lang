@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=فورم/وکی سپورٹ
+EMailSupport=ای میلز سپورٹ
+RemoteControlSupport=آن لائن ریئل ٹائم / ریموٹ سپورٹ
+OtherSupport=دیگر سپورٹ
+ToSeeListOfAvailableRessources=دستیاب وسائل سے رابطہ کرنے/دیکھنے کے لیے:
+HelpCenter=مدداور تعاون کا مرکز
+DolibarrHelpCenter=ڈولیبر ہیلپ اینڈ سپورٹ سینٹر
+ToGoBackToDolibarr=دوسری صورت میں، <a href="%s"> Dolibarr </a> استعمال کرنا جاری رکھنے کے لیے یہاں کلک کریں۔
+TypeOfSupport=سپورٹ کی قسم
+TypeSupportCommunauty=کمیونٹی (مفت)
+TypeSupportCommercial=کمرشل
+TypeOfHelp=قسم
+NeedHelpCenter=مدد یا مدد کی ضرورت ہے؟
+Efficiency=کارکردگی
+TypeHelpOnly=صرف مدد کریں۔
+TypeHelpDev=مدد + ترقی
+TypeHelpDevForm=مدد + ترقی + تربیت
+BackToHelpCenter=بصورت دیگر، <a href="%s"> ہیلپ سنٹر کے ہوم پیج پر واپس جائیں </a>۔
+LinkToGoldMember=آپ اپنی زبان (%s) کے لیے Dolibarr کے منتخب کردہ ٹرینرز میں سے کسی ایک کو ان کے ویجیٹ پر کلک کر کے کال کر سکتے ہیں (اسٹیٹس اور زیادہ سے زیادہ قیمت خود بخود اپ ڈیٹ ہو جاتی ہے):
+PossibleLanguages=معاون زبانیں۔
+SubscribeToFoundation=Dolibarr پروجیکٹ میں مدد کریں، فاؤنڈیشن کو سبسکرائب کریں۔
+SeeOfficalSupport=آپ کی زبان میں آفیشل ڈولیبر سپورٹ کے لیے: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> a09a4b739f170f

@@ -78,10 +78,10 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'openinghours', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'openinghours', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	/**
@@ -97,7 +97,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="monday" id="monday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+	print '<input name="monday" id="monday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Tuesday"), $langs->trans("OpeningHoursFormatDesc"));
@@ -131,10 +131,7 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '</div>';
-	print '<br>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 }

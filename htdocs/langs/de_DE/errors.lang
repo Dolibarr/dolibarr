@@ -9,6 +9,7 @@ ErrorBadMXDomain=E-Mail %s scheint nicht korrekt zu sein (Domain hat keinen gül
 ErrorBadUrl=Die URL %s ist nicht korrekt
 ErrorBadValueForParamNotAString=Ungültiger Wert für Ihren Parameter. Normalerweise passiert das, wenn die Übersetzung fehlt.
 ErrorRefAlreadyExists=Die Referenz <b> %s </b> ist bereits vorhanden.
+ErrorTitleAlreadyExists=Titel <b> %s </b> existiert bereits.
 ErrorLoginAlreadyExists=Benutzername %s existiert bereits.
 ErrorGroupAlreadyExists=Gruppe %s existiert bereits.
 ErrorEmailAlreadyExists=E-Mail %s existiert bereits.
@@ -27,7 +28,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Dieser Kontakt ist bereits als Kontak
 ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kasse) und akzeptiert deshalb nur Bargeldtransaktionen.
 ErrorFromToAccountsMustDiffers=Quell- und Zielbankkonto müssen unterschiedlich sein.
 ErrorBadThirdPartyName=Ungültiger Wert für den Namen des Partners
+ForbiddenBySetupRules=Durch Setup-Regeln verboten
 ErrorProdIdIsMandatory=Die %s ist zwingend notwendig
+ErrorAccountancyCodeCustomerIsMandatory=Der Buchhaltungscode des Kunden %s ist eine Pflichtangabe
 ErrorBadCustomerCodeSyntax=Die eingegebene Kundennummer ist unzulässig.
 ErrorBadBarCodeSyntax=Falsche Syntax für den Barcode. Vielleicht haben Sie eine falsche Barcodeart  eingestellt  oder eine falsche Barcode Maske definiert.
 ErrorCustomerCodeRequired=Kunden Nr. erforderlich
@@ -64,7 +67,7 @@ ErrorDestinationAlreadyExists=Eine weitere Datei mit dem Namen <b> %s </b> ist b
 ErrorPartialFile=Die Datei wurde nicht vollständig zum Server übertragen.
 ErrorNoTmpDir=Das temporäre Verzeichnis %s existiert nicht.
 ErrorUploadBlockedByAddon=Der Upload wurde durch ein PHP Apache-Plugin blockiert.
-ErrorFileSizeTooLarge=Die Größe der gewählten Datei übersteigt den zulässigen Maximalwert.
+ErrorFileSizeTooLarge=Die Dateigröße ist zu groß oder die Datei wurde nicht bereitgestellt.
 ErrorFieldTooLong=Das Feld %s ist zu lang.
 ErrorSizeTooLongForIntType=Die Größe überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
 ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
@@ -111,6 +114,7 @@ ErrorFailedToLoadRSSFile=RSS-Feeds welche Fehler erhalten. Versuchen Sie die Kon
 ErrorForbidden=Zugriff verweigert.<br>Sie haben versucht eine Seite, Bereich oder Funktion aufzurufen die deaktiviert ist oder sie haben keine Berechtigung dazu.
 ErrorForbidden2=Die Zugriffsberechtigungen für diese Anmeldung kann Ihr Administrator unter %s->%s einstellen.
 ErrorForbidden3=Es scheint keine ordnungsgemäße Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
+ErrorForbidden4=Hinweis: Löschen Sie Ihre Browser-Cookies, um bestehende Sitzungen für diese Anmeldung zu löschen.
 ErrorNoImagickReadimage=Imagick_readimage Funktion in dieser PHP-Version nicht vorhanden. Vorschaubilder sind nicht möglich. Administratoren können diese Registerkarte unter Einstellungen-Display ausblenden.
 ErrorRecordAlreadyExists=Datensatz bereits vorhanden
 ErrorLabelAlreadyExists=Dieses Label existiert schon
@@ -215,7 +219,7 @@ ErrorBadLinkSourceSetButBadValueForRef=Der Link ist ungültig. Die Quelle für d
 ErrorTooManyErrorsProcessStopped=Zu viele Fehler, Verarbeitung abgebrochen.
 ErrorMassValidationNotAllowedWhenStockIncreaseOnAction=Massenfreigabe ist nicht Möglich, wenn die Option um den Lagerbestand zu Verändern eingeschaltet ist (Sie müssen jedes Dokument einzeln freigeben umd das Lager für die Lagerbewegung anzugeben)
 ErrorObjectMustHaveStatusDraftToBeValidated=Objekt %s muss im Entwurfstatus sein um es zu bestätigen.
-ErrorObjectMustHaveLinesToBeValidated=Objekt %s muss Zeilen haben damit es bestätigt werden kann.
+ErrorObjectMustHaveLinesToBeValidated=Objekt %s muss Zeilen haben damit es freigegeben werden kann.
 ErrorOnlyInvoiceValidatedCanBeSentInMassAction=Nur freigegebene Rechnungen können mittels der "Via E-Mail senden" Massenaktion versendet werden.
 ErrorChooseBetweenFreeEntryOrPredefinedProduct=Sie müssen angeben ob der Artikel ein vordefiniertes Produkt ist oder nicht
 ErrorDiscountLargerThanRemainToPaySplitItBefore=Der Rabatt den Sie anwenden wollen ist grösser als der verbleibende Rechnungsbetrag. Teilen Sie den Rabatt in zwei kleinere Rabatte auf.
@@ -264,13 +268,25 @@ ErrorAnAmountWithoutTaxIsRequired=Fehler, Betrag ist notwendig
 ErrorAPercentIsRequired=Fehler, bitte geben Sie den Prozentsatz korrekt ein
 ErrorYouMustFirstSetupYourChartOfAccount=Sie müssen zuerst Ihren Kontenplan einrichten
 ErrorFailedToFindEmailTemplate=Vorlage mit Codename %s konnte nicht gefunden werden
-ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Die Dauer für den Service ist nicht definiert. Es besteht keine Möglichkeit, den Stundenpreis zu berechnen.
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Die Dauer für die Leistung ist nicht definiert. Es besteht keine Möglichkeit, den Stundenpreis zu berechnen.
 ErrorActionCommPropertyUserowneridNotDefined=Der Besitzer des Benutzers ist erforderlich
 ErrorActionCommBadType=Der ausgewählte Ereignistyp (ID: %n, Code: %s) ist im Wörterbuch für den Ereignistyp nicht vorhanden
 CheckVersionFail=Versionsprüfung fehlgeschlagen
 ErrorWrongFileName=Der Dateiname darf nicht __SOMETHING__ enthalten
 ErrorNotInDictionaryPaymentConditions=Nicht im Dictionary der Zahlungsbedingungen, bitte ändern.
 ErrorIsNotADraft=%s ist kein Entwurf
+ErrorExecIdFailed=Befehl "id" kann nicht ausgeführt werden
+ErrorBadCharIntoLoginName=Unzulässiges Zeichen im Login-Namen
+ErrorRequestTooLarge=Fehler, Anfrage zu groß
+ErrorNotApproverForHoliday=Sie sind nicht der Genehmiger für den Urlaub %s
+ErrorAttributeIsUsedIntoProduct=Dieses Attribut wird in mindestens einer Produktvariante verwendet
+ErrorAttributeValueIsUsedIntoProduct=Dieser Attributwert wird in mindestens einer Produktvariante verwendet
+ErrorPaymentInBothCurrency=Fehler, alle Beträge müssen in die gleiche Spalte eingetragen werden
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Sie versuchen Rechnungen in der Währung %s von einem Konto mit der Währung %s zu bezahlen
+ErrorInvoiceLoadThirdParty=Das Geschäftspartner-Objekt für Rechnung „%s“ kann nicht geladen werden
+ErrorInvoiceLoadThirdPartyKey=Geschäftspartner-Schlüssel "%s" ist für Rechnung "%s" nicht vorhanden
+ErrorDeleteLineNotAllowedByObjectStatus=Das Löschen einer Zeile ist aufgrund des tatsächlichen Objektstatus nicht zulässig
+ErrorAjaxRequestFailed=Anfrage fehlgeschlagen
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
@@ -296,22 +312,28 @@ WarningYourLoginWasModifiedPleaseLogin=Ihr Login wurde verändert. Aus Sicherhei
 WarningAnEntryAlreadyExistForTransKey=Eine Übersetzung für diesen Übersetzungsschlüssel existiert schon für diese Sprache
 WarningNumberOfRecipientIsRestrictedInMassAction=Achtung, die Anzahl der verschiedenen Empfänger ist auf <b> %s </b> beschränkt, wenn Massenaktionen für Listen verwendet werden
 WarningDateOfLineMustBeInExpenseReportRange=Das Datum dieser Positionszeile ist ausserhalb der Datumsspanne dieser Spesenabrechnung
-WarningProjectDraft=Das Projekt befindet sich noch im Entwurfsmodus. Vergessen Sie nicht, es zu validieren, wenn Sie Aufgaben verwenden möchten.
+WarningProjectDraft=Das Projekt befindet sich noch im Entwurfsmodus. Vergessen Sie nicht, es freizugeben, wenn Sie Aufgaben verwenden möchten.
 WarningProjectClosed=Projekt ist geschlossen. Sie müssen es zuerst wieder öffnen.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Einige Bank-Transaktionen wurden entfernt, nachdem der Kassenbon, der diese enthielt, erzeugt wurde. Daher wird sich die Anzahl der Checks und die Endsumme auf dem Kassenbon von der Anzahl und Endsumme in der Liste unterscheiden.
 WarningFailedToAddFileIntoDatabaseIndex=Warnung: Dateieintrag zur ECM-Datenbankindextabelle konnte nicht hinzugefügt werden
 WarningTheHiddenOptionIsOn=Achtung, die versteckte Option <b> %s </b> ist aktiviert.
-WarningCreateSubAccounts=Achtung, Sie können kein Unterkonto direkt erstellen. Sie müssen einen Geschäftspartner oder einen Benutzer erstellen und ihm einen Buchungscode zuweisen, um sie in dieser Liste zu finden
+WarningCreateSubAccounts=Achtung, Sie können kein Unterkonto direkt erstellen. Sie müssen einen Geschäftspartner oder einen Benutzer erstellen und ihm ein Buchungskonto zuweisen, um ihn in dieser Liste zu finden
 WarningAvailableOnlyForHTTPSServers=Nur verfügbar, wenn eine HTTPS-gesicherte Verbindung verwendet wird.
 WarningModuleXDisabledSoYouMayMissEventHere=Das Modul %s wurde nicht aktiviert. Sie können also eine Menge Veranstaltung hier verpassen.
 WarningPaypalPaymentNotCompatibleWithStrict=Der Wert 'Strict' führt dazu, dass die Online-Zahlungsfunktionen nicht richtig funktionieren. Verwenden Sie stattdessen 'Lax'.
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Wert nicht gültig
 RequireAtLeastXString = Mindestlänge beträgt %s Zeichen
 RequireXStringMax = Maximal %s Zeichen zulässig
 RequireAtLeastXDigits = Mindestlänge beträgt %s Ziffern
 RequireXDigitsMax = Maximal %s Ziffern zulässig
+RequireValidNumeric = Erfordert einen numerischen Wert
 RequireValidEmail = E-Mail Adresse ist nicht gültig
 RequireMaxLength = Länge muss kleiner sein als %s Zeichen
 RequireMinLength = Länge muss größer als %s Zeichen sein
@@ -325,3 +347,12 @@ BadSetupOfField = Fehler beim Setup des Feldes
 BadSetupOfFieldClassNotFoundForValidation = Fehler beim Setup des Feldes: Klasse für Validierung nicht gefunden
 BadSetupOfFieldFileNotFound = Fehler beim Setup des Feldes: einzubindende Datei nicht gefunden
 BadSetupOfFieldFetchNotCallable = Fehler beim Setup des Felds: Kann bei der Klasse nicht aufgerufen werden
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git
+>>>>>>> Branch '15.0' von git@github.com:Dolibarr/dolibarr.git

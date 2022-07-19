@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = Extrapola dla artykułu
 GroupOfTicket=Grupa biletów
 YouCanLinkArticleToATicketCategory=Możesz powiązać artykuł z grupą biletów (aby artykuł był sugerowany podczas kwalifikacji nowych biletów)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

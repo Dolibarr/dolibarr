@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('ftp', 'companies', 'other'));
+$langs->loadLangs(array('companies', 'other'));
 
 // Security check
 if ($user->socid) {
@@ -52,8 +52,8 @@ $upload_dir = $conf->ftp->dir_temp;
 $download_dir = $conf->ftp->dir_temp;
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;

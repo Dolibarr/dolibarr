@@ -90,6 +90,7 @@ CategorieRecursivHelp=Ja opcija ir ieslēgta, pievienojot produktu apakškategor
 AddProductServiceIntoCategory=Add the following product/service
 AddCustomerIntoCategory=Piešķirt kategoriju klientam
 AddSupplierIntoCategory=Piešķirt kategoriju piegādātājam
+AssignCategoryTo=Piešķirt kategoriju
 ShowCategory=Show tag/category
 ByDefaultInList=By default in list
 ChooseCategory=Izvēlies sadaļu

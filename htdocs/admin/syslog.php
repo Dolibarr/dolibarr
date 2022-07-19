@@ -187,8 +187,6 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 }
 
 
-//print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
-
 // Output mode
 print load_fiche_titre($langs->trans("SyslogOutput"), '', '');
 
@@ -207,7 +205,7 @@ foreach ($syslogModules as $moduleName) {
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
-	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) {
+	if (($moduleactive == -1) && getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0) {
 		continue; // Some modules are hidden if not activable and not into debug mode (end user must not see them)
 	}
 

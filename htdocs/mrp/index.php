@@ -147,7 +147,7 @@ if ($conf->use_javascript_ajax) {
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 /*
  * Last modified BOM
@@ -155,7 +155,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max = 5;
 
-$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
+$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status, a.fk_product";
 $sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
 $sql .= " WHERE a.entity IN (".getEntity('bom').")";
 $sql .= $db->order("a.tms", "DESC");
@@ -176,6 +176,7 @@ if ($resql) {
 
 			$staticbom->id = $obj->rowid;
 			$staticbom->ref = $obj->ref;
+			$staticbom->fk_product = $obj->fk_product;
 			$staticbom->date_modification = $obj->datem;
 			$staticbom->status = $obj->status;
 
@@ -245,7 +246,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array(
 	//'type' => $type,

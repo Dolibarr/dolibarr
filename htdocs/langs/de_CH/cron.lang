@@ -1,10 +1,6 @@
 # Dolibarr language file - Source file is en_US - cron
 CronMethodDoesNotExists=Klasse %s hat keine %s Methode
-EnabledAndDisabled=Aktiviert und deaktiviert
 CronDelete=cronjobs löschen
-CronDtStart=Nicht vor
-CronDtEnd=Nicht nach
 CronPriority=Rang
 JobFinished=Job gestarted und beendet
-JobDisabled=Job deaktiviert
 MakeLocalDatabaseDumpShort=Lokale Datenbanksicherung

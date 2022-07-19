@@ -64,7 +64,7 @@ class FormWebsite
 		$out = '';
 
 		$sql = "SELECT rowid, ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."website";
+		$sql .= " FROM ".$this->db->prefix()."website";
 		$sql .= " WHERE 1 = 1";
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
@@ -104,16 +104,17 @@ class FormWebsite
 	 *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
 	 *  @param	int		$addjscombo			Add js combo
+	 *  @param	string	$morecss			More CSS
 	 * 	@return	void
 	 */
-	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0)
+	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
 		global $langs, $conf, $user;
 
 		$langs->load("admin");
 
 		$sql = "SELECT rowid, code, label, entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_type_container';
+		$sql .= " FROM ".$this->db->prefix().'c_type_container';
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
 		$sql .= " ORDER BY label";
 
@@ -123,7 +124,7 @@ class FormWebsite
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer minwidth200" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}

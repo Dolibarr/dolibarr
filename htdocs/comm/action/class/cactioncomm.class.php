@@ -145,7 +145,7 @@ class CActionComm
 	 *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
 	 *  @param  string      $idorcode       'id' or 'code' or 'all'
 	 *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
-	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
+	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
 	 *  @param  int         $shortlabel     1=Get short label instead of long label
 	 *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
@@ -186,35 +186,55 @@ class CActionComm
 
 					$qualified = 1;
 
-					// $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
+					// $obj->type can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
+					// Note: type = system... than type of event is added among other standard events.
+					//       type = module... then type of event is grouped into module defined into module = myobject@mymodule. Example: Event organization or external modules
+					//       type = xxx... then type of event is added into list as a new flat value (not grouped). Example: Agefod external module
 					if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && !preg_match('/^AC_OTH/', $obj->code)) {
 						$qualified = 0; // We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 					}
 
 					if ($qualified && !empty($obj->module)) {
-						if ($obj->module == 'invoice' && empty($conf->facture->enabled)  && empty($user->facture->lire)) {
-							$qualified = 0;
+						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
+						$qualified = 0;
+						// Special cases
+						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+							$qualified = 1;
 						}
-						if ($obj->module == 'order' && empty($conf->commande->enabled) && empty($user->commande->lire)) {
-							$qualified = 0;
+						if ($obj->module == 'order' && !empty($conf->commande->enabled) && empty($user->rights->commande->lire)) {
+							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && empty($conf->propal->enabled)  && empty($user->propale->lire)) {
-							$qualified = 0;
+						if ($obj->module == 'propal' && !empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
+							$qualified = 1;
 						}
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && empty($user->fournisseur->facture->lire)) || (!empty($conf->supplier_invoice->enabled) && empty($user->supplier_invoice->lire)))) {
-							$qualified = 0;
+						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (!empty($conf->rights->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire)))) {
+							$qualified = 1;
 						}
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && empty($user->fournisseur->commande->lire)) || (empty($conf->supplier_order->enabled) && empty($user->supplier_order->lire)))) {
-							$qualified = 0;
+						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->lire)) || (empty($conf->rights->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)))) {
+							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && empty($conf->expedition->enabled) && empty($user->expedition->lire)) {
-							$qualified = 0;
+						if ($obj->module == 'shipping' && !empty($conf->expedition->enabled) && !empty($user->rights->expedition->lire)) {
+							$qualified = 1;
 						}
-						if (preg_match('/@eventorganization/', $obj->module) && empty($conf->eventorganization->enabled) && empty($user->eventorganization->read)) {
-							$qualified = 0;
+						// For the generic case with type = 'module...' and module = 'myobject@mymodule'
+						$regs = array();
+						if (preg_match('/^module/', $obj->type)) {
+							if (preg_match('/^(.+)@(.+)$/', $obj->module, $regs)) {
+								$tmpobject = $regs[1];
+								$tmpmodule = $regs[2];
+								//var_dump($user->$tmpmodule);
+								if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled) && (!empty($user->rights->$tmpmodule->read) || !empty($user->rights->$tmpmodule->lire) || !empty($user->rights->$tmpmodule->$tmpobject->read) || !empty($user->rights->$tmpmodule->$tmpobject->lire))) {
+									$qualified = 1;
+								}
+							}
 						}
-						if (!preg_match('/^system/', $obj->type) && isset($conf->{$obj->module}) && empty($conf->{$obj->module}->enabled)) {
-							$qualified = 0;
+						// For the case type is not 'system...' neither 'module', we just check module is on
+						if (! in_array($obj->type, array('system', 'systemauto', 'module', 'moduleauto'))) {
+							$tmpmodule = $obj->module;
+							//var_dump($tmpmodule);
+							if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled)) {
+								$qualified = 1;
+							}
 						}
 					}
 
@@ -241,7 +261,7 @@ class CActionComm
 							$transcode = $langs->trans($keyfortrans);
 						}
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
-						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+						if (($onlyautoornot == -1 || $onlyautoornot == -2) && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 							if ($typecalendar == 'system') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-99] = $langs->trans("ActionAC_MANUAL");

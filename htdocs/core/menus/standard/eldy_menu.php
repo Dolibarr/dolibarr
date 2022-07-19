@@ -198,8 +198,12 @@ class MenuManager
 					$submenu = new Menu();
 					print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu, null, $this->type_user); // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
 					// Note: $submenu contains menu entry with substitution not yet done
-					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') {
+					//var_dump($submenu); exit;
+					//}
+					//if ($tmpmainmenu=='accountancy') {
+					//var_dump($submenu->liste); exit;
+					//}
 					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
@@ -317,14 +321,14 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">';
+					print '<span class="spanlilevel0 vsmenudisabled">';
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
 						print $val['prefix'];
 					}
 
 					print $val['titre'];
-					print '</font>';
+					print '</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

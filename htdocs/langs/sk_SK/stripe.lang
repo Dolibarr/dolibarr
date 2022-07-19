@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Nasledovné adresy URL sú k dispozícii ponúknuť stránky na zákazníka, aby platbu na Dolibarr objektov
 PaymentForm=Platba formulár
@@ -28,7 +28,6 @@ AccountParameter=Parametre účtu
 UsageParameter=Používanie parametrov
 InformationToFindParameters=Pomôžte nájsť %s informácie o účte
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
-VendorName=Názov dodávateľa
 CSSUrlForPaymentForm=CSS štýlov url platobného formulára
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed

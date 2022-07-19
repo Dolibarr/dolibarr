@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015-2020 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -102,21 +102,26 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-//print getCustomerInvoicePieChart($socid);
 print getNumberInvoicesPieChart('customers');
 print '<br>';
-print getNumberInvoicesPieChart('fourn');
-//print getPurchaseInvoicePieChart($socid);
-print '<br>';
-print getCustomerInvoiceDraftTable($max, $socid);
-print '<br>';
-print getDraftSupplierTable($max, $socid);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+if (!empty($conf->fournisseur->enabled)) {
+	print getNumberInvoicesPieChart('fourn');
+	print '<br>';
+}
+
+print getCustomerInvoiceDraftTable($max, $socid);
+
+if (!empty($conf->fournisseur->enabled)) {
+	print '<br>';
+	print getDraftSupplierTable($max, $socid);
+}
+
+print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -129,12 +134,12 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays, ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -210,11 +215,11 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($tmpinvoice->hasDelay()) {
+					print '<td width="20" class="nobordernopadding nowrap">';
 					print img_warning($langs->trans("Late"));
+					print '</td>';
 				}
-				print '</td>';
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -232,7 +237,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
-				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
 				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
 
@@ -279,12 +284,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= ", SUM(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -362,8 +367,9 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
-				print '<td>'.$facstatic->getLibStatut(3).'</td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
+				$alreadypaid = $facstatic->getSommePaiement();
+				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
 				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
@@ -431,7 +437,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 			$total_ttc = $totalam = $total_ht = 0;
 
 			while ($i < $num && $i < $max) {
-				$objp = $db->fetch_object($result);
+				$obj = $db->fetch_object($result);
 
 				if ($i >= $max) {
 					$othernb += 1;
@@ -441,24 +447,24 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 					continue;
 				}
 
-				$donationstatic->id = $objp->rowid;
-				$donationstatic->ref = $objp->rowid;
-				$donationstatic->lastname = $objp->lastname;
-				$donationstatic->firstname = $objp->firstname;
-				$donationstatic->date = $objp->date;
-				$donationstatic->statut = $objp->status;
-				$donationstatic->status = $objp->status;
+				$donationstatic->id = $obj->rowid;
+				$donationstatic->ref = $obj->rowid;
+				$donationstatic->lastname = $obj->lastname;
+				$donationstatic->firstname = $obj->firstname;
+				$donationstatic->date = $obj->date;
+				$donationstatic->statut = $obj->status;
+				$donationstatic->status = $obj->status;
 
 				$label = $donationstatic->getFullName($langs);
-				if ($objp->societe) {
-					$label .= ($label ? ' - ' : '').$objp->societe;
+				if ($obj->societe) {
+					$label .= ($label ? ' - ' : '').$obj->societe;
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
-				print '<td class="nowrap right"><span class="amount">'.price($objp->amount).'</span></td>';
-				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->dm), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->dm), 'day', 'tzuserrel').'</td>';
 				print '<td>'.$donationstatic->getLibStatut(3).'</td>';
 				print '</tr>';
 
@@ -526,9 +532,8 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 
 					if ($i >= $max) {
 						$othernb += 1;
+						$tot_ttc += $obj->amount;
 						$i++;
-						$total_ht += $obj->total_ht;
-						$total_ttc += $obj->total_ttc;
 						continue;
 					}
 
@@ -577,7 +582,7 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 /*
  * Customers orders to be billed
  */
-if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+if (isModEnabled('facture') && !empty($conf->commande->enabled) && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
@@ -588,7 +593,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= ", c.rowid, c.ref, c.facture, c.fk_statut as status, c.total_ht, c.total_tva, c.total_ttc,";
 	$sql .= " cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
@@ -596,7 +601,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -711,7 +716,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				print "</tr>\n";
 			}
 
-			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
+			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <span style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</span> </td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
 				print '<td class="right">'.price($tot_ht).'</td>';
 			}
@@ -748,7 +753,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook

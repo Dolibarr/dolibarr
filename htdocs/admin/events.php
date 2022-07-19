@@ -107,6 +107,8 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'audit', '', -1);
 
+print '<br>';
+
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";

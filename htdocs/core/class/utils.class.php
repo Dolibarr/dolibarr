@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2016 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2016	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Anthony Berton		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,7 +189,7 @@ class Utils
 	 *  @param  int         $usedefault        1=Use default backup profile (Set this to 1 when used as cron)
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
-	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
@@ -202,7 +204,7 @@ class Utils
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Check compression parameter
-		if (!in_array($compression, array('none', 'gz', 'bz', 'zip'))) {
+		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
 			$langs->load("errors");
 			$this->error = $langs->transnoentitiesnoconv("ErrorBadValueForParameter", $compression, "Compression");
 			return -1;
@@ -231,7 +233,7 @@ class Utils
 				$prefix = 'pg_dump';
 				$ext = 'sql';
 			}
-			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
+			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
 
 		$outputdir = $conf->admin->dir_output.'/backup';
@@ -240,17 +242,25 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
-
+			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+				$cmddump = $db->getPathOfDump();
+			} else {
+				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
+			}
+			if (empty($cmddump)) {
+				$this->error = "Failed to detect command to use for mysqldump. Try a manual backup before to set path of command.";
+				return -1;
+			}
 
 			$outputfile = $outputdir.'/'.$file;
 			// for compression format, we add extension
 			$compression = $compression ? $compression : 'none';
 			if ($compression == 'gz') {
 				$outputfile .= '.gz';
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$outputfile .= '.bz2';
+			} elseif ($compression == 'zstd') {
+				$outputfile .= '.zst';
 			}
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
@@ -266,10 +276,10 @@ class Utils
 			$param = $dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 			$param .= " -u ".$dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -P ".$dolibarr_main_db_port;
+				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
-			if (!GETPOST("use_transaction", "alpha")) {
-				$param .= " -l --single-transaction";
+			if (GETPOST("use_transaction", "alpha")) {
+				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
 				$param .= " -K";
@@ -332,17 +342,42 @@ class Utils
 
 			$handle = '';
 
+			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
+
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
-			if ($compression == 'none') {
-				$handle = fopen($outputfile, 'w');
-			}
-			if ($compression == 'gz') {
-				$handle = gzopen($outputfile, 'w');
-			}
-			if ($compression == 'bz') {
-				$handle = bzopen($outputfile, 'w');
+			if (!$lowmemorydump) {
+				if ($compression == 'none') {
+					$handle = fopen($outputfile, 'w');
+				} elseif ($compression == 'gz') {
+					$handle = gzopen($outputfile, 'w');
+				} elseif ($compression == 'bz') {
+					$handle = bzopen($outputfile, 'w');
+				} elseif ($compression == 'zstd') {
+					$handle = fopen($outputfile, 'w');
+				}
+			} else {
+				if ($compression == 'none') {
+					$fullcommandclear .= " > ".$outputfile;
+					$fullcommandcrypted .= " > ".$outputfile;
+					$handle = 1;
+				} elseif ($compression == 'gz') {
+					$fullcommandclear .= " | gzip > ".$outputfile;
+					$fullcommandcrypted .= " | gzip > ".$outputfile;
+					$paramcrypted.=" | gzip";
+					$handle = 1;
+				} elseif ($compression == 'bz') {
+					$fullcommandclear .= " | bzip2 > ".$outputfile;
+					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
+					$paramcrypted.=" | bzip2";
+					$handle = 1;
+				} elseif ($compression == 'zstd') {
+					$fullcommandclear .= " | zstd > ".$outputfile;
+					$fullcommandcrypted .= " | zstd > ".$outputfile;
+					$paramcrypted.=" | zstd";
+					$handle = 1;
+				}
 			}
 
 			$ok = 0;
@@ -364,7 +399,8 @@ class Utils
 				}
 
 
-				// TODO Replace with executeCLI function
+				// TODO Replace with executeCLI function but
+				// we must first introduce a low memory mode
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
@@ -384,16 +420,23 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
-								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-								if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
-									$ok = 1;
-								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
-									$ok = 1;
+								if (!$lowmemorydump) {
+									fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
+									if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
+										$ok = 1;
+									} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
+										$ok = 1;
+									}
+								} else {
+									// If we have a result here in lowmemorydump mode, something is strange
 								}
 							}
+						} elseif ($lowmemorydump) {
+							$ok = 1;
 						}
 					}
 				}
+
 				if ($execmethod == 2) {	// With this method, there is no way to get the return code, only output
 					$handlein = popen($fullcommandclear, 'r');
 					$i = 0;
@@ -419,12 +462,12 @@ class Utils
 
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
@@ -439,12 +482,12 @@ class Utils
 			// Get errorstring
 			if ($compression == 'none') {
 				$handle = fopen($outputfile, 'r');
-			}
-			if ($compression == 'gz') {
+			} elseif ($compression == 'gz') {
 				$handle = gzopen($outputfile, 'r');
-			}
-			if ($compression == 'bz') {
+			} elseif ($compression == 'bz') {
 				$handle = bzopen($outputfile, 'r');
+			} elseif ($compression == 'zstd') {
+				$handle = fopen($outputfile, 'r');
 			}
 			if ($handle) {
 				// Get 2048 first chars of error message.
@@ -454,12 +497,12 @@ class Utils
 				// Close file
 				if ($compression == 'none') {
 					fclose($handle);
-				}
-				if ($compression == 'gz') {
+				} elseif ($compression == 'gz') {
 					gzclose($handle);
-				}
-				if ($compression == 'bz') {
+				} elseif ($compression == 'bz') {
 					bzclose($handle);
+				} elseif ($compression == 'zstd') {
+					fclose($handle);
 				}
 				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
 					$errormsg = '';
@@ -608,12 +651,13 @@ class Utils
 	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
 	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
 		global $conf, $langs;
 
@@ -624,10 +668,17 @@ class Utils
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
+
 		if ($redirectionfile) {
 			$command .= " > ".dol_sanitizePathName($redirectionfile);
 		}
-		$command .= " 2>&1";
+
+		if ($redirectionfileerr && ($redirectionfileerr != $redirectionfile)) {
+			// If we ask a redirect of stderr on a given file not already used for stdout
+			$command .= " 2> ".dol_sanitizePathName($redirectionfileerr);
+		} else {
+			$command .= " 2>&1";
+		}
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
@@ -636,8 +687,7 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-
-		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		dol_syslog("Utils::executeCLI execmethod=".$execmethod." command=".$command, LOG_DEBUG);
 		$output_arr = array();
 
 		if ($execmethod == 1) {
@@ -839,8 +889,13 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
 					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
+				if ($result < 0 && empty($this->errors)) {
+					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
+					$this->errors[] = $this->error;
+				}
 
 				// Build PDF doc
 				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
@@ -848,8 +903,13 @@ class Utils
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
 					$this->error = $resarray['error'].' '.$resarray['output'];
+					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
+				if ($result < 0 && empty($this->errors)) {
+					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
+					$this->errors[] = $this->error;
+				}
 
 				chdir($currentdir);
 			} else {
@@ -860,8 +920,6 @@ class Utils
 				return 1;
 			} else {
 				$error++;
-				$langs->load("errors");
-				$this->error = $langs->trans("ErrorFailToGenerateFile", $outputfiledoc);
 			}
 		} else {
 			$error++;
@@ -1099,11 +1157,11 @@ class Utils
 					fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
 				}
 
-				$sql = 'SELECT * FROM '.$table; // Here SELECT * is allowed because we don't have definition of columns to take
+				$sql = "SELECT * FROM ".$table; // Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while ($row = $db->fetch_row($result)) {
 					// For each row of data we print a line of INSERT
-					fwrite($handle, 'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
+					fwrite($handle, "INSERT ".$delayed.$ignore."INTO ".$table." VALUES (");
 					$columns = count($row);
 					for ($j = 0; $j < $columns; $j++) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
@@ -1167,5 +1225,113 @@ class Utils
 		fclose($handle);
 
 		return 1;
+	}
+
+	/**
+	 *  Make a send last backup of database or fil in param
+	 *  CAN BE A CRON TASK
+	 *
+	 *	@param 	string	$sendto              Recipients emails
+	 *	@param 	string  $from                Sender email
+	 *	@param 	string	$subject             Topic/Subject of mail
+	 *	@param 	string	$message             Message
+	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
+	 * 	@param 	string	$filter			     Filter file send
+	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	{
+		global $conf, $langs;
+
+		$filepath = '';
+		$output = '';
+		$error = 0;
+
+		if (!empty($from)) {
+			$from = dol_escape_htmltag($from);
+		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} else {
+			$error++;
+		}
+
+		if (!empty($sendto)) {
+			$sendto = dol_escape_htmltag($sendto);
+		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
+			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} else {
+			$error++;
+		}
+
+		if (!empty($subject)) {
+			$subject = dol_escape_htmltag($subject);
+		} else {
+			$subject = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
+		}
+
+		if (empty($message)) {
+			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if ($filename) {
+			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
+				$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filename);
+			}
+		} else {
+			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
+		}
+		if ($tmpfiles) {
+			foreach ($tmpfiles as $key => $val) {
+				if ($key  == 'fullname') {
+					$filepath = array($val);
+					$filesize = dol_filesize($val);
+				}
+				if ($key  == 'type') {
+					$mimetype = array($val);
+				}
+				if ($key  == 'relativename') {
+					$filename = array($val);
+				}
+			}
+		}
+
+		if ($filepath) {
+			if ($filesize > 100000000) {
+				$output = 'Sorry, last backup file is too large to be send by email';
+				$error++;
+			}
+		} else {
+			$output = 'No backup file found';
+			$error++;
+		}
+
+		if (!$error) {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
+			if ($mailfile->error) {
+				$error++;
+				$output = $mailfile->error;
+			}
+		}
+
+		if (!$error) {
+			$result = $mailfile->sendfile();
+			if ($result <= 0) {
+				$error++;
+				$output = $mailfile->error;
+			}
+		}
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->error = $error;
+		$this->output = $output;
+
+		if ($result == true) {
+			return 0;
+		} else {
+			return $result;
+		}
 	}
 }

@@ -87,7 +87,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplier_proposal" value="'.$conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -120,9 +120,9 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     		Object third party
-	 * 	@param	Propal		$supplier_proposal	Object supplier_proposal
-	 *  @return string      					Value if OK, 0 if KO
+	 *  @param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *  @return string      								Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

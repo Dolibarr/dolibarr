@@ -1,0 +1,76 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. ஏற்றுமதி
+Sending=ஏற்றுமதி
+Sendings=ஏற்றுமதி
+AllSendings=அனைத்து ஏற்றுமதிகள்
+Shipment=ஏற்றுமதி
+Shipments=ஏற்றுமதி
+ShowSending=ஏற்றுமதிகளைக் காட்டு
+Receivings=டெலிவரி ரசீதுகள்
+SendingsArea=ஏற்றுமதி பகுதி
+ListOfSendings=ஏற்றுமதி பட்டியல்
+SendingMethod=கப்பல் முறை
+LastSendings=சமீபத்திய %s ஏற்றுமதிகள்
+StatisticsOfSendings=ஏற்றுமதிக்கான புள்ளிவிவரங்கள்
+NbOfSendings=ஏற்றுமதிகளின் எண்ணிக்கை
+NumberOfShipmentsByMonth=மாதத்தின் மூலம் ஏற்றுமதிகளின் எண்ணிக்கை
+SendingCard=ஏற்றுமதி அட்டை
+NewSending=புதிய ஏற்றுமதி
+CreateShipment=ஏற்றுமதியை உருவாக்கவும்
+QtyShipped=Qty அனுப்பப்பட்டது
+QtyShippedShort=அளவு கப்பல்.
+QtyPreparedOrShipped=Qty தயாரிக்கப்பட்டது அல்லது அனுப்பப்பட்டது
+QtyToShip=கப்பலுக்கு க்யூடி
+QtyToReceive=பெற வேண்டிய அளவு
+QtyReceived=Qty பெற்றது
+QtyInOtherShipments=மற்ற ஏற்றுமதிகளில் அளவு
+KeepToShip=அனுப்புவதற்கு இருக்கவும்
+KeepToShipShort=எஞ்சியிரு
+OtherSendingsForSameOrder=இந்த ஆர்டருக்கான பிற ஏற்றுமதிகள்
+SendingsAndReceivingForSameOrder=இந்த ஆர்டருக்கான ஏற்றுமதிகள் மற்றும் ரசீதுகள்
+SendingsToValidate=சரிபார்ப்பதற்கான ஏற்றுமதிகள்
+StatusSendingCanceled=ரத்து செய்யப்பட்டது
+StatusSendingCanceledShort=ரத்து செய்யப்பட்டது
+StatusSendingDraft=வரைவு
+StatusSendingValidated=சரிபார்க்கப்பட்டது (கப்பலுக்கு அனுப்பப்படும் அல்லது ஏற்கனவே அனுப்பப்பட்ட பொருட்கள்)
+StatusSendingProcessed=செயலாக்கப்பட்டது
+StatusSendingDraftShort=வரைவு
+StatusSendingValidatedShort=சரிபார்க்கப்பட்டது
+StatusSendingProcessedShort=செயலாக்கப்பட்டது
+SendingSheet=ஏற்றுமதி தாள்
+ConfirmDeleteSending=இந்த ஏற்றுமதியை நிச்சயமாக நீக்க விரும்புகிறீர்களா?
+ConfirmValidateSending=<b> %s </b> குறிப்புடன் இந்தக் கப்பலைச் சரிபார்க்க விரும்புகிறீர்களா?
+ConfirmCancelSending=இந்த ஏற்றுமதியை நிச்சயமாக ரத்து செய்ய விரும்புகிறீர்களா?
+DocumentModelMerou=Merou A5 மாடல்
+WarningNoQtyLeftToSend=எச்சரிக்கை, எந்த தயாரிப்புகளும் அனுப்பப்படுவதற்கு காத்திருக்கவில்லை.
+StatsOnShipmentsOnlyValidated=புள்ளிவிவரங்கள் சரிபார்க்கப்பட்ட ஏற்றுமதிகளுக்கு மட்டுமே. பயன்படுத்தப்படும் தேதி கப்பலின் சரிபார்ப்பு தேதி (திட்டமிடப்பட்ட விநியோக தேதி எப்போதும் அறியப்படவில்லை)
+DateDeliveryPlanned=திட்டமிடப்பட்ட விநியோக தேதி
+RefDeliveryReceipt=ரெஃப் டெலிவரி ரசீது
+StatusReceipt=நிலை விநியோக ரசீது
+DateReceived=டெலிவரி பெறப்பட்ட தேதி
+ClassifyReception=வரவேற்பை வகைப்படுத்தவும்
+SendShippingByEMail=மின்னஞ்சல் மூலம் ஏற்றுமதி அனுப்பவும்
+SendShippingRef=கப்பலின் சமர்ப்பிப்பு %s
+ActionsOnShipping=ஏற்றுமதி நிகழ்வுகள்
+LinkToTrackYourPackage=உங்கள் தொகுப்பைக் கண்காணிக்க இணைப்பு
+ShipmentCreationIsDoneFromOrder=இப்போதைக்கு, புதிய ஏற்றுமதியை உருவாக்குவது விற்பனை ஆர்டர் பதிவிலிருந்து செய்யப்படுகிறது.
+ShipmentLine=ஏற்றுமதி வரி
+ProductQtyInCustomersOrdersRunning=திறந்த விற்பனை ஆர்டர்களில் இருந்து தயாரிப்பு அளவு
+ProductQtyInSuppliersOrdersRunning=திறந்த கொள்முதல் ஆர்டர்களில் இருந்து தயாரிப்பு அளவு
+ProductQtyInShipmentAlreadySent=ஏற்கனவே அனுப்பப்பட்ட திறந்த விற்பனை ஆர்டரில் இருந்து தயாரிப்பு அளவு
+ProductQtyInSuppliersShipmentAlreadyRecevied=ஏற்கனவே பெற்ற திறந்த கொள்முதல் ஆர்டர்களில் இருந்து தயாரிப்பு அளவு
+NoProductToShipFoundIntoStock=<b> %s </b> கிடங்கில் அனுப்ப வேண்டிய தயாரிப்பு எதுவும் இல்லை. சரியான இருப்பு அல்லது மற்றொரு கிடங்கைத் தேர்வு செய்ய திரும்பவும்.
+WeightVolShort=எடை/தொகுதி.
+ValidateOrderFirstBeforeShipment=ஷிப்மென்ட் செய்வதற்கு முன் நீங்கள் முதலில் ஆர்டரைச் சரிபார்க்க வேண்டும்.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=டெலிவரி ரசீதுகளுக்கான முழுமையான ஆவண மாதிரி (லோகோ...)
+DocumentModelStorm=டெலிவரி ரசீதுகள் மற்றும் எக்ஸ்ட்ராஃபீல்டு இணக்கத்தன்மைக்கான முழுமையான ஆவண மாதிரி (லோகோ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=நிலையான EXPEDITION_ADDON_NUMBER வரையறுக்கப்படவில்லை
+SumOfProductVolumes=தயாரிப்பு தொகுதிகளின் கூட்டுத்தொகை
+SumOfProductWeights=தயாரிப்பு எடைகளின் கூட்டுத்தொகை
+
+# warehouse details
+DetailWarehouseNumber= கிடங்கு விவரங்கள்
+DetailWarehouseFormat= W:%s (Qty: %d)

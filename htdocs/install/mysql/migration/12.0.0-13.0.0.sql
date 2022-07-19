@@ -484,9 +484,9 @@ ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_author;
 ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_valid;
 
 -- add constraint
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
 
 ALTER TABLE llx_deliverydet DROP FOREIGN KEY  fk_livraisondet_fk_livraison;
 ALTER TABLE llx_deliverydet DROP INDEX idx_livraisondet_fk_expedition;

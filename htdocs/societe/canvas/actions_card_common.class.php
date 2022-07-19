@@ -118,7 +118,7 @@ abstract class ActionsCardCommon
 
 		if ($action == 'create') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript">
 				$(document).ready(function () {
 		              $("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
@@ -139,7 +139,7 @@ abstract class ActionsCardCommon
 
 		if ($action == 'create' || $action == 'edit') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				$(document).ready(function () {
 						$("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";

@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       admin/conferenceorboothattendee_extrafields.php
+ *      \file       htdocs/admin/eventorganization_confboothattendee_extrafields.php
  *		\ingroup    eventorganization
  *		\brief      Page to setup extra fields of conferenceorboothattendee
  */
@@ -85,7 +85,7 @@ print dol_get_fiche_end();
 // Buttons
 if ($action != 'create' && $action != 'edit') {
 	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
 	print "</div>";
 }
 

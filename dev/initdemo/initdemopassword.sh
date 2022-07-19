@@ -171,7 +171,10 @@ if [ $res -ne 0 ]; then
 fi 
 
 if [ -s "$mydir/initdemopostsql.sql" ]; then
+	echo A file initdemopostsql.sql was found, we execute it.
 	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+else
+	echo No file initdemopostsql.sql found, we extra sql action done.
 fi 
 
 

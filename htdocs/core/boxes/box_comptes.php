@@ -122,7 +122,12 @@ class box_comptes extends ModeleBoxes
 					$account_static->accountancy_journal = $objp->accountancy_journal;
 					$solde = $account_static->solde(0);
 
-					$solde_total[$objp->currency_code] += $solde;
+					if (!array_key_exists($objp->currency_code, $solde_total)) {
+						$solde_total[$objp->currency_code] = $solde;
+					} else {
+						$solde_total[$objp->currency_code] += $solde;
+					}
+
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',
@@ -136,8 +141,11 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
-						'text' => price($solde, 0, $langs, 1, -1, -1, $objp->currency_code)
+						'td' => 'class="nowraponall right amount"',
+						'text' => '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$account_static->id.'">'
+									.price($solde, 0, $langs, 1, -1, -1, $objp->currency_code)
+									.'</a>',
+						'asis' => 1,
 					);
 
 					$line++;
@@ -156,7 +164,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right nowraponall"',
+						'td' => 'class="liste_total nowraponall right amount"',
 						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
 					);
 					$line++;

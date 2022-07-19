@@ -122,11 +122,11 @@ class box_task extends ModeleBoxes
 			$boxcontent .= '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 			$selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
 			$boxcontent .= $form->selectArray($cookie_name, $selectArray, $filterValue);
-			$boxcontent .= '<button type="submit" class="button buttongen">'.$langs->trans("Refresh").'</button>';
+			$boxcontent .= '<button type="submit" class="button buttongen button-save">'.$langs->trans("Refresh").'</button>';
 			$boxcontent .= '</form>'."\n";
 			$boxcontent .= '</div>'."\n";
 			if (!empty($conf->use_javascript_ajax)) {
-				$boxcontent .= '<script type="text/javascript" language="javascript">
+				$boxcontent .= '<script type="text/javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 								jQuery(".showiffilter'.$this->boxcode.'").toggle();
@@ -145,7 +145,7 @@ class box_task extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -168,7 +168,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 

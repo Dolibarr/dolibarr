@@ -27,22 +27,22 @@ create table llx_product_fournisseur_price
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product			integer,
   fk_soc				integer,
-  ref_fourn				varchar(30),
+  ref_fourn				varchar(128),
   desc_fourn            text,
   fk_availability		integer,	   
   price					double(24,8) DEFAULT 0,		-- price without tax for quantity
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,
   remise				double NOT NULL DEFAULT 0,
-  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax
+  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax (discount not taken into account, so rounding of price/quantity)
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
   default_vat_code	    varchar(10),
   barcode                       varchar(180) DEFAULT NULL,          -- barcode
   fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
-  tva_tx				double(6,3) NOT NULL,
-  localtax1_tx		    double(6,3) DEFAULT 0,
+  tva_tx				double(7,4) NOT NULL,
+  localtax1_tx		    double(7,4) DEFAULT 0,
   localtax1_type        varchar(10)  NOT NULL DEFAULT '0',
-  localtax2_tx		    double(6,3) DEFAULT 0,
+  localtax2_tx		    double(7,4) DEFAULT 0,
   localtax2_type        varchar(10)  NOT NULL DEFAULT '0',
   info_bits				integer NOT NULL DEFAULT 0,
   fk_user				integer,
@@ -52,7 +52,7 @@ create table llx_product_fournisseur_price
   supplier_reputation varchar(10),
   packaging			    real DEFAULT NULL,
   fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
+  multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_unitprice   double(24,8) DEFAULT NULL,		-- unit price without tax
   multicurrency_price		double(24,8) DEFAULT NULL

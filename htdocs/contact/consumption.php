@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/societe/consumption.php
+ *	\file       htdocs/contact/consumption.php
  *  \ingroup    societe
  *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
  */
@@ -32,10 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-// Security check
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $id = GETPOST('id', 'int');
 
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 if ($id > 0) {
 	$object->fetch($id);
@@ -47,8 +47,8 @@ $socid = $object->thirdparty->id;
 
 // Sort & Order fields
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -86,6 +86,8 @@ $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptioncontact'));
 
+$result = restrictedArea($user, 'contact', $object->id, 'socpeople&societe');
+
 
 /*
  * Actions
@@ -120,7 +122,11 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref = '<div class="refidno">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+$morehtmlref .= '<div class="refidno">';
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$objsoc->fetch($socid);
 	// Thirdparty
@@ -147,16 +153,16 @@ print '</td></tr>';
 
 if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if ($conf->propal->enabled && $user->rights->propal->lire) {
+	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if ($conf->commande->enabled && $user->rights->commande->lire) {
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if ($conf->facture->enabled && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
@@ -196,7 +202,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle as type_contact_label, ';
 	$tables_from = MAIN_DB_PREFIX.'fichinterdet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
 	$dateprint = 'f.datec';
@@ -208,7 +214,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'facturedet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON d.fk_facture=f.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='facture' and tc.source='external' and tc.active=1)";
 	$where = " WHERE f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
@@ -221,7 +227,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'propaldet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'propal as c ON d.fk_propal=c.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='propal' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('propal').')';
 	$datePrint = 'c.datep';
@@ -234,7 +240,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'commandedet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON d.fk_commande=c.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='commande' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('order').')';
 	$dateprint = 'c.date_commande';
@@ -247,7 +253,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'facture_fourn_det d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON d.fk_facture_fourn=f.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='invoice_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'f.datef';
@@ -272,7 +278,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'commande_fournisseurdet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as c ON d.fk_commande=c.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='order_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'c.date_valid';
@@ -286,7 +292,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from = MAIN_DB_PREFIX.'contratdet d';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat as c ON d.fk_contrat=c.rowid';
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
+	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='contrat' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('contrat').')';
 	$dateprint = 'c.date_valid';
@@ -349,7 +355,7 @@ if (empty($elementTypeArray) && !$object->thirdparty->client && !$object->thirdp
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);
@@ -360,7 +366,7 @@ $param .= "&socid=".urlencode($socid);
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-
+$num=0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -404,7 +410,7 @@ if ($sql_select) {
 	print '</td>';
 	print '<td class="liste_titre nowrap center">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1);
 	print '</td>';
 	print '<td class="liste_titre center">';
 	print '</td>';
@@ -645,7 +651,7 @@ if ($sql_select) {
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</span></td></tr>';
 
 	print "</table>";
 } else {
@@ -653,7 +659,7 @@ if ($sql_select) {
 
 	print '<table class="liste centpercent">'."\n";
 
-	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span></td></tr>';
 
 	print "</table>";
 }

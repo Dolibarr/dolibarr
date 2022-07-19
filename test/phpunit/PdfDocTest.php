@@ -160,11 +160,11 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 
 		$result=pdf_getlinedesc($localobject, 0, $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
+		$this->assertEquals("PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)", $result);
 
 		$result=doc_getlinedesc($localobject->lines[0], $langs);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, "PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
+		$this->assertEquals("PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)", $result);
 	}
 
 	/**

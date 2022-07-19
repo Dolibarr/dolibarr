@@ -37,8 +37,6 @@ if (!$user->admin) {
 $rowid = GETPOST('rowid', 'int');
 $entity = GETPOST('entity', 'int');
 $action = GETPOST('action', 'aZ09');
-$update = GETPOST('update', 'alpha');
-$delete = GETPOST('delete', 'none'); // Do not use alpha here
 $debug = GETPOST('debug', 'int');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
@@ -222,7 +220,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity) {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
+print '<input type="submit" class="button button-add" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 
@@ -259,7 +257,7 @@ if ($result) {
 
 		print "\n";
 
-		print '<tr class="oddeven"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';
@@ -310,10 +308,10 @@ print '</div>';
 if ($conf->use_javascript_ajax) {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
-	print '<input type="submit" name="update" class="button marginbottomonly" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button button-edit marginbottomonly" name="update" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 	print '<div id="delconst" class="right">';
-	print '<input type="submit" name="delete" class="button marginbottomonly" value="'.$langs->trans("Delete").'">';
+	print '<input type="submit" class="button button-cancel marginbottomonly" name="delete" value="'.$langs->trans("Delete").'">';
 	print '</div>';
 }
 

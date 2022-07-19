@@ -19,6 +19,7 @@ ProspectionArea=Področje možnih strank
 IdThirdParty=ID partnerja
 IdCompany=ID podjetja
 IdContact=ID kontakta
+ThirdPartyAddress=Third-party address
 ThirdPartyContacts=Third-party contacts
 ThirdPartyContact=Third-party contact/address
 Company=Podjetje
@@ -51,6 +52,8 @@ CivilityCode=Vljudnostni naziv
 RegisteredOffice=Registrirana poslovalnica
 Lastname=Priimek
 Firstname=Ime
+RefEmployee=Employee reference
+NationalRegistrationNumber=National registration number
 PostOrFunction=Job position
 UserTitle=Naziv
 NatureOfThirdParty=Nature of Third party
@@ -102,6 +105,7 @@ WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Model kode kupca
 SupplierCodeModel=Vendor code model
 Gencod=Črtna koda
+GencodBuyPrice=Barcode of price ref
 ##### Professional ID #####
 ProfId1Short=Mat. št.
 ProfId2Short=Reg. sodišče
@@ -157,6 +161,18 @@ ProfId3CL==
 ProfId4CL==
 ProfId5CL==
 ProfId6CL=-
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId4CM=Id. prof. 4 (Certificate of deposits)
+ProfId5CM=Id. prof. 5 (Others)
+ProfId6CM=-
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+ProfId4ShortCM=Certificate of deposits
+ProfId5ShortCM=Ostali
+ProfId6ShortCM=-
 ProfId1CO==
 ProfId2CO==
 ProfId3CO==
@@ -347,7 +363,7 @@ ListOfThirdParties=List of Third Parties
 ShowCompany=Third Party
 ShowContact=Contact-Address
 ContactsAllShort=Vsi (brez filtra)
-ContactType=Vrsta kontakta
+ContactType=Contact role
 ContactForOrders=Kontakt za naročilo
 ContactForOrdersOrShipments=Kontakt za naročilo ali pošiljanje
 ContactForProposals=Kontakt za ponudbo
@@ -369,7 +385,7 @@ VATIntraCheck=Kontrola
 VATIntraCheckDesc=The VAT ID must include the country prefix. The link <b>%s</b> uses the European VAT checker service (VIES) which requires internet access from the Dolibarr server.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Check the intra-Community VAT ID on the European Commission website
-VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Kontrola ni možna. Država članica ne zagotavlja storitve poizvedbe (%s).
 NorProspectNorCustomer=Not prospect, nor customer
 JuridicalStatus=Business entity type

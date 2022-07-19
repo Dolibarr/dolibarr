@@ -108,14 +108,14 @@ if ($socid > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				print '<tr class="oddeven">';
 
-				print "<td class=\"center\">".dol_print_date($fac->date)."</td>\n";
+				print '<td class="center">'.dol_print_date($fac->date)."</td>\n";
 				print "<td><a href=\"facture/card.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"), "bill")." ".$fac->ref."</a></td>\n";
 
-				print '<td class="left">'.$fac->getLibStatut(2, $totalpaye).'</td>';
+				print '<td class="left">'.$fac->getLibStatut(2, $totalpaid).'</td>';
 				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
 				$solde = $solde + $fac->total_ttc;
 

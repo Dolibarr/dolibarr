@@ -81,6 +81,7 @@ if ($query == "cat") {
 	$objProd->fetch($id);
 	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
 
+	$match = array();
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
 	if ($file == "") {

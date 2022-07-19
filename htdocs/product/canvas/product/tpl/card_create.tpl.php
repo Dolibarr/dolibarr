@@ -27,7 +27,7 @@ $object = $GLOBALS['object'];
 $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE product/canvas/product/tpl/card_create.tpl.php  -->
 
 <?php
 print load_fiche_titre($langs->trans("NewProduct"), '', 'product');

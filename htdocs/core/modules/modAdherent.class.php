@@ -286,8 +286,8 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
-			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
+			'a.rowid'=>'MemberId', 'a.ref'=>'MemberRef', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
+			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.code_departement'=>'StateCode', 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
 			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
 			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
 			'a.tms'=>'DateLastModification', 'a.datefin'=>'DateEndSubscription', 'ta.rowid'=>'MemberTypeId', 'ta.libelle'=>'MemberTypeLabel',
@@ -301,7 +301,7 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'Numeric', 'c.dateadh'=>'Date', 'c.datef'=>'Date', 'c.subscription'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'a.rowid'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
+			'a.rowid'=>'member', 'a.ref'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
 			'a.societe'=>'member', 'a.address'=>"member", 'a.zip'=>"member", 'a.town'=>"member", 'd.nom'=>"member", 'co.code'=>"member", 'co.label'=>"member",
 			'a.phone'=>"member", 'a.phone_perso'=>"member", 'a.phone_mobile'=>"member", 'a.email'=>"member", 'a.birth'=>"member", 'a.statut'=>"member",
 			'a.photo'=>"member", 'a.note_public'=>"member", 'a.note_private'=>"member", 'a.datec'=>'member', 'a.datevalid'=>'member', 'a.tms'=>'member',
@@ -338,10 +338,10 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_array[$r] = array('a'=>MAIN_DB_PREFIX.'adherent', 'extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
 		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
-			'a.ref' => 'Member Ref*',
+			'a.ref' => 'MemberRef*',
 			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
-			'a.state_id'=>'StateId', 'a.country'=>"CountryId", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
+			"a.fk_adherent_type"=>"MemberTypeId*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
+			'a.state_id'=>'StateId|StateCode', 'a.country'=>"CountryId|CountryCode", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
@@ -397,9 +397,7 @@ class modAdherent extends DolibarrModules
 		if (!empty($conf->societe->enabled)) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
-		//$this->import_run_sql_after_array[$r] = array(
-		//	'UPDATE '.MAIN_DB_PREFIX."adherent as a SET a.ref = a.rowid WHERE a.ref LIKE '(PROV%)'"
-		//);
+		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
@@ -456,8 +454,8 @@ class modAdherent extends DolibarrModules
 		}*/
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

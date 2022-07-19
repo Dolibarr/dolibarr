@@ -48,7 +48,7 @@ CountriesNotInEEC=EEC tarkibiga kirmagan mamlakatlar
 CountriesInEECExceptMe=%s dan tashqari EECdagi mamlakatlar
 CountriesExceptMe=%s dan tashqari barcha mamlakatlar
 AccountantFiles=Dastlabki hujjatlarni eksport qilish
-ExportAccountingSourceDocHelp=Ushbu vosita yordamida siz buxgalteriya hisobini yaratish uchun foydalanilgan manba hodisalarini (CSV va PDF-lardagi ro'yxat) eksport qilishingiz mumkin.
+ExportAccountingSourceDocHelp=Ushbu vosita yordamida siz buxgalteriya hisobingizni yaratish uchun foydalaniladigan manba voqealarini (CSV va PDF-dagi ro'yxat) eksport qilishingiz mumkin.
 ExportAccountingSourceDocHelp2=Jurnallaringizni eksport qilish uchun %s - %s menyu yozuvidan foydalaning.
 VueByAccountAccounting=Buxgalteriya hisobi bo'yicha ko'rish
 VueBySubAccountAccounting=Buxgalteriya subkontaji bo'yicha ko'rish
@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=O'rnatishda aniqlanmagan obuna to'lo
 AccountancyArea=Buxgalteriya hisobi maydoni
 AccountancyAreaDescIntro=Buxgalteriya modulidan foydalanish bir necha bosqichda amalga oshiriladi:
 AccountancyAreaDescActionOnce=Quyidagi harakatlar odatda faqat bir marta yoki yiliga bir marta amalga oshiriladi ...
-AccountancyAreaDescActionOnceBis=Kelgusida sizning vaqtingizni tejash uchun jurnalistikani rasmiylashtirishda to'g'ri sukut bo'yicha buxgalteriya hisobini taklif qilish orqali (Jurnallarda va Bosh daftarda yozuvlarni yozish) taklif qilish kerak.
+AccountancyAreaDescActionOnceBis=Kelajakda buxgalteriya hisobiga ma'lumotlarni uzatishda avtomatik ravishda to'g'ri standart hisob qaydnomasini taklif qilish orqali vaqtni tejash uchun keyingi qadamlar bajarilishi kerak.
 AccountancyAreaDescActionFreq=Quyidagi harakatlar odatda har oyda, haftada yoki kunda juda katta kompaniyalar uchun amalga oshiriladi ...
 
-AccountancyAreaDescJournalSetup=QADAM %s: %s menyusidan jurnallar ro'yxatining tarkibini yarating yoki tekshiring.
+AccountancyAreaDescJournalSetup=QADAM %s: %s menyusidan jurnal ro'yxati tarkibini tekshiring
 AccountancyAreaDescChartModel=QADAM %s: hisob jadvalining modeli mavjudligini tekshiring yoki menyudan %s yarating.
 AccountancyAreaDescChart=QADAM %s: tanlang va | yoki hisob qaydnomangizni %s menyusidan to'ldiring.
 
 AccountancyAreaDescVat=QADAM %s: har bir QQS stavkasi bo'yicha buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescDefault=QADAM %s: sukut bo'yicha buxgalteriya hisoblarini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
-AccountancyAreaDescExpenseReport=QADAM %s: har bir hisobot turi bo'yicha buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
+AccountancyAreaDescExpenseReport=QADAM %s: Xarajatlar hisobotining har bir turi uchun standart buxgalteriya hisoblarini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescSal=QADAM %s: Ish haqini to'lash bo'yicha buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
-AccountancyAreaDescContrib=QADAM %s: Maxsus xarajatlar (turli xil soliqlar) bo'yicha buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
+AccountancyAreaDescContrib=QADAM %s: Soliqlar uchun standart buxgalteriya hisoblarini belgilang (maxsus xarajatlar). Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescDonation=QADAM %s: xayr-ehson uchun buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescSubscription=QADAM %s: a'zo obuna uchun buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescMisc=QADAM %s: Turli xil operatsiyalar uchun majburiy sukut qaydnomasi va buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescLoan=QADAM %s: ssudalar bo'yicha ssudalarning buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescBank=QADAM %s: har bir bank va moliyaviy hisob uchun buxgalteriya hisobi va jurnal kodini aniqlang. Buning uchun %s menyu yozuvidan foydalaning.
-AccountancyAreaDescProd=QADAM %s: Mahsulotlaringiz / xizmatlaringiz bo'yicha buxgalteriya hisoblarini aniqlang. Buning uchun %s menyu yozuvidan foydalaning.
+AccountancyAreaDescProd=QADAM %s: Mahsulotlar/xizmatlaringizda buxgalteriya hisoblarini aniqlang. Buning uchun %s menyu yozuvidan foydalaning.
 
 AccountancyAreaDescBind=QADAM %s: mavjud %s satrlari bilan buxgalteriya hisobi o'rtasidagi bog'lanishni tekshiring, shuning uchun dastur bir marta bosish bilan Ledger-dagi operatsiyalarni jurnalga yozib olish imkoniyatiga ega bo'ladi. To'liq etishmayotgan birikmalar. Buning uchun %s menyu yozuvidan foydalaning.
 AccountancyAreaDescWriteRecords=QADAM %s: operatsiyalarni kitobga yozing. Buning uchun <strong> %s </strong> menyusiga o'ting va <strong> %s </strong> tugmachasini bosing.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Yopish
 MenuAccountancyValidationMovements=Harakatlarni tasdiqlang
 ProductsBinding=Mahsulotlar hisoblari
 TransferInAccounting=Buxgalteriya hisobiga o'tkazish
-RegistrationInAccounting=Buxgalteriyada ro'yxatdan o'tish
+RegistrationInAccounting=Buxgalteriya hisobida qayd etish
 Binding=Hisobvaraqlar uchun majburiy
 CustomersVentilation=Xaridorlarning hisob-fakturasi majburiy
 SuppliersVentilation=Sotuvchi hisob-fakturasini majburiy ravishda to'ldirish
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Xarajatlar to'g'risidagi hisobotni majburiy ravishda b
 CreateMvts=Yangi tranzaksiya yarating
 UpdateMvts=Bitimni o'zgartirish
 ValidTransaction=Bitimni tasdiqlash
-WriteBookKeeping=Buxgalteriya hisobidagi operatsiyalarni ro'yxatdan o'tkazing
+WriteBookKeeping=Buxgalteriya hisobida operatsiyalarni qayd etish
 Bookkeeping=Kitob
 BookkeepingSubAccount=Subledger
 AccountBalance=Hisob balansi
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Xayriya mablag'larini ro'yxatdan o'tkazish uchun buxg
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Obunalarni ro'yxatdan o'tkazish uchun buxgalteriya hisobi
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Mijozlar depozitini ro'yxatdan o'tkazish uchun sukut bo'yicha buxgalteriya hisobi
+UseAuxiliaryAccountOnCustomerDeposit=Mijozlarning depozit liniyalarida sub-hisoblardan foydalaning
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Xarid qilingan mahsulotlar uchun sukut bo'yicha buxgalteriya hisobi (agar mahsulot varag'ida belgilanmagan bo'lsa foydalaniladi)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EECda sotib olingan mahsulotlar uchun sukut bo'yicha buxgalteriya hisobi (agar mahsulot varag'ida belgilanmagan bo'lsa foydalaniladi)
@@ -219,12 +220,12 @@ ByPredefinedAccountGroups=Oldindan belgilangan guruhlar bo'yicha
 ByPersonalizedAccountGroups=Shaxsiylashtirilgan guruhlar bo'yicha
 ByYear=Yil bo'yicha
 NotMatch=O'rnatilmagan
-DeleteMvt=Buxgalteriya hisobidan ba'zi operatsion liniyalarni o'chirib tashlang
+DeleteMvt=Buxgalteriya hisobidan ba'zi qatorlarni o'chiring
 DelMonth=O'chirish uchun oy
 DelYear=O'chirish yili
 DelJournal=O'chirish uchun jurnal
-ConfirmDeleteMvt=Bu yil / oy va / yoki ma'lum bir jurnal uchun buxgalteriya hisobining barcha operatsion yo'nalishlarini o'chirib tashlaydi (kamida bitta mezon talab qilinadi). O'chirilgan yozuvni daftarga qaytarish uchun '%s' xususiyatidan qayta foydalanishingiz kerak bo'ladi.
-ConfirmDeleteMvtPartial=Bu operatsiyani buxgalteriya hisobidan o'chirib tashlaydi (bir xil operatsiyaga tegishli barcha operatsion liniyalar o'chiriladi)
+ConfirmDeleteMvt=Bu yil/oy va/yoki ma'lum bir jurnal uchun buxgalteriya hisobidagi barcha qatorlarni o'chiradi (kamida bitta mezon talab qilinadi). O'chirilgan yozuvni daftarga qaytarish uchun "%s" funksiyasidan qayta foydalanishingiz kerak bo'ladi.
+ConfirmDeleteMvtPartial=Bu buxgalteriya hisobidan tranzaksiyani o'chiradi (bir xil tranzaksiyaga tegishli barcha qatorlar o'chiriladi)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Xarajatlar hisoboti jurnali
 DescFinanceJournal=Finance journal including all the types of payments by bank account
@@ -278,30 +279,31 @@ DescVentilExpenseReportMore=Agar siz buxgalteriya hisobini xarajatlar to'g'risid
 DescVentilDoneExpenseReport=Xarajatlar hisobotlari ro'yxati va ularning to'lovlarini hisobga olish hisobi bilan bu erda maslahatlashing
 
 Closure=Yillik yopilish
-DescClosure=Tasdiqlanmagan oylar bo'yicha harakatlarning soni va allaqachon ochilgan moliya yillari bilan bu erda maslahatlashing
-OverviewOfMovementsNotValidated=1-qadam / harakatlarning umumiy ko'rinishi tasdiqlanmagan. (Moliyaviy yilni yopish uchun zarur)
-AllMovementsWereRecordedAsValidated=Barcha harakatlar tasdiqlangan deb qayd etildi
-NotAllMovementsCouldBeRecordedAsValidated=Barcha harakatlarni tasdiqlangan deb yozib bo'lmaydi
-ValidateMovements=Harakatlarni tasdiqlang
+DescClosure=Hali tasdiqlanmagan va qulflanmagan oylar bo'yicha harakatlar soni bilan bu erda maslahatlashing
+OverviewOfMovementsNotValidated=Tasdiqlanmagan va qulflanmagan harakatlarning umumiy ko'rinishi
+AllMovementsWereRecordedAsValidated=Barcha harakatlar tasdiqlangan va qulflangan sifatida qayd etilgan
+NotAllMovementsCouldBeRecordedAsValidated=Hamma harakatlarni tasdiqlangan va qulflangan deb yozib bo'lmaydi
+ValidateMovements=Yozuvni tasdiqlash va bloklash...
 DescValidateMovements=Yozishni, xatlarni va o'chirishni har qanday o'zgartirish yoki o'chirish taqiqlanadi. Jismoniy mashqlar uchun barcha yozuvlar tasdiqlanishi kerak, aks holda yopish mumkin bo'lmaydi
 
 ValidateHistory=Avtomatik bog'lash
-AutomaticBindingDone=Avtomatik ulanish amalga oshirildi
+AutomaticBindingDone=Avtomatik ulanishlar bajarildi (%s) - Ba'zi yozuvlar uchun avtomatik bog'lash mumkin emas (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Harakat to'g'ri muvozanatlashtirilmagan. Debit = %s | Kredit = %s
+MvtNotCorrectlyBalanced=Harakat to'g'ri muvozanatlanmagan. Debet = %s & Kredit = %s
 Balancing=Balanslash
 FicheVentilation=Majburiy karta
 GeneralLedgerIsWritten=Bitimlar kitobda yozilgan
 GeneralLedgerSomeRecordWasNotRecorded=Ba'zi operatsiyalarni jurnalga yozib bo'lmaydi. Agar boshqa xato xabari bo'lmasa, bu ular allaqachon jurnalga yozilganligi sababli bo'lishi mumkin.
-NoNewRecordSaved=Jurnalizatsiya qilish uchun boshqa yozuv yo'q
+NoNewRecordSaved=O‘tkazish uchun boshqa rekord yo‘q
 ListOfProductsWithoutAccountingAccount=Hech qanday buxgalteriya hisobiga bog'lanmagan mahsulotlar ro'yxati
 ChangeBinding=Majburiylikni o'zgartiring
 Accounted=Hisob kitobida hisobga olingan
 NotYetAccounted=Buxgalteriya hisobiga hali o'tkazilmagan
 ShowTutorial=Qo'llanmani ko'rsatish
 NotReconciled=Yarashtirilmagan
-WarningRecordWithoutSubledgerAreExcluded=Ogohlantirish, subledger hisobi aniqlanmagan barcha operatsiyalar filtrlanadi va ushbu ko'rinishdan chiqarib tashlanadi
+WarningRecordWithoutSubledgerAreExcluded=Ogohlantirish, subregger hisobi aniqlanmagan barcha qatorlar filtrlanadi va bu ko'rinishdan chiqarib tashlanadi
+AccountRemovedFromCurrentChartOfAccount=Joriy hisobvaraqlar rejasida mavjud bo'lmagan buxgalteriya hisobi
 
 ## Admin
 BindingOptions=Majburiy variantlar
@@ -329,8 +331,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Xaridlar bo'yicha buxgalteriyada majburi
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xarajatlar hisobotlari bo'yicha buxgalteriyada majburiy va o'tkazishni o'chirib qo'ying (xarajatlar hisoboti buxgalteriya hisobida hisobga olinmaydi)
 
 ## Export
-NotifiedExportDate=Eksport qilingan chiziqlarni eksport qilingan deb belgilang (chiziqlarni o'zgartirish mumkin bo'lmaydi)
-NotifiedValidationDate=Eksport qilingan yozuvlarni tasdiqlang (satrlarni o'zgartirish yoki o'chirish mumkin bo'lmaydi)
+NotifiedExportDate=Eksport qilingan qatorlarni eksport qilingan deb belgilash <span class="warning"> (chiziqni o‘zgartirish uchun siz butun tranzaksiyani o‘chirib tashlashingiz va uni buxgalteriya hisobiga qayta o‘tkazishingiz kerak) </span>
+NotifiedValidationDate=Eksport qilingan yozuvlarni tekshirish va bloklash <span class="warning"> (“Yopish” funksiyasi bilan bir xil effekt, satrlarni o‘zgartirish va o‘chirish ALBATTA mumkin emas) </span>
+DateValidationAndLock=Sanani tekshirish va qulflash
 ConfirmExportFile=Buxgalteriya eksporti faylini yaratishni tasdiqlashmi?
 ExportDraftJournal=Jurnal jurnalini eksport qiling
 Modelcsv=Model of export
@@ -387,11 +390,27 @@ SaleExport=Eksportni sotish
 SaleEEC=EECda sotish
 SaleEECWithVAT=EECda QQS bilan sotish bekor bo'lmaydi, shuning uchun bu kommunal ichki savdo emas va taklif qilingan hisob standart mahsulot hisobvarag'i.
 SaleEECWithoutVATNumber=EECda QQSsiz sotish, lekin uchinchi tomonning QQS identifikatori aniqlanmagan. Biz standart sotuvlar uchun mahsulot hisobiga tushamiz. Agar kerak bo'lsa, siz uchinchi tomonning QQS identifikatorini yoki mahsulot hisobini tuzatishingiz mumkin.
-
+ForbiddenTransactionAlreadyExported=Taqiqlangan: tranzaktsiya tasdiqlangan va/yoki eksport qilingan.
+ForbiddenTransactionAlreadyValidated=Taqiqlangan: tranzaksiya tasdiqlangan.
 ## Dictionary
 Range=Buxgalteriya hisobi doirasi
 Calculated=Hisoblangan
 Formula=Formula
+
+## Reconcile
+Unlettering=Murosasiz
+AccountancyNoLetteringModified=Hech qanday kelishuv o'zgartirilmagan
+AccountancyOneLetteringModifiedSuccessfully=Bitta yarashuv muvaffaqiyatli oʻzgartirildi
+AccountancyLetteringModifiedSuccessfully=%s moslashtirish muvaffaqiyatli o'zgartirildi
+AccountancyNoUnletteringModified=Hech qanday kelishuv oʻzgartirilmagan
+AccountancyOneUnletteringModifiedSuccessfully=Bitta kelishuv muvaffaqiyatli oʻzgartirildi
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile muvaffaqiyatli oʻzgartirildi
+
+## Confirm box
+ConfirmMassUnlettering=Ommaviy kelishuvni tasdiqlash
+ConfirmMassUnletteringQuestion=Haqiqatan ham %s tanlangan yozuv(lar)ni yarashtirmoqchimisiz?
+ConfirmMassDeleteBookkeepingWriting=Ommaviy oʻchirishni tasdiqlash
+ConfirmMassDeleteBookkeepingWritingQuestion=Bu operatsiyani buxgalteriya hisobidan o'chirib tashlaydi (bir xil tranzaksiyaga tegishli barcha qatorlar o'chiriladi) %s tanlangan yozuv(lar)ni o'chirib tashlamoqchimisiz?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=O'rnatishning ba'zi majburiy bosqichlari bajarilmadi, iltimos, ularni to'ldiring
@@ -404,6 +423,10 @@ NoJournalDefined=Hech qanday jurnal aniqlanmagan
 Binded=Chiziqlar bog'langan
 ToBind=Bog'lash uchun chiziqlar
 UseMenuToSetBindindManualy=Chiziqlar hali bog'lanmagan, bog'lanishni qo'lda bajarish uchun <a href="%s"> %s </a> menyusidan foydalaning
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Kechirasiz, bu modul vaziyat hisob-fakturalarining eksperimental xususiyatiga mos kelmaydi
+AccountancyErrorMismatchLetterCode=Kelishuv kodidagi nomuvofiqlik
+AccountancyErrorMismatchBalanceAmount=Balans (%s) 0 ga teng emas
+AccountancyErrorLetteringBookkeeping=Tranzaktsiyalarda xatoliklar yuz berdi: %s
 
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari

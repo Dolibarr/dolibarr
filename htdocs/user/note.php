@@ -84,10 +84,12 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
-
 $form = new Form($db);
+
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Notes');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($id) {
 	$head = user_prepare_head($object);
@@ -112,7 +114,25 @@ if ($id) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Login
-	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
+	}
+	print '</tr>';
 
 	$editenabled = (($action == 'edit') && !empty($user->rights->user->user->creer));
 
@@ -124,7 +144,7 @@ if ($id) {
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 		// Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
+		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_8, '90%');
 		$doleditor->Create();
 	} else {
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
@@ -137,11 +157,7 @@ if ($id) {
 	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 	}
 
 
@@ -152,7 +168,7 @@ if ($id) {
 	print '<div class="tabsAction">';
 
 	if ($user->rights->user->user->creer && $action != 'edit') {
-		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
 	}
 
 	print "</div>";

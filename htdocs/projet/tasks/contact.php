@@ -59,9 +59,9 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 // Add new contact
 if ($action == 'addcontact' && $user->rights->projet->creer) {
-	$source  = 'internal';
+	$source = 'internal';
 	if (GETPOST("addsourceexternal")) {
-		$source  ='external';
+		$source = 'external';
 	}
 
 	$result = $object->fetch($id, $ref);
@@ -140,13 +140,19 @@ if (!empty($project_ref) && !empty($withproject)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref . ' - ' . $langs->trans("Contacts");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 
 /* *************************************************************************** */
@@ -162,7 +168,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
-		$result = $projectstatic->fetch($object->fk_project);
 		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
@@ -196,7 +201,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
@@ -244,8 +249,10 @@ if ($id > 0 || !empty($ref)) {
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 			if ($projectstatic->public) {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans('SharedProject');
 			} else {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans('PrivateProject');
 			}
 			print '</td></tr>';
@@ -277,10 +284,9 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Description
 			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -288,7 +294,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td></tr>';
 
 			// Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";
@@ -296,7 +302,6 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -408,7 +413,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid');
 			print '</td>';
-			print '<td class="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
+			print '<td class="right" colspan="3" ><input type="submit" class="button button-add" value="'.$langs->trans("Add").'" name="addsourceinternal"></td>';
 			print '</tr>';
 
 			// Line to add an external contact. Only if project linked to a third party.

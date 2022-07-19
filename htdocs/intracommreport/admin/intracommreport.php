@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file		htdocs/admin/intracommreport.php
+ *      \file		htdocs/intracommreport/admin/intracommreport.php
  *      \ingroup	intracommreport
  *      \brief		Page to setup the module intracomm report
  */
@@ -117,7 +117,7 @@ foreach ($list_DEB as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';
@@ -181,7 +181,7 @@ foreach ($list_DES as $key) {
 	print '<td>'.$label.'</td>';
 	// Value
 	print '<td class="left">';
-	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td>';
 
 	print '</tr>';

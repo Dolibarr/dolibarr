@@ -186,7 +186,7 @@ CREATE TABLE llx_workstation_workstation(
 	entity int DEFAULT 1,
 	note_private text,
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14),
@@ -204,14 +204,14 @@ ALTER TABLE llx_workstation_workstation ADD INDEX idx_workstation_workstation_st
 
 CREATE TABLE llx_workstation_workstation_resource(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_resource integer,
 	fk_workstation integer
 ) ENGINE=innodb;
 
 CREATE TABLE llx_workstation_workstation_usergroup(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_usergroup integer,
 	fk_workstation integer
 ) ENGINE=innodb;
@@ -267,7 +267,7 @@ create table llx_payment_vat
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_tva          integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,
@@ -434,7 +434,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     note_public text,
     note_private text,
     date_creation datetime NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer,
     fk_user_modif integer,
     last_main_doc varchar(255),
@@ -469,7 +469,7 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_
 create table llx_eventorganization_conferenceorboothattendee_extrafields
 (
     rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-    tms                       timestamp,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -513,7 +513,7 @@ CREATE TABLE llx_partnership(
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
 	fk_user_creat integer NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_modif integer, 
 	note_private text, 
 	note_public text, 
@@ -536,7 +536,7 @@ ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_member (fk_member);
 create table llx_partnership_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -571,7 +571,7 @@ CREATE TABLE llx_knowledgemanagement_knowledgerecord(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	last_main_doc varchar(255), 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
@@ -595,7 +595,7 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord ADD COLUMN url varchar(255);
 create table llx_knowledgemanagement_knowledgerecord_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

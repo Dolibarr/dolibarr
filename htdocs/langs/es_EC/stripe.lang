@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuración del módulo de Stripe
-StripeDesc=Ofrezca a los clientes una página de pago en línea de Stripe para pagos con tarjetas de crédito / debito a través de <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Esto se puede utilizar para permitir a sus clientes realizar pagos ad-hoc o para pagos relacionados con un objeto Dolibarr en particular (factura, pedido, ...)
 StripeOrCBDoPayment=Pague con tarjeta de crédito o Stripe
 STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después de un intento de pago (exitoso o fallido)
 StripeDoPayment=Pagar con raya

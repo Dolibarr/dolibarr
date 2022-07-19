@@ -227,7 +227,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_vat as pf,'.MAIN_DB_PREFIX.'tva as f';
 $sql .= ' WHERE pf.fk_tva = f.rowid';
 //$sql .= ' AND f.fk_type = pc.id';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND pf.rowid = '.$object->id;
+$sql .= ' AND pf.rowid = '.((int) $object->id);
 
 dol_syslog("compta/payment_vat/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -307,7 +307,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentVATPaid")).'">'.$langs->trans('Delete').'</a>';
 		}

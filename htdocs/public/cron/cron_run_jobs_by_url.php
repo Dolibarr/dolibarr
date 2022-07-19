@@ -23,6 +23,7 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
@@ -40,6 +41,11 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cron');
 }
 
 // For MultiCompany module.
@@ -67,6 +73,10 @@ global $langs, $conf;
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
 
+// Security check
+if (empty($conf->cron->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 
@@ -83,7 +93,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }

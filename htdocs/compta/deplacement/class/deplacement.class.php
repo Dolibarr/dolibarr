@@ -1,4 +1,6 @@
 <?php
+use Stripe\ApiOperations\Delete;
+
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -121,7 +123,7 @@ class Deplacement extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 
@@ -167,14 +169,14 @@ class Deplacement extends CommonObject
 		$sql .= ", fk_soc";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$this->fk_user;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $this->fk_user);
 		$sql .= ", '".$this->db->escape($this->type)."'";
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->fk_soc > 0 ? $this->fk_soc : "null");
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_soc > 0 ? ((int) $this->fk_soc) : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -249,7 +251,7 @@ class Deplacement extends CommonObject
 		$sql .= " , note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= " , note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= " , fk_projet = ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -310,12 +312,14 @@ class Deplacement extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
+	 *	@param	User	$user		USer that Delete
 	 *	@return	int				<0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
+
+		$id = $this->id;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".((int) $id);
 
@@ -469,7 +473,7 @@ class Deplacement extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
-		$sql .= ' c.tms';
+		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -480,18 +484,11 @@ class Deplacement extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

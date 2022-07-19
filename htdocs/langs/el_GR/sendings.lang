@@ -43,7 +43,7 @@ ConfirmValidateSending=Είστε βέβαιοι ότι θέλετε να επι
 ConfirmCancelSending=Είστε βέβαιοι ότι θέλετε να ακυρώσετε αυτήν την αποστολή;
 DocumentModelMerou=Mérou A5 μοντέλο
 WarningNoQtyLeftToSend=Προσοχή, δεν υπάρχουν είδη που περιμένουν να σταλούν.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Τα στατιστικά αφορούν μόνο επικυρωμένες αποστολές. Η ημερομηνία που χρησιμοποιείται είναι η ημερομηνία επικύρωσης της αποστολής (η προγραμματισμένη ημερομηνία παράδοσης δεν είναι πάντα γνωστή)
 DateDeliveryPlanned=Προγραμματισμένη ημερομηνία παράδοσης
 RefDeliveryReceipt=Παραλαβή παράδοσης αναφοράς
 StatusReceipt=Κατάσταση παραλαβής κατάστασης
@@ -53,7 +53,7 @@ SendShippingByEMail=Αποστολή αποστολής μέσω ηλεκτρο�
 SendShippingRef=Υποβολή της αποστολής %s
 ActionsOnShipping=Εκδηλώσεις για την αποστολή
 LinkToTrackYourPackage=Σύνδεσμος για να παρακολουθείτε το πακέτο σας
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία νέας αποστολής γίνεται από το αρχείο Παραγγελίας Πωλήσεων.
 ShipmentLine=Σειρά αποστολής
 ProductQtyInCustomersOrdersRunning=Ποσότητα προϊόντος από ανοικτές παραγγελίες πώλησης
 ProductQtyInSuppliersOrdersRunning=Ποσότητα προϊόντος από ανοικτές εντολές αγοράς
@@ -66,7 +66,7 @@ ValidateOrderFirstBeforeShipment=Θα πρέπει πρώτα να επικυρ�
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Πληρέστερο πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=Πιο πλήρες μοντέλο εγγράφου για αποδείξεις παράδοσης και συμβατότητα με επιπλέον πεδία (λογότυπο...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
 SumOfProductVolumes=Άθροισμα όγκου του προϊόντος
 SumOfProductWeights=Άθροισμα το βάρος των προϊόντων

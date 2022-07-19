@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -48,18 +48,15 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 /*
  *	View
  */
-
 $form = new Form($db);
-
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Info');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $object = new SupplierProposal($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
-
 $object->info($object->id);
+
+$title = $object->ref." - ".$langs->trans('Info');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 
 $head = supplier_proposal_prepare_head($object);
@@ -76,12 +73,12 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 $morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->supplier_proposal->creer) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -99,9 +96,10 @@ if (!empty($conf->projet->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}
