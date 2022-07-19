@@ -12,7 +12,7 @@ OpenEtablishment=Etablissement ouvert
 CloseEtablishment=Etablissement fermé
 # Dictionary
 DictionaryPublicHolidays=Congés - jours fériés
-DictionaryDepartment=GRH - Liste des départements
+DictionaryDepartment=GRH - Liste des départements organisationnels
 DictionaryFunction=GRH - Liste des fonctions
 # Module
 Employees=Salariés
@@ -70,9 +70,9 @@ RequiredSkills=Compétences requises pour cet emploi
 UserRank=Niveau employé
 SkillList=Liste compétence
 SaveRank=Sauvegarder niveau
-knowHow=Savoir comment
-HowToBe=Comment être
-knowledge=Connaissances
+TypeKnowHow=Savoir comment
+TypeHowToBe=Comment être
+TypeKnowledge=Connaissances
 AbandonmentComment=Commentaire sur l'abandon
 DateLastEval=Date dernière évaluation
 NoEval=Aucune évaluation effectuée pour cet employé

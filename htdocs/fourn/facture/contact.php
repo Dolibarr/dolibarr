@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -99,11 +99,6 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->facture->creer || $u
 /*
  * View
  */
-
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('ContactsAddresses');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
@@ -122,6 +117,10 @@ if ($id > 0 || !empty($ref)) {
 
 		$alreadypaid = $object->getSommePaiement();
 
+		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
+		$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+		llxHeader('', $title, $helpurl);
+
 		$head = facturefourn_prepare_head($object);
 
 		print dol_get_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
@@ -138,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {

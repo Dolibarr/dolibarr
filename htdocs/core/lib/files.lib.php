@@ -755,10 +755,11 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
+ * @param	array	$excludefileext		Exclude some file extensions
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0, $excludefileext = null)
 {
 	global $conf;
 
@@ -802,10 +803,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 							}
 						}
 						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir);
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir, $excludefileext);
 					}
 				} else {
 					$newfile = $file;
+
+					if (is_array($excludefileext)) {
+						$extension = pathinfo($file, PATHINFO_EXTENSION);
+						if (in_array($extension, $excludefileext)) {
+							//print "We exclude the file ".$file." because its extension is inside list ".join(', ', $excludefileext); exit;
+							continue;
+						}
+					}
+
 					// Replace destination filename with a new one
 					if (is_array($arrayreplacement)) {
 						foreach ($arrayreplacement as $key => $val) {
@@ -1443,7 +1453,7 @@ function dol_delete_preview($object)
 	} elseif ($object->element == 'invoice_supplier') {
 		$dir = $conf->fournisseur->facture->dir_output;
 	} elseif ($object->element == 'project') {
-		$dir = $conf->projet->dir_output;
+		$dir = $conf->project->dir_output;
 	} elseif ($object->element == 'shipping') {
 		$dir = $conf->expedition->dir_output.'/sending';
 	} elseif ($object->element == 'delivery') {
@@ -1525,7 +1535,7 @@ function dol_meta_create($object)
 	} elseif ($object->element == 'invoice_supplier') {
 		$dir = $conf->fournisseur->dir_output.'/facture';
 	} elseif ($object->element == 'project') {
-		$dir = $conf->projet->dir_output;
+		$dir = $conf->project->dir_output;
 	} elseif ($object->element == 'shipping') {
 		$dir = $conf->expedition->dir_output.'/sending';
 	} elseif ($object->element == 'delivery') {
@@ -1717,7 +1727,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1) {
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0, $object);
+						$sharefile = 0;
+						if ($TFile['type'][$i] == 'application/pdf' && strpos($_SERVER["REQUEST_URI"], 'product') !== false && !empty($conf->global->PRODUCT_ALLOW_EXTERNAL_DOWNLOAD)) $sharefile = 1;
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
 						if ($result < 0) {
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
@@ -2812,7 +2824,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
-	} elseif ($modulepart == 'project' && !empty($conf->projet->dir_output)) {
+	} elseif ($modulepart == 'project' && !empty($conf->project->dir_output)) {
 		// Wrapping pour les projets
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
@@ -2824,9 +2836,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->projet->dir_output.'/'.$original_file;
+		$original_file = $conf->project->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
-	} elseif ($modulepart == 'project_task' && !empty($conf->projet->dir_output)) {
+	} elseif ($modulepart == 'project_task' && !empty($conf->project->dir_output)) {
 		if ($fuser->rights->projet->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
@@ -2837,7 +2849,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
 			}
 		}
-		$original_file = $conf->projet->dir_output.'/'.$original_file;
+		$original_file = $conf->project->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('project').")";
 	} elseif (($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier') && !empty($conf->fournisseur->commande->dir_output)) {
 		// Wrapping pour les commandes fournisseurs
@@ -2977,6 +2989,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for import module
 		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
+	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_temp)) {
+			// Wrapping for recruitment module
+		$accessallowed = $user->rights->$modulepart->recruitmentjobposition->read;
+		$original_file = $conf->recruitment->dir_output .'/'. $original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
 		$accessallowed = 1;

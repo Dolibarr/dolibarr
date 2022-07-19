@@ -29,7 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
@@ -72,10 +72,6 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Notes');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
@@ -87,6 +83,10 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
+
+		$title = $object->ref." - ".$langs->trans('Notes');
+		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+		llxHeader('', $title, $help_url);
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {
@@ -105,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->supplier_proposal->creer) {

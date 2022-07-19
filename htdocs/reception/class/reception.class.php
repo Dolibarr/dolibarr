@@ -600,7 +600,7 @@ class Reception extends CommonObject
 						$inventorycode = '';
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
 
-						if ($result < 0) {
+						if (intval($result) < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -614,7 +614,7 @@ class Reception extends CommonObject
 						$inventorycode = '';
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
 
-						if ($result < 0) {
+						if (intval($result) < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
 							$this->errors = array_merge($this->errors, $mouvS->errors);
@@ -846,6 +846,21 @@ class Reception extends CommonObject
 			}
 		}
 
+		// Check batch is set
+		$product = new Product($this->db);
+		$product->fetch($fk_product);
+		if (!empty($conf->productbatch->enabled)) {
+			$langs->load("errors");
+			if (!empty($product->status_batch) && empty($batch)) {
+				$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+				return -1;
+			} elseif (empty($product->status_batch) && !empty($batch)) {
+				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
+				return -1;
+			}
+		}
+		unset($product);
+
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
@@ -864,6 +879,7 @@ class Reception extends CommonObject
 		$line->status = 1;
 		$line->cost_price = $cost_price;
 		$line->fk_reception = $this->id;
+
 		$this->lines[$num] = $line;
 
 		return $num;

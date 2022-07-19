@@ -2,6 +2,13 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 17.0.0 compared to 16.0.0 *****
+
+For developers or integrators:
+------------------------------
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
 
 
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
@@ -13,6 +20,7 @@ NEW: PHP 8.1 compatibility
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
 NEW: Can show ZATCA QRCode on PDFs
+NEW: Can show Swiss QR Code on PDFs
 NEW: #17123 added ExtraFields for Stock Mouvement
 NEW: #20609 : new massaction to assign a sale representatives on a selection of thirdparties
 NEW: #20653 edit discount pourcentage for all lines in one shot
@@ -117,6 +125,7 @@ NEW: VAT Report by month - Show detail by rate and also by code
 NEW: Ticket triggers: allow to automatically send messages on new tickets
 NEW: Accountancy - Add hidden feature for accounting reconciliation
 NEW: Can store the session into database (instead of beeing managed by PHP)
+NEW: Added MMK currency (Myanmar Kyat)
 
  Modules
 NEW: Module Partnership Management
@@ -197,7 +206,7 @@ Following changes may create regressions for some external modules, but were nec
 * Method fetch_all_resources(), fetch_all_used(), fetch_all_available() of DolResource has been removed (they were not used by core code).
 * Method fetch_all of DolResource has been renamed into fetchAll() to match naming conventions.
 * The hook 'upgrade' and 'doUpgrade2" has been renamed 'doUpgradeBefore' and 'doUpgradeAfterDB'. A new trigger 'doUpgradeAfterFiles' has been introduced.
-
+* The context hook 'suppliercard' when on the supplier tab of a thirdparty has been renamed into 'thirdpartysupplier'
 
 
 ***** ChangeLog for 15.0.2 compared to 15.0.1 *****

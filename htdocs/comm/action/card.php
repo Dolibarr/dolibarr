@@ -1036,10 +1036,11 @@ if ($action == 'create') {
 		//print '<tr><td></td><td colspan="3" class="opacitymedium">';
 		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
-		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
+		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
+		$reg = array();
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulefreq = $reg[1];
 		}
@@ -1234,7 +1235,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 
 		$projectid = GETPOST('projectid', 'int');
@@ -1737,7 +1738,7 @@ if ($id > 0) {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
@@ -1762,7 +1763,7 @@ if ($id > 0) {
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && !empty($conf->projet->enabled)) {
+			if ($object->elementtype == 'task' && !empty($conf->project->enabled)) {
 				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
@@ -1946,7 +1947,7 @@ if ($id > 0) {
 		// Thirdparty
 		//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			$morehtmlref .= $langs->trans('Project').' ';

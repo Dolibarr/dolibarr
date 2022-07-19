@@ -122,11 +122,11 @@ if (empty($reshook)) {
 	// Action add group
 	if ($action == 'add') {
 		if ($caneditperms) {
-			if (!GETPOST("nom", "nohtml")) {
+			if (!GETPOST("nom", "alphanohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= GETPOST("nom", 'nohtml');
+				$object->name	= GETPOST("nom", 'alphanohtml');
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name = GETPOST("nom", 'nohtml');
+			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
@@ -246,8 +246,13 @@ if (empty($reshook)) {
 /*
  * View
  */
+$title = $object->name.' - '.$langs->trans("Card");
+if ($action == 'create') {
+	$title = $langs->trans("NewGroup");
+}
 
-llxHeader('', $langs->trans("GroupCard"));
+llxHeader('', $title, $help_url);
+
 
 $form = new Form($db);
 $fuserstatic = new User($db);

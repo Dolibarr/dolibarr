@@ -49,6 +49,8 @@ class RssParser
 	private $_lastfetchdate; // Last successful fetch
 	private $_rssarray = array();
 
+	private $current_namespace;
+
 	// For parsing with xmlparser
 	public $stack = array(); // parser stack
 	private $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');

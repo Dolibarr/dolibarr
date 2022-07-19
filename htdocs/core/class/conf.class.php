@@ -51,7 +51,7 @@ class Conf
 	public $use_javascript_ajax;
 	//! To store if javascript/ajax is enabked
 	public $disable_compute;
-	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
+	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
 	//! Used to store current css (from theme)
@@ -746,8 +746,8 @@ class Conf
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
 
-			// Default max file size for upload
-			$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
+			// Default max file size for upload (deprecated)
+			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 			// By default, we propagate contacts
 			if (!isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) {
@@ -772,6 +772,11 @@ class Conf
 			// By default, we show state code in combo list
 			if (!isset($this->global->MULTICURRENCY_USE_ORIGIN_TX)) {
 				$this->global->MULTICURRENCY_USE_ORIGIN_TX = 1;
+			}
+
+			// By default, use an enclosure " for field with CRL or LF into content, + we also remove also CRL/LF chars.
+			if (!isset($this->global->USE_STRICT_CSV_RULES)) {
+				$this->global->USE_STRICT_CSV_RULES = 2;
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
@@ -1033,11 +1038,14 @@ class Conf
 		if (!empty($this->file->mailing_limit_sendbyweb)) {
 			$this->global->MAILING_LIMIT_SENDBYWEB = $this->file->mailing_limit_sendbyweb;
 		}
-		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {
+		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {	// Limit by web can't be 0
 			$this->global->MAILING_LIMIT_SENDBYWEB = 25;
 		}
 		if (!empty($this->file->mailing_limit_sendbycli)) {
 			$this->global->MAILING_LIMIT_SENDBYCLI = $this->file->mailing_limit_sendbycli;
+		}
+		if (!empty($this->file->mailing_limit_sendbyday)) {
+			$this->global->MAILING_LIMIT_SENDBYDAY = $this->file->mailing_limit_sendbyday;
 		}
 
 		return 0;

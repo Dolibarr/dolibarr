@@ -17,6 +17,10 @@
 -- This table is just an history table to track all receiving done for a 
 -- particular supplier order. A movement with same information is also done
 -- into stock_movement so this table may be useless.
+-- 
+-- Detail of each lines of a reception (qty, batch and into wich warehouse is
+-- received a purchase order line).
+-- This table should be also name llx_receptiondet.
 -- ===================================================================
 
 create table llx_commande_fournisseur_dispatch
