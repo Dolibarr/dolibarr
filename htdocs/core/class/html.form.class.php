@@ -3179,13 +3179,6 @@ class Form
 				$out .= '<option value="-1">'.($placeholder ? $placeholder : '&nbsp;').'</option>';
 			}
 
-			if (! is_object($hookmanager)) {
-				require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-				$hookmanager = new HookManager($this->db);
-			}
-
-			$hookmanager->initHooks(array('form'));
-
 			$i = 0;
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
