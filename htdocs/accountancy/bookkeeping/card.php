@@ -543,10 +543,10 @@ if (!empty($object->piece_num)) {
 			print_liste_field_titre("AccountAccountingShort");
 			print_liste_field_titre("SubledgerAccount");
 			print_liste_field_titre("LabelOperation");
-			print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-			print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+			print_liste_field_titre("Debit", "", "", "", "", "", "", "", 'right');
+			print_liste_field_titre("Credit", "", "", "", "", "", "", "", 'right');
 			if (empty($object->date_validation)) {
-				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+				print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 			} else {
 				print_liste_field_titre("");
 			}
