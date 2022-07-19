@@ -126,7 +126,7 @@ $creditor = $mysoc->name;
 $type = $source;
 if ($source == 'proposal') {
 	$object = new Propal($db);
-	$object->fetch(0, $ref);
+	$object->fetch(0, $ref, '', $entity);
 } else {
 	accessforbidden('Bad value for source');
 	exit;
@@ -139,7 +139,7 @@ if ($source == 'proposal') {
 	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
+if (!dol_verifyHash($securekeyseed.$type.$ref.$object->entity, $SECUREKEY, '0')) {
 	http_response_code(403);
 	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
 	exit(-1);
@@ -288,18 +288,8 @@ $error = 0;
 // Signature on commercial proposal
 if ($source == 'proposal') {
 	$found = true;
-	$langs->load("proposal");
 
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
-	$proposal = new Propal($db);
-	$result = $proposal->fetch('', $ref);
-	if ($result <= 0) {
-		$mesg = $proposal->error;
-		$error++;
-	} else {
-		$result = $proposal->fetch_thirdparty($proposal->socid);
-	}
+	$result = $object->fetch_thirdparty($object->socid);
 
 	// Creditor
 
@@ -315,39 +305,39 @@ if ($source == 'proposal') {
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<b>'.$proposal->thirdparty->name.'</b>';
+	print '<b>'.$object->thirdparty->name.'</b>';
 	print '</td></tr>'."\n";
 
 	// Amount
 
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow2">';
-	print '<b>'.price($proposal->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
+	print '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
 
-	$text = '<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
+	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
-	if ($proposal->status == $proposal::STATUS_VALIDATED) {
-		$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+	if ($object->status == $object::STATUS_VALIDATED) {
+		$directdownloadlink = $object->getLastMainDocLink('proposal');
 		if ($directdownloadlink) {
 			print '<br><a href="'.$directdownloadlink.'">';
-			print img_mime($proposal->last_main_doc, '');
+			print img_mime($object->last_main_doc, '');
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	} else {
-		$last_main_doc_file = $proposal->last_main_doc;
+		$last_main_doc_file = $object->last_main_doc;
 
-		if ($proposal->status == $proposal::STATUS_NOTSIGNED) {
-			$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+		if ($object->status == $object::STATUS_NOTSIGNED) {
+			$directdownloadlink = $object->getLastMainDocLink('proposal');
 			if ($directdownloadlink) {
 				print '<br><a href="'.$directdownloadlink.'">';
-				print img_mime($proposal->last_main_doc, '');
+				print img_mime($object->last_main_doc, '');
 				print $langs->trans("DownloadDocument").'</a>';
 			}
-		} elseif ($proposal->status == $proposal::STATUS_SIGNED || $proposal->status == $proposal::STATUS_BILLED) {
+		} elseif ($object->status == $object::STATUS_SIGNED || $object->status == $object::STATUS_BILLED) {
 			if (preg_match('/_signed-(\d+)/', $last_main_doc_file)) {	// If the last main doc has been signed
 				$last_main_doc_file_not_signed = preg_replace('/_signed-(\d+)/', '', $last_main_doc_file);
 
@@ -355,10 +345,10 @@ if ($source == 'proposal') {
 				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
 
 				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
-					$directdownloadlink = $proposal->getLastMainDocLink('proposal');
+					$directdownloadlink = $object->getLastMainDocLink('proposal');
 					if ($directdownloadlink) {
 						print '<br><a href="'.$directdownloadlink.'">';
-						print img_mime($proposal->last_main_doc, '');
+						print img_mime($object->last_main_doc, '');
 						print $langs->trans("DownloadDocument").'</a>';
 					}
 				}
@@ -367,7 +357,7 @@ if ($source == 'proposal') {
 	}
 
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
 
 	// TODO Add link to download PDF (similar code than for invoice)

@@ -843,12 +843,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td>';
+						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1);
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end
