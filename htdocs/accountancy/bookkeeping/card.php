@@ -171,7 +171,7 @@ if ($action == "confirm_update") {
 	foreach ($accountingaccount_number as $key => $value) {
 		$accountingaccount->fetch(null, $accountingaccount_number[$key], true);
 		$accountingaccount_label[$key] = $accountingaccount->label[$key];
-		
+
 		// if one added row is empty remove it before continue
 		if ($key < 1 && (empty($accountingaccount_number[$key]) || $accountingaccount_number[$key] == '-1') || (floatval($debit[$key]) == 0.0) && (floatval($credit[$key]) == 0.0)) {
 			continue;
