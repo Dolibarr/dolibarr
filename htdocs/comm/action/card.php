@@ -1195,15 +1195,16 @@ if ($action == 'create') {
 		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
 		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
 
-		$reg1 = array();
-		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
-			$selectedrecurrulefreq = $reg1[1];
+
+		$reg = array();
+		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulefreq = $reg[1];
 		}
-		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = $reg2[1];
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulebymonthday = $reg[1];
 		}
-		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = $reg3[1];
+		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
+			$selectedrecurrulebyday = $reg[1];
 		}
 
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
