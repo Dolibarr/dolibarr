@@ -383,7 +383,7 @@ if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
-if ($search_morphy != '') {
+if (in_array($search_morphy, ['mor', 'phy'])) {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
 if ($search_ref) {
