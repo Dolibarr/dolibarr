@@ -715,7 +715,9 @@ if ($action == 'create') {
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
-					$productstatic->fk_unit = $objp->fk_unit;
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						$productstatic->fk_unit = $objp->fk_unit;
+					}
 					$productstatic->status = $objp->tosell;
 					$productstatic->status_buy = $objp->tobuy;
 					$productstatic->barcode = $objp->barcode;
