@@ -578,6 +578,9 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf, $mysoc, $langs, $user;
 		$error = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($this->db);
+		$hookmanager->initHooks(array('receiptprinter'));
 		$ret = $this->loadTemplate($templateid);
 
 		// tags a remplacer par leur valeur avant de parser (dol_value_xxx)
@@ -620,6 +623,15 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_mail}', $user->email, $this->template);
+
+		$parameters = array('object'=>$object);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('sendToPrinterBefore', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->error = "Error in hook dolReceiptPrinter sendToPrinterBefore ".$reshook;
+			dol_syslog("dolReceiptPrinter::sendToPrinter: error=".$this->error, LOG_ERR);
+			return $reshook;
+		}
 
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
@@ -853,10 +865,19 @@ class dolReceiptPrinter extends Printer
 						}
 						break;
 					default:
-						$this->printer->text($vals[$tplline]['tag']);
-						$this->printer->text($vals[$tplline]['value']);
-						$this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
-						$error++;
+						$parameters = array('vals' => $vals[$tplline],
+							'object' => $object,
+							'nbcharactbyline' => $nbcharactbyline);
+						$action = '';
+						$reshook = $hookmanager->executeHooks('sendToPrinterAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+						if (!$reshook || $reshook < 0 ) {
+							$this->printer->text($vals[$tplline]['tag']);
+							$this->printer->text($vals[$tplline]['value']);
+							$this->errors[] = 'UnknowTag: &lt;' . strtolower($vals[$tplline]['tag']) . '&gt;';
+							$error++;
+						}
+
 						break;
 				}
 			}
