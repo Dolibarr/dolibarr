@@ -11176,3 +11176,17 @@ function dolForgeCriteriaCallback($matches)
 
 	return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
 }
+
+/**
+ * Function to get the value of global confs
+ * For PHP8 : Avoid warnings when conf are not set
+ *
+ * @param string $constName Constant name to get
+ * @param mixed  $default Default value if constant is unset
+ * @return mixed return the value of const if exists or the default value
+ */
+function getGlobalConst($constName, $default = null) {
+    global $conf;
+
+    return !isset($conf->global->$constName) ? $conf->global->$constName : $default;
+}
