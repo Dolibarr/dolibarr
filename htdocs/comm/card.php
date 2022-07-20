@@ -914,8 +914,10 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+		$param ="";
+
 		$sql = "SELECT s.nom, s.rowid";
-		$sql .= ", c.rowid as cid, c.total_ht";
+		$sql .= ", c.rowid as cid, c.entity, c.total_ht";
 		$sql .= ", c.total_tva";
 		$sql .= ", c.total_ttc";
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
@@ -1024,7 +1026,7 @@ if ($object->id > 0) {
 	 */
 	if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
 		$sql = 'SELECT e.rowid as id';
-		$sql .= ', e.ref';
+		$sql .= ', e.ref, e.entity';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut as statut';
 		$sql .= ', s.nom';
