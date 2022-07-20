@@ -427,11 +427,15 @@ if ($action == 'edit') {
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
-	$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE_EMAILING];
+	$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").img_warning();
 	}
-	print $text;
+	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') == 'default') {
+		print '<span class="opacitymedium">'.$text.'</span>';
+	} else {
+		print $text;
+	}
 	print '</td></tr>';
 
 	if (!empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default') {

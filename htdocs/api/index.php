@@ -257,6 +257,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
+								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
+
 								$regapi = array();
 								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
 									$classname = ucwords($regapi[1]);

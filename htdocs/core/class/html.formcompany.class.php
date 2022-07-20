@@ -825,13 +825,14 @@ class FormCompany extends Form
 	/**
 	 * showContactRoles on view and edit mode
 	 *
-	 * @param string $htmlname Html component name and id
-	 * @param Contact $contact Contact Obejct
-	 * @param string $rendermode view, edit
-	 * @param array $selected $key=>$val $val is selected Roles for input mode
-	 * @return string   String with contacts roles
+	 * @param 	string 		$htmlname 	Html component name and id
+	 * @param 	Contact 	$contact 	Contact Obejct
+	 * @param 	string 		$rendermode view, edit
+	 * @param 	array		$selected 	$key=>$val $val is selected Roles for input mode
+	 * @param	string		$morecss	More css
+	 * @return 	string   				String with contacts roles
 	 */
-	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500')
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
@@ -856,7 +857,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss);
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
