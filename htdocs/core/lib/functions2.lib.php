@@ -1278,7 +1278,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	// Get counter in database
 	$counter = 0;
-	$sql = "SELECT MAX(".$sqlstring.") as val";
+	$sql = "SELECT MAX(CAST(".$sqlstring." AS UNSIGNED)) as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
