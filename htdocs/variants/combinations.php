@@ -154,7 +154,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if ($conf->global->PRODUIT_MULTIPRICES) {
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -279,7 +279,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -292,7 +292,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if ($conf->global->PRODUIT_MULTIPRICES) {
+	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
