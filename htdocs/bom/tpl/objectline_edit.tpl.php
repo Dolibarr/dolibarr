@@ -141,7 +141,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("duration_unit", "time", ($line->duration_unit) ? $line->duration_unit : '', 0, 1);
+	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
 	print '</td>';
 
 	$coldisplay++;
