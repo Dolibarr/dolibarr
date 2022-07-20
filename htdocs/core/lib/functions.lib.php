@@ -11189,5 +11189,5 @@ function getGlobalConst($constName, $default = null)
 {
 	global $conf;
 
-	return !isset($conf->global->{$constName}) ? $conf->global->{$constName} : $default;
+	return isset($conf->global->{$constName}) ? $conf->global->{$constName} : $default;
 }
