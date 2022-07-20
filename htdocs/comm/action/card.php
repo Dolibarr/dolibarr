@@ -1065,8 +1065,8 @@ $formproject = new FormProjets($db);
 $arrayrecurrulefreq = array(
 	'no'=>$langs->trans("OnceOnly"),
 	'MONTHLY'=>$langs->trans("EveryMonth"),
-	'WEEKLY'=>$langs->trans("EveryWeek"),
-	'DAILY'=>$langs->trans("EveryDay")
+	'WEEKLY'=>$langs->trans("EveryWeek")
+	// 'DAILY'=>$langs->trans("EveryDay")
 );
 
 
