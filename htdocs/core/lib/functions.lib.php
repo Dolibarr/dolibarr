@@ -11187,7 +11187,7 @@ function dolForgeCriteriaCallback($matches)
  */
 function getGlobalConst($constName, $default = null)
 {
-    global $conf;
+	global $conf;
 
-    return !isset($conf->global->{$constName}) ? $conf->global->{$constName} : $default;
+	return !isset($conf->global->{$constName}) ? $conf->global->{$constName} : $default;
 }
