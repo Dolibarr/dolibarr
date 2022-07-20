@@ -11185,7 +11185,8 @@ function dolForgeCriteriaCallback($matches)
  * @param mixed  $default Default value if constant is unset
  * @return mixed return the value of const if exists or the default value
  */
-function getGlobalConst($constName, $default = null) {
+function getGlobalConst($constName, $default = null)
+{
     global $conf;
 
     return !isset($conf->global->{$constName}) ? $conf->global->{$constName} : $default;
