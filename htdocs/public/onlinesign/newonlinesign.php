@@ -328,7 +328,7 @@ if ($source == 'proposal') {
 	// Object
 
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $proposal->ref).'</b>';
-	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
 	if ($proposal->status == $proposal::STATUS_VALIDATED) {
 		$directdownloadlink = $proposal->getLastMainDocLink('proposal');

@@ -959,10 +959,12 @@ if ($socid > 0 && empty($object->id)) {
 }
 
 $title = $langs->trans("ThirdParty");
+if ($action == 'create') {
+	$title = $langs->trans("NewThirdParty");
+}
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
-
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
@@ -3032,6 +3034,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print "</td></tr>\n";
 		}
+
+		// Link user (you must create a contact to get a user)
+		/*
+		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+		if ($object->user_id) {
+			$dolibarr_user = new User($db);
+			$result = $dolibarr_user->fetch($object->user_id);
+			print $dolibarr_user->getLoginUrl(-1);
+		} else {
+			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
+			if (!$object->user_id && $user->rights->user->user->creer) {
+				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
+		}
+		print '</td></tr>';
+		*/
 
 		// Webservices url/key
 		if (!empty($conf->syncsupplierwebservices->enabled)) {

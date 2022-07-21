@@ -166,6 +166,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+
 	/**
 	 * testNum2Alpha
 	 *
@@ -533,6 +534,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 		$input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+		$after=dol_textishtml($input);
+		$this->assertFalse($after);
+
+		$input="A text\nwith a link https://aaa?param=abc&amp;param2=def";
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 	}

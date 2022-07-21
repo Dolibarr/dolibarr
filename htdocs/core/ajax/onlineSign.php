@@ -69,10 +69,10 @@ $type = $mode;
 // Check securitykey
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
+if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
 	http_response_code(403);
 	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
 	exit(-1);
@@ -122,27 +122,39 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+				// Defined modele of doc
+				$directdownloadlink = $object->getLastMainDocLink('proposal');
 
-				$pdf = pdf_getInstance();
-				$pdf->Open();
-				$pdf->AddPage();
-				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");		// original PDF
+				if (preg_match('/\.pdf/i', $directdownloadlink)) {
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
 
-				for ($i=1;$i<($pagecount+1);$i++) {
-					if ($i>1) $pdf->AddPage();
-					$tppl=$pdf->importPage($i);
-					$pdf->useTemplate($tppl);
+					if (dol_is_file($sourcefile)) {
+						$pdf = pdf_getInstance();
+						$pdf->Open();
+						$pdf->AddPage();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+
+						for ($i=1; $i<($pagecount+1); $i++) {
+							if ($i>1) $pdf->AddPage();
+							$tppl=$pdf->importPage($i);
+							$pdf->useTemplate($tppl);
+						}
+
+						$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
+						$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+				} else {
+					// Adding signature on doc not yet supported
 				}
+			}
 
-				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
-				$pdf->Close();
-				$pdf->Output($newpdffilename, "F");
-
+			if (!$error) {
 				$db->begin();
-
-				// Index the new file and update the last_main_doc property of object.
-				$object->indexFile($newpdffilename, 1);
 
 				$online_sign_ip = getUserRemoteIP();
 				$online_sign_name = '';		// TODO Ask name on form to sign

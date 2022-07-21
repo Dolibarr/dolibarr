@@ -512,7 +512,7 @@ $buttonreconcile = '';
 $morehtmlref = '';
 
 if ($id > 0 || !empty($ref)) {
-	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
+	$title = $object->ref.' - '.$langs->trans("Transactions");
 	$helpurl = "";
 	llxHeader('', $title, $helpurl);
 

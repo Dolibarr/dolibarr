@@ -510,6 +510,7 @@ if (!function_exists('ftp_connect')) {
 			$nboflines = count($contents);
 			$rawlisthasfailed = false;
 			$i = 0;
+			$nbofentries = 0;
 			while ($i < $nboflines && $i < 1000) {
 				$vals = preg_split('@ +@', utf8_encode($buff[$i]), 9);
 				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
@@ -527,6 +528,7 @@ if (!function_exists('ftp_connect')) {
 
 				// Is it a directory ?
 				$is_directory = 0;
+				$is_link = 0;
 				if ($file == '..') {
 					$is_directory = 1;
 				} elseif (!$rawlisthasfailed) {
@@ -695,6 +697,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 
 	$ok = 1;
 	$conn_id = null;
+	$mesg="";
 
 	if (!is_numeric($ftp_port)) {
 		$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
