@@ -812,6 +812,7 @@ if ($resql) {
 	$contactListCache = array();
 
 	$today_start_date_time = dol_now();
+	$cache_user_list = array();
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -840,36 +841,54 @@ if ($resql) {
 			$actionstatic->fetchResources();
 		}
 
-		// get event color
-		$event_color = '';
+		// cache of user list (owners)
+		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+			$res = $userstatic->fetch($obj->fk_user_action);
+			if ($res > 0) {
+				$cache_user_list[$obj->fk_user_action] = $userstatic;
+			}
+		}
+
+		// get event style for user owner
+		$event_owner_style = '';
+		// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+		if ($cache_user_list[$obj->fk_user_action]->color != '') {
+			$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
+		}
+
+		// get event style for start date
 		$event_more_class = '';
+		$event_start_date_style = '';
 		$event_start_date_time = $actionstatic->datep;
 		if ($obj->fulldayevent) {
 			$today_start_date_time = dol_mktime(0, 0, 0, date('m', $today_start_date_time), date('d', $today_start_date_time), date('Y', $today_start_date_time));
 		}
 		if ($event_start_date_time > $today_start_date_time) {
 			// future event
-			$event_color = $conf->global->AGENDA_EVENT_FUTURE_COLOR;
 			$event_more_class = 'event-future';
+			$event_start_date_color = $conf->global->AGENDA_EVENT_FUTURE_COLOR;
 		} else {
 			// check event end date
 			$event_end_date_time = $db->jdate($obj->dp2);
 			if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
 				// past event
-				$event_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 				$event_more_class = 'event-past';
+				$event_start_date_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 			} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
 				// past event
-				$event_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 				$event_more_class = 'event-past';
+				$event_start_date_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 			} else {
 				// current event
-				$event_color = $conf->global->AGENDA_EVENT_CURRENT_COLOR;
 				$event_more_class = 'event-current';
+				$event_start_date_color = $conf->global->AGENDA_EVENT_CURRENT_COLOR;
 			}
 		}
+		if ($event_start_date_color != '') {
+			$event_start_date_style .= 'background: #' . $event_start_date_color . ';';
+		}
 
-		print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '"' . ($event_color != '' ? ' style="background: #'.$event_color.';"' : '') . '>';
+		print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '"' . '>';
 
 		// Ref
 		if (!empty($arrayfields['a.id']['checked'])) {
@@ -880,10 +899,15 @@ if ($resql) {
 
 		// User owner
 		if (!empty($arrayfields['owner']['checked'])) {
-			print '<td class="tdoverflowmax150">'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
-			if ($obj->fk_user_action > 0) {
-				$userstatic->fetch($obj->fk_user_action);
-				print $userstatic->getNomUrl(-1);
+			print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
+			if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+				$res = $userstatic->fetch($obj->fk_user_action);
+				if ($res > 0) {
+					$cache_user_list[$obj->fk_user_action] = $userstatic;
+				}
+			}
+			if (isset($cache_user_list[$obj->fk_user_action])) {
+				print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
 			} else {
 				print '&nbsp;';
 			}
@@ -931,7 +955,7 @@ if ($resql) {
 
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td class="center nowraponall">';
+			print '<td class="center nowraponall"' . ($event_start_date_style != '' ? ' style="'.$event_start_date_style.'"' : '') . '>';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
 			$late = 0;
 			if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
