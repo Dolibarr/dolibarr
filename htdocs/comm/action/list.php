@@ -972,7 +972,7 @@ while ($i < $imaxinloop) {
 		$event_start_date_style .= 'background: #' . $event_start_date_color . ';';
 	}
 
-	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '"' . '>';
+	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 
 	// Ref
 	if (!empty($arrayfields['a.id']['checked'])) {
