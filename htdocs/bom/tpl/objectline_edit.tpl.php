@@ -138,7 +138,6 @@ if ($filtertype != 1) {
 	print '<td class="nobottom nowrap linecolcostprice right">';
 	print '</td>';
 } else {
-
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolunit right">';
 	print  $formproduct->selectMeasuringUnits("fk_unit", "time", ($line->fk_unit) ? $line->fk_unit : '', 0, 0);
