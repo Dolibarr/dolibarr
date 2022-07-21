@@ -71,7 +71,7 @@ if ($action == 'getDurationUnitByProduct') {
 	$res = $product->fetch($idproduct);
 
 	$cUnit = new CUnits($db);
-	$fk_unit = $cUnit->getUnitFromCode($product->duration_unit, 'short_label','time');
+	$fk_unit = $cUnit->getUnitFromCode($product->duration_unit, 'short_label', 'time');
 
 	echo json_encode($fk_unit);
 	exit();
