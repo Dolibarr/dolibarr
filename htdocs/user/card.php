@@ -476,7 +476,7 @@ if (empty($reshook)) {
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				// Do we update also ->entity ?
-				if (!empty($conf->multicompany->enabled && $user->entity == 0 && !empty($user->admin))) {	// If multicompany is not enabled, we never update the entity of a user.
+				if (!empty($conf->multicompany->enabled) && empty($user->entity) && !empty($user->admin)) {	// If multicompany is not enabled, we never update the entity of a user.
 					if (GETPOST('superadmin', 'int')) {
 						$object->entity = 0;
 					} else {
