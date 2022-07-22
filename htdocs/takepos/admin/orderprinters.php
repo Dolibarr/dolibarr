@@ -61,6 +61,7 @@ if ($action == "SavePrinter1") {
 		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_1", $printedcategories, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_NAME_1", GETPOST('TAKEPOS_PRINTED_CATEGORIES_NAME_1', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == "SavePrinter2") {
@@ -71,6 +72,7 @@ if ($action == "SavePrinter2") {
 		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_2", $printedcategories, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_NAME_2", GETPOST('TAKEPOS_PRINTED_CATEGORIES_NAME_2', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == "SavePrinter3") {
@@ -81,6 +83,7 @@ if ($action == "SavePrinter3") {
 		}
 	}
 	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_3", $printedcategories, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINTED_CATEGORIES_NAME_3", GETPOST('TAKEPOS_PRINTED_CATEGORIES_NAME_3', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -170,10 +173,11 @@ foreach ($fulltree as $key => $val) {
 
 //Printer1
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><td class="right">';
+print '<form action="orderprinters.php">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td>'.$langs->trans("Name").': <input type="text" name="TAKEPOS_PRINTED_CATEGORIES_NAME_1" value="'.(!empty($conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_1'}) ? $conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_1'} : '').'"></td><td class="right">';
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
-print '<form action="orderprinters.php">';
+//print '<form action="orderprinters.php">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
@@ -203,10 +207,11 @@ print '<input type="submit" class="button button-save" value="'.$langs->trans("S
 
 //Printer2
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><td class="right">';
+print '<form action="orderprinters.php">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td>'.$langs->trans("Name").': <input type="text" name="TAKEPOS_PRINTED_CATEGORIES_NAME_2" value="'.(!empty($conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_2'}) ? $conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_2'} : '').'"></td><td class="right">';
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
-print '<form action="orderprinters.php">';
+//print '<form action="orderprinters.php">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
@@ -236,10 +241,11 @@ print '<input type="submit" class="button button-save" value="'.$langs->trans("S
 
 //Printer3
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><td class="right">';
+print '<form action="orderprinters.php">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td>'.$langs->trans("Name").': <input type="text" name="TAKEPOS_PRINTED_CATEGORIES_NAME_3" value="'.(!empty($conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_3'}) ? $conf->global->{'TAKEPOS_PRINTED_CATEGORIES_NAME_3'} : '').'"></td><td class="right">';
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
-print '<form action="orderprinters.php">';
+//print '<form action="orderprinters.php">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
