@@ -441,7 +441,7 @@ if ($action == 'writebookkeeping') {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch($k, null, true);		// TODO Use a cache for label
+						$accountingaccount->fetch(null, $k, true);		// TODO Use a cache for label
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
