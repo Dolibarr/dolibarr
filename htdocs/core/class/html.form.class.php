@@ -3342,7 +3342,6 @@ class Form
 				}
 
 				$outref = $objp->ref;
-				$outval = '';
 				$outbarcode = $objp->barcode;
 				$outqty = 1;
 				$outdiscount = 0;
@@ -3523,48 +3522,52 @@ class Form
 					}
 				}
 
-				$opt = '<option value="'.$outkey.'"';
+				$optstart = '<option value="'.$outkey.'"';
 				if ($selected && $selected == $objp->idprodfournprice) {
-					$opt .= ' selected';
+					$optstart .= ' selected';
 				}
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) {
-					$opt .= ' disabled';
+					$optstart .= ' disabled';
 				}
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0) {
-					$opt .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
+					$optstart .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
 				}
-				$opt .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
-				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
-				$opt .= '>';
+				$optstart .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
 
-				$opt .= $optlabel;
-				$outval .= $outvallabel;
+				$outarrayentry = array(
+					'key' => $outkey,
+					'value' => $outref,
+					'label' => $outvallabel,
+					'qty' => $outqty,
+					'price_qty_ht' => price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
+					'price_unit_ht' => price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
+					'price_ht' => price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+					'tva_tx' => $objp->tva_tx,
+					'default_vat_code' => $objp->default_vat_code,
+					'discount' => $outdiscount,
+					'type' => $outtype,
+					'duration_value' => $outdurationvalue,
+					'duration_unit' => $outdurationunit,
+					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'description' => $objp->description
+				);
 
-				$opt .= "</option>\n";
+				$parameters = array(
+					'objp' => &$objp,
+					'optstart' => &$optstart,
+					'optlabel' => &$optlabel,
+					'outvallabel' => &$outvallabel,
+					'outarrayentry' => &$outarrayentry
+				);
+				$reshook = $hookmanager->executeHooks('selectProduitsFournisseurListOption', $parameters, $this);
+
 
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
-				$out .= $opt;
-				array_push(
-					$outarray,
-					array('key'=>$outkey,
-						'value'=>$outref,
-						'label'=>$outval,
-						'qty'=>$outqty,
-						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
-						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
-						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
-						'tva_tx'=>$objp->tva_tx,
-						'default_vat_code'=>$objp->default_vat_code,
-						'discount'=>$outdiscount,
-						'type'=>$outtype,
-						'duration_value'=>$outdurationvalue,
-						'duration_unit'=>$outdurationunit,
-						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
-						'description'=>$objp->description
-					)
-				);
+				$out .= $optstart . ' data-html="'.dol_escape_htmltag($optlabel).'">' . $optlabel . "</option>\n";;
+				array_push($outarray, $outarrayentry);
+
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"

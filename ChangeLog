@@ -4,8 +4,19 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
 
+For users:
+---------------
+
+...
+
+
 For developers or integrators:
 ------------------------------
+
+...
+
+
+WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
@@ -191,6 +202,8 @@ NEW: Add hooks on salaries and sociales card
 NEW: Add hooks select product list and select thirdparty list function
 NEW: Add hook to getSellPrice function
 
+
+WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * There is a new specific permission to be allowed to enter timesheets. If you use timesheet, don't forget to give the new permission (disable and 
@@ -489,6 +502,8 @@ NEW: we need to be able to put more filters on deleteByParentField() function
 NEW: make it easier to set the `keyword`, `keywords` and `description` attributes of an ecm file object
 NEW: Experimental feature to manage user sessions in database
 
+
+WARNING:
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field 

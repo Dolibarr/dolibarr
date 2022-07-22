@@ -7461,8 +7461,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_PHONEMOBILE__'] = (isset($object->phone_mobile) ? dol_print_phone($object->phone_mobile) : '');
 				$substitutionarray['__MEMBER_TYPE__'] = (isset($object->type) ? $object->type : '');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
-				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
-				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
+				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = (isset($object->first_subscription_date_start) ? dol_print_date($object->first_subscription_date_start, 'dayrfc') : '');
+				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = (isset($object->first_subscription_date_end) ? dol_print_date($object->first_subscription_date_end, 'dayrfc') : '');
 				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE__']        = dol_print_date($object->last_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_START__']  = dol_print_date($object->last_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_LAST_SUBSCRIPTION_DATE_END__']    = dol_print_date($object->last_subscription_date_end, 'dayrfc');
@@ -8599,7 +8599,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
 		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/', '/').']/i', $s)) {
+		// We must accept: '$user->rights->cabinetmed->read && $object->canvas=="patient@cabinetmed"'
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -9020,6 +9021,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					if ($values[0] != $type) {
 						continue;
 					}
+					//var_dump(verifCond($values[4]));
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {

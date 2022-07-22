@@ -417,17 +417,19 @@ class ActionsDatapolicy
 			}
 
 			if (GETPOST('socid')) {
+				/* Removed due to awful harcoded values
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$societe = new Societe($this->db);
 				$societe->fetch(GETPOST('socid'));
 
-				if (!in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
+				if (!empty($object->forme_juridique_code) && !in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) && $societe->typent_id != 8) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 					$jsscript .= '<script>';
 					$jsscript .= "var elementToHide = 'td.societe_extras_datapolicy_opposition_traitement, td.societe_extras_datapolicy_opposition_prospection, td.societe_extras_datapolicy_consentement';".PHP_EOL;
 					$jsscript .= "$(elementToHide).parent('tr').hide();".PHP_EOL;
 					$jsscript .= '</script>';
 				}
+				*/
 			}
 		} elseif ($parameters['currentcontext'] == 'contactcard') {
 			if (GETPOST('action') == 'create' || GETPOST('action') == 'edit') {
