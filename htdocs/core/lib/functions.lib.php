@@ -8215,7 +8215,6 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 			}
 		}
 		if ($mesgstring) {
-			$langs->load("errors");
 			$ret++;
 			$out .= $langs->trans($mesgstring);
 		}

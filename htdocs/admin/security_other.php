@@ -165,7 +165,7 @@ if (ini_get("session.gc_probability") == 0) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
@@ -177,7 +177,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
 print '</td>';
 print '</tr>';
 
