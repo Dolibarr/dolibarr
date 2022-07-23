@@ -597,7 +597,7 @@ if (empty($reshook)) {
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
-					0, // We already have the $idprod always defined
+					$productsupplier->product_fourn_price_id,
 					$ref_supplier,
 					$remise_percent,
 					$price_base_type,
