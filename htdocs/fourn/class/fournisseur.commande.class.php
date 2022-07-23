@@ -1871,7 +1871,7 @@ class CommandeFournisseur extends CommonOrder
 
 				// Predefine quantity according to packaging
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$prod = new Product($this->db, $fk_product);
+					$prod = new Product($this->db);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
 
 					if ($qty < $prod->packaging) {
