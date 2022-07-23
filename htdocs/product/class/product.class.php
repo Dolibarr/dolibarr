@@ -1933,10 +1933,8 @@ class Product extends CommonObject
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.default_vat_code,";
-		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.packaging";
-		}
+		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
+		$sql .= " pfp.packaging";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
 		$sql .= " WHERE pfp.rowid = ".((int) $prodfournprice);
 		if ($qty > 0) {
