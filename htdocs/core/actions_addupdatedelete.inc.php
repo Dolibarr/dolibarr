@@ -134,6 +134,8 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
@@ -141,14 +143,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
+
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+
+			$db->commit();
 
 			if (empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}
 		} else {
+			$db->rollback();
+
 			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {
