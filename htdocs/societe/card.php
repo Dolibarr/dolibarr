@@ -554,9 +554,7 @@ if (empty($reshook)) {
 			}
 			//var_dump($object->array_languages);exit;
 
-			if (GETPOST('deletephoto')) {
-				$object->logo = '';
-			} elseif (!empty($_FILES['photo']['name'])) {
+			if (!empty($_FILES['photo']['name'])) {
 				$object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
 
