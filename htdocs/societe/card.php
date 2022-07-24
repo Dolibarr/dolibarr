@@ -785,11 +785,11 @@ if (empty($reshook)) {
 				}
 				if ($file_OK) {
 					if (image_format_supported($_FILES['photo']['name']) > 0) {
-						if($current_logo != $object->logo) {
+						if ($current_logo != $object->logo) {
 							$fileimg = $dir.'/'.$current_logo;
 							$dirthumbs = $dir.'/thumbs';
 							dol_delete_file($fileimg);
-							dol_delete_dir_recursive($dirthumbs);		
+							dol_delete_dir_recursive($dirthumbs);
 						}
 
 						dol_mkdir($dir);
