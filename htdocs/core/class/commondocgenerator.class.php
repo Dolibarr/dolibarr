@@ -895,7 +895,12 @@ abstract class CommonDocGenerator
 					//Add value to store price with currency
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
+					$valueofselectkey = $object->array_options['options_'.$key];
+					if (array_key_exists($valueofselectkey, $extrafields->attributes[$object->table_element]['param'][$key]['options'])) {
+						$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$valueofselectkey];
+					} else {
+						$object->array_options['options_'.$key] = '';
+					}
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 					$valArray = explode(',', $object->array_options['options_'.$key]);
 					$output = array();
@@ -945,7 +950,11 @@ abstract class CommonDocGenerator
 					}
 				}
 
-				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				if (array_key_exists('option_'.$key, $object->array_options)) {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				} else {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => ''));
+				}
 			}
 		}
 
