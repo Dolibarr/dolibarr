@@ -26,7 +26,7 @@
  */
 function showOnlineSignatureUrl($type, $ref)
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
 	$langs->loadLangs(array("payment", "paybox"));
@@ -59,7 +59,8 @@ function showOnlineSignatureUrl($type, $ref)
  */
 function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 {
-	global $conf, $db, $langs, $dolibarr_main_url_root;
+	global $conf, $dolibarr_main_url_root;
+	global $object;
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
@@ -90,7 +91,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref, '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.$object->entity, '0');
 		}
 		/*
 		if ($mode == 1) {
@@ -120,7 +121,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 
 	// For multicompany
 	if (!empty($out) && !empty($conf->multicompany->enabled)) {
-		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+		$out .= "&entity=".$object->entity; // Check the entity of object because we may have the same reference in several entities
 	}
 
 	return $out;
