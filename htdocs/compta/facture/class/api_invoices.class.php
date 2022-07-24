@@ -666,7 +666,7 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->delete(DolibarrApiAccess::$user);
-		if ($result < 0) {
+		if ($result <= 0) {
 			throw new RestException(500, 'Error when deleting invoice');
 		}
 
