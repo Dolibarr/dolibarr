@@ -506,7 +506,7 @@ if ($mode == 'feature') {
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
 		foreach ($objMod->module_parts['hooks'] as $key => $val) {
 			if ($key === 'entity') {
