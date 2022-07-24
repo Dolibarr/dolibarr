@@ -220,7 +220,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity) {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<input type="submit" class="button button-add" name="add" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 
@@ -273,7 +273,7 @@ if ($result) {
 		print '</td>';
 
 		// Date last change
-		print '<td class="nowraponall">';
+		print '<td class="nowraponall center">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 
