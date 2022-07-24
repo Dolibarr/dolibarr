@@ -525,7 +525,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERM
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('FICHINTER_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
