@@ -9020,7 +9020,6 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					if ($values[0] != $type) {
 						continue;
 					}
-					var_dump($value.' '.verifCond($values[4]));
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
