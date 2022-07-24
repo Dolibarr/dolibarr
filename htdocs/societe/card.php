@@ -555,6 +555,7 @@ if (empty($reshook)) {
 			//var_dump($object->array_languages);exit;
 
 			if (!empty($_FILES['photo']['name'])) {
+				$current_logo = $object->logo;
 				$object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
 
@@ -784,6 +785,13 @@ if (empty($reshook)) {
 				}
 				if ($file_OK) {
 					if (image_format_supported($_FILES['photo']['name']) > 0) {
+						if($current_logo != $object->logo) {
+							$fileimg = $dir.'/'.$current_logo;
+							$dirthumbs = $dir.'/thumbs';
+							dol_delete_file($fileimg);
+							dol_delete_dir_recursive($dirthumbs);		
+						}
+
 						dol_mkdir($dir);
 
 						if (@is_dir($dir)) {
