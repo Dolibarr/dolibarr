@@ -103,6 +103,7 @@ if ($cancel) {
 	$action = '';
 }
 
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
