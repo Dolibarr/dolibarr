@@ -6913,7 +6913,9 @@ abstract class CommonObject
 				if ((string) $keyb == '') {
 					continue;
 				}
-				if (strpos($valb, "|") !== false) list($valb, $parent) = explode('|', $valb);
+				if (strpos($valb, "|") !== false) {
+					list($valb, $parent) = explode('|', $valb);
+				}
 				$out .= '<option value="'.$keyb.'"';
 				$out .= (((string) $value == (string) $keyb) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
