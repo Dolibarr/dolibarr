@@ -577,9 +577,9 @@ class dolReceiptPrinter extends Printer
 	public function sendToPrinter($object, $templateid, $printerid)
 	{
 		global $conf, $mysoc, $langs, $user;
+		global $hookmanager;
 		$error = 0;
-		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($this->db);
+		
 		$hookmanager->initHooks(array('receiptprinter'));
 		$ret = $this->loadTemplate($templateid);
 
