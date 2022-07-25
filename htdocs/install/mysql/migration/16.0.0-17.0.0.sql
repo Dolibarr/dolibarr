@@ -57,3 +57,7 @@ ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) afte
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
+ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
+
+
