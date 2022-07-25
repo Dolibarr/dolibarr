@@ -74,14 +74,15 @@ $s_ftp_port = 'FTP_PORT_'.$numero_ftp;
 $s_ftp_user = 'FTP_USER_'.$numero_ftp;
 $s_ftp_password = 'FTP_PASSWORD_'.$numero_ftp;
 $s_ftp_passive = 'FTP_PASSIVE_'.$numero_ftp;
-$ftp_name = $conf->global->$s_ftp_name;
-$ftp_server = $conf->global->$s_ftp_server;
-$ftp_port = $conf->global->$s_ftp_port; if (empty($ftp_port)) {
+$ftp_name = getDolGlobalString($s_ftp_name);
+$ftp_server = getDolGlobalString($s_ftp_server);
+$ftp_port = getDolGlobalString($s_ftp_port);
+if (empty($ftp_port)) {
 	$ftp_port = 21;
 }
-$ftp_user = $conf->global->$s_ftp_user;
-$ftp_password = $conf->global->$s_ftp_password;
-$ftp_passive = $conf->global->$s_ftp_passive;
+$ftp_user = getDolGlobalString($s_ftp_user);
+$ftp_password = getDolGlobalString($s_ftp_password);
+$ftp_passive = getDolGlobalString($s_ftp_passive);
 
 // For result on connection
 $ok = 0;
@@ -696,7 +697,9 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	global $langs, $conf;
 
 	$ok = 1;
+	$error = 0;
 	$conn_id = null;
+	$newsectioniso = '';
 	$mesg="";
 
 	if (!is_numeric($ftp_port)) {
@@ -707,7 +710,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	if ($ok) {
 		$connecttimeout = (empty($conf->global->FTP_CONNECT_TIMEOUT) ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
 		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			dol_syslog('Try to connect with ssh2_ftp');
+			dol_syslog('Try to connect with ssh2_connect');
 			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
 		} elseif (!empty($conf->global->FTP_CONNECT_WITH_SSL)) {
 			dol_syslog('Try to connect with ftp_ssl_connect');
@@ -716,7 +719,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 			dol_syslog('Try to connect with ftp_connect');
 			$conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
 		}
-		if ($conn_id || $tmp_conn_id) {
+		if (!empty($conn_id) || !empty($tmp_conn_id)) {
 			if ($ftp_user) {
 				if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
 					dol_syslog('Try to authenticate with ssh2_auth_password');
