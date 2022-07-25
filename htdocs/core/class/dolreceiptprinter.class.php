@@ -579,7 +579,7 @@ class dolReceiptPrinter extends Printer
 		global $conf, $mysoc, $langs, $user;
 		global $hookmanager;
 		$error = 0;
-		
+
 		$hookmanager->initHooks(array('receiptprinter'));
 		$ret = $this->loadTemplate($templateid);
 
