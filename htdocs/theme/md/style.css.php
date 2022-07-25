@@ -2403,6 +2403,10 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
+}
 
 img.photokanban, div.photokanban {
 	padding: 0;
