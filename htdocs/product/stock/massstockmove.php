@@ -336,11 +336,11 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 					continue;
 				}
 				//var_dump($data);
-				$tmp_id_sw = $data[$i][0]['val'];
-				$tmp_id_tw = $data[$i][1]['val'];
-				$tmp_id_product = $data[$i][2]['val'];
-				$tmp_qty = $data[$i][3]['val'];
-				$tmp_batch = $data[$i][4]['val'];
+				$tmp_id_sw = dol_escape_htmltag($data[$i][0]['val']);
+				$tmp_id_tw = dol_escape_htmltag($data[$i][1]['val']);
+				$tmp_id_product = dol_escape_htmltag($data[$i][2]['val']);
+				$tmp_qty = dol_escape_htmltag($data[$i][3]['val']);
+				$tmp_batch = dol_escape_htmltag($data[$i][4]['val']);
 
 				if (!is_numeric($tmp_id_product)) {
 					$result = fetchref($productstatic, $tmp_id_product);
