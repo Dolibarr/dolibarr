@@ -160,8 +160,11 @@ if ($filtertype != 1) {
 	print '</td>';
 } else {
 	$coldisplay++;
+	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+	$cUnit = new CUnits($this->db);
+	$fk_unit_default = $cUnit->getUnitFromCode('h', 'short_label', 'time');
 	print '<td class="bordertop nobottom nowrap linecolunit right">';
-	print  $formproduct->selectMeasuringUnits("duration_unit", "time", 'h', 0, 1);
+	print  $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 0, 0);
 	print '</td>';
 
 	$coldisplay++;
@@ -212,7 +215,8 @@ jQuery(document).ready(function() {
 	//change unit selected if we change service selected
 	<?php if ($filtertype == 1) { ?>
 	$('#idprodservice').change(function(){
-			var idproduct = $(this).val();
+		var idproduct = $(this).val();
+
 			$.ajax({
 				url : "<?php echo dol_buildpath('/bom/ajax/ajax.php', 1); ?>"
 				,type: 'POST'
@@ -221,8 +225,10 @@ jQuery(document).ready(function() {
 					,'idproduct' : idproduct
 				}
 			}).done(function(data) {
+
+				console.log(data);
 				var data = JSON.parse(data);
-				$('#duration_unit').val(data).change();;
+				$("#fk_unit").val(data).change();
 			});
 	});
 	<?php } ?>

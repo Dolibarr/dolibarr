@@ -420,15 +420,16 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
+	 * @param string $unit_type weight,size,surface,volume,qty,time...
 	 * @return int            <0 if KO, Id of code if OK
 	 */
-	public function getUnitFromCode($code, $mode = 'code')
+	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
 	{
 
 		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, ' AND unit_type = "'.$unit_type.'"');
 		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, ' AND unit_type = "'. $unit_type .'"');
 		}
 
 		return $code;

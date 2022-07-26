@@ -175,7 +175,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$duration_unit = GETPOST('duration_unit', 'alphanohtml');
+		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
@@ -199,7 +199,7 @@ if (empty($reshook)) {
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
 			$bomline->efficiency = $efficiency;
-			$bomline->duration_unit = $duration_unit;
+			$bomline->fk_unit = $fk_unit;
 
 			// Rang to use
 			$rangmax = $object->line_max(0);
@@ -235,7 +235,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$duration_unit = GETPOST('duration_unit', 'alphanohtml');
+		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -248,7 +248,9 @@ if (empty($reshook)) {
 		$bomline->qty_frozen = (int) $qty_frozen;
 		$bomline->disable_stock_change = (int) $disable_stock_change;
 		$bomline->efficiency = $efficiency;
-		$bomline->duration_unit = $duration_unit;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$bomline->fk_unit = $fk_unit;
 
 		$result = $bomline->update($user);
 		if ($result <= 0) {
