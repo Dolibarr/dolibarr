@@ -1442,7 +1442,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Return value of a conf parameterfor leave module
+	 *  Return value of a conf parameter for leave module
 	 *  TODO Move this into llx_const table
 	 *
 	 *  @param	string	$name                 Name of parameter
