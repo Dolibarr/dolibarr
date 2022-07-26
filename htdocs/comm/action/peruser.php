@@ -99,7 +99,7 @@ $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
 $pid = GETPOST("search_projectid", "int", 3) ?GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOST("search_type", 'alpha') ?GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOST("maxprint", 'int') != '') ?GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -626,12 +626,14 @@ if ($type) {
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1') {
+if ($status == '-1' || $status == 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
+}
 if ($status == '50') {
+	// Running already started
 	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
+}
 if ($status == 'done' || $status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
