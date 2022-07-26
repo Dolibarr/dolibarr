@@ -24,15 +24,14 @@ OutputBaseFilename=__FILENAMEEXEDOLIWAMP__
 ;OutputManifestFile=build\doliwampbuild.log
 ; Define full path from which all relative path are defined
 ; You must modify this to put here your dolibarr root directory
-;SourceDir=Z:\home\ldestailleur\git\dolibarrxxx
 SourceDir=..\..\..
 AppId=doliwamp
 AppPublisher=NLTechno
-AppPublisherURL=https://www.nltechno.com
+AppPublisherURL=https://www.dolicloud.com
 AppSupportURL=https://www.dolibarr.org
 AppUpdatesURL=https://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql software.
-AppCopyright=Copyright (C) 2008-2020 Laurent Destailleur (NLTechno), Fabian Rodriguez (Le Goût du Libre)
+AppCopyright=Copyright (C) 2008-2022 Laurent Destailleur (NLTechno), Fabian Rodriguez (Le Goût du Libre)
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING

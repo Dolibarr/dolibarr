@@ -1084,8 +1084,12 @@ if ($nboftargetok) {
      		print "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
  
- 			print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
-
+ 			if ($OS eq 'windows') {
+ 				print "Check that ISCC.exe is in your PATH.\n";
+			} else {
+ 				print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
+			}
+			
  			$SOURCEBACK=$SOURCE;
  			$SOURCEBACK =~ s/\//\\/g;
 
@@ -1102,20 +1106,30 @@ if ($nboftargetok) {
 			close(IN);
 			close(OUT);
 
-    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"\n";
-    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
+    		
+ 			if ($OS eq 'windows') {
+	    		$cmd= "ISCC.exe \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+	    	} else {
+	    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+	    	}
 			print "$cmd\n";
 			$ret= `$cmd`;
-			#print "$ret\n";
+			print "ret=$ret\n";
 
 			# Move to final dir
 			print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
     		rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
             print "Move $SOURCE/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
-            $ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+            
+            use File::Copy;
+
+            #$ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+            $ret=move("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe", "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
             
             print "Remove tmp file $SOURCE/build/exe/doliwamp/doliwamp.tmp.iss\n";
-            $ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+            #$ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+            $ret=unlink("$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss");
             
     		next;
     	}
