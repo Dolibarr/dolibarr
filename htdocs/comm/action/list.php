@@ -811,7 +811,6 @@ if ($resql) {
 	$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 	$contactListCache = array();
 
-	$today_start_date_time = dol_now();
 	$cache_user_list = array();
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
@@ -861,7 +860,9 @@ if ($resql) {
 		$event_start_date_style = '';
 		$event_start_date_time = $actionstatic->datep;
 		if ($obj->fulldayevent) {
-			$today_start_date_time = dol_mktime(0, 0, 0, date('m', $today_start_date_time), date('d', $today_start_date_time), date('Y', $today_start_date_time));
+			$today_start_date_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
+		} else {
+			$today_start_date_time = $now;
 		}
 		if ($event_start_date_time > $today_start_date_time) {
 			// future event
