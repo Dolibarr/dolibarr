@@ -50,17 +50,11 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
-
+$optioncss = GETPOST('optioncss', 'alpha');
 if ($contextpage == 'poslist') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $socid, '');
+$mode = GETPOST("mode", 'alpha');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
@@ -105,8 +99,6 @@ $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
 $type = GETPOST('type', 'alpha');
-$optioncss = GETPOST('optioncss', 'alpha');
-$mode = GETPOST("mode", 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
@@ -267,6 +259,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $socid, '');
+
 
 
 /*
@@ -1737,9 +1737,10 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
+	// Import key
 	if (!empty($arrayfields['s.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">';
-		print $obj->import_key;
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->import_key).'">';
+		print dol_escape_htmltag($obj->import_key);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
