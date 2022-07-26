@@ -48,8 +48,9 @@ CountriesNotInEEC=Land ikke i EEC
 CountriesInEECExceptMe=Land i EEC unntatt %s
 CountriesExceptMe=Alle land unntatt %s
 AccountantFiles=Eksporter kildedokumenter
-ExportAccountingSourceDocHelp=Med dette verktøyet kan du eksportere kildehendelsene (liste i CSV og PDF-er) som brukes til å generere regnskapet ditt.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=For å eksportere journalene dine, bruk menyoppføringen %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Vis etter regnskapskonto
 VueBySubAccountAccounting=Vis etter regnskaps-subkonto
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på ban
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Definer en dato for å starte binding og overføring i regnskap. Etter denne datoen vil ikke transaksjonene bli overført til regnskap.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Velg regnskapsvisning som standard ved overføring av regnskap
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnementer
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Regnskapskonto som standard for å registrere kundeinnskudd
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskapskonto som standard for de kjøpte varene (brukt hvis ikke definert i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskapskonto som standard for kjøpte produkter i EU (brukt hvis ikke definert i produktarket)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overføring ti
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Datovalidering og lås
 ConfirmExportFile=Bekreftelse på generering av regnskapseksportfilen ?
 ExportDraftJournal=Eksporter utkastjournal
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorr
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=Saldoen (%s) er ikke lik 0
 AccountancyErrorLetteringBookkeeping=Det har oppstått feil angående transaksjonene: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Regnskapsposter

@@ -12,7 +12,7 @@ OpenEtablishment=Obre l'establiment
 CloseEtablishment=Tanca l'establiment
 # Dictionary
 DictionaryPublicHolidays=Permís - Dies festius
-DictionaryDepartment=HRM - Llistat de departament
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM: llocs de treball
 # Module
 Employees=Empleats
@@ -70,9 +70,9 @@ RequiredSkills=Competències necessàries per a aquesta feina
 UserRank=Rank d'usuari
 SkillList=Llista d'habilitats
 SaveRank=Guardar rang
-knowHow=Saber com
-HowToBe=Com ser
-knowledge=Coneixement
+TypeKnowHow=Know how
+TypeHowToBe=How to be
+TypeKnowledge=Knowledge
 AbandonmentComment=Comentari d'abandonament
 DateLastEval=Data darrera avaluació
 NoEval=No s'ha fet cap avaluació per a aquest empleat
@@ -88,3 +88,4 @@ DeleteSkill = S'ha eliminat l'habilitat
 SkillsExtraFields=Atributs addicionals (Competències)
 JobsExtraFields=Atributs addicionals (Empleats)
 EvaluationsExtraFields=Atributs addicionals (avaluacions)
+NeedBusinessTravels=Need business travels

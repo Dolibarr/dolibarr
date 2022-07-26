@@ -152,18 +152,18 @@ $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
 
 // Definition of fields for list
 $arrayfields = array(
-	't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>1),
-	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>2),
-	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>3),
-	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>4),
-	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>5),
-	't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>6),
-	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>7),
-	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>8),
-	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>9),
-	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>11),
-	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>12),
+	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>1),
+	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>2),
+	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>3),
+	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>4),
+	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>5),
+	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>6),
+	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>7),
+	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>8),
+	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>9),
+	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>10),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>11),
+	'c.assigned'=>array('label'=>"TaskRessourceLinks", 'checked'=>1, 'position'=>12),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);

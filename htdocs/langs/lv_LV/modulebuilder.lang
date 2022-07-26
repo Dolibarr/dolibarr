@@ -1,17 +1,19 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Moduļa ID
 ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina utilītas, lai izveidotu vai rediģētu savu moduli. Dokumentācija alternatīvai <a href="%s" target="_blank" rel="noopener noreferrer"> manuālai izstrādei ir pieejama šeit </a>.
-EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
-EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
+EnterNameOfModuleDesc=Ievadiet izveidojamā moduļa/lietojumprogrammas nosaukumu bez atstarpēm. Izmantojiet lielos burtus, lai atdalītu vārdus (piemēram, MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Ievadiet izveidojamā objekta nosaukumu bez atstarpēm. Izmantojiet lielos burtus, lai atdalītu vārdus (piemēram: MyObject, Student, Teacher...). Tiks ģenerēts CRUD klases fails, kā arī API fails, lapas, lai uzskaitītu/pievienotu/rediģētu/dzēstu objektu un SQL faili.
+EnterNameOfDictionaryDesc=Ievadiet izveidojamās vārdnīcas nosaukumu bez atstarpēm. Izmantojiet lielos burtus, lai atdalītu vārdus (piemēram, MyDico...). Tiks ģenerēts klases fails, kā arī SQL fails.
 ModuleBuilderDesc2=Ceļš, kurā tiek ģenerēti / rediģēti moduļi (pirmais ārējo moduļu katalogs, kas definēts %s): <strong> %s </strong>
 ModuleBuilderDesc3=Atrastie / rediģējamie moduļi: <strong> %s </strong>
 ModuleBuilderDesc4=Modulis identificēts kā "rediģējams", kad moduļa saknes direktorijā  atrodas fails <strong> %s </strong>
 NewModule=Jauns modulis
 NewObjectInModulebuilder=Jauns objekts
-NewDictionary=New dictionary
+NewDictionary=Jauna vārdnīca
+ModuleName=Moduļa nosaukums
 ModuleKey=Moduļa atslēga
 ObjectKey=Objekta atslēga
-DicKey=Dictionary key
+DicKey=Vārdnīcas atslēga
 ModuleInitialized=Modulis inicializēts
 FilesForObjectInitialized=Files for new object '%s' initialized
 FilesForObjectUpdated=Atjaunots objektu '%s' faili (.sql faili un .class.php fails)
@@ -153,3 +155,4 @@ LinkToParentMenu=Vecāku izvēlne (fk_xxxxmenu)
 ListOfTabsEntries=Cilņu ierakstu saraksts
 TabsDefDesc=Šeit definējiet moduļa nodrošinātās cilnes
 TabsDefDescTooltip=Jūsu moduļa/lietojumprogrammas nodrošinātās cilnes ir definētas masīvā <strong> $this->tabs </strong> moduļa deskriptora failā. Varat manuāli rediģēt šo failu vai izmantot iegulto redaktoru.
+BadValueForType=Nepareiza vērtība tipam %s
