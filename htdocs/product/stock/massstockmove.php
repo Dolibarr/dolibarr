@@ -337,8 +337,8 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 				}
 				//var_dump($data);
 				$tmp_id_sw = (int) $data[$i][0]['val'];
-				$tmp_id_tw = (int) dol_escape_htmltag($data[$i][1]['val']);
-				$tmp_id_product = (int) dol_escape_htmltag($data[$i][2]['val']);
+				$tmp_id_tw = (int) $data[$i][1]['val'];
+				$tmp_id_product = (int) $data[$i][2]['val'];
 				$tmp_qty = price2num((float) $data[$i][3]['val'], 'MS');
 				$tmp_batch = dol_escape_htmltag($data[$i][4]['val']);
 
