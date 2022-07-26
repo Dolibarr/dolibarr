@@ -57,4 +57,4 @@ ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) afte
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
 
 ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
-ALTER TABLE llx_bom_bomline ADD COLUMN duration_unit varchar(6) DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;

@@ -53,6 +53,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 include_once '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 
 
 $action = GETPOST('action', 'aZ09');
@@ -69,10 +70,9 @@ if ($action == 'getDurationUnitByProduct') {
 	$product = new Product($db);
 	$res = $product->fetch($idproduct);
 
-	if ($res > 0) {
-		$return = $product->duration_unit;
-	}
+	$cUnit = new CUnits($db);
+	$fk_unit = $cUnit->getUnitFromCode($product->duration_unit, 'short_label', 'time');
 
-	echo json_encode($return);
+	echo json_encode($fk_unit);
 	exit();
 }

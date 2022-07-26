@@ -1128,7 +1128,8 @@ class BOM extends CommonObject
 					}
 				} else {
 					//Convert qty to hour
-					$qty = convertDurationtoHour($line->qty, $line->duration_unit);
+					$unit = measuringUnitString($line->fk_unit);
+					$qty = convertDurationtoHour($line->qty, $unit);
 
 					if ($conf->workstation->enabled) {
 						if ($tmpproduct->fk_default_workstation) {
@@ -1293,7 +1294,7 @@ class BOMLine extends CommonObjectLine
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
-		'duration_unit' => array('type'=>'varchar(6)', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
+		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);

@@ -132,16 +132,14 @@ if ($filtertype != 1) {
 	//Unité
 	print '<td class="linecolunit nowrap right">';
 	$coldisplay++;
-	if ($line->qty > 1) {
-		$dur = array("s"=>$langs->trans("Seconds"), "i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-	} elseif ($tmpproduct->duration_value > 0) {
-		$dur = array("s"=>$langs->trans("Second"), "i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+
+	if (!empty($line->fk_unit)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$unit = new CUnits($this->db);
+		$unit->fetch($line->fk_unit);
+		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 	}
-	if (!empty($line->duration_unit)) {
-		print (isset($dur[$line->duration_unit]) ? "&nbsp;".$langs->trans($dur[$line->duration_unit])."&nbsp;" : '');
-	} else {
-		print (!empty($tmpproduct->duration_unit) && isset($dur[$tmpproduct->duration_unit]) ? "&nbsp;" . $langs->trans($dur[$tmpproduct->duration_unit]) . "&nbsp;" : '');
-	}
+
 	print '</td>';
 
 	//Poste de travail
