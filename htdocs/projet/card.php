@@ -1316,7 +1316,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 
-			// Add button to create objects from projects
+			// Add button to create objects from project
 			if (!empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON)) {
 				if (!empty($conf->propal->enabled) && $user->rights->propal->creer) {
 					$langs->load("propal");

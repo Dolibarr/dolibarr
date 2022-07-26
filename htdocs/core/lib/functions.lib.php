@@ -10357,7 +10357,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
  *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
  *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                          'modal' => true, // true|false to display dialog as a modal (with dark background) 
+ *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
  *                          ],
  *                          ]
  * // phpcs:enable
