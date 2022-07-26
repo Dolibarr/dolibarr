@@ -10343,7 +10343,6 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param bboolean  $isDropdown is dropdown button
  * @param int       $userRight  user action right
  * // phpcs:disable
  * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
@@ -10359,17 +10358,18 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
  *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
  *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
+ * 						    'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
  *                          ],
  *                          ]
  * // phpcs:enable
  * @return string               html button
  */
-function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $isDropdown = false, $userRight = 1, $params = array())
+function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
 	global $hookmanager, $action, $object, $langs;
 
-	//var_dump($isDropdown);
-	if ($isDropdown)
+	//var_dump($params);
+	if ($params['isDropdown'])
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';
