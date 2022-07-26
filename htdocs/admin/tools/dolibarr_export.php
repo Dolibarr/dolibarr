@@ -171,8 +171,7 @@ print '</tr>';
 print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
-print '<tr>';
-print '<td class="tdtop nopaddingleftimp">';
+print '<tr class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -194,8 +193,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 print '</fieldset>';
 print '</div>';
 
-print '</td>';
-print '<td class="tdtop nopaddingrightimp">';
+print '</tr>';
+print '<br>';
+print '<tr class="tdtop nopaddingrightimp">';
 
 print '<button id="btn" type="button" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
 
@@ -216,6 +216,7 @@ function hideoptions(){
 </script>';
 
 print '<div id="div_container_sub_exportoptions" style="display: none;">';
+print '<br>';
 if (in_array($type, array('mysql', 'mysqli'))) {
 	print "<!--  Fieldset mysqldump -->\n";
 	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';
@@ -430,7 +431,7 @@ if (in_array($type, array('pgsql'))) {
 }
 print '</div>';
 
-print '</td>';
+print '</tr>';
 print '</tr>';
 print '</table>';
 
