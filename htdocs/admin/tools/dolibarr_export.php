@@ -197,7 +197,8 @@ print '</tr>';
 print '<br>';
 print '<tr class="tdtop nopaddingrightimp">';
 
-print '<button id="btn" type="button" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
+print '<button id="btn" type="button" style="all: unset; color: var(--colortextlink); text-decoration: underline;
+cursor: pointer;" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
 
 print '<script type="text/javascript">
 
