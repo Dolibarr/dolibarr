@@ -588,6 +588,10 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
+	private $labelStatus;
+	private $labelStatusShort;
+
+
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
