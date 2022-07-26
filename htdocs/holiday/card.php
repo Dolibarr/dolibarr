@@ -1153,7 +1153,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
 						break;
 					case 'SQL_Create':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP').' '.$_GET['msg'];
+						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP');
 						break;
 					case 'CantCreate':
 						$errors[] = $langs->transnoentitiesnoconv('CantCreateCP');
