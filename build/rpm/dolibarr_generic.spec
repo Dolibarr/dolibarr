@@ -67,7 +67,7 @@ Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mbstring
 Requires: mysql-server, mysql 
 Requires: php-mysqli >= 4.1.0 
 %endif
-%endif%_datadir/dolibarr/htdocs/eventorganization
+%endif
 
 %endif
 
