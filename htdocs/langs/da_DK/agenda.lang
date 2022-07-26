@@ -57,6 +57,7 @@ MemberValidatedInDolibarr=Medlem %s bekræftet
 MemberModifiedInDolibarr=Medlem %s ændret
 MemberResiliatedInDolibarr=Medlem %s afsluttet
 MemberDeletedInDolibarr=Medlem %s slettet
+MemberExcludedInDolibarr=Medlem %s udelukket
 MemberSubscriptionAddedInDolibarr=Abonnement %s for medlem %s tilføjet
 MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s ændret
 MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet

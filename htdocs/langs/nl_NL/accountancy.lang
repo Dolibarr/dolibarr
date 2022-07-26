@@ -48,8 +48,9 @@ CountriesNotInEEC=Landen buiten de EU
 CountriesInEECExceptMe=EU landen behalve %s
 CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
-ExportAccountingSourceDocHelp=Met deze tool kunt u de bron events (lijst in CSV en PDF) exporteren die zijn gebruikt om om uw boekhouding te genereren.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzett
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Schakel combolijst in voor dochteronderneming-account (kan traag zijn als je veel derden hebt, verbreek de mogelijkheid om op een deel van de waarde te zoeken)
 ACCOUNTING_DATE_START_BINDING=Definieer een startdatum voor het koppelen en doorboeken naar de boekhouding. Transacties voor deze datum worden niet doorgeboekt naar de boekhouding.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Selecteer bij boekhoudkundige overdracht standaard periodeweergave
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Verkoopboek
 ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Grootboeknummer voor donaties
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te registreren
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standaard grootboekrekening voor storting door klant
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten binnen de EU (gebruikt indien niet gedefinieerd in het productblad)
@@ -279,10 +280,10 @@ DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclar
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
 Closure=Jaarafsluiting
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+DescClosure=Raadpleeg hier het aantal bewegingen per maand die nog niet gevalideerd & vergrendeld zijn
+OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
+AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
+NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd
 ValidateMovements=Valideer wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 
@@ -290,7 +291,7 @@ ValidateHistory=Automatisch boeken
 AutomaticBindingDone=Automatische bindings uitgevoerd (%s) - Automatische binding was niet mogelijk voor record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fout. U kunt geen grootboekrekening verwijderen welke in gebruik is.
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
+MvtNotCorrectlyBalanced=Beweging niet correct gebalanceerd. Debet = %s & Credit = %s
 Balancing=Balansen
 FicheVentilation=Koppelen card
 GeneralLedgerIsWritten=Grootboek transacties
@@ -303,7 +304,7 @@ NotYetAccounted=Nog niet overgezet naar boekhouding
 ShowTutorial=Handleiding weergeven
 NotReconciled=Niet afgestemd
 WarningRecordWithoutSubledgerAreExcluded=Pas op, alle bewerkingen zonder gedefinieerde sub grootboekrekening worden gefilterd en uitgesloten van deze weergave
-AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
+AccountRemovedFromCurrentChartOfAccount=Boekhoudrekening die niet bestaat in het huidige rekeningschema
 
 ## Admin
 BindingOptions=Koppelmogelijkheden
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken 
 
 ## Export
 NotifiedExportDate=Geëxporteerde regels markeren als geëxporteerd <span class="warning">(om een regel te wijzigen, moet u de hele transactie verwijderen en opnieuw in de boekhouding opnemen)</span>
-NotifiedValidationDate=Valideer en vergrendel de geëxporteerde items <span class="warning">(hetzelfde effect als de functie "Sluiting", wijziging en verwijdering van de regels is ZEKER niet mogelijk)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Datum validatie en vergrendelen
 ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
 ExportDraftJournal=Journaal exporteren
@@ -398,19 +399,19 @@ Calculated=Berekend
 Formula=Formule
 
 ## Reconcile
-Unlettering=Unreconcile
-AccountancyNoLetteringModified=No reconcile modified
-AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
-AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
-AccountancyNoUnletteringModified=No unreconcile modified
-AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
-AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+Unlettering=niet afstemmen
+AccountancyNoLetteringModified=Geen afstemming gewijzigd
+AccountancyOneLetteringModifiedSuccessfully=Eén afstemming succesvol gewijzigd
+AccountancyLetteringModifiedSuccessfully=%s afstemming succesvol gewijzigd
+AccountancyNoUnletteringModified=Geen verzoening gewijzigd
+AccountancyOneUnletteringModifiedSuccessfully=Eén onafstemming succesvol gewijzigd
+AccountancyUnletteringModifiedSuccessfully=%s afstemmen succesvol gewijzigd
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnlettering=Bulk verwijderen afstemming bevestiging
+ConfirmMassUnletteringQuestion=Weet u zeker dat u de %s geselecteerde record(s) ongedaan wilt maken?
 ConfirmMassDeleteBookkeepingWriting=Bevestiging bulk verwijdering
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=Hiermee wordt de transactie uit de boekhouding verwijderd (alle regels die betrekking hebben op dezelfde transactie worden verwijderd) Weet u zeker dat u de geselecteerde record(en) van %s wilt verwijderen?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
@@ -424,9 +425,10 @@ Binded=Geboekte regels
 ToBind=Te boeken regels
 UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <a href="%s"> %s </a> om de binding handmatig te maken
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry, deze module is niet compatibel met de experimentele functie van situatiefacturen
-AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
-AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+AccountancyErrorMismatchLetterCode=Komt niet overeen in afstemmingscode
+AccountancyErrorMismatchBalanceAmount=Het saldo (%s) is niet gelijk aan 0
+AccountancyErrorLetteringBookkeeping=Er zijn fouten opgetreden met betrekking tot de transacties: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Boekingen

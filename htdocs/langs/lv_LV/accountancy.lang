@@ -48,8 +48,9 @@ CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
-ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu CSV un PDF formātā), kas tiek izmantoti jūsu grāmatvedības uzskaitei.
+ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat meklēt un eksportēt avota notikumus, kas tiek izmantoti jūsu grāmatvedības uzskaitei. <br> Eksportētajā ZIP failā būs pieprasīto vienumu saraksti CSV formātā, kā arī tiem pievienotie faili to sākotnējā formātā (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
+ExportAccountingProjectHelp=Norādiet projektu, ja jums ir nepieciešams grāmatvedības pārskats tikai par konkrētu projektu. Izdevumu atskaites un kredīta maksājumi netiek iekļauti projektu pārskatos.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kont�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
 ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu meitas kontam (tas var būt lēns, ja jums ir daudz trešo pušu, pārtraukt iespēju meklēt daļu vērtības)
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pārsūtot grāmatvedību, pēc noklusējuma atlasiet periodu
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Kāds ir grāmatvedības pārskaitījuma periods, kas atlasīts pēc noklusējuma
 
 ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
 ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grāmatvedības konts, lai reģistrētu abonementus
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Grāmatvedības konts pēc noklusējuma reģistrē klientu depozītu
-UseAuxiliaryAccountOnCustomerDeposit=Izmantojiet apakškontus klientu noguldījumu līnijās
+UseAuxiliaryAccountOnCustomerDeposit=Saglabājiet klienta kontu kā individuālu kontu meitas virsgrāmatā pirmo iemaksu rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Nopirkto produktu grāmatvedības konts pēc noklusējuma (tiek izmantots, ja tas nav definēts produktu lapā)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem EEK (lietots, ja nav definēts produktu lapā)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesie�
 
 ## Export
 NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
-NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "Aizvērt", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "%s", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
 DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diem
 AccountancyErrorMismatchLetterCode=Saskaņošanas koda neatbilstība
 AccountancyErrorMismatchBalanceAmount=Atlikums (%s) nav vienāds ar 0
 AccountancyErrorLetteringBookkeeping=Ir radušās kļūdas saistībā ar darījumiem: %s
+ErrorAccountNumberAlreadyExists=Grāmatvedības numurs %s jau pastāv
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti

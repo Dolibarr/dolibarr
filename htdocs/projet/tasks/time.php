@@ -100,8 +100,10 @@ $childids = $user->getAllChildIds(1);
 $hookmanager->initHooks(array('projecttasktime', 'globalcard'));
 
 $object = new Task($db);
-$projectstatic = new Project($db);
 $extrafields = new ExtraFields($db);
+$projectstatic = new Project($db);
+
+// fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($projectstatic->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -919,7 +921,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<table class="border tableforfield centpercent">';
 
 			// Usage
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 				print '<tr><td class="tdtop">';
 				print $langs->trans("Usage");
 				print '</td>';
@@ -942,7 +944,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 					print '<br>';
 				}
-				if (!empty($conf->eventorganization->enabled)) {
+				if (isModEnabled('eventorganization')) {
 					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 					print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -1098,7 +1100,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Third party
 			$morehtmlref .= $langs->trans("ThirdParty").': ';
-			if (is_object($projectstatic->thirdparty)) {
+			if (!empty($projectstatic->thirdparty) && is_object($projectstatic->thirdparty)) {
 				$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
 			}
 			$morehtmlref .= '</div>';
@@ -1110,10 +1112,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		print '<div class="fichehalfleft">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
+		print '<table class="border centpercent tableforfield">';
+
+		// Task parent
+		print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
+		if ($object->fk_task_parent > 0) {
+			$tasktmp = new Task($db);
+			$tasktmp->fetch($object->fk_task_parent);
+			print $tasktmp->getNomUrl(1);
+		}
+		print '</td></tr>';
 
 		// Date start - Date end
-		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td>';
 		$start = dol_print_date($object->date_start, 'dayhour');
 		print ($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'dayhour');

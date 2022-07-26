@@ -487,9 +487,9 @@ class Cronjob extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Load object in memory from the database
+	 *  Load list of cron jobs in a memory array from the database
+	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder      sort order
 	 *  @param	string		$sortfield      sort field
@@ -500,11 +500,8 @@ class Cronjob extends CommonObject
 	 *  @param  int         $processing     Processing or not
 	 *  @return int          			    <0 if KO, >0 if OK
 	 */
-	public function fetch_all($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
 	{
-		// phpcs:enable
-		global $langs;
-
 		$this->lines = array();
 
 		$sql = "SELECT";
@@ -1470,6 +1467,8 @@ class Cronjobline
 	 * @var int ID
 	 */
 	public $id;
+
+	public $entity;
 
 	/**
 	 * @var string Ref
