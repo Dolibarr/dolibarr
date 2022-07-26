@@ -1316,56 +1316,50 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 
-
+			// Add button to create objects from projects
 			if (!empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON)) {
-				print'<div class="dropdown inline-block">';
-				print'<a style="margin-right: auto;"class="dropdown-toggle butAction" data-toggle="dropdown">'.$langs->trans("Create").'</a>';
-				print '<div class="dropdown-menu">';
-				print '<div class="dropdown-global-search-button-list" >';
 				if (!empty($conf->propal->enabled) && $user->rights->propal->creer) {
 					$langs->load("propal");
-					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
 					$langs->load("orders");
-					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (isModEnabled('facture') && $user->rights->facture->creer) {
 					$langs->load("bills");
-					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
 					$langs->load("supplier_proposal");
-					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->supplier_order->enabled) && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 					$langs->load("suppliers");
-					print dolGetButtonAction('', $langs->trans('AddSupplierOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddSupplierOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->supplier_invoice->enabled) && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 					$langs->load("suppliers");
-					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
 					$langs->load("interventions");
-					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
 					$langs->load("contracts");
-					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
 					$langs->load("trips");
-					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
 				if (!empty($conf->don->enabled) && $user->rights->don->creer) {
 					$langs->load("donations");
-					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
+					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
-				print "</div>";
-				print "</div>";
-				print "</div>";
 			}
+
 			// Clone
 			if ($user->rights->projet->creer) {
 				if ($userWrite > 0) {
