@@ -83,7 +83,7 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 	print "export DESTIBETARC='/tmp'; export DESTISTABLE='/tmp';\n";
 	print "On Windows:\n";
 	print "set DESTIBETARC=c:/tmp\n";
-	print "set DESTISTABLE=c:/tmp;\n";
+	print "set DESTISTABLE=c:/tmp\n";
 	print "\n";
 	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
 	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
