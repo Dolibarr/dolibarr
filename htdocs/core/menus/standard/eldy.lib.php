@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		print_start_menu_array();
 	}
 
+	global $usemenuhider;
 	$usemenuhider = 1;
 
 	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
@@ -485,8 +486,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) {
-				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
 			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
@@ -709,6 +710,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
 
+	global $usemenuhider;
 	$usemenuhider = 0;
 
 	if (is_array($moredata) && !empty($moredata['searchform'])) {	// searchform can contains select2 code or link to show old search form or link to switch on search page
@@ -842,7 +844,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 	}
 
-	//var_dump($tabMenu);    //
+	//var_dump($tabMenu);
 	//var_dump($newmenu->liste);
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
