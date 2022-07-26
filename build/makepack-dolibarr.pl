@@ -65,7 +65,7 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
-if ($SOURCE !~ /^\//)
+if ($SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i)
 {
 	print "Error: Launch the script $PROG.$Extension with its full path from /.\n";
 	print "$PROG.$Extension aborted.\n";
