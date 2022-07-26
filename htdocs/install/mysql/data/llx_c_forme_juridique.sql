@@ -109,7 +109,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '228', 'VO
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '229', 'VS0  - Vennootschap met sociaal oogmerk');
 
 
--- France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
+-- France: Extrait de https://www.insee.fr/fr/information/2028129
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant (EI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant (EI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'13','Artisan (EI)');

@@ -137,6 +137,10 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+DROP TABLE llx_payment_salary_extrafields;
+DROP TABLE llx_asset_model_extrafields;
+DROP TABLE llx_asset_type_extrafields;
+
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_line_id integer DEFAULT NULL;
 
