@@ -889,7 +889,6 @@ $i = 0;
 //$savnbfield = $totalarray['nbfield'];
 //$totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-$today_start_date_time = dol_now();
 $cache_user_list = array();
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -945,7 +944,9 @@ while ($i < $imaxinloop) {
 	$event_start_date_style = '';
 	$event_start_date_time = $actionstatic->datep;
 	if ($obj->fulldayevent) {
-		$today_start_date_time = dol_mktime(0, 0, 0, date('m', $today_start_date_time), date('d', $today_start_date_time), date('Y', $today_start_date_time));
+		$today_start_date_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
+	} else {
+		$today_start_date_time = $now;
 	}
 	if ($event_start_date_time > $today_start_date_time) {
 		// future event
