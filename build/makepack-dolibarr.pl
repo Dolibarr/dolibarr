@@ -76,15 +76,23 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
 	print "Error: Missing environment variables.\n";
 	print "You must define the environment variable DESTIBETARC and DESTISTABLE to point to the\ndirectories where you want to save the generated packages.\n";
+	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set them with\n";
+	print "On Linux:\n";
+	print "export DESTIBETARC='/tmp'; export DESTISTABLE='/tmp';\n";
+	print "On Windows:\n";
+	print "set DESTIBETARC=c:/tmp\n";
+	print "set DESTISTABLE=c:/tmp;\n";
+	print "\n";
 	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
 	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
-	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
 }
 if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 {
-	print "Error: Directory of environment variable DESTIBETARC or DESTISTABLE does not exist.\n";
+	print "Error: Directory of environment variable DESTIBETARC ($ENV{'DESTIBETARC'}) or DESTISTABLE ($ENV{'DESTISTABLE'}) does not exist.\n";
 	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
@@ -94,7 +102,7 @@ if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 # --------------
 if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='linux'; $CR=''; }
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
-elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
+elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i || "$^O" =~ /msys/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
 	print "Error: Can't detect your OS.\n";
 	print "Can't continue.\n";
@@ -390,7 +398,7 @@ if ($nboftargetok) {
 		$olddir=getcwd();
 		chdir("$SOURCE");
 		
-		print "Clean $SOURCE/htdocs\n";
+		print "Clean $SOURCE/htdocs/includes/autoload.php\n";
 		$ret=`rm -f  $SOURCE/htdocs/includes/autoload.php`;
 		
 		$ret=`git ls-files . --exclude-standard --others`;
