@@ -21,18 +21,18 @@
  */
 
 /**
- * \file       htdocs/core/modules/recruitment/mod_recruitmentjobposition_advanced.php
+ * \file       htdocs/core/modules/recruitment/mod_recruitmentcandidaturen_advanced.php
  * \ingroup    recruitment
- * \brief      File containing class for advanced numbering model of RecruitmentJobPosition
+ * \brief      File containing class for advanced numbering model of RecruitmentCandidature
  */
 
-dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobposition.php');
+dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentcandidature.php');
 
 
 /**
  *	Class to manage customer Bom numbering rules advanced
  */
-class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosition
+class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandidature
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -68,18 +68,18 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstjob" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconstcand" value="RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
-		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskjob" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcand" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -127,7 +127,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK');
+		$mask = getDolGlobalString('RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -136,7 +136,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 
 		$date = $object->date;
 
-		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentjobposition', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentcandidature', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}
