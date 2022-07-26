@@ -8675,7 +8675,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && ($info['type'] == 'int' || preg_match('/^integer/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
@@ -8934,6 +8934,8 @@ abstract class CommonObject
 			return 'NULL';
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
 			return price2num("$value");
+		} else if (preg_match('/int$/i', $fieldsentry['type'])) {
+			return (int)$value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
 				return 'true';
