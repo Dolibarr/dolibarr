@@ -137,6 +137,10 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+DROP TABLE llx_payment_salary_extrafields;
+DROP TABLE llx_asset_model_extrafields;
+DROP TABLE llx_asset_type_extrafields;
+
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_line_id integer DEFAULT NULL;
 
@@ -663,3 +667,5 @@ ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
 ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, datep);

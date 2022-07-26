@@ -12,7 +12,7 @@ OpenEtablishment=Открытое заведение
 CloseEtablishment=Закрыть заведение
 # Dictionary
 DictionaryPublicHolidays=Отпуск - праздничные дни
-DictionaryDepartment=HRM - Список отделов
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM - Вакансии
 # Module
 Employees=Сотрудники
@@ -70,9 +70,9 @@ RequiredSkills=Необходимые навыки для этой работы
 UserRank=Рейтинг пользователя
 SkillList=Список навыков
 SaveRank=Сохранить рейтинг
-knowHow=Знать как
-HowToBe=Как быть
-knowledge=Знания
+TypeKnowHow=Знать как
+TypeHowToBe=Как быть
+TypeKnowledge=Знания
 AbandonmentComment=Комментарий об отказе
 DateLastEval=Дата последней оценки
 NoEval=Оценка этого сотрудника не проводилась
@@ -88,3 +88,4 @@ DeleteSkill = Навык удален
 SkillsExtraFields=Дополнительные атрибуты (компетенции)
 JobsExtraFields=Дополнительные атрибуты (Emplois)
 EvaluationsExtraFields=Дополнительные атрибуты (оценки)
+NeedBusinessTravels=Need business travels

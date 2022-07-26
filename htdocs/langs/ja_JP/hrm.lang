@@ -12,7 +12,7 @@ OpenEtablishment=事業所を開く
 CloseEtablishment=事業所を閉じる
 # Dictionary
 DictionaryPublicHolidays=休暇-祝日
-DictionaryDepartment=HRM - 部門一覧
+DictionaryDepartment=HRM-組織単位
 DictionaryFunction=HRM - 役職
 # Module
 Employees=従業員s
@@ -70,9 +70,9 @@ RequiredSkills=この仕事に必要なスキル
 UserRank=ユーザランク
 SkillList=スキルリスト
 SaveRank=ランクを保存
-knowHow=ノーハウ
-HowToBe=なる方法
-knowledge=知識
+TypeKnowHow=ノーハウ
+TypeHowToBe=あるべき姿
+TypeKnowledge=知識
 AbandonmentComment=放棄コメント
 DateLastEval=最終評価日
 NoEval=この従業員の評価は行われていない
@@ -88,3 +88,4 @@ DeleteSkill = スキルが削除された
 SkillsExtraFields=追加属性（コンピテンシー）
 JobsExtraFields=追加属性（求人情報）
 EvaluationsExtraFields=追加属性（評価）
+NeedBusinessTravels=出張が必要

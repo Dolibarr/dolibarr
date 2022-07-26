@@ -135,7 +135,12 @@ if ($mode == 'setup' && $user->admin) {
 	$submit_enabled = 0;
 
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
@@ -253,7 +258,13 @@ if ($mode == 'config' && $user->admin) {
 
 	$object = new PrintingDriver($db);
 	$result = $object->listDrivers($db, 10);
-	$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+
+	if (!empty($conf->modules_parts['printing'])) {
+		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+	} else {
+		$dirmodels = array('/core/modules/printing/');
+	}
+
 	foreach ($result as $driver) {
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
@@ -296,7 +307,12 @@ if ($mode == 'test' && $user->admin) {
 
 	print '<table class="noborder centpercent">';
 	if (!empty($driver)) {
-		$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		if (!empty($conf->modules_parts['printing'])) {
+			$dirmodels = array_merge(array('/core/modules/printing/'), (array) $conf->modules_parts['printing']);
+		} else {
+			$dirmodels = array('/core/modules/printing/');
+		}
+
 		foreach ($dirmodels as $dir) {
 			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
 				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';

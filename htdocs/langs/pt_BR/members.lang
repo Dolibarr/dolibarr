@@ -12,7 +12,6 @@ ErrorUserPermissionAllowsToLinksToItselfOnly=Por razões de segurança, você de
 SetLinkToThirdParty=Link para um fornecedor Dolibarr
 MembersListResiliated=Lista de membros encerrados
 MenuMembersResiliated=Membros encerrados
-MemberId=Id adesão
 MemberStatusDraft=Minuta (requer confirmação)
 MemberStatusDraftShort=Minuta
 MemberStatusActiveLateShort=Vencido

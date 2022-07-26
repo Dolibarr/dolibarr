@@ -178,3 +178,4 @@ IsAnAnswer=最初のメールの回答
 RecordCreatedByEmailCollector=電子メールコレクター%sによって電子メール%sから作成されたレコード
 DefaultBlacklistMailingStatus=新しい連絡先を作成するときのフィールド「%s」のデフォルト値
 DefaultStatusEmptyMandatory=空だが必須
+WarningLimitSendByDay=警告：インスタンスのセットアップまたはコントラクトにより、1日あたりのメール数が<b>%s</b>に制限される。さらに送信しようとすると、インスタンスの速度が低下したり、停止したりする可能性があります。より高い割り当てが必要な場合は、サポートに連絡すること。
