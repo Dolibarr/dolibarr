@@ -112,32 +112,32 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'dolresource'
 			);
 			$conditions = array(
-				'users' => $user->rights->user->user->lire,
-				'members' => !empty($conf->adherent->enabled) && $user->rights->adherent->lire,
-				'customers' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-				'prospects' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-				'suppliers' => ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->lire)
-								 || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)
-								 || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)
+				'users' => !empty($user->rights->user->user->lire),
+				'members' => !empty($conf->adherent->enabled) && !empty($user->rights->adherent->lire),
+				'customers' => !empty($conf->societe->enabled) && !empty($user->rights->societe->lire) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+				'prospects' => !empty($conf->societe->enabled) && !empty($user->rights->societe->lire) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+				'suppliers' => ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->lire))
+								 || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire))
+								 || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))
 								 )
 								 && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
-				'contacts' => !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
-				'products' => !empty($conf->product->enabled) && $user->rights->produit->lire,
-				'services' => !empty($conf->service->enabled) && $user->rights->service->lire,
-				'proposals' => !empty($conf->propal->enabled) && $user->rights->propale->lire,
-				'orders' => !empty($conf->commande->enabled) && $user->rights->commande->lire,
-				'invoices' => isModEnabled('facture') && $user->rights->facture->lire,
-				'donations' => !empty($conf->don->enabled) && $user->rights->don->lire,
-				'contracts' => !empty($conf->contrat->enabled) && $user->rights->contrat->lire,
-				'interventions' => !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
-				'supplier_orders' => !empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-				'supplier_invoices' => !empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-				'supplier_proposals' => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
-				'projects' => !empty($conf->project->enabled) && $user->rights->projet->lire,
-				'expensereports' => !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
-				'holidays' => !empty($conf->holiday->enabled) && $user->rights->holiday->read,
-				'ticket' => !empty($conf->ticket->enabled) && $user->rights->ticket->read,
-				'dolresource' => !empty($conf->resource->enabled) && $user->rights->resource->read
+				'contacts' => !empty($conf->societe->enabled) && !empty($user->rights->societe->contact->lire),
+				'products' => !empty($conf->product->enabled) && !empty($user->rights->produit->lire),
+				'services' => !empty($conf->service->enabled) && !empty($user->rights->service->lire),
+				'proposals' => !empty($conf->propal->enabled) && !empty($user->rights->propale->lire),
+				'orders' => !empty($conf->commande->enabled) && !empty($user->rights->commande->lire),
+				'invoices' => isModEnabled('facture') && !empty($user->rights->facture->lire),
+				'donations' => !empty($conf->don->enabled) && !empty($user->rights->don->lire),
+				'contracts' => !empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire),
+				'interventions' => !empty($conf->ficheinter->enabled) && !empty($user->rights->ficheinter->lire),
+				'supplier_orders' => !empty($conf->supplier_order->enabled) && !empty($user->rights->fournisseur->commande->lire) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
+				'supplier_invoices' => !empty($conf->supplier_invoice->enabled) && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+				'supplier_proposals' => !empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire)&& empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
+				'projects' => !empty($conf->project->enabled) && !empty($user->rights->projet->lire),
+				'expensereports' => !empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire),
+				'holidays' => !empty($conf->holiday->enabled) && !empty($user->rights->holiday->read),
+				'ticket' => !empty($conf->ticket->enabled) && !empty($user->rights->ticket->read),
+				'dolresource' => !empty($conf->resource->enabled) && !empty($user->rights->resource->read)
 			);
 			$classes = array(
 				'users' => 'User',

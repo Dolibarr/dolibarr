@@ -60,7 +60,7 @@ class box_birthdays extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->user->user->lire && empty($user->socid));
+		$this->hidden = !((!empty($user->rights->user->user->lire)) && empty($user->socid));
 	}
 
 	/**

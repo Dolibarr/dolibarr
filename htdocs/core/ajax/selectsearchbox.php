@@ -160,7 +160,7 @@ if (!empty($conf->ticket->enabled) && empty($conf->global->MAIN_SEARCHFORM_TICKE
 }
 
 // HR
-if (!empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->rights->user->user->lire) {
+if (!empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && !empty($user->rights->user->user->lire)) {
 	$arrayresult['searchintouser'] = array('position'=>200, 'shortcut'=>'U', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('', 'object_user', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 if (!empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire) {

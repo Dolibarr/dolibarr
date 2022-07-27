@@ -293,8 +293,8 @@ if (empty($reshook)) {
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
 	$permissiontoread = $user->rights->adherent->lire;
-	$permissiontodelete = $user->rights->adherent->supprimer;
-	$permissiontoadd = $user->rights->adherent->creer;
+	$permissiontodelete = !empty($user->rights->adherent->supprimer);
+	$permissiontoadd = !empty($user->rights->adherent->creer);
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -609,16 +609,16 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->creer) {
+if (!empty($user->rights->adherent->creer)) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
-if ($user->rights->adherent->supprimer) {
+if (!empty($user->rights->adherent->supprimer)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->societe->creer) {
+if (!empty($user->rights->societe->creer)) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
+if (!empty($user->rights->adherent->creer) && !empty($user->rights->user->user->cree)) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -627,7 +627,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->adherent->creer) {
+if (!empty($user->rights->adherent->creer)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 

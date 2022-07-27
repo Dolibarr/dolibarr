@@ -2413,7 +2413,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"activation" => !empty($conf->adherent->enabled) && !empty($user->rights->adherent->creer), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2421,7 +2421,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"activation" => !empty($conf->societe->enabled) && !empty($user->rights->societe->creer), // vs hooking
 				"position" => 10,
 			),
 			array(
@@ -2429,7 +2429,7 @@ function printDropdownQuickadd()
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"activation" => !empty($conf->societe->enabled) && !empty($user->rights->societe->contact->creer), // vs hooking
 				"position" => 20,
 			),
 			array(
@@ -2437,7 +2437,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"activation" => !empty($conf->propal->enabled) && !empty($user->rights->propale->creer), // vs hooking
 				"position" => 30,
 			),
 
@@ -2446,7 +2446,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"activation" => !empty($conf->commande->enabled) && !empty($user->rights->commande->creer), // vs hooking
 				"position" => 40,
 			),
 			array(
@@ -2454,7 +2454,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && !empty($user->rights->facture->creer), // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2462,7 +2462,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"activation" => !empty($conf->contrat->enabled) && !empty($user->rights->contrat->creer), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2470,7 +2470,7 @@ function printDropdownQuickadd()
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "supplier_proposal",
-				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"activation" => !empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->creer), // vs hooking
 				"position" => 70,
 			),
 			array(
@@ -2478,7 +2478,7 @@ function printDropdownQuickadd()
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "supplier_order",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->creer)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->creer)), // vs hooking
 				"position" => 80,
 			),
 			array(
@@ -2486,7 +2486,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "supplier_invoice",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->creer)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->creer)), // vs hooking
 				"position" => 90,
 			),
 			array(
@@ -2494,7 +2494,7 @@ function printDropdownQuickadd()
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
-				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"activation" => !empty($conf->product->enabled) && !empty($user->rights->produit->creer), // vs hooking
 				"position" => 100,
 			),
 			array(
@@ -2502,7 +2502,7 @@ function printDropdownQuickadd()
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
-				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"activation" => !empty($conf->service->enabled) && !empty($user->rights->service->creer), // vs hooking
 				"position" => 110,
 			),
 			array(
@@ -2510,7 +2510,7 @@ function printDropdownQuickadd()
 				"title" => "AddUser@users",
 				"name" => "User@users",
 				"picto" => "user",
-				"activation" => $user->rights->user->user->creer, // vs hooking
+				"activation" => !empty($user->rights->user->user->creer), // vs hooking
 				"position" => 500,
 			),
 		),

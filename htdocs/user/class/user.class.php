@@ -2696,7 +2696,7 @@ class User extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!$user->rights->user->user->lire && $user->id != $this->id) {
+		if (!empty($user->rights->user->user->lire) && $user->id != $this->id) {
 			$option = 'nolink';
 		}
 
