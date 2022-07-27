@@ -1230,7 +1230,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 		exit;
 	} else {
 		$db->rollback();
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -2741,7 +2741,8 @@ if (!GETPOST('hide_websitemenu')) {
 
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
-			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
+			//print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
+			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
@@ -2964,7 +2965,12 @@ if (!GETPOST('hide_websitemenu')) {
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsite'), '', 'confirm_deletesite', $formquestion, 0, 1, 200);
+				if ($atleastonepage) {
+					$langs->load("errors");
+					$formquestion[] = array('type' => 'onecolumn', 'value' => '<div class="warning">'.$langs->trans("WarningPagesWillBeDeleted").'</div>');
+				}
+
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsite'), '', 'confirm_deletesite', $formquestion, 0, 1, 210 + ($atleastonepage ? 70 : 0), 580);
 
 				print $formconfirm;
 			}
