@@ -61,6 +61,7 @@ AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
 ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
