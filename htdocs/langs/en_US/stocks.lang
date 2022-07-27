@@ -316,6 +316,3 @@ StockTransferRightRead=Read stocks transfers
 StockTransferRightCreateUpdate=Create/Update stocks transfers
 StockTransferRightDelete=Delete stocks transfers
 BatchNotFound=Lot / serial not found for this product
-ValidateInventory=Inventory validation
-IncludeSubWarehouse=Include sub-warehouse ?
-IncludeSubWarehouseExplanation=Check this box if you want to include all sub-warehouses of the associated warehouse in the inventory
