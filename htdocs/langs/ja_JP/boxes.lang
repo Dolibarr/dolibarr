@@ -46,6 +46,7 @@ BoxMyLastBookmarks=ブックマーク：最新の%s
 BoxOldestExpiredServices=最も古いアクティブな期限切れのサービス
 BoxLastExpiredServices=アクティブな期限切れのサービスを持つ最新の%s最も古い連絡先
 BoxTitleLastActionsToDo=実行する最新の%sアクション
+BoxTitleOldestActionsToDo=完了しない最も古い%sイベント
 BoxTitleLastContracts=変更された最新の%s契約
 BoxTitleLastModifiedDonations=変更された最新の%s寄付
 BoxTitleLastModifiedExpenses=変更された最新の%s経費報告書s

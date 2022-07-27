@@ -409,8 +409,12 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 	}
 
+
+
 	if (!$error) {
 		$db->begin();
+
+
 
 		// Creation of action/event
 		$idaction = $object->create($user);
@@ -474,15 +478,15 @@ if (empty($reshook) && $action == 'add') {
 					$db->commit();
 				}
 
-				if (!empty($backtopage)) {
-					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
-					header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
-				} elseif ($idaction) {
-					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
-				} else {
-					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam ? '?'.$moreparam : ''));
-				}
-				exit;
+				// if (!empty($backtopage)) {
+				// 	dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
+				// 	header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
+				// } elseif ($idaction) {
+				// 	header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
+				// } else {
+				// 	header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam ? '?'.$moreparam : ''));
+				// }
+				// exit;
 			} else {
 				// If error
 				$db->rollback();
@@ -496,6 +500,151 @@ if (empty($reshook) && $action == 'add') {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create'; $donotclearsession = 1;
 		}
+
+		$selectedrecurrulefreq = 'no';
+		$selectedrecurrulebymonthday = '';
+		$selectedrecurrulebyday = '';
+		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
+
+		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
+			$selectedrecurrulefreq = $reg1[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
+			$selectedrecurrulebymonthday = $reg2[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
+			$selectedrecurrulebyday = $reg3[1];
+		}
+
+		// If event is recurrent
+		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
+			// We set first date of recurrence and offsets
+			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
+				$firstdatearray = dol_get_first_day_week(GETPOST("apday", 'int'), GETPOST("apmonth", 'int'), GETPOST("apyear", 'int'));
+				$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), $firstdatearray['month'], $firstdatearray['first_day'], $firstdatearray['year'], $tzforfullday ? $tzforfullday : 'tzuser');
+				$datep = dol_time_plus_duree($datep, $selectedrecurrulebyday + 6, 'd');//We begin the week after
+				$dayoffset = 7;
+				$monthoffset = 0;
+			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
+				$firstday = $selectedrecurrulebymonthday;
+				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ?  GETPOST("apmonth", 'int') + 1 : GETPOST("apmonth", 'int');//We begin the week after
+				$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), $firstmonth, $firstday, GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+				$dayoffset = 0;
+				$monthoffset = 1;
+			} else {
+				$error++;
+			}
+			// End date
+			$repeateventlimitdate = dol_mktime('23', '59', '59', GETPOSTISSET("limitmonth", 'int') ? GETPOST("limitmonth", 'int') :  01, GETPOSTISSET("limitday", 'int') ? GETPOST("limitday", 'int') : 01, GETPOSTISSET("limityear", 'int') && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuser');
+			// Set date of end of event
+			$deltatime = num_between_day($object->datep, $datep);
+			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
+
+			while ($datep <= $repeateventlimitdate && !$error) {
+				$finalobject = clone $object;
+
+
+				$finalobject->datep = $datep;
+				$finalobject->datef = $datef;
+				// Creation of action/event
+				$idaction = $finalobject->create($user);
+
+				if ($idaction > 0) {
+					if (!$finalobject->error) {
+						// Category association
+						$categories = GETPOST('categories', 'array');
+						$finalobject->setCategories($categories);
+
+						unset($_SESSION['assignedtouser']);
+
+						$moreparam = '';
+						if ($user->id != $finalobject->userownerid) {
+							$moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
+						}
+
+						// Create reminders
+						if ($addreminder == 'on') {
+							$actionCommReminder = new ActionCommReminder($db);
+
+							$dateremind = dol_time_plus_duree($datep, -$offsetvalue, $offsetunit);
+
+							$actionCommReminder->dateremind = $dateremind;
+							$actionCommReminder->typeremind = $remindertype;
+							$actionCommReminder->offsetunit = $offsetunit;
+							$actionCommReminder->offsetvalue = $offsetvalue;
+							$actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+							$actionCommReminder->fk_actioncomm = $finalobject->id;
+							if ($remindertype == 'email') {
+								$actionCommReminder->fk_email_template = $modelmail;
+							}
+
+							// the notification must be created for every user assigned to the event
+							foreach ($finalobject->userassigned as $userassigned) {
+								$actionCommReminder->fk_user = $userassigned['id'];
+								$res = $actionCommReminder->create($user);
+
+								if ($res <= 0) {
+									// If error
+									$db->rollback();
+									$langs->load("errors");
+									$error = $langs->trans('ErrorReminderActionCommCreation');
+									setEventMessages($error, null, 'errors');
+									$action = 'create'; $donotclearsession = 1;
+									break;
+								}
+							}
+						}
+
+						// Modify $moreparam so we are sure to see the event we have just created, whatever are the default value of filter on next page.
+						/*$moreparam .= ($moreparam ? '&' : '').'search_actioncode=0';
+						 $moreparam .= ($moreparam ? '&' : '').'search_status=-1';
+						 $moreparam .= ($moreparam ? '&' : '').'search_filtert='.$object->userownerid;
+						 */
+						$moreparam .= ($moreparam ? '&' : '').'disabledefaultvalues=1';
+
+						if ($error) {
+							$db->rollback();
+						} else {
+							$db->commit();
+						}
+					} else {
+						// If error
+						$db->rollback();
+						$langs->load("errors");
+						$error = $langs->trans($finalobject->error);
+						setEventMessages($error, null, 'errors');
+						$action = 'create'; $donotclearsession = 1;
+					}
+				} else {
+					$db->rollback();
+					setEventMessages($finalobject->error, $finalobject->errors, 'errors');
+					$action = 'create'; $donotclearsession = 1;
+				}
+
+				// If event is not recurrent, we stop here
+				if (!($userepeatevent && GETPOSTISSET('recurrulefreq') && GETPOST('recurrulefreq') != 'no' && GETPOSTISSET("limityear") && GETPOSTISSET("limitmonth") && GETPOSTISSET("limitday"))) {
+					break;
+				}
+
+				// increment date for recurrent events
+				$datep = dol_time_plus_duree($datep, $dayoffset, 'd');
+				$datep = dol_time_plus_duree($datep, $monthoffset, 'm');
+				$datef = dol_time_plus_duree($datef, $dayoffset, 'd');
+				$datef = dol_time_plus_duree($datef, $monthoffset, 'm');
+			}
+		}
+		if (!empty($backtopage) && !$error) {
+			dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
+			header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
+		} elseif ($idaction) {
+			header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
+		} else {
+			header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam ? '?'.$moreparam : ''));
+		}
+		exit;
 	}
 }
 
@@ -916,9 +1065,10 @@ $formproject = new FormProjets($db);
 $arrayrecurrulefreq = array(
 	'no'=>$langs->trans("OnceOnly"),
 	'MONTHLY'=>$langs->trans("EveryMonth"),
-	'WEEKLY'=>$langs->trans("EveryWeek"),
-	//'DAYLY'=>$langs->trans("EveryDay")
+	'WEEKLY'=>$langs->trans("EveryWeek")
+	// 'DAILY'=>$langs->trans("EveryDay")
 );
+
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
@@ -1037,20 +1187,31 @@ if ($action == 'create') {
 		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
 		print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
 		print '<input type="hidden" name="recurid" value="'.(empty($object->recurid) ? '' : $object->recurid).'">';
+
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
+		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
+		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
+
+
 		$reg = array();
 		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulefreq = $reg[1];
 		}
-		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) {
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulebymonthday = $reg[1];
 		}
 		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
 			$selectedrecurrulebyday = $reg[1];
 		}
+
 		print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
+		// print '<script>console.log("recurrule: " +'.$object->recurrule.')</script>';
+		// For recursive event
+
+
 		// If recurrulefreq is MONTHLY
 		print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
 		print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
@@ -1059,32 +1220,47 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
+		// limit date
+		$repeateventlimitdate = $repeateventlimitdate ? $repeateventlimitdate : '';
+		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
+		print $langs->trans("Until")." ";
+		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print '</div>';
+
 		print '<script type="text/javascript">
-				jQuery(document).ready(function() {
-					function init_repeat()
+			jQuery(document).ready(function() {
+				function init_repeat()
+				{
+					console.log("recurrule: " + "'.$object->recurrule.'");
+					console.log("reg1: " + "'.$selectedrecurrulefreq.'");
+					console.log("reg2: " + "'.$selectedrecurrulebymonthday.'");
+					console.log("reg3: " + "'.$selectedrecurrulebyday.'");
+					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
+					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
 					{
-						if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-						{
-							jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-							jQuery(".repeateventBYDAY").hide();
-						}
-						else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-						{
-							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-						}
-						else
-						{
-							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").hide();
-						}
+						jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+						jQuery(".repeateventlimitdate").css("display", "inline-block");
+						jQuery(".repeateventBYDAY").hide();
 					}
+					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
+					{
+						jQuery(".repeateventBYMONTHDAY").hide();
+						jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+						jQuery(".repeateventlimitdate").css("display", "inline-block");
+					}
+					else
+					{
+						jQuery(".repeateventBYMONTHDAY").hide();
+						jQuery(".repeateventBYDAY").hide();
+						jQuery(".repeateventlimitdate").hide();
+					}
+				}
+				init_repeat();
+				jQuery("#recurrulefreq").change(function() {
 					init_repeat();
-					jQuery("#recurrulefreq").change(function() {
-						init_repeat();
-					});
 				});
-				</script>';
+			});
+			</script>';
 		print '</div>';
 		//print '</td></tr>';
 	}
@@ -1545,64 +1721,64 @@ if ($id > 0) {
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td colspan="3" class="valignmiddle height30 small"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
 		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
-		// Recurring event
-		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
-		if ($userepeatevent) {
-			// Repeat
-			//print '<tr><td></td><td colspan="3">';
-			print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
-			print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
-			print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
-			$selectedrecurrulefreq = 'no';
-			$selectedrecurrulebymonthday = '';
-			$selectedrecurrulebyday = '';
-			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
-				$selectedrecurrulefreq = $reg[1];
-			}
-			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) {
-				$selectedrecurrulebymonthday = $reg[1];
-			}
-			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
-				$selectedrecurrulebyday = $reg[1];
-			}
-			print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
-			// If recurrulefreq is MONTHLY
-			print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
-			print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
-			print '</div>';
-			// If recurrulefreq is WEEKLY
-			print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
-			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
-			print '</div>';
-			print '<script type="text/javascript">
-				jQuery(document).ready(function() {
-					function init_repeat()
-					{
-						if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
-						{
-							jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-							jQuery(".repeateventBYDAY").hide();
-						}
-						else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
-						{
-							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
-						}
-						else
-						{
-							jQuery(".repeateventBYMONTHDAY").hide();
-							jQuery(".repeateventBYDAY").hide();
-						}
-					}
-					init_repeat();
-					jQuery("#recurrulefreq").change(function() {
-						init_repeat();
-					});
-				});
-				</script>';
-			print '</div>';
-			//print '</td></tr>';
-		}
+		// // Recurring event
+		// $userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
+		// if ($userepeatevent) {
+		// 	// Repeat
+		// 	//print '<tr><td></td><td colspan="3">';
+		// 	print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
+		// 	print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
+		// 	print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
+		// 	$selectedrecurrulefreq = 'no';
+		// 	$selectedrecurrulebymonthday = '';
+		// 	$selectedrecurrulebyday = '';
+		// 	if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg)) {
+		// 		$selectedrecurrulefreq = $reg[1];
+		// 	}
+		// 	if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i', $object->recurrule, $reg)) {
+		// 		$selectedrecurrulebymonthday = $reg[1];
+		// 	}
+		// 	if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg)) {
+		// 		$selectedrecurrulebyday = $reg[1];
+		// 	}
+		// 	print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq, 0, 0, 0, '', 0, 0, 0, '', 'marginrightonly');
+		// 	// If recurrulefreq is MONTHLY
+		// 	print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
+		// 	print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
+		// 	print '</div>';
+		// 	// If recurrulefreq is WEEKLY
+		// 	print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
+		// 	print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
+		// 	print '</div>';
+		// 	print '<script type="text/javascript">
+		// 		jQuery(document).ready(function() {
+		// 			function init_repeat()
+		// 			{
+		// 				if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
+		// 				{
+		// 					jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+		// 					jQuery(".repeateventBYDAY").hide();
+		// 				}
+		// 				else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
+		// 				{
+		// 					jQuery(".repeateventBYMONTHDAY").hide();
+		// 					jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+		// 				}
+		// 				else
+		// 				{
+		// 					jQuery(".repeateventBYMONTHDAY").hide();
+		// 					jQuery(".repeateventBYDAY").hide();
+		// 				}
+		// 			}
+		// 			init_repeat();
+		// 			jQuery("#recurrulefreq").change(function() {
+		// 				init_repeat();
+		// 			});
+		// 		});
+		// 		</script>';
+		// 	print '</div>';
+		// 	//print '</td></tr>';
+		// }
 		print '</td></tr>';
 
 		// Date start - end
@@ -1903,12 +2079,21 @@ if ($id > 0) {
 	} else {
 		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
+		$formconfirm = '';
+
 		// Clone event
 		if ($action == 'clone') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
-
-			print $formconfirm;
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', array(), 'yes', 1);
 		}
+
+		// Call Hook formConfirm
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+
+		// Print form confirm
+		print $formconfirm;
 
 		$linkback = '';
 		// Link to other agenda views

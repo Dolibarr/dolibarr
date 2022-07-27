@@ -1086,7 +1086,7 @@ class Website extends CommonObject
 
 			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
 			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
-			$line .= "'".$this->db->escape($objectpageold->allowed_in_frames)."'";
+			$line .= (int) $objectpageold->allowed_in_frames;
 			$line .= ");";
 			$line .= "\n";
 

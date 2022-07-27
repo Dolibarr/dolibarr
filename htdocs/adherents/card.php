@@ -1227,12 +1227,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : $object->pass).'"></td></tr>';
 		}
-		// Morphy
-		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		print "</td></tr>";
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -1242,6 +1236,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $adht->getNomUrl(1);
 			print '<input type="hidden" name="typeid" value="'.$object->typeid.'">';
 		}
+		print "</td></tr>";
+
+		// Morphy
+		$morphys["phy"] = $langs->trans("Physical");
+		$morphys["mor"] = $langs->trans("Moral");
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
+		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print "</td></tr>";
 
 		// Company
@@ -1511,7 +1512,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members", "companies", "install", "other"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
+			$labeltouse = getDolGlobalString("ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION");
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
