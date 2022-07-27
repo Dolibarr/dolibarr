@@ -1111,7 +1111,7 @@ if ($nboftargetok) {
  			if ($OS eq 'windows') {
 	    		$cmd= "ISCC.exe \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 	    	} else {
-	    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+	    		#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
 	    	}
 			print "$cmd\n";
 			$ret= `$cmd`;
