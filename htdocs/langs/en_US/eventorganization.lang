@@ -60,6 +60,7 @@ ConferenceOrBoothTab = Conference Or Booth
 AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
+ApplicantOrVisitor=Applicant or visitor
 
 #
 # Template Mail

@@ -24,6 +24,7 @@
  *  \brief      Description and activation file for the EventOrganization
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  *  Description and activation class for module EventOrganization
@@ -367,7 +368,21 @@ class modEventOrganization extends DolibarrModules
 			}
 		}
 
-		return $this->_init($sql, $options);
+		$langs->load("eventorganization");
+		$cat = new Categorie($this->db);
+		$sql[] = "INSERT IGNORE INTO ".MAIN_DB_PREFIX.$cat->table_element."(label, type, entity, description, visible) VALUES('".$langs->trans('ApplicantOrVisitor')."', 2, 1, '".$langs->trans('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF')."', 1)";
+
+		$init = $this->_init($sql, $options);
+
+		if(empty($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF)) {
+			$langs->load('eventorganization');
+			$res = $cat->fetch(null, $langs->trans('ApplicantOrVisitor'));
+			if($cat->id) {
+				dolibarr_set_const($this->db, 'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF', $res);
+			}
+		}
+
+		return $init;
 	}
 
 	/**
