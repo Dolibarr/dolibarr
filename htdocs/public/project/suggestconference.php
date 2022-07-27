@@ -463,8 +463,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
-
-dol_htmloutput_errors($errmsg);
+dol_htmloutput_errors($errmsg, $errors);
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
