@@ -543,6 +543,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -562,14 +563,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat width75" name="search_prod" value="'.$search_prod.'"></td>';
+			print '<td class="liste_titre" ><input type="text" class="flat width75" name="search_label" value="'.$search_label.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
@@ -633,6 +634,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		print "</table>";
+		print '</div>';
 
 		print "</form>";
 	}

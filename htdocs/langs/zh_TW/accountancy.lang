@@ -48,8 +48,9 @@ CountriesNotInEEC=非歐盟國家
 CountriesInEECExceptMe=除了%s以外的歐盟國家
 CountriesExceptMe=除了%s以外的所有國家
 AccountantFiles=匯出來源文件
-ExportAccountingSourceDocHelp=使用此工具，您可以匯出用於產生會計的來源事件（CSV 和 PDF 中的清單）。
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=要匯出您的日記帳，請使用選單條目 %s - %s。
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=依會計科目檢視
 VueBySubAccountAccounting=依會計子分類帳檢視
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
 ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢,損失搜尋部份數值的能力）
 ACCOUNTING_DATE_START_BINDING=定義開始綁定和轉移會計的日期。小於此日期，交易將不會轉入會計。
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=在會計轉帳時，預設選擇為週期顯示
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=銷售日記帳
 ACCOUNTING_PURCHASE_JOURNAL=採購日記帳
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=會計帳戶預設註冊客戶存款
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=停用費用報表中的會計綁�
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=驗證與鎖定的日期
 ConfirmExportFile=確定要產生會計匯出檔案 ?
 ExportDraftJournal=匯出日記帳草稿
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=抱�
 AccountancyErrorMismatchLetterCode=協調代碼不匹配
 AccountancyErrorMismatchBalanceAmount=餘額（%s）不等於0
 AccountancyErrorLetteringBookkeeping=交易發生錯誤：%s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=會計條目

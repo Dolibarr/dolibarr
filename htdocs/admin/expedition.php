@@ -451,7 +451,7 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.getDolGlobalString('SHIPPING_DRAFT_WATERMARK').'">';
+print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 
 print '</table>';

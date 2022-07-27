@@ -12,7 +12,7 @@ OpenEtablishment=Etablissement ouvert
 CloseEtablishment=Etablissement fermé
 # Dictionary
 DictionaryPublicHolidays=Congés - jours fériés
-DictionaryDepartment=GRH - Liste des départements organisationnels
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=GRH - Liste des fonctions
 # Module
 Employees=Salariés
@@ -88,3 +88,4 @@ DeleteSkill = Compétence supprimée
 SkillsExtraFields=Attributs supplémentaires (Compétences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
+NeedBusinessTravels=Need business travels

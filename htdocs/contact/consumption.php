@@ -167,7 +167,7 @@ if ($object->thirdparty->client) {
 	}
 }
 
-if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) {
+if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 

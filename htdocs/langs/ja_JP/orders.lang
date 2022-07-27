@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=この提案にリンクされた注文はすでに開かれているため、他の注文は自動的に作成されませんでした
 OrdersArea=お客様の注文エリア
 SuppliersOrdersArea=購買発注エリア
 OrderCard=注文カード

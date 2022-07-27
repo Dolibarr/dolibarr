@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-modul opsætning
-PaypalDesc=Dette modul tillader betaling med kunder via <a href="http://www.paypal.com" target="_blank">PayPal</a>. Dette kan bruges til en ad hoc-betaling eller en betaling relateret til en Dolibarr objekt (faktura, ordre, ...)
+PaypalDesc=Dette modul tillader betaling fra kunder via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> . Dette kan bruges til en ad-hoc betaling eller til en betaling relateret til et Dolibarr objekt (faktura, ordre, ...)
 PaypalOrCBDoPayment=Betal med PayPal (kort eller PayPal)
 PaypalDoPayment=Betal med PayPal
 PAYPAL_API_SANDBOX=Mode test / sandkasse
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=En tilbagekaldelse blev udført på alle post
 ValidationOfPaymentFailed=Bekræftelse af betaling er mislykket
 CardOwner=Kortholder
 PayPalBalance=Paypal kredit
+OnlineSubscriptionPaymentLine=Onlineabonnement opkrævet på %s<br>Betalt via %s<br>Oprindelses-IP-adresse: %s<br>Transaktions-id: %s

@@ -178,3 +178,4 @@ IsAnAnswer=É unha resposta de un coreo electrónico recibido
 RecordCreatedByEmailCollector=Rexistro creado polo receptor de correo electrónico %s a partir do correo electrónico %s
 DefaultBlacklistMailingStatus=Valor predeterminado para o campo '%s' ao crear un novo contacto 
 DefaultStatusEmptyMandatory=Baleiro pero obrigatorio
+WarningLimitSendByDay=ADVERTENCIA: a configuración ou o contrato da súa instancia limita o seu número de correos electrónicos ao día a <b> %s </b> . Se tenta enviar máis, pode que a súa instancia se ralentice ou se suspenda. Poñase en contacto co seu servizo de asistencia se precisa unha cota máis alta.

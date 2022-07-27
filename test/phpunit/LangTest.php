@@ -186,7 +186,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
 			print __METHOD__." FONTFORPDF=".$result."\n";
-			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
 
 			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";

@@ -1355,8 +1355,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ((!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 					|| (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+					$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+					$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 					print '<td id="field_mask">';
 					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '<script type="text/javascript">
@@ -1368,7 +1368,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										var valueSelected = this.value;
 										$("#field_mask, #mask_option").addClass("hideobject");
 					';
-					if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+					if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 						print '
 										if (this.value == 1) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");
