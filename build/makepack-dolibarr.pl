@@ -1276,7 +1276,7 @@ if ($nboftargetok) {
 
 print "\n----- Summary -----\n";
 foreach my $target (sort keys %CHOOSEDTARGET) {
-	if ($target eq '-CHKSUM') { print "Checksum was generated"; next; }
+	if ($target eq '-CHKSUM') { print "Checksum was generated\n"; next; }
 	if ($CHOOSEDTARGET{$target} < 0) {
 		print "Package $target not built (bad requirement).\n";
 	} else {
