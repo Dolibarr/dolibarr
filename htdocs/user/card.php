@@ -2834,20 +2834,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 }
 
-if (!empty($conf->api->enabled) && !empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_api_key").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                    action: \'getrandompassword\',
-                    generic: true
-                },
-                function(token) {
-                    $("#api_key").val(token);
-                });
-            });
-    });';
-	print '</script>';
+if (!empty($conf->api->enabled)) {
+	$constname = 'api_key';
+
+	// Add button to autosuggest a key
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	print dolJSToSetRandomPassword($constname, 'generate_api_key');
 }
 
 // End of page
