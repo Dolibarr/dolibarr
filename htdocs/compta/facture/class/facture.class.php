@@ -1275,6 +1275,13 @@ class Facture extends CommonInvoice
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
 		}
 
+		if($objFrom->socid != $object->socid){
+			global $mysoc;
+
+			foreach ($object->lines as $line) {
+				$line->tva_tx = get_default_tva($mysoc, $objsoc, $line->fk_product);
+			}
+		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
