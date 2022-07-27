@@ -313,4 +313,3 @@ StockTransferRightCreateUpdate=Créer/Mettre à jour les transferts de stocks
 StockTransferRightDelete=Supprimer les transferts de stocks
 BatchNotFound=Lot / série non trouvé(e) pour ce produit
 ClearQtys=Effacer toutes les quantités
-IncludeSubWarehouse=Inclure les sous-entrepôts ?
