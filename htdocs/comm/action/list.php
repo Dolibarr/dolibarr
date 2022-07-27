@@ -805,6 +805,7 @@ if ($resql) {
 	$contactstatic = new Contact($db);
 	$now = dol_now();
 	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+	$today_start_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
 
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 	$caction = new CActionComm($db);
@@ -859,8 +860,8 @@ if ($resql) {
 		$event_more_class = '';
 		$event_start_date_style = '';
 		$event_start_date_time = $actionstatic->datep;
-		if ($obj->fulldayevent) {
-			$today_start_date_time = dol_mktime(0, 0, 0, date('m', $now), date('d', $now), date('Y', $now));
+		if ($obj->fulldayevent == 1) {
+			$today_start_date_time = $today_start_time;
 		} else {
 			$today_start_date_time = $now;
 		}
