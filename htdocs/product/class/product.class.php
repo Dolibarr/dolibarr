@@ -4647,9 +4647,10 @@ class Product extends CommonObject
 	 * @param  int $id             		Id of product to search childs of
 	 * @param  int $firstlevelonly 		Return only direct child
 	 * @param  int $level          		Level of recursing call (start to 1)
+	 * @param  array $parents   	    Array of all parents of $id
 	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 */
-	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
+	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
 		global $alreadyfound;
 
@@ -4665,7 +4666,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_pere = ".((int) $id);
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.$parents, LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
@@ -4682,12 +4683,10 @@ class Product extends CommonObject
 				if (!empty($alreadyfound[$rec['rowid']])) {
 					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
 					$hasParentInSamePath = false;
-					while (($fathers = $rec['rowid']->getFather()) != -1) {
-						foreach ($fathers as $father) {
-							if ($father['rowid'] == $id) {
-								$hasParentInSamePath = true;
-								break;
-							}
+					for ($i = 0; $i < count($parents); $i++) {
+						if ($parents[$i] == $rec['id']) {
+							$hasParentInSamePath = true;
+							break;
 						}
 					}
 					if ($hasParentInSamePath)
@@ -4705,7 +4704,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1);
+					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, array_push($parents, $rec['rowid']));
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 					}
