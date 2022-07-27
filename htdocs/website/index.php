@@ -587,7 +587,7 @@ if ($action == 'addsite' && $usercanedit) {
 	if (!$error && !GETPOST('WEBSITE_REF', 'alpha')) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("WebsiteName")), null, 'errors');
 	}
 	if (!$error && !preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF', 'alpha'))) {
 		$error++;
