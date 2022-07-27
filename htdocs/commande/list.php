@@ -1733,7 +1733,6 @@ if ($resql) {
 
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
-		var_dump($_SERVER["PHP_SELF"]);
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['pr.desc']['checked'])) {
