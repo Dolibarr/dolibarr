@@ -1275,7 +1275,7 @@ class Facture extends CommonInvoice
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
 		}
 
-		if($objFrom->socid != $object->socid){
+		if ($objFrom->socid != $object->socid) {
 			global $mysoc;
 
 			foreach ($object->lines as $line) {
