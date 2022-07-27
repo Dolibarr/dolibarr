@@ -195,6 +195,7 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
+print '</tr>';
 print '<tr>';
 print '<td class="tdtop nopaddingrightimp">';
 print '<br>';
