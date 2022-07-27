@@ -41,7 +41,7 @@ if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin))
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (isset($val['type']) && preg_match('/category:/', $val['type'])) {
+			if (preg_match('/category:/', $val['type'])) {
 				if (GETPOST($key, 'int') == '-1') {
 					$val_const = '';
 				} else {
