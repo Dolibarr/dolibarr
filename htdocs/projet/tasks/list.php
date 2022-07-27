@@ -162,7 +162,7 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>107),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>107),
 	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -1290,9 +1290,12 @@ while ($i < $imaxinloop) {
 					$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 				}
 			}
+			// Budget for task
 			if (!empty($arrayfields['t.budget_amount']['checked'])) {
 				print '<td class="center">';
-				print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+				if ($object->budget_amount) {
+					print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

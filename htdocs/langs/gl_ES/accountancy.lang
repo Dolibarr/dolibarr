@@ -48,8 +48,9 @@ CountriesNotInEEC=Países non CEE
 CountriesInEECExceptMe=Todos os paises incluidos na CEE excepto %s
 CountriesExceptMe=Todos os países excepto %s
 AccountantFiles=Exportar documentos contables
-ExportAccountingSourceDocHelp=Con esta ferramenta, pode exportar os eventos de orixe (listaxe en CSV e PDF) que se empregan para xerar a súa contabilidade.
+ExportAccountingSourceDocHelp=Con esta ferramenta, pode buscar e exportar os eventos de orixe que se utilizan para xerar a súa contabilidade. <br> O ficheiro ZIP exportado conterá as listas de elementos solicitados en CSV, así como os seus ficheiros anexos no seu formato orixinal (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Para exportar as súas revistas, use a entrada de menú %s - %s
+ExportAccountingProjectHelp=Especifique un proxecto se precisa un informe contable só para un proxecto específico. Os informes de gastos e pagamentos de préstamos non están incluídos nos informes do proxecto.
 VueByAccountAccounting=Ver por conta contable
 VueBySubAccountAccounting=Ver pos subconta contable
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Desactivar transaccións directas en conta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Activar a listaxe combinada para a conta subsidiaria (pode ser lento se ten moitos terceiros, rompe coa capacidade de buscar unha parte do valor) 
 ACCOUNTING_DATE_START_BINDING=Define unha data para comezar a ligar e transferir na contabilidade. Por debaixo desta data, as transaccións non se transferirán á contabilidade.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, selecciona amosar o período por defecto
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, cal é o período seleccionado por defecto
 
 ACCOUNTING_SELL_JOURNAL=Diario de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Conta contable de rexistro de doacións/subvencións
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta contable de rexistro subscricións
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta contable por defecto para rexistrar os ingresos realizados polo cliente
-UseAuxiliaryAccountOnCustomerDeposit=Use subcontas nas liñas de depósito de clientes
+UseAuxiliaryAccountOnCustomerDeposit=Almacenar a conta do cliente como unha conta individual para as liñas de anicipo no Libro Maior subsidiario (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contable predeterminada para os produtos comprados (usada se non está definida na folla de produtos)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Conta contable predeterminada para os produtos comprados na CEE (usada se non está definida na folla de produto)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactivar a ligazón e transferenc
 
 ## Export
 NotifiedExportDate=Marcar as liñas exportadas como Exportadas <span class="warning"> (para modificar unha liña, terá que eliminar toda a transacción e transferila de novo á contabilidade) </span>
-NotifiedValidationDate=Validar e bloquear as entradas exportadas <span class="warning"> (o mesmo efecto que a función "Peche", a modificación e eliminación das liñas DEFINITIVAMENTE non será posible) </span>
+NotifiedValidationDate=Validar e bloquear as entradas exportadas <span class="warning"> (o mesmo efecto que a función "%s", a modificación e eliminación das liñas DEFINITIVAMENTE non será posible) </span>
 DateValidationAndLock=Data validación e bloqueo
 ConfirmExportFile=Confirmación da xeración do ficheiro de exportación contable? 
 ExportDraftJournal=Exportar libro borrador
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sent
 AccountancyErrorMismatchLetterCode=Erro no código de conciliación
 AccountancyErrorMismatchBalanceAmount=O saldo (%s) non é igual a 0
 AccountancyErrorLetteringBookkeeping=Producíronse erros nas transaccións: %s
+ErrorAccountNumberAlreadyExists=O número contable %s xa existe
 
 ## Import
 ImportAccountingEntries=Entradas contables

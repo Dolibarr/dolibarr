@@ -111,7 +111,7 @@ if ($action == 'delete') {
 /*
 if ($action == 'valide')
 {
-	$facid = $_GET['facid'];
+	$facid = GETPOST('facid', 'int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }

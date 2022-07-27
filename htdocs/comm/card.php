@@ -1035,7 +1035,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND e.entity IN (".getEntity('expedition').")";
 		$sql .= ' GROUP BY e.rowid';
-		$sql .= ', e.ref';
+		$sql .= ', e.ref, e.entity';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut';
 		$sql .= ', s.nom';

@@ -2396,6 +2396,10 @@ div.photoref {
 	vertical-align:middle;
 	text-align:center;
 }
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
+}
 img.photorefnoborder {
 	padding: 2px;
 	height: 48px;
@@ -4713,9 +4717,10 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
+
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }

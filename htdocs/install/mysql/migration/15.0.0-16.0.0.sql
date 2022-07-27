@@ -667,3 +667,5 @@ ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
 ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, datep);
