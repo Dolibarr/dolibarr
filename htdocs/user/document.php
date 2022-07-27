@@ -129,7 +129,11 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("UserCard").' - '.$langs->trans("Files"));
+
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Documents');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($object->id) {
 	/*

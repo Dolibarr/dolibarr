@@ -1122,7 +1122,10 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("SupplierProposalNew");
+}
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 
@@ -1141,7 +1144,7 @@ $now = dol_now();
 if ($action == 'create') {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewAskPrice"), '', 'supplier_proposal');
+	print load_fiche_titre($langs->trans("SupplierProposalNew"), '', 'supplier_proposal');
 
 	$soc = new Societe($db);
 	if ($socid > 0) {

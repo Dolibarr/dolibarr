@@ -84,10 +84,12 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
-
 $form = new Form($db);
+
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Notes');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($id) {
 	$head = user_prepare_head($object);

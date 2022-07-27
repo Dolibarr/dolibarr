@@ -17,6 +17,7 @@
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3790,6 +3791,20 @@ class Societe extends CommonObject
 			}
 		}
 
+		//Verify NIF if country is DZ
+		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'DZ') {
+			$string = trim($this->idprof1);
+			$string = preg_replace('/(\s)/', '', $string);
+
+			//Check NIF
+			if (preg_match('/(^[0-9]{15}$)/', $string)) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+
 		return $ok;
 	}
 
@@ -3831,6 +3846,9 @@ class Societe extends CommonObject
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
 				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'DZ') {
+				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif='.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
 				$url = 'http://www.nif.pt/'.$strippedIdProf1;

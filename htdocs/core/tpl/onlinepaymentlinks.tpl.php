@@ -43,10 +43,10 @@ if (!empty($conf->commande->enabled)) {
 		print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref', 'alpha').'" size="10">';
 		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_order_ref', 'alpha')) {
-			print '<br> -> <strong class="wordbreak">';
 			$url = getOnlinePaymentUrl(0, 'order', GETPOST('generate_order_ref', 'alpha'));
+			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print "</strong><br>\n";
+			print '"></div>'."\n";
 		}
 		print '</form>';
 	}
@@ -65,10 +65,10 @@ if (isModEnabled('facture')) {
 		print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref', 'alpha').'" size="10">';
 		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_invoice_ref', 'alpha')) {
-			print '<br> -> <strong class="wordbreak">';
 			$url = getOnlinePaymentUrl(0, 'invoice', GETPOST('generate_invoice_ref', 'alpha'));
+			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print "</strong><br>\n";
+			print '"></div>'."\n";
 		}
 		print '</form>';
 	}
@@ -87,10 +87,10 @@ if (!empty($conf->contrat->enabled)) {
 		print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref', 'alpha').'" size="10">';
 		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_contract_ref')) {
-			print '<br> -> <strong class="wordbreak">';
 			$url = getOnlinePaymentUrl(0, 'contractline', GETPOST('generate_contract_ref', 'alpha'));
+			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print "</strong><br>\n";
+			print '"></div>'."\n";
 		}
 		print '</form>';
 	}
@@ -109,10 +109,10 @@ if (!empty($conf->adherent->enabled)) {
 		print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref', 'alpha').'" size="10">';
 		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_member_ref')) {
-			print '<br> -> <strong class="wordbreak">';
 			$url = getOnlinePaymentUrl(0, 'membersubscription', GETPOST('generate_member_ref', 'alpha'));
+			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			print $url;
-			print "</strong><br>\n";
+			print '"></div>'."\n";
 		}
 		print '</form>';
 	}
@@ -131,10 +131,10 @@ if (!empty($conf->don->enabled)) {
 		print '<input type="text class="flat" id="generate_donation_ref" name="generate_donation_ref" value="'.GETPOST('generate_donation_ref', 'alpha').'" size="10">';
 		print '<input type="submit" class="none reposition button smallpaddingimp" value="'.$langs->trans("GetSecuredUrl").'">';
 		if (GETPOST('generate_donation_ref')) {
-			print '<br> -> <strong class="wordbreak">';
+			print '<div class="urllink"><input type="text" class="wordbreak quatrevingtpercent" value="';
 			$url = getOnlinePaymentUrl(0, 'donation', GETPOST('generate_donation_ref', 'alpha'));
 			print $url;
-			print "</strong><br>\n";
+			print '"></div>'."\n";
 		}
 		print '</form>';
 	}

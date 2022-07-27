@@ -210,7 +210,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			} else {
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type).' paramkey='.htmlentities($key).' paramvalue='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]);
+				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type, ENT_COMPAT, 'UTF-8').' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8').' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8').' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
 				print $errormessage;
 				// Add entry into error log
 				if (function_exists('error_log')) {
@@ -573,7 +573,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -1349,7 +1349,7 @@ if (!function_exists("llxHeader")) {
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
@@ -1368,6 +1368,12 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+
+		$parameters = array('help_url' => $help_url);
+		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
+		if ($reshook > 0) {
+			$help_url = $hookmanager->resPrint;
+		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -3176,7 +3182,7 @@ if (!function_exists("llxFooter")) {
 			// Clean and save data
 			foreach ($user->lastsearch_values_tmp as $key => $val) {
 				unset($_SESSION['lastsearch_values_tmp_'.$key]); // Clean array to rebuild it just after
-				if (count($val) && empty($_POST['button_removefilter'])) {	// If there is search criteria to save and we did not click on 'Clear filter' button
+				if (count($val) && empty($_POST['button_removefilter']) && empty($_POST['button_removefilter_x'])) {
 					if (empty($val['sortfield'])) {
 						unset($val['sortfield']);
 					}
@@ -3364,7 +3370,7 @@ if (!function_exists("llxFooter")) {
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: 'notrequired' },	// for update
+												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3374,7 +3380,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: 'notrequired' },
+												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
 												});
 									  }
 								});

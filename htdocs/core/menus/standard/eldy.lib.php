@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		print_start_menu_array();
 	}
 
+	global $usemenuhider;
 	$usemenuhider = 1;
 
 	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
@@ -485,8 +486,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$url = $shorturl = $tmp[0];
 			$param = (isset($tmp[1]) ? $tmp[1] : '');
 
-			if (!preg_match('/mainmenu/i', $param) || !preg_match('/leftmenu/i', $param)) {
-				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+			if ((!preg_match('/mainmenu/i', $param)) || !preg_match('/leftmenu/i', $param)) {
+				$param .= ($param ? '&' : '').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
 			}
 			//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 			$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
@@ -709,6 +710,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"]);
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"]));
 
+	global $usemenuhider;
 	$usemenuhider = 0;
 
 	if (is_array($moredata) && !empty($moredata['searchform'])) {	// searchform can contains select2 code or link to show old search form or link to switch on search page
@@ -842,7 +844,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		}
 	}
 
-	//var_dump($tabMenu);    //
+	//var_dump($tabMenu);
 	//var_dump($newmenu->liste);
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
@@ -2240,7 +2242,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->user->user->creer);
 			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->user->user->lire);
 
-			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
 
 			// Skills
 			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
@@ -2271,6 +2273,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 
 			$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->read, '', $mainmenu, 'holiday', 0, '', '', '', img_picto('', 'holiday', 'class="pictofixedwidth"'));
 			$newmenu->add("/holiday/card.php?mainmenu=hrm&leftmenu=holiday&action=create", $langs->trans("New"), 1, $user->rights->holiday->write, '', $mainmenu);
+			$newmenu->add("/holiday/card_group.php?mainmenu=hrm&leftmenu=holiday&action=request", $langs->trans("NewHolidayForGroup"), 1, ($user->rights->holiday->writeall && $user->rights->holiday->readall), '', $mainmenu, 'holiday_sm');
 			$newmenu->add("/holiday/list.php?mainmenu=hrm&leftmenu=holiday", $langs->trans("List"), 1, $user->rights->holiday->read, '', $mainmenu);
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "holiday") {
 				$newmenu->add("/holiday/list.php?search_status=1&mainmenu=hrm&leftmenu=holiday", $langs->trans("DraftCP"), 2, $user->rights->holiday->read, '', $mainmenu, 'holiday_sm');

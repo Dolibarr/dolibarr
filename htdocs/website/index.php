@@ -2307,6 +2307,7 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 
 			if (!$error) {
 				$result = $object->importWebSite($fileofzip);
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'importsite';
@@ -3797,7 +3798,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1);
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1, 'minwidth300');
 		print '</td></tr>';
 	}
 
@@ -3988,7 +3989,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<tr><td>';
 	print $langs->trans('PublicAuthorAlias');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_AUTHORALIAS" value="'.dol_escape_htmltag($pageauthoralias).'" placeholder="Anonymous">';
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -4318,8 +4319,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+
+			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+			$selectedfields = '';
+			$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 			print_barre_liste($langs->trans("Results"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1, 1, 1);
 
@@ -4369,7 +4372,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$totalnbwords = 0;
 
 			foreach ($listofpages['list'] as $answerrecord) {
-				if (get_class($answerrecord) == 'WebsitePage') {
+				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
 					print '<tr>';
 
 					// Type of container
@@ -4686,7 +4689,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			try {
 				$res = include $filephp;
 				if (empty($res)) {
-					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
+					print "ERROR: Failed to include file '".$filephp."'. Try to edit and re-save page ith this ID.";
 				}
 			} catch (Exception $e) {
 				print $e->getMessage();

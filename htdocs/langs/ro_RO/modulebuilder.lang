@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Id modul
 ModuleBuilderDesc=Acest instrument trebuie folosit numai de utilizatori sau dezvoltatori experimentați. Oferă utilități pentru a construi sau edita propriul modul. Documentația pentru <a href="%s" target="_blank" rel="noopener noreferrer">dezvoltarea manuală alternativă se găseşte aici</a>.
 EnterNameOfModuleDesc=Introdu numele modulului/aplicației de creat fără spații. Foloseşte majuscule pentru a separa cuvintele (De exemplu: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Introdu numele obiectului de creat fără spații. Foloseşte majuscule pentru a separa cuvinte (De exemplu: MyObject, Student, Teacher...). Se vor genera fișierul clasă CRUD, dar și fișierul API, paginile de listă/adăugare/editare/ștergere obiect și fișierele SQL.
@@ -9,6 +10,7 @@ ModuleBuilderDesc4=Un modul este detectat ca "editabil" atunci când fișierul <
 NewModule=Modul nou
 NewObjectInModulebuilder=Obiect nou
 NewDictionary=Dicţionar nou
+ModuleName=Nume modul
 ModuleKey=Cheie modul
 ObjectKey=Cheie obiect
 DicKey=Cheie dicţionar
@@ -153,3 +155,4 @@ LinkToParentMenu=Meniu părinte (fk_xxxxmenu)
 ListOfTabsEntries=Listă tab-uri
 TabsDefDesc=Defineşte aici tab-urile furnizate de modulul tău
 TabsDefDescTooltip=Tab-urile furnizate de modulul/aplicația ta sunt definite în matricea <strong>$this->tabs</strong> în fișierul descriptor al modulului. Poți edita manual acest fișier sau poți utiliza editorul încorporat. 
+BadValueForType=Valoare incorectă pentru tipul %s

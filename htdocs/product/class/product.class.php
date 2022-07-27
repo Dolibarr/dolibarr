@@ -1933,10 +1933,8 @@ class Product extends CommonObject
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.default_vat_code,";
-		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.packaging";
-		}
+		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
+		$sql .= " pfp.packaging";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
 		$sql .= " WHERE pfp.rowid = ".((int) $prodfournprice);
 		if ($qty > 0) {
@@ -4882,14 +4880,17 @@ class Product extends CommonObject
 	/**
 	 *    Return clicable link of object (with eventually picto)
 	 *
-	 * @param  int    $withpicto             Add picto into link
-	 * @param  string $option                Where point the link ('stock', 'composition', 'category', 'supplier', '')
-	 * @param  int    $maxlength             Maxlength of ref
-	 * @param  int    $save_lastsearch_value -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 * @param  int    $notooltip			 No tooltip
-	 * @return string                                String with URL
+	 * @param	int		$withpicto				Add picto into link
+	 * @param	string	$option					Where point the link ('stock', 'composition', 'category', 'supplier', '')
+	 * @param	int		$maxlength				Maxlength of ref
+	 * @param 	int		$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int		$notooltip				No tooltip
+	 * @param  	string  $morecss            	''=Add more css on link
+	 * @param	int		$add_label				0=Default, 1=Add label into string, >1=Add first chars into string
+	 * @param	string	$sep					' - '=Separator between ref and label if option 'add_label' is set
+	 * @return	string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -4997,9 +4998,9 @@ class Product extends CommonObject
 			}
 
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="nowraponall classfortooltip"';
+			$linkclose .= ' class="nowraponall classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
-			$linkclose = ' class="nowraponall"';
+			$linkclose = ' class="nowraponall'.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		if ($option == 'supplier' || $option == 'category') {
@@ -5038,6 +5039,9 @@ class Product extends CommonObject
 		}
 		$result .= $newref;
 		$result .= $linkend;
+		if ($withpicto != 2) {
+			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
+		}
 
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
@@ -6152,6 +6156,43 @@ class Product extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+	}
+
+
+	/**
+	 * Return the duration in Hours of a service base on duration fields
+	 * @return int -1 KO, >= 0 is the duration in hours
+	 */
+	public function getProductDurationHours()
+	{
+		global $langs;
+
+		if (empty($this->duration_value)) {
+			$this->errors[]='ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
+			return -1;
+		}
+
+		if ($this->duration_unit == 'i') {
+			$prodDurationHours = 1. / 60;
+		}
+		if ($this->duration_unit == 'h') {
+			$prodDurationHours = 1.;
+		}
+		if ($this->duration_unit == 'd') {
+			$prodDurationHours = 24.;
+		}
+		if ($this->duration_unit == 'w') {
+			$prodDurationHours = 24. * 7;
+		}
+		if ($this->duration_unit == 'm') {
+			$prodDurationHours = 24. * 30;
+		}
+		if ($this->duration_unit == 'y') {
+			$prodDurationHours = 24. * 365;
+		}
+		$prodDurationHours *= $this->duration_value;
+
+		return $prodDurationHours;
 	}
 }
 

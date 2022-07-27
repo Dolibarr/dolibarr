@@ -1115,11 +1115,11 @@ class Holiday extends CommonObject
 		$this->fetchByUser($fk_user, '', '');
 
 		foreach ($this->holiday as $infos_CP) {
-			if ($infos_CP['statut'] == 4) {
+			if ($infos_CP['statut'] == Holiday::STATUS_CANCELED) {
 				continue; // ignore not validated holidays
 			}
-			if ($infos_CP['statut'] == 5) {
-				continue; // ignore not validated holidays
+			if ($infos_CP['statut'] == Holiday::STATUS_REFUSED) {
+				continue; // ignore refused holidays
 			}
 			//var_dump("--");
 			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
@@ -1442,7 +1442,7 @@ class Holiday extends CommonObject
 	}
 
 	/**
-	 *  Return value of a conf parameterfor leave module
+	 *  Return value of a conf parameter for leave module
 	 *  TODO Move this into llx_const table
 	 *
 	 *  @param	string	$name                 Name of parameter

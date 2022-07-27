@@ -1190,15 +1190,24 @@ if (!empty($conf->accounting->enabled)) {
 
 
 $title = $langs->trans('ProductServiceCard');
+
 $help_url = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+	if ($action == 'create') {
+		$title = $langs->trans("NewProduct");
+	} else {
+		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+	}
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+	if ($action == 'create') {
+		$title = $langs->trans("NewService");
+	} else {
+		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+	}
 }
 
 llxHeader('', $title, $help_url);
@@ -1343,8 +1352,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ((!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 					|| (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
 					print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
-					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+					$inherited_mask_lot = getDolGlobalString('LOT_ADVANCED_MASK');
+					$inherited_mask_sn = getDolGlobalString('SN_ADVANCED_MASK');
 					print '<td id="field_mask">';
 					print $form->textwithpicto('<input type="text" class="flat minwidth175" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '<script type="text/javascript">
@@ -1356,7 +1365,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 										var valueSelected = this.value;
 										$("#field_mask, #mask_option").addClass("hideobject");
 					';
-					if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+					if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
 						print '
 										if (this.value == 1) {
 											$("#field_mask, #mask_option").toggleClass("hideobject");

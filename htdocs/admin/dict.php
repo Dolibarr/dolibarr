@@ -2090,6 +2090,8 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($obj->{$value});
 							} elseif ($value == 'block_if_negative') {
 								$valuetoshow = yn($obj->{$value});
+							} elseif ($value == 'icon') {
+								$valuetoshow = $obj->{$value}." ".img_picto("",  $obj->{$value});
 							} elseif ($value == 'type_duration') {
 								$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 								$valuetoshow =$TDurationTypes[$obj->{$value}];

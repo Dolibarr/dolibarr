@@ -57,7 +57,7 @@ $type = 'myobject';
 
 $arrayofparameters = array(
 	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'textarea','enabled'=>1),
+	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'varchar','enabled'=>1),
 );
 
 $error = 0;

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=An order was already open linked to this proposal, so no other order was created automatically
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Purchase orders area
 OrderCard=Order card

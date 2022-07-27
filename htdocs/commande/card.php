@@ -1484,8 +1484,12 @@ if (empty($reshook)) {
  *	View
  */
 
-$title = $langs->trans('Order')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewOrder");
+}
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
@@ -1609,7 +1613,7 @@ if ($action == 'create' && $usercancreate) {
 		$fk_account         = $soc->fk_account;
 		$availability_id    = 0;
 		$shipping_method_id = $soc->shipping_method_id;
-		$warehouse_id       = $soc->warehouse_id;
+		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
@@ -1698,7 +1702,7 @@ if ($action == 'create' && $usercancreate) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1, 'maxwidth200 widthcentpercentminusx');
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, !empty($srccontactslist)?$srccontactslist:"", '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1722,7 +1726,7 @@ if ($action == 'create' && $usercancreate) {
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
-	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
+	$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date);
 	print $form->selectDate($date_delivery ? $date_delivery : -1, 'liv_', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
@@ -1803,7 +1807,12 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
+	$parameters = array();
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		$parameters['objectsrc'] =  $objectsrc;
+	}
+	$parameters['socid'] = $socid;
+
 	// Note that $action and $object may be modified by hook
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;

@@ -128,17 +128,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
 		$head = societe_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 

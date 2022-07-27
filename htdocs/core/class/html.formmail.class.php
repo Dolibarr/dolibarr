@@ -954,7 +954,7 @@ class FormMail extends Form
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
 				} else {
 					if (!isset($this->ckeditortoolbar)) {
-						$this->ckeditortoolbar = 'dolibarr_notes';
+						$this->ckeditortoolbar = 'dolibarr_mailings';
 					}
 
 					// Editor wysiwyg
@@ -1551,7 +1551,7 @@ class FormMail extends Form
 
 					if (!empty($extrafields->attributes[$product->table_element]['label']) && is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
-							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
+							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = isset($product->array_options['options_'.$key]) ? $product->array_options['options_'.$key] : '';
 						}
 					}
 				}
