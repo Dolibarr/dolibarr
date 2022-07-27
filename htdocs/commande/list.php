@@ -1439,6 +1439,14 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre" align="middle">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1454,14 +1462,6 @@ if ($resql) {
 	// Product QtyOrdered
 	if (!empty($arrayfields['cdet.qty']['checked'])) {
 		print '<td class="liste_titre"></td>';
-	}
-
-	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="liste_titre" align="middle">';
-		$searchpicto = $form->showFilterButtons('left');
-		print $searchpicto;
-		print '</td>';
 	}
 
 	// Ref
@@ -1727,8 +1727,13 @@ if ($resql) {
 	// Fields title
 	print '<tr class="liste_titre">';
 
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
+
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
+		var_dump($_SERVER["PHP_SELF"]);
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['pr.desc']['checked'])) {
@@ -1736,10 +1741,6 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cdet.qty']['checked'])) {
 		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
-	}
-
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
 	if (!empty($arrayfields['c.ref']['checked'])) {
@@ -1970,6 +1971,18 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 
+		// Action column
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+		}
+
 		// Détail commande
 		// Product Ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
@@ -2012,18 +2025,6 @@ if ($resql) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
 				$totalarray['val']['cdet.qty'] = $obj->qty;
-			}
-		}
-
-		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-			print '<td class="nowrap center">';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 		}
 
