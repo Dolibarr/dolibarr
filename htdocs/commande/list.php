@@ -71,6 +71,15 @@ $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_end_mon
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_start_month', 'int'), GETPOST('search_datedelivery_start_day', 'int'), GETPOST('search_datedelivery_start_year', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
 $search_product_category = GETPOST('search_product_category', 'int');
+/*
+// Détail commande
+*/
+$search_refProduct = GETPOST('search_refProduct', 'alpha');
+$search_descProduct = GETPOST('search_descProduct', 'alpha');
+$check_orderdetail = GETPOST('check_orderdetail', 'alpha');
+/*
+// Détail commande fin
+*/
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -204,6 +213,17 @@ $arrayfields = array(
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
+/*
+	// Détail commande fin
+	*/
+if (!empty($check_orderdetail)) {
+	$arrayfields['cdet.qty'] = array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1);
+	$arrayfields['pr.desc'] = array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1);
+	$arrayfields['pr.ref'] = array('label'=>'ProductRef', 'checked'=>1, 'position'=>1);
+}
+	/*
+	// Détail commande fin
+	*/
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -789,6 +809,16 @@ $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason, c.import_key';
+/*
+// Détail commande
+*/
+if (!empty($check_orderdetail)) {
+	$sql .= ', cdet.description, cdet.qty, ';
+	$sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
+}
+/*
+// Détail commande fin
+*/
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -809,7 +839,19 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
-$sql .= ', '.MAIN_DB_PREFIX.'commande as c';
+/*
+// Détail commande
+*/
+if (!empty($check_orderdetail)) {
+	$sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande=c.rowid';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product';
+} else {
+	$sql .= ', '.MAIN_DB_PREFIX.'commande as c';
+}
+/*
+// Détail commande fin
+*/
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
@@ -1310,6 +1352,13 @@ if ($resql) {
 		print '</div>';
 		print '<br>';
 	}
+	/*
+	// Détail commande
+	*/
+	print '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_orderdetail" name="check_orderdetail" class="check_orderdetail"'.($check_orderdetail ? ' checked' : '').'><label for="check_orderdetail"> <span class="check_orderdetail_text">'.$langs->trans("OrderShowDetail").'</span></label> &nbsp; </div>';
+	/*
+	// Détail commande fin
+	*/
 
 	if ($sall) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -1391,6 +1440,27 @@ if ($resql) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	/*
+	// Détail commande
+	*/
+	if (!empty($arrayfields['pr.ref']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="6" type="text" name="search_refProduct" value="'.dol_escape_htmltag($search_refProduct).'">';
+		print '</td>';
+	}
+	// Product Description
+	if (!empty($arrayfields['pr.desc']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="6" type="text" name="search_descProduct" value="'.dol_escape_htmltag($search_descProduct).'">';
+		print '</td>';
+	}
+	// Product QtyOrdered
+	if (!empty($arrayfields['cdet.qty']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
+	/*
+	// Détail commande fin
+	*/
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1652,6 +1722,22 @@ if ($resql) {
 
 	// Fields title
 	print '<tr class="liste_titre">';
+
+	/*
+	// Détail commande
+	*/
+	if (!empty($arrayfields['pr.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['pr.desc']['checked'])) {
+		print_liste_field_titre($arrayfields['pr.desc']['label'], $_SERVER["PHP_SELF"], 'pr.desc', '', $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['cdet.qty']['checked'])) {
+		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
+	}
+	/*
+	// Détail commande fin
+	*/
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1820,6 +1906,14 @@ if ($resql) {
 	}
 	$total_ht = 0;
 	$total_margin = 0;
+	/*
+	// Détail commande
+	*/
+	$totalqty = 0;
+	/*
+	// Détail commande fin
+	*/
+
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	$last_num = min($num, $limit);
@@ -1872,9 +1966,92 @@ if ($resql) {
 			$total_ht += $obj->total_ht;
 			$total_margin += $marginInfo['total_margin'];
 		}
+		/*
+		// Détail commande
+		*//*
+		if (isset($refpre) && $obj->product_ref != $refpre) {
+			print '<tr class="liste_total">';
+			$i = 0;
+			// var_dump($totalarray);
+			while ($i < $totalarray['nbfield']) {
+				$i++;
+				if (!empty($totalarray['pos'][$i]) && $totalarray['pos'][$i] == 'cdet.qty') {
+					print '<td class="nowrap tdoverflowmax200">'.$totalqty.'</td>';
+				} elseif ($i == 1) {
+					print '<td>';
+					if (is_object($form)) {
+						print $form->textwithpicto($langs->trans("Total"), $langs->transnoentitiesnoconv("Totalforthispage"));
+					} else {
+						print $langs->trans("Totalforthispage");
+					}
+					print '</td>';
+				} else {
+					print '<td></td>';
+				}
+			}
+			print '</tr>';
+			$totalqty = $obj->qty;
+			//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+		} else {
+			$totalqty = $totalqty + $obj->qty;
+		}
+		$refpre = isset($obj->product_ref) ? $obj->product_ref : '';
+		/*
+		// Détail commande fin
+		*/
 
 		print '<tr class="oddeven">';
 
+		/*
+		// Détail commande
+		*/
+		// Product Ref
+		if (!empty($arrayfields['pr.ref']['checked'])) {
+			if (!empty($obj->product_rowid)) {
+				$generic_product->id = $obj->product_rowid;
+				$generic_product->ref = $obj->product_ref;
+				$generic_product->label = $obj->product_label;
+				$generic_product->status = $obj->product_status;
+				$generic_product->status_buy = $obj->product_status_buy;
+				$generic_product->status_batch = $obj->product_batch;
+				$generic_product->barcode = $obj->product_barcode;
+				print '<td class="nowrap tdoverflowmax200">'.$generic_product->getNomUrl(1).'</td>';
+			} else {
+				print '<td class="nowrap tdoverflowmax200">Ligne libre</td>';
+			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Product Description
+		if (!empty($arrayfields['pr.desc']['checked'])) {
+			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
+			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
+			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Product QtyOrdered
+		if (!empty($arrayfields['cdet.qty']['checked'])) {
+			print '<td class="nowrap tdoverflowmax200">'.$obj->qty.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
+			}
+			if (isset($totalarray['val']['cdet.qty'])) {
+				$totalarray['val']['cdet.qty'] += $obj->qty;
+			} else {
+				$totalarray['val']['cdet.qty'] = $obj->qty;
+			}
+		}
+		/*
+		// Détail commande fin
+		*/
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
