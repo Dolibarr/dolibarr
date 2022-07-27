@@ -1352,9 +1352,9 @@ if ($resql) {
 		print '</div>';
 		print '<br>';
 	}
-	
+
 	// Détail commande
-	if (!empty($conf->global->ORDER_ADD_OPTION_SHOW_DETAIL_LIST)){
+	if (!empty($conf->global->ORDER_ADD_OPTION_SHOW_DETAIL_LIST)) {
 		print '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_orderdetail" name="check_orderdetail" class="check_orderdetail"'.($check_orderdetail ? ' checked' : '').'><label for="check_orderdetail"> <span class="check_orderdetail_text">'.$langs->trans("OrderShowDetail").'</span></label> &nbsp; </div>';
 	}
 
@@ -1912,7 +1912,7 @@ if ($resql) {
 	}
 	$total_ht = 0;
 	$total_margin = 0;
-	
+
 	// Détail commande
 	$totalqty = 0;
 
