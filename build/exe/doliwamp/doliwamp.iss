@@ -80,7 +80,7 @@ Name: "desktopicon"; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
-Name: "{app}\bin\apache\apache2.4.41\logs"
+Name: "{app}\bin\apache\apache2.4.51\logs"
 
 [Files]
 ; Stop/start
@@ -102,10 +102,10 @@ Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversi
 ; Put here path of Wampserver applications
 ; Value OK: apache 2.4.41, php 7.3.12, mariadb10.4.10 (wampserver3.2.0_x64.exe)
 ; Value OK: apache 2.4.51, php 7.3.33, mariadb10.6.5 (wampserver3.2.6_x64.exe)
-Source: "C:\wamp64\apps\phpmyadmin4.9.2\*.*"; DestDir: "{app}\apps\phpmyadmin4.9.2"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
-Source: "C:\wamp64\bin\apache\apache2.4.41\*.*"; DestDir: "{app}\bin\apache\apache2.4.41"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\php\php7.3.12\*.*"; DestDir: "{app}\bin\php\php7.3.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\mariadb\mariadb10.4.10\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.4.10"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+Source: "C:\wamp64\apps\phpmyadmin4.9.7\*.*"; DestDir: "{app}\apps\phpmyadmin4.9.7"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
+Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\php\php7.3.33\*.*"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 
 ; Mysql data files (does not overwrite if exists)
 ; We must copy them because the tool mysql_install_db.exe to generate them at first install does not return to prompt so make install hang
@@ -122,10 +122,10 @@ Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".
 Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.41\conf"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.4.10"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.3.12"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -232,10 +232,10 @@ procedure InitializeWizard();
 begin
 
   //version des applis, a modifier pour chaque version de WampServer 2
-  apacheVersion := '2.4.41';
-  phpVersion := '7.3.12' ;
-  mysqlVersion := '10.4.10';
-  phpmyadminVersion := '4.9.2';
+  apacheVersion := '2.4.51';
+  phpVersion := '7.3.33' ;
+  mysqlVersion := '10.6.5';
+  phpmyadminVersion := '4.9.7';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -369,9 +369,9 @@ begin
 
 	
 	// Migration of database
-//	datadir := pathWithSlashes+'/bin/mariadb/marradb10.4.10/data';
-//    exedirold := pathWithSlashes+'/bin/mariadb/marradb10.4.10/';
-//    exedirnew := pathWithSlashes+'/bin/mariadb/marradb10.4.10/';
+//	datadir := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/data';
+//    exedirold := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/';
+//    exedirnew := pathWithSlashes+'/bin/mariadb/mariadb10.6.5/';
 		
     // If we have a new database version, we should only copy old my.ini file into new directory
     // and change only all basedir= strings to use new version. Like this, data dir is still correct.
@@ -1071,7 +1071,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mariadb\mariadb10.4.10\*.*"
+Type: files; Name: "{app}\bin\mariadb\mariadb10.6.5\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
