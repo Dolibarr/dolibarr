@@ -88,6 +88,11 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL
 -- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
 
+ALTER TABLE llx_user ADD COLUMN datelastpassvalidation datetime;
+ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
+ALTER TABLE llx_user ADD COLUMN idpers1 varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers2	varchar(128);
+ALTER TABLE llx_user ADD COLUMN idpers3	varchar(128);
 
 -- For v14
 
