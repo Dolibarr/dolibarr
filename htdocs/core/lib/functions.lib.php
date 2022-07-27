@@ -1718,7 +1718,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
-	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
 	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
 	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
 	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';

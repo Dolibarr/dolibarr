@@ -4992,6 +4992,7 @@ span[phptag] {
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;

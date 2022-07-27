@@ -2933,12 +2933,12 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($pagepreviousid) {
 			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'&token='.newToken().'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
 		} else {
-			print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("Previous")).'</span>';
+			print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
 		}
 		if ($pagenextid) {
 			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'&token='.newToken().'">'.img_next($langs->trans("NextContainer")).'</a>';
 		} else {
-			print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("Next")).'</span>';
+			print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
 		}
 
 		print '</span>';
@@ -3547,7 +3547,7 @@ if ($action == 'createsite') {
 	}
 
 	print '<!-- Add site -->'."\n";
-	//print '<div class="fichecenter">';
+	print '<div class="tabBar tabBarWithBottom">';
 
 	print '<table class="border centpercent">';
 
@@ -3566,7 +3566,7 @@ if ($action == 'createsite') {
 	}
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $form->textwithpicto($langs->trans('WebSite'), $langs->trans("Example").': www.mywebsite.com, myportal, ...');
+	print $form->textwithpicto($langs->trans('WebsiteName'), $langs->trans("Example").': MyPortal, www.mywebsite.com, ...');
 	print '</td><td>';
 	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'" autofocus>';
 	print '</td></tr>';
@@ -3575,7 +3575,16 @@ if ($action == 'createsite') {
 	print $langs->trans('MainLanguage');
 	print '</td><td>';
 	$shortlangcode = preg_replace('/[_-].*$/', '', trim($langs->defaultlang));
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : $shortlangcode), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
+	print '</td></tr>';
+
+	print '<tr><td>';
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
+	print '</td><td>';
+	print img_picto('', 'language', 'class="pictofixedwidth"');
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -3585,28 +3594,22 @@ if ($action == 'createsite') {
 	print '</td></tr>';
 
 	print '<tr><td>';
-	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
-	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
-	print '</td></tr>';
 
-	print '<tr><td>';
-
-	$htmltext = $langs->trans("SetHereVirtualHost", '{s1}');
-	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>', $htmltext);
+	$htmltext = $langs->trans("VirtualhostDesc");
+	/*$htmltext = str_replace('{s1}', DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>', $htmltext);
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
-	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);*/
 
-	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
+
+	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="virtualhost" value="'.dol_escape_htmltag(GETPOST('virtualhost', 'alpha')).'">';
 	print '</td></tr>';
 
-
 	print '</table>';
+	print '</div>';
 
 	if ($action == 'createsite') {
 		print '<div class="center">';
