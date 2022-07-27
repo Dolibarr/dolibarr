@@ -1177,7 +1177,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	if (empty($positiverates)) {
 		$positiverates = '0';
 	}
-	echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
+	echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr, 0, 1);
 	/*
 	if ($object->default_vat_code)
 	{

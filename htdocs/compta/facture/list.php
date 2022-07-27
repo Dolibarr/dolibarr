@@ -846,9 +846,9 @@ $sql .= ' f.rowid DESC ';
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	*/
+	 $result = $db->query($sql);
+	 $nbtotalofrecords = $db->num_rows($result);
+	 */
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	if ($sall || $search_product_category > 0 || $search_user > 0) {
 		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(DISTINCT f.rowid) as nbtotalofrecords FROM', $sql);
@@ -1078,8 +1078,8 @@ if ($resql) {
 		$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
 	}
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
-			$langs->load("withdrawals");
-			$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
+		$langs->load("withdrawals");
+		$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeWithdrawRequest");
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
@@ -1266,11 +1266,11 @@ if ($resql) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		/*
-		print $langs->trans('From').' ';
-		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
-		print '</div>';
-		print '<div class="nowrap">';
-		print $langs->trans('to').' ';*/
+		 print $langs->trans('From').' ';
+		 print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
+		 print '</div>';
+		 print '<div class="nowrap">';
+		 print $langs->trans('to').' ';*/
 		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("Before"));
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 		print '</div>';
@@ -1686,12 +1686,12 @@ if ($resql) {
 			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
 			if (!empty($conf->global->INVOICE_USE_SITUATION) && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
-				 $facturestatic->retained_warranty = $obj->retained_warranty;
-				 $facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
-				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
-				 $facturestatic->situation_final = $obj->retained_warranty_date_limit;
-				 $facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
-				 $facturestatic->situation_counter = $obj->situation_counter;
+				$facturestatic->retained_warranty = $obj->retained_warranty;
+				$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
+				$facturestatic->situation_final = $obj->retained_warranty_date_limit;
+				$facturestatic->situation_final = $obj->retained_warranty_date_limit;
+				$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
+				$facturestatic->situation_counter = $obj->situation_counter;
 			}
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
@@ -1990,14 +1990,14 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				  print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				}
-				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
+				$totalarray['val']['f.total_ht'] += $obj->total_ht;
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.total_tva']['checked'])) {
@@ -2159,16 +2159,16 @@ if ($resql) {
 
 			// Currency rate
 			if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
-				  print '<td class="nowraponall">';
-				  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
-				  print "</td>\n";
+				print '<td class="nowraponall">';
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
-				  print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

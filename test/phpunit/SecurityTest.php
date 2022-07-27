@@ -217,9 +217,17 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=testSqlAndScriptInject($test, 1);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL1b. Should find an attack on GET param and did not.');
 
+		$test = '... update ... set ... =';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2a. Should find an attack on GET param and did not.');
+
+		$test = 'action=update& ... set ... =';
+		$result=testSqlAndScriptInject($test, 1);
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject for SQL2b. Should not find an attack on GET param and did.');
+
 		$test = '... union ... selection ';
 		$result=testSqlAndScriptInject($test, 1);
-		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2. Should find an attack on GET param and did not.');
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for SQL2c. Should find an attack on GET param and did not.');
 
 		$test = 'j&#x61;vascript:';
 		$result=testSqlAndScriptInject($test, 0);

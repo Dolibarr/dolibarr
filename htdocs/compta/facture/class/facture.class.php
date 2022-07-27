@@ -160,7 +160,7 @@ class Facture extends CommonInvoice
 	public $revenuestamp;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
 	 * ! Closing when no payment: replaced, abandoned
 	 * @var string Close code
 	 */
@@ -417,7 +417,10 @@ class Facture extends CommonInvoice
 	const STATUS_ABANDONED = 3;
 
 	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandonned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandonned - bad
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandonned remain - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandonned remain - bank charge
+	const CLOSECODE_OTHER = 'other'; // Abandonned remain - other
+
 	const CLOSECODE_ABANDONED = 'abandon'; // Abandonned - other
 	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
 
@@ -5075,6 +5078,7 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
