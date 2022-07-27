@@ -882,6 +882,13 @@ if ($socid > 0) {
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
+if ($search_refProduct) {
+	$sql .= natural_search('pr.ref', $search_refProduct);
+}
+if ($search_descProduct) {
+	$sql .= natural_search('pr.label', $search_descProduct);
+	$sql .= natural_search('cdet.description', $search_descProduct);
+}
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
 }
