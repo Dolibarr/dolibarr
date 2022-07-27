@@ -519,21 +519,10 @@ if ($action == 'edit') {
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
-				if (!empty($conf->use_javascript_ajax)) {
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
-                        $("#generate_token'.$constname.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$constname.'").val(token);
-            				});
-                         });
-                    });';
-					print '</script>';
-				}
+
+				// Add button to autosuggest a key
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
 				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
