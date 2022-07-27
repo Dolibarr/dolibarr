@@ -171,7 +171,8 @@ print '</tr>';
 print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
-print '<tr class="tdtop nopaddingleftimp">';
+print '<tr>';
+print '<td class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -193,25 +194,24 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 print '</fieldset>';
 print '</div>';
 
-print '</tr>';
+print '</td>';
+print '<tr>';
+print '<td class="tdtop nopaddingrightimp">';
 print '<br>';
-print '<tr class="tdtop nopaddingrightimp">';
-
-print '<button id="btn" type="button" style="all: unset; color: var(--colortextlink); text-decoration: underline;
-cursor: pointer;" onclick="hideoptions()">'.$langs->trans("ShowAdvancedOptions").'</button>';
+print '<a id="lnk" href="javascript:hideoptions()"> '.$langs->trans("ShowAdvancedOptions").'</a>';
 
 print '<script type="text/javascript">
 
 function hideoptions(){
-	const btn = document.getElementById("btn");
+	const lnk = document.getElementById("lnk");
 	const div = document.getElementById("div_container_sub_exportoptions");
 
   	if (div.style.display === "none") {
     	div.style.display = "block";
-		btn.innerText="'.$langs->trans("HideAdvancedoptions").'";
+		lnk.innerText="'.$langs->trans("HideAdvancedoptions").'";
   	} else {
     	div.style.display = "none";
-		btn.innerText="'.$langs->trans("ShowAdvancedOptions").'";
+		lnk.innerText="'.$langs->trans("ShowAdvancedOptions").'";
 	}
 }
 </script>';
@@ -432,7 +432,7 @@ if (in_array($type, array('pgsql'))) {
 }
 print '</div>';
 
-print '</tr>';
+print '</td>';
 print '</tr>';
 print '</table>';
 
