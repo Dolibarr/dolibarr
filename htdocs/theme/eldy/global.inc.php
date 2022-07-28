@@ -7639,6 +7639,10 @@ div.clipboardCPValue.hidewithsize {
 	#dolpaymenttable {
 		padding: 5px;
 	}
+
+	.lilevel1 span.paddingright {
+		padding-right: 3px;
+	}
 }
 
 @media only screen and (max-width: 320px)
