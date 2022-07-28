@@ -94,16 +94,17 @@ foreach ($maincategories as $cat) {
 	$result = $object->fetch($cat['id']);
 	$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
 	foreach ($prods as $pro) {
-		print '
-		<div class="cell small-6 medium-4">
+		print '<div class="cell small-6 medium-4">
 			<div class="item">
-                <h4>'.$pro->label.'</h4>
-                <span class="dots"></span>
+                <h4>'.$pro->label.'</h4>';
+				if ($pro->net_measure != '') {
+					print '('.$pro->net_measure." ".measuringUnitString($pro->net_measure_units).')';
+				}
+                print '<span class="dots"></span>
                 <span class="price">'.price($pro->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</span>
-            </div>
-        </div>';
-	}
-	print '</div>';
+            </div>';
+		if (!empty($pro->country_id)) print '<small class="origin">'.$langs->trans('Origin').' '.getCountry($pro->country_id, 'all')['label'].'</small>';
+        print'</div>';
 }
 ?>
 			</div>
