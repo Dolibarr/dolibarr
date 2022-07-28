@@ -2310,7 +2310,7 @@ span.widthpictotitle.pictotitle {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
@@ -7641,7 +7641,7 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	.lilevel1 span.paddingright {
-		padding-right: 3px;
+		padding-right: 4px;
 	}
 }
 
