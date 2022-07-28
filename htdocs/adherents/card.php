@@ -1706,7 +1706,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 
-
 		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
@@ -1761,7 +1760,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print " ".img_warning($langs->trans("Late"));
 			}
 		} else {
-			if ($object->need_subscription == 0) {
+			if ($object->getNeedSubscription() == 0) {
 				print $langs->trans("SubscriptionNotNeeded");
 			} elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");

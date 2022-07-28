@@ -96,7 +96,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 			$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.gender, a.email, a.photo, a.morphy,";
 			$sql .= " a.datefin as date_end_subscription,";
-			$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription,";
+			$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription, ta.amount, ta.caneditamount,";
 			$sql .= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta, ".MAIN_DB_PREFIX."subscription as c";
 			$sql .= " WHERE a.entity IN (".getEntity('adherent').")";
@@ -121,7 +121,6 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$staticmember->photo = $obj->photo;
 					$staticmember->morphy = $obj->morphy;
 					$staticmember->statut = $obj->status;
-					$staticmember->need_subscription = $obj->need_subscription;
 					$staticmember->datefin = $this->db->jdate($obj->date_end_subscription);
 					if (!empty($obj->fk_soc)) {
 						$staticmember->fk_soc = $obj->fk_soc;
@@ -133,6 +132,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 					$subscriptionstatic->id = $obj->cid;
 					$subscriptionstatic->ref = $obj->cid;
+					$staticmember->typeid = $obj->typeid;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',

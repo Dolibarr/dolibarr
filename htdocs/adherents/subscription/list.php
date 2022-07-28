@@ -504,8 +504,6 @@ while ($i < min($num, $limit)) {
 	$adht = new AdherentType($db);
 	$adht->fetch($typeid);
 
-	$adherent->need_subscription = $adht->subscription;
-
 	print '<tr class="oddeven">';
 
 	// Ref

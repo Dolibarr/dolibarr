@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 
 /**
@@ -253,7 +254,7 @@ class Adherent extends CommonObject
 	 */
 	public $type;
 
-	public $need_subscription;
+	public $need_subscription;    // Obsolete, use the getter instead
 
 	public $user_id;
 
@@ -1323,7 +1324,7 @@ class Adherent extends CommonObject
 		$sql .= " d.model_pdf,";
 		$sql .= " c.rowid as country_id, c.code as country_code, c.label as country,";
 		$sql .= " dep.nom as state, dep.code_departement as state_code,";
-		$sql .= " t.libelle as type, t.subscription as subscription,";
+		$sql .= " t.libelle as type, t.subscription as subscription, t.amount,";
 		$sql .= " u.rowid as user_id, u.login as user_login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
@@ -1414,7 +1415,6 @@ class Adherent extends CommonObject
 
 				$this->typeid = $obj->fk_adherent_type;
 				$this->type = $obj->type;
-				$this->need_subscription = $obj->subscription;
 
 				$this->user_id = $obj->user_id;
 				$this->user_login = $obj->user_login;
@@ -2294,14 +2294,50 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie, exclu)
+	 *  Return the status of a member (draft, validated, resiliated, excluded)
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param	int		$mode       0=long libelle, 1=short libelle , 2=Picto + short libelle, 3=Picto, 4=Picto + long libelle , 5=Short Libelle + Picto
 	 *  @return string				Label
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $this->need_subscription, $this->datefin, $mode);
+		return $this->LibStatut($this->statut, $this->getNeedSubscription(), $this->datefin, $mode, $this->getFullyPaid());
+	}
+
+	/**
+	 *  Return 1 if this member is required to pay a subscription, 0 otherwise
+	 *
+	 *  @return int				1 if subscription is required, 0 otherwise
+	 */
+	public function getNeedSubscription()
+	{
+		$type = new AdherentType($this->db);
+		$res = $type->fetch($this->typeid);
+		$need_subscription = 0;
+		if($res > 0) {
+			$need_subscription = !empty($type->subscription) && !empty($type->amount) && empty($type->caneditamount);
+		}
+		return $need_subscription;
+	}
+
+	/**
+	 *  Returns 1 if the last paid subscription (if any) covers at least the amount of the due amount and is not expired, or 1 if this amount is free, or 0 otherwise 
+	 *
+	 *  @return int				Amount has been fully paid
+	 */
+	public function getFullyPaid()
+	{
+		$type = new AdherentType($this->db);
+		$res = $type->fetch($this->type);
+		$fullypaid = 0;
+		if($res>0) {
+			if(!$this->last_subscription_amount && !$this->last_subscription_date_end) {
+				$this->fetch_subscriptions();
+			}
+			$fullypaid = ($this->last_subscription_amount >= $type->amount) || $type->caneditamount;
+			$fullypaid &= $this->last_subscription_date_end? ($this->last_subscription_date_end >= dol_now()) : 0;
+		}
+		return $fullypaid;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2310,41 +2346,51 @@ class Adherent extends CommonObject
 	 *
 	 *  @param	int			$status      			Id status
 	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
-	 *	@param	int     	$date_end_subscription	Date fin adhesion
+	 *	@param	int     	$date_end_subscription	Date of expiration of membership, if any
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *	@param	int     	$fullypaid				Last due subscription has been fully paid
 	 *  @return string      						Label
 	 */
-	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0)
+	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0, $fullypaid=0)
 	{
 		// phpcs:enable
 		global $langs;
 		$langs->load("members");
-
 		$statusType = '';
 		$labelStatus = '';
 		$labelStatusShort = '';
-
+		$need_subscription = (int)$this->getNeedSubscription();
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription == 0) {
-				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusNoSubscription");
-				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
-			} elseif (!$date_end_subscription) {
-				$statusType = 'status1';
-				$labelStatus = $langs->trans("MemberStatusActive");
-				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < dol_now()) {
+			if($date_end_subscription && $date_end_subscription < dol_now()) {
 				$statusType = 'status3';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
-			} else {
-				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusPaid");
-				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
+			}
+			elseif (!$date_end_subscription || $date_end_subscription > dol_now()) {
+				if($need_subscription) {
+					if($fullypaid == -1) {
+						$fullypaid = $this->getFullyPaid();
+					}
+					if($fullypaid) {
+						$statusType = 'status4';
+						$labelStatus = $langs->trans("MemberStatusPaid");
+						$labelStatusShort = $langs->trans("MemberStatusPaidShort");
+					}
+					else {
+						$statusType = 'status1';
+						$labelStatus = $langs->trans("MemberStatusActive");
+						$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+					}
+				}
+				else {
+					$statusType = 'status4';
+					$labelStatus = $langs->trans("MemberStatusNoSubscription");
+					$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
+				}
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {
 			$statusType = 'status6';

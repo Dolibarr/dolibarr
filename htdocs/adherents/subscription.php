@@ -545,7 +545,7 @@ if ($rowid > 0) {
 			print " ".img_warning($langs->trans("Late"));
 		}
 	} else {
-		if ($object->need_subscription == 0) {
+		if ($object->getNeedSubscription() == 0) {
 			print $langs->trans("SubscriptionNotNeeded");
 		} elseif (!$adht->subscription) {
 			print $langs->trans("SubscriptionNotRecorded");

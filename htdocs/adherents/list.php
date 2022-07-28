@@ -324,7 +324,7 @@ $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_cre
 $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
-$sql .= " t.libelle as type, t.subscription,";
+$sql .= " t.libelle as type, t.subscription, t.amount,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -644,6 +644,7 @@ $topicmail = "Information";
 $modelmail = "member";
 $objecttmp = new Adherent($db);
 $trackid = 'mem'.$object->id;
+
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall) {
@@ -953,6 +954,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->morphy = $obj->morphy;
 	$memberstatic->note_public = $obj->note_public;
 	$memberstatic->note_private = $obj->note_private;
+	$memberstatic->typeid = $obj->type_id;
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -1165,7 +1167,7 @@ while ($i < min($num, $limit)) {
 				print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 			}
 		} else {
-			if (!empty($obj->subscription)) {
+			if (!empty($memberstatic->getNeedSubscription())) {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($obj->statut > 0) {
 					print " ".img_warning();
@@ -1212,7 +1214,7 @@ while ($i < min($num, $limit)) {
 	// Status
 	if (!empty($arrayfields['d.statut']['checked'])) {
 		print '<td class="nowrap right">';
-		print $memberstatic->LibStatut($obj->statut, $obj->subscription, $datefin, 5);
+		print $memberstatic->LibStatut($obj->statut, $memberstatic->getNeedSubscription(), $datefin, 5, $memberstatic->getFullyPaid());
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

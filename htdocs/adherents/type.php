@@ -682,11 +682,7 @@ if ($rowid > 0) {
 				$datefin = $db->jdate($objp->datefin);
 
 				$adh = new Adherent($db);
-				$adh->lastname = $objp->lastname;
-				$adh->firstname = $objp->firstname;
-				$adh->datefin = $datefin;
-				$adh->need_subscription = $objp->subscription;
-				$adh->statut = $objp->status;
+				$adh->fetch($objp->rowid); // also fetches subscriptions
 
 				// Lastname
 				print '<tr class="oddeven">';
