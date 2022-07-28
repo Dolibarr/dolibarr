@@ -739,6 +739,7 @@ Permission79=Create/modify subscriptions
 Permission81=Read customers orders
 Permission82=Create/modify customers orders
 Permission84=Validate customers orders
+Permission85=Generate the documents sales orders
 Permission86=Send customers orders
 Permission87=Close customers orders
 Permission88=Cancel customers orders
