@@ -59,6 +59,7 @@ MembersStatusExcluded=Excluded members
 MembersStatusResiliated=Terminated members
 MemberStatusNoSubscription=Validated (no contribution required)
 MemberStatusNoSubscriptionShort=Validated
+NoEndSubscription=Unlimited
 SubscriptionNotNeeded=No contribution required
 NewCotisation=New contribution
 PaymentSubscription=New contribution payment

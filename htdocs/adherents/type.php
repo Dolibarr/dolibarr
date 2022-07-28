@@ -657,6 +657,7 @@ if ($rowid > 0) {
 			print '<input class="flat" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'" size="12"></td>';
 
 			print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
 
 			print '<td class="liste_titre right" colspan="2">';
 			print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -673,7 +674,8 @@ if ($rowid > 0) {
 			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-			print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+			print_liste_field_titre("Subscription", $_SERVER["PHP_SELF"], "d.subscription", $param, "", 'align="center"', $sortfield, $sortorder);
+			print_liste_field_titre("", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			print "</tr>\n";
 
 			while ($i < $num && $i < $conf->liste_limit) {
@@ -715,26 +717,32 @@ if ($rowid > 0) {
 				print "</td>";
 
 				// Date end subscription
+				print '<td class="nowrap center">';
 				if ($datefin) {
-					print '<td class="nowrap center">';
 					if ($datefin < dol_now() && $objp->status > 0) {
 						print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
 					} else {
 						print dol_print_date($datefin, 'day');
 					}
-					print '</td>';
 				} else {
-					print '<td class="nowrap left">';
-					if (!empty($objp->subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
-						if ($objp->status > 0) {
-							print " ".img_warning();
-						}
-					} else {
-						print '&nbsp;';
-					}
-					print '</td>';
+					print $langs->trans("NoEndSubscription");
 				}
+				print '</td>';
+
+				// Paid contribution
+				print '<td class="nowrap center">';
+				if (!empty($adh->last_subscription_amount)) { // Warning if paid amount is lower to due amount
+					print round($adh->last_subscription_amount, 2).' '.strtoupper($conf->currency);
+					print " (".$langs->trans("PaidOn")." ".dol_print_date($adh->last_subscription_date_start, 'day').")";
+				}
+				else {
+					print $langs->trans("SubscriptionNotReceived");
+				}
+
+				if($adh->getNeedSubscription() && !$adh->getFullyPaid()) {
+					print " ".img_warning($langs->trans("SubscriptionLate"));
+				}
+				print '</td>';
 
 				// Actions
 				print '<td class="center">';
