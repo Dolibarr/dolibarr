@@ -1413,7 +1413,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= '</a>';
+
+			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1719,15 +1723,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
-			print "</td></tr>\n";
-
-			// VCard
-			print '<tr><td>'.$langs->trans("VCard").'</td>';
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'">';
-			print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-			print $langs->trans("Download");
-			print '</a>';
 			print "</td></tr>\n";
 
 			print "</table>\n";

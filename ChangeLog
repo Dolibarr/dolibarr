@@ -223,6 +223,81 @@ Following changes may create regressions for some external modules, but were nec
 * The context hook 'suppliercard' when on the supplier tab of a thirdparty has been renamed into 'thirdpartysupplier'
 
 
+***** ChangeLog for 15.0.3 compared to 15.0.2 *****
+
+FIX: 15.0: modules cannot declare more than 1 cron job using the same method with different parameters
+FIX: 15 fix graph ficheinter status
+FIX: #18704
+FIX: #20444
+FIX: #20448 missing preg_replace for vat rate when adding a free line
+FIX: #20476 migration postgresql 13.0.x to 14.0.x packaging type
+FIX: #20487 missing letter D in constant THIRDPARTIES_DISABLE_RELATED_…
+FIX: #20487 missing letter D in constant THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB
+FIX: #20527 Accountancy - Unbalanced entry proposed when an employee are declared on a social contribution
+FIX: #20527 Accountancy Unbalanced entry proposed when an employee are declared on social contribution
+FIX: #20621 signature online with proposal with n page.
+FIX: #20696
+FIX: #20828
+FIX: #20886 : manage durations in list_print_total.tpl.php
+FIX: #20902
+FIX: #21051
+FIX: #21093
+FIX: #21138
+FIX: #21140
+FIX: #21174
+FIX: #21323
+FIX: #21472 On the bank transfer lists, a change of page switches to the lists of the direct debit module
+FIX: #21495
+FIX: #21518
+FIX: Accountancy - Label of VAT account is empty
+FIX: Accountancy - Model account list - Problem of CSRF
+FIX: Accountancy - Partitioning of the entity on an automatic binding
+FIX: add missing thead, th and id on table
+FIX: backport commit 5b3fcc5e43979b1b0789bf81fb8f1b2b59c93056, chkbxlst cannot be emptied
+FIX: Bank account not set when creating invoice from order
+FIX: Bank transfer - Link on code supplier invoice was bad
+FIX: Can convert a partially closed down payment when close for
+FIX: class center linkedObjectblock order date
+FIX: count elements in invoice list (Issue #21444)
+FIX: Customer price non numeric warning when 0 vat.
+FIX: errors in getLinesArray()
+FIX: False alert of WAF when there is "set" into some URL action=update.
+FIX: Intervention graph by status on ficheinter Index page
+FIX: Intervention url link into Commerce index
+FIX: Fix get origin from other than supplier proposal when add a new supplier proposal
+FIX: Fix show errors in card
+FIX: fourn/commande/card.php Added "$object" parameter to $formfile->showdocuments call
+FIX: french traductions for payment methods
+FIX: hook for dol_format_address
+FIX: Index page for "Sales" give wrong URL link to Intervention
+FIX: issue Dolibarr#21495 for v15
+FIX: label and get_substitutionarray_each_var_object on ODT generation
+FIX: load product stock in inventory lines
+FIX: missing morecss for multiselectarray
+FIX: missins time spent list menu
+FIX: new member subscription: bank account and payment mode might be hidden
+FIX: ODT generation of BOM document
+FIX: ODT tags for subobjects {object_subobject_yyy} was not working.
+FIX: qty received label in Squille PDF model
+FIX: rank duplicate on mass action invoice from multiple orders
+FIX: regression + add $forceentity parameter
+FIX: regression PR #20713
+FIX: security breach if we have same ref number in multiple entities
+FIX: selection of type of invoice
+FIX: Send remind to pay invoice only on validated invoices
+FIX: Show sellist type of extrafield when none category selected
+FIX: signature online with proposal with n page.
+FIX: sql error when PRODUCT_USE_SUPPLIER_PACKAGING enabled.
+FIX: sql order
+FIX: trash icon on crontask list to do not work
+FIX: v15 linked object block center order date
+FIX: Warning on attribut
+FIX: We must remove empty values of $features array in fetchByProductCombination2ValuePairs() because some products can use only several attributes in their variations and not necessarily all. In this case, fetch doesn't work without my correction
+FIX: with callback function
+FIX: xml file for company with special chars in name
+FIX: Zatca QR code must use company name/vat
+
+
 ***** ChangeLog for 15.0.2 compared to 15.0.1 *****
 
 FIX: #19777 #20281
