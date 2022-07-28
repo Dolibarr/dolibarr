@@ -5474,7 +5474,7 @@ abstract class CommonObject
 
 				// We save charset_output to restore it because write_file can change it if needed for
 				// output format that does not support UTF8.
-				$sav_charset_output = $outputlangs->charset_output;
+				$sav_charset_output = !empty($outputlangs->charset_output)?$outputlangs->charset_output:'';
 
 				if (in_array(get_class($this), array('Adherent'))) {
 					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
@@ -5484,7 +5484,7 @@ abstract class CommonObject
 				// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
 				if ($resultwritefile > 0) {
-					$outputlangs->charset_output = $sav_charset_output;
+					isset($outputlangs->charset_output)?$outputlangs->charset_output = $sav_charset_output:'';
 
 					// We delete old preview
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
