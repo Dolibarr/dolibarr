@@ -10422,7 +10422,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	global $hookmanager, $action, $object, $langs;
 
 	//var_dump($params);
-	if (isset($params['isDropdown']))
+	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';
