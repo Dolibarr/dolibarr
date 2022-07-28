@@ -41,23 +41,23 @@ $ref = GETPOST('ref', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$canadduser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+$canreaduser = (!empty($user->admin) || !empty($user->rights->user->user->lire));
+$canedituser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+$candisableuser = (!empty($user->admin) || !empty($user->rights->user->user->supprimer));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+	$canreadgroup = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+	$caneditgroup = (!empty($user->admin) || !empty($user->rights->user->group_advance->write));
 }
 // Define value to know what current user can do on properties of edited user
 if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
-	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
-	|| (($user->id != $id) && $user->rights->user->user->creer));
-	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
-	|| (($user->id != $id) && $user->rights->user->user->password));
+	$caneditfield = ((($user->id == $id) && !empty($user->rights->user->self->creer))
+	|| (($user->id != $id) && !empty($user->rights->user->user->creer)));
+	$caneditpassword = ((($user->id == $id) && !empty($user->rights->user->self->password))
+	|| (($user->id != $id) && !empty($user->rights->user->user->password)));
 }
 
 $permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
@@ -147,11 +147,11 @@ if ($object->id) {
 	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '';
-	if ($user->rights->user->user->lire || $user->admin) {
+	if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, !empty($user->rights->user->user->lire) || !empty($user->admin));
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

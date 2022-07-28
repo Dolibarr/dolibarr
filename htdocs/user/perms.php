@@ -50,9 +50,9 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreaduser = ($user->admin || $user->rights->user->user->lire);
+$canreaduser = (!empty($user->admin) || !empty($user->rights->user->user->lire));
 // Define if user can modify other users and permissions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = (!empty($user->admin) || !empty($user->rights->user->user->creer));
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$canreaduser = ($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
@@ -249,11 +249,11 @@ if ($result) {
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, !empty($user->rights->user->user->lire) || !empty($user->admin));
 
 
 print '<div class="fichecenter">';

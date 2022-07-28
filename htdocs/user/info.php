@@ -75,11 +75,11 @@ print dol_get_fiche_head($head, 'info', $title, -1, 'user');
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, !empty($user->rights->user->user->lire) || !empty($user->admin));
 
 
 $object->info($id); // This overwrite ->ref with login instead of id

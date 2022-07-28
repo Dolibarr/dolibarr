@@ -76,10 +76,10 @@ $dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), G
 $dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$canadduser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+$canreaduser = (!empty($user->admin) || !empty($user->rights->user->user->lire));
+$canedituser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+$candisableuser = (!empty($user->admin) || !empty($user->rights->user->user->supprimer));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
@@ -92,8 +92,8 @@ $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
 // Define value to know what current user can do on properties of edited user
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer) || (($user->id != $id) && $user->rights->user->user->creer));
-	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password) || (($user->id != $id) && $user->rights->user->user->password));
+	$caneditfield = ((($user->id == $id) && !empty($user->rights->user->self->creer)) || (($user->id != $id) && $user->rights->user->user->creer));
+	$caneditpassword = ((($user->id == $id) && !empty($user->rights->user->self->password)) || (($user->id != $id) && $user->rights->user->user->password));
 }
 
 // Security check
@@ -712,7 +712,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
-	$permissiontoadd = $user->rights->user->user->creer;
+	$permissiontoadd = !empty($user->rights->user->user->creer);
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1365,7 +1365,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$title = $langs->trans("User");
 			$linkback = '';
 
-			if ($user->rights->user->user->lire || $user->admin) {
+			if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
@@ -1413,7 +1413,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			dol_banner_tab($object, 'id', $linkback, !empty($user->rights->user->user->lire) || !empty($user->admin));
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -2808,8 +2808,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->lire;
-			$delallowed = $user->rights->user->user->creer;
+			$genallowed = !empty($user->rights->user->user->lire);
+			$delallowed = !empty($user->rights->user->user->creer);
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;

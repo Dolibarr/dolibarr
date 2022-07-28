@@ -42,7 +42,7 @@ if ($result > 0) {
 	$result = $adht->fetch($object->typeid);
 }
 
-$permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = !empty($user->rights->adherent->creer); // Used by the include of actions_setnotes.inc.php
 
 // Fetch object
 if ($id > 0 || !empty($ref)) {
@@ -50,7 +50,7 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || !empty($user->rights->user->user->creer));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
@@ -62,10 +62,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->rights->adherent->creer;
+$canaddmember = !empty($user->rights->adherent->creer);
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
-	$caneditfieldmember = $user->rights->adherent->creer;
+	$caneditfieldmember = !empty($user->rights->adherent->creer);
 }
 
 $hookmanager->initHooks(array('membernote'));
@@ -146,7 +146,7 @@ if ($id) {
 
 
 	$cssclass = 'titlefield';
-	$permission = $user->rights->adherent->creer; // Used by the include of notes.tpl.php
+	$permission = !empty($user->rights->adherent->creer); // Used by the include of notes.tpl.php
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

@@ -39,7 +39,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+if (($object->id != $user->id) && (!empty($user->rights->user->user->lire))) {
 	accessforbidden();
 }
 
@@ -48,7 +48,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && !empty($user->rights->user->self->creer)) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -99,11 +99,11 @@ if ($id) {
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if (!empty($user->rights->user->user->lire) || !empty($user->admin)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, !empty($user->rights->user->user->lire) || !empty($user->admin));
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -167,7 +167,7 @@ if ($id) {
 
 	print '<div class="tabsAction">';
 
-	if ($user->rights->user->user->creer && $action != 'edit') {
+	if (!empty($user->rights->user->user->creer) && $action != 'edit') {
 		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
 	}
 
