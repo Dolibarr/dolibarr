@@ -155,7 +155,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	// Number of actions to do (late)
-	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->rights->agenda->myactions->read) {
+	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && !empty($user->hasRight('agenda', 'myactions', 'read'))) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$board = new ActionComm($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -176,7 +176,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (!empty($conf->propal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->propale->lire) {
+	if (!empty($conf->propal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && !empty($user->hasRight('propale', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -185,7 +185,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier proposals open (expired)
-	if (!empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->rights->supplier_proposal->lire) {
+	if (!empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->hasRight('supplier_proposal', 'lire'))) {
 		$langs->load("supplier_proposal");
 		include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 		$board = new SupplierProposal($db);
@@ -202,7 +202,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of suppliers orders a deal
-	if (!empty($conf->supplier_order->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->rights->fournisseur->commande->lire) {
+	if (!empty($conf->supplier_order->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->hasRight('fournisseur', 'commande', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$board = new CommandeFournisseur($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -210,7 +210,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of contract / services enabled (delayed)
-	if (!empty($conf->contrat->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CONTRACT) && $user->rights->contrat->lire) {
+	if (!empty($conf->contrat->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CONTRACT) && !empty($user->hasRight('contrat', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 		$board = new Contrat($db);
 		$dashboardlines[$board->element.'_inactive'] = $board->load_board($user, "inactive");
@@ -219,7 +219,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of tickets open
-	if (!empty($conf->ticket->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_TICKET) && $user->rights->ticket->read) {
+	if (!empty($conf->ticket->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_TICKET) && !empty($user->hasRight('ticket', 'read'))) {
 		include_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$board = new Ticket($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
