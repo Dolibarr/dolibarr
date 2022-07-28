@@ -563,7 +563,7 @@ class Contact extends CommonObject
 		$this->ref_ext = trim($this->ref_ext);
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
-		$this->email = trim($this->email);
+		$this->email = dol_strtolower(trim($this->email));
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);

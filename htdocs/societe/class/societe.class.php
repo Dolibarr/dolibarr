@@ -1279,7 +1279,7 @@ class Societe extends CommonObject
 		$this->fax			= trim($this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
-		$this->email = trim($this->email);
+		$this->email = dol_strtolower(trim($this->email));
 		$this->url			= $this->url ?clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
