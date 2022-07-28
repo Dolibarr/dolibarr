@@ -397,7 +397,8 @@ if (empty($reshook) && $action == 'add') {
 				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 			}
 
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+			$amount = GETPOST('amount')? GETPOST('amount'):-1;
+			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $amount>0) {
 				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
 					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
 					// It is not so important because a test is done on return of payment validation.
