@@ -2339,7 +2339,7 @@ img.hideonsmartphone.pictoactionview {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
