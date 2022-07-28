@@ -161,7 +161,7 @@ class box_members_last_modified extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
+						'text' => $memberstatic->LibStatut($objp->status, null, $this->db->jdate($objp->date_end_subscription), 3),
 					);
 
 					$line++;

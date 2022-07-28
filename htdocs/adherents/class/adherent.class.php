@@ -2345,13 +2345,13 @@ class Adherent extends CommonObject
 	 *  Renvoi le libelle d'un statut donne
 	 *
 	 *  @param	int			$status      			Id status
-	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
+	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise ; or null to recompute
 	 *	@param	int     	$date_end_subscription	Date of expiration of membership, if any
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *	@param	int     	$fullypaid				Last due subscription has been fully paid
+	 *	@param	int     	$fullypaid				Last due subscription has been fully paid ; or null to recompute
 	 *  @return string      						Label
 	 */
-	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0, $fullypaid=0)
+	public function LibStatut($status, $need_subscription=null, $date_end_subscription=null, $mode = 0, $fullypaid=null)
 	{
 		// phpcs:enable
 		global $langs;
@@ -2359,7 +2359,9 @@ class Adherent extends CommonObject
 		$statusType = '';
 		$labelStatus = '';
 		$labelStatusShort = '';
-		$need_subscription = (int)$this->getNeedSubscription();
+		if($need_subscription == null) {
+			$need_subscription = (int)$this->getNeedSubscription();
+		}
 		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
@@ -2372,7 +2374,7 @@ class Adherent extends CommonObject
 			}
 			elseif (!$date_end_subscription || $date_end_subscription > dol_now()) {
 				if($need_subscription) {
-					if($fullypaid == -1) {
+					if($fullypaid == null) {
 						$fullypaid = $this->getFullyPaid();
 					}
 					if($fullypaid) {
