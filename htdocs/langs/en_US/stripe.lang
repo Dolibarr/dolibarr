@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mo
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+TERMINAL_LOCATION=Location (address) for terminals
