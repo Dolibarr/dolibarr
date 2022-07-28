@@ -232,6 +232,7 @@ class Societe extends CommonObject
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'Fk incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>425),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'Location incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>430),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>435),
+		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>440),
 		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>445),
 		'fk_account' =>array('type'=>'integer', 'label'=>'AccountingAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>450),
