@@ -403,3 +403,36 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7608', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7609', 'Državno tijelo');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7610', 'Kućna radinost');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7611', 'Sporedno zanimanje');
+
+-- Japan (id country=123)
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12301', '株式会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12302', '有限会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12303', '合資会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12304', '合名会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12305', '相互会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12306', '医療法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12307', '財団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12308', '社団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12309', '社会福祉法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12310', '学校法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12311', '特定非営利活動法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12312', 'ＮＰＯ法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12313', '商工組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12314', '林業組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12315', '同業組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12316', '農業協同組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12317', '漁業協同組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12318', '農事組合法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12319', '生活互助会');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12320', '協業組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12321', '協同組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12322', '生活協同組合');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12323', '連合会');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12324', '組合連合会');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12325', '協同組合連合会');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12329', '一般社団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12330', '公益社団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12331', '一般財団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12332', '公益財団法人');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12333', '合同会社');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (123, '12399', '個人又はその他の法人');
