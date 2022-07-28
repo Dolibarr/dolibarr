@@ -563,7 +563,7 @@ class Contact extends CommonObject
 		$this->ref_ext = trim($this->ref_ext);
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
-		$this->email = dol_strtolower(trim($this->email));
+		$this->email = trim($this->email);
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);
@@ -571,7 +571,6 @@ class Contact extends CommonObject
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
-		$this->setUpperOrLowerCase();
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) {
 			$this->statut = 0;
@@ -579,6 +578,7 @@ class Contact extends CommonObject
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
+		$this->setUpperOrLowerCase();
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";

@@ -1864,7 +1864,6 @@ class User extends CommonObject
 		$this->address						= trim((string) $this->address);
 		$this->zip							= trim((string) $this->zip);
 		$this->town							= trim((string) $this->town);
-		$this->setUpperOrLowerCase();
 
 		$this->state_id						= ($this->state_id > 0 ? $this->state_id : 0);
 		$this->country_id					= ($this->country_id > 0 ? $this->country_id : 0);
@@ -1890,6 +1889,8 @@ class User extends CommonObject
 		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
+
+		$this->setUpperOrLowerCase();
 
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');

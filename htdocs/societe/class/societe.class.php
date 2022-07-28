@@ -1270,7 +1270,6 @@ class Societe extends CommonObject
 		$this->address		= $this->address ?trim($this->address) : trim($this->address);
 		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
 		$this->town = $this->town ?trim($this->town) : trim($this->town);
-		$this->setUpperOrLowerCase();
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
@@ -1279,7 +1278,7 @@ class Societe extends CommonObject
 		$this->fax			= trim($this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
-		$this->email = dol_strtolower(trim($this->email));
+		$this->email		= trim($this->email);
 		$this->url			= $this->url ?clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -1412,7 +1411,7 @@ class Societe extends CommonObject
 				}
 			}
 		}
-
+		$this->setUpperOrLowerCase();
 		if ($result >= 0) {
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
