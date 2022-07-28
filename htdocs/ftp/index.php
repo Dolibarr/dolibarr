@@ -27,9 +27,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ftp.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other'));
+$langs->loadLangs(array('ftp', 'companies', 'other'));
 
 // Security check
 if ($user->socid) {
@@ -665,127 +666,14 @@ if (!function_exists('ftp_connect')) {
 
 print '<br>';
 
-// Close FTP connection
-if ($conn_id) {
-	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-	} elseif (!empty($conf->global->FTP_CONNECT_WITH_SSL)) {
-		ftp_close($conn_id);
-	} else {
-		ftp_close($conn_id);
+if (!empty($conn_id)) {
+	$disconnect = dol_ftp_close($conn_id);
+
+	if ($disconnect == false) {
+		setEventMessages($langs->trans("ErrorFTPNodisconnect"), null, 'errors');
 	}
 }
 
 // End of page
 llxFooter();
 $db->close();
-
-
-
-/**
- * Connect to FTP server
- *
- * @param 	string	$ftp_server		Server name
- * @param 	string	$ftp_port		Server port
- * @param 	string	$ftp_user		FTP user
- * @param 	string	$ftp_password	FTP password
- * @param 	string	$section		Directory
- * @param	integer	$ftp_passive	Use a passive mode
- * @return	int 	<0 if OK, >0 if KO
- */
-function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
-{
-	global $langs, $conf;
-
-	$ok = 1;
-	$error = 0;
-	$conn_id = null;
-	$newsectioniso = '';
-	$mesg="";
-
-	if (!is_numeric($ftp_port)) {
-		$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
-		$ok = 0;
-	}
-
-	if ($ok) {
-		$connecttimeout = (empty($conf->global->FTP_CONNECT_TIMEOUT) ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			dol_syslog('Try to connect with ssh2_connect');
-			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
-		} elseif (!empty($conf->global->FTP_CONNECT_WITH_SSL)) {
-			dol_syslog('Try to connect with ftp_ssl_connect');
-			$conn_id = ftp_ssl_connect($ftp_server, $ftp_port, $connecttimeout);
-		} else {
-			dol_syslog('Try to connect with ftp_connect');
-			$conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
-		}
-		if (!empty($conn_id) || !empty($tmp_conn_id)) {
-			if ($ftp_user) {
-				if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-					dol_syslog('Try to authenticate with ssh2_auth_password');
-					if (ssh2_auth_password($tmp_conn_id, $ftp_user, $ftp_password)) {
-						// Turn on passive mode transfers (must be after a successful login
-						//if ($ftp_passive) ftp_pasv($conn_id, true);
-
-						// Change the dir
-						$newsectioniso = utf8_decode($section);
-						//ftp_chdir($conn_id, $newsectioniso);
-						$conn_id = ssh2_sftp($tmp_conn_id);
-						if (!$conn_id) {
-							dol_syslog('Failed to connect to SFTP after sssh authentication', LOG_DEBUG);
-							$mesg = $langs->transnoentitiesnoconv("FailedToConnectToSFTPAfterSSHAuthentication");
-							$ok = 0;
-							$error++;
-						}
-					} else {
-						dol_syslog('Failed to connect to FTP with login '.$ftp_user, LOG_DEBUG);
-						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
-						$ok = 0;
-						$error++;
-					}
-				} else {
-					if (ftp_login($conn_id, $ftp_user, $ftp_password)) {
-						// Turn on passive mode transfers (must be after a successful login
-						if ($ftp_passive) {
-							ftp_pasv($conn_id, true);
-						}
-
-						// Change the dir
-						$newsectioniso = utf8_decode($section);
-						ftp_chdir($conn_id, $newsectioniso);
-					} else {
-						$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServerWithCredentials");
-						$ok = 0;
-						$error++;
-					}
-				}
-			}
-		} else {
-			dol_syslog('FailedToConnectToFTPServer '.$ftp_server.' '.$ftp_port, LOG_ERR);
-			$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
-			$ok = 0;
-		}
-	}
-
-	$arrayresult = array('conn_id'=>$conn_id, 'ok'=>$ok, 'mesg'=>$mesg, 'curdir'=>$section, 'curdiriso'=>$newsectioniso);
-	return $arrayresult;
-}
-
-
-/**
- * Tell if an entry is a FTP directory
- *
- * @param 		resource	$connect_id		Connection handler
- * @param 		string		$dir			Directory
- * @return		int			1=directory, 0=not a directory
- */
-function ftp_isdir($connect_id, $dir)
-{
-	if (@ftp_chdir($connect_id, $dir)) {
-		ftp_cdup($connect_id);
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
