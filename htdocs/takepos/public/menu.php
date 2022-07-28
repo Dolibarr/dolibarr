@@ -38,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!$conf->global->TAKEPOS_QR_MENU) {
 	accessforbidden(); // If Restaurant Menu is disabled never allow NO LOGIN access
 }
+
+$langs->loadLangs(array("products"));
 ?>
 <!DOCTYPE html>
 <html>
@@ -109,7 +111,7 @@ foreach ($maincategories as $cat) {
 	</div>
 	<footer class="footer">
 	  <div class="container">
-		<p class="text-muted"><?php print $mysoc->name; ?></p>
+		<p class="text-muted"><?php print $mysoc->name; ?> - <?php print $langs->trans('SellingPriceTTC'); ?></p>
 	  </div>
 	</footer>
   </body>
