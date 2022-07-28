@@ -152,7 +152,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TerminalNameDesc").'</td>';
 print '<td>';
-print '<input type="text" name="terminalname'.$terminal.'" value="'.(! empty($conf->global->{"TAKEPOS_TERMINAL_NAME_".$terminal}) ? $conf->global->{"TAKEPOS_TERMINAL_NAME_".$terminal} : $langs->trans("TerminalName", $terminal)).'" >';
+print '<input type="text" name="terminalname'.$terminal.'" value="'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$terminal, $langs->trans("TerminalName", $terminal)).'" >';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
