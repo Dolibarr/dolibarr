@@ -206,16 +206,16 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields to fields for list
-$arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
+$arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>66, 'checked'=>0);
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
-	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
+	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>113, 'checked'=> 1);
 }
 
 $arrayfields['unsubscribed'] = array(
 		'label'=>'No_Email',
 		'checked'=>0,
 		'enabled'=>(!empty($conf->mailing->enabled)),
-		'position'=>41);
+		'position'=>111);
 
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
