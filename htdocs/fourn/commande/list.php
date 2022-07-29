@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2018-2020 Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
@@ -1557,6 +1557,7 @@ if ($resql) {
 	$totalarray = array('nbfield' => 0, 'val' => array(), 'pos' => array());
 	$totalarray['val']['cf.total_ht'] = 0;
 	$totalarray['val']['cf.total_ttc'] = 0;
+	$totalarray['val']['cf.total_tva'] = 0;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
