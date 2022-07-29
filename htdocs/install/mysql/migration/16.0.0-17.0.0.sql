@@ -62,4 +62,5 @@ ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NUL
 
 ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 

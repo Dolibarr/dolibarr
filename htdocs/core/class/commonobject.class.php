@@ -759,6 +759,8 @@ abstract class CommonObject
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
+		$this->email = dol_strtolower($this->email);
+		$this->personal_email = dol_strtolower($this->personal_email);
 	}
 
 	/**
