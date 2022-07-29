@@ -621,6 +621,11 @@ if (empty($reshook)) {
 			}
 		}
 		$action = ($result < 0 || !$error) ?  '' : 'create';
+
+		if (!$error && $backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
