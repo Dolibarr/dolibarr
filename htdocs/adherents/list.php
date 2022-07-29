@@ -305,8 +305,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
-$membertypestatic = new AdherentType($db);
-$memberstatic = new Adherent($db);
 
 $title = $langs->trans("Members");
 
@@ -736,6 +734,7 @@ if (!empty($arrayfields['d.morphy']['checked'])) {
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '<td class="liste_titre">';
+	$membertypestatic = new AdherentType($db);
 	$listetype = $membertypestatic->liste_array();
 	print $form->selectarray("search_type", $listetype, $search_type, 1, 0, 0, '', 0, 32);
 	print '</td>';
@@ -937,6 +936,9 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
+
+	$membertypestatic = new AdherentType($db);
+	$memberstatic = new Adherent($db);
 
 	$datefin = $db->jdate($obj->datefin);
 	$memberstatic->id = $obj->rowid;

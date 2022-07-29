@@ -2328,14 +2328,17 @@ class Adherent extends CommonObject
 	public function getFullyPaid()
 	{
 		$type = new AdherentType($this->db);
-		$res = $type->fetch($this->type);
+		$res = $type->fetch($this->typeid);
 		$fullypaid = 0;
 		if($res>0) {
-			if(!$this->last_subscription_amount && !$this->last_subscription_date_end) {
-				$this->fetch_subscriptions();
+			$res = $this->fetch_subscriptions();
+			if($res>0) {
+				if(!empty($this->last_subscription_amount)) {
+					$fullypaid = ($this->last_subscription_amount >= $type->amount);
+					$fullypaid &= $this->last_subscription_date_end? ($this->last_subscription_date_end >= dol_now()) : 0;
+				}
+				$fullypaid |= $type->caneditamount || empty($type->subscription);
 			}
-			$fullypaid = ($this->last_subscription_amount >= $type->amount) || $type->caneditamount;
-			$fullypaid &= $this->last_subscription_date_end? ($this->last_subscription_date_end >= dol_now()) : 0;
 		}
 		return $fullypaid;
 	}
