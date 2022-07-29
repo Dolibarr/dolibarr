@@ -739,11 +739,8 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 }
 else {  // Show the table of membership types
 	// Get units
-	$measuringUnits = new CUnits($db);
-	$result = $measuringUnits->fetchAll('',	'',	0,	0, array('t.active' => 1));
-	$units = array();
-	foreach ($measuringUnits->records as $lines)
-		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
+	$cunits = new CUnits($db);
+	$units = $cunits->fetchAllAsObject();
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";

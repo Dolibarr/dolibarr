@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 
 $langs->load("members");
 
@@ -230,7 +231,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -275,6 +276,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
+		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
@@ -310,6 +312,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print $langs->trans("MorAndPhy");
 			}
+			print '</td>';
+			print '<td class="center nowrap">';
+			$cunits = new CUnits($db);
+			$units = $cunits->fetchAllAsObject();
+			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
