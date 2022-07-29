@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ftp.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('ftp', 'companies', 'other'));
+$langs->loadLangs(array('companies', 'other'));
 
 // Security check
 if ($user->socid) {

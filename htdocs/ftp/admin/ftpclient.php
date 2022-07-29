@@ -25,7 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->loadLangs(array('ftp', "admin", "other"));
+$langs->loadLangs(array("admin", "other"));
 
 $def = array();
 $lastftpentry = 0;
