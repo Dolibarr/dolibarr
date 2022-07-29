@@ -724,8 +724,6 @@ if ($rowid > 0) {
 					} else {
 						print dol_print_date($datefin, 'day');
 					}
-				} else {
-					print $langs->trans("NoEndSubscription");
 				}
 				print '</td>';
 
