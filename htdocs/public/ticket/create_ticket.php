@@ -209,7 +209,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	}
 
 	// Check Captcha code if is enabled
-	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) || !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 		if (!$ok) {

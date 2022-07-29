@@ -910,7 +910,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
+	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance) || empty($user->rights->holiday->writeall))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -923,7 +923,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$errors[] = $langs->trans('ErrorEndDateCP');
 					break;
 				case 'SQL_Create':
-					$errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
+					$errors[] = $langs->trans('ErrorSQLCreateCP');
 					break;
 				case 'CantCreate':
 					$errors[] = $langs->trans('CantCreateCP');
@@ -1153,7 +1153,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
 						break;
 					case 'SQL_Create':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP').' '.$_GET['msg'];
+						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP');
 						break;
 					case 'CantCreate':
 						$errors[] = $langs->transnoentitiesnoconv('CantCreateCP');
@@ -1174,7 +1174,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('NoMotifRefuseCP');
 						break;
 					case 'mail':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend')."\n".$_GET['error_content'];
+						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend');
 						break;
 				}
 

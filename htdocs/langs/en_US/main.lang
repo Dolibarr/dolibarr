@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -345,7 +351,7 @@ KiloBytes=Kilobytes
 MegaBytes=Megabytes
 GigaBytes=Gigabytes
 TeraBytes=Terabytes
-UserAuthor=Ceated by
+UserAuthor=Created by
 UserModif=Updated by
 b=b.
 Kb=Kb
@@ -712,6 +718,7 @@ FeatureDisabled=Feature disabled
 MoveBox=Move widget
 Offered=Offered
 NotEnoughPermissions=You don't have permission for this action
+UserNotInHierachy=This action is reserved to the supervisors of this user
 SessionName=Session name
 Method=Method
 Receive=Receive
@@ -801,6 +808,7 @@ URLPhoto=URL of photo/logo
 SetLinkToAnotherThirdParty=Link to another third party
 LinkTo=Link to
 LinkToProposal=Link to proposal
+LinkToExpedition= Link to expedition
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
 LinkToTemplateInvoice=Link to template invoice

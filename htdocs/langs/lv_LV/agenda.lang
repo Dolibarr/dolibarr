@@ -57,6 +57,7 @@ MemberValidatedInDolibarr=Dalībnieks %s apstiprināts
 MemberModifiedInDolibarr=Dalībnieks %s labots
 MemberResiliatedInDolibarr=Dalībnieks %s ir izbeigts
 MemberDeletedInDolibarr=Dalībnieks %s dzēsts
+MemberExcludedInDolibarr=Dalībnieks %s ir izslēgts
 MemberSubscriptionAddedInDolibarr=Abonements %s dalībniekam %s pievienots
 MemberSubscriptionModifiedInDolibarr=Abonements %s biedram %s ir labots
 MemberSubscriptionDeletedInDolibarr=Abonements %s dalībniekam %s dzēsts

@@ -59,6 +59,7 @@ $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$backtopage = GETPOST("backtopage", "alpha");
 
 $idproduct = GETPOST('idproduct', 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -777,7 +778,11 @@ if ($msid) {
 } else {
 	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		if (!empty($object->ref)) {
+			$title .= ' ('.$object->ref.')';
+		} else {
+			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		}
 	}
 }
 

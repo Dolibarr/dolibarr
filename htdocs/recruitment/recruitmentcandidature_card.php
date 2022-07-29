@@ -86,7 +86,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 if (empty($action) && empty($id) && empty($ref)) {
-	$action = 'view';
+	$action = 'create';
 }
 
 // Load object

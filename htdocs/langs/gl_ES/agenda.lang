@@ -57,6 +57,7 @@ MemberValidatedInDolibarr=Membro %s validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s rematado
 MemberDeletedInDolibarr=Membro %s eliminado
+MemberExcludedInDolibarr=Membro %s excluído
 MemberSubscriptionAddedInDolibarr=Subscrición %s do membro %s engadida
 MemberSubscriptionModifiedInDolibarr=Subscrición %s do membro %s modificada
 MemberSubscriptionDeletedInDolibarr=Subscrición %s do membro %s eliminada

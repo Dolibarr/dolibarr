@@ -316,7 +316,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
-$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$parameters = array('search_all' => $sall, 'fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
@@ -692,7 +692,7 @@ while ($i < $imaxinloop) {
 
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
+		print '<td class="nobordernopadding nowraponall">';
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
 		// Warning
@@ -726,7 +726,7 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['f.ref_client']['checked'])) {
 		// Customer ref
 		print '<td class="nowrap tdoverflowmax200">';
-		print $obj->ref_client;
+		print dol_escape_htmltag($obj->ref_client);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

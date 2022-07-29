@@ -952,7 +952,7 @@ class Utils
 
 		dol_include_once('/core/lib/files.lib.php');
 
-		$nbSaves = empty($conf->global->SYSLOG_FILE_SAVES) ? 10 : intval($conf->global->SYSLOG_FILE_SAVES);
+		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
 		if (empty($conf->global->SYSLOG_FILE)) {
 			$mainlogdir = DOL_DATA_ROOT;

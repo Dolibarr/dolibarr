@@ -209,7 +209,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => DOL_URL_ROOT . '/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
 				'holidays' => DOL_URL_ROOT . '/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
 				'ticket' => DOL_URL_ROOT . '/ticket/list.php?leftmenu=ticket',
-				'dolresource' => DOL_URL_ROOT . '/resource/list.php?mainmenu=tools',
+				'dolresource' => DOL_URL_ROOT . '/resource/list.php?mainmenu=agenda',
 			);
 			$titres = array(
 				'users' => "Users",

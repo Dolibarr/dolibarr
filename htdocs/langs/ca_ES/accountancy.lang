@@ -48,8 +48,9 @@ CountriesNotInEEC=Països no integrats a la CEE
 CountriesInEECExceptMe=Països a la CEE excepte %s
 CountriesExceptMe=Tots els països, excepte %s
 AccountantFiles=Exporta documents d'origen
-ExportAccountingSourceDocHelp=Amb aquesta eina, podeu exportar els esdeveniments d'origen (llista en CSV i PDF) que s'utilitzen per a generar la vostra comptabilitat.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Per a exportar els vostres diaris, utilitzeu l'entrada de menú %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Veure per compte comptable
 VueBySubAccountAccounting=Veure-ho per subcomptes comptables
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Desactiva el registre directe de transaccions al compt
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilita l'exportació d'esborrany en el diari
 ACCOUNTANCY_COMBO_FOR_AUX=Activa la llista combinada per a un compte subsidiari (pot ser lent si tens molts tercers, trenca la capacitat de cerca en una part del valor)
 ACCOUNTING_DATE_START_BINDING=Definiu una data per a començar la vinculació i transferència a la comptabilitat. Per sota d’aquesta data, les transaccions no es transferiran a la comptabilitat.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En el cas de transferència de comptabilitat, seleccioneu el període a mostrar per defecte
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Diari de venda
 ACCOUNTING_PURCHASE_JOURNAL=Diari de compra
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les donacions
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les donacions
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable per defecte per a registrar el dipòsit del client
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per als productes comprats (utilitzat si no es defineix en el producte)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte de comptabilitat per defecte dels productes comprats a la CEE (utilitzat si no està definit a la taula de productes)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transfer
 
 ## Export
 NotifiedExportDate=Marca les línies exportades com a Exportades <span class="warning"> (per a modificar una línia, hauràs de suprimir tota la transacció i tornar-la a transferir a la comptabilitat) </span>
-NotifiedValidationDate=Validar i bloquejar les entrades exportades <span class="warning"> (el mateix efecte que la funció "Tancament", la modificació i la supressió de les línies DEFINITIVAMENT no seran possibles) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Validació de data i bloqueig
 ConfirmExportFile=Confirmació de la generació del fitxer d'exportació comptable?
 ExportDraftJournal=Exporta els esborranys del llibre
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Ho s
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat

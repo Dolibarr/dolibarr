@@ -141,14 +141,18 @@ class DoliStorage implements TokenStorageInterface
 		dol_syslog("hasAccessToken service=".$service);
 
 		$sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
+		$sql .= " WHERE service = '".$this->db->escape($service.(empty($this->keyforprovider) ? '' : '-'.$this->keyforprovider))."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			dol_print_error($this->db);
 		}
 		$result = $this->db->fetch_array($resql);
-		$token = unserialize($result['token']);
+		if ($result) {
+			$token = unserialize($result['token']);
+		} else {
+			$token = '';
+		}
 
 		$this->tokens[$service] = $token;
 

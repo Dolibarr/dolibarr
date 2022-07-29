@@ -123,11 +123,11 @@ if (empty($reshook)) {
 
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
+	$noback = 1;
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// action update on Skilldet
-
-	$skilldetArray = GETPOST("descriptionline", "array");
+	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
 
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {

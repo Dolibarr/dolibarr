@@ -157,6 +157,10 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
+	// Security options
+	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
+
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	print "\n";
 	print "<html>\n";

@@ -208,6 +208,7 @@ class DoliDBMysqli extends DoliDB
 		try {
 			$result = $this->db->select_db($database);
 		} catch (Exception $e) {
+			// Nothing done on error
 		}
 		return $result;
 	}
@@ -470,7 +471,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return $this->db->real_escape_string($stringtoencode);
+		return $this->db->real_escape_string((string) $stringtoencode);
 	}
 
 	/**
@@ -481,7 +482,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeunderscore($stringtoencode)
 	{
-		return str_replace('_', '\_', $stringtoencode);
+		return str_replace('_', '\_', (string) $stringtoencode);
 	}
 
 	/**
@@ -756,6 +757,9 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$pk = '';
+		$sqluq = $sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

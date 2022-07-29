@@ -48,8 +48,9 @@ CountriesNotInEEC=Країни, які не входять до ЄЕС
 CountriesInEECExceptMe=Країни ЄЕС, крім %s
 CountriesExceptMe=Усі країни, крім %s
 AccountantFiles=Експортувати вихідні документи
-ExportAccountingSourceDocHelp=За допомогою цього інструмента ви можете експортувати вихідні події (список у CSV та PDF-файлах), які використовуються для створення вашого обліку.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Щоб експортувати свої журнали, використовуйте пункт меню %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Переглянути за обліковим записом
 VueBySubAccountAccounting=Перегляд за бухгалтерським субрахунком
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Вимкнути прямий запис транза�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Увімкнути експорт чернетки в журналі
 ACCOUNTANCY_COMBO_FOR_AUX=Увімкнути комбінований список для дочірнього облікового запису (може працювати повільно, якщо у вас багато третіх сторін, порушує можливість пошуку на частині вартості)
 ACCOUNTING_DATE_START_BINDING=Визначте дату початку зв’язування та перенесення в бухгалтерію. Нижче цієї дати операції не будуть передані до бухгалтерського обліку.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Під час перенесення бухгалтерського обліку виберіть відображення періоду за замовчуванням
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Обліковий рахунок для реєстр
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Обліковий запис для реєстрації підписок
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Обліковий рахунок за замовчуванням для реєстрації депозиту клієнта
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Обліковий рахунок за замовчуванням для купленої продукції (використовується, якщо не визначено в товарному аркуші)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Обліковий рахунок за замовчуванням для купленої продукції в ЄЕС (використовується, якщо не визначено в товарному аркуші)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Вимкнути прив'язку 
 
 ## Export
 NotifiedExportDate=Позначте експортовані рядки як експортовані <span class="warning"> (щоб змінити рядок, вам потрібно буде видалити всю транзакцію та повторно перенести її в облік) </span>
-NotifiedValidationDate=Перевірте та заблокуйте експортовані записи <span class="warning"> (той самий ефект, що й функція «Закриття», зміна та видалення рядків ОБОВ’ЯЗКОВО неможливі) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Перевірка дати та блокування
 ConfirmExportFile=Підтвердження створення файлу експорту бухгалтерського обліку?
 ExportDraftJournal=Експортувати чернетку журналу
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=На
 AccountancyErrorMismatchLetterCode=Невідповідність коду узгодження
 AccountancyErrorMismatchBalanceAmount=Залишок (%s) не дорівнює 0
 AccountancyErrorLetteringBookkeeping=Сталися помилки щодо транзакцій: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Бухгалтерські проводки

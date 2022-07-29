@@ -35,7 +35,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 //$result=restrictedArea($user,'stock', $id, 'entrepot&stock');
 $result = restrictedArea($user, 'stock');
-
+$usercancreate = $user->rights->stock->creer;
 
 /*
  * View
@@ -75,7 +75,7 @@ if (!empty($conf->project->enabled)) {
 			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!empty($object->socid) ? $object->socid : 0), $object->fk_project, 'none', 0, 0, 0, 1);
 		}
 	} else {
 		if (!empty($object->fk_project)) {

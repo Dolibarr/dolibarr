@@ -32,9 +32,20 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
-
 -- Missing in v16 or lower
 
+ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
+
+ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
+ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
+ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
 
 
@@ -62,3 +73,13 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Allow users to make subscriptions of any amount during membership subscription
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
+
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
+ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+

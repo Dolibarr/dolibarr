@@ -476,7 +476,7 @@ if (empty($reshook)) {
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				// Do we update also ->entity ?
-				if (!empty($conf->multicompany->enabled && $user->entity == 0 && !empty($user->admin))) {	// If multicompany is not enabled, we never update the entity of a user.
+				if (!empty($conf->multicompany->enabled) && empty($user->entity) && !empty($user->admin)) {	// If multicompany is not enabled, we never update the entity of a user.
 					if (GETPOST('superadmin', 'int')) {
 						$object->entity = 0;
 					} else {
@@ -730,9 +730,12 @@ if (!empty($conf->stock->enabled)) {
 	$formproduct = new FormProduct($db);
 }
 
-llxHeader('', $langs->trans("UserCard"));
+$help_url = '';
 
 if ($action == 'create' || $action == 'adduserldap') {
+	$title = $langs->trans("NewUser");
+	llxHeader('', $title, $help_url);
+
 	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
@@ -830,7 +833,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<table class="border centpercent">';
 
 	// Civility
-	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
 	print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
 	print '</td></tr>';
 
@@ -1350,6 +1353,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 		}
 
+		$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+		$title = $person_name." - ".$langs->trans('Card');
+		llxHeader('', $title, $help_url);
+
 		// Show tabs
 		if ($mode == 'employee') { // For HRM module development
 			$title = $langs->trans("Employee");
@@ -1406,7 +1413,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= '</a>';
+
+			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1712,15 +1723,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Signature
 			print '<tr><td class="tdtop">'.$langs->trans('Signature').'</td><td class="wordbreak">';
 			print dol_htmlentitiesbr($object->signature);
-			print "</td></tr>\n";
-
-			// VCard
-			print '<tr><td>'.$langs->trans("VCard").'</td>';
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'">';
-			print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-			print $langs->trans("Download");
-			print '</a>';
 			print "</td></tr>\n";
 
 			print "</table>\n";
@@ -2070,7 +2072,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Civility
-			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
 			if ($caneditfield && !$object->ldap_sid) {
 				print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
 			} elseif ($object->civility_code) {
@@ -2827,20 +2829,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 }
 
-if (!empty($conf->api->enabled) && !empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_api_key").click(function() {
-                $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                    action: \'getrandompassword\',
-                    generic: true
-                },
-                function(token) {
-                    $("#api_key").val(token);
-                });
-            });
-    });';
-	print '</script>';
+if (!empty($conf->api->enabled)) {
+	$constname = 'api_key';
+
+	// Add button to autosuggest a key
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	print dolJSToSetRandomPassword($constname, 'generate_api_key');
 }
 
 // End of page
