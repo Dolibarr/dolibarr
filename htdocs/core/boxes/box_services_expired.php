@@ -58,7 +58,7 @@ class box_services_expired extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->contrat->lire);
+		$this->hidden = empty($user->rights->contrat->lire);
 	}
 
 	/**

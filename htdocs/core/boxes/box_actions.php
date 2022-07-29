@@ -62,7 +62,7 @@ class box_actions extends ModeleBoxes
 
 		$this->enabled = $conf->agenda->enabled;
 
-		$this->hidden = !($user->rights->agenda->myactions->read);
+		$this->hidden = empty($user->rights->agenda->myactions->read);
 	}
 
 	/**
