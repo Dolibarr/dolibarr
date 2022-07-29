@@ -368,20 +368,7 @@ class modEventOrganization extends DolibarrModules
 			}
 		}
 
-		$langs->load("eventorganization");
-		$cat = new Categorie($this->db);
-		$sql[] = "INSERT IGNORE INTO ".MAIN_DB_PREFIX.$cat->table_element."(label, type, entity, description, visible) VALUES('".$langs->trans('ApplicantOrVisitor')."', 2, 1, '".$langs->trans('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF')."', 1)";
-		$sql[] = "INSERT IGNORE INTO ".MAIN_DB_PREFIX."c_type_contact(rowid, element, source, code, libelle, active) VALUES(300, 'conferenceorbooth', 'external', 'SPEAKER', '".$langs->trans('Speaker')."', 1)";
-
 		$init = $this->_init($sql, $options);
-
-		if (empty($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF)) {
-			$langs->load('eventorganization');
-			$res = $cat->fetch(null, $langs->trans('ApplicantOrVisitor'));
-			if ($cat->id) {
-				dolibarr_set_const($this->db, 'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF', $res);
-			}
-		}
 
 		return $init;
 	}
