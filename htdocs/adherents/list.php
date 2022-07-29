@@ -1169,14 +1169,7 @@ while ($i < min($num, $limit)) {
 				print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 			}
 		} else {
-			if (!empty($memberstatic->getNeedSubscription())) {
-				print $langs->trans("SubscriptionNotReceived");
-				if ($obj->statut > 0) {
-					print " ".img_warning();
-				}
-			} else {
-				print '&nbsp;';
-			}
+			print $langs->trans("NoEndSubscription");
 		}
 		print '</td>';
 	}

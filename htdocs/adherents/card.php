@@ -1760,19 +1760,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print " ".img_warning($langs->trans("Late"));
 			}
 		} else {
-			if ($object->getNeedSubscription() == 0) {
-				print $langs->trans("SubscriptionNotNeeded");
-			} elseif (!$adht->subscription) {
-				print $langs->trans("SubscriptionNotRecorded");
-				if (Adherent::STATUS_VALIDATED == $object->statut) {
-					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
-				}
-			} else {
-				print $langs->trans("SubscriptionNotReceived");
-				if (Adherent::STATUS_VALIDATED == $object->statut) {
-					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
-				}
-			}
+			print $langs->trans("NoEndSubscription");
+		}
+		print '</td></tr>';
+
+		// Paid contribution
+		print '<tr><td>'.$langs->trans("Subscription").'</td><td class="valeur">';
+		if (!empty($object->last_subscription_amount)) { // Warning if paid amount is lower to due amount
+			print round($object->last_subscription_amount, 2).' '.strtoupper($conf->currency);
+			print " (".$langs->trans("PaidOn")." ".dol_print_date($object->last_subscription_date_start, 'day').")";
+			print " – ";
+			$id = $object->id;
+			print '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?memberid='.$id.'">'.$langs->trans('ListOfSubscriptions').'</a>';
+		}
+		else {
+			print $langs->trans("SubscriptionNotReceived");
+		}
+		if($object->getNeedSubscription() && !$object->getFullyPaid()) {
+			print " ".img_warning($langs->trans("SubscriptionLate"));
 		}
 		print '</td></tr>';
 

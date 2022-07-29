@@ -46,6 +46,8 @@ $search_login = GETPOST('search_login', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
+$search_member = GETPOST('memberid', 'int');
+
 $optioncss = GETPOST('optioncss', 'alpha');
 $sall = '';
 
@@ -174,6 +176,9 @@ if ($search_ref) {
 	} else {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}
+}
+if ($search_member) {
+	$sql .= natural_search(array('d.rowid'), $search_member);
 }
 if ($search_type) {
 	$sql .= natural_search(array('c.fk_type'), $search_type);
