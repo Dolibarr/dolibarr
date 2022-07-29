@@ -303,6 +303,20 @@ class CUnits // extends CommonObject
 		}
 	}
 
+	/**
+	 * Load list of units from the database into a single object
+	 * 
+	 *  @param      bool		$onlyactive		Fetch only active units
+	 *  @return     arry		Array of units     
+	 */
+	public function fetchAllAsObject($onlyactive=true) {
+		global $langs;
+		$result = $this->fetchAll('',	'',	0,	0, $onlyactive? array('t.active' => 1): array());
+		$units = array();
+		foreach ($this->records as $lines)
+			$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
+		return $units;
+	}
 
 	/**
 	 *  Update object into database
