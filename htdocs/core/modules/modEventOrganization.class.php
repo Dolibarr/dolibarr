@@ -375,10 +375,10 @@ class modEventOrganization extends DolibarrModules
 
 		$init = $this->_init($sql, $options);
 
-		if(empty($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF)) {
+		if (empty($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF)) {
 			$langs->load('eventorganization');
 			$res = $cat->fetch(null, $langs->trans('ApplicantOrVisitor'));
-			if($cat->id) {
+			if ($cat->id) {
 				dolibarr_set_const($this->db, 'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF', $res);
 			}
 		}
