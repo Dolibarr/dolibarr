@@ -1534,7 +1534,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 			if (!$object->user_id && $user->rights->user->user->creer) {
-				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add', 'class="pictofixedwidth"').$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}
 		print '</td></tr>';
