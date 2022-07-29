@@ -775,16 +775,16 @@ class User extends CommonObject
 				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 				// instead of "read", "write", "delete"
 				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
-					return $this->rights->$rightsPath->lire;
+					return $this->rights->$rightsPath->$permlevel1->lire;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
-					return $this->rights->$rightsPath->create;
+					return $this->rights->$rightsPath->$permlevel1->create;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
-					return $this->rights->$rightsPath->create;
+					return $this->rights->$rightsPath->$permlevel1->create;
 				}
 				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
-					return $this->rights->$rightsPath->supprimer;
+					return $this->rights->$rightsPath->$permlevel1->supprimer;
 				}
 			}
 		} else {
