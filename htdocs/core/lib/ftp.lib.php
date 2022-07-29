@@ -164,6 +164,7 @@ function dol_ftp_close($connect_id)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
+ * @return		result
  */
 function dol_ftp_delete($connect_id, $file, $newsection)
 {
@@ -195,6 +196,7 @@ function dol_ftp_delete($connect_id, $file, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
+ * @return		result
  */
 function dol_ftp_get($connect_id, $file, $newsection)
 {
@@ -223,6 +225,7 @@ function dol_ftp_get($connect_id, $file, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
+ * @return		result
  */
 function dol_ftp_rmdir($connect_id, $file, $newsection)
 {
