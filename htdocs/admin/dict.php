@@ -2375,7 +2375,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
-		} elseif (in_array($value, array('element', 'source'))) {	//Example: the type and source of the element (for contact types)
+		} elseif (in_array($value, array('element', 'source'))) {	// Example: the type and source of the element (for contact types)
 			print '<td>';
 			print $form->selectarray($value, $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''));
 			print '</td>';
