@@ -185,7 +185,6 @@ function dol_ftp_delete($connect_id, $file, $newsection)
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
 		return ssh2_sftp_unlink($connect_id, $newremotefileiso);
 	} else {
-		var_dump($newremotefileiso);
 		return @ftp_delete($connect_id, $newremotefileiso);
 	}
 }
@@ -242,8 +241,8 @@ function dol_ftp_rmdir($connect_id, $file, $newsection)
 	$newremotefileiso = utf8_decode($remotefile);
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-		$result = ssh2_sftp_rmdir($connect_id, $newremotefileiso);
+		return ssh2_sftp_rmdir($connect_id, $newremotefileiso);
 	} else {
-		$result = @ftp_rmdir($connect_id, $newremotefileiso);
+		return @ftp_rmdir($connect_id, $newremotefileiso);
 	}
 }

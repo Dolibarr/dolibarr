@@ -188,17 +188,15 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 
 	if ($conn_id && $ok && !$mesg) {
 		foreach (GETPOST('const', 'array') as $const) {
-			var_dump($const);
 			if (isset($const["check"])) {	// Is checkbox checked
 				$langs->load("other");
 
 				// Remote file
 				$file = $const["file"];
 				$newsection = $const["section"];
-				$newsection = $section;
 
 				$result = dol_ftp_delete($conn_id, $file, $newsection);
-				var_dump($newsection);
+
 				if ($result) {
 					setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 				} else {
@@ -230,7 +228,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 	if ($conn_id && $ok && !$mesg) {
 		$newsection = $section;
 
-		$result = dol_ftp_rmdir($connect_id, $file, $newsection);
+		$result = dol_ftp_rmdir($conn_id, $file, $newsection);
 
 		if ($result) {
 			setEventMessages($langs->trans("DirWasRemoved", $file), null, 'mesgs');
@@ -361,12 +359,12 @@ if (!function_exists('ftp_connect')) {
 	if (!empty($ftp_server)) {
 		// Confirm remove file
 		if ($action == 'delete') {
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', GETPOST('file')), 'confirm_deletefile', '', '', 1);
 		}
 
 		// Confirmation de la suppression d'une ligne categorie
 		if ($action == 'delete_section') {
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode(GETPOST('section')).'&file='.urlencode(GETPOST('file')), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', GETPOST('file')), 'confirm_deletesection', '', '', 1);
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';
@@ -456,8 +454,6 @@ if (!function_exists('ftp_connect')) {
 			} else {
 				$buff = ftp_rawlist($conn_id, $newsectioniso);
 				$contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
-				//var_dump($contents);
-				//var_dump($buff);
 			}
 
 			$nboflines = count($contents);
@@ -467,7 +463,6 @@ if (!function_exists('ftp_connect')) {
 			while ($i < $nboflines && $i < 1000) {
 				$vals = preg_split('@ +@', utf8_encode($buff[$i]), 9);
 				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
-				//var_dump($vals);
 				$file = $vals[8];
 				if (empty($file)) {
 					$rawlisthasfailed = true;
