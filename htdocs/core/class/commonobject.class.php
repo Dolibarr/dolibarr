@@ -8935,7 +8935,7 @@ abstract class CommonObject
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
 			return price2num("$value");
 		} elseif (preg_match('/int$/i', $fieldsentry['type'])) {
-			return (int)$value;
+			return (int) $value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
 				return 'true';
