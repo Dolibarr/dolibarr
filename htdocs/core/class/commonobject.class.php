@@ -8189,7 +8189,7 @@ abstract class CommonObject
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								}
-				    		} else if(val > 0) {
+				    		} elseif(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -8212,7 +8212,7 @@ abstract class CommonObject
 								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
 								    $("#"+child_list).hide();
 								//Show mother lists
-								} else if ($("#"+parent_list).val() != 0){
+								} elseif ($("#"+parent_list).val() != 0){
 								    $("#"+parent_list).show();
 								}
 								//Show the child list if the parent list value is selected
@@ -8320,8 +8320,8 @@ abstract class CommonObject
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
+	 *   elseif calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 elseif calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
 	 * @param float		$unitPrice		 Product unit price
@@ -8934,7 +8934,7 @@ abstract class CommonObject
 			return 'NULL';
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
 			return price2num("$value");
-		} else if (preg_match('/int$/i', $fieldsentry['type'])) {
+		} elseif (preg_match('/int$/i', $fieldsentry['type'])) {
 			return (int)$value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
