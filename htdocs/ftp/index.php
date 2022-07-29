@@ -160,32 +160,14 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 
 	if ($conn_id && $ok && !$mesg) {
 		$newsection = $section;
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
-		}
+		$result = dol_ftp_delete($conn_id, $file, $newsection);
 
-		$langs->load("other");
-
-		// Remote file
-		$filename = $file;
-		$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
-		$newremotefileiso = utf8_decode($remotefile);
-
-		//print "x".$newremotefileiso;
-		dol_syslog("ftp/index.php ftp_delete ".$newremotefileiso);
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$result = ssh2_sftp_unlink($conn_id, $newremotefileiso);
-		} else {
-			$result = @ftp_delete($conn_id, $newremotefileiso);
-		}
 		if ($result) {
 			setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 		} else {
 			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
 			setEventMessages($langs->trans("FTPFailedToRemoveFile", $file), null, 'errors');
 		}
-
-		//ftp_close($conn_id);	Close later
 
 		$action = '';
 	} else {
@@ -206,25 +188,17 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 
 	if ($conn_id && $ok && !$mesg) {
 		foreach (GETPOST('const', 'array') as $const) {
-			if ($const["check"]) {	// Is checkbox checked
+			var_dump($const);
+			if (isset($const["check"])) {	// Is checkbox checked
 				$langs->load("other");
 
 				// Remote file
 				$file = $const["file"];
 				$newsection = $const["section"];
-				if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
-				}
-				$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
-				$newremotefileiso = utf8_decode($remotefile);
+				$newsection = $section;
 
-				//print "x".$newremotefileiso;
-				dol_syslog("ftp/index.php ftp_delete n files for ".$newremotefileiso);
-				if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-					$result = ssh2_sftp_unlink($conn_id, $newremotefileiso);
-				} else {
-					$result = @ftp_delete($conn_id, $newremotefileiso);
-				}
+				$result = dol_ftp_delete($conn_id, $file, $newsection);
+				var_dump($newsection);
 				if ($result) {
 					setEventMessages($langs->trans("FileWasRemoved", $file), null, 'mesgs');
 				} else {
@@ -255,20 +229,9 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 
 	if ($conn_id && $ok && !$mesg) {
 		$newsection = $section;
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
-		}
 
-		// Remote file
-		$filename = $file;
-		$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
-		$newremotefileiso = utf8_decode($remotefile);
+		$result = dol_ftp_rmdir($connect_id, $file, $newsection);
 
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$result = ssh2_sftp_rmdir($conn_id, $newremotefileiso);
-		} else {
-			$result = @ftp_rmdir($conn_id, $newremotefileiso);
-		}
 		if ($result) {
 			setEventMessages($langs->trans("DirWasRemoved", $file), null, 'mesgs');
 		} else {
@@ -299,20 +262,10 @@ if ($action == 'download') {
 		$localfile = tempnam($download_dir, 'dol_');
 
 		$newsection = $section;
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
-		}
 
-		// Remote file
-		$filename = $file;
-		$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
-		$newremotefileiso = utf8_decode($remotefile);
+		$result = dol_ftp_get($connect_id, $file, $newsection);
 
-		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			$result = fopen('ssh2.sftp://'.intval($conn_id).$newremotefileiso, 'r');
-		} else {
-			$result = ftp_get($conn_id, $localfile, $newremotefileiso, FTP_BINARY);
-		}
+
 		if ($result) {
 			if (!empty($conf->global->MAIN_UMASK)) {
 				@chmod($localfile, octdec($conf->global->MAIN_UMASK));
@@ -344,8 +297,6 @@ if ($action == 'download') {
 			header('Pragma: public');
 
 			readfile($localfile);
-
-			ftp_close($conn_id);
 
 			exit;
 		} else {
