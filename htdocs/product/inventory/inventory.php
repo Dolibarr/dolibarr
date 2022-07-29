@@ -711,7 +711,8 @@ if ($object->id > 0) {
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
+				//if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
+				if ($qty_view != '') {
 					$hasinput = true;
 				}
 				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
