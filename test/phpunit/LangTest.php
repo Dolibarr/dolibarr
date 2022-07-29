@@ -226,6 +226,10 @@ class LangTest extends PHPUnit\Framework\TestCase
 				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
+
+				$result=preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
 			}
 		}
 
