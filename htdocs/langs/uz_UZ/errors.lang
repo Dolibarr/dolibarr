@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Faqat HTTPS xavfsiz ulanishidan foydalanish 
 WarningModuleXDisabledSoYouMayMissEventHere=%s moduli yoqilmagan. Shunday qilib, siz bu erda ko'plab tadbirlarni o'tkazib yuborishingiz mumkin.
 WarningPaypalPaymentNotCompatibleWithStrict="Qat'iy" qiymati onlayn to'lov xususiyatlarining noto'g'ri ishlashiga olib keladi. Buning o'rniga "Lax" dan foydalaning.
 
-<<<<<<< BOSH
-=======
-<<<<<<< BOSH
-<<<<<<< BOSH
->>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Qiymat yaroqsiz
 RequireAtLeastXString = Kamida %s belgi kerak
@@ -347,12 +342,3 @@ BadSetupOfField = Maydonni noto'g'ri sozlashda xato
 BadSetupOfFieldClassNotFoundForValidation = Maydonni noto'g'ri o'rnatish xatosi: Tasdiqlash uchun sinf topilmadi
 BadSetupOfFieldFileNotFound = Maydonni noto'g'ri o'rnatishda xato: Faylni kiritish uchun topilmadi
 BadSetupOfFieldFetchNotCallable = Maydonni noto'g'ri o'rnatish xatosi: Sinfda qo'ng'iroq qilib bo'lmaydi
-<<<<<<< BOSH
-=======
-=======
-=======
->>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
->>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
-=======
->>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
->>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git

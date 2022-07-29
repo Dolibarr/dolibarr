@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Disponibil numai dacă se utilizează conexi
 WarningModuleXDisabledSoYouMayMissEventHere=Modulul %s nu a fost activat. Este posibil să pierdeți o mulțime de evenimente aici. 
 WarningPaypalPaymentNotCompatibleWithStrict=Valoarea 'Strictă' face ca funcțiile de plată online să nu funcționeze corect. Folosiți în schimb 'Lax'.
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valoare invalidă
 RequireAtLeastXString = Necesită cel puţin %s caracter(e)
@@ -347,12 +342,3 @@ BadSetupOfField = Eroare setare invalidă a câmpului
 BadSetupOfFieldClassNotFoundForValidation = Eroare setare valoare câmp : Clasa nu a fost găsită pentru validare
 BadSetupOfFieldFileNotFound = Eroare setare valoare câmp : Fișierul nu a fost găsit pentru includere
 BadSetupOfFieldFetchNotCallable = Eroare setare valoare câmp : Operaţia fetch nu este apelabilă din clasă
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
->>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git
->>>>>>> ramura '15.0' de la git@github.com:Dolibarr/dolibarr.git

@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Hanya tersedia jika menggunakan koneksi aman
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s belum diaktifkan. Jadi Anda mungkin melewatkan banyak acara di sini.
 WarningPaypalPaymentNotCompatibleWithStrict=Nilai 'Strict' membuat fitur pembayaran online tidak berfungsi dengan baik. Gunakan 'Lax' sebagai gantinya.
 
-<<<<<<< KEPALA
-=======
-<<<<<<< KEPALA
-<<<<<<< KEPALA
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Nilai tidak valid
 RequireAtLeastXString = Memerlukan setidaknya %s karakter
@@ -347,12 +342,3 @@ BadSetupOfField = Salah pengaturan bidang yang buruk
 BadSetupOfFieldClassNotFoundForValidation = Salah pengaturan bidang yang buruk: Kelas tidak ditemukan untuk validasi
 BadSetupOfFieldFileNotFound = Salah pengaturan bidang yang buruk: File tidak ditemukan untuk dimasukkan
 BadSetupOfFieldFetchNotCallable = Salah pengaturan bidang yang buruk: Ambil tidak dapat dipanggil di kelas
-<<<<<<< KEPALA
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
