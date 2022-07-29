@@ -8189,7 +8189,7 @@ abstract class CommonObject
 									$("select[name=\""+child_list+"\"] option[parent]").remove();
 									$("select[name=\""+child_list+"\"]").append(options);
 								}
-				    		} elseif(val > 0) {
+				    		} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -8212,7 +8212,7 @@ abstract class CommonObject
 								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
 								    $("#"+child_list).hide();
 								//Show mother lists
-								} elseif ($("#"+parent_list).val() != 0){
+								} else if ($("#"+parent_list).val() != 0){
 								    $("#"+parent_list).show();
 								}
 								//Show the child list if the parent list value is selected
