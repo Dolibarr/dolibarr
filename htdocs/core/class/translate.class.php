@@ -904,11 +904,11 @@ class Translate
 	 *      This function need module "numberwords" to be installed. If not it will return
 	 *      same number (this module is not provided by default as it use non GPL source code).
 	 *
-	 *		@param	int		$number		Number to encode in full text
-	 *      @param  string	$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
-	 *      @return string				Label translated in UTF8 (but without entities)
-	 * 									10 if setDefaultLang was en_US => ten
-	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
+	 *		@param	int|string	$number		Number to encode in full text
+	 *      @param  string		$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
+	 *      @return string					Label translated in UTF8 (but without entities)
+	 * 										10 if setDefaultLang was en_US => ten
+	 * 										123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
 	public function getLabelFromNumber($number, $isamount = '')
 	{

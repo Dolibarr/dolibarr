@@ -285,17 +285,17 @@ class ActionComm extends CommonObject
 
 	// Properties for links to other objects
 	/**
-	 * @var int Id of linked object
+	 * @var int 		Id of linked object
 	 */
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int Id of record alternative for API
+	 * @var int 		Id of record alternative for API
 	 */
 	public $elementid;
 
 	/**
-	 * @var string Type of record. This if property ->element of object linked to.
+	 * @var string 		Type of record. This if property ->element of object linked to.
 	 */
 	public $elementtype;
 
@@ -1558,13 +1558,13 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) {
+		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
 			$canread = 1; // Can read my event
 		}
-		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) {
+		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if ($user->rights->agenda->allactions->read) {
+		if (!empty($user->rights->agenda->allactions->read)) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
@@ -2093,8 +2093,8 @@ class ActionComm extends CommonObject
 						}
 
 						if (!empty($conf->global->AGENDA_EXPORT_FIX_TZ)) {
-							$timestampStart = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-							$timestampEnd   = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampStart = $timestampStart - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampEnd   = $timestampEnd - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
 						}
 
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));

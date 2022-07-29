@@ -34,7 +34,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $permissiontoadd) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
 	} else {

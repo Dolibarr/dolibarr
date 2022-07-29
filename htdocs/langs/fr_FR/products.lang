@@ -412,3 +412,4 @@ SwitchOnSaleStatus=Basculer le statut En vente
 SwitchOnPurchaseStatus=Basculer le statut En achat
 StockMouvementExtraFields= Champs supplémentaires (mouvement de stock)
 PuttingPricesUpToDate=Mettre à jour les prix
+OrProductsWithCategories=Ou produits avec tags/categories

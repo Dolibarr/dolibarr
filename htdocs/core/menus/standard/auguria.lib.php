@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++) {
+		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
 		$shorturl = '';
@@ -80,9 +81,9 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		if ($showmode == 1) {
 			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
 
+			// url = url from host, shorturl = relative path into dolibarr sources
 			$url = $shorturl = $newTabMenu[$i]['url'];
-
-			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
+			if (!preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {	// Do not change url content for external links
 				$tmp = explode('?', $newTabMenu[$i]['url'], 2);
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1]) ? $tmp[1] : '');
@@ -235,11 +236,11 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
 
 	if ($showmode == 1) {
-		print '<a '.$classnametxt.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage aaa"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
-			print '<a '.$classnameimg.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 			print '<span class="mainmenuaspan">';
 			print $text;
 			print '</span>';
@@ -300,11 +301,13 @@ function print_end_menu_array_auguria()
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
  * @param	array		$moredata			An array with more data to output
+ * @param 	int			$type_user     		0=Menu for backoffice, 1=Menu for front office
  * @return	int								Nb of menu entries
  */
-function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null)
+function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
 {
-	global $user, $conf, $langs, $dolibarr_main_db_name, $mysoc;
+	global $user, $conf, $langs, $hookmanager;
+	global $dolibarr_main_db_name, $mysoc;
 
 	$newmenu = $menu;
 
@@ -472,6 +475,29 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		return 0;
 	}
 
+	// Allow the $menu_array of the menu to be manipulated by modules
+	$parameters = array(
+		'mainmenu' => $mainmenu,
+	);
+	$hook_items = $menu_array;
+	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+
+	if (is_numeric($reshook)) {
+		if ($reshook == 0 && !empty($hookmanager->results)) {
+			$menu_array[] = $hookmanager->results; // add
+		} elseif ($reshook == 1) {
+			$menu_array = $hookmanager->results; // replace
+		}
+
+		// @todo Sort menu items by 'position' value
+		//      $position = array();
+		//      foreach ($menu_array as $key => $row) {
+		//          $position[$key] = $row['position'];
+		//      }
+		//		$array1_sort_order = SORT_ASC;
+		//      array_multisort($position, $array1_sort_order, $menu_array);
+	}
+
 	// Show menu
 	$invert = empty($conf->global->MAIN_MENU_INVERT) ? "" : "invert";
 	if (empty($noout)) {
@@ -542,7 +568,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($menu_array[$i]['enabled']) {     // Enabled so visible
 					print '<div class="menu_titre">'.$tabstring;
 					if ($shorturlwithoutparam) {
-						print '<a class="vmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+						print '<a class="vmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
 						print '<span class="vmenu">';
 					}
@@ -555,7 +581,11 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					print '</div>'."\n";
 					$lastlevel0 = 'enabled';
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
-					print '<div class="menu_titre">'.$tabstring.'<span class="vmenudisabled">'.$menu_array[$i]['titre'].'</span></div>'."\n";
+					print '<div class="menu_titre">'.$tabstring;
+					print '<span class="vmenudisabled">';
+					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
+					print '</span>';
+					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
 				} else {
 					$lastlevel0 = 'hidden';
@@ -572,10 +602,12 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					$cssmenu = ' menu_contenu'.dol_string_nospecial(preg_replace('/\.php.*$/', '', $menu_array[$i]['url']));
 				}
 
-				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {     // Enabled so visible, except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
+				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {
+					// Enabled so visible, except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
 					if ($shorturlwithoutparam) {
-						print '<a class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
 						print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 					}
@@ -590,8 +622,12 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 						print '<br>';
 					}
 					print '</div>'."\n";
-				} elseif ($showmenu && $lastlevel0 == 'enabled') {       // Not enabled but visible (so greyed), except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br></div>'."\n";
+				} elseif ($showmenu && $lastlevel0 == 'enabled') {
+					// Not enabled but visible (so greyed), except if parent was not enabled.
+					print '<div class="menu_contenu'.$cssmenu.'">';
+					print $tabstring;
+					print '<span class="spanlilevel0 vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br>';
+					print '</div>'."\n";
 				}
 			}
 

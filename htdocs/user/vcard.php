@@ -113,7 +113,7 @@ if ($company->id) {
 	}
 
 	// Si user lie a un tiers non de type "particulier"
-	if ($user2->typent_code != 'TE_PRIVATE') {
+	if ($company->typent_code != 'TE_PRIVATE') {
 		$v->setOrg($company->name);
 	}
 }

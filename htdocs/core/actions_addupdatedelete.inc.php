@@ -61,7 +61,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				continue; // The field was not submited to be saved
 			}
 		} else {
-			if (!GETPOSTISSET($key)) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -91,6 +91,12 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+			$value = '';
+			$values_arr = GETPOST($key, 'array');
+			if (!empty($values_arr)) {
+				$value = implode(',', $values_arr);
+			}
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
@@ -134,6 +140,8 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
@@ -141,14 +149,19 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
+
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+
+			$db->commit();
 
 			if (empty($noback)) {
 				header("Location: " . $urltogo);
 				exit;
 			}
 		} else {
+			$db->rollback();
+
 			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {
@@ -177,7 +190,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key)) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -215,6 +228,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			$value = '';
+			$values_arr = GETPOST($key, 'array');
+			if (!empty($values_arr)) {
+				$value = implode(',', $values_arr);
+			}
 		} else {
 			if ($key == 'lang') {
 				$value = GETPOST($key, 'aZ09');

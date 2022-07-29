@@ -63,6 +63,7 @@ $search_email = GETPOST("search_email", 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $search_filter = GETPOST("search_filter", 'alpha');
 $search_status = GETPOST("search_status", 'intcomma');
+$search_morphy = GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -381,6 +382,9 @@ if ($search_filter == 'outofdate') {
 if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
+}
+if ($search_morphy != '') {
+	$sql .= natural_search("d.morphy", $search_morphy);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -731,6 +735,11 @@ if (!empty($arrayfields['d.login']['checked'])) {
 }
 if (!empty($arrayfields['d.morphy']['checked'])) {
 	print '<td class="liste_titre left">';
+	$arraymorphy = array('mor'=>$langs->trans("Moral"), 'phy'=>$langs->trans("Physical"));
+	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1);
+	print '</td>';
+}
+if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {

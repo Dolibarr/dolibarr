@@ -16,20 +16,45 @@
  */
 
 /**
- *	\file       htdocs/asterisk/cidlookup.php
+ *	\file       htdocs/public/clicktodial/cidlookup.php
  *  \brief      Script to search companies names based on incoming calls, from caller phone number
- *	\remarks    To use this script, your Asterisk must be compiled with CURL,
- *	            and your dialplan must be something like this:
+ *	\remarks    To use this script, your Asterisk must be compiled with CURL, and your dialplan must be something like this:
  *
- *              exten => s,1,Set(CALLERID(name)=${CURL(http://IP-DOLIBARR:80/asterisk/cidlookup.php?phone=${CALLERID(num)})})
+ *              exten => s,1,Set(CALLERID(name)=${CURL(http://IP-DOLIBARR:80/asterisk/cidlookup.php?phone=${CALLERID(num)}&securitykey=SECURITYKEY)})
  *
  *			    Change IP-DOLIBARR to the IP address of your dolibarr server
+ *			    Change SECURITYKEY to the value defined into your setup of module ClickToDial
  */
 
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
-include '../master.inc.php';
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cidlookup');
+}
+
+include '../../main.inc.php';
 
 $phone = GETPOST('phone');
+$securitykey = GETPOST('securitykey');
+
 $notfound = $langs->trans("Unknown");
 
 // Security check
@@ -38,11 +63,26 @@ if (empty($conf->clicktodial->enabled)) {
 	exit;
 }
 
+
+/*
+ * View
+ */
+
+if (empty($securitykey)) {
+	echo 'Securitykey is required. Check setup of clicktodial module.';
+	exit;
+}
+if ($securitykey != getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP')) {
+	echo 'Securitykey is wrong.';
+	exit;
+}
+
 // Check parameters
 if (empty($phone)) {
 	print "Error: Url must be called with parameter phone=phone to search\n";
 	exit;
 }
+
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";

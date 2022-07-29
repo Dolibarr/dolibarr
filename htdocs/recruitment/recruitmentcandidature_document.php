@@ -188,6 +188,7 @@ if ($object->id) {
 	$param = '&id='.$object->id;
 
 	$relativepathwithnofile = 'recruitmentcandidature/'.dol_sanitizeFileName($object->ref).'/';
+	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

@@ -293,7 +293,7 @@ ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is man
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
-WarningMandatorySetupNotComplete=Click here to setup mandatory parameters
+WarningMandatorySetupNotComplete=Click here to setup main parameters
 WarningEnableYourModulesApplications=Click here to enable your modules and applications
 WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=A bookmark with this title or this target (URL) already exists.
@@ -324,7 +324,8 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
- 
+WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
+
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)

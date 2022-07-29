@@ -16,7 +16,5 @@ TOKEN_EXPIRED=Token caducado
 TOKEN_EXPIRE_AT=El token caduca a las
 OAUTH_GOOGLE_NAME=Servicio de Google OAuth
 OAUTH_GOOGLE_ID=ID de Google OAuth
-OAUTH_GOOGLE_DESC=Vaya a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> esta página </a> y luego a "Credenciales" para crear credenciales de OAuth
 OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
-OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> esta página </a> y luego "Registre una nueva aplicación" para crear credenciales de OAuth

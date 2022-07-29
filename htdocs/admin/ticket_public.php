@@ -183,7 +183,8 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 			}
 
 			// enable captcha by default
-			$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA', 1, 'chaine', 0, '', $conf->entity);
+			// TODO Add a visible option in this setup page for this
+			$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_TICKET', 1, 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
 				$error++;
 				$errors[] = $db->lasterror();
