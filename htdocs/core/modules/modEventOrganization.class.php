@@ -24,6 +24,7 @@
  *  \brief      Description and activation file for the EventOrganization
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  *  Description and activation class for module EventOrganization
@@ -367,7 +368,9 @@ class modEventOrganization extends DolibarrModules
 			}
 		}
 
-		return $this->_init($sql, $options);
+		$init = $this->_init($sql, $options);
+
+		return $init;
 	}
 
 	/**
