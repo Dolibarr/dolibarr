@@ -775,8 +775,14 @@ else {  // Show the table of membership types
 			print '<tr class="oddeven">';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td class="nowrap">';
-			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
-			print max(1, intval($objp->duration)).' '.$units[$unit];
+
+			if(!empty($objp->duration)) {
+				$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+				print max(1, intval($objp->duration)).' '.$units[$unit];
+			} else {
+				print $langs->trans("NoEndSubscription");
+			}
+
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
 			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));

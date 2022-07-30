@@ -125,6 +125,7 @@ PublicMemberCard=Member public card
 SubscriptionNotRecorded=Contribution not recorded
 AddSubscription=Create contribution
 ShowSubscription=Show contribution
+YouCanHaveUnlimitedMembershipDuration=Although membership duration is typically 1 year, you can select any duration or make it unlimited if this field is left empty.
 # Label of email templates
 SendingAnEMailToMember=Sending information email to member
 SendingEmailOnAutoSubscription=Sending email on auto registration

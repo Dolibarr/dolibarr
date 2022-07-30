@@ -143,7 +143,7 @@ class Subscription extends CommonObject
 		$now = dol_now();
 
 		// Check parameters
-		if ($this->datef <= $this->dateh) {
+		if (!empty($this->datef) && $this->datef <= $this->dateh) {
 			$this->error = $langs->trans("ErrorBadValueForDate");
 			return -1;
 		}
@@ -165,9 +165,11 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
+
+		$end_date_sql = empty($this->datef)? "null" : "'".$this->db->idate($this->datef)."'";
 		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
-		$sql .= " '".$this->db->idate($this->datef)."',";
+		$sql .= " ".$end_date_sql.","; // can be null if membership unlimited
 		$sql .= " ".((float) $this->amount).",";
 		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
 

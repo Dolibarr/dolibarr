@@ -314,10 +314,14 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			}
 			print '</td>';
 			print '<td class="center nowrap">';
-			$cunits = new CUnits($db);
-			$units = $cunits->fetchAllAsObject();
-			$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
-			print max(1, intval($objp->duration)).' '.$units[$unit];
+			if(!empty($objp->duration)) {
+				$cunits = new CUnits($db);
+				$units = $cunits->fetchAllAsObject();
+				$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+				print max(1, intval($objp->duration)).' '.$units[$unit];
+			} else {
+				print $langs->trans("NoEndSubscription");
+			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
@@ -402,7 +406,8 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
 	print '<input name="duration_value" size="5" value="'.GETPOST('duraction_unit', 'aZ09').'"> ';
-	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : '', '', 1);
+	print ' '.$form->textwithpicto('', $langs->trans("YouCanHaveUnlimitedMembershipDuration"));
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -474,12 +479,17 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-		if ($object->duration_value > 1) {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-		} elseif ($object->duration_value > 0) {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+		if(!empty($object->duration)) {
+			if ($object->duration_value > 1) {
+				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			} elseif ($object->duration_value > 0) {
+				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+			}
+			print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 		}
-		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		else {
+			print $langs->trans("NoEndSubscription");
+		}
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -830,7 +840,8 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
 		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
-		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? '' : $object->duration_unit), '', 1);
+		print ' '.$form->textwithpicto('', $langs->trans("YouCanHaveUnlimitedMembershipDuration"));
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';

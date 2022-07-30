@@ -587,11 +587,18 @@ while ($i < min($num, $limit)) {
 	}
 	// Date end
 	if (!empty($arrayfields['c.datef']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
+		print '<td class="center">';
+		if(!empty($obj->datef)) {
+			print dol_print_date($db->jdate($obj->datef), 'day');
+		} else {
+			print $langs->trans("NoEndSubscription");
+		}
+		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
+
 	// Price
 	if (!empty($arrayfields['d.amount']['checked'])) {
 		print '<td class="right amount">'.price($obj->subscription).'</td>';

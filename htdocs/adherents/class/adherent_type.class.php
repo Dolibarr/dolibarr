@@ -386,7 +386,8 @@ class AdherentType extends CommonObject
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? 'null' : ((float) $this->amount)).",";
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
-		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
+		$unit = empty($this->duration_unit)? '': $this->duration_unit;
+		$sql .= "duration = '".$this->db->escape($this->duration_value.$unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
 		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";

@@ -1551,7 +1551,8 @@ class Adherent extends CommonObject
 		$subscription->note_public = $label;
 		$subscription->fk_type = $fk_type;
 
-		$rowid = $subscription->create($user);
+
+		$rowid = $subscription->create($user, true); // Disable legacy triggers
 		if ($rowid > 0) {
 			// Update denormalized subscription end date (read database subscription to find values)
 			// This will also update this->datefin
@@ -2303,8 +2304,8 @@ class Adherent extends CommonObject
 			$res = $this->fetch_subscriptions();
 			if($res>0) {
 				if(!empty($this->last_subscription_amount)) {
-					$fullypaid = ($this->last_subscription_amount >= $type->amount);
-					$fullypaid &= $this->last_subscription_date_end? ($this->last_subscription_date_end >= dol_now()) : 0;
+					$fullypaid = $this->last_subscription_amount >= $type->amount;
+					$fullypaid &= empty($this->last_subscription_date_end) || $this->last_subscription_date_end >= dol_now();
 				}
 				$fullypaid |= $type->caneditamount || empty($type->subscription);
 			}
