@@ -259,6 +259,9 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// email a peu pres correct et le login n'existe pas
 		$adh = new Adherent($db);
+		$adht = new AdherentType($db);
+		$adht->fetch($object->typeid);
+
 		$adh->statut      = -1;
 		$adh->public      = $public;
 		$adh->firstname   = GETPOST('firstname');
@@ -282,6 +285,10 @@ if (empty($reshook) && $action == 'add') {
 		$adh->morphy      = $conf->global->MEMBER_NEWFORM_FORCEMORPHY ? $conf->global->MEMBER_NEWFORM_FORCEMORPHY : GETPOST('morphy');
 		$adh->birth       = $birthday;
 
+		// Start membership now
+		$now = dol_now();
+		$adh->datevalid	  = $now;
+		$adh->datefin 	  = $adh->get_end_date($now, $adht);
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($adh->table_element);
@@ -294,9 +301,6 @@ if (empty($reshook) && $action == 'add') {
 		if ($result > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$object = $adh;
-
-			$adht = new AdherentType($db);
-			$adht->fetch($object->typeid);
 
 			if ($object->email) {
 				$subject = '';

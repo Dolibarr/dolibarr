@@ -569,7 +569,7 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key,datefin)";
 		$sql .= " VALUES (";
 		$sql .= " '(PROV)'";
 		$sql .= ", '".$this->db->idate($this->datec)."'";
@@ -579,6 +579,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ", ".(!empty($this->datefin)? "'".$this->db->idate($this->datefin)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -593,6 +594,7 @@ class Adherent extends CommonObject
 				$result = $this->update($user, 1, 1, 0, 0, 'add'); // nosync is 1 to avoid update data of user
 				if ($result < 0) {
 					$this->db->rollback();
+					$this->error = 'Failed while updating minor fields';
 					return -1;
 				}
 
@@ -806,9 +808,6 @@ class Adherent extends CommonObject
 					$result = $luser->fetch($this->user_id);
 
 					if ($result >= 0) {
-						//var_dump($this->user_login);exit;
-						//var_dump($this->login);exit;
-
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 							$luser->login = $this->login;
@@ -910,59 +909,42 @@ class Adherent extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Update denormalized last subscription date.
-	 * 	This function is called when we delete a subscription for example.
+	 *	Get the end date of a membership or subscription according to the membership type ; or null if membership unlimited
 	 *
-	 *	@param	User	$user			User making change
-	 *	@return	int						<0 if KO, >0 if OK
+	 * Behaviour change: the deleted function Adherent->update_end_date() assumed that end date is related to subscription.
+	 * It shouldn't. In the new behaviour, membership has an end date based on the subscription duration, and
+	 * can be either up-to-date or late if subscription (payment) is not renewed or deleted.
+	 *
+	 *	@param	int				$startdate			First day of membership creation or subscription
+	 *	@param	AdherentType	$adht				Instance of a membership type, if null it will be retrieved 
+	 *	@return	int						new end date of membership or subscription
 	 */
-	public function update_end_date($user)
-	{
-		// phpcs:enable
-		$this->db->begin();
-
-		// Search for last subscription id and end date
-		$sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
-		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= " WHERE fk_adherent = ".((int) $this->id);
-		$sql .= " ORDER by dateadh DESC"; // Sort by start subscription date
-
-		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			$dateop = $this->db->jdate($obj->dateop);
-			$datedeb = $this->db->jdate($obj->datedeb);
-			$datefin = $this->db->jdate($obj->datefin);
-
-			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
-			$sql .= " WHERE rowid = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$this->last_subscription_date = $dateop;
-				$this->last_subscription_date_start = $datedeb;
-				$this->last_subscription_date_end = $datefin;
-				$this->datefin = $datefin;
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->db->rollback();
-				return -1;
+	public function get_end_date($startdate, $adht=null) {
+		if(empty($adht)) {
+			$adht = new AdherentType($this->db);
+			$adht->fetch($this->typeid);
+			if($adht <= 0) {
+				return null;
 			}
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->db->rollback();
-			return -1;
+		}
+		if(empty($adht->duration)) {
+			return null; // Unlimited membership
+		}
+		$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
+		$delay = max(1, intval($adht->duration));
+		$enddate = dol_time_plus_duree($startdate, $delay, $delayunit);
+		if($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd') {
+			return dol_time_plus_duree($enddate, -1, 's'); // Just remove 1 second for short membership durations
+		}
+		else {
+			return dol_time_plus_duree($enddate, -1, 'd'); // ...or a full day otherwise
 		}
 	}
 
+	
 	/**
-	 *  Fonction qui supprime l'adherent et les donnees associees
+	 *  Deletes member (adherent) and associated data
 	 *
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User		$user		User object
@@ -1550,8 +1532,6 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-		$error = 0;
-
 		// Clean parameters
 		if (!$amount) {
 			$amount = 0;
@@ -1559,19 +1539,13 @@ class Adherent extends CommonObject
 
 		$this->db->begin();
 
-		if ($datesubend) {
-			$datefin = $datesubend;
-		} else {
-			// If no end date, end date = date + 1 year - 1 day
-			$datefin = dol_time_plus_duree($date, 1, 'y');
-			$datefin = dol_time_plus_duree($datefin, -1, 'd');
-		}
+		$datefin = empty($datesubend)? $this->get_end_date($date): $datesubend;
 
 		// Create subscription
 		$subscription = new Subscription($this->db);
 		$subscription->fk_adherent = $this->id;
 		$subscription->dateh = $date; // Date of new subscription
-		$subscription->datef = $datefin; // End data of new subscription
+		$subscription->datef = $datefin; // End date of new subscription, or null
 		$subscription->amount = $amount;
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
@@ -1581,23 +1555,18 @@ class Adherent extends CommonObject
 		if ($rowid > 0) {
 			// Update denormalized subscription end date (read database subscription to find values)
 			// This will also update this->datefin
-			$result = $this->update_end_date($user);
-			if ($result > 0) {
-				// Change properties of object (used by triggers)
-				$this->last_subscription_date = dol_now();
-				$this->last_subscription_date_start = $date;
-				$this->last_subscription_date_end = $datefin;
-				$this->last_subscription_amount = $amount;
-			}
+			//$result = $this->update_end_date($user);
+			
+			// Change properties of object (used by triggers)
+			$this->last_subscription_date = dol_now();
+			$this->last_subscription_date_start = $date;
+			$this->last_subscription_date_end = $datefin;
+			$this->last_subscription_amount = $amount;
 
-			if (!$error) {
-				$this->db->commit();
-				return $rowid;
-			} else {
-				$this->db->rollback();
-				return -2;
-			}
-		} else {
+			$this->db->commit();
+			return $rowid;
+		}
+		else {
 			$this->error = $subscription->error;
 			$this->errors = $subscription->errors;
 			$this->db->rollback();

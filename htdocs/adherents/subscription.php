@@ -79,9 +79,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg = '';
 
-$defaultdelay = 1;
-$defaultdelayunit = 'y';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
@@ -252,7 +249,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 		$action = 'addsubscription';
 	}
 	if (!$datesubend) {
-		$datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
+		$datesubend = $object->get_end_date($startdate, $adht);
 	}
 	if (($option == 'bankviainvoice' || $option == 'bankdirect') && !$paymentdate) {
 		$error++;

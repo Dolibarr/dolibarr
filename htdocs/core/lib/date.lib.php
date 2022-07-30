@@ -114,7 +114,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
- *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i, s)
  *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  */
@@ -124,6 +124,9 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 
 	if ($duration_value == 0) {
 		return $time;
+	}
+	if ($duration_unit == 's') {
+		return $time + $duration_value;
 	}
 	if ($duration_unit == 'i') {
 		return $time + (60 * $duration_value);

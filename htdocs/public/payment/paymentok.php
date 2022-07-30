@@ -384,9 +384,6 @@ if ($ispaymentok) {
 		// Create complementary actions (this include creation of thirdparty)
 		// Send confirmation email
 
-		$defaultdelay = 1;
-		$defaultdelayunit = 'y';
-
 		// Record subscription
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -487,22 +484,12 @@ if ($ispaymentok) {
 					}
 				}
 
-				// Subscription informations
-				$datesubscription = $object->datevalid;
-				if ($object->datefin > 0) {
-					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
-				}
-
-				$datesubend = null;
-				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
-					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
-					// the new end date of subscription must be in futur
-					while ($datesubend < $now) {
-						$datesubend = dol_time_plus_duree($datesubend, $defaultdelay, $defaultdelayunit);
-						$datesubscription = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
-					}
-					$datesubend = dol_time_plus_duree($datesubend, -1, 'd');
-				}
+				// Update the membership end date based on the duration of membership
+				$now = dol_now();
+				$datesubscription = $now;
+				$object->datevalid = $datesubscription;
+				$datesubend = $object->get_end_date($now, $adht);
+				$object->datefin = $datesubend;
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
