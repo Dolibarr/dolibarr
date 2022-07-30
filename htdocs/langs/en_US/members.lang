@@ -120,6 +120,7 @@ LastSubscriptionsModified=Latest %s modified contributions
 String=String
 Text=Text
 Int=Int
+PaidOn=paid on
 DateAndTime=Date and time
 PublicMemberCard=Member public card
 SubscriptionNotRecorded=Contribution not recorded

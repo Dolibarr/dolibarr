@@ -1770,8 +1770,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print round($object->last_subscription_amount, 2).' '.strtoupper($conf->currency);
 			print " (".$langs->trans("PaidOn")." ".dol_print_date($object->last_subscription_date_start, 'day').")";
 			print " – ";
-			$id = $object->id;
-			print '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?memberid='.$id.'">'.$langs->trans('ListOfSubscriptions').'</a>';
 		}
 		else {
 			print $langs->trans("SubscriptionNotReceived");
