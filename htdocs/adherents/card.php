@@ -626,13 +626,8 @@ if (empty($reshook)) {
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->delete($id, $user);
 		if ($result > 0) {
-			if (!empty($backtopage)) {
-				header("Location: ".$backtopage);
-				exit;
-			} else {
-				header("Location: list.php");
-				exit;
-			}
+			header("Location: list.php");
+			exit;
 		} else {
 			setEventMessages($object->error, null, 'errors');
 		}
