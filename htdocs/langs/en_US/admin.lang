@@ -2064,6 +2064,7 @@ EmailCollectors=Email collectors
 EmailCollectorDescription=Add a scheduled job and a setup page to scan regularly email boxes (using IMAP protocol) and record emails received into your application, at the right place and/or create some records automatically (like leads).
 NewEmailCollector=New Email Collector
 EMailHost=Host of email IMAP server
+EMailHostPort=Port of email IMAP server
 MailboxSourceDirectory=Mailbox source directory
 MailboxTargetDirectory=Mailbox target directory
 EmailcollectorOperations=Operations to do by collector

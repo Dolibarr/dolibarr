@@ -64,3 +64,4 @@ ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
