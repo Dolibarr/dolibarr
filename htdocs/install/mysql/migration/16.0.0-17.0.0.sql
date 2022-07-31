@@ -64,3 +64,5 @@ ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
+ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
+
