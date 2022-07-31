@@ -458,7 +458,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Complete request and execute it with limit
-$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder, $sortfield == "d.ref");
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }

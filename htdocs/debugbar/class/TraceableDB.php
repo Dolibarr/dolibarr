@@ -198,11 +198,12 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param   string $sortfield List of sort fields
 	 * @param   string $sortorder Sort order
+	 * @param   bool   $isnumeric Sort order must be interpreted as a numeric value (integer)
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = null, $sortorder = null, $isnumeric=false)
 	{
-		return $this->db->order($sortfield, $sortorder);
+		return $this->db->order($sortfield, $sortorder, $isnumeric);
 	}
 
 	/**

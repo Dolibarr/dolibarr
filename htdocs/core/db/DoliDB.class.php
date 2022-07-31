@@ -261,9 +261,10 @@ abstract class DoliDB implements Database
 	 *
 	 * @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 * @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
+	 * @param   bool 		$isnumeric 		Sort order must be interpreted as a numeric value (integer)
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null)
+	public function order($sortfield = null, $sortorder = null, $isnumeric=false)
 	{
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
@@ -278,7 +279,9 @@ abstract class DoliDB implements Database
 					$return .= ', ';
 				}
 
+				if($isnumeric) $return .= 'CAST(';
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
+				if($isnumeric) $return .= ' AS UNSIGNED)';
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 
