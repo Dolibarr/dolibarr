@@ -1192,7 +1192,7 @@ class Facture extends CommonInvoice
 	 *  @param  	int 	$fromid         Id of object to clone
 	 * 	@return		int					    New id of clone
 	 */
-	public function createFromClone(User $user, $fromid = 0)
+	public function createFromClone(User $user, $fromid = 0, $targetThirdPartyVat = false)
 	{
 		global $conf, $hookmanager;
 
@@ -1276,6 +1276,14 @@ class Facture extends CommonInvoice
 			}
 
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+		}
+		// we have a different thirdparty selected and we checked $targetThirdPartyVat
+		if ($objFrom->socid != $object->socid && $targetThirdPartyVat) {
+			global $mysoc;
+
+			foreach ($object->lines as $line) {
+				$line->tva_tx = get_default_tva($mysoc, $objsoc, $line->fk_product);
+			}
 		}
 
 		// Create clone

@@ -207,8 +207,12 @@ if (empty($reshook)) {
 		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone. We use native clone to keep this->db valid.
 
 		$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
+
 		$objectutil->socid = $socid;
-		$result = $objectutil->createFromClone($user, $id);
+
+		$targetThirdPartyVat = GETPOSTISSET('targetThirdPartyVat');
+		$result = $objectutil->createFromClone($user, $id, $targetThirdPartyVat);
+
 		if ($result > 0) {
 			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
 			exit();
@@ -4174,9 +4178,10 @@ if ($action == 'create') {
 		// Create an array for form
 		$formquestion = array(
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)),
-			array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
+			array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now()),
+			array('type' => 'checkbox', 'name' => 'targetThirdPartyVat', 'label' => $langs->trans("targetThirdPartyVat"), 'value' => 0 ),
 		);
-		// Ask confirmatio to clone
+		// Ask confirmation to clone
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 

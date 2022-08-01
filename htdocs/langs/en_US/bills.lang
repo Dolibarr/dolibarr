@@ -610,3 +610,4 @@ PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to pa
 SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
 MakePaymentAndClassifyPayed=Record payment
 BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
+targetThirdPartyVat=Modify the VAT rate to use the default rate depending on the new thirdparty
