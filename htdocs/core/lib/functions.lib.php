@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -7387,6 +7387,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+			}
+			if (!empty($conf->propal->enabled) && (!is_object($object) || $object->element == 'propal')) {
+				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
