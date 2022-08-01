@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Du må først konfigurere kontoplanen d
 ErrorFailedToFindEmailTemplate=Kunne ikke finne mal med kodenavn %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Varighet ikke definert på tjenesten. Ingen måte å beregne timeprisen.
 ErrorActionCommPropertyUserowneridNotDefined=Brukerens eier kreves
-ErrorActionCommBadType=Valgt hendelsestype (id: %n, kode: %s) finnes ikke i ordboken for hendelsestype
+ErrorActionCommBadType=Valgt hendelsestype (id: %s, kode: %s) finnes ikke i ordboken for hendelsestype
 CheckVersionFail=Versjonskontroll mislyktes
 ErrorWrongFileName=Navnet på filen kan ikke inneholde __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Ikke i ordboken for betalingsvilkår, vennligst endre.
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Bare tilgjengelig hvis du bruker HTTPS-sikre
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s er ikke aktivert, så du kan gå glipp av mange hendelser her.
 WarningPaypalPaymentNotCompatibleWithStrict=Verdien 'Strict' gjør at betalingsfunksjonene på nettet ikke fungerer som de skal. Bruk 'Lax' i stedet.
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Verdien er ikke gyldig
 RequireAtLeastXString = Krever minst %s tegn
@@ -347,12 +342,3 @@ BadSetupOfField = Feil oppsett av felt
 BadSetupOfFieldClassNotFoundForValidation = Feil oppsett av felt: Klasse ikke funnet for validering
 BadSetupOfFieldFileNotFound = Feil oppsett av felt: Filen ble ikke funnet for inkludering
 BadSetupOfFieldFetchNotCallable = Feil oppsett av felt: Henting kan ikke kalles på klasse
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
