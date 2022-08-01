@@ -92,12 +92,12 @@ if ($action == 'update' && !$cancel) {
 			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW", GETPOST("MAIN_MAIL_SMTPS_PW", 'none'), 'chaine', 0, '', $conf->entity);
 		}
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_USE_OAUTH")) {
-			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_USE_OAUTH", GETPOST("MAIN_MAIL_SMTPS_USE_OAUTH", 'none'), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_USE_OAUTH", GETPOST("MAIN_MAIL_SMTPS_USE_OAUTH", 'int'), 'chaine', 0, '', $conf->entity);
 			$method = GETPOST("MAIN_MAIL_SMTPS_USE_OAUTH", 'aZ09') == 1 ? 'XOAUTH2' : 'LOGIN';
 			dolibarr_set_const($db, "MAIL_SMTP_AUTH_TYPE", $method, 'chaine', 0, '', $conf->entity);
 		}
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_OAUTH_SERVICE")) {
-			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE", 'none'), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE", 'chaine'), 'chaine', 0, '', $conf->entity);
 		}
 		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS", GETPOST("MAIN_MAIL_EMAIL_TLS", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS", 'int'), 'chaine', 0, '', $conf->entity);
