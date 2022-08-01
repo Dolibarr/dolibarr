@@ -69,6 +69,11 @@ class SMTPs
 	private $_smtpsPW = null;
 
 	/**
+	 * Token in case we use OAUTH2
+	 */
+	private $_smtpsToken = null;
+
+	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -583,9 +588,10 @@ class SMTPs
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
-					$token = 'xxx';
-					$xxxx = "user=".$this->_smtpsID."\1auth=Bearer ".$token."\1\1";
-					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($xxxx), '235');
+					$user = $this->_smtpsID;
+					$token = $this->_smtpsToken;
+					$initRes = "user=".$user."\001auth=Bearer ".$token."\001\001";
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($initRes), '235');
 					if (!$_retVal) {
 						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
 					}
@@ -631,7 +637,7 @@ class SMTPs
 		// Connect to Server
 		if ($this->socket = $this->_server_connect()) {
 			// If a User ID *and* a password is given, assume Authentication is desired
-			if (!empty($this->_smtpsID) && !empty($this->_smtpsPW)) {
+			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
 			} else {
@@ -921,6 +927,27 @@ class SMTPs
 	public function getPW()
 	{
 		return $this->_smtpsPW;
+	}
+
+	/**
+	 * User token for OAUTH2
+	 *
+	 * @param 	string 	$_strToken 	User token
+	 * @return 	void
+	 */
+	public function setToken($_strToken)
+	{
+		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Retrieves the User token for OAUTH2
+	 *
+	 * @return 	string 		User token for OAUTH2
+	 */
+	public function getToken()
+	{
+		return $this->_smtpsToken;
 	}
 
 	/**
@@ -1866,7 +1893,7 @@ class SMTPs
 		}
 
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse:".$server_response);
 			$_retVal = false;
 		}
 
