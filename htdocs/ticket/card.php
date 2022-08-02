@@ -925,15 +925,17 @@ if ($action == 'create' || $action == 'presend') {
 		if ($object->fk_user_create > 0) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
-			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
 			$morehtmlref .= $fuser->getNomUrl(-1);
-		}
-		if (!empty($object->origin_email)) {
+		} elseif (!empty($object->email_msgid)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+		} elseif (!empty($object->origin_email)) {
+			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 		}
 
 		// Thirdparty
@@ -1018,6 +1020,23 @@ if ($action == 'create' || $action == 'presend') {
 		print dol_print_date($object->datec, 'dayhour', 'tzuser');
 		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
 		print '</td></tr>';
+
+		// Origin
+		/*
+		if ($object->email_msgid) {
+			$texttoshow = $langs->trans("CreatedByEmailCollector");
+		} elseif ($object->origin_email) {
+			$texttoshow = $langs->trans("FromPublicEmail");
+		}
+		if ($texttoshow) {
+			print '<tr><td class="titlefield fieldname_email_origin">';
+			print $langs->trans("Origin");
+			print '</td>';
+			print '<td class="valuefield fieldname_email_origin">';
+			print $texttoshow;
+			print '</td></tr>';
+		}
+		*/
 
 		// Read date
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
@@ -1118,6 +1137,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Fin colonne gauche et début colonne droite
 		print '</div><div class="fichehalfright">';
 
+
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
@@ -1127,13 +1147,10 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Categories
 		if (isModEnabled('categorie')) {
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-
-			print '<table class="border tableforfield centpercent noborderbottom">';
-
+			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
 			print '<td class="valignmiddle titlefield">';
-			print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
 			print $langs->trans("Categories");
 			if ($action != 'categories' && !$user->socid) {
 				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
@@ -1170,10 +1187,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			print '</table>';
-
-			print '</div>';
 		}
-
 
 		// View Original message
 		$actionobject->viewTicketOriginalMessage($user, $action, $object);
