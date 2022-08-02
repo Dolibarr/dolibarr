@@ -778,7 +778,7 @@ class User extends CommonObject
 					return $this->rights->$rightsPath->$permlevel1->lire;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
-					return $this->rights->$rightsPath->$permlevel1->create;
+					return $this->rights->$rightsPath->$permlevel1->creer;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
 					return $this->rights->$rightsPath->$permlevel1->create;
@@ -797,7 +797,7 @@ class User extends CommonObject
 				return $this->rights->$rightsPath->lire;
 			}
 			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
-				return $this->rights->$rightsPath->create;
+				return $this->rights->$rightsPath->creer;
 			}
 			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
 				return $this->rights->$rightsPath->create;
