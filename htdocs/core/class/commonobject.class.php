@@ -7765,12 +7765,12 @@ abstract class CommonObject
 			} else {
 				$value = '';
 			}
-		} elseif (preg_match('/^(text|html)/', $type)) {
-			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
 			$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
 			$value = implode('<br>', $value);
+		} else {	// text|html|varchar
+			$value = dol_htmlentitiesbr($value);
 		}
 
 		//print $type.'-'.$size.'-'.$value;
