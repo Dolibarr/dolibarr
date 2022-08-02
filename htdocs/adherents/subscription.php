@@ -49,6 +49,8 @@ $rowid = $id;
 $ref = GETPOST('ref', 'alphanohtml');
 $typeid = GETPOST('typeid', 'int');
 $cancel = GETPOST('cancel');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -421,10 +423,15 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			$_POST["operation"] = '';
 			$_POST["label"] = '';
 			$_POST["num_chq"] = '';
+			$add_sucess = true;
 		}
 	}
 }
 
+if(($add_success || $cancel) && !empty($backtopage)) {
+	header("Location: ".$backtopage);
+	exit;
+}
 
 
 /*
@@ -477,6 +484,7 @@ if ($rowid > 0) {
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="backtopage" value="'.(empty($backtopage)? $_SERVER["HTTP_REFERER"]:$backtopage).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
@@ -542,19 +550,7 @@ if ($rowid > 0) {
 			print " ".img_warning($langs->trans("Late"));
 		}
 	} else {
-		if ($object->getNeedSubscription() == 0) {
-			print $langs->trans("SubscriptionNotNeeded");
-		} elseif (!$adht->subscription) {
-			print $langs->trans("SubscriptionNotRecorded");
-			if (Adherent::STATUS_VALIDATED == $object->statut) {
-				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
-			}
-		} else {
-			print $langs->trans("SubscriptionNotReceived");
-			if (Adherent::STATUS_VALIDATED == $object->statut) {
-				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
-			}
-		}
+		print $langs->trans("NoEndSubscription");
 	}
 	print '</td></tr>';
 
@@ -793,14 +789,14 @@ if ($rowid > 0) {
 
 
 	if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
-		// Shon online payment link
+		// Show online payment link
 		$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
 
 		if ($useonlinepayment) {
 			print '<br>';
 
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('membersubscription', $object->ref);
+			print showOnlinePaymentUrl('membersubscription', $object->ref, price2num($adht->amount));
 			print '<br>';
 		}
 	}
@@ -944,14 +940,32 @@ if ($rowid > 0) {
 		if (GETPOST('reday')) {
 			$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 		}
-		if (!$datefrom) {
-			$datefrom = $object->datevalid;
-			if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
-				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
-			} else {
-				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
+
+
+		// Update the membership end date based on the duration of membership
+		// If the membership has already an end date, it is extended for the next period
+		$now = dol_now();
+		$expired = $object->getExpired();
+		$fullypaid = $object->getFullyPaid();
+
+		if(empty($datefrom)) {
+			if(!empty($adht->duration) && !$expired && $fullypaid) {
+				// We're paying the next period
+				$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
+				$unit = ($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd')? 's':'d';
+				$datefrom = dol_time_plus_duree($object->datefin, 1, $unit);
+				$dateto = $object->get_end_date($datefrom, $adht);
+			}
+			else {
+				// We're paying the current period
+				$datefrom = $now;
+				$dateto = $object->get_end_date($datefrom, $adht);
+			}
+			if(empty($datefrom)) {
+				$datefrom = now();
 			}
 		}
+
 		print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
 		print "</td></tr>";
 
@@ -959,11 +973,10 @@ if ($rowid > 0) {
 		if (GETPOST('endday')) {
 			$dateto = dol_mktime(0, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 		}
-		if (!$dateto) {
-			$dateto = -1; // By default, no date is suggested
-		}
+
 		print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
 		print $form->selectDate($dateto, 'end', '', '', '', "subscription", 1, 0);
+		print ' '.$form->textwithpicto('', $langs->trans("YouCanHaveUnlimitedMembershipDuration"));
 		print "</td></tr>";
 
 		if ($adht->subscription) {

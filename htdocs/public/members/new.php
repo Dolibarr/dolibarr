@@ -259,8 +259,6 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// email a peu pres correct et le login n'existe pas
 		$adh = new Adherent($db);
-		$adht = new AdherentType($db);
-		$adht->fetch($object->typeid);
 
 		$adh->statut      = -1;
 		$adh->public      = $public;
@@ -286,6 +284,8 @@ if (empty($reshook) && $action == 'add') {
 		$adh->birth       = $birthday;
 
 		// Start membership now
+		$adht = new AdherentType($db);
+		$adht->fetch($adh->typeid);
 		$now = dol_now();
 		$adh->datevalid	  = $now;
 		$adh->datefin 	  = $adh->get_end_date($now, $adht);
@@ -481,7 +481,9 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 
-if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEWFORM_FORCETYPE) || $action == 'create') {
+$filling_started = !empty(GETPOST('email')) || !empty(GETPOST('firstname')) || !empty(GETPOST('lastname'));
+
+if ((!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEWFORM_FORCETYPE) || $action == 'create') || $filling_started) {
 	print '<input type="hidden" name="action" value="add" />';
 	print '<br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
@@ -542,8 +544,9 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	// Moral/Physic attribute
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
+	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
+
 	if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY)) {
-		print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
 		print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
 		print '</td></tr>'."\n";
 	} else {

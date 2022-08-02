@@ -496,8 +496,13 @@ if (empty($reshook)) {
 		//$object->note        = $comment;
 		$object->morphy      = $morphy;
 		$object->user_id     = $userid;
-		$object->socid = $socid;
+		$object->socid 		 = $socid;
 		$object->public      = $public;
+
+		// Start membership now
+		$now = dol_now();
+		$object->datevalid	  = $now;
+		$object->datefin 	  = $object->get_end_date($now, $adht);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -705,6 +710,13 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 		$action = '';
+
+		if(!empty(GETPOST('add_sub'))) {
+			$backtopage = DOL_URL_ROOT.'/adherents/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			$goto = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id.'&action=addsubscription&token='.newToken().'&backtopage='.urlencode($backtopage);
+			header("Location: ".$goto);
+			exit;
+		}
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_resiliate') {
@@ -1546,7 +1558,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($conf->mailman->enabled) && !empty($conf->global->ADHERENT_USE_SPIP)) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value'=>'');
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
+			$formquestion[] = array('type'=>'separator');
+			$formquestion[] = array('type'=>'checkbox', 'name'=> 'add_sub', 'label' => $langs->transnoentitiesnoconv("AddASubscriptionForThisPeriod"), 'value'=>'1');
+			$formquestion[] = array('type'=>'separator');
+
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 300);
 		}
 
 		// Confirm resiliate
@@ -1760,11 +1776,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Paid contribution
-		print '<tr><td>'.$langs->trans("Subscription").'</td><td class="valeur">';
-		if (!empty($object->last_subscription_amount)) { // Warning if paid amount is lower to due amount
-			print round($object->last_subscription_amount, 2).' '.strtoupper($conf->currency);
+		print '<tr><td>'.$langs->trans("LatestSubscriptionAmount").'</td><td class="valeur">';
+		if (!empty($object->last_subscription_amount) && price2num($object->last_subscription_amount) > 0) { // Warning if paid amount is lower to due amount
+			print price2num($object->last_subscription_amount).' '.strtoupper($conf->currency);
 			print " (".$langs->trans("PaidOn")." ".dol_print_date($object->last_subscription_date_start, 'day').")";
-			print " – ";
 		}
 		else {
 			print $langs->trans("SubscriptionNotReceived");

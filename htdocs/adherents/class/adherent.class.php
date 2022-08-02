@@ -912,10 +912,6 @@ class Adherent extends CommonObject
 	/**
 	 *	Get the end date of a membership or subscription according to the membership type ; or null if membership unlimited
 	 *
-	 * Behaviour change: the deleted function Adherent->update_end_date() assumed that end date is related to subscription.
-	 * It shouldn't. In the new behaviour, membership has an end date based on the subscription duration, and
-	 * can be either up-to-date or late if subscription (payment) is not renewed or deleted.
-	 *
 	 *	@param	int				$startdate			First day of membership creation or subscription
 	 *	@param	AdherentType	$adht				Instance of a membership type, if null it will be retrieved 
 	 *	@return	int						new end date of membership or subscription
@@ -942,7 +938,57 @@ class Adherent extends CommonObject
 		}
 	}
 
-	
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Update denormalized last subscription date.
+	 * 	This function is called when we delete a subscription for example.
+	 *
+	 *	@param	User	$user			User making change
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function update_end_date($user)
+	{
+		// phpcs:enable
+		$this->db->begin();
+
+		// Search for last subscription id and end date
+		$sql = "SELECT rowid, datec as dateop, dateadh as datedeb, datef as datefin";
+		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
+		$sql .= " WHERE fk_adherent = ".((int) $this->id);
+		$sql .= " ORDER by dateadh DESC"; // Sort by start subscription date
+
+		dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$dateop = $this->db->jdate($obj->dateop);
+			$datedeb = $this->db->jdate($obj->datedeb);
+			$datefin = $this->db->jdate($obj->datefin);
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+			$sql .= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->last_subscription_date = $dateop;
+				$this->last_subscription_date_start = $datedeb;
+				$this->last_subscription_date_end = $datefin;
+				$this->datefin = $datefin;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 	/**
 	 *  Deletes member (adherent) and associated data
 	 *
@@ -1551,12 +1597,14 @@ class Adherent extends CommonObject
 		$subscription->note_public = $label;
 		$subscription->fk_type = $fk_type;
 
+		// TODO delete triggers and here properties under
+		// TODO 1y = y = Unlimited in UI
 
 		$rowid = $subscription->create($user, true); // Disable legacy triggers
 		if ($rowid > 0) {
 			// Update denormalized subscription end date (read database subscription to find values)
 			// This will also update this->datefin
-			//$result = $this->update_end_date($user);
+			$result = $this->update_end_date($user);
 			
 			// Change properties of object (used by triggers)
 			$this->last_subscription_date = dol_now();
@@ -2293,7 +2341,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Returns 1 if the last paid subscription (if any) covers at least the amount of the due amount and is not expired, or 1 if this amount is free, or 0 otherwise 
 	 *
-	 *  @return int				Amount has been fully paid
+	 *  @return bool				Amount has been fully paid or payment is not required
 	 */
 	public function getFullyPaid()
 	{
@@ -2304,13 +2352,33 @@ class Adherent extends CommonObject
 			$res = $this->fetch_subscriptions();
 			if($res>0) {
 				if(!empty($this->last_subscription_amount)) {
-					$fullypaid = $this->last_subscription_amount >= $type->amount;
-					$fullypaid &= empty($this->last_subscription_date_end) || $this->last_subscription_date_end >= dol_now();
-				}
+					$fullypaid = price2num($this->last_subscription_amount) >= price2num($type->amount);
+				} 
 				$fullypaid |= $type->caneditamount || empty($type->subscription);
-			}
+			} 
 		}
 		return $fullypaid;
+	}
+
+	/**
+	 *  Returns 1 if the last paid (or free) subscription has expired
+	 *  It considers as expired a membership that has no associated subscription even if subscriptions are free
+	 *  (aka memberships must have associated subscriptions to be valid)
+	 *
+	 *  @return bool				Last subscription has expired
+	 */
+	public function getExpired()
+	{
+		$type = new AdherentType($this->db);
+		$res = $type->fetch($this->typeid);
+		$expired = true;
+		if($res>0) {
+			$res = $this->fetch_subscriptions();
+			if($res>0) {
+				$expired = empty($this->last_subscription_date_start) || (!empty($this->last_subscription_date_end) && $this->last_subscription_date_end < dol_now());
+			} 
+		}
+		return $expired;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2340,32 +2408,25 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if($date_end_subscription && $date_end_subscription < dol_now()) {
+			if (!empty($date_end_subscription) && $date_end_subscription < dol_now()) {
 				$statusType = 'status3';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			}
-			elseif (!$date_end_subscription || $date_end_subscription > dol_now()) {
-				if($need_subscription) {
-					if($fullypaid == null) {
-						$fullypaid = $this->getFullyPaid();
-					}
-					if($fullypaid) {
-						$statusType = 'status4';
-						$labelStatus = $langs->trans("MemberStatusPaid");
-						$labelStatusShort = $langs->trans("MemberStatusPaidShort");
-					}
-					else {
-						$statusType = 'status1';
-						$labelStatus = $langs->trans("MemberStatusActive");
-						$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-					}
-				}
-				else {
-					$statusType = 'status4';
-					$labelStatus = $langs->trans("MemberStatusNoSubscription");
-					$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
-				}
+			elseif (!$need_subscription) {
+				$statusType = 'status4';
+				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
+			}
+			elseif(!$this->getFullyPaid()) {
+				$statusType = 'status1';
+				$labelStatus = $langs->trans("MemberStatusActive");
+				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+			}
+			else {
+				$statusType = 'status4';
+				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {
 			$statusType = 'status6';

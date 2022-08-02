@@ -7619,6 +7619,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 				$outputlangs->loadLangs(array('paypal', 'other'));
 				$typeforonlinepayment = 'free';
+				$amount = '';
 				if (is_object($object) && $object->element == 'commande') {
 					$typeforonlinepayment = 'order';
 				}
@@ -7627,11 +7628,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'member') {
 					$typeforonlinepayment = 'member';
+					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+					$adht = new AdherentType($db);
+					$res = $adht->fetch($object->typeid);
+					if($res > 0) {
+						$amount = $adht->amount;
+					}
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$typeforonlinepayment = 'contract';
 				}
-				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
+				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], $amount);
 				$paymenturl = $url;
 			}
 

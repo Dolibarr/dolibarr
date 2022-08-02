@@ -474,6 +474,10 @@ if ($rowid > 0) {
 		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
+		print '<tr><td class="titlefield">'.$langs->trans("CanEditAmountShort").'</td><td>';
+		print yn($object->caneditamount);
+		print '</tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
@@ -748,7 +752,7 @@ if ($rowid > 0) {
 				// Paid contribution
 				print '<td class="nowrap center">';
 				if (!empty($adh->last_subscription_amount)) { // Warning if paid amount is lower to due amount
-					print round($adh->last_subscription_amount, 2).' '.strtoupper($conf->currency);
+					print price2num($adh->last_subscription_amount).' '.strtoupper($conf->currency);
 					print " (".$langs->trans("PaidOn")." ".dol_print_date($adh->last_subscription_date_start, 'day').")";
 				}
 				else {

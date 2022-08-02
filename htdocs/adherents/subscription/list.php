@@ -503,6 +503,7 @@ while ($i < min($num, $limit)) {
 	$adherent->morphy = $obj->morphy;
 	$adherent->email = $obj->email;
 	$adherent->typeid = $obj->fk_type;
+	$adherent->company = empty($obj->societe)? $obj->company : $obj->societe;
 	$adherent->datefin = $db->jdate($obj->datef);
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
@@ -532,7 +533,7 @@ while ($i < min($num, $limit)) {
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+		print '<td class="tdoverflowmax150">'.$adherent->getNomUrl(0, 0, 'card', 'lastname').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

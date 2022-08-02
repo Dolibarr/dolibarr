@@ -291,7 +291,7 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$member = new Adherent($this->db);
 			$result = $member->fetch($this->fk_adherent);
-			//$result = $member->update_end_date($user);
+			$result = $member->update_end_date($user);
 
 			if (!$error && !$notrigger) {
 				$this->context = array('member'=>$member);
@@ -358,7 +358,7 @@ class Subscription extends CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 					$member = new Adherent($this->db);
 					$result = $member->fetch($this->fk_adherent);
-					//$result = $member->update_end_date($user);
+					$result = $member->update_end_date($user);
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
 						$result = $accountline->delete($user); // Return false if refused because line is reconciled

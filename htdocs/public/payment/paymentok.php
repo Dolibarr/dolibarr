@@ -485,11 +485,25 @@ if ($ispaymentok) {
 				}
 
 				// Update the membership end date based on the duration of membership
+				// If the membership has already an end date, it is extended for the next period
 				$now = dol_now();
-				$datesubscription = $now;
-				$object->datevalid = $datesubscription;
-				$datesubend = $object->get_end_date($now, $adht);
-				$object->datefin = $datesubend;
+
+				$expired = $object->getExpired();
+				$fullypaid = $object->getFullyPaid();
+
+				if(!$expired && $fullypaid && !empty($adht->duration)) {
+					// We're paying the next period
+					$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
+					$unit = ($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd')? 's':'d';
+					$datesubscription = dol_time_plus_duree($object->datefin, 1, $unit);
+				}
+				else {
+					// We're paying the current period
+					$object->datevalid = $now;
+					$datesubscription = $now;
+					$datesubscriptionend = $object->get_end_date($datesubscription, $adht);
+				}
+
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
@@ -543,7 +557,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
 
-					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $membertypeid);
+					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubscriptionend, $membertypeid);
 					if ($crowid <= 0) {
 						$error++;
 						$errmsg = $object->error;
