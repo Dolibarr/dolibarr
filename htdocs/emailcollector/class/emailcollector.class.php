@@ -1855,8 +1855,8 @@ class EmailCollector extends CommonObject
 							$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 							$actioncomm->note_private = $descriptionfull;
 							$actioncomm->fk_project  = $projectstatic->id;
-							$actioncomm->datep       = $date;
-							$actioncomm->datef       = $date;
+							$actioncomm->datep       = $date;	// date of email
+							$actioncomm->datef       = $date;	// date of email
 							$actioncomm->percentage  = -1; // Not applicable
 							$actioncomm->socid       = $thirdpartystatic->id;
 							$actioncomm->contact_id = $contactstatic->id;
@@ -2103,7 +2103,7 @@ class EmailCollector extends CommonObject
 							$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
 							$projecttocreate->title = $subject;
-							$projecttocreate->date_start = $date;
+							$projecttocreate->date_start = $date;	// date of email
 							$projecttocreate->date_end = '';
 							$projecttocreate->opp_status = $id_opp_status;
 							$projecttocreate->opp_percent = $percent_opp_status;
@@ -2211,12 +2211,13 @@ class EmailCollector extends CommonObject
 							$tickettocreate->severity_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 							$tickettocreate->origin_email = $from;
 							$tickettocreate->fk_user_create = $user->id;
-							$tickettocreate->datec = $date;
+							$tickettocreate->datec = dol_now();
 							$tickettocreate->fk_project = $projectstatic->id;
 							$tickettocreate->notify_tiers_at_create = 0;
 							$tickettocreate->note_private = $descriptionfull;
 							$tickettocreate->entity = $conf->entity;
 							$tickettocreate->email_msgid = $msgid;
+							$tickettocreate->email_date = $date;
 							//$tickettocreate->fk_contact = $contactstatic->id;
 
 							$savesocid = $tickettocreate->socid;
@@ -2311,12 +2312,13 @@ class EmailCollector extends CommonObject
 							$candidaturetocreate->email = $from;
 							//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
 							$candidaturetocreate->fk_user_creat = $user->id;
-							$candidaturetocreate->date_creation = $date;
+							$candidaturetocreate->date_creation = dol_now();
 							$candidaturetocreate->fk_project = $projectstatic->id;
 							$candidaturetocreate->description = $description;
 							$candidaturetocreate->note_private = $descriptionfull;
 							$candidaturetocreate->entity = $conf->entity;
 							$candidaturetocreate->email_msgid = $msgid;
+							$candidaturetocreate->email_date = $date;		// date of email
 							$candidaturetocreate->status = $candidaturetocreate::STATUS_DRAFT;
 							//$candidaturetocreate->fk_contact = $contactstatic->id;
 

@@ -70,3 +70,6 @@ ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_product (fk_product);
 
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
+ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
