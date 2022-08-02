@@ -652,6 +652,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->recruitment->dir_output;
 	$trackid = 'recruitmentcandidature'.$object->id;
+	$inreplyto = $object->email_msgid;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
