@@ -194,6 +194,7 @@ class EmailCollector extends CommonObject
 
 
 	public $host;
+	public $port;
 	public $hostcharset;
 	public $login;
 	public $password;
