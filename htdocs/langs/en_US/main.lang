@@ -1185,3 +1185,5 @@ YourMessage=Your message
 YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
 UrlToCheck=Url to check
 Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
