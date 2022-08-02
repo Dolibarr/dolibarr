@@ -744,6 +744,7 @@ abstract class CommonObject
 	public function setUpperOrLowerCase()
 	{
 		global $conf;
+
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
@@ -759,8 +760,12 @@ abstract class CommonObject
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
-		$this->email = dol_strtolower($this->email);
-		$this->personal_email = dol_strtolower($this->personal_email);
+		if (isset($this->email)) {
+			$this->email = dol_strtolower($this->email);
+		}
+		if (isset($this->personal_email)) {
+			$this->personal_email = dol_strtolower($this->personal_email);
+		}
 	}
 
 	/**
