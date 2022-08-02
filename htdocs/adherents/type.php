@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019		Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  *
@@ -140,6 +140,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
