@@ -22,6 +22,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         label varchar(255), 
         description text,
         host varchar(255),
+        port varchar(10) DEFAULT '993',
         hostcharset varchar(16) DEFAULT 'UTF-8',
         login varchar(128), 
         password varchar(128),

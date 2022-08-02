@@ -289,6 +289,7 @@ ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by current object status
 ErrorAjaxRequestFailed=Request failed
 ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
+ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
