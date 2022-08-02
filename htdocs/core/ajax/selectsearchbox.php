@@ -64,11 +64,11 @@ $arrayresult = array();
 
 // Define $searchform
 
-if (isModEnabled('adherent') && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->rights->adherent->lire) {
+if (isModEnabled('adherent') && empty($conf->global->MAIN_SEARCHFORM_ADHERENT_DISABLED) && $user->hasRight('adherent', 'lire')) {
 	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (((!empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->rights->societe->lire) {
+if (((isModEnabled('societe') && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->hasRight('societe', 'lire')) {
 	$arrayresult['searchintothirdparty'] = array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('', 'object_company', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
@@ -76,7 +76,7 @@ if (isModEnabled('societe') && empty($conf->global->MAIN_SEARCHFORM_CONTACT_DISA
 	$arrayresult['searchintocontact'] = array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('', 'object_contact', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (((!empty($conf->product->enabled) && $user->hasRight('produit', 'lire')) || (!empty($conf->service->enabled) && $user->hasRight('service', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
+if (((isModEnabled('product') && $user->hasRight('produit', 'lire')) || (isModEnabled('service') && $user->hasRight('service', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
 	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 	// search on lot/serial numbers
 	if (isModEnabled('productbatch')) {
@@ -108,13 +108,13 @@ if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INV
 	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (isModEnabled('supplier_proposal') && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->hasRight('supplier_proposal', 'lire')) {
 	$arrayresult['searchintosupplierpropal'] = array('position'=>100, 'img'=>'object_supplier_proposal', 'label'=>$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_proposal', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) &&  $user->rights->supplier_order->lire)) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED)) {
+if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled('supplier_order') &&  $user->hasRight('supplier_order', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED)) {
 	$arrayresult['searchintosupplierorder'] = array('position'=>110, 'img'=>'object_supplier_order', 'label'=>$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_order', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) {
+if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) {
 	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_supplier_invoice', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
@@ -129,7 +129,7 @@ if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INV
 }
 
 // Vendor payments
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) {
+if (((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) {
 	$arrayresult['searchintovendorpayments'] = array(
 		'position'=>175,
 		'img'=>'object_payment',
@@ -139,7 +139,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 }
 
 // Miscellaneous payments
-if (isModEnabled('banque') && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED) && $user->rights->banque->lire) {
+if (isModEnabled('banque') && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS_DISABLED) && $user->hasRight('banque', 'lire')) {
 	$arrayresult['searchintomiscpayments'] = array(
 		'position'=>180,
 		'img'=>'object_payment',
@@ -148,24 +148,24 @@ if (isModEnabled('banque') && empty($conf->global->MAIN_SEARCHFORM_MISC_PAYMENTS
 		'url'=>DOL_URL_ROOT.'/compta/bank/various_payment/list.php?leftmenu=tax_various'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (isModEnabled('contrat') && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire) {
+if (isModEnabled('contrat') && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->hasRight('contrat', 'lire')) {
 	$arrayresult['searchintocontract'] = array('position'=>130, 'img'=>'object_contract', 'label'=>$langs->trans("SearchIntoContracts", $search_boxvalue), 'text'=>img_picto('', 'object_contract', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContracts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contrat/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('ficheinter') && empty($conf->global->MAIN_SEARCHFORM_FICHINTER_DISABLED) && $user->rights->ficheinter->lire) {
+if (isModEnabled('ficheinter') && empty($conf->global->MAIN_SEARCHFORM_FICHINTER_DISABLED) && $user->hasRight('ficheinter', 'lire')) {
 	$arrayresult['searchintointervention'] = array('position'=>140, 'img'=>'object_intervention', 'label'=>$langs->trans("SearchIntoInterventions", $search_boxvalue), 'text'=>img_picto('', 'object_intervention', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('ticket') && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->rights->ticket->read) {
+if (isModEnabled('ticket') && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->hasRight('ticket', 'read')) {
 	$arrayresult['searchintotickets'] = array('position'=>145, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
 // HR
-if (isModEnabled('user') && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->rights->user->user->lire) {
+if (isModEnabled('user') && empty($conf->global->MAIN_SEARCHFORM_USER_DISABLED) && $user->hasRight('user', 'user', 'lire')) {
 	$arrayresult['searchintouser'] = array('position'=>200, 'shortcut'=>'U', 'img'=>'object_user', 'label'=>$langs->trans("SearchIntoUsers", $search_boxvalue), 'text'=>img_picto('', 'object_user', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('expensereport') && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire) {
+if (isModEnabled('expensereport') && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->hasRight('expensereport', 'lire')) {
 	$arrayresult['searchintoexpensereport'] = array('position'=>210, 'img'=>'object_trip', 'label'=>$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'text'=>img_picto('', 'object_trip', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
-if (isModEnabled('holiday') && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->rights->holiday->read) {
+if (isModEnabled('holiday') && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->hasRight('holiday', 'read')) {
 	$arrayresult['searchintoleaves'] = array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
