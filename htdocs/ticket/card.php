@@ -56,6 +56,7 @@ $projectid = GETPOST('projectid', 'int');
 $cancel    = GETPOST('cancel', 'alpha');
 $action    = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('$backtopage', 'alpha');
+$contactid = GETPOST('contactid', 'int');
 
 $notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 
@@ -1038,7 +1039,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
-		if ($object->fk_status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
+		if (isset($object->fk_status) && $object->fk_status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
 			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.$object->track_id.'&action=view&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
 		}
 		print '</td></tr></table>';
@@ -1066,7 +1067,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Progression').'</td><td class="left">';
 		print '</td>';
-		if ($action != 'progression' && $object->fk_status < $object::STATUS_CLOSED && !$user->socid) {
+		if ($action != 'progression' && isset($object->fk_status) && $object->fk_status < $object::STATUS_CLOSED && !$user->socid) {
 			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1189,7 +1190,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="submit" class="button small" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			//    Button to edit Properties
-			if ($object->fk_status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
+			if (isset($object->fk_status) && $object->fk_status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
 				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&action=view&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
@@ -1248,7 +1249,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Display navbar with links to change ticket status
 		print '<!-- navbar with status -->';
-		if (!$user->socid && $user->rights->ticket->write && $object->fk_status < $object::STATUS_CLOSED && GETPOST('set') !== 'properties') {
+		if (!$user->socid && $user->rights->ticket->write && isset($object->fk_status) && $object->fk_status < $object::STATUS_CLOSED && GETPOST('set') !== 'properties') {
 			$actionobject->viewStatusActions($object);
 		}
 
@@ -1384,16 +1385,16 @@ if ($action == 'create' || $action == 'presend') {
 
 			if (empty($reshook)) {
 				// Show link to add a message (if read and not closed)
-				if ($object->fk_status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
+				if (isset($object->fk_status) && $object->fk_status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
 					print dolGetButtonAction('', $langs->trans('TicketAddMessage'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&mode=init&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Link to create an intervention
 				// socid is needed otherwise fichinter ask it and forgot origin after form submit :\
-				if (!$object->fk_soc && $user->rights->ficheinter->creer) {
+				if (!$object->fk_soc && $user->hasRight("ficheinter", "creer")) {
 					print dolGetButtonAction($langs->trans('UnableToCreateInterIfNoSocid'), $langs->trans('TicketAddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
-				if ($object->fk_soc > 0 && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
+				if ($object->fk_soc > 0 && isset($object->fk_status) && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
 
@@ -1404,17 +1405,17 @@ if ($action == 'create' || $action == 'presend') {
 				*/
 
 				// Close ticket if statut is read
-				if ($object->fk_status > 0 && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+				if (isset($object->fk_status) && $object->fk_status > 0 && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('CloseTicket'), 'default', $_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Abadon ticket if statut is read
-				if ($object->fk_status > 0 && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
+				if (isset($object->fk_status) && $object->fk_status > 0 && $object->fk_status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {
 					print dolGetButtonAction('', $langs->trans('AbandonTicket'), 'default', $_SERVER["PHP_SELF"].'?action=abandon&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
 				// Re-open ticket
-				if (!$user->socid && ($object->fk_status == Ticket::STATUS_CLOSED || $object->fk_status == Ticket::STATUS_CANCELED) && !$user->socid) {
+				if (!$user->socid && (isset($object->fk_status) && ($object->fk_status == Ticket::STATUS_CLOSED || $object->fk_status == Ticket::STATUS_CANCELED)) && !$user->socid) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&track_id='.$object->track_id, '');
 				}
 
