@@ -364,13 +364,14 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->facture)) {
 		$user->rights->facture = new stdClass();
+		$user->rights->facture->invoice_advance = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
-		$user->rights->adherent->cotisation = new stdClass();
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
+	$user->rights->facture->invoice_advance->validate = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
 	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0) {
