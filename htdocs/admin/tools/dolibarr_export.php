@@ -168,9 +168,10 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
+print '<tr class="oddeven nohover"><td style="class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
+
 print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
@@ -196,10 +197,11 @@ print '</div>';
 
 print '</td>';
 print '</tr>';
+
 print '<tr>';
-print '<td class="tdtop nopaddingrightimp">';
+print '<td class="tdtop nopaddingleftimp">';
 print '<br>';
-print '<a id="lnk" href="javascript:hideoptions()"> '.$langs->trans("ShowAdvancedOptions").'</a>';
+print '<a id="lnk" href="javascript:hideoptions()"> '.$langs->trans("ShowAdvancedOptions").'...</a>';
 
 print '<script type="text/javascript">
 
@@ -212,7 +214,7 @@ function hideoptions(){
 		lnk.innerText="'.$langs->trans("HideAdvancedoptions").'";
   	} else {
     	div.style.display = "none";
-		lnk.innerText="'.$langs->trans("ShowAdvancedOptions").'";
+		lnk.innerText="'.$langs->trans("ShowAdvancedOptions").'...";
 	}
 }
 </script>';
