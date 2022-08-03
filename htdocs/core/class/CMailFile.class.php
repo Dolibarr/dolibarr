@@ -658,7 +658,7 @@ class CMailFile
 			}
 
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
-			$keyforsmtpuseoauth = "MAIN_MAIL_SMTPS_USE_OAUTH";
+			$keyforsmtpauthtype = "MAIN_MAIL_SMTPS_AUTH_TYPE";
 			$keyforsmtpoauthservice = "MAIN_MAIL_SMTPS_OAUTH_SERVICE";
 			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
 			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
@@ -835,7 +835,7 @@ class CMailFile
 					$this->smtps->setPW($loginpass);
 				}
 
-				if (!empty($conf->global->$keyforsmtpuseoauth)) {
+				if (!empty($conf->global->$keyforsmtpauthtype) && $conf->global->$keyforsmtpauthtype === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {

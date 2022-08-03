@@ -570,13 +570,13 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) {
-				$conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
+			if (empty($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE)) {
+				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
 			}
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;

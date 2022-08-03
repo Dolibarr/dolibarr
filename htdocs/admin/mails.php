@@ -91,10 +91,8 @@ if ($action == 'update' && !$cancel) {
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_PW")) {
 			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW", GETPOST("MAIN_MAIL_SMTPS_PW", 'none'), 'chaine', 0, '', $conf->entity);
 		}
-		if (GETPOSTISSET("MAIN_MAIL_SMTPS_USE_OAUTH")) {
-			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_USE_OAUTH", GETPOST("MAIN_MAIL_SMTPS_USE_OAUTH", 'int'), 'chaine', 0, '', $conf->entity);
-			$method = GETPOST("MAIN_MAIL_SMTPS_USE_OAUTH", 'aZ09') == 1 ? 'XOAUTH2' : 'LOGIN';
-			dolibarr_set_const($db, "MAIL_SMTP_AUTH_TYPE", $method, 'chaine', 0, '', $conf->entity);
+		if (GETPOSTISSET("MAIN_MAIL_SMTPS_AUTH_TYPE")) {
+			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_AUTH_TYPE", GETPOST("MAIN_MAIL_SMTPS_AUTH_TYPE", 'chaine'), 'chaine', 0, '', $conf->entity);
 		}
 		if (GETPOSTISSET("MAIN_MAIL_SMTPS_OAUTH_SERVICE")) {
 			dolibarr_set_const($db, "MAIN_MAIL_SMTPS_OAUTH_SERVICE", GETPOST("MAIN_MAIL_SMTPS_OAUTH_SERVICE", 'chaine'), 'chaine', 0, '', $conf->entity);
@@ -222,8 +220,7 @@ if ($action == 'edit') {
                             jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
                             jQuery(".smtp_method").hide();
                             jQuery(".dkim").hide();
-                            jQuery(".smtp_oauth_service").hide();
-                            jQuery(".smtp_use_oauth").hide();
+                            jQuery(".smtp_auth_method").hide();
                             ';
 		if ($linuxlike) {
 			print '
@@ -266,8 +263,7 @@ if ($action == 'edit') {
 			                jQuery("#smtp_port_mess").hide();
                             jQuery(".smtp_method").show();
 							jQuery(".dkim").hide();
-                            jQuery(".smtp_oauth_service").show();
-                            jQuery(".smtp_use_oauth").show();
+                            jQuery(".smtp_auth_method").show();
 						}
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
                         {
@@ -295,14 +291,16 @@ if ($action == 'edit') {
                             jQuery("#smtp_port_mess").hide();
 							jQuery(".smtp_method").show();
                             jQuery(".dkim").show();
-                            jQuery(".smtp_oauth_service").hide();
-                            jQuery(".smtp_use_oauth").hide();
+							jQuery(".smtp_auth_method").hide();
                         }
                     }
-					function change_smtp_oauth_service() {
-						console.log(jQuery("#MAIN_MAIL_SMTPS_USE_OAUTH").val());
-						if (jQuery("#MAIN_MAIL_SMTPS_USE_OAUTH").val() == 1) {
+					function change_smtp_auth_method() {
+						console.log(jQuery("#radio_pw").prop("checked"));
+						if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\' && jQuery("#radio_oauth").prop("checked")) {
 							jQuery(".smtp_oauth_service").show();
+							jQuery(".smtp_pw").hide();
+						} else if(jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\'){
+							jQuery(".smtp_oauth_service").hide();
 							jQuery(".smtp_pw").hide();
 						} else {
 							jQuery(".smtp_oauth_service").hide();
@@ -310,12 +308,13 @@ if ($action == 'edit') {
 						}
 					}
                     initfields();
-					change_smtp_oauth_service();
+					change_smtp_auth_method();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
                         initfields();
+						change_smtp_auth_method();
                     });
-					jQuery("#MAIN_MAIL_SMTPS_USE_OAUTH").change(function() {
-						change_smtp_oauth_service();
+					jQuery("#radio_pw, #radio_oauth").change(function() {
+						change_smtp_auth_method();
 					});
                     jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
 						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
@@ -416,20 +415,6 @@ if ($action == 'edit') {
 	}
 	print '</tr>';
 
-	// OAUTH
-	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))) {
-		print '<tr class="oddeven smtp_use_oauth"><td>'.$form->textwithpicto($langs->trans("MAIN_MAIL_SMTPS_USE_OAUTH"), $langs->trans("OauthNotAvailableForAll")).'</td><td>';
-		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity)) {
-			print $form->selectyesno('MAIN_MAIL_SMTPS_USE_OAUTH', (!empty($conf->global->MAIN_MAIL_SMTPS_USE_OAUTH) ? $conf->global->MAIN_MAIL_SMTPS_USE_OAUTH : 0), 1);
-		} else {
-			$value = yn($conf->global->MAIN_MAIL_SMTPS_USE_OAUTH);
-			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
-			print '<input type="hidden" id="MAIN_MAIL_SMTPS_USE_OAUTH" name="MAIN_MAIL_SMTPS_USE_OAUTH" value="'.$value.'">';
-		}
-		print '</td></tr>';
-	}
-
 	// Port
 	print '<tr class="oddeven"><td>';
 	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail') {
@@ -474,6 +459,25 @@ if ($action == 'edit') {
 		print '</td></tr>';
 	}
 
+
+	// OAUTH
+	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))) {
+		print '<tr class="oddeven smtp_auth_method"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>';
+		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity)) {
+			print '<input type="radio" id="radio_pw" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="LOGIN"'.($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE == 'LOGIN' ? ' checked' : '').'> ';
+			print '<label for="radio_pw" >'.$langs->trans("UsePassword").'</label>';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="radio" id="radio_oauth" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="XOAUTH2"'.($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE == 'XOAUTH2' ? ' checked' : '').'> ';
+			print '<label for="radio_oauth" >'.$form->textwithpicto($langs->trans("UseOauth"), $langs->trans("OauthNotAvailableForAllAndHadToBeCreatedBefore")).'</label>';
+		} else {
+			$value = $conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE;
+			$htmltext = $langs->trans("ContactSuperAdminForChange");
+			print $form->textwithpicto($langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE"), $htmltext, 1, 'superadmin');
+			print '<input type="hidden" id="MAIN_MAIL_SMTPS_AUTH_TYPE" name="MAIN_MAIL_SMTPS_AUTH_TYPE" value="'.$value.'">';
+		}
+		print '</td></tr>';
+	}
+
 	// PW
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))) {
 		$mainsmtppw = (!empty($conf->global->MAIN_MAIL_SMTPS_PW) ? $conf->global->MAIN_MAIL_SMTPS_PW : '');
@@ -493,7 +497,7 @@ if ($action == 'edit') {
 
 	// OAUTH service provider
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps')))) {
-		print '<tr class="oddeven smtp_oauth_service"><td>'.$form->textwithpicto($langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE"), $langs->trans("DontForgetCreateTokenOauthMod")).'</td><td>';
+		print '<tr class="oddeven smtp_oauth_service"><td>'.$langs->trans("MAIN_MAIL_SMTPS_OAUTH_SERVICE").'</td><td>';
 
 		// SuperAdministrator access only
 		if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity)) {
@@ -680,10 +684,6 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_SERVER) ? $conf->global->MAIN_MAIL_SMTP_SERVER : '').'</td></tr>';
 		}
 
-		// Use OAUTH
-		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps'))) {
-			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_USE_OAUTH").'</td><td>'.yn($conf->global->MAIN_MAIL_SMTPS_USE_OAUTH).'</td></tr>';
-		}
 
 		// Port
 		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail')) {
@@ -697,13 +697,20 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 		}
 
+		// AUTH method
+		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps'))) {
+			$authtype = $conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE;
+			$text = ($authtype === "LOGIN") ? $langs->trans("UsePassword") : ($authtype === "XOAUTH2" ?  $langs->trans("UseOauth") : '') ;
+			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_AUTH_TYPE").'</td><td>'.$text.'</td></tr>';
+		}
+
 		// SMTPS PW
-		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')) && (!(isset($conf->global->MAIL_SMTP_AUTH_TYPE) && $conf->global->MAIL_SMTP_AUTH_TYPE === "XOAUTH2"))) {
+		if (isset($conf->global->MAIN_MAIL_SENDMODE) && (in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer')) || (in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps')) && (isset($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) && $conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE === "LOGIN")))) {
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 		}
 
 		// SMTPS oauth service
-		if (isset($conf->global->MAIL_SMTP_AUTH_TYPE) && $conf->global->MAIL_SMTP_AUTH_TYPE === "XOAUTH2") {
+		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps')) && isset($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) && $conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE === "XOAUTH2") {
 			$text = $oauthservices[$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE];
 			if (empty($text)) {
 				$text = $langs->trans("Undefined").img_warning();
