@@ -217,7 +217,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 
 	// Date end subscription
 	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	if(!empty($object->datef)) {
+	if (!empty($object->datef)) {
 		print $form->selectDate($object->datef, 'datesubend', 0, 0, 0, 'update', 1);
 	}
 	print '</td>';
@@ -319,7 +319,7 @@ if ($rowid && $action != 'edit') {
 	// Date end subscription
 	print '<tr>';
 	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">';
-	if(!empty($object->datef)) {
+	if (!empty($object->datef)) {
 		print dol_print_date($object->datef, 'day');
 	} else {
 		print $langs->trans("NoEndSubscription");

@@ -316,7 +316,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			}
 			print '</td>';
 			print '<td class="center nowrap">';
-			if(!empty($objp->duration)) {
+			if (!empty($objp->duration)) {
 				$cunits = new CUnits($db);
 				$units = $cunits->fetchAllAsObject();
 				$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
@@ -485,15 +485,14 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-		if(!empty($object->duration)) {
+		if (!empty($object->duration)) {
 			if ($object->duration_value > 1) {
 				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 			} elseif ($object->duration_value > 0) {
 				$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 			}
 			print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
-		}
-		else {
+		} else {
 			print $langs->trans("NoEndSubscription");
 		}
 		print '</td></tr>';
@@ -756,12 +755,11 @@ if ($rowid > 0) {
 				if (!empty($adh->last_subscription_amount)) { // Warning if paid amount is lower to due amount
 					print price2num($adh->last_subscription_amount).' '.strtoupper($conf->currency);
 					print " (".$langs->trans("PaidOn")." ".dol_print_date($adh->last_subscription_date_start, 'day').")";
-				}
-				else {
+				} else {
 					print $langs->trans("SubscriptionNotReceived");
 				}
 
-				if($adh->getNeedSubscription() && !$adh->getFullyPaid()) {
+				if ($adh->getNeedSubscription() && !$adh->getFullyPaid()) {
 					print " ".img_warning($langs->trans("SubscriptionLate"));
 				}
 				print '</td>';

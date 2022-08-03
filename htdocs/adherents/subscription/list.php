@@ -590,7 +590,7 @@ while ($i < min($num, $limit)) {
 	// Date end
 	if (!empty($arrayfields['c.datef']['checked'])) {
 		print '<td class="center">';
-		if(!empty($obj->datef)) {
+		if (!empty($obj->datef)) {
 			print dol_print_date($db->jdate($obj->datef), 'day');
 		} else {
 			print $langs->trans("NoEndSubscription");

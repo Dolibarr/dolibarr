@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022       Yoan Mollard	        <opensource@aubrune.eu>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -219,7 +219,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
-	// SHow counter of validated members publicly 
+	// SHow counter of validated members publicly
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';

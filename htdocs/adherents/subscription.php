@@ -429,7 +429,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	}
 }
 
-if(($add_success || $cancel) && !empty($backtopage)) {
+if (($add_success || $cancel) && !empty($backtopage)) {
 	header("Location: ".$backtopage);
 	exit;
 }
@@ -949,20 +949,19 @@ if ($rowid > 0) {
 		$expired = $object->getExpired();
 		$fullypaid = $object->getFullyPaid();
 
-		if(empty($datefrom)) {
-			if(!empty($adht->duration) && !$expired && $fullypaid) {
+		if (empty($datefrom)) {
+			if (!empty($adht->duration) && !$expired && $fullypaid) {
 				// We're paying the next period
 				$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
 				$unit = ($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd')? 's':'d';
 				$datefrom = dol_time_plus_duree($object->datefin, 1, $unit, 1);
 				$dateto = $object->get_end_date($datefrom, $adht);
-			}
-			else {
+			} else {
 				// We're paying the current period
 				$datefrom = $now;
 				$dateto = $object->get_end_date($datefrom, $adht);
 			}
-			if(empty($datefrom)) {
+			if (empty($datefrom)) {
 				$datefrom = now();
 			}
 		}

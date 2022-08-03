@@ -717,7 +717,7 @@ if (empty($reshook)) {
 		}
 		$action = '';
 
-		if(!empty(GETPOST('add_sub'))) {
+		if (!empty(GETPOST('add_sub'))) {
 			$backtopage = DOL_URL_ROOT.'/adherents/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
 			$goto = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id.'&action=addsubscription&token='.newToken().'&backtopage='.urlencode($backtopage);
 			header("Location: ".$goto);
@@ -1787,11 +1787,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (!empty($object->last_subscription_amount) && price2num($object->last_subscription_amount) > 0) { // Warning if paid amount is lower to due amount
 			print price2num($object->last_subscription_amount).' '.strtoupper($conf->currency);
 			print " (".$langs->trans("PaidOn")." ".dol_print_date($object->last_subscription_date_start, 'day').")";
-		}
-		else {
+		} else {
 			print $langs->trans("SubscriptionNotReceived");
 		}
-		if($object->getNeedSubscription() && !$object->getFullyPaid()) {
+		if ($object->getNeedSubscription() && !$object->getFullyPaid()) {
 			print " ".img_warning($langs->trans("SubscriptionLate"));
 		}
 		print '</td></tr>';
