@@ -774,6 +774,11 @@ class Conf
 				$this->global->MULTICURRENCY_USE_ORIGIN_TX = 1;
 			}
 
+			// By default, use an enclosure " for field with CRL or LF into content, + we also remove also CRL/LF chars.
+			if (!isset($this->global->USE_STRICT_CSV_RULES)) {
+				$this->global->USE_STRICT_CSV_RULES = 2;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2021 Maxime Kohlhaas       <support@atm-consulting.fr>
+-- Copyright (C) 2022 charlene Benke       <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 --
 -- ============================================================================
 
-create table llx_element_tag
+create table llx_element_categorie
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_categorie  integer NOT NULL,

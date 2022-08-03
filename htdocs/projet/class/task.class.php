@@ -127,6 +127,7 @@ class Task extends CommonObjectLine
 	public $timespent_fk_user;
 	public $timespent_thm;
 	public $timespent_note;
+	public $timespent_fk_product;
 
 	public $comments = array();
 
@@ -1227,6 +1228,7 @@ class Task extends CommonObjectLine
 		$sql .= ", task_date_withhour";
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
+		$sql .= ", fk_product";
 		$sql .= ", note";
 		$sql .= ", datec";
 		$sql .= ") VALUES (";
@@ -1236,6 +1238,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
+		$sql .= ", ".((int) $this->timespent_fk_product);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
@@ -1523,6 +1526,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.task_date_withhour,";
 		$sql .= " t.task_duration,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.fk_product,";
 		$sql .= " t.thm,";
 		$sql .= " t.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -1541,6 +1545,7 @@ class Task extends CommonObjectLine
 				$this->timespent_withhour   = $obj->task_date_withhour;
 				$this->timespent_duration = $obj->task_duration;
 				$this->timespent_fk_user	= $obj->fk_user;
+				$this->timespent_fk_product	= $obj->fk_product;
 				$this->timespent_thm    	= $obj->thm; // hourly rate
 				$this->timespent_note = $obj->note;
 			}
@@ -1694,6 +1699,7 @@ class Task extends CommonObjectLine
 		$sql .= " task_date_withhour = ".(empty($this->timespent_withhour) ? 0 : 1).",";
 		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
 		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
+		$sql .= " fk_product = ".((int) $this->timespent_fk_product).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 

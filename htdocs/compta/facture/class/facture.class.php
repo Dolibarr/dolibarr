@@ -3839,6 +3839,7 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		} else {
+			$this->errors[]='status of invoice must be Draft to allow use of ->addline()';
 			dol_syslog(get_class($this)."::addline status of invoice must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
@@ -5601,6 +5602,9 @@ class Facture extends CommonInvoice
 								//$actioncomm->email_tobcc = $sendtobcc;
 								//$actioncomm->email_subject = $subject;
 								$actioncomm->errors_to = $errors_to;
+
+								$actioncomm->elementtype = 'invoice';
+								$actioncomm->fk_element = $tmpinvoice->id;
 
 								//$actioncomm->extraparams = $extraparams;
 

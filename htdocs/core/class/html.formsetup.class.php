@@ -952,21 +952,11 @@ class FormSetupItem
 		if (!empty($conf->use_javascript_ajax)) {
 			$out.= '&nbsp;'.img_picto($this->langs->trans('Generate'), 'refresh', 'id="generate_token'.$this->confKey.'" class="linkobject"');
 		}
-		if (!empty($conf->use_javascript_ajax)) {
-			$out .= "\n" . '<script type="text/javascript">';
-			$out .= '$(document).ready(function () {
-                        $("#generate_token' . $this->confKey . '").click(function() {
-                	        $.get( "' . DOL_URL_ROOT . '/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#' . $this->confKey . '").val(token);
-            				});
-                         });
-                    });';
-			$out .= '</script>';
-		}
+
+		// Add button to autosuggest a key
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		$out .= dolJSToSetRandomPassword($this->confKey, 'generate_token'.$this->confKey);
+
 		return $out;
 	}
 

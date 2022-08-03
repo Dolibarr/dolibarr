@@ -140,21 +140,10 @@ print '<br>';
 print '<br>';
 print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php');
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#WEBSERVICES_KEY").val(token);
-				});
-            });
-    });';
-	print '</script>';
-}
+$constname = 'WEBSERVICES_KEY';
+
+print dolJSToSetRandomPassword($constname);
+
 
 // End of page
 llxFooter();

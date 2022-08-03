@@ -90,7 +90,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function getListOfManagedEvents()
 	{
-		global $conf;
+		global $conf, $action;
 		global $hookmanager;
 
 
@@ -100,6 +100,8 @@ class InterfaceNotification extends DolibarrTriggers
 		}
 		$hookmanager->initHooks(array('notification'));
 
+		$parameters = array();
+		$object = new stdClass();
 		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
 		if (empty($reshook)) {
 			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {

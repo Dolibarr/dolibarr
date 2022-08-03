@@ -2,6 +2,24 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 17.0.0 compared to 16.0.0 *****
+
+For users:
+---------------
+
+...
+
+
+For developers or integrators:
+------------------------------
+
+...
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
 
 
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
@@ -14,25 +32,23 @@ NEW: PHP 8.1 compatibility.
      on the PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
-NEW: Can show ZATCA QRCode on PDFs
-NEW: Can show Swiss QR Code on PDFs
+NEW: Can show ZATCA QR-Code on PDFs
+NEW: Can show Swiss QR-Code on PDFs
 NEW: #17123 added ExtraFields for Stock Mouvement
-NEW: #20609 : new massaction to assign a sale representatives on a selection of thirdparties
+NEW: #20609 new massaction to assign a sale representatives on a selection of thirdparties
 NEW: #20653 edit discount pourcentage for all lines in one shot
 NEW: Accept 'auto' for ref of object on import of purchase order/proposal
 NEW: Accountancy - Add more filters and info on page to bind accounting accounts
-NEW: Accountancy - Add subledger account when we generate a transaction with a deposit invoice
+NEW: Accountancy - Add subledger account when generate a transaction with a deposit invoice
 NEW: Accountancy - Add a massaction to preselect an account (customer and supplier list)
 NEW: ACE Editor is restored at same cursor position after a save.
 NEW: Add "addMoreActionsButtons" hook to subscription form
 NEW: Add an option in GUI to show a Quick add button into top menu bar
-NEW: Module Recruitment - Add a public page with all list of open job positions.
-NEW: Module Recruitment - Add a tab with list of application on the jobposition file.
 NEW: Add a workflow to auto link contract on a ticket
 NEW: Add column date of Signature on proposal list
 NEW: Add column template invoice in invoice list
 NEW: Add column "Total HT" to products array on document creation card
-NEW: ADD configuration for text color of button action
+NEW: Add configuration for text color of button action
 NEW: Add constant to hide categories in TakePos
 NEW: Add constant to show category description in TakePos
 NEW: Add constant to show only the products in stock in TakePos
@@ -40,7 +56,7 @@ NEW: Add entity filter in exports
 NEW: Show the event block on recurring invoices #20870
 NEW: Add filter "opportunity status" on statistics of projects.
 NEW: Add firstname, lastname and max number of attendees for module "Event Organization"
-NEW: add margin info in proposal and order list
+NEW: Add margin info in proposal and order list
 NEW: Add massaction "Edit Extrafield" for Product
 NEW: Add more fields to detect duplicate during import of thirdparties
 NEW: Add option to foce delivery on email for purchase order receipt to yes
@@ -51,14 +67,12 @@ NEW: Add possibility with constant MAIN_LOGIN_BADCHARUNAUTHORIZED to define bad 
 NEW: Add private and public notes on tax files.
 NEW: Add status "Obsolete" to KM articles
 NEW: Add substitutions "user numbers"
-NEW: Add the possibility to add sub-BOMs to BOM
 NEW: allow a ticket to be automatically marked as read when created from backend.
 NEW: allow cut&paste as real numeric value to excel
 NEW: A public form to send a message and create a lead is available
 NEW: automatically set totally received status in reception
 NEW: Auto set invoice paid when adding credit not and remain to pay is 0
 NEW: Availibility dictionnary has a new column unit and number
-NEW: barcode rule to insert product in takepos
 NEW: Can change value of AWP during the inventory
 NEW: Can enter price with tax for predefined products on purchase objects
 NEW: Can filter on a thirdparty on product statistics
@@ -74,7 +88,7 @@ NEW: create third-party with contact if not found on public ticket
 NEW: Default value for MAIN_SECURITY_CSRF_WITH_TOKEN is now 2 (GET are also protected agains CSRF attacks)
 NEW: deposit payment terms: add field into dictionary admin page to define default percentage of deposit. 
 NEW: Dictionaries - add possibility to manage countries in EEC
-NEW: display errors in a message box after generating documents
+NEW: Display errors in a message box after generating documents
 NEW: Display physical and virtual stock of the products when creating OF from a BOM
 NEW: Display product ref in "Object link" product tab for BOM
 NEW: Enhance the import. Can use 'auto' for the ref (import of orders)
@@ -86,10 +100,13 @@ NEW: leave requests: add field into type dictionary to block request if balance 
 NEW: MAIN_MAIL_AUTOCOPY_TO can accept several email and special keys
 NEW: MAIN_SEARCH_CAT_OR_BY_DEFAULT const for search by category
 NEW: Mass action "Close shipments"
+NEW: Module BOM - Add tabs for nets Bom
+NEW: Module BOM - Add the possibility to add sub-BOMs to BOM
+NEW: Module Recruitment - Add a public page with all list of open job positions.
+NEW: Module Recruitment - Add a tab with list of application on the jobposition file.
 NEW: Module website now supports the multicompany module
 NEW: More mode for THEME_TOPMENU_DISABLE_IMAGE (2, 3, ...)
 NEW: Add option to move checkbox column as first column on Thirdparty list (only few screens)
-NEW: Add tabs for nets Bom
 NEW: on redirect of page in website module, GET parameters are kept.
 NEW: optional display warning icons on ticket list
 NEW: option to default check "notify tier at creation" in ticket module
@@ -101,15 +118,15 @@ NEW: Send email to the supplier order contact
 NEW: New permission to report time on timesheet.
 NEW: SEPA XML - option to place payment Type Info at Credit transfer Transaction level
 NEW: Show number of votes into the label of tab "Results" of a survey
-NEW: Show product reference in Takepos
 NEW: Some core tables are created only at module activation
 NEW: split consumption line on MO
 NEW: stock filter in reassort lists
 NEW: stock limit in stock export CSV
-NEW: Sub-bom are availables
 NEW: Supplier order - Show ref supplier of reception in linked object block
 NEW: support user_modif in order
-NEW: TakePos - pagination on search results
+NEW: TakePOS - barcode rule to insert product in TakePOS
+NEW: TakePOS - pagination on search results
+NEW: TakePOS - show product reference
 NEW: The backup tools has an "lowmemory" option for mysqldump on large database
 NEW: The 'reposition' class works on ajax constantonoff that make redirects
 NEW: Thirdparty - Add rules "customer accountancy code" is mandatory to validate invoice
@@ -124,7 +141,7 @@ NEW: Added MMK currency (Myanmar Kyat)
 
  Modules
 NEW: Module Partnership Management
-NEW: Experimental module Event Organization Management
+NEW: Experimental Module Event Organization Management
 
 
 For developers or integrators:
@@ -139,7 +156,6 @@ NEW: Suggest a way to run upgrade per entities.
 NEW: Support html content for multiselect component.
 NEW: ModuleBuilder - Add tabs view in module builder
 NEW: ModuleBuilder - More feature that can be modifed after module generation
-NEW: Hook getNomUrl available everywhere in tooltip of ref links
 NEW: Identification of tr is possible with by attribute data-id on some pages
 NEW: Import with select boxes V2
 NEW: Can update rank of invoice, proposal and order lines with API update
@@ -166,6 +182,9 @@ NEW: Add a protection into PHPunit to avoid to forget a var_dump
 NEW: Add datem and type parameters to API to create movements
 NEW: Add hidden option on contract PDF line to hide qty and price
 NEW: Option MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND to send last document in mass mailing action
+
+Hooks: 
+NEW: Hook getNomUrl available everywhere in tooltip of ref links
 NEW: Add hooks: selectContactListWhere hook, selectThirdpartyListWhere hook 
 NEW: TakePos - add hooks complete product display
 NEW: TakePos - add hooks for cart display
@@ -186,6 +205,8 @@ NEW: Add hooks on salaries and sociales card
 NEW: Add hooks select product list and select thirdparty list function
 NEW: Add hook to getSellPrice function
 
+
+WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * There is a new specific permission to be allowed to enter timesheets. If you use timesheet, don't forget to give the new permission (disable and 
@@ -559,6 +580,8 @@ NEW: we need to be able to put more filters on deleteByParentField() function
 NEW: make it easier to set the `keyword`, `keywords` and `description` attributes of an ecm file object
 NEW: Experimental feature to manage user sessions in database
 
+
+WARNING:
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field 

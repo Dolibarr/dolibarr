@@ -734,6 +734,15 @@ if ($id > 0 || $ref) {
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
 			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('physicalStockTextStockOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$text_stock_options = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$text_stock_options .= $hookmanager->resPrint;
+			} else {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
 
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
@@ -819,6 +828,15 @@ if ($id > 0 || $ref) {
 				}
 				$helpondiff .= $langs->trans("ProductQtyToConsumeByMO").': '.$object->stats_mrptoconsume['qty'].'<br>';
 				$helpondiff .= $langs->trans("ProductQtyToProduceByMO").': '.$object->stats_mrptoproduce['qty'];
+			}
+			$parameters = array('found' => &$found, 'id' => $object->id, 'includedraftpoforvirtual' => null);
+			$reshook = $hookmanager->executeHooks('virtualStockHelpOnDiff', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {
+				$helpondiff = $hookmanager->resPrint;
+			} elseif ($reshook == 0) {
+				$helpondiff .= $hookmanager->resPrint;
+			} else {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
 

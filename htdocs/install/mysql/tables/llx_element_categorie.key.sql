@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2021 Maxime Kohlhaas       <support@atm-consulting.fr>
+-- Copyright (C) 2022 Charlene Benke <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
 
-ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx1 (fk_element, fk_categorie);
+	
+ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie)     REFERENCES llx_fk_categorie(rowid);

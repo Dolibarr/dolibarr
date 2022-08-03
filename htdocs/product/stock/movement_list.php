@@ -778,7 +778,11 @@ if ($msid) {
 } else {
 	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		if (!empty($object->ref)) {
+			$title .= ' ('.$object->ref.')';
+		} else {
+			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		}
 	}
 }
 

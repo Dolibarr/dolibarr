@@ -120,9 +120,9 @@ $usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreat
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->send)));
 
-$usercancreateorder = $user->rights->commande->creer;
-$usercancreateinvoice = $user->rights->facture->creer;
-$usercancreatecontract = $user->rights->contrat->creer;
+$usercancreateorder = $user->hasRight('commande', 'creer');
+$usercancreateinvoice = $user->hasRight('facture', 'creer');
+$usercancreatecontract = $user->hasRight('contrat', 'creer');
 $usercancreateintervention = $user->hasRight('ficheinter', 'creer');
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
@@ -1526,8 +1526,12 @@ if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $langs->trans('Proposal')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewPropal");
+}
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos|DE:Modul_Angebote';
+
 llxHeader('', $title, $help_url);
 
 $now = dol_now();
