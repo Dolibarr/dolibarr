@@ -222,11 +222,12 @@ function dol_ftp_get($connect_id, $file, $newsection)
  * Upload a FTP file
  *
  * @param 		resource	$connect_id		Connection handler
- * @param 		string		$file			File
- * @param 		string		$newsection			$newsection
+ * @param 		string		$file			File name
+ * @param 		string		$localfile		The path to the local file
+ * @param 		string		$newsection		$newsection
  * @return		result
  */
-function dol_ftp_put($connect_id, $file, $newsection)
+function dol_ftp_put($connect_id, $file, $localfile, $newsection)
 {
 
 	global $conf;
@@ -241,9 +242,9 @@ function dol_ftp_put($connect_id, $file, $newsection)
 	$newremotefileiso = utf8_decode($remotefile);
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-		return fopen('ssh2.sftp://'.intval($connect_id).$newremotefileiso, 'r');
+		return ssh2_scp_send($connect_id, $localfile, $newremotefileiso, 0644);
 	} else {
-		return ftp_put($connect_id, $localfile, $newremotefileiso, FTP_BINARY);
+		return ftp_put($connect_id, $newremotefileiso, $localfile, FTP_BINARY);
 	}
 }
 
