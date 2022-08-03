@@ -928,7 +928,7 @@ class Adherent extends CommonObject
 		}
 		$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
 		$delay = max(1, intval($adht->duration));
-		$enddate = dol_time_plus_duree($startdate, $delay, $delayunit);
+		$enddate = dol_time_plus_duree($startdate, $delay, $delayunit, 1);
 		if($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd') {
 			return dol_time_plus_duree($enddate, -1, 's'); // Just remove 1 second for short membership durations
 		}

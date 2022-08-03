@@ -953,7 +953,7 @@ if ($rowid > 0) {
 				// We're paying the next period
 				$delayunit = preg_replace("/[^a-zA-Z]+/", "", $adht->duration);
 				$unit = ($delayunit == 's' || $delayunit == 'h' || $delayunit == 'i' || $delayunit == 'd')? 's':'d';
-				$datefrom = dol_time_plus_duree($object->datefin, 1, $unit);
+				$datefrom = dol_time_plus_duree($object->datefin, 1, $unit, 1);
 				$dateto = $object->get_end_date($datefrom, $adht);
 			}
 			else {
