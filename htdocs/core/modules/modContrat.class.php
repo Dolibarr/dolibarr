@@ -181,7 +181,7 @@ class modContrat extends DolibarrModules
 		'cod.date_ouverture'=>"contract_line", 'cod.date_ouverture_prevue'=>"contract_line", 'cod.date_fin_validite'=>"contract_line", 'cod.date_cloture'=>"contract_line",
 		'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product');
 
-		$this->export_TypeFields_array[$r] = array('s.rowid'=>"List:societe:nom", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text',
+		$this->export_TypeFields_array[$r] = array('s.rowid'=>"Numeric", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text',
 		's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text',
 		's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 		'co.ref'=>"Text", 'co.datec'=>"Date", 'co.date_contrat'=>"Date",

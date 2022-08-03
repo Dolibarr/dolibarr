@@ -37,6 +37,11 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $db;
 
 	/**
+	 * @var string	Condition to be enabled
+	 */
+	public $enabled;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -94,8 +99,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 	/**
 	 * Retourne nombre de destinataires
 	 *
-	 * @param      string	$sql        Sql request to count
-	 * @return     int       			Nb of recipient, or <0 if error
+	 * @param      string		$sql        Sql request to count
+	 * @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql)
 	{
@@ -224,7 +229,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing =" .((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
 
 		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
 		$result = $this->db->query($sql);

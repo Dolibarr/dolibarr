@@ -35,6 +35,8 @@ $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
+$massaction = GETPOST('massaction', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
@@ -111,7 +113,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_name = '';
 		$search_supervisor = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -145,7 +147,8 @@ if (empty($reshook)) {
 			}
 
 			//If the user set a comment, we add it to the log comment
-			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+			$note_holiday = GETPOST('note_holiday');
+			$comment = ((isset($note_holiday[$userID]) && !empty($note_holiday[$userID])) ? ' ('.$note_holiday[$userID].')' : '');
 
 			//print 'holiday: '.$val['rowid'].'-'.$userValue;
 			if ($userValue != '') {

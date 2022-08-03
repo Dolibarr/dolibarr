@@ -40,7 +40,7 @@ if ($user->socid > 0) {
 }
 
 // Get supervariables
-$prev_id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
@@ -82,8 +82,8 @@ if ($type == 'bank-transfer') {
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref) {
-	if ($object->fetch($prev_id, $ref) >= 0) {
+if ($id > 0 || $ref) {
+	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
 		print dol_get_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
@@ -97,7 +97,7 @@ if ($prev_id > 0 || $ref) {
 
 		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 		if ($object->date_trans <> 0) {
 			$muser = new User($db);
@@ -105,7 +105,7 @@ if ($prev_id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -151,7 +151,9 @@ if ($prev_id > 0 || $ref) {
 		if ($object->type == 'bank-transfer') {
 			$modulepart = 'paymentbybanktransfer';
 		}
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+		print img_picto('', 'download', 'class="paddingleft"');
+		print '</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
@@ -207,7 +209,7 @@ if ($resql) {
 
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellpadding="4">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';

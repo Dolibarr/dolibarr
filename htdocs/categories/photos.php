@@ -194,19 +194,19 @@ if ($object->id) {
 
 		if (is_array($listofphoto) && count($listofphoto)) {
 			print '<br>';
-			print '<table width="100%" valign="top" align="center">';
+			print '<table width="100%" valign="top" class="center centpercent">';
 
 			foreach ($listofphoto as $key => $obj) {
 				$nbphoto++;
 
 				if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) {
-					print '<tr align=center valign=middle border=1>';
+					print '<tr class"center valignmiddle" border="1">';
 				}
 				if ($nbbyrow) {
 					print '<td width="'.ceil(100 / $nbbyrow).'%" class="photo">';
 				}
 
-				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
+				print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$obj['photo']).'" alt="Original size" target="_blank" rel="noopener noreferrer">';
 
 				// Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
 				if ($obj['photo_vignette']) {

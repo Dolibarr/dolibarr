@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2015      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2022 		    Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +21,8 @@
 create table llx_c_stcomm
 (
   id       integer      PRIMARY KEY,
-  code     varchar(12)  NOT NULL,
-  libelle  varchar(30),
+  code     varchar(24)  NOT NULL,
+  libelle  varchar(128),
   picto    varchar(128),
   active   tinyint default 1  NOT NULL
 )ENGINE=innodb;

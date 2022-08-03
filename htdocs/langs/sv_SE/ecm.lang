@@ -45,3 +45,5 @@ GenerateImgWebp=Kopiera alla bilder med en annan version med .webp-format
 ConfirmGenerateImgWebp=Om du bekräftar kommer du generera en bild i .webp format för alla bilder som finns i denna mapp (undermappar är inte inkluderade)
 ConfirmImgWebpCreation=Bekräfta kloning av alla bilder
 SucessConvertImgWebp=Bilder blev klonade
+ECMDirName=Dir name
+ECMParentDirectory=Parent directory

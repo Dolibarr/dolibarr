@@ -188,7 +188,7 @@ if ($date && $dateIsValid) {
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
 	} else {
-		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
+		$sql .= " AND sm.datem >= '".$db->idate($dateendofday)."'";
 	}
 	if ($productid > 0) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
@@ -363,7 +363,7 @@ print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, ar
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock', 'class="pictofiwedwidth"');
 print '</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -475,6 +475,8 @@ print $hookmanager->resPrint;
 
 print "</tr>\n";
 
+$totalbuyingprice = 0;
+
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
@@ -563,10 +565,11 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			// PMP value
 			print '<td class="right">';
 			if (price2num($objp->estimatedvalue, 'MT')) {
-				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+				print '<span class="amount">'.price(price2num($objp->estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
+			$totalbuyingprice += $objp->estimatedvalue;
 			print '</td>';
 
 			// Selling value
@@ -575,7 +578,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
 			print'</td>';
 
@@ -598,7 +601,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		print '</tr>';
+		print '</tr>'."\n";
 	}
 	$i++;
 }
@@ -607,12 +610,17 @@ $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-if (empty($date) || ! $dateIsValid) {
-	$colspan = 8;
-	if ($mode == 'future') {
-		$colspan++;
-	}
+$colspan = 8;
+if ($mode == 'future') {
+	$colspan++;
+}
+
+
+if (empty($date) || !$dateIsValid) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+} else {
+	print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
+	print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
 }
 
 print '</table>';

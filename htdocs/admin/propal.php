@@ -43,6 +43,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'propal';
@@ -196,6 +198,37 @@ if ($action == 'updateMask') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
 }
 
 
@@ -591,6 +624,28 @@ print '<td class="right"><input type="submit" class="button button-edit" value="
 print '</tr>';
 print '</form>';
 
+// default update prices on cloning a proposal
+/*
+print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="' . newToken() .'">';
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans('DefaultPuttingPricesUpToDate').'</td>';
+print '<td></td>';
+print '<td class="right">';
+if (!empty($conf->use_javascript_ajax)) {
+	print ajax_constantonoff('PROPOSAL_CLONE_UPDATE_PRICES', array(), $conf->entity, 0, 0, 1, 0);
+} else {
+	if (empty($conf->global->PROPOSAL_CLONE_UPDATE_PRICES)) {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+	} else {
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+	}
+}
+print '</td>';
+print '</tr>';
+print '</form>';
+*/
+
 /*
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -620,10 +675,10 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'PROPOSAL_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
@@ -638,7 +693,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMAR
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('PROPALE_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

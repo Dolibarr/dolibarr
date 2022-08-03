@@ -108,9 +108,9 @@ if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	$object->fetch($id);
-	$res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -118,7 +118,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday'])) {
+if ($action == 'setdatep' && GETPOST('datepday')) {
 	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
@@ -344,7 +344,7 @@ if ($result > 0) {
 
 	// Send by mail
 	if ($user->socid == 0 && $action == '') {
-		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->send)));
 		if ($usercansend) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		} else {
@@ -392,7 +392,7 @@ if ($result > 0) {
 		$somethingshown = $formfile->numoffiles;
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	//print '<br>';
 
 	// List of actions on element
@@ -401,7 +401,7 @@ if ($result > 0) {
 	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
 
 	// Presend form
 	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models

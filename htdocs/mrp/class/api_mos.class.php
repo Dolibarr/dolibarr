@@ -147,8 +147,9 @@ class Mos extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -491,7 +492,8 @@ class Mos extends DolibarrApi
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -550,7 +552,8 @@ class Mos extends DolibarrApi
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {

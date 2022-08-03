@@ -88,7 +88,6 @@ RequestLastAccessInError=Error en el último requerimiento de acceso a la base d
 ReturnCodeLastAccessInError=Código de respuesta para el último error al requerir acceso a la base de datos
 InformationLastAccessInError=Información del último error al requerir acceso a la base de datos
 YouCanSetOptionDolibarrMainProdToZero=Puede leer el archivo log o establecer la opción $dolibarr_main_prod a 0 en su archivo de configuración para obtener más información.
-InformationToHelpDiagnose=Esta información puede ser útil para propósitos de diagnóstico (puede poner la opción $dolibarr_main_prod a '1' para sacar dichas noticias)
 TechnicalID=ID técnico
 LineID=ID línea
 PrecisionUnitIsLimitedToXDecimals=Dolibarr fue configurada para limitar la precisión en el precio de la unidad a <b>%s</b> decimales.
@@ -507,7 +506,6 @@ NotAllExportedMovementsCouldBeRecordedAsExported=No todos los movimientos de exp
 Miscellaneous=Miscelanias
 GroupBy=Agrupar por...
 RemoveString=Quitar cadena '%s'
-SomeTranslationAreUncomplete=Alguno de los idiomas ofertados pueden estar traducidos parcialmente o pueden contener errores. Por favor ayude a corregir su idioma registrándose en  <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> para agregar sus mejoras.
 DownloadDocument=Descargar documento
 ActualizeCurrency=Actualizar tipo de cambio
 ModuleBuilder=Constructor de Módulos y Aplicaciones

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
-if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
@@ -118,7 +118,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 

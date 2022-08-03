@@ -63,9 +63,11 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '</td>';
 	print '<td class="valuefieldcreate">';
+
 	if (!empty($val['picto'])) {
 		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
 	}
+
 	if (in_array($val['type'], array('int', 'integer'))) {
 		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
 	} elseif ($val['type'] == 'double') {
@@ -78,6 +80,8 @@ foreach ($object->fields as $key => $val) {
 			$check = 'restricthtml';
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif (in_array($val['type'], array('date', 'datetime'))) {
+		$value = GETPOSTISSET($key) ? dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')) : $object->$key;
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
 	} elseif ($key == 'lang') {
@@ -86,7 +90,7 @@ foreach ($object->fields as $key => $val) {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
 		if ($key == 'lang') {

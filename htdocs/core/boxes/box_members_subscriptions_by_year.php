@@ -111,7 +111,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 				$i = 0;
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
-					$year = dol_print_date($this->db->jdate($objp->dateh), "%Y", 'gmt');
+					$year = dol_print_date($this->db->jdate($objp->dateh), "%Y");
 					$Total[$year] = (isset($Total[$year]) ? $Total[$year] : 0) + $objp->subscription;
 					$Number[$year] = (isset($Number[$year]) ? $Number[$year] : 0) + 1;
 					$tot += $objp->subscription;
@@ -179,12 +179,12 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $Number[$key],
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price($value).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price($value),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => '<span class="amount">'.price(price2num($value / $Number[$key], 'MT')).'</span>',
+						'td' => 'class="nowraponall right amount"',
+						'text' => price(price2num($value / $Number[$key], 'MT')),
 					);
 					$line++;
 				}
@@ -196,6 +196,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total"),
 					);
@@ -204,12 +205,12 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 						'text' => $numb,
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price($tot).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price($tot),
 					);
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right"',
-						'text' => '<span class="amount">'.price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')).'</span>',
+						'td' => 'class="liste_total nowraponall right amount"',
+						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
 					);
 				}
 			} else {

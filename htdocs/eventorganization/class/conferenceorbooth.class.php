@@ -24,7 +24,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
@@ -102,12 +102,12 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'help'=>"OrganizationEvenLabelName", 'showoncombobox'=>'1',),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width300'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
@@ -135,7 +135,8 @@ class ConferenceOrBooth extends ActionComm
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-	public $pubregister;
+	//public $pubregister;
+
 
 	/**
 	 * Constructor
@@ -195,11 +196,11 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setPercentageFromStatus()
 	{
-		if ($this->status==self::STATUS_DONE) {
-			$this->percentage=100;
+		if ($this->status == self::STATUS_DONE) {
+			$this->percentage = 100;
 		}
-		if ($this->status==self::STATUS_DRAFT) {
-			$this->percentage=0;
+		if ($this->status == self::STATUS_DRAFT) {
+			$this->percentage = 0;
 		}
 	}
 
@@ -211,12 +212,12 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function setActionCommFields(User $user)
 	{
-		$this->userownerid=$user->id;
-		$this->type_id=$this->fk_action;
-		$this->socid=$this->fk_soc;
-		$this->datef=$this->datep2;
-		$this->note_private=$this->note;
-		$this->fk_user_author=$this->fk_user_author;
+		$this->userownerid = $user->id;
+		$this->type_id = $this->fk_action;
+		$this->socid = $this->fk_soc;
+		$this->datef = $this->datep2;
+		$this->note_private = $this->note;
+		$this->fk_user_author = $this->fk_user_author;
 	}
 
 	/**
@@ -226,9 +227,9 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	protected function getActionCommFields()
 	{
-		$this->fk_action=$this->type_id;
-		$this->fk_soc=$this->socid;
-		$this->datep2=$this->datef;
+		$this->fk_action = $this->type_id;
+		$this->fk_soc = $this->socid;
+		$this->datep2 = $this->datef;
 	}
 
 	/**
@@ -252,8 +253,8 @@ class ConferenceOrBooth extends ActionComm
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
-		$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
-		$this->pubregister = $link_subscription;
+		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+		$this->pubregister = $link_subscription;*/
 
 		$this->getActionCommFields();
 		return $result;
@@ -383,7 +384,7 @@ class ConferenceOrBooth extends ActionComm
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_CONFIRMED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -408,48 +409,14 @@ class ConferenceOrBooth extends ActionComm
 		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONFERENCEORBOOTH_VALIDATE', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'conferenceorbooth/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'conferenceorbooth/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$oldref;
-				$dirdest = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Set new ref and current status
 		if (!$error) {
-			$this->ref = $num;
 			$this->status = self::STATUS_CONFIRMED;
 		}
 
@@ -576,7 +543,7 @@ class ConferenceOrBooth extends ActionComm
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
-			if ($option=='withproject') {
+			if ($option == 'withproject') {
 				$url .= '&withproject=1';
 			}
 		}
@@ -635,7 +602,7 @@ class ConferenceOrBooth extends ActionComm
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('conferenceorboothdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -712,14 +679,11 @@ class ConferenceOrBooth extends ActionComm
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

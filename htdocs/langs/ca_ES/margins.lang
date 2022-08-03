@@ -22,7 +22,7 @@ ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
 ChooseProduct/Service=Tria el producte o servei
 ForceBuyingPriceIfNull=Forçar preu de cost/compra al preu de venda si no s'ha definit
-ForceBuyingPriceIfNullDetails=Si no es proporciona el preu de compra / cost quan afegim una nova línia i aquesta opció està "ACTIVADA", el marge serà 0 a la nova línia (preu de compra / cost = preu de venda). Si aquesta opció està "DESACTIVADA" (recomanat), el marge serà igual al valor suggerit per defecte (i pot ser del 100% si no es pot trobar cap valor per defecte).
+ForceBuyingPriceIfNullDetails=Si no es proporciona el preu de compra / cost quan afegim una nova línia i aquesta opció està "ACTIVADA", el marge serà 0%% a la nova línia (preu de compra / cost = preu de venda). Si aquesta opció està "DESACTIVADA" (recomanat), el marge serà igual al valor suggerit per defecte (i pot ser 100%% si no es pot trobar cap valor per defecte).
 MARGIN_METHODE_FOR_DISCOUNT=Mètode de gestió de descomptes globals
 UseDiscountAsProduct=Com un producte
 UseDiscountAsService=Com un servei

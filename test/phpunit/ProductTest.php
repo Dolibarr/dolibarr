@@ -199,7 +199,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$localobject->note_private = 'New private note after update';
 		$result=$localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error '.$localobject->error);
 
 		return $localobject;
 	}

@@ -115,11 +115,11 @@ abstract class ModeleNumRefTicket
 	/**
 	 *  Renvoi prochaine valeur attribuee
 	 *
-	 *    @param  Societe $objsoc  Object third party
-	 *    @param  Project $project Object project
-	 *    @return string                    Valeur
+	 *    @param  Societe 	$objsoc  	Object third party
+	 *    @param  Ticket 	$ticket		Object ticket
+	 *    @return string                Valeur
 	 */
-	public function getNextValue($objsoc, $project)
+	public function getNextValue($objsoc, $ticket)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

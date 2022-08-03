@@ -409,6 +409,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
 			}
+			if (!empty($conf->global->STRIPE_KLARNA)) {
+				$paymentmethodtypes[] = "klarna";
+			}
 			if (!empty($conf->global->STRIPE_BANCONTACT)) {
 				$paymentmethodtypes[] = "bancontact";
 			}
@@ -450,7 +453,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_GIROPAY)) {
 				unset($dataforintent['setup_future_usage']);
 			}
-
+			if (!empty($conf->global->STRIPE_KLARNA)) {
+				unset($dataforintent['setup_future_usage']);
+			}
 			if (!is_null($payment_method)) {
 				$dataforintent["payment_method"] = $payment_method;
 				$description .= ' - '.$payment_method;
@@ -526,12 +531,12 @@ class Stripe extends CommonObject
 				$this->code = $e->getStripeCode();
 				$this->declinecode = $e->getDeclineCode();
 			} catch (Exception $e) {
-				/*var_dump($dataforintent);
-				var_dump($description);
-				var_dump($key);
-				var_dump($paymentintent);
-				var_dump($e->getMessage());
-				var_dump($e);*/
+				//var_dump($dataforintent);
+				//var_dump($description);
+				//var_dump($key);
+				//var_dump($paymentintent);
+				//var_dump($e->getMessage());
+				//var_dump($e);
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = '';
@@ -690,11 +695,11 @@ class Stripe extends CommonObject
 					$_SESSION["stripe_setup_intent"] = $setupintent;
 				}*/
 			} catch (Exception $e) {
-				/*var_dump($dataforintent);
-				 var_dump($description);
-				 var_dump($key);
-				 var_dump($setupintent);
-				 var_dump($e->getMessage());*/
+				//var_dump($dataforintent);
+				//var_dump($description);
+				//var_dump($key);
+				//var_dump($setupintent);
+				//var_dump($e->getMessage());
 				$error++;
 				$this->error = $e->getMessage();
 			}
@@ -775,7 +780,8 @@ class Stripe extends CommonObject
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
-					//var_dump($a);var_dump($stripeacc);exit;
+					//var_dump($a);
+					//var_dump($stripeacc);exit;
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {

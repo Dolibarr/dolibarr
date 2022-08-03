@@ -24,7 +24,6 @@ DolibarrReceiptPrinter=Impresora de recibos Dolibarr
 PointOfSale=Punto de venta
 CloseBill=Cerrar bill
 TakeposConnectorNecesary=Se requiere &#39;conector TakePOS&#39;
-NotAvailableWithBrowserPrinter=Not available when printer for receipt is set to browser:
 Receipt=Recibo
 Header=Encabezamiento
 Footer=Pie de página

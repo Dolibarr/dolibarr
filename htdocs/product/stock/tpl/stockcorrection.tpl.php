@@ -41,7 +41,7 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{
@@ -156,8 +156,8 @@ if (!empty($conf->productbatch->enabled) &&
 // Purchase price and project
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
-print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->projet->enabled)) {
+print '<td colspan="'.(!empty($conf->project->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
+if (!empty($conf->project->enabled)) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');
@@ -173,7 +173,10 @@ print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
 print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td>';
+print '<td>';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '</td>';
 print '</tr>';
 
 print '</table>';

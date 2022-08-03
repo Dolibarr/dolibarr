@@ -200,8 +200,9 @@ class RemiseCheque extends CommonObject
 				}
 			}
 
+			$lines = array();
+
 			if ($this->id > 0 && $this->errno == 0) {
-				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.fk_type = 'CHQ'";
@@ -615,6 +616,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charseSupprimert_output = $outputlangs->charset_output;
+
 			$result = $docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
 			if ($result > 0) {
 				//$outputlangs->charset_output=$sav_charset_output;
@@ -729,7 +731,7 @@ class RemiseCheque extends CommonObject
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
-		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
+		/* Reconciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
 			$this->error='ActionRefusedLineAlreadyConciliated';
@@ -738,7 +740,7 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		// Not conciliated, we can delete it
+		// Not reconciled, we can delete it
 		//$bankline->delete($user);    // We delete
 
 		$bankaccount = $payment->fk_account;

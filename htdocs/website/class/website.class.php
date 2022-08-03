@@ -256,12 +256,12 @@ class Website extends CommonObject
 				}
 			}
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change WEBSITE to your own tag if you
 			// want this action to call a trigger.
 			// if (!$notrigger) {
 
 			//     // Call triggers
-			//     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+			//     $result = $this->call_trigger('WEBSITE_CREATE',$user);
 			//     if ($result < 0) $error++;
 			//     // End call triggers
 			// }
@@ -560,7 +560,7 @@ class Website extends CommonObject
 			}
 
 			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+			//$result=$this->call_trigger('WEBSITE_MODIFY',$user);
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
 		}
@@ -587,6 +587,8 @@ class Website extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -595,11 +597,11 @@ class Website extends CommonObject
 
 		if (!$error) {
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change WEBSITE to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('WEBSITE_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}
@@ -618,7 +620,7 @@ class Website extends CommonObject
 		}
 
 		if (!$error && !empty($this->ref)) {
-			$pathofwebsite = DOL_DATA_ROOT.'/website/'.$this->ref;
+			$pathofwebsite = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->ref;
 
 			dol_delete_dir_recursive($pathofwebsite);
 		}
@@ -655,6 +657,13 @@ class Website extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$newref = dol_sanitizeFileName($newref);
+
+		if (empty($newref)) {
+			$this->error = 'ErrorBadParameter';
+			return -1;
+		}
+
 		$object = new self($this->db);
 
 		// Check no site with ref exists
@@ -671,8 +680,8 @@ class Website extends CommonObject
 		$oldidforhome = $object->fk_default_home;
 		$oldref = $object->ref;
 
-		$pathofwebsiteold = $dolibarr_main_data_root.'/website/'.$oldref;
-		$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.$newref;
+		$pathofwebsiteold = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.dol_sanitizeFileName($oldref);
+		$pathofwebsitenew = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.dol_sanitizeFileName($newref);
 		dol_delete_dir_recursive($pathofwebsitenew);
 
 		$fileindex = $pathofwebsitenew.'/index.php';
@@ -779,7 +788,7 @@ class Website extends CommonObject
 
 				// Re-generates the index.php page to be the home page, and re-generates the wrapper.php
 				//--------------------------------------------------------------------------------------
-				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
+				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper, $object);
 			}
 		}
 
@@ -1031,7 +1040,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias, allowed_in_frames)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -1076,9 +1085,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
 
 			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
-			$line .= "'".$this->db->escape($objectpageold->author_alias)."'";
+			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
+			$line .= (int) $objectpageold->allowed_in_frames;
 			$line .= ");";
 			$line .= "\n";
+
 			fputs($fp, $line);
 
 			// Add line to update home page id during import
@@ -1092,7 +1103,7 @@ class Website extends CommonObject
 		}
 
 		$line = "\n-- For Dolibarr v14+ --;\n";
-		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->lang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
 		fputs($fp, $line);
@@ -1135,7 +1146,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
-			return -1;
+			return -2;
 		}
 
 		dol_delete_dir_recursive($conf->website->dir_temp."/".$object->ref);
@@ -1144,14 +1155,14 @@ class Website extends CommonObject
 		$filename = basename($pathtofile);
 		if (!preg_match('/^website_(.*)-(.*)$/', $filename, $reg)) {
 			$this->errors[] = 'Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
-			return -1;
+			return -3;
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
 
 		if (!empty($result['error'])) {
 			$this->errors[] = 'Failed to unzip file '.$pathtofile.'.';
-			return -1;
+			return -4;
 		}
 
 		$arrayreplacement = array();
@@ -1198,9 +1209,9 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1); // The maxrowid of table is searched into this function two
+		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
 		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile;
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
 			$error++;
 		}
 
@@ -1266,7 +1277,7 @@ class Website extends CommonObject
 
 		// Regenerate index page to point to the new index page
 		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
-		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
+		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php', $object);
 
 		if ($error) {
 			$this->db->rollback();
@@ -1278,7 +1289,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Rebuild all files of a containers of a website. Rebuild also the wrapper.php file. TODO Add other files too.
+	 * Rebuild all files of all the pages/containers of a website. Rebuild also the index and wrapper.php file.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
 	 * @return 	int						<0 if KO, >=0 if OK
@@ -1330,12 +1341,12 @@ class Website extends CommonObject
 				$aliasesarray[] = $objectpagestatic->pageurl;
 			}
 
-			// Regenerate all aliases pages (pages with a natural name)
+			// Regenerate also all aliases pages (pages with a natural name) by calling dolSavePageAlias()
 			if (is_array($aliasesarray)) {
 				foreach ($aliasesarray as $aliasshortcuttocreate) {
 					if (trim($aliasshortcuttocreate)) {
 						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
-						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
+						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);	// This includes also a copy into sublanguage directories.
 						if (!$result) {
 							$this->errors[] = 'Failed to write file '.basename($filealias);
 							$error++;
@@ -1348,10 +1359,15 @@ class Website extends CommonObject
 		}
 
 		if (!$error) {
-			// Save wrapper.php
+			// Save index.php and wrapper.php
 			$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+			$fileindex = $pathofwebsite.'/index.php';
+			$filetpl = '';
+			if ($object->fk_default_home > 0) {
+				$filetpl = $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php';
+			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
-			dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
+			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
 		}
 
 		if ($error) {

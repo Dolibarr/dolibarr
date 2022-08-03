@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2013-2014  Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 /**
  * Class to manage accounting accounts
  */
@@ -109,6 +110,11 @@ class AccountingAccount extends CommonObject
 	public $account_category;
 
 	/**
+	 * @var int Label category account
+	 */
+	public $account_category_label;
+
+	/**
 	 * @var int Status
 	 */
 	public $status;
@@ -148,6 +154,11 @@ class AccountingAccount extends CommonObject
 	 */
 	private $accountingaccount_codetotid_cache = array();
 
+
+	const STATUS_ENABLED = 1;
+	const STATUS_DISABLED = 0;
+
+
 	/**
 	 * Constructor
 	 *
@@ -158,7 +169,7 @@ class AccountingAccount extends CommonObject
 		global $conf;
 
 		$this->db = $db;
-		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) $conf->global->CHARTOFACCOUNTS).")"; // Used to add a filter in Form::showrefnav method
+		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) $conf->global->CHARTOFACCOUNTS).")"; // Used to add a filter in Form::showrefnav method
 	}
 
 	/**
@@ -166,7 +177,7 @@ class AccountingAccount extends CommonObject
 	 *
 	 * @param 	int 	       $rowid 				    Id
 	 * @param 	string 	       $account_number 	        Account number
-	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active char of account
+	 * @param 	int|boolean    $limittocurrentchart     1 or true=Load record only if it is into current active chart of account
 	 * @param   string         $limittoachartaccount    'ABC'=Load record only if it is into chart account with code 'ABC' (better and faster than previous parameter if you have chart of account code).
 	 * @return 	int                                     <0 if KO, 0 if not found, Id of record if OK and found
 	 */
@@ -187,13 +198,14 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.entity = ".$conf->entity;
 			}
 			if (!empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.$this->db->escape($conf->global->CHARTOFACCOUNTS).')';
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) $conf->global->CHARTOFACCOUNTS).')';
 			}
 			if (!empty($limittoachartaccount)) {
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch rowid=".$rowid." account_number=".$account_number, LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
@@ -335,8 +347,8 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Update record
 	 *
-	 * @param User $user Use making update
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User $user 		User making update
+	 * @return int             	<0 if KO (-2 = duplicate), >0 if OK
 	 */
 	public function update($user)
 	{
@@ -366,6 +378,12 @@ class AccountingAccount extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -2;
+			}
+
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -464,7 +482,7 @@ class AccountingAccount extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $option = '')
 	{
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 		if (!empty($conf->dol_no_mouse_hover)) {
@@ -495,7 +513,7 @@ class AccountingAccount extends CommonObject
 			$url .= '&save_lastsearch_values=1';
 		}
 
-		$picto = 'billr';
+		$picto = 'accounting_account';
 		$label = '';
 
 		if (empty($this->labelshort) || $withcompletelabel == 1) {
@@ -549,13 +567,22 @@ class AccountingAccount extends CommonObject
 		if ($withpicto != 2) {
 			$result .= $linkstart . $label_link . $linkend;
 		}
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
 	/**
 	 * Information on record
 	 *
-	 * @param int $id of record
+	 * @param int 	$id 	ID of record
 	 * @return void
 	 */
 	public function info($id)
@@ -565,26 +592,19 @@ class AccountingAccount extends CommonObject
 		$sql .= ' WHERE a.rowid = ' . ((int) $id);
 
 		dol_syslog(get_class($this) . '::info sql=' . $sql);
-		$result = $this->db->query($sql);
+		$resql = $this->db->query($sql);
 
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
-			$this->db->free($result);
+			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
 		}
@@ -685,198 +705,204 @@ class AccountingAccount extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-		$langs->loadLangs(array("users"));
-
-		if ($mode == 0) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 1) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 2) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
-			}
-		} elseif ($mode == 3) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4') . ' ' . $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5') . ' ' . $langs->trans('Disabled');
-			}
-		} elseif ($mode == 5) {
-			if ($status == 1) {
-				return $langs->trans('Enabled') . ' ' . img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled') . ' ' . img_picto($langs->trans('Disabled'), 'statut5');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			$langs->load("users");
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
 		}
-	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+		$statusType = 'status4';
+		if ($status == self::STATUS_DISABLED) {
+			$statusType = 'status5';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
 
 	/**
 	 * Return Suggest accounting accounts to bind
 	 *
-	 * @param Societe $buyer Societe Object Buyers
-	 * @param $seller Company Object seller
-	 * @param Product $product Product object sell or buy
-	 * @param Facture $facture Facture
-	 * @param FactureLigne $factureDet Facture Det
-	 * @param array $accountingAccount array of Account account
-	 *
-	 * @return    array        Accounting accounts suggested
+	 * @param 	Societe 							$buyer 				Object buyer
+	 * @param 	Societe 							$seller 			Object seller
+	 * @param 	Product 							$product 			Product object sell or buy
+	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
+	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
+	 * @param 	array 								$accountingAccount 	Array of Account account
+	 * @param 	string 								$type 				Customer / Supplier
+	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
 	 */
-	public function getAccountingCodeToBind(Societe $buyer, $seller, Product $product, Facture $facture, FactureLigne $factureDet, $accountingAccount = array())
+	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
 		global $conf;
 		global $hookmanager;
 
 		// Instantiate hooks for external modules
-		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
+		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
-		// Execute hook accoutancyBindingCalculation
-		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount);
-		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+		// Execute hook accountancyBindingCalculation
+		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
+		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
+			$const_name = '';
+			if ($type == 'customer') {
+				$const_name = "SOLD";
+			} elseif ($type == 'supplier') {
+				$const_name = "BUY";
+			}
+
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			$isBuyerInEEC = isInEEC($buyer);
 			$isSellerInEEC = isInEEC($seller);
-			$code_sell_l = '';
-			$code_sell_p = '';
-			$code_sell_t = '';
+			$code_l = '';	// Default value for generic product/service
+			$code_p = '';	// Value for the product/service in parameter ($product)
+			$code_t = '';	// Default value of product account for the thirdparty
 			$suggestedid = '';
 
-			// Level 1: Search suggested default account for product/service
+			// Level 1 (define $code_l): Search suggested default account for product/service
 			$suggestedaccountingaccountbydefaultfor = '';
 			if ($factureDet->product_type == 1) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-					$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+					$code_l = (!empty($conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'} : '');
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
 					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {    // European intravat sale, without VAT intra community number
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_INTRA_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_INTRA_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eec';
 					} else {                                        // Foreign sale
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_EXPORT_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_SERVICE_' . $const_name . '_EXPORT_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'export';
 					}
 				}
 			} elseif ($factureDet->product_type == 0) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-					$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+					$code_l = (!empty($conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'} : '');
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithvat';
 					} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {    // European intravat sale, without VAT intra community number
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eecwithoutvatnumber';
 					} elseif ($isSellerInEEC && $isBuyerInEEC) {    // European intravat sale
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_INTRA_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_INTRA_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'eec';
 					} else {
-						$code_sell_l = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT : '');
+						$code_l = (!empty($conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_EXPORT_ACCOUNT'}) ? $conf->global->{'ACCOUNTING_PRODUCT_' . $const_name . '_EXPORT_ACCOUNT'} : '');
 						$suggestedaccountingaccountbydefaultfor = 'export';
 					}
 				}
 			}
-			if ($code_sell_l == -1) {
-				$code_sell_l = '';
+			if ($code_l == -1) {
+				$code_l = '';
 			}
 
-			// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
+			// Level 2 (define $code_p): Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 			$suggestedaccountingaccountfor = '';
-			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code)) && !empty($product->accountancy_code_sell)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
-				$code_sell_p = $product->accountancy_code_sell;
+			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code))) {
+				// If buyer in same country than seller (if not defined, we assume it is same country)
+				if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+					$code_p = $product->accountancy_code_sell;
+				} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+					$code_p = $product->accountancy_code_buy;
+				}
 				$suggestedid = $accountingAccount['dom'];
 				$suggestedaccountingaccountfor = 'prodserv';
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0 && !empty($product->accountancy_code_sell)) {    // European intravat sale, but with VAT
-					$code_sell_p = $product->accountancy_code_sell;
+				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {
+					// European intravat sale, but with VAT
+					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+						$code_p = $product->accountancy_code_sell;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+						$code_p = $product->accountancy_code_buy;
+					}
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra) && !empty($product->accountancy_code_sell)) {    // European intravat sale, without VAT intra community number
-					$code_sell_p = $product->accountancy_code_sell;
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {
+					// European intravat sale, without VAT intra community number
+					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+						$code_p = $product->accountancy_code_sell;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+						$code_p = $product->accountancy_code_buy;
+					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
-				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {          // European intravat sale
-					$code_sell_p = $product->accountancy_code_sell_intra;
+				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {
+					// European intravat sale
+					if ($type=='customer' && !empty($product->accountancy_code_sell_intra)) {
+						$code_p = $product->accountancy_code_sell_intra;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_intra)) {
+						$code_p = $product->accountancy_code_buy_intra;
+					}
 					$suggestedid = $accountingAccount['intra'];
 					$suggestedaccountingaccountfor = 'eec';
-				} elseif (!empty($product->accountancy_code_sell_export)) {                                        // Foreign sale
-					$code_sell_p = $product->accountancy_code_sell_export;
+				} else {
+					// Foreign sale
+					if ($type=='customer' && !empty($product->accountancy_code_sell_export)) {
+						$code_p = $product->accountancy_code_sell_export;
+					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_export)) {
+						$code_p = $product->accountancy_code_buy_export;
+					}
 					$suggestedid = $accountingAccount['export'];
 					$suggestedaccountingaccountfor = 'export';
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+			// Level 3 (define $code_t): Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-				if (!empty($buyer->code_compta)) {
-					$code_sell_t = $buyer->code_compta;
+				if (!empty($buyer->code_compta_product)) {
+					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
 					$suggestedaccountingaccountfor = 'thridparty';
 				}
 			}
 
 			// Manage Deposit
-			if ($factureDet->desc == "(DEPOSIT)") {
+			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
 				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
 				if ($result < 0) {
 					return -1;
 				}
 
-				$code_sell_l = $accountdeposittoventilated->ref;
+				$code_l = $accountdeposittoventilated->ref;
 				$suggestedid = $accountdeposittoventilated->rowid;
 				$suggestedaccountingaccountfor = 'deposit';
 			}
 
-			if (empty($suggestedid) && empty($code_sell_p) && !empty($code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
-				if (empty($this->accountingaccount_codetotid_cache[$code_sell_l])) {
+			// If $suggestedid could not be guessed yet, we set it from the generic default accounting code $code_l
+			if (empty($suggestedid) && empty($code_p) && !empty($code_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
+				if (empty($this->accountingaccount_codetotid_cache[$code_l])) {
 					$tmpaccount = new self($this->db);
-					$result = $tmpaccount->fetch(0, $code_sell_l, 1);
+					$result = $tmpaccount->fetch(0, $code_l, 1);
 					if ($result < 0) {
 						return -1;
 					}
 					if ($tmpaccount->id > 0) {
 						$suggestedid = $tmpaccount->id;
 					}
-					$this->accountingaccount_codetotid_cache[$code_sell_l] = $tmpaccount->id;
+					$this->accountingaccount_codetotid_cache[$code_l] = $tmpaccount->id;
 				} else {
-					$suggestedid = $this->accountingaccount_codetotid_cache[$code_sell_l];
+					$suggestedid = $this->accountingaccount_codetotid_cache[$code_l];
 				}
 			}
 			return array(
 				'suggestedaccountingaccountbydefaultfor' => $suggestedaccountingaccountbydefaultfor,
 				'suggestedaccountingaccountfor' => $suggestedaccountingaccountfor,
 				'suggestedid' => $suggestedid,
-				'code_sell_l' => $code_sell_l,
-				'code_sell_p' => $code_sell_p,
-				'code_sell_t' => $code_sell_t,
+				'code_l' => $code_l,
+				'code_p' => $code_p,
+				'code_t' => $code_t,
 			);
 		} else {
 			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {

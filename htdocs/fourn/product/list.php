@@ -33,10 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 $langs->loadLangs(array("products", "suppliers"));
 
-if (!$user->rights->produit->lire && !$user->rights->service->lire) {
-	accessforbidden();
-}
-
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
@@ -72,13 +68,15 @@ $catid = GETPOST('catid', 'intcomma');
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 
+if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+	accessforbidden();
+}
 
+$permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'));
 
 
 /*
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
+ * Actions
  */
 
 if (GETPOST('cancel', 'alpha')) {
@@ -108,7 +106,7 @@ if (empty($reshook)) {
 		$search_field2 = '';
 		$search_date_creation = '';
 		$search_date_update = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -228,7 +226,11 @@ if ($resql) {
 	if ($optioncss != '') {
 		$param .= '&optioncss='.$optioncss;
 	}
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
 
 	if (!empty($catid)) {
 		print "<div id='ways'>";
@@ -257,6 +259,7 @@ if ($resql) {
 	$trackid = 'prod'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent">';
 
 	// Fields title search
@@ -357,7 +360,13 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	print "</table>";
+	// If no record found
+	if ($num == 0) {
+		$colspan = 8;
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
+	print "</table></div>";
 
 	print '</form>';
 } else {

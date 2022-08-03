@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
 		}
 	}
 
@@ -172,7 +173,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -185,7 +186,7 @@ if (empty($reshook)) {
 			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -193,6 +194,9 @@ if (empty($reshook)) {
 			if ($object->update($user) > 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}
@@ -230,7 +234,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -254,6 +258,7 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}
@@ -377,7 +382,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -506,7 +511,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
 		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print "</td></tr>\n";
@@ -634,7 +639,7 @@ if (!empty($id) && $action == 'edit') {
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
@@ -695,7 +700,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->don->creer) {
@@ -717,9 +722,10 @@ if (!empty($id) && $action != 'edit') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -778,7 +784,6 @@ if (!empty($id) && $action != 'edit') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	/*
 	 * Payments
@@ -788,7 +793,7 @@ if (!empty($id) && $action != 'edit') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
-	$sql .= " WHERE d.rowid = '".$id."'";
+	$sql .= " WHERE d.rowid = ".((int) $id);
 	$sql .= " AND p.fk_donation = d.rowid";
 	$sql .= " AND d.entity IN (".getEntity('donation').")";
 	$sql .= " AND p.fk_typepayment = c.id";
@@ -836,7 +841,6 @@ if (!empty($id) && $action != 'edit') {
 		dol_print_error($db);
 	}
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -919,9 +923,9 @@ if (!empty($id) && $action != 'edit') {
 		print showOnlinePaymentUrl('donation', $object->ref).'<br>';
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 llxFooter();

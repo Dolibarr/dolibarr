@@ -46,8 +46,8 @@ $smonth = (GETPOSTISSET('closemonth') ?GETPOST('closemonth', 'int') : dol_print_
 $sday = (GETPOSTISSET('closeday') ?GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -128,7 +128,7 @@ if (GETPOST('cancel', 'alpha')) {
 if ($action == "reopen") {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
-		dol_print_error($db, $object->error, $object->error);
+		setEventMessages($object->error, $object->error, 'errors');
 	}
 
 	$action = 'view';
@@ -312,7 +312,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				} elseif ($syear && $smonth && $sday) {
 					$sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
 				} else {
-					dol_print_error('', 'Year not defined');
+					setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 				}
 
 				$resql = $db->query($sql);
@@ -356,7 +356,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			} elseif ($syear && $smonth && $sday) {
 				$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 			} else {
-				dol_print_error('', 'Year not defined');
+				setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 			}
 
 			$resql = $db->query($sql);
@@ -647,9 +647,10 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+
+		print '<table class="border tableforfield centpercent">';
 
 		print '<tr><td class="titlefield nowrap">';
 		print $langs->trans("DateCreationShort");
@@ -658,16 +659,16 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</td></tr>';
 
 		print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
-		print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
+		print '<span class="amount">'.price($object->opening, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		print "</td></tr>";
 		foreach ($arrayofpaymentmode as $key => $val) {
 			print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
-			print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
+			print '<span class="amount">'.price($object->$key, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print "</td></tr>";
 		}
 
 		print "</table>\n";
-		print '</div>';
+
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
@@ -676,14 +677,14 @@ if (empty($action) || $action == "view" || $action == "close") {
 		if ($action != 'close') {
 			print '<div class="tabsAction">';
 
-			print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintTicket').'</a></div>';
 
 			if ($object->status == CashControl::STATUS_DRAFT) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			print '</div>';

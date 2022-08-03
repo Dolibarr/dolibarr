@@ -171,7 +171,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 			$this->error = $numFinal;
 		}
 
-		return  $numFinal;
+		return $numFinal;
 	}
 
 

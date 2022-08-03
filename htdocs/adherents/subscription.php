@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -485,7 +487,11 @@ if ($rowid > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -495,7 +501,7 @@ if ($rowid > 0) {
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 	}
 
 	// Type
@@ -506,25 +512,24 @@ if ($rowid > 0) {
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 	print '</tr>';
 
 	// Password
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+		print '<tr><td>'.$langs->trans("Password").'</td><td>';
 		if ($object->pass) {
 			print preg_replace('/./i', '*', $object->pass);
 		} else {
 			if ($user->admin) {
-				print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			} else {
-				print $langs->trans("Hidden");
+				print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 			}
+			print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 		}
-		if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
+		if (!empty($object->pass_indatabase) && empty($object->user_id)) {	// Show warning only for old password still in clear (does not happen anymore)
 			$langs->load("errors");
 			$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 			print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -540,15 +545,17 @@ if ($rowid > 0) {
 			print " ".img_warning($langs->trans("Late"));
 		}
 	} else {
-		if (!$adht->subscription) {
+		if ($object->need_subscription == 0) {
+			print $langs->trans("SubscriptionNotNeeded");
+		} elseif (!$adht->subscription) {
 			print $langs->trans("SubscriptionNotRecorded");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		} else {
 			print $langs->trans("SubscriptionNotReceived");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		}
 	}
@@ -557,24 +564,25 @@ if ($rowid > 0) {
 	print '</table>';
 
 	print '</div>';
-	print '<div class="fichehalfright"><div class="ficheaddleft">';
 
+	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
 
-	// Birthday
-	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+	print '<table class="border tableforfield centpercent">';
 
-	// Public
-	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-	// Categories
+	// Tags / Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
 		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
+
+	// Birth Date
+	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+	// Public
+	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 	// Other attributes
 	$cols = 2;
@@ -652,12 +660,10 @@ if ($rowid > 0) {
 
 	print "</table>\n";
 
-	print "</div></div></div>\n";
+	print "</div></div>\n";
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
-
-	print '</form>';
 
 
 	/*
@@ -825,11 +831,11 @@ if ($rowid > 0) {
 				$bankviainvoice = 1;
 			}
 		} else {
-			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$bankviainvoice = 1;
 			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
 				$bankdirect = 1;
-			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 				$invoiceonly = 1;
 			}
 		}
@@ -838,7 +844,7 @@ if ($rowid > 0) {
 
 		if ($conf->use_javascript_ajax) {
 			//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
 						$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
 						$("#none, #invoiceonly").click(function() {
@@ -943,8 +949,10 @@ if ($rowid > 0) {
 		}
 		if (!$datefrom) {
 			$datefrom = $object->datevalid;
-			if ($object->datefin > 0) {
+			if ($object->datefin > 0 && dol_time_plus_duree($object->datefin, $defaultdelay, $defaultdelayunit) > dol_now()) {
 				$datefrom = dol_time_plus_duree($object->datefin, 1, 'd');
+			} else {
+				$datefrom = dol_get_first_day(dol_print_date(time(), "%Y"));
 			}
 		}
 		print $form->selectDate($datefrom, '', '', '', '', "subscription", 1, 1);
@@ -963,7 +971,7 @@ if ($rowid > 0) {
 
 		if ($adht->subscription) {
 			// Amount
-			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'. price(GETPOSTISSET('subscription') ? GETPOST('subscription') : $adht->amount).'"> '.$langs->trans("Currency".$conf->currency) .'</td></tr>';
 
 			// Label
 			print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -974,7 +982,7 @@ if ($rowid > 0) {
 			print '"></td></tr>';
 
 			// Complementary action
-			if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
+			if ((!empty($conf->banque->enabled) || isModEnabled('facture')) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
 				$company = new Societe($db);
 				if ($object->fk_soc) {
 					$result = $company->fetch($object->fk_soc);
@@ -995,7 +1003,7 @@ if ($rowid > 0) {
 					print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 				}
 				// Add invoice with no payments
-				if (!empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
@@ -1025,7 +1033,7 @@ if ($rowid > 0) {
 					print '</label><br>';
 				}
 				// Add invoice with payments
-				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
@@ -1059,12 +1067,12 @@ if ($rowid > 0) {
 				// Bank account
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
 				print img_picto('', 'bank_account');
-				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
+				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2, '', 0, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Payment mode
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2);
+				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2, 1, 0, 0, 1, 'minwidth200');
 				print "</td></tr>\n";
 
 				// Date of payment
@@ -1157,9 +1165,13 @@ if ($rowid > 0) {
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
 		print '</div>';
 
 		print '</form>';

@@ -151,7 +151,7 @@ if ($action == "productinfo") {
 	$arrayofcss = array('/takepos/css/phone.css');
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 	?>
-<script language="javascript">
+<script type="text/javascript">
 	<?php
 	$categorie = new Categorie($db);
 	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
@@ -329,7 +329,7 @@ function TakeposPrintingOrder(){
 }
 
 function Exit(){
-	window.location.href='../user/logout.php';
+	window.location.href='../user/logout.php?token=<?php echo newToken(); ?>';
 }
 
 function CheckPlease(payment){

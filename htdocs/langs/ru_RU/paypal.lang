@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Настройка модуля PayPal 
-PaypalDesc=Этот модуль позволяет клиентам производить оплату через <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Его можно использовать для специального платежа или для платежа, связанного с объектом Dolibarr (счет, заказ, ...)
+PaypalDesc=Этот модуль позволяет клиентам производить оплату через <a href="http://www.paypal.com" target="_blank">PayPal</a>. Его можно использовать для специального платежа или для платежа, связанного с объектом Dolibarr (счет, заказ, ...)
 PaypalOrCBDoPayment=Оплата через PayPal (карта или PayPal)
 PaypalDoPayment=Оплата с PayPal
 PAYPAL_API_SANDBOX=Режим тестирования / песочницы
@@ -27,7 +27,7 @@ ShortErrorMessage=Короткое сообщение об ошибке
 ErrorCode=Код ошибки
 ErrorSeverityCode=Код серьезности ошибки
 OnlinePaymentSystem=Система онлайн-платежей
-PaypalLiveEnabled=Включен "живой" режим PayPal (в противном случае тестовый / песочница)
+PaypalLiveEnabled=Включен "живой" режим PayPal (в противном случае тестовый/песочница)
 PaypalImportPayment=Импорт платежей PayPal
 PostActionAfterPayment=Публикация действий после платежей
 ARollbackWasPerformedOnPostActions=Откат был выполнен для всех действий с публикацией. Вы должны выполнить действия публикации вручную, если они необходимы.

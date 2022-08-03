@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Ҳисобот дар дохили ширкат
+Module68000Desc = Идоракунии ҳисоботи дохилӣ (Дастгирии формати Фаронса DEB/DES)
+IntracommReportSetup = Танзими модули дохили ҳисобот
+IntracommReportAbout = Дар бораи ҳисоботи дохили
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NUM_AGREMENT=Нишондиҳандаҳои рақамӣ (délivré par le CISD de rattachement)
+INTRACOMMREPORT_TYPE_ACTEUR=Навъи амалкунанда
+INTRACOMMREPORT_ROLE_ACTEUR=Рол joué par l'acteur
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les муаррифӣ
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Хидматрасонии навъи "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Нумераи декларант
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
+MenuIntracommReport=Ҳисобот дар дохили ширкат
+MenuIntracommReportNew=Эъломияи нав
+MenuIntracommReportList=Рӯйхат
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Эъломияи нав
+Declaration=Эъломия
+AnalysisPeriod=Давраи таҳлил
+TypeOfDeclaration=Навъи эъломия
+DEB=Эъломияи мубодилаи мол (DEB)
+DES=Эъломияи мубодилаи хидматҳо (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Омода кардани файли XML дар формати ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of analysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Рӯйхати эъломияҳои тавлидшуда
+IntracommReportNumber=Рақами эъломия
+IntracommReportPeriod=Давраи таҳлил
+IntracommReportTypeDeclaration=Навъи эъломия
+IntracommReportDownload=файли XML -ро зеркашӣ кунед
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Ҳолати нақлиёт

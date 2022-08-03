@@ -18,32 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Системаи идоракунии дониш
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Идоракунии донишҳо (KM) ё пойгоҳи Help-Desk -ро идора кунед
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Танзими системаи идоракунии дониш
+Settings = Танзимот
+KnowledgeManagementSetupPage = Саҳифаи танзими системаи идоракунии дониш
 
 
 #
 # About page
 #
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About = Дар бораи
+KnowledgeManagementAbout = Дар бораи идоракунии дониш
+KnowledgeManagementAboutPage = Идоракунии дониш дар бораи саҳифа
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+KnowledgeManagementArea = Идоракунии дониш
+MenuKnowledgeRecord = Пойгоҳи дониш
+ListKnowledgeRecord = Рӯйхати мақолаҳо
+NewKnowledgeRecord = Мақолаи нав
+ValidateReply = Ҳалли худро тасдиқ кунед
+KnowledgeRecords = Мақолаҳо
+KnowledgeRecord = Мақола
+KnowledgeRecordExtraFields = Майдони экзотикӣ барои мақола
+GroupOfTicket=Гурӯҳи чиптаҳо
+YouCanLinkArticleToATicketCategory=Шумо метавонед мақоларо ба гурӯҳи чиптаҳо пайваст кунед (аз ин рӯ мақола ҳангоми тахассуси чиптаҳои нав пешниҳод карда мешавад)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

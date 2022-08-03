@@ -206,7 +206,7 @@ class PrestaShopWebservice
 	 */
 	public function printDebug($title, $content)
 	{
-		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.$title.'</h6><pre>'.htmlentities($content).'</pre></div>';
+		echo '<div style="display:table;background:#CCC;font-size:8pt;padding:7px"><h6 style="font-size:9pt;margin:0">'.dol_escape_htmltag($title).'</h6><pre>'.dol_escape_htmltag($content).'</pre></div>';
 	}
 
 	/**
@@ -232,6 +232,9 @@ class PrestaShopWebservice
 		if ($response != '') {
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
+			if (!function_exists('simplexml_load_string')) {
+				throw new PrestaShopWebserviceException('Method simplexml_load_string not available. Your PHP does not support xml.');
+			}
 			$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 			if (libxml_get_errors()) {
 				$msg = var_export(libxml_get_errors(), true);

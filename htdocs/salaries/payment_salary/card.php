@@ -111,7 +111,7 @@ if ($action == 'delete') {
 /*
 if ($action == 'valide')
 {
-	$facid = $_GET['facid'];
+	$facid = GETPOST('facid', 'int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
@@ -138,7 +138,9 @@ print '</td></tr>';*/
 print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">';
+print $langs->trans("PaymentType".$object->type_code);
+print '</td></tr>';
 
 // Numero
 print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  *	\ingroup    member
  *	\brief      Page to make mass init of barcode
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -188,7 +189,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<br>';
 
 // For thirdparty
-if ($conf->societe->enabled) {
+if (isModEnabled('societe')) {
 	$nbno = $nbtotal = 0;
 
 	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
@@ -224,7 +225,7 @@ if ($conf->societe->enabled) {
 // For products
 if ($conf->product->enabled || $conf->product->service) {
 	// Example 1 : Adding jquery code
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
 	function confirm_erase() {
 		return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
 	}
@@ -264,29 +265,31 @@ if ($conf->product->enabled || $conf->product->service) {
 		dol_print_error($db);
 	}
 
-	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices"))."\n";
 
 	if (is_object($modBarCodeProduct)) {
 		print $langs->trans("BarCodeNumberManager").": ";
 		$objproduct = new Product($db);
 		print '<b>'.(isset($modBarCodeProduct->name) ? $modBarCodeProduct->name : $modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled = 0;
+		print '<br>';
 	} else {
 		$disabled = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<span class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</span> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
+		print '<br><div class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<br><a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>';
+		print '</div>';
 	}
 	if (empty($nbno)) {
 		$disabled1 = 1;
 	}
 
-	print '<br>';
 	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
 	$moretags1 = (($disabled || $disabled1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
 	print '<input type="submit" class="button" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretags1.'>';
 	$moretags2 = (($nbno == $nbtotal) ? ' disabled' : '');
 	print ' &nbsp; ';
-	print '<input type="submit" class="button" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
+	print '<input type="submit" class="button butActionDelete" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
 	print '<br><br><br><br>';
 }
 

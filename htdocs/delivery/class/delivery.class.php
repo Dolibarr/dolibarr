@@ -106,6 +106,8 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	public $commande_id;
+
 	public $lines = array();
 
 
@@ -211,7 +213,7 @@ class Delivery extends CommonObject
 						$origin_id = $this->lines[$i]->commande_ligne_id; // For backward compatibility
 					}
 
-					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description)) {
+					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description, $this->lines[$i]->array_options)) {
 						$error++;
 					}
 				}
@@ -262,9 +264,10 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
+	 *  @param	array	$array_options			Array options
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
 		// phpcs:enable
 		$error = 0;
@@ -281,6 +284,15 @@ class Delivery extends CommonObject
 		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$error++;
+		}
+
+		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."deliverydet");
+
+		if (is_array($array_options) && count($array_options) > 0) {
+			$line = new DeliveryLine($this->db);
+			$line->id = $id;
+			$line->array_options = $array_options;
+			$result = $line->insertExtraFields();
 		}
 
 		if ($error == 0) {
@@ -385,7 +397,7 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
 			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
@@ -518,6 +530,8 @@ class Delivery extends CommonObject
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
 
@@ -531,7 +545,9 @@ class Delivery extends CommonObject
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
+				$line->array_options = $expedition->lines[$i]->array_options;
+			}
 			$this->lines[$i] = $line;
 		}
 
@@ -589,18 +605,23 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
+	 *	@param	int		$origin_id				Origin id
+	 *	@param	int		$qty					Qty
+	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty)
+	public function addline($origin_id, $qty, $array_options = null)
 	{
+		global $conf;
+
 		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
-
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+			$line->array_options = $array_options;
+		}
 		$this->lines[$num] = $line;
 	}
 
@@ -708,7 +729,7 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -719,8 +740,8 @@ class Delivery extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
@@ -740,14 +761,24 @@ class Delivery extends CommonObject
 			$result .= ' ';
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines
+	 *	Load lines insto $this->lines.
 	 *
-	 *	@return	void
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -769,9 +800,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$line = new DeliveryLine($this->db);
-
 				$obj = $this->db->fetch_object($resql);
+
+				$line = new DeliveryLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -813,9 +844,11 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
 
-		return $this->lines;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
@@ -946,7 +979,7 @@ class Delivery extends CommonObject
 		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$resultArray = array();
+			$array = array();
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
@@ -980,7 +1013,7 @@ class Delivery extends CommonObject
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
 				}
 
-					$i++;
+				$i++;
 			}
 			return $array;
 		} else {
@@ -1065,6 +1098,23 @@ class Delivery extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'deliverydet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 
@@ -1089,14 +1139,6 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-	public $price;
-	public $fk_product;
-	public $origin_id;
-
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1118,10 +1160,24 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	public $origin_line_id;
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
 
+	public $fk_product;
+	public $product_desc;
+	public $product_type;
 	public $product_ref;
 	public $product_label;
+
+	public $fk_origin_line;
+	public $origin_id;
+
+	public $price;
+
+	public $origin_line_id;
+
 
 	/**
 	 *	Constructor

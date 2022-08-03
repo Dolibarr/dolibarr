@@ -45,3 +45,5 @@ GenerateImgWebp=Dublējiet visus attēlus ar citu versiju ar .webp formātu
 ConfirmGenerateImgWebp=Ja apstiprināsit, visiem šajā mapē esošajiem attēliem tiks ģenerēts attēls .webp formātā (apakšmapes nav iekļautas) ...
 ConfirmImgWebpCreation=Apstipriniet visu attēlu dublēšanos
 SucessConvertImgWebp=Attēli ir veiksmīgi dublēti
+ECMDirName=Režisora nosaukums
+ECMParentDirectory=Vecāku direktorijs

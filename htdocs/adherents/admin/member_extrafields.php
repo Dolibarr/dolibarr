@@ -84,7 +84,7 @@ print dol_get_fiche_end();
 // Buttons
 if ($action != 'create' && $action != 'edit') {
 	print '<div class="tabsAction">';
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
+	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
 	print "</div>";
 }
 

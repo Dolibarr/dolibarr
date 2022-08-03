@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE fourn/commande/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE fourn/commande/tpl/linkedobjectblock.tpl.php -->\n";
 
 
 global $user;

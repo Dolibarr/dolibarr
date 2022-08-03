@@ -308,7 +308,7 @@ var DHighlightRules = function() {
                 regex: '[a-zA-Z]+'
             }, {
                 token: 'string',
-                regex: '".*"'
+                regex: '"[^"]*"'
             }, {
                 token: 'comment',
                 regex: '//.*$'

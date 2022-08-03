@@ -55,13 +55,17 @@ class Validate
 	{
 		global $langs;
 
-		if ($outputLang) {
+		if (empty($outputLang)) {
 			$this->outputLang = $langs;
 		} else {
 			$this->outputLang = $outputLang;
 		}
 
-		$outputLang->load('validate');
+		if (!is_object($this->outputLang) || !method_exists($this->outputLang, 'load')) {
+			return false;
+		}
+
+		$this->outputLang->loadLangs(array('validate', 'errors'));
 
 		$this->db = $db;
 	}
@@ -212,13 +216,28 @@ class Validate
 	/**
 	 * Check Duration validity
 	 *
-	 * @param string $duration to validate
+	 * @param mixed $duration to validate
 	 * @return boolean Validity is ok or not
 	 */
 	public function isDuration($duration)
 	{
 		if (!is_int($duration) && $duration >= 0) {
 			$this->error = $this->outputLang->trans('RequireValidDuration');
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check numeric validity
+	 *
+	 * @param mixed $string to validate
+	 * @return boolean Validity is ok or not
+	 */
+	public function isNumeric($string)
+	{
+		if (!is_numeric($string)) {
+			$this->error = $this->outputLang->trans('RequireValidNumeric');
 			return false;
 		}
 		return true;
@@ -243,7 +262,7 @@ class Validate
 	 * Check for all values in db
 	 *
 	 * @param array  $values Boolean to validate
-	 * @param string $table  the db table name without MAIN_DB_PREFIX
+	 * @param string $table  the db table name without $this->db->prefix()
 	 * @param string $col    the target col
 	 * @return boolean Validity is ok or not
 	 * @throws Exception
@@ -262,14 +281,17 @@ class Validate
 		}
 
 		foreach ($value_arr as $val) {
-			$sql = "SELECT ".$col." FROM ".MAIN_DB_PREFIX.$table." WHERE ".$col." = '".$this->db->escape($val)."'"; // nore quick than count(*) to check existing of a row
-			$resql = $this->db->getRow($sql);
+			$sql = "SELECT ".$col." FROM ".$this->db->prefix().$table." WHERE ".$col." = '".$this->db->escape($val)."' LIMIT 1"; // more quick than count(*) to check existing of a row
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				continue;
-			} else {
-				$this->error = $this->outputLang->trans('RequireValidExistingElement');
-				return false;
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					continue;
+				}
 			}
+			// If something was wrong
+			$this->error = $this->outputLang->trans('RequireValidExistingElement');
+			return false;
 		}
 
 		return true;
@@ -278,13 +300,13 @@ class Validate
 	/**
 	 * Check for all values in db
 	 *
-	 * @param array  $values    Boolean to validate
+	 * @param integer  $id of element
 	 * @param string $classname the class name
 	 * @param string $classpath the class path
 	 * @return boolean Validity is ok or not
 	 * @throws Exception
 	 */
-	public function isFetchable($values, $classname, $classpath)
+	public function isFetchable($id, $classname, $classpath)
 	{
 		if (!empty($classpath)) {
 			if (dol_include_once($classpath)) {
@@ -297,7 +319,7 @@ class Validate
 						return false;
 					}
 
-					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $values)) {
+					if (!empty($object->table_element) && $object->isExistingObject($object->table_element, $id)) {
 						return true;
 					} else { $this->error = $this->outputLang->trans('RequireValidExistingElement'); }
 				} else { $this->error = $this->outputLang->trans('BadSetupOfFieldClassNotFoundForValidation'); }

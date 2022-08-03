@@ -85,7 +85,7 @@ class modIncoterm extends DolibarrModules
 		}
 		$this->dictionaries = array(
 			'langs'=>'incoterm',
-			'tabname'=>array(MAIN_DB_PREFIX."c_incoterms"), // List of tables we want to see into dictonnary editor
+			'tabname'=>array("c_incoterms"), // List of tables we want to see into dictonnary editor
 			'tablib'=>array("Incoterms"), // Label of tables
 			'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
 			'tabsqlsort'=>array("rowid ASC"), // Sort order
@@ -93,7 +93,8 @@ class modIncoterm extends DolibarrModules
 			'tabfieldvalue'=>array("code,libelle"), // List of fields (list of fields to edit a record)
 			'tabfieldinsert'=>array("code,libelle"), // List of fields (list of fields for insert)
 			'tabrowid'=>array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->incoterm->enabled)
+			'tabcond'=>array($conf->incoterm->enabled),
+			'tabhelp' => array(array())
 		);
 
 		$this->boxes = array(); // List of boxes

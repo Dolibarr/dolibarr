@@ -79,8 +79,8 @@ if (!$allowed) {
 $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -506,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -532,7 +534,7 @@ foreach ($accounts as $key => $type) {
 
 	// Ref
 	if (!empty($arrayfields['b.ref']['checked'])) {
-		print '<td class="nowrap">'.$objecttmp->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -548,7 +550,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account type
 	if (!empty($arrayfields['accountype']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
 		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
 		if (!$i) {
@@ -584,11 +586,15 @@ foreach ($accounts as $key => $type) {
 
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
-		print '<td>';
-		if (!empty($conf->accounting->enabled) && !empty($objecttmp->fk_accountancy_journal)) {
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
-			print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+		print '<td class="tdoverflowmax125">';
+		if (!empty($conf->accounting->enabled)) {
+			if (empty($objecttmp->fk_accountancy_journal)) {
+				print img_warning($langs->trans("Mandatory"));
+			} else {
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
+				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			}
 		} else {
 			print '';
 		}
@@ -600,7 +606,7 @@ foreach ($accounts as $key => $type) {
 
 	// Currency
 	if (!empty($arrayfields['b.currency_code']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print $objecttmp->currency_code;
 		print '</td>';
 		if (!$i) {
@@ -610,9 +616,18 @@ foreach ($accounts as $key => $type) {
 
 	// Transactions to reconcile
 	if (!empty($arrayfields['toreconcile']['checked'])) {
-		print '<td class="center">';
-
 		$conciliate = $objecttmp->canBeConciliated();
+
+		$labeltoshow = '';
+		if ($conciliate == -2) {
+			$labeltoshow = $langs->trans("CashAccount");
+		} elseif ($conciliate == -3) {
+			$labeltoshow = $langs->trans("Closed");
+		} elseif (empty($objecttmp->rappro)) {
+			$labeltoshow = $langs->trans("ConciliationDisabled");
+		}
+
+		print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dol_escape_htmltag($labeltoshow).'"' : '').'>';
 		if ($conciliate == -2) {
 			print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
 		} elseif ($conciliate == -3) {
@@ -657,7 +672,7 @@ foreach ($accounts as $key => $type) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['b.datec']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($objecttmp->date_creation, 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -666,7 +681,7 @@ foreach ($accounts as $key => $type) {
 	}
 	// Date modification
 	if (!empty($arrayfields['b.tms']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($objecttmp->date_update, 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -714,7 +729,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }

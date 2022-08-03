@@ -37,8 +37,6 @@ if (!$user->admin) {
 $rowid = GETPOST('rowid', 'int');
 $entity = GETPOST('entity', 'int');
 $action = GETPOST('action', 'aZ09');
-$update = GETPOST('update', 'alpha');
-$delete = GETPOST('delete', 'none'); // Do not use alpha here
 $debug = GETPOST('debug', 'int');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
@@ -222,7 +220,7 @@ if (!empty($conf->multicompany->enabled) && !$user->entity) {
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<input type="submit" class="button button-add" name="add" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 
@@ -275,7 +273,7 @@ if ($result) {
 		print '</td>';
 
 		// Date last change
-		print '<td class="nowraponall">';
+		print '<td class="nowraponall center">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 

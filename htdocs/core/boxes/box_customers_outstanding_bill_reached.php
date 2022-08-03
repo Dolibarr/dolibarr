@@ -35,7 +35,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 	public $boxcode = "customersoutstandingbillreached";
 	public $boximg = "object_company";
 	public $boxlabel = "BoxCustomersOutstandingBillReached";
-	public $depends = array("facture","societe");
+	public $depends = array("facture", "societe");
 
 	/**
 	 * @var DoliDB Database handler.
@@ -93,12 +93,12 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			$sql .= ", s.outstanding_limit";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -155,9 +155,9 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				}
 
 				if ($num == 0 || $nboutstandingbillreachedcustomers == 0) {
-					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center"',
-					'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
+					$this->info_box_contents[0][] = array(
+						'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
 					);
 				}
 

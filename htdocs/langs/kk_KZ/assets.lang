@@ -16,52 +16,52 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
-DeleteType=Delete
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+Assets = Активтер
+NewAsset = Жаңа актив
+AccountancyCodeAsset = Есеп коды (актив)
+AccountancyCodeDepreciationAsset = Есеп коды (амортизациялық активтер шоты)
+AccountancyCodeDepreciationExpense = Бухгалтерлік есеп коды (амортизациялық шығындар шоты)
+NewAssetType=Жаңа актив түрі
+AssetsTypeSetup=Актив типін реттеу
+AssetTypeModified=Актив түрі өзгертілді
+AssetType=Актив түрі
+AssetsLines=Активтер
+DeleteType=Жою
+DeleteAnAssetType=Активтің түрін жою
+ConfirmDeleteAssetType=Бұл актив түрін шынымен жойғыңыз келе ме?
+ShowTypeCard='%s' түрін көрсету
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Активтер
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Активтердің сипаттамасы
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Активтерді баптау
+Settings = Параметрлер
+AssetsSetupPage = Активтерді орнату беті
+ExtraFieldsAssetsType = Қосымша атрибуттар (актив түрі)
+AssetsType=Актив түрі
+AssetsTypeId=Актив түрінің идентификаторы
+AssetsTypeLabel=Активтер түрінің белгісі
+AssetsTypes=Активтердің түрлері
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
-MenuListAssets = List
-MenuNewTypeAssets = New
-MenuListTypeAssets = List
+MenuAssets = Активтер
+MenuNewAsset = Жаңа актив
+MenuTypeAssets = Активтерді теріңіз
+MenuListAssets = Тізім
+MenuNewTypeAssets = Жаңа
+MenuListTypeAssets = Тізім
 
 #
 # Module
 #
-Asset=Asset
-NewAssetType=New asset type
-NewAsset=New asset
-ConfirmDeleteAsset=Are you sure you want to delete this asset ?
+Asset=Актив
+NewAssetType=Жаңа актив түрі
+NewAsset=Жаңа актив
+ConfirmDeleteAsset=Бұл активті шынымен жойғыңыз келе ме?

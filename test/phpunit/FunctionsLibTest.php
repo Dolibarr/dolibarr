@@ -166,6 +166,27 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+
+	/**
+	 * testNum2Alpha
+	 *
+	 * @return void
+	 */
+	public function testNum2Alpha()
+	{
+		$result = num2Alpha(0);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A', 'Check num2Alpha 0');
+
+		$result = num2Alpha(5);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'F', 'Check num2Alpha 5');
+
+		$result = num2Alpha(26);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'AA', 'Check num2Alpha 26');
+	}
+
 	/**
 	 * testIsValidEmail
 	 *
@@ -513,6 +534,10 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 		$input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+		$after=dol_textishtml($input);
+		$this->assertFalse($after);
+
+		$input="A text\nwith a link https://aaa?param=abc&amp;param2=def";
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 	}
@@ -1048,13 +1073,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertFalse($verifcond, 'Test a false comparison');
 
 		$verifcond=verifCond('$conf->facture->enabled');
-		$this->assertTrue($verifcond, 'Test that conf property of a module report true when enabled');
+		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
 
 		$verifcond=verifCond('$conf->moduledummy->enabled');
-		$this->assertFalse($verifcond, 'Test that conf property of a module report false when disabled');
+		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
+
+		$verifcond=verifCond(0);
+		$this->assertFalse($verifcond, 'Test that verifConf(0) return False');
+
+		$verifcond=verifCond("0");
+		$this->assertFalse($verifcond, 'Test that verifConf("0") return False');
 
 		$verifcond=verifCond('');
-		$this->assertTrue($verifcond);
+		$this->assertTrue($verifcond, 'Test that verifConf("") return False (special case)');
 	}
 
 	/**
@@ -1321,8 +1352,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1, price2num('1.000'), 'Test 1.000 give 1 with english language');
 
 		// Text can't be converted
-		$this->assertEquals('12.4$', price2num('12.4$'));
-		$this->assertEquals('12.4$', price2num('12r.4$'));
+		$this->assertEquals('12.4', price2num('12.4$'));
+		$this->assertEquals('12.4', price2num('12r.4$'));
 
 		// For spanish language
 		$newlangs2 = new Translate('', $conf);

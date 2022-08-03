@@ -20,7 +20,7 @@
  */
 
 /**
- * \file    hrm/admin/setup.php
+ * \file    htdocs/admin/hrm.php
  * \ingroup hrm
  * \brief   HrmTest setup page.
  */
@@ -50,12 +50,14 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
 $arrayofparameters = array(
 	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'textarea','enabled'=>1),
+	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'varchar','enabled'=>1),
 );
 
 $error = 0;
@@ -79,10 +81,12 @@ if ($action == 'update') {
 	if (!empty($max_rank)) {
 		$static_skill = new Skill($db);
 		$TAllSkills = $static_skill->fetchAll();
-		foreach ($TAllSkills as &$skill) {
-			if (empty($skill->lines)) $skill->fetchLines();
-			if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
-				$skill->createSkills(count($skill->lines) + 1);
+		if (is_array($TAllSkills)) {
+			foreach ($TAllSkills as &$skill) {
+				if (empty($skill->lines)) $skill->fetchLines();
+				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
+					$skill->createSkills(count($skill->lines) + 1);
+				}
 			}
 		}
 	}
@@ -275,7 +279,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'HRMTEST_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -417,7 +421,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'HRMTEST_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -467,13 +471,17 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 print load_fiche_titre($langs->trans('OtherOptions'), '', '');
 
+if (empty($conf->global->HRM_MAXRANK)) {
+	$conf->global->HRM_MAXRANK = Skill::DEFAULT_MAX_RANK_PER_SKILL;
+}
+
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -569,7 +577,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {

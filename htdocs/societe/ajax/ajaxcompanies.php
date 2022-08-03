@@ -125,15 +125,17 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
 			$label = '';
-			if ($conf->global->SOCIETE_ADD_REF_IN_LIST) {
+			if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 				if (($row['client']) && (!empty($row['code_client']))) {
 					$label = $row['code_client'].' - ';
 				}
 				if (($row['fournisseur']) && (!empty($row['code_fournisseur']))) {
 					$label .= $row['code_fournisseur'].' - ';
 				}
-				$label .= ' '.$row['name'];
 			}
+
+			$label .= $row['nom'];
+
 			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 				$label .= ($row['address'] ? ' - '.$row['address'] : '').($row['zip'] ? ' - '.$row['zip'] : '').($row['town'] ? ' '.$row['town'] : '');
 				if (!empty($row['country_code'])) {

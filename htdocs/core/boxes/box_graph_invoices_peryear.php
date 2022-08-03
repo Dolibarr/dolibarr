@@ -54,7 +54,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->facture->lire);
+		$this->hidden = empty($user->rights->facture->lire);
 	}
 
 	/**
@@ -93,7 +93,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		$prefix = '';
 		$socid = 0;
 		if ($user->socid) $socid = $user->socid;
-		if (!$user->rights->societe->client->voir || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if (empty($user->rights->societe->client->voir) || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 
 		if ($user->rights->facture->lire) {
 			$mesg = '';

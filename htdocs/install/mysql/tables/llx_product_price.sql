@@ -29,8 +29,8 @@ create table llx_product_price
   fk_product		integer NOT NULL,
   date_price		datetime NOT NULL,
   price_level		smallint NULL DEFAULT 1,
-  price				double(24,8) DEFAULT NULL,
-  price_ttc			double(24,8) DEFAULT NULL,
+  price				double(24,8) DEFAULT NULL,		-- price without tax
+  price_ttc			double(24,8) DEFAULT NULL,		-- price inc vat (but not localtax1 nor localtax2)
   price_min			double(24,8) default NULL,
   price_min_ttc		double(24,8) default NULL,
   price_base_type	varchar(3) DEFAULT 'HT',
@@ -48,7 +48,7 @@ create table llx_product_price
   import_key 		varchar(14),
   
   fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
+  multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_price	double(24,8) DEFAULT NULL,
   multicurrency_price_ttc	double(24,8) DEFAULT NULL

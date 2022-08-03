@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022       Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +27,14 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 /**
  * 	Class to manage tasks
  */
-class Task extends CommonObject
+class Task extends CommonObjectLine
 {
 	/**
 	 * @var string ID to identify managed object
@@ -40,7 +42,7 @@ class Task extends CommonObject
 	public $element = 'project_task';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 	Name of table without prefix where object is stored
 	 */
 	public $table_element = 'projet_task';
 
@@ -57,7 +59,9 @@ class Task extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('projet_task_time');
+	protected $childtables = array(
+		'projet_task_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_task')
+	);
 
 	/**
 	 * @var int ID parent task
@@ -80,6 +84,11 @@ class Task extends CommonObject
 	public $date_start;
 	public $date_end;
 	public $progress;
+
+	/**
+	 * @deprecated Use date_end instead
+	 */
+	public $datee;
 
 	/**
 	 * @var int ID
@@ -164,6 +173,11 @@ class Task extends CommonObject
 		// Clean parameters
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+
+		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
+			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
+			return -1;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -384,6 +398,11 @@ class Task extends CommonObject
 			$this->budget_amount = trim($this->budget_amount);
 		}
 
+		if (!empty($this->date_start) && !empty($this->date_end) && $this->date_start > $this->date_end) {
+			$this->errors[] = $langs->trans('StartDateCannotBeAfterEndDate');
+			return -1;
+		}
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -459,15 +478,15 @@ class Task extends CommonObject
 
 		if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref)) {
 			// We remove directory
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$project = new Project($this->db);
 				$project->fetch($this->fk_project);
 
-				$olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
-				$newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+				$olddir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+				$newdir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$res = dol_move($olddir, $newdir);
+					$res = dol_move_dir($olddir, $newdir);
 					if (!$res) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
@@ -586,11 +605,11 @@ class Task extends CommonObject
 			return -1 * $error;
 		} else {
 			//Delete associated link file
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($this->fk_project);
 
-				$dir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
+				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
 				dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 				if (file_exists($dir)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -790,9 +809,10 @@ class Task extends CommonObject
 	 * @param	array	$extrafields	    Show additional column from project or task
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
+	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array())
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -905,6 +925,7 @@ class Task extends CommonObject
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		global $db; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();
@@ -1011,6 +1032,10 @@ class Task extends CommonObject
 								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
 							}
 						}
+					}
+
+					if ($loadextras) {
+						$tasks[$i]->fetch_optionals();
 					}
 				}
 
@@ -1165,6 +1190,7 @@ class Task extends CommonObject
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 
 		$ret = 0;
+		$now = dol_now();
 
 		// Check parameters
 		if (!is_object($user)) {
@@ -1202,6 +1228,7 @@ class Task extends CommonObject
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
 		$sql .= ", note";
+		$sql .= ", datec";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
@@ -1210,6 +1237,7 @@ class Task extends CommonObject
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1265,6 +1293,97 @@ class Task extends CommonObject
 		}
 		return $ret;
 	}
+
+	/**
+	 *  Fetch records of time spent of this task
+	 *
+	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return int							<0 if KO, array of time spent if OK
+	 */
+	public function fetchTimeSpentOnTask($morewherefilter = '')
+	{
+		global $langs;
+
+		$arrayres = array();
+
+		$sql = "SELECT";
+		$sql .= " s.rowid as socid,";
+		$sql .= " s.nom as thirdparty_name,";
+		$sql .= " s.email as thirdparty_email,";
+		$sql .= " ptt.rowid,";
+		$sql .= " ptt.fk_task,";
+		$sql .= " ptt.task_date,";
+		$sql .= " ptt.task_datehour,";
+		$sql .= " ptt.task_date_withhour,";
+		$sql .= " ptt.task_duration,";
+		$sql .= " ptt.fk_user,";
+		$sql .= " ptt.note,";
+		$sql .= " ptt.thm,";
+		$sql .= " pt.rowid as task_id,";
+		$sql .= " pt.ref as task_ref,";
+		$sql .= " pt.label as task_label,";
+		$sql .= " p.rowid as project_id,";
+		$sql .= " p.ref as project_ref,";
+		$sql .= " p.title as project_label,";
+		$sql .= " p.public as public";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql .= " WHERE ptt.fk_task = pt.rowid AND pt.fk_projet = p.rowid";
+		$sql .= " AND pt.rowid = ".((int) $this->id);
+		$sql .= " AND pt.entity IN (".getEntity('project').")";
+		if ($morewherefilter) {
+			$sql .= $morewherefilter;
+		}
+
+		dol_syslog(get_class($this)."::fetchAllTimeSpent", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				$newobj = new stdClass();
+
+				$newobj->socid              = $obj->socid;
+				$newobj->thirdparty_name    = $obj->thirdparty_name;
+				$newobj->thirdparty_email   = $obj->thirdparty_email;
+
+				$newobj->fk_project			= $obj->project_id;
+				$newobj->project_ref		= $obj->project_ref;
+				$newobj->project_label = $obj->project_label;
+				$newobj->public				= $obj->project_public;
+
+				$newobj->fk_task			= $obj->task_id;
+				$newobj->task_ref = $obj->task_ref;
+				$newobj->task_label = $obj->task_label;
+
+				$newobj->timespent_line_id = $obj->rowid;
+				$newobj->timespent_line_date = $this->db->jdate($obj->task_date);
+				$newobj->timespent_line_datehour	= $this->db->jdate($obj->task_datehour);
+				$newobj->timespent_line_withhour = $obj->task_date_withhour;
+				$newobj->timespent_line_duration = $obj->task_duration;
+				$newobj->timespent_line_fk_user = $obj->fk_user;
+				$newobj->timespent_line_thm = $obj->thm;	// hourly rate
+				$newobj->timespent_line_note = $obj->note;
+
+				$arrayres[] = $newobj;
+
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			$this->lines = $arrayres;
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+
 
 	/**
 	 *  Calculate total of time spent for task
@@ -1659,23 +1778,23 @@ class Task extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
-
-		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -1843,8 +1962,8 @@ class Task extends CommonObject
 					$clone_project_ref = $ori_project_ref;
 				}
 
-				$clone_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
-				$ori_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
+				$clone_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
+				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
 
 				$filearray = dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach ($filearray as $key => $file) {
@@ -2077,7 +2196,7 @@ class Task extends CommonObject
 		$sql .= " AND p.fk_statut = 1";
 		$sql .= " AND t.fk_projet = p.rowid";
 		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2091,7 +2210,7 @@ class Task extends CommonObject
 			$task_static = new Task($this->db);
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->projet->task->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
 			if ($user->rights->projet->all->lire) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
@@ -2142,13 +2261,13 @@ class Task extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		}
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND t.fk_projet = p.rowid"; // tasks to do
-		if ($mine || !$user->rights->projet->all->lire) {
+		if ($mine || empty($user->rights->projet->all->lire)) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -2156,7 +2275,7 @@ class Task extends CommonObject
 		if ($socid) {
 			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id).") OR (s.rowid IS NULL))";
 		}
 
@@ -2192,6 +2311,6 @@ class Task extends CommonObject
 
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
-		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
+		return ($datetouse > 0 && ($datetouse < ($now - $conf->project->task->warning_delay)));
 	}
 }

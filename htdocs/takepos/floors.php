@@ -104,7 +104,7 @@ if ($action == "updatename") {
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
+	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
 if ($action == "add") {
@@ -128,22 +128,20 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <link rel="stylesheet" href="css/pos.css.php?a=xxx">
 <style type="text/css">
 div.tablediv{
-background-image:url(img/table.gif);
--moz-background-size:100% 100%;
--webkit-background-size:100% 100%;
-background-size:100% 100%;
-height:10%;
-width:10%;
-text-align: center;
-font-size:300%;
-color:white;
+	background-image:url(img/table.gif);
+	-moz-background-size:100% 100%;
+	-webkit-background-size:100% 100%;
+	background-size:100% 100%;
+	height:10%;
+	width:10%;
+	text-align: center;
+	font-size:300%;
+	color:white;
 }
+
+/* Color when a table has a pending order/invoice */
 div.red{
-color:red;
-}
-html, body
-{
-height: 100%;
+	color:red;
 }
 </style>
 

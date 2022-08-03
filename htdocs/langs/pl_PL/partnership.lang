@@ -19,7 +19,7 @@
 ModulePartnershipName=Zarządzanie partnerstwem
 PartnershipDescription=Moduł Zarządzania partnerstwem
 PartnershipDescriptionLong= Moduł Zarządzania partnerstwem
-
+Partnership=Partnership
 AddPartnership=Dodaj partnerstwo
 CancelPartnershipForExpiredMembers=Partnerstwo: Anuluj partnerstwo członków z wygasłymi subskrypcjami
 PartnershipCheckBacklink=Partnerstwo: Sprawdź odsyłający link zwrotny
@@ -58,6 +58,7 @@ ManagePartnership=Zarządzaj partnerstwem
 BacklinkNotFoundOnPartnerWebsite=Nie znaleziono linku zwrotnego w witrynie partnera
 ConfirmClosePartnershipAsk=Czy na pewno chcesz anulować to partnerstwo?
 PartnershipType=Rodzaj partnerstwa
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail

@@ -102,11 +102,11 @@ if ($action == "set") {
 	}
 
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-	if (! ($res > 0)) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	if (! $error) {
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -297,7 +297,7 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified=1;
-							if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
 							if ($modulequalified) {

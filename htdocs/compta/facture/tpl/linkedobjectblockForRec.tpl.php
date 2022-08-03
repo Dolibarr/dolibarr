@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedopjectblockForRec.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedobjectblockForRec.tpl.php -->\n";
 
 
 global $user;
@@ -46,7 +46,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	?>
 <tr class="<?php echo $trclass; ?>" >
-	<td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
+	<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
 	<td class="linkedcol-name"><!-- nowraponall because ref is a label --><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>

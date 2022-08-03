@@ -79,7 +79,7 @@ class Odf
 
 		// Create tmp direcoty (will be deleted in destructor)
 		if (!file_exists($this->tmpdir)) {
-			$result=mkdir($this->tmpdir);
+			$result = mkdir($this->tmpdir);
 		}
 
 		// Load zip proxy
@@ -122,7 +122,8 @@ class Odf
 	}
 
 	/**
-	 * Assing a template variable
+	 * Assing a template variable into ->vars.
+	 * For example, key is {object_date} and value is '2021-01-01'
 	 *
 	 * @param string   $key        Name of the variable within the template
 	 * @param string   $value      Replacement value
@@ -134,6 +135,7 @@ class Odf
 	public function setVars($key, $value, $encode = true, $charset = 'ISO-8859')
 	{
 		$tag = $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT'];
+
 		// TODO Warning string may be:
 		// <text:span text:style-name="T13">{</text:span><text:span text:style-name="T12">aaa</text:span><text:span text:style-name="T13">}</text:span>
 		// instead of {aaa} so we should enhance this function.
@@ -329,6 +331,7 @@ class Odf
 		$tempHtml = $html;
 
 		while (strlen($tempHtml) > 0) {
+			$matches = array();
 			// Check if the string includes a html tag
 			if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
@@ -342,6 +345,7 @@ class Odf
 					$tempHtml = substr($tempHtml, $tagOffset);
 				}
 				// Extract the attribute data from the html tag
+				$explodedAttributes = array();
 				preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
 				$explodedAttributes = array_filter($explodedAttributes[0]);
 				$attributes = array();
@@ -448,32 +452,6 @@ class Odf
 	}
 
 	/**
-	 * Evaluating php codes inside the ODT and output the buffer (print, echo) inplace of the code
-	 *
-	 * @return int             0
-	 */
-	public function phpEval()
-	{
-		preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU', $this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
-		$nbfound=count($matches['content']);
-		for ($i=0; $i < $nbfound; $i++) {
-			try {
-				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
-				$code = $matches['content'][$i];
-				ob_start();
-				eval($code);
-				$ob_output = ob_get_contents(); // send the content of the buffer into $ob_output
-				$this->contentXml = str_replace($matches[0][$i], $ob_output, $this->contentXml);
-				ob_end_clean();
-			} catch (Exception $e) {
-				ob_end_clean();
-				$this->contentXml = str_replace($matches[0][$i], 'ERROR: there was a problem while evaluating this portion of code, please fix it: '.$e, $this->contentXml);
-			}
-		}
-		return 0;
-	}
-
-	/**
 	 * Assign a template variable as a picture
 	 *
 	 * @param string $key name of the variable within the template
@@ -515,10 +493,12 @@ IMG;
 
 		// Search all possible rows in the document
 		$reg1 = "#<table:table-row[^>]*>(.*)</table:table-row>#smU";
+		$matches = array();
 		preg_match_all($reg1, $this->contentXml, $matches);
 		for ($i = 0, $size = count($matches[0]); $i < $size; $i++) {
 			// Check if the current row contains a segment row.*
 			$reg2 = '#\[!--\sBEGIN\s(row.[\S]*)\s--\](.*)\[!--\sEND\s\\1\s--\]#sm';
+			$matches2 = array();
 			if (preg_match($reg2, $matches[0][$i], $matches2)) {
 				$balise = str_replace('row.', '', $matches2[1]);
 				// Move segment tags around the row
@@ -665,6 +645,7 @@ IMG;
 		}
 		// $reg = "#\[!--\sBEGIN\s$segment\s--\]<\/text:p>(.*)<text:p\s.*>\[!--\sEND\s$segment\s--\]#sm";
 		$reg = "#\[!--\sBEGIN\s$segment\s--\](.*)\[!--\sEND\s$segment\s--\]#sm";
+		$m = array();
 		if (preg_match($reg, html_entity_decode($this->contentXml), $m) == 0) {
 			throw new OdfException("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
 		}
@@ -1005,6 +986,7 @@ IMG;
 	public function getvalue($valuename)
 	{
 		$searchreg="/\\[".$valuename."\\](.*)\\[\\/".$valuename."\\]/";
+		$matches = array();
 		preg_match($searchreg, $this->contentXml, $matches);
 		$this->contentXml = preg_replace($searchreg, "", $this->contentXml);
 		return  $matches[1];

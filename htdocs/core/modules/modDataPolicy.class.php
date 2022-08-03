@@ -211,8 +211,6 @@ class modDataPolicy extends DolibarrModules {
 	{
 		global $langs;
 
-		$this->_load_tables('/datapolicy/sql/');
-
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);

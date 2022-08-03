@@ -56,7 +56,6 @@ StatusAccountClosed=Cerrado
 LineRecord=Transacción
 AddBankRecord=Agregar Registro
 AddBankRecordLong=Agregar Registro Manualmente
-ConciliatedBy=Reconciliado por
 DateConciliating=Fecha de Reconciliación
 BankLineConciliated=Registro reconciliado con extracto bancario
 SupplierInvoicePayment=Pago de Proveedor

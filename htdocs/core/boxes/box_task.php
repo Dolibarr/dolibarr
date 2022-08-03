@@ -64,7 +64,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || !($user->rights->projet->lire));
+		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || empty($user->rights->projet->lire));
 	}
 
 	/**
@@ -126,7 +126,7 @@ class box_task extends ModeleBoxes
 			$boxcontent .= '</form>'."\n";
 			$boxcontent .= '</div>'."\n";
 			if (!empty($conf->use_javascript_ajax)) {
-				$boxcontent .= '<script type="text/javascript" language="javascript">
+				$boxcontent .= '<script type="text/javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 								jQuery(".showiffilter'.$this->boxcode.'").toggle();
@@ -145,7 +145,7 @@ class box_task extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -168,7 +168,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
-			if (!$user->rights->projet->all->lire) {
+			if (empty($user->rights->projet->all->lire)) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 

@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Desc=Direktdrucksystem aktivieren
-PrintingSetup=Direktdrucksystem einrichten
-PrintingDesc=Dieses Modul kann Dokumente direkt an einen Drucker schicken. Der Druckbutton erscheint in entsprechenden Modulen.
-MenuDirectPrinting=Direktdruck - Jobs
 PrintingDriverDesc=Konfigurationsvariablen für den Druckertreiber.
 FileWasSentToPrinter=Die Datei %s wurde an den Drucker gesendet
 ViaModule=über das Druckmodul

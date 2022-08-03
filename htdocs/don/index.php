@@ -190,7 +190,7 @@ print '</tr>';
 print "</table>";
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -252,7 +252,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardDonation', $parameters, $object); // Note that $action and $object may have been modified by hook

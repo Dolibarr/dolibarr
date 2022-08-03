@@ -119,7 +119,7 @@ class MouvementStock extends CommonObject
 		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
 		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
@@ -156,16 +156,17 @@ class MouvementStock extends CommonObject
 	 *	@param		int				$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
-	 *	@param		string			$datem				Force date of movement
+	 *	@param		integer|string	$datem				Force date of movement
 	 *	@param		integer|string	$eatby				eat-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		integer|string	$sellby				sell-by date. Will be used if lot does not exists yet and will be created.
 	 *	@param		string			$batch				batch number
 	 *	@param		boolean			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
-	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0)
+	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -287,7 +288,7 @@ class MouvementStock extends CommonObject
 			// If found and eatby/sellby not defined into table and provided, we update table
 			// If found and eatby/sellby not defined into table and not provided, we do nothing
 			// If not found, we add record
-			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_lot as pb";
+			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".$this->db->prefix()."product_lot as pb";
 			$sql .= " WHERE pb.fk_product = ".((int) $fk_product)." AND pb.batch = '".$this->db->escape($batch)."'";
 			dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -435,11 +436,11 @@ class MouvementStock extends CommonObject
 				$origin_id = 0;
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
+			$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement(";
 			$sql .= " datem, fk_product, batch, eatby, sellby,";
 			$sql .= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql .= ")";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $this->product_id).", ";
+			$sql .= " VALUES ('".$this->db->idate($this->datem)."', ".((int) $this->product_id).", ";
 			$sql .= " ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
@@ -457,7 +458,7 @@ class MouvementStock extends CommonObject
 			$resql = $this->db->query($sql);
 
 			if ($resql) {
-				$mvid = $this->db->last_insert_id(MAIN_DB_PREFIX."stock_mouvement");
+				$mvid = $this->db->last_insert_id($this->db->prefix()."stock_mouvement");
 				$this->id = $mvid;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -473,7 +474,7 @@ class MouvementStock extends CommonObject
 			// Test if there is already a record for couple (warehouse / product), so later we will make an update or create.
 			$alreadyarecord = 0;
 			if (!$error) {
-				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
+				$sql = "SELECT rowid, reel FROM ".$this->db->prefix()."product_stock";
 				$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
 
 				dol_syslog(get_class($this)."::_create check if a record already exists in product_stock", LOG_DEBUG);
@@ -524,10 +525,10 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (!$error) {
 				if ($alreadyarecord > 0) {
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".((float) $qty);
+					$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = reel + ".((float) $qty);
 					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
+					$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
 					$sql .= " (reel, fk_entrepot, fk_product) VALUES ";
 					$sql .= " (".((float) $qty).", ".((int) $entrepot_id).", ".((int) $fk_product).")";
 				}
@@ -538,7 +539,7 @@ class MouvementStock extends CommonObject
 					$this->errors[] = $this->db->lasterror();
 					$error = -3;
 				} elseif (empty($fk_product_stock)) {
-					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
+					$fk_product_stock = $this->db->last_insert_id($this->db->prefix()."product_stock");
 				}
 			}
 
@@ -559,11 +560,11 @@ class MouvementStock extends CommonObject
 			if (!$error) {
 				$newpmp = price2num($newpmp, 'MU');
 
-				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
+				// $sql = "UPDATE ".$this->db->prefix()."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".((int) $fk_product);
 				// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".((float) $newpmp).",";
-				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
+				$sql = "UPDATE ".$this->db->prefix()."product as p SET pmp = ".((float) $newpmp).",";
+				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql .= " WHERE rowid = ".((int) $fk_product);
 
 				dol_syslog(get_class($this)."::_create update AWP", LOG_DEBUG);
@@ -574,11 +575,13 @@ class MouvementStock extends CommonObject
 				}
 			}
 
-			// If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
-			// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
-			$resql = $this->db->query($sql);
-			// We do not test error, it can fails if there is child in batch details
+			if (empty($donotcleanemptylines)) {
+				// If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
+				$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
+				$resql = $this->db->query($sql);
+				// We do not test error, it can fails if there is child in batch details
+			}
 		}
 
 		// Add movement for sub products (recursive call)
@@ -597,7 +600,7 @@ class MouvementStock extends CommonObject
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
 						$error++;
-						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $batch, $product->ref);
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
 					}
 				}
 			}
@@ -626,8 +629,8 @@ class MouvementStock extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.tms,";
 		$sql .= " t.datem,";
 		$sql .= " t.fk_product,";
@@ -644,8 +647,8 @@ class MouvementStock extends CommonObject
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
 		$sql .= " t.fk_projet as fk_project";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -721,7 +724,7 @@ class MouvementStock extends CommonObject
 		$pqtys = array();
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
+		$sql .= " FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
@@ -764,76 +767,56 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Decrease stock for product and subproducts
 	 *
-	 * 	@param 		User	$user			    Object user
-	 * 	@param		int		$fk_product		    Id product
-	 * 	@param		int		$entrepot_id	    Warehouse id
-	 * 	@param		int		$qty			    Quantity
-	 * 	@param		int		$price			    Price
-	 * 	@param		string	$label			    Label of stock movement
-	 * 	@param		string	$datem			    Force date of movement
-	 *	@param		integer	$eatby			    eat-by date
-	 *	@param		integer	$sellby			    sell-by date
-	 *	@param		string	$batch			    batch number
-	 * 	@param		int		$id_product_batch	Id product_batch
-	 *  @param      string  $inventorycode      Inventory code
-	 * 	@return		int						    <0 if KO, >0 if OK
+	 * 	@param 		User			$user			    	Object user
+	 * 	@param		int				$fk_product		    	Id product
+	 * 	@param		int				$entrepot_id	    	Warehouse id
+	 * 	@param		int				$qty			    	Quantity
+	 * 	@param		int				$price			    	Price
+	 * 	@param		string			$label			    	Label of stock movement
+	 * 	@param		integer|string	$datem			    	Force date of movement
+	 *	@param		integer			$eatby			    	eat-by date
+	 *	@param		integer			$sellby			    	sell-by date
+	 *	@param		string			$batch			    	batch number
+	 * 	@param		int				$id_product_batch		Id product_batch
+	 *  @param      string  		$inventorycode      	Inventory code
+	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 * 	@return		int								    	<0 if KO, >0 if OK
 	 */
-	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '')
+	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
 	}
 
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User			$user			     Object user
-	 * 	@param		int				$fk_product		     Id product
-	 * 	@param		int				$entrepot_id	     Warehouse id
-	 * 	@param		int				$qty			     Quantity
-	 * 	@param		int				$price			     Price
-	 * 	@param		string			$label			     Label of stock movement
-	 *	@param		integer|string	$eatby			     eat-by date
-	 *	@param		integer|string	$sellby			     sell-by date
-	 *	@param		string			$batch			     batch number
-	 * 	@param		string			$datem			     Force date of movement
-	 * 	@param		int				$id_product_batch    Id product_batch
-	 *  @param      string			$inventorycode       Inventory code
-	 *	@return		int								     <0 if KO, >0 if OK
+	 * 	@param 		User			$user			     	Object user
+	 * 	@param		int				$fk_product		     	Id product
+	 * 	@param		int				$entrepot_id	     	Warehouse id
+	 * 	@param		int				$qty			     	Quantity
+	 * 	@param		int				$price			     	Price
+	 * 	@param		string			$label			     	Label of stock movement
+	 *	@param		integer|string	$eatby			     	eat-by date
+	 *	@param		integer|string	$sellby			     	sell-by date
+	 *	@param		string			$batch			     	batch number
+	 * 	@param		integer|string	$datem			     	Force date of movement
+	 * 	@param		int				$id_product_batch    	Id product_batch
+	 *  @param      string			$inventorycode       	Inventory code
+	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *	@return		int								     	<0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '')
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
 	}
-
-
-	// /**
-	//  * Return nb of subproducts lines for a product
-	//  *
-	//  * @param      int		$id				Id of product
-	//  * @return     int						<0 if KO, nb of subproducts if OK
-	//  * @deprecated A count($product->getChildsArbo($id,1)) is same. No reason to have this in this class.
-	//  */
-	// public function nbOfSubProducts($id)
-	// {
-	// 	$nbSP=0;
-
-	// 	$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-	// 	$resql.= " WHERE fk_product_pere = ".((int) $id);
-	// 	if ($this->db->query($resql))
-	// 	{
-	// 		$obj=$this->db->fetch_object($resql);
-	// 		$nbSP=$obj->nb;
-	// 	}
-	// 	return $nbSP;
-	// }
 
 	/**
 	 * Count number of product in stock before a specific date
@@ -846,8 +829,8 @@ class MouvementStock extends CommonObject
 	{
 		$nb = 0;
 
-		$sql = 'SELECT SUM(value) as nb from '.MAIN_DB_PREFIX.'stock_mouvement';
-		$sql .= ' WHERE fk_product = '.((int) $productidselected);
+		$sql = "SELECT SUM(value) as nb from ".$this->db->prefix()."stock_mouvement";
+		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
@@ -873,7 +856,9 @@ class MouvementStock extends CommonObject
 	 */
 	private function createBatch($dluo, $qty)
 	{
-		global $user;
+		global $user, $langs;
+
+		$langs->load('productbatch');
 
 		$pdluo = new Productbatch($this->db);
 
@@ -884,7 +869,7 @@ class MouvementStock extends CommonObject
 			$result = $pdluo->fetch($dluo);
 			if (empty($pdluo->id)) {
 				// We didn't find the line. May be it was deleted before by a previous move in same transaction.
-				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
+				$this->error = $langs->trans('CantMoveNonExistantSerial');
 				$this->errors[] = $this->error;
 				$result = -2;
 			}
@@ -1093,7 +1078,7 @@ class MouvementStock extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
+	 *	@param	string	$option				On what the link point to ('' = Tab of stock movement of warehouse, 'movements' = list of movements)
 	 *  @param	integer	$notooltip			1=Disable tooltip
 	 *  @param	int		$maxlen				Max length of visible user name
 	 *  @param  string  $morecss            Add more css on link
@@ -1104,16 +1089,21 @@ class MouvementStock extends CommonObject
 		global $langs, $conf, $db;
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
+		$label = img_picto('', 'stock', 'class="pictofixedwidth"').'<u>'.$langs->trans("Movement").' '.$this->id.'</u>';
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Label').':</b> '.$this->label;
-		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.$this->qty;
+		$label .= '<br><b>'.$langs->trans('Qty').':</b> '.($this->qty > 0 ? '+' : '').$this->qty;
 		$label .= '</div>';
 
-		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
-		$link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
+		// Link to page of warehouse tab
+		if ($option == 'movements') {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$this->id;
+		} else {
+			$url = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$this->warehouse_id.'&msid='.$this->id;
+		}
+
+		$link = '<a href="'.$url.'"'.($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$link .= '>';
 		$linkend = '</a>';
 
@@ -1220,8 +1210,8 @@ class MouvementStock extends CommonObject
 		$cpt = 0;
 
 		$sql = "SELECT sum(pb.qty) as cpt";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE ps.fk_product = " . ((int) $fk_product);
 		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 

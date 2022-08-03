@@ -156,7 +156,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -245,8 +245,8 @@ print dol_get_fiche_end();
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {
@@ -326,22 +326,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
-		if ($object->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
-		} else {
-			print '<input name="price" size="10" value="'.price($object->price).'">';
-		}
+		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
 		print '</td></tr>';
 
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		if ($object->price_base_type == 'TTC') {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
-		} else {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min).'">';
-		}
+		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
 		print '</td></tr>';
 
 		// Update all child soc
@@ -382,7 +374,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			// Ref. Customer
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-			print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
+			print '<td><input name="ref_customer" size="12" value="'.dol_escape_htmltag($prodcustprice->ref_customer).'"></td></tr>';
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
@@ -551,6 +543,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -570,14 +563,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat width75" name="search_prod" value="'.$search_prod.'"></td>';
+			print '<td class="liste_titre" ><input type="text" class="flat width75" name="search_label" value="'.$search_label.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
@@ -641,6 +634,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		print "</table>";
+		print '</div>';
 
 		print "</form>";
 	}

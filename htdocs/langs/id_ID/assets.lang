@@ -61,5 +61,7 @@ MenuListTypeAssets = Daftar
 #
 # Module
 #
+Asset=Aset
 NewAssetType=Jenis aset baru
 NewAsset=Aset baru
+ConfirmDeleteAsset=Anda yakin ingin menghapus aset ini?

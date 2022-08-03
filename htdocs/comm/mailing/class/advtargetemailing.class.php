@@ -41,7 +41,7 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'advtargetemailing';
+	public $table_element = 'mailing_advtarget';
 
 	/**
 	 * @var int ID
@@ -159,7 +159,7 @@ class AdvanceTargetingMailing extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."advtargetemailing(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_advtarget(";
 		$sql .= "name,";
 		$sql .= "entity,";
 		$sql .= "fk_element,";
@@ -188,7 +188,7 @@ class AdvanceTargetingMailing extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."advtargetemailing");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing_advtarget");
 		}
 
 		// Commit or rollback
@@ -227,7 +227,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.tms";
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -282,7 +282,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.tms";
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as t";
 		if (!empty($id)) {
 			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = 'mailing'";
 		} else {
@@ -345,7 +345,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.tms";
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_advtarget as t";
 		if (!empty($id)) {
 			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = '".$this->db->escape($type_element)."'";
 		} else {
@@ -410,7 +410,7 @@ class AdvanceTargetingMailing extends CommonObject
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."advtargetemailing SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_advtarget SET";
 
 		$sql .= " name=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "''").",";
 		$sql .= " entity=".$conf->entity.",";
@@ -458,7 +458,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."advtargetemailing";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_advtarget";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete sql=".$sql);
@@ -686,7 +686,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sqlwhere = array();
 
-		$sqlwhere[] = 't.entity IN ('.getEntity('socpeople').')';
+		$sqlwhere[] = 't.entity IN ('.getEntity('contact').')';
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('contact_categ', $arrayquery)) {

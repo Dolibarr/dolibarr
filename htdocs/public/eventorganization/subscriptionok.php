@@ -57,7 +57,7 @@ if (!empty($conf->paypal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
-global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $mysoc;
+global $dolibarr_main_url_root, $mysoc;
 
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 

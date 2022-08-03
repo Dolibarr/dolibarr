@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=To'g'ridan-to'g'ri bosib chiqarish
-Module64000Desc=To'g'ridan-to'g'ri bosib chiqarish tizimini yoqing
-PrintingSetup=To'g'ridan-to'g'ri bosib chiqarish tizimini sozlash
-PrintingDesc=Ushbu modul hujjatni boshqa dasturda ochishga hojat qoldirmasdan, hujjatlarni to'g'ridan-to'g'ri printerga bosib chiqarish uchun turli xil modullarga Chop etish tugmachasini qo'shadi.
-MenuDirectPrinting=To'g'ridan-to'g'ri bosib chiqarish ishlari
-DirectPrint=To'g'ridan-to'g'ri chop etish
+Module64000Name=Bir marta bosish Chop etish
+Module64000Desc=Bir marta bosish orqali chop etish tizimini yoqing
+PrintingSetup=Bir marta bosish orqali bosib chiqarish tizimini sozlash
+PrintingDesc=Ushbu modul hujjatlarni boshqa ilovaga ochishga hojat qoldirmasdan to'g'ridan-to'g'ri printerda chop etish imkonini berish uchun turli modullarga Chop etish tugmachasini qo'shadi.
+MenuDirectPrinting=Bir marta bosish Chop etish vazifalari
+DirectPrint=Bir marta bosish Chop etish
 PrintingDriverDesc=Drayverni bosib chiqarish uchun konfiguratsiya o'zgaruvchilari.
 ListDrivers=Haydovchilar ro'yxati
 PrintTestDesc=Printerlar ro'yxati.

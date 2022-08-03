@@ -45,3 +45,5 @@ GenerateImgWebp=Barcha rasmlarni .webp formatidagi boshqa versiyasi bilan takror
 ConfirmGenerateImgWebp=Agar tasdiqlasangiz, ushbu papkada joylashgan barcha rasmlar uchun .webp formatida rasm hosil qilasiz (pastki papkalar kiritilmagan) ...
 ConfirmImgWebpCreation=Barcha rasmlarning takrorlanishini tasdiqlang
 SucessConvertImgWebp=Rasmlar muvaffaqiyatli takrorlandi
+ECMDirName=Direktor nomi
+ECMParentDirectory=Ota -ona katalogi

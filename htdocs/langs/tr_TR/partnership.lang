@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
-
+Partnership=Partnership
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -51,13 +51,14 @@ PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
 PartnershipDedicatedToThisMember=Partnership dedicated to this member
 DatePartnershipStart=Başlangıç tarihi
 DatePartnershipEnd=Bitiş tarihi
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
+ReasonDecline=Reddetme nedeni
+ReasonDeclineOrCancel=Reddetme nedeni
 PartnershipAlreadyExist=Partnership already exist
 ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
 
 #
 # Template Mail
@@ -77,9 +78,9 @@ YourPartnershipRefusedContent=We inform you that your partnership request has be
 YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
 YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Son URL kontrolü için hataların sayısı
+LastCheckBacklink=Son URL kontrolünün tarihi
+ReasonDeclineOrCancel=Reddetme nedeni
 
 #
 # Status

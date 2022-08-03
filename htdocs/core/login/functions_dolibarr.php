@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022      Harry Winner Kamdem  <harry@sense.africa>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +105,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 				// Check crypted password according to crypt algorithm
 				if ($cryptType == 'auto') {
-					if (dol_verifyHash($passtyped, $passcrypted, '0')) {
+					if ($passcrypted && dol_verifyHash($passtyped, $passcrypted, '0')) {
 						$passok = true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
 					}
@@ -142,7 +143,11 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0) {
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO entity '".$entitytotest."' not allowed for user '".$obj->rowid."'", LOG_NOTICE);
+
 							$login = ''; // force authentication failure
+							if ($mc->db->lasterror()) {
+								$_SESSION["dol_loginmesg"] = $mc->db->lasterror();
+							}
 						}
 					}
 				}

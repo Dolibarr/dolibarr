@@ -319,7 +319,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NoAmbiCaracAutoGeneration")."</td>";
-	print '<td><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
+	print '<td><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <label for="NoAmbiCaracAutoGeneration" id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</label></td>';
 	print '</tr>';
 
 	print '</table>';

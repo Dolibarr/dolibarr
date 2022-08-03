@@ -93,12 +93,12 @@ class UserBankAccount extends Account
 	{
 		$now = dol_now();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rib (fk_user, datec)";
+		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
 		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user_rib");
+				$this->id = $this->db->last_insert_id($this->db->prefix()."user_rib");
 
 				return $this->update($user);
 			}
@@ -123,7 +123,7 @@ class UserBankAccount extends Account
 			$this->create();
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user_rib SET";
+		$sql = "UPDATE ".$this->db->prefix()."user_rib SET";
 		$sql .= " bank = '".$this->db->escape($this->bank)."'";
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
 		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
@@ -167,7 +167,7 @@ class UserBankAccount extends Account
 
 		$sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, label, datec, tms as datem";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
+		$sql .= " FROM ".$this->db->prefix()."user_rib";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		}

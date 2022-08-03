@@ -127,7 +127,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script language="javascript">
+<script type="text/javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;

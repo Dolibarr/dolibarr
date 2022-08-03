@@ -45,3 +45,5 @@ GenerateImgWebp=Kopier alle billeder med en anden version med .webp-format
 ConfirmGenerateImgWebp=Hvis du bekræfter, genererer du et billede i .webp-format for alle billeder i øjeblikket i denne mappe (undermapper er ikke inkluderet) ...
 ConfirmImgWebpCreation=Bekræft duplikering af alle billeder
 SucessConvertImgWebp=Billeder blev duplikeret
+ECMDirName=Dir navn
+ECMParentDirectory=Forældremappe

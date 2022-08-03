@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Direkt utskrift
-Module64000Desc=Aktivera System för Direkt Utskrift
-PrintingSetup=Inställningar av System för Direkt Utskrift
-PrintingDesc=Denna modul lägger till en utskriftsknapp för olika moduler för att tillåta att dokument skrivs ut direkt till en skrivare utan att behöva öppna dokumentet i en annan applikation.
-MenuDirectPrinting=Direktutskriftjobbs
-DirectPrint=Direktutskrift
+Module64000Name=Direktutskrift
+Module64000Desc=Aktivera direktutskrift
+PrintingSetup=Ställ in Direktutskrift
+PrintingDesc=Denna modul lägger till "Skriv ut" knapp i olika moduler för att skriva ut dokumenten direkt till förutbestämd skrivare, utan att öppna dokumentet i en annan applikation
+MenuDirectPrinting=One click Printing jobs
+DirectPrint=Direktutskift
 PrintingDriverDesc=Konfigurationsvariabler för skrivardrivrutin.
 ListDrivers=Lista över drivrutiner
 PrintTestDesc=Lista över skrivare

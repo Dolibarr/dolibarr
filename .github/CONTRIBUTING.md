@@ -26,8 +26,9 @@ Default **language here is english**. So please prepare your contributions in en
 1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 2. Clone your fork.
 3. Choose a branch(See the [Branches](#branches) section below).
-4. Commit and push your changes.
-5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+4. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
+5. Commit and push your changes.
+6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 <span id="branches" name="branches"></span>
 ### Branches

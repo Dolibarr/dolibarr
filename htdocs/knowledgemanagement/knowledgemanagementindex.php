@@ -145,7 +145,7 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 END MODULEBUILDER DRAFT MYOBJECT */
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $NBMAX = (empty($conf->global->MAIN_SIZE_SHORTLIST_LIMIT) ? 25 : $conf->global->MAIN_SIZE_SHORTLIST_LIMIT);
@@ -202,7 +202,7 @@ if (! empty($conf->knowledgemanagement->enabled) && $user->rights->knowledgemana
 }
 */
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

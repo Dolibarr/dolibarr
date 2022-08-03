@@ -75,11 +75,21 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $fk_product;
 
 	/**
-	 * @var int ID
+	 * @var int ID. Should be named fk_origin_line ?
 	 */
 	public $fk_commandefourndet;
 
+	public $fk_reception;
+
+
 	public $qty;
+	public $qty_asked;
+
+	public $libelle;
+	public $desc;
+	public $tva_tx;
+	public $vat_src_code;
+	public $ref_supplier;
 
 	/**
 	 * @var int ID
@@ -286,7 +296,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
-			$sql .= " WHERE t.ref = '".$ref."'";
+			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
@@ -374,7 +384,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-
 		$sql .= " fk_commande=".(isset($this->fk_commande) ? $this->fk_commande : "null").",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " fk_commandefourndet=".(isset($this->fk_commandefourndet) ? $this->fk_commandefourndet : "null").",";
@@ -388,8 +397,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
-
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -413,7 +420,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

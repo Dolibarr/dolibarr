@@ -20,10 +20,10 @@
 /**
  *  \file       htdocs/salaries/class/salariesstats.class.php
  *  \ingroup    salaries
- *  \brief      Fichier de la classe de gestion des stats des salaires
+ *  \brief      File of class for statistics on salaries
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 /**
  *	Classe permettant la gestion des stats des salaires
@@ -58,7 +58,7 @@ class SalariesStats extends Stats
 		$this->socid = $socid;
 		$this->userid = $userid;
 
-		$object = new PaymentSalary($this->db);
+		$object = new Salary($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field = 'amount';
 
@@ -69,7 +69,7 @@ class SalariesStats extends Stats
 		if (is_array($this->userid) && count($this->userid) > 0) {
 			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
-			$this->where .= ' AND fk_user = '.$this->userid;
+			$this->where .= " AND fk_user = ".((int) $this->userid);
 		}
 	}
 
@@ -81,7 +81,7 @@ class SalariesStats extends Stats
 	 */
 	public function getNbByYear()
 	{
-		$sql = "SELECT YEAR(datep) as dm, count(*)";
+		$sql = "SELECT YEAR(dateep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm DESC";
@@ -99,9 +99,9 @@ class SalariesStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		$sql = "SELECT MONTH(datep) as dm, count(*)";
+		$sql = "SELECT MONTH(dateep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(datep) = ".((int) $year);
+		$sql .= " WHERE YEAR(dateep) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -121,9 +121,9 @@ class SalariesStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		$sql = "SELECT date_format(datep,'%m') as dm, sum(".$this->field.")";
+		$sql = "SELECT date_format(dateep,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dateep,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -141,9 +141,9 @@ class SalariesStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		$sql = "SELECT date_format(datep,'%m') as dm, avg(".$this->field.")";
+		$sql = "SELECT date_format(dateep,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
+		$sql .= " WHERE date_format(dateep,'%Y') = '".$this->db->escape($year)."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -158,7 +158,7 @@ class SalariesStats extends Stats
 	 */
 	public function getAllByYear()
 	{
-		$sql = "SELECT date_format(datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(dateep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";

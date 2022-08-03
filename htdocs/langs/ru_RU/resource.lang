@@ -30,7 +30,7 @@ DictionaryResourceType=Тип ресурсов
 
 SelectResource=Выберете ресурс
 
-IdResource=Ресурс Id
+IdResource=Id ресурса
 AssetNumber=Серийный номер
 ResourceTypeCode=Код типа ресурса
 ImportDataset_resource_1=Ресурсы

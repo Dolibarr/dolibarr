@@ -26,7 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -67,7 +67,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if ($user->rights->loan->write) {
@@ -88,9 +88,10 @@ if (!empty($conf->projet->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}

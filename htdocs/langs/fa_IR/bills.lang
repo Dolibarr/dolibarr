@@ -81,15 +81,14 @@ PaymentsReports=گزارش‌های پرداخت‌ها
 PaymentsAlreadyDone=پرداخت‌هائی که قبلا انجام شده
 PaymentsBackAlreadyDone=Refunds already done
 PaymentRule=مقررات پرداخت
-PaymentMode=نوع پرداخ
-DefaultPaymentMode=Default Payment Type
+PaymentMode=Payment method
+PaymentModes=Payment methods
+DefaultPaymentMode=Default Payment method
 DefaultBankAccount=Default Bank Account
-PaymentTypeDC=کارت اعتباری/نقدی
-PaymentTypePP=PayPal
-IdPaymentMode=نوع پرداخت (شناسه)
-CodePaymentMode=نوع پرداخت (کد)
-LabelPaymentMode=نوع پرداخت (برچسب)
-PaymentModeShort=نوع پرداخت
+IdPaymentMode=Payment method (id)
+CodePaymentMode=Payment method (code)
+LabelPaymentMode=Payment method (label)
+PaymentModeShort=Payment method
 PaymentTerm=شرایط پرداخت
 PaymentConditions=شرایط پرداخت
 PaymentConditionsShort=شرایط پرداخت
@@ -192,6 +191,7 @@ ConfirmClassifyPaidPartiallyReasonDiscount=پرداخت نشده باقی‌ما
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=پرداخت‌نشده باقی‌ماندن<b>( %s %s)</b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من قبول می‌کنم مبلغ م.ب.ا.ا. را به‌واسطۀ این تخفیف ضرر کنم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=پرداخت‌نشده باقی‌ماندن <b>(%s %s) </b> تخفیفی است که اعطا شده، زیرا پرداخت قبل از موعد انجام شده است. من م.ب.ا.ا. را بدون یادداشت اعتباری بازیابی می‌کنم.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=مشتری بدحساب
+ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fees)
 ConfirmClassifyPaidPartiallyReasonProductReturned=برخی‌از محصولات برگشت‌خورده
 ConfirmClassifyPaidPartiallyReasonOther=مبلغ به دلیل دیگری معلق شده است
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=این گزینه در صورتی ممکن است که صورت‌حساب شما با توضیحات مناسب همراه باشد. (مثلا «تنها مالیاتی متناظر با مبلغی که واقعا پرداخت شده، امکان کسر شدن دارد»)
@@ -199,6 +199,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=در برخی کشورها، �
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=این گزینه را در شرایطی انتخاب کنید که سایر گزینه‌ها مناسب نباشد
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=یک <b>مشتری بد‌حساب</b> مشتری‌ای است که بدهی خود را پرداخت نمی‌کند.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=این گزینه در هنگام عدم پرداخت کامل به دلیل بازگشت برخی از محصولات مورد استفاده قرار می‌گیرد
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonOtherDesc=این گزینه را در صورتی که سایر گزینه‌ها مناسب نباشد انتخاب کنید، برای مثال برای شرایط زیر: <br>- پرداخت کامل نشده به‌این علت که برخی محصولات پس‌داده شده‌اند <br>- مبلغ ادعا شده بسیار مهم است چون تخفیف فراموش شده است <br> در همۀ احوال، مبلغ ادعاشده باید در سامانۀ حساب‌داری با یک یادداشت اعتباری تصحیح شود
 ConfirmClassifyAbandonReasonOther=سایر
 ConfirmClassifyAbandonReasonOtherDesc=این گزینه در شرایطی غیر از این استفاده می‌شود. برای مثال به دلیل این‌که می‌خواهید یک صورت‌حساب جایگزین بسازید.
@@ -234,16 +235,24 @@ AlreadyPaidBack=مبلغ قبلا بازگردانده شده است
 AlreadyPaidNoCreditNotesNoDeposits=قبلا پرداخت شده است (بدون یادداشت‌های اعتباری و پیش‌پرداخت)
 Abandoned=معلق
 RemainderToPay=مبلغ باقی‌مانده
+RemainderToPayMulticurrency=Remaining unpaid, original currency
 RemainderToTake=مبلغ باقی‌مانده برای برداشت
+RemainderToTakeMulticurrency=Remaining amount to take, original currency
 RemainderToPayBack=مبلغ باقی‌مانده برای بازگرداندن
+RemainderToPayBackMulticurrency=Remaining amount to refund, original currency
+NegativeIfExcessRefunded=negative if excess refunded
 Rest=در انتظار
 AmountExpected=مبلغ ادعائی
 ExcessReceived=اضافی دریافت
+ExcessReceivedMulticurrency=Excess received, original currency
+NegativeIfExcessReceived=negative if excess received
 ExcessPaid=اضافی پرداخت‌شده
+ExcessPaidMulticurrency=Excess paid, original currency
 EscompteOffered=تخفیف ارائه شده (پرداخت قبل از موعد)
 EscompteOfferedShort=تخفیف
 SendBillRef=تسلیم صورت‌حساب %s
 SendReminderBillRef=تسلیم صورت‌حساب %s (یادآورنده)
+SendPaymentReceipt=Submission of payment receipt %s
 NoDraftBills=صورت‌حساب پیش‌نویسی وجود ندارد
 NoOtherDraftBills=صورت‌حساب پیش‌نویس دیگری وجود ندارد
 NoDraftInvoices=صورت‌حساب پیش‌نویس وجود ندارد
@@ -260,6 +269,7 @@ DateInvoice=تاریخ صورت‌حساب
 DatePointOfTax=نقطۀ مالیات
 NoInvoice=بدون صورت‌حساب
 NoOpenInvoice=No open invoice
+NbOfOpenInvoices=Number of open invoices
 ClassifyBill=طبقه‌بندی صورت‌حساب
 SupplierBillsToPay=صورت‌حساب‌های پرداخت‌نشدۀ فروشنده
 CustomerBillsUnpaid=صورت‌حساب‌های پرداخت‌نشدۀ مشتری
@@ -269,6 +279,7 @@ SetMode=تنظیم نوع پرداخت
 SetRevenuStamp=تنظیم تمبر مالیاتی
 Billed=صورت‌حساب صادرشده
 RecurringInvoices=صورت‌حساب‌های تکرارشدنی
+RecurringInvoice=Recurring invoice
 RepeatableInvoice=صورت‌حساب قالبی
 RepeatableInvoices=صورت‌حساب‌های قالبی
 Repeatable=قالب
@@ -438,6 +449,8 @@ PaymentTypeTRA=پیش‌نویس بانک
 PaymentTypeShortTRA=پیش‌نویس
 PaymentTypeFAC=صورت‌حساب
 PaymentTypeShortFAC=صورت‌حساب
+PaymentTypeDC=کارت اعتباری/نقدی
+PaymentTypePP=PayPal
 BankDetails=جزئیات بانک
 BankCode=کد بانک
 DeskCode=کد شعبه
@@ -570,7 +583,7 @@ ToCreateARecurringInvoiceGene=برای تولید صورت‌حساب‌های �
 ToCreateARecurringInvoiceGeneAuto=در صورتی که می‌خواهید این نوع صورت‌حساب‌ها به شکل خودکار تولید شود، از مدیر بخواهید واحد <strong>%s</strong> را نصب و تنظیم کند. توجه کنید که هر دو حالت (دستی و خودکار) می‌تواند بدون ریسک تکراری بودن، توأما استفاده شود.
 DeleteRepeatableInvoice=حذف صورت‌حساب قالبی
 ConfirmDeleteRepeatableInvoice=آیا مطمئنید می‌خواهید  این صورت‌حساب قالبی را حذف کنید؟
-CreateOneBillByThird=ساخت یک صورت‌حساب برای هر شخص سوم (در غیر این‌صور، یک صورت‌حساب برای هر سفارش)
+CreateOneBillByThird=Create one invoice per third party (otherwise, one invoice per selected object)
 BillCreated=%s invoice(s) generated
 BillXCreated=Invoice %s generated
 StatusOfGeneratedDocuments=وضعیت تولید سند
@@ -591,3 +604,6 @@ SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+NoPaymentAvailable=No payment available for %s
+PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices

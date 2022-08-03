@@ -43,6 +43,8 @@ create table llx_commande_fournisseur_dispatch_extrafields
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1;
+
 UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 
 create table llx_c_shipment_package_type

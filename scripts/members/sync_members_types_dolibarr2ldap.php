@@ -121,7 +121,6 @@ if ($resql) {
 		}
 
 		$ldap->unbind();
-		$ldap->close();
 	} else {
 		print $ldap->error;
 	}

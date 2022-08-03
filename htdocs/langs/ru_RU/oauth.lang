@@ -7,9 +7,9 @@ IsTokenGenerated=Токен сгенерирован?
 NoAccessToken=Токен доступа не сохранен в локальной базе данных
 HasAccessToken=Токен был сгенерирован и сохранен в локальной базе данных
 NewTokenStored=Токен получен и сохранен
-ToCheckDeleteTokenOnProvider=Щелкните здесь, чтобы проверить / удалить авторизацию, сохраненную поставщиком OAuth %s
+ToCheckDeleteTokenOnProvider=Щелкните здесь, чтобы проверить/удалить авторизацию, сохраненную поставщиком OAuth %s
 TokenDeleted=Токен удален
-RequestAccess=Нажмите здесь, чтобы запросить / продлить доступ и получить новый токен для сохранения
+RequestAccess=Нажмите здесь, чтобы запросить/продлить доступ и получить новый токен для сохранения
 DeleteAccess=Нажмите здесь, чтобы удалить токен
 UseTheFollowingUrlAsRedirectURI=Используйте следующий URL-адрес в качестве URI перенаправления при создании учетных данных с помощью поставщика OAuth:
 ListOfSupportedOauthProviders=Введите учетные данные, предоставленные вашим поставщиком OAuth2. Здесь перечислены только поддерживаемые провайдеры OAuth2. Эти службы могут использоваться другими модулями, которым требуется аутентификация OAuth2.
@@ -23,10 +23,10 @@ TOKEN_DELETE=Удалить сохраненный токен
 OAUTH_GOOGLE_NAME=OAuth сервис Google
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Перейдите на <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> на эту страницу </a> затем "Учетные данные" для создания учетных данных OAuth.
+OAUTH_GOOGLE_DESC=Перейдите на <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">на эту страницу</a> затем "Учетные данные" для создания учетных данных OAuth.
 OAUTH_GITHUB_NAME=Сервис OAuth GitHub
 OAUTH_GITHUB_ID=Идентификатор OAuth GitHub
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Перейдите на <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> на эту страницу </a>, затем «Зарегистрируйте новое приложение», чтобы создать учетные данные OAuth.
+OAUTH_GITHUB_DESC=Перейдите на <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">на эту страницу</a>, затем «Зарегистрируйте новое приложение», чтобы создать учетные данные OAuth.
 OAUTH_STRIPE_TEST_NAME=Тест OAuth Stripe
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe в работе

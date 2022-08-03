@@ -32,7 +32,7 @@ $addlinkid = GETPOST('idtolinkto', 'int');
 $addlinkref = GETPOST('reftolinkto', 'alpha');
 $cancellink = GETPOST('cancel', 'alpha');
 
-// Link invoice to order
+// Link object to another object
 if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 0 && $addlinkid > 0) {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
@@ -61,7 +61,7 @@ if ($action == 'addlinkbyref' && ! empty($permissiondellink) && !$cancellink && 
 	}
 }
 
-// Delete link
+// Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
 	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
 	if ($result < 0) {

@@ -189,7 +189,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	$param .= " -U ".$dolibarr_main_db_user;
 	$paramcrypted = $param;
 	$paramclear = $param;
-	/*if (! empty($dolibarr_main_db_pass))
+	/*if (!empty($dolibarr_main_db_pass))
 	{
 		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
 		$paramclear.=" -p".$dolibarr_main_db_pass;
@@ -207,6 +207,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	//if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
+
+	print '<br>';
+
 	print '</fieldset>';
 }
 

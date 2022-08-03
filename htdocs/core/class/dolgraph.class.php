@@ -107,10 +107,12 @@ class DolGraph
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor;
 
+		// Some default values for the case it is not defined into the theme later.
 		$this->bordercolor = array(235, 235, 224);
 		$this->datacolor = array(array(120, 130, 150), array(160, 160, 180), array(190, 190, 220));
 		$this->bgcolor = array(235, 235, 224);
 
+		// Load color of the theme
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		if (is_readable($color_file)) {
 			include $color_file;
@@ -1054,6 +1056,7 @@ class DolGraph
 		}
 
 		$showlegend = $this->showlegend;
+		$bordercolor = "";
 
 		$legends = array();
 		$nblot = 0;
@@ -1158,40 +1161,36 @@ class DolGraph
 		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
 		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle')))) {
 			$type = $this->type[$firstlot]; // pie or polar
-			$this->stringtoshow .= 'var options = {' . "\n";
+			//$this->stringtoshow .= 'var options = {' . "\n";
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+
+
 			$legendMaxLines = 0; // Does not work
+
+			/* For Chartjs v2.9 */
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, ';
 			} else {
-				$this->stringtoshow .= 'legend: { position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
 				if (!empty($legendMaxLines)) {
 					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
 				}
-				/* This has no effect on chartjs version with dol v14
-				$this->stringtoshow .= ', labels: {
-					color: \'rgb(255, 0, 0)\',
-					// This more specific font property overrides the global property
-					font: {
-						size: 24
-					}
-				}';
-				*/
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
 
-			/* This has no effect on chartjs version with dol v14
-			$this->stringtoshow .= 'plugins: {
-				legend: {
-					display: true,
-					labels: {
-						color: \'rgb(255, 0, 0)\',
-						// This more specific font property overrides the global property
-						font: {
-							size: 24
-						}
-					}
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { ';
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			} else {
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				if (!empty($legendMaxLines)) {
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
 				}
-			},'."\n"; */
+				$this->stringtoshow .= ' }, ' . "\n";
+			}
+			$this->stringtoshow .= ' }, ' . "\n";
+
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
@@ -1288,25 +1287,42 @@ class DolGraph
 			$this->stringtoshow .= '});' . "\n";
 		} else {
 			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-			$type = 'bar';
+			$type = 'bar'; $xaxis = '';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
 				$type = 'bar';
 			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'horizontalBar';
+				$type = 'bar'; $xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
 				$type = 'line';
 			}
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+			$this->stringtoshow .= $xaxis;
+
+			/* For Chartjs v2.9 */
+			/*
 			if (empty($showlegend)) {
-				$this->stringtoshow .= 'legend: { display: false }, ';
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' },';
+				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' }, '."\n";
 			}
-			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+			*/
+
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { '."\n";
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
+			} else {
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
+			}
+			$this->stringtoshow .= "}, \n";
+
+			/* For Chartjs v2.9 */
+			/*
+			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
 			if ($this->hideXValues) {
 				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
 			}
@@ -1316,11 +1332,12 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxes: [{ ticks: { beginAtZero: true }';
+			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
 			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }] }';
+			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1414,19 +1431,27 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (is_array($this->datacolor[$i])) {
+					if (!empty($this->datacolor[$i]) && is_array($this->datacolor[$i])) {
 						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
 					} else {
 						$color = $this->datacolor[$i];
 					}
-					if (is_array($this->bordercolor[$i])) {
-						$color = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
+					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
+						$bordercolor = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
 						if ($type != 'horizontalBar') {
 							$bordercolor = $color;
 						} else {
 							$bordercolor = $this->bordercolor[$i];
 						}
+					}
+
+					// For negative colors, we invert border and background
+					$tmp = str_replace('#', '', $color);
+					if (strpos($tmp, '-') !== false) {
+						$foundnegativecolor++;
+						$bordercolor = str_replace('-', '', $color);
+						$color = '#FFFFFF'; // If $val is '-123'
 					}
 				}
 				if ($i > 0) {
@@ -1523,7 +1548,7 @@ class DolGraph
 			}
 		}
 		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '200') : '160');
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
 		}
 		return 0;
 	}

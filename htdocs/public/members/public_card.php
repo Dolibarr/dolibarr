@@ -147,16 +147,8 @@ $db->close();
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
+	top_htmlhead($head, $title);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) {
-		print $head."\n";
-	}
-	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 

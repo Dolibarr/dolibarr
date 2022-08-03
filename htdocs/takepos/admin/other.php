@@ -95,9 +95,9 @@ print '</tr>';
 $url = 'https://www.dolistore.com/45-pos';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+print '<td class="titlefield"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
 print '<td>'.$langs->trans("DolistorePosCategory").'</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 print '</tr>';
 
 print "</table>\n";
@@ -119,9 +119,9 @@ print '</tr>';
 $url = 'http://www.takepos.com';
 
 print '<tr class="oddeven">'."\n";
-print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
+print '<td class="left"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';
 print '<td>TakePOS original developers</td>';
-print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
+print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 print '</tr>';
 
 print "</table>\n";

@@ -18,4 +18,4 @@ ModuleZapierForDolibarrDesc = Dolibarrモジュール対応 Zapier
 ZapierForDolibarrSetup=Dolibarr対応 Zapier を設定
 ZapierDescription=Zapier とのインタフェース
 ZapierAbout=モジュールZapierについて
-ZapierSetupPage=Zapierを使用するためにDolibarr側でセットアップする必要はない。ただし、DolibarrでZapierを使用できるようにするには、zapierでパッケージを生成して公開する必要がある。 <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">このwikiページ</a>のドキュメントを参照すること。
+ZapierSetupPage=Zapierを使用するためにDolibarr側で設定する必要はない。ただし、DolibarrでZapierを使用できるようにするには、zapierでパッケージを生成して公開する必要がある。 <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">このwikiページ</a>のドキュメントを参照すること。

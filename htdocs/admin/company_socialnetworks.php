@@ -90,7 +90,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'socialnetworks', $langs->trans("SocialNetworksInformation"), -1, 'company');
+print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
@@ -108,9 +108,14 @@ print '<input type="hidden" name="action" value="update">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';
-print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td><td>'.$langs->trans("Url").'</td><td>'.$langs->trans("SocialNetworkId").'</td><td></td>';
+print '<td class="titlefieldcreate">'.$langs->trans("SocialNetworksInformation").'</td>';
+print '<td>'.$langs->trans("SocialNetworkId").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Url"), $langs->trans("KeepEmptyToUseDefault")).'</td>';
+print '<td></td>';
 print "</tr>\n";
 
+$listofnetworks = dol_sort_array($listofnetworks, 'label');
+//var_dump($listofnetworks);
 
 foreach ($listofnetworks as $key => $value) {
 	if (!empty($value['active'])) {
@@ -119,9 +124,9 @@ foreach ($listofnetworks as $key => $value) {
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
 		print '<td class="nowraponall"><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
-		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
-		print '</td><td>';
 		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
+		print '</td><td>';
+		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
 		print '</td>';
 		print '<td class="nowraponall">'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
 		print '</tr>'."\n";

@@ -109,7 +109,7 @@ foreach ($list_account_main as $key) {
 	print '</td>';
 	// Value
 	print '<td>'; // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+	print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
 	print '</td>';
 	print '</tr>';
 }

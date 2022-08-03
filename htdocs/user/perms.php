@@ -250,10 +250,43 @@ if ($user->rights->user->user->lire || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
 
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+
+
+print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
+print '<table class="border centpercent tableforfield">';
+
+// Login
+print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+if (!empty($object->ldap_sid) && $object->statut == 0) {
+	print '<td class="error">';
+	print $langs->trans("LoginAccountDisableInDolibarr");
+	print '</td>';
+} else {
+	print '<td>';
+	$addadmin = '';
+	if (property_exists($object, 'admin')) {
+		if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+		} elseif (!empty($object->admin)) {
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+		}
+	}
+	print showValueWithClipboardCPButton($object->login).$addadmin;
+	print '</td>';
+}
+print '</tr>'."\n";
+
+print '</table>';
+
+print '</div>';
+print '<br>';
 
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
@@ -292,14 +325,13 @@ if ($user->admin) {
 }
 print '</tr>'."\n";
 
-//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
+
+// Fix bad value for module_position in table
+// ------------------------------------------
 $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
-}
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result = $db->query($sql);
@@ -312,9 +344,22 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
-		if (empty($modules[$obj->module])) {
+		if (!isset($obj->module) || empty($modules[$obj->module])) {
 			$i++;
 			continue;
+		}
+
+		// Special cases
+		if (!empty($conf->reception->enabled)) {
+			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
 		}
 
 		$objMod = $modules[$obj->module];
@@ -341,6 +386,75 @@ if ($result) {
 				$db->query($sqlupdate);
 			}
 		}
+	}
+}
+
+
+
+//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND r.entity = ".((int) $entity);
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+}
+$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+
+$result = $db->query($sql);
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
+	$oldmod = '';
+
+	while ($i < $num) {
+		$obj = $db->fetch_object($result);
+
+		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
+		if (empty($modules[$obj->module])) {
+			$i++;
+			continue;
+		}
+
+		// Special cases
+		if (!empty($conf->reception->enabled)) {
+			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
+		}
+
+		$objMod = $modules[$obj->module];
+
+		// Save field module_position in database if value is wrong
+		/*
+		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
+				// TODO Define familyposition
+				//$familyposition = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+
+				$newmoduleposition = $modules[$obj->module]->module_position;
+
+				// Correct $newmoduleposition position for external modules
+				$objMod = $modules[$obj->module];
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
+					$newmoduleposition += 100000;
+				}
+
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
+				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
+
+				$db->query($sqlupdate);
+			}
+		}
+		*/
 
 		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {

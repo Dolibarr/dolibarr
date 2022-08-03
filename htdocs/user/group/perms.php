@@ -328,7 +328,7 @@ if ($object->id > 0) {
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 			print '</td>';
 
-			if (is_array($permsgroupbyentity[$entity])) {
+			if (!empty($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 				if (in_array($obj->id, $permsgroupbyentity[$entity])) {
 					// Own permission by group
 					if ($caneditperms) {

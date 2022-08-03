@@ -45,3 +45,5 @@ GenerateImgWebp=Dupliceer alle afbeeldingen met een andere versie met .webp-inde
 ConfirmGenerateImgWebp=Als u bevestigt, genereert u een afbeelding in .webp-indeling voor alle afbeeldingen die zich momenteel in deze map bevinden (submappen zijn niet inbegrepen)...
 ConfirmImgWebpCreation=Bevestig alle afbeeldingen duplicatie
 SucessConvertImgWebp=Afbeeldingen succesvol gedupliceerd
+ECMDirName=Dir name
+ECMParentDirectory=Parent directory

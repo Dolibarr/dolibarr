@@ -69,6 +69,9 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'banque';
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
+
 
 /*
  * Actions
@@ -94,7 +97,7 @@ if ($object->id) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' : ';
 		if ($user->rights->banque->modifier && 0) {

@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE bom/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user, $db;
 global $noMoreLinkedObjectBlockAfter;
@@ -54,7 +54,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '</td>';
 	echo '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
 
-	echo '<td class="linkedcol-ref" align="center">';
+	echo '<td class="linkedcol-ref">';
 	$result = $product_static->fetch($objectlink->fk_product);
 	if ($result < 0) {
 		setEventMessage($product_static->error, 'errors');
@@ -62,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$product_static->getNomUrl(1);
 	}
 	print '</td>';
-	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
+	echo '<td class="linkedcol-date">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->rights->commande->lire) {
 		$total = $total + $objectlink->total_ht;

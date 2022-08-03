@@ -2,9 +2,10 @@
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2021	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2021	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016	  	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
+$default_account = GETPOST('default_account', 'int');
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
@@ -156,8 +158,8 @@ if (empty($reshook)) {
 
 	// Mass actions
 	$objectclass = 'AccountingAccount';
-	$permissiontoread = $user->rights->accounting->read;
-	$permissiontodelete = $user->rights->accounting->delete;
+	$permissiontoread = $user->hasRight('accounting', 'read');
+	$permissiontodelete = $user->hasRight('accounting', 'delete');
 	$uploaddir = $conf->accounting->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -192,10 +194,10 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 
 				dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
 				if ($db->query($sql)) {
-					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
+					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -413,6 +415,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
+	if ($search_label) {
+		$param .= '&search_label='.urlencode($search_label);
+	}
 	if ($search_desc) {
 		$param .= '&search_desc='.urlencode($search_desc);
 	}
@@ -431,12 +436,15 @@ if ($result) {
 
 	$arrayofmassactions = array(
 		'ventil'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
+		,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	if ($massaction !== 'set_default_account') {
+		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -451,9 +459,17 @@ if ($result) {
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
+	if ($massaction == 'set_default_account') {
+		$formquestion[]=array('type' => 'other',
+			'name' => 'set_default_account',
+			'label' => $langs->trans("AccountancyCode"),
+			'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($toselect)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
+	}
+
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
 
-	if ($msg) {
+	if (!empty($msg)) {
 		print $msg.'<br>';
 	}
 
@@ -475,7 +491,6 @@ if ($result) {
 	print '</div>';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
@@ -491,7 +506,7 @@ if ($result) {
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
-	print '</tr>';
+	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
@@ -525,21 +540,26 @@ if ($result) {
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
+		// product_type: 0 = service, 1 = product
+		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
+		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
 		$code_sell_l = '';
 		$code_sell_p = '';
+		$code_sell_t = '';
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
 		$thirdpartystatic->client = $objp->client;
 		$thirdpartystatic->fournisseur = $objp->fournisseur;
 		$thirdpartystatic->code_client = $objp->code_client;
+		$thirdpartystatic->code_compta = $objp->code_compta_client;		// For backward compatibility
 		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
 		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta = $objp->company_code_sell;
+		$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -554,12 +574,11 @@ if ($result) {
 		$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
 		$product_static->accountancy_code_buy_export = $objp->code_buy_export;
 		$product_static->tva_tx = $objp->tva_tx_prod;
-		$product_static->tva_tx = $objp->tva_tx_prod;
 
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		$facture_static->datef = $objp->datef;
+		$facture_static->date = $db->jdate($objp->datef);
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -568,7 +587,7 @@ if ($result) {
 		$facture_static_det->product_type = $objp->type_l;
 		$facture_static_det->desc = $objp->description;
 
-		$accoutinAccountArray = array(
+		$accountingAccountArray = array(
 			'dom'=>$objp->aarowid,
 			'intra'=>$objp->aarowid_intra,
 			'export'=>$objp->aarowid_export,
@@ -577,16 +596,18 @@ if ($result) {
 		$code_sell_p_notset = '';
 		$code_sell_t_notset = '';
 
-		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accoutinAccountArray);
+		$suggestedid = 0;
+
+		$return=$accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
 		} else {
 			$suggestedid=$return['suggestedid'];
 			$suggestedaccountingaccountfor=$return['suggestedaccountingaccountfor'];
 			$suggestedaccountingaccountbydefaultfor=$return['suggestedaccountingaccountbydefaultfor'];
-			$code_sell_l=$return['code_sell_l'];
-			$code_sell_p=$return['code_sell_p'];
-			$code_sell_t=$return['code_sell_t'];
+			$code_sell_l=$return['code_l'];
+			$code_sell_p=$return['code_p'];
+			$code_sell_t=$return['code_t'];
 		}
 		//var_dump($return);
 
@@ -605,6 +626,7 @@ if ($result) {
 		// $code_sell_l is now default code of product/service
 		// $code_sell_p is now code of product/service
 		// $code_sell_t is now code of thirdparty
+		//var_dump($code_sell_l.' - '.$code_sell_p.' - '.$code_sell_t.' -> '.$suggestedid.' ('.$suggestedaccountingaccountbydefaultfor.' '.$suggestedaccountingaccountfor.')');
 
 		print '<tr class="oddeven">';
 
@@ -614,7 +636,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($facture_static->datef), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($facture_static->date, 'day').'</td>';
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
@@ -622,13 +644,13 @@ if ($result) {
 			print $product_static->getNomUrl(1);
 		}
 		if ($product_static->label) {
-			print '<br><span class="opacitymedium small">'.$product_static->label.'</span>';
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($product_static->label).'</span>';
 		}
 		print '</td>';
 
 		// Description
 		print '<td class="tdoverflowonsmartphone small">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
@@ -638,11 +660,11 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		$code_vat_differ='';
-		if ($product_static->tva_tx !== $facture_static_det->tva_tx && ! empty($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		$code_vat_differ = '';
+		if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+			$code_vat_differ = 'warning bold';
 		}
-		print '<td style="'.$code_vat_differ.'" class="right">';
+		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
 		print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -656,7 +678,7 @@ if ($result) {
 		print '</td>';
 
 		// VAT Num
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		// Found accounts
 		print '<td class="small">';
@@ -703,17 +725,24 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account($suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
 		print '<td class="center">';
-		if (!empty($suggestedid) && $suggestedaccountingaccountfor<>'') {
-			$ischecked=1;
-		} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
-			$ischecked = 0;
+		$ischecked = 0;
+		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
+			$ischecked = 1;
 		}
-		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? "checked" : "").'/>';
+
+		if (!empty($toselect)) {
+			$ischecked = 0;
+			if (in_array($objp->rowid."_".$i, $toselect)) {
+				$ischecked=1;
+			}
+		}
+
+		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';
@@ -731,7 +760,7 @@ if ($db->type == 'mysqli') {
 }
 
 // Add code to auto check the box when we select an account
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")

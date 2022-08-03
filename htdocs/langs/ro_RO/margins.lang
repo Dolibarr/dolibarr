@@ -22,7 +22,7 @@ ProductService=Produs sau serviciu
 AllProducts=Toate produsele şi serviciile
 ChooseProduct/Service=Alege produs sau serviciu
 ForceBuyingPriceIfNull=Forțaţi prețul de achiziţie/de cost la prețul de vânzare, dacă nu este definit
-ForceBuyingPriceIfNullDetails=Dacă prețul de achiziţie/cost nu este furnizat atunci când adăugăm o nouă linie, iar această opțiune este „ACTIVĂ”, marja va fi 0 pe noua linie (preț de achiziţie/cost = preț de vânzare). Dacă această opțiune este „INACTIVĂ” (recomandat), marja va fi egală cu valoarea sugerată implicit (și poate fi de 100% dacă nu se găsește nicio valoare implicită).
+ForceBuyingPriceIfNullDetails=Dacă prețul de achiziţie/cost nu este furnizat atunci când adăugăm o linie nouă, iar această opțiune este "ACTIVATĂ", marja va fi 0 %% pe noua linie (preț de achiziţie/cost = preț de vânzare). Dacă această opțiune este "DEZACTIVATĂ" (recomandat), marja va fi egală cu valoarea implicită (și poate fi 100 %% dacă nu se găsește nicio valoare implicită).
 MARGIN_METHODE_FOR_DISCOUNT=Metoda de marjă pentru reduceri globale
 UseDiscountAsProduct=Ca produs
 UseDiscountAsService=Ca serviciu

@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Laporan intrakom
+Module68000Desc = Manajemen laporan intrakom (Dukungan untuk format DEB/DES Prancis)
+IntracommReportSetup = Pengaturan modul intracommreport
+IntracommReportAbout = Tentang intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_NUM_AGREMENT=Nomor persetujuan (dikeluarkan oleh CISD lampiran)
+INTRACOMMREPORT_TYPE_ACTEUR=Tipe aktor
+INTRACOMMREPORT_ROLE_ACTEUR=Peran yang dimainkan oleh aktor 
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Tingkat kewajiban pada perkenalan
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Tingkat kewajiban pengiriman
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategori layanan dari jenis "Ongkos Kirim"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Nomor deklarator
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=Laporan intrakom
+MenuIntracommReportNew=Deklarasi baru
 MenuIntracommReportList=Daftar
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=Deklarasi baru
+Declaration=Deklarasi
+AnalysisPeriod=Periode analisis
+TypeOfDeclaration=Jenis deklarasi
+DEB=Deklarasi pertukaran barang (DEB)
+DES=Deklarasi pertukaran layanan (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=Persiapan file XML dalam format ProDouane
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=Daftar deklarasi yang dihasilkan
+IntracommReportNumber=Nomor deklarasi
+IntracommReportPeriod=Periode analisis
+IntracommReportTypeDeclaration=Jenis deklarasi
+IntracommReportDownload=unduh file XML
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Moda transportasi

@@ -54,7 +54,7 @@ BuildRequires: desktop-file-utils
 Group: Applications/Productivity
 Requires: apache-base, apache-mod_php, php-cgi, php-cli, php-bz2, php-gd, php-ldap, php-imap, php-mysqli, php-openssl, fonts-ttf-dejavu 
 Requires: mysql, mysql-client 
-%else%_datadir/dolibarr/htdocs/datapolicy
+%else
 %if 0%{?suse_version}
 # Voir http://en.opensuse.org/openSUSE:Packaging_Conventions_RPM_Macros
 Group: Productivity/Office/Management
@@ -67,7 +67,7 @@ Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mbstring
 Requires: mysql-server, mysql 
 Requires: php-mysqli >= 4.1.0 
 %endif
-%endif%_datadir/dolibarr/htdocs/eventorganization
+%endif
 
 %endif
 
@@ -125,7 +125,7 @@ cui hai bisogno ed essere facile da usare.
 
 %if 0%{?sles_version}
 %{__rm} -rf $RPM_BUILD_ROOT
-%{__mkdir} $RPM_BUILD_ROOT%_datadir/dolibarr/htdocs/datapolicy
+%{__mkdir} $RPM_BUILD_ROOT%
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}
 %{__mkdir} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %else
@@ -247,7 +247,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/bom
-%_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
@@ -309,6 +308,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
+%_datadir/dolibarr/htdocs/webhook
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/workstation

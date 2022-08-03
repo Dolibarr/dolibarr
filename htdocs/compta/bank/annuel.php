@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
+/* Copyright (C) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Charles-Fr BENKE        <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,9 @@ if (!empty($ref)) {
 	$id = $object->id;
 }
 
+$annee = '';
+$totentrees = array();
+$totsorties = array();
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
@@ -192,14 +195,14 @@ for ($mois = 1; $mois < 13; $mois++) {
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';
-		if ($decaiss[$case] > 0) {
+		if (isset($decaiss[$case]) && $decaiss[$case] > 0) {
 			print price($decaiss[$case]);
 			$totsorties[$annee] += $decaiss[$case];
 		}
 		print "</td>";
 
 		print '<td class="right borderrightlight" width="10%">&nbsp;';
-		if ($encaiss[$case] > 0) {
+		if (isset($encaiss[$case]) && $encaiss[$case] > 0) {
 			print price($encaiss[$case]);
 			$totentrees[$annee] += $encaiss[$case];
 		}
@@ -211,7 +214,8 @@ for ($mois = 1; $mois < 13; $mois++) {
 // Total debit-credit
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start; $annee <= $year_end; $annee++) {
-	print '<td class="right nowraponall"><b>'.price($totsorties[$annee]).'</b></td><td class="right nowraponall"><b>'.price($totentrees[$annee]).'</b></td>';
+	print '<td class="right nowraponall"><b>'. (isset($totsorties[$annee]) ? price($totsorties[$annee]) : '') .'</b></td>';
+	print '<td class="right nowraponall"><b>'. (isset($totentrees[$annee]) ? price($totentrees[$annee]) : '') .'</b></td>';
 }
 print "</tr>\n";
 
@@ -245,6 +249,7 @@ if ($resql) {
 
 print '<table class="noborder centpercent">';
 
+$nbcol = '';
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';
 print "</tr>\n";
@@ -267,7 +272,7 @@ if ($result < 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql .= " WHERE b.fk_account = ba.rowid";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($id && $_GET["option"] != 'all') {
+	if ($id && GETPOST("option") != 'all') {
 		$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 	}
 
@@ -299,7 +304,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
-		if ($id && $_GET["option"] != 'all') {
+		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
@@ -381,7 +386,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".($year - $annee)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
-		if ($id && $_GET["option"] != 'all') {
+		if ($id && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
@@ -448,9 +453,9 @@ if ($result < 0) {
 
 	print '<div class="fichecenter"><div class="fichehalfleft"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show1;
-	print '</div></div><div class="fichehalfright"><div class="ficheaddleft"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
+	print '</div></div><div class="fichehalfright"><div align="center">'; // do not use class="center" here, it will have no effect for the js graph inside.
 	print $show2;
-	print '</div></div></div></div>';
+	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 }
 
