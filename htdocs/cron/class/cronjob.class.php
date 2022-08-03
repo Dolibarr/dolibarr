@@ -262,8 +262,8 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datestart) == 0) {
-			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
+		if (dol_strlen($this->datenextrun) == 0) {
+			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
 		if (empty($this->label)) {
@@ -377,10 +377,6 @@ class Cronjob extends CommonObject
 
 		// Commit or rollback
 		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
@@ -491,9 +487,9 @@ class Cronjob extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Load object in memory from the database
+	 *  Load list of cron jobs in a memory array from the database
+	 *  @TODO Use object CronJob and not CronJobLine.
 	 *
 	 *  @param	string		$sortorder      sort order
 	 *  @param	string		$sortfield      sort field
@@ -504,11 +500,8 @@ class Cronjob extends CommonObject
 	 *  @param  int         $processing     Processing or not
 	 *  @return int          			    <0 if KO, >0 if OK
 	 */
-	public function fetch_all($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
+	public function fetchAll($sortorder = 'DESC', $sortfield = 't.rowid', $limit = 0, $offset = 0, $status = 1, $filter = '', $processing = -1)
 	{
-		// phpcs:enable
-		global $langs;
-
 		$this->lines = array();
 
 		$sql = "SELECT";
@@ -717,8 +710,8 @@ class Cronjob extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
-		if (dol_strlen($this->datestart) == 0) {
-			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
+		if (dol_strlen($this->datenextrun) == 0) {
+			$this->errors[] = $langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtNextLaunch'));
 			$error++;
 		}
 		if ((dol_strlen($this->datestart) != 0) && (dol_strlen($this->dateend) != 0) && ($this->dateend < $this->datestart)) {
@@ -873,7 +866,7 @@ class Cronjob extends CommonObject
 
 		// Clear fields
 		$object->status = self::STATUS_DISABLED;
-		$object->label = $langs->trans("CopyOf").' '.$object->label;
+		$object->label = $langs->trans("CopyOf").' '.$langs->trans($object->label);
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -968,7 +961,16 @@ class Cronjob extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$this->label;
+		$label .= '<br><b>'.$langs->trans('Title').':</b> '.$langs->trans($this->label);
+		if ($this->label != $langs->trans($this->label)) {
+			$label .= ' <span class="opacitymedium">('.$this->label.')</span>';
+		}
+		if (!empty($this->datestart)) {
+			$label .= '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
+		}
+		if (!empty($this->dateend)) {
+			$label .= '<br><b>'.$langs->trans('CronDtEnd').':</b> '.dol_print_date($this->dateend, 'dayhour', 'tzuserrel');
+		}
 
 		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
 
@@ -1032,10 +1034,11 @@ class Cronjob extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
+
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
-				$this->user_modification = $obj->fk_user_mod;
-				$this->user_creation = $obj->fk_user_author;
 			}
 			$this->db->free($resql);
 
@@ -1464,6 +1467,8 @@ class Cronjobline
 	 * @var int ID
 	 */
 	public $id;
+
+	public $entity;
 
 	/**
 	 * @var string Ref

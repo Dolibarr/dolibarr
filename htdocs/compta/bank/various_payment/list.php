@@ -284,7 +284,7 @@ if ($resql) {
 	}
 
 	// must be place behind the last "header(...)" call
-	llxHeader();
+	llxHeader('', $langs->trans("VariousPayments"));
 
 	$i = 0;
 	$total = 0;
@@ -537,6 +537,8 @@ if ($resql) {
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
 	$totalarray['val']['total_cred'] = 0;
+	$totalarray['val']['total_deb'] = 0;
+
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 

@@ -212,7 +212,7 @@ function group_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/group/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("GroupCard");
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'group';
 	$h++;
 
@@ -454,6 +454,28 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	}
+
+	//Dark mode
+	if ($foruserprofile) {
+		//Nothing
+	} else {
+		$listofdarkmodes = array(
+			'0' => $langs->trans("AlwaysDisabled"),
+			'1' => $langs->trans("AccordingToBrowser"),
+			'2' => $langs->trans("AlwaysEnabled")
+		);
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
+		print '<td colspan="'.($colspan - 1).'">';
+		if ($edit) {
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0);
+		} else {
+			print $listofdarkmodes[isset($conf->global->THEME_DARKMODEENABLED) ? $conf->global->THEME_DARKMODEENABLED : 0];
+		}
+		print $form->textwithpicto('', $langs->trans("DoesNotWorkWithAllThemes"));
+		print '</tr>';
+	}
+
 
 	// TopMenuDisableImages
 	if ($foruserprofile) {

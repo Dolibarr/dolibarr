@@ -48,8 +48,9 @@ CountriesNotInEEC=Страны, не входящие в ЕЭС
 CountriesInEECExceptMe=Страны ЕЭС, кроме %s
 CountriesExceptMe=Все страны кроме %s
 AccountantFiles=Экспорт исходных документов
-ExportAccountingSourceDocHelp=С помощью этого инструмента вы можете экспортировать исходные события (список в формате CSV и PDF), которые используются для создания вашей отчетности.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Чтобы экспортировать журналы, используйте пункт меню %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Просмотр по учетной записи
 VueBySubAccountAccounting=Просмотр по субсчету бухгалтерского учета
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Отключить прямую запись тран�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Включить экспорт черновиков в журнале
 ACCOUNTANCY_COMBO_FOR_AUX=Включить комбинированный список для вспомогательной учетной записи (может быть медленным, если у вас много третьих лиц, нарушить возможность поиска по части значения)
 ACCOUNTING_DATE_START_BINDING=Определите дату начала привязки и передачи в бухгалтерском учете. Ниже этой даты операции не переносятся в бухгалтерский учет.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=При переносе бухгалтерии выберите период отображения по умолчанию
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Журнал продаж
 ACCOUNTING_PURCHASE_JOURNAL=Журнал платежей
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Бухгалтерский счет для регис
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Учетная запись для регистрации подписок
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Бухгалтерский счет по умолчанию для регистрации депозита клиента
-UseAuxiliaryAccountOnCustomerDeposit=Используйте субсчета на депозитных линиях клиентов
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Бухгалтерский счет по умолчанию для купленных продуктов (используется, если не определено в описании продукта)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Бухгалтерский счет по умолчанию для купленных продуктов в EEC (используется, если не определено в описании продукта)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Отключить привязку
 
 ## Export
 NotifiedExportDate=Отметить экспортированные строки как Экспортированные <span class="warning"> (чтобы изменить строку, вам нужно будет удалить всю транзакцию и заново перенести ее в учет) </span>
-NotifiedValidationDate=Подтвердите и заблокируйте экспортированные записи <span class="warning"> (тот же эффект, что и функция «Закрытие», изменение и удаление строк будет ОПРЕДЕЛЕННО невозможно) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Проверка даты и блокировка
 ConfirmExportFile=Подтверждение генерации файла экспорта бухгалтерского учета?
 ExportDraftJournal=Экспорт черновика журнала
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=К �
 AccountancyErrorMismatchLetterCode=Несоответствие в коде согласования
 AccountancyErrorMismatchBalanceAmount=Баланс (%s) не равен 0
 AccountancyErrorLetteringBookkeeping=Произошли ошибки, связанные с транзакциями: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Бухгалтерские записи

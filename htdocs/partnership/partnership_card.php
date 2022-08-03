@@ -83,8 +83,8 @@ $managedfor 			= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
-if ($object->id > 0 && $object->fk_member > 0 && $managedfor != 'member') accessforbidden();
-if ($object->id > 0 && $object->fk_soc > 0 && $managedfor != 'thirdparty') accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
 
 /*

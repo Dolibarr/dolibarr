@@ -369,13 +369,14 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->facture)) {
 		$user->rights->facture = new stdClass();
+		$user->rights->facture->invoice_advance = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
-		$user->rights->adherent->cotisation = new stdClass();
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
+	$user->rights->facture->invoice_advance->validate = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
 	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0) {
@@ -504,9 +505,13 @@ if ($ispaymentok) {
 					$datesubend = dol_time_plus_duree($datesubend, -1, 'd');
 				}
 
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
-				$label = 'Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
+				$label = $langs->trans("OnlineSubscriptionPaymentLine", $formatteddate, $paymentmethod, $ipaddress, $TRANSACTIONID);
 
 				// Payment informations
 				$accountid = 0;
@@ -693,9 +698,6 @@ if ($ispaymentok) {
 						// Send subscription email
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
-						// Set output language
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 						// Load traductions files required by page
 						$outputlangs->loadLangs(array("main", "members"));
 						// Get email content from template

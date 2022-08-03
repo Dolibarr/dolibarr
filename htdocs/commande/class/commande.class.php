@@ -507,7 +507,7 @@ class Commande extends CommonOrder
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null").",";
 		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1234,7 +1234,8 @@ class Commande extends CommonOrder
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = '';
+		$this->user_valid         = 0;		// deprecated
+		$this->user_validation_id = 0;
 		$this->date = dol_now();
 		$this->date_commande = dol_now();
 		$this->date_creation      = '';
@@ -1882,8 +1883,11 @@ class Commande extends CommonOrder
 				$this->status = $obj->fk_statut;
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid = $obj->fk_user_valid;
-				$this->user_modification = $obj->fk_user_modif;
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_valid = $obj->fk_user_valid;			// deprecated
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_modification    = $obj->fk_user_modif;
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->total_localtax1;
@@ -2264,8 +2268,8 @@ class Commande extends CommonOrder
 		}
 		$sql .= ' ed.fk_origin_line = cd.rowid';
 		$sql .= ' AND cd.fk_commande = '.((int) $this->id);
-		if ($this->fk_product > 0) {
-			$sql .= ' AND cd.fk_product = '.((int) $this->fk_product);
+		if ($fk_product > 0) {
+			$sql .= ' AND cd.fk_product = '.((int) $fk_product);
 		}
 		if ($filtre_statut >= 0) {
 			$sql .= ' AND e.fk_statut >= '.((int) $filtre_statut);
@@ -3348,7 +3352,7 @@ class Commande extends CommonOrder
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
+		$sql .= " fk_user_valid=".((isset($this->user_valid) && $this->user_valid > 0) ? $this->user_valid : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
@@ -3837,21 +3841,13 @@ class Commande extends CommonOrder
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
+					$this->user_creation_id = $obj->fk_user_author;
 				}
-
 				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
-
 				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
+					$this->user_closing_id = $obj->fk_user_cloture;
 				}
 
 				$this->date_creation     = $this->db->jdate($obj->datec);

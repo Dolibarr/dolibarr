@@ -138,7 +138,7 @@ $candelete = 0;
 if (!empty($user->rights->expensereport->supprimer)) {
 	$candelete = 1;
 }
-if ($object->statut == ExpenseReport::STATUS_DRAFT && !empty($user->rights->expensereport->write) && in_array($object->fk_user_author, $childids)) {
+if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
 	$candelete = 1;
 }
 
@@ -263,7 +263,7 @@ if (empty($reshook)) {
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
-			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {

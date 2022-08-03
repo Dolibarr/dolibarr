@@ -112,12 +112,12 @@ if (!empty($conf->productbatch->enabled) &&
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
-		print $form->selectDate(($d_sellby ? $d_sellby : $pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
+		print $form->selectDate((!empty($d_sellby) ? $d_sellby : $pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
 		print '</td>';
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<td>'.$langs->trans("EatByDate").'</td><td>';
-		print $form->selectDate(($d_eatby ? $d_eatby : $pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
+		print $form->selectDate((!empty($d_eatby) ? $d_eatby : $pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
 		print '</td>';
 	}
 	print '</tr>';
@@ -135,9 +135,6 @@ print '<td>';
 print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
-
-// Extrafield template
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 print '</table>';
 

@@ -211,8 +211,7 @@ if ($num) {
 
 		// Value
 		print '<td>';
-		$key_value = getDolGlobalString($conf->global->$key, $conf->global->$key);
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$key_value.'">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 		print '</td></tr>';
 	}
 }
@@ -240,7 +239,7 @@ if (!$conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = $accountancyexport->getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }

@@ -85,7 +85,7 @@ class FormMail extends Form
 	public $toid;
 
 	/**
-	 * @var string replyto name
+	 * @var string 	Reply-to name
 	 */
 	public $replytoname;
 
@@ -95,19 +95,24 @@ class FormMail extends Form
 	public $replytomail;
 
 	/**
-	 * @var string to name
+	 * @var string 	To name
 	 */
 	public $toname;
 
 	/**
-	 * @var string to email
+	 * @var string 	To email
 	 */
 	public $tomail;
 
 	/**
-	 * @var string trackid
+	 * @var string 	Track id
 	 */
 	public $trackid;
+
+	/**
+	 * @var string	If you know a MSGID of an email and want to send the email in reply to it. Will be added into header as In-Reply-To: <...>
+	 */
+	public $inreplyto;
 
 	public $withsubstit; // Show substitution array
 	public $withfrom;
@@ -449,6 +454,7 @@ class FormMail extends Form
 				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
+				$out .= '<input type="hidden" name="inreplyto" value="'.$this->inreplyto.'" />';
 			}
 			if (!empty($this->withfrom)) {
 				if (!empty($this->withfromreadonly)) {
@@ -458,7 +464,7 @@ class FormMail extends Form
 			}
 			foreach ($this->param as $key => $value) {
 				if (is_array($value)) {
-					$out .= "<!-- param key=".$key." is array, we do not output input filed for it -->\n";
+					$out .= "<!-- param key=".$key." is array, we do not output input field for it -->\n";
 				} else {
 					$out .= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
 				}
@@ -954,7 +960,7 @@ class FormMail extends Form
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
 				} else {
 					if (!isset($this->ckeditortoolbar)) {
-						$this->ckeditortoolbar = 'dolibarr_notes';
+						$this->ckeditortoolbar = 'dolibarr_mailings';
 					}
 
 					// Editor wysiwyg
@@ -1551,7 +1557,7 @@ class FormMail extends Form
 
 					if (!empty($extrafields->attributes[$product->table_element]['label']) && is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
-							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
+							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = isset($product->array_options['options_'.$key]) ? $product->array_options['options_'.$key] : '';
 						}
 					}
 				}

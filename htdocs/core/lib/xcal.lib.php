@@ -301,7 +301,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$format             "rss"
  *  @param      string	$title              Title of export
  *  @param      string	$desc               Description of export
- *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category") or Array of WebsitePage
+ *  @param      array	$events_array       Array of events ("uid","startdate","summary","url","desc","author","category","image") or Array of WebsitePage
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
@@ -377,7 +377,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 					$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
 					//$tmpevent['category'] = '';
 					$tmpevent['desc'] = $event->description;
-
+					$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
 					$event = $tmpevent;
 				}
 
@@ -387,7 +387,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$url		  = $event["url"];
 				$author = $event["author"];
 				$category = $event["category"];
-
+				if (!empty($event["image"])) {
+					$image = $event["image"];
+				}
 				/* No place inside a RSS
 				$priority     = $event["priority"];
 				$fulldayevent = $event["fulldayevent"];
@@ -403,6 +405,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
 				fwrite($fichier, "<description><![CDATA[");
+
+				if (!empty($image)) {
+					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
+				}
 
 				if ($description) {
 					fwrite($fichier, $description);

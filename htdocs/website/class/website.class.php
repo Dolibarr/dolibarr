@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+
 /**
  * Class Website
  */
@@ -49,6 +50,10 @@ class Website extends CommonObject
 	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
+
+
+	protected $childtablesoncascade = array();
+
 
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
@@ -580,8 +585,8 @@ class Website extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user      User that deletes
-	 * @param bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param User $user      	User that deletes
+	 * @param bool $notrigger 	false=launch triggers, true=disable triggers
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
@@ -596,20 +601,8 @@ class Website extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Uncomment this and change WEBSITE to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('WEBSITE_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'website_page';
+			$sql .= ' WHERE fk_website = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -617,6 +610,12 @@ class Website extends CommonObject
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
+		}
+
+		// Delete common code. This include execution of trigger.
+		$result = $this->deleteCommon($user, $notrigger);
+		if ($result <= 0) {
+			$error++;
 		}
 
 		if (!$error && !empty($this->ref)) {
@@ -977,8 +976,8 @@ class Website extends CommonObject
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
-		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2);
+		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
 
 		// Copy files into medias/image
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
@@ -1086,7 +1085,7 @@ class Website extends CommonObject
 
 			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
 			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
-			$line .= "'".$this->db->escape($objectpageold->allowed_in_frames)."'";
+			$line .= (int) $objectpageold->allowed_in_frames;
 			$line .= ");";
 			$line .= "\n";
 
@@ -1103,7 +1102,7 @@ class Website extends CommonObject
 		}
 
 		$line = "\n-- For Dolibarr v14+ --;\n";
-		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->lang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
 		fputs($fp, $line);
@@ -1146,7 +1145,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref)) {
 			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
-			return -1;
+			return -2;
 		}
 
 		dol_delete_dir_recursive($conf->website->dir_temp."/".$object->ref);
@@ -1155,14 +1154,14 @@ class Website extends CommonObject
 		$filename = basename($pathtofile);
 		if (!preg_match('/^website_(.*)-(.*)$/', $filename, $reg)) {
 			$this->errors[] = 'Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
-			return -1;
+			return -3;
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
 
 		if (!empty($result['error'])) {
 			$this->errors[] = 'Failed to unzip file '.$pathtofile.'.';
-			return -1;
+			return -4;
 		}
 
 		$arrayreplacement = array();
@@ -1211,7 +1210,7 @@ class Website extends CommonObject
 		// Load sql record
 		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
 		if ($runsql <= 0) {
-			$this->errors[] = 'Failed to load sql file '.$sqlfile;
+			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
 			$error++;
 		}
 

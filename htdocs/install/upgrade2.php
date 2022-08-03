@@ -4116,6 +4116,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
+		'/asterisk/cidlookup.php',
 		'/categories/class/api_category.class.php',
 		'/categories/class/api_deprecated_category.class.php',
 		'/compta/facture/class/api_invoice.class.php',

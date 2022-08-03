@@ -48,8 +48,9 @@ CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
 AccountantFiles=Exportar documentos de origen
-ExportAccountingSourceDocHelp=Con esta herramienta, puede exportar los eventos de origen (lista en CSV y PDF) que se utilizan para generar su contabilidad.
+ExportAccountingSourceDocHelp=Con esta herramienta, puede buscar y exportar los eventos de origen que se utilizan para generar su contabilidad. <br> El archivo ZIP exportado contendrá las listas de artículos solicitados en CSV, así como sus archivos adjuntos en su formato original (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Para exportar sus diarios, use la entrada de menú %s - %s.
+ExportAccountingProjectHelp=Especifique un proyecto si necesita un informe contable solo para un proyecto específico. Los informes de gastos y los pagos de préstamos no se incluyen en los informes de proyectos.
 VueByAccountAccounting=Ver por cuenta contable
 VueBySubAccountAccounting=Ver por subcuenta contable
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Habilite la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros, rompa la capacidad de buscar en una parte del valor)
 ACCOUNTING_DATE_START_BINDING=Defina una fecha para comenzar a vincular y transferir en contabilidad. Por debajo de esta fecha, las transacciones no se transferirán a contabilidad.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la transferencia de contabilidad, seleccione el período que se muestra de forma predeterminada
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=En la transferencia de contabilidad, ¿cuál es el período seleccionado por defecto?
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripciones
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta contable por defecto para registrar el anticipo del cliente
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Almacene la cuenta del cliente como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (usada si no se define en el producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los productos comprados en CEE (usada si no se define en el producto)
@@ -279,10 +280,10 @@ DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de in
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
 
 Closure=Cierre anual
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+DescClosure=Consulta aquí el número de movimientos por mes que aún no están validados y bloqueados
+OverviewOfMovementsNotValidated=Resumen de movimientos no validados y bloqueados
+AllMovementsWereRecordedAsValidated=Todos los movimientos fueron registrados como validados y bloqueados.
+NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos se pudieron registrar como validados y bloqueados
 ValidateMovements=Validar y bloquear registro...
 DescValidateMovements=Se prohíbe cualquier modificación o eliminación de registros. Todas las entradas para un ejercicio deben validarse; de lo contrario, no será posible cerrarlo
 
@@ -290,7 +291,7 @@ ValidateHistory=Vincular automáticamente
 AutomaticBindingDone=Vinculaciones automáticas realizadas (%s) - La vinculación automática no es posible para algunos registros (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
+MvtNotCorrectlyBalanced=Movimiento no equilibrado correctamente. Débito = %s & Crédito = %s
 Balancing=Saldo
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
@@ -303,7 +304,7 @@ NotYetAccounted=Aún no contabilizado en el libro mayor
 ShowTutorial=Ver Tutorial
 NotReconciled=No reconciliado
 WarningRecordWithoutSubledgerAreExcluded=Advertencia, todas las líneas sin cuenta de libro mayor auxiliar definida se filtran y excluyen de esta vista
-AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
+AccountRemovedFromCurrentChartOfAccount=Cuenta contable que no existe en el plan de cuentas actual
 
 ## Admin
 BindingOptions=Opciones de enlace
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactive la vinculación y transfe
 
 ## Export
 NotifiedExportDate=Marcar las líneas exportadas como Exportadas <span class="warning"> (para modificar una línea, deberá eliminar toda la transacción y volver a transferirla a contabilidad) </span>
-NotifiedValidationDate=Validar y bloquear las entradas exportadas <span class="warning">(mismo efecto que la función "Cierre", no será posible DEFINITIVAMENTE la modificación y eliminación de las líneas)</span>
+NotifiedValidationDate=Valide y bloquee las entradas exportadas <span class="warning"> (mismo efecto que la función "%s", la modificación y eliminación de las líneas DEFINITIVAMENTE no será posible) </span>
 DateValidationAndLock=Validación de fecha y bloqueo
 ConfirmExportFile=¿Confirmación de la generación del archivo de exportación contable?
 ExportDraftJournal=Exportar libro borrador
@@ -398,19 +399,19 @@ Calculated=Calculado
 Formula=Fórmula
 
 ## Reconcile
-Unlettering=Unreconcile
-AccountancyNoLetteringModified=No reconcile modified
-AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
-AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
-AccountancyNoUnletteringModified=No unreconcile modified
-AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
-AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+Unlettering=No reconciliar
+AccountancyNoLetteringModified=Sin reconciliación modificada
+AccountancyOneLetteringModifiedSuccessfully=Una conciliación modificada con éxito
+AccountancyLetteringModifiedSuccessfully=%s reconciliación modificada con éxito
+AccountancyNoUnletteringModified=Sin modificación no reconciliada
+AccountancyOneUnletteringModifiedSuccessfully=Una no reconciliada modificada con éxito
+AccountancyUnletteringModifiedSuccessfully=%s no reconciliado modificado con éxito
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnlettering=Confirmación masiva de no conciliación
+ConfirmMassUnletteringQuestion=¿Está seguro de que desea anular la conciliación de los registros seleccionados %s?
 ConfirmMassDeleteBookkeepingWriting=Confirmación de borrado en lote
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=Esto eliminará la transacción de la contabilidad (se eliminarán todas las líneas relacionadas con la misma transacción). ¿Está seguro de que desea eliminar los %s registros seleccionados?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos necesarios de la configuración no están realizados, por favor complételos.
@@ -424,9 +425,10 @@ Binded=Líneas contabilizadas
 ToBind=Líneas a contabilizar
 UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Lo sentimos, este módulo no es compatible con la función experimental de facturas de situación.
-AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
-AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+AccountancyErrorMismatchLetterCode=Discrepancia en el código de conciliación
+AccountancyErrorMismatchBalanceAmount=El saldo (%s) no es igual a 0
+AccountancyErrorLetteringBookkeeping=Se han producido errores con respecto a las transacciones: %s
+ErrorAccountNumberAlreadyExists=El número de contabilidad %s ya existe
 
 ## Import
 ImportAccountingEntries=Entradas contables

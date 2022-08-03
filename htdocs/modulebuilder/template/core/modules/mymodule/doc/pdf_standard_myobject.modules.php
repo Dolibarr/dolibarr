@@ -898,8 +898,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {
-			  pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
+		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('MYMODULE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('MYMODULE_DRAFT_WATERMARK')));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

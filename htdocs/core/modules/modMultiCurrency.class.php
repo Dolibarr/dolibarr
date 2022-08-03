@@ -286,7 +286,7 @@ class modMultiCurrency extends DolibarrModules
 
 		$multicurrency = new MultiCurrency($this->db);
 
-		if (!$multicurrency->checkCodeAlreadyExists($conf->currency)) {
+		if (! $multicurrency->checkCodeAlreadyExists($conf->currency)) {
 			$langs->loadCacheCurrencies('');
 
 			$multicurrency->code = $conf->currency;

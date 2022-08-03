@@ -4,6 +4,7 @@ SuppliersInvoice=Τιμολόγιο προμηθευτή
 SupplierInvoices=Τιμολόγια προμηθευτή
 ShowSupplierInvoice=Εμφάνιση τιμολογίου προμηθευτή
 NewSupplier=Νέος προμηθευτής
+NewSupplierInvoice = Νέο τιμολόγιο προμηθευτή
 History=Ιστορικό
 ListOfSuppliers=Κατάλογος προμηθευτών
 ShowSupplier=Εμφάνιση προμηθευτή

@@ -725,6 +725,7 @@ fieldset {
 	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
+	min-inline-size: auto;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -1018,6 +1019,9 @@ textarea.centpercent {
 	cursor: default;
 }
 .cursorpointer {
+	cursor: pointer;
+}
+.classfortooltiponclick .fa-question-circle {
 	cursor: pointer;
 }
 .cursormove {
@@ -2336,7 +2340,7 @@ img.hideonsmartphone.pictoactionview {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
@@ -2399,6 +2403,10 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
 	object-fit: contain;
+}
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
 }
 
 img.photokanban, div.photokanban {
@@ -2702,7 +2710,7 @@ div.mainmenu.menu {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
-	                }';
+	                }'."\n";
 			} else {
 				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
 				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
@@ -2715,6 +2723,7 @@ div.mainmenu.menu {
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
@@ -3055,6 +3064,7 @@ span.vsmenudisabled, font.vsmenudisabled {
 	text-align: <?php print $left; ?>;
 	font-weight: normal;
 	color: #aaa;
+	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -4724,9 +4734,8 @@ div#card-errors {
 .ui-dialog-content {
 	font-size: <?php print $fontsize; ?>px !important;
 }
-
-.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 div#dialogforpopup {
@@ -4948,6 +4957,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '36px' : '50px') : '0'; ?>;
+	z-index: 1000;
 }
 
 .exampleapachesetup {
@@ -4983,6 +4993,7 @@ span[phptag] {
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -7021,9 +7032,11 @@ span.clipboardCPValueToPrint, div.clipboardCPValueToPrint {
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
-	display: inline-block;
+	display: inline-block;	/* this will be modifiy on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
 	color: transparent;
 	white-space: nowrap;
+	overflow-x: hidden;
+	vertical-align: middle;
 }
 div.clipboardCPValue.hidewithsize {
 	width: 0 !important;
@@ -7291,22 +7304,26 @@ div.clipboardCPValue.hidewithsize {
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
 	}
-	
-		
+
+
 	.underbanner.underbanner-before-box {
 		border-bottom: none;
 	}
-	
+
 	div.divButAction {
 		margin-bottom: 0.5em;
 	}
-	
+
 	div#card-errors {
 		max-width: unset;
 	}
-	
+
 	#dolpaymenttable {
 		padding: 5px;
+	}
+
+	.lilevel1 span.paddingright {
+		padding-right: 3px;
 	}
 }
 

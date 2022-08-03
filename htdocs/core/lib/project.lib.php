@@ -824,10 +824,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
+				// Budget task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 					print '<td class="center">';
-					print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
-					$total_budget_amount += $lines[$i]->budget_amount;
+					if ($lines[$i]->budget_amount) {
+						print '<span class="amount">'.price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+						$total_budget_amount += $lines[$i]->budget_amount;
+					}
 					print '</td>';
 				}
 
@@ -982,7 +985,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 
 
-		// resume
+		// Progress
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.progress_summary']['checked'])) {
 			print '<td class="right">';
 			if ($total_projectlinesa_planned) {
@@ -1008,9 +1011,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 
+		// Budget task
 		if (count($arrayfields) > 0 && !empty($arrayfields['t.budget_amount']['checked'])) {
 			print '<td class="nowrap liste_total center">';
-			print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			if (strcmp($total_budget_amount, '')) {
+				print price($total_budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			}
 			print '</td>';
 		}
 
@@ -2549,8 +2555,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$projectstatic->ref = $objp->ref;
 				$projectstatic->status = $objp->status;
 				$projectstatic->title = $objp->title;
-				$projectstatic->datee = $db->jdate($objp->datee);
-				$projectstatic->dateo = $db->jdate($objp->dateo);
+				$projectstatic->date_end = $db->jdate($objp->datee);
+				$projectstatic->date_start = $db->jdate($objp->dateo);
 
 				print '<tr class="oddeven">';
 

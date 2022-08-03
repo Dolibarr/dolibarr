@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Először be kell állítania a számla
 ErrorFailedToFindEmailTemplate=Nem sikerült megtalálni a %s kódnevű sablont
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=A szolgáltatás időtartama nincs meghatározva. Nincs mód az óraárak kiszámítására.
 ErrorActionCommPropertyUserowneridNotDefined=A felhasználó tulajdonosa kötelező
-ErrorActionCommBadType=A kiválasztott eseménytípus (azonosító: %n, kód: %s) nem létezik az Eseménytípus szótárban
+ErrorActionCommBadType=A kiválasztott eseménytípus (azonosító: %s, kód: %s) nem létezik az Eseménytípus szótárban
 CheckVersionFail=A verzióellenőrzés sikertelen
 ErrorWrongFileName=A fájl nevében nem lehet __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nem szerepel a Fizetési feltételek szótárban, kérjük módosítsa.
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Csak HTTPS biztonságos kapcsolat használat
 WarningModuleXDisabledSoYouMayMissEventHere=A %s modul nincs engedélyezve. Így sok eseményről lemaradhat itt.
 WarningPaypalPaymentNotCompatibleWithStrict=A 'Strict' érték miatt az online fizetési funkciók nem működnek megfelelően. Használja helyette a „Lax” szót.
 
-<<<<<<< FEJ
-=======
-<<<<<<< FEJ
-<<<<<<< FEJ
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
 # Validate
 RequireValidValue = Az érték nem érvényes
 RequireAtLeastXString = Legalább %s karakter szükséges
@@ -347,12 +342,3 @@ BadSetupOfField = Hiba a mező rossz beállításában
 BadSetupOfFieldClassNotFoundForValidation = Hiba a mező rossz beállításában: Az osztály nem található az ellenőrzéshez
 BadSetupOfFieldFileNotFound = Hiba a mező rossz beállításában: A fájl nem található a felvételhez
 BadSetupOfFieldFetchNotCallable = Hiba a mező rossz beállításában: A lekérés nem hívható az osztályban
-<<<<<<< FEJ
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága

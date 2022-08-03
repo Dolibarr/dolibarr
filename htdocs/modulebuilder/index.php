@@ -71,6 +71,12 @@ $file = GETPOST('file', 'alpha');
 $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
+$editorname= GETPOST('editorname', 'alpha');
+$editorurl= GETPOST('editorurl', 'alpha');
+$version= GETPOST('version', 'alpha');
+$family= GETPOST('family', 'alpha');
+$picto= GETPOST('idpicto', 'alpha');
+$idmodule= GETPOST('idmodule', 'alpha');
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
@@ -334,7 +340,13 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				'Mon module'=>$modulename,
 				'mon module'=>$modulename,
 				'htdocs/modulebuilder/template'=>strtolower($modulename),
-				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
+				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : ''),
+				'Editor name'=>$editorname,
+				'https://www.example.com'=>$editorurl,
+				'$this->version = \'1.0\''=>'$this->version = \''.$version.'\'',
+				'$this->picto = \'generic\';'=>(empty($picto)) ? '$this->picto = \'generic\'' : '$this->picto = \''.$picto.'\';',
+				"modulefamily" =>$family,
+				'500000'=>$idmodule
 			);
 
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME)) {
@@ -350,7 +362,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 				$arrayreplacement['1.0'] = $conf->global->MODULEBUILDER_SPECIFIC_VERSION;
 			}
 			if (!empty($conf->global->MODULEBUILDER_SPECIFIC_FAMILY)) {
-				$arrayreplacement['other'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
+				$arrayreplacement['modulefamily'] = $conf->global->MODULEBUILDER_SPECIFIC_FAMILY;
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -370,7 +382,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	if (!$error) {
 		setEventMessages('ModuleInitialized', null);
 		$module = $modulename;
-		$modulename = '';
 
 		clearstatcache(true);
 		if (function_exists('opcache_invalidate')) {
@@ -1507,9 +1518,10 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$error++;
 	}*/
 
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
 	// Edit the class file to write properties
 	if (!$error) {
-		$moduletype = 'external';
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
 
 		if (is_numeric($object) && $object <= 0) {
@@ -1519,20 +1531,19 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 
 	// Edit sql with new properties
 	if (!$error) {
-		$moduletype = 'external';
-
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
+
 		if ($result <= 0) {
 			$error++;
 		}
 	}
 
 	if (!$error) {
+		clearstatcache(true);
+
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		setEventMessages($langs->trans('WarningDatabaseIsNotUpdated'), null);
-
-		clearstatcache(true);
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj='.$objectname.'&nocache='.time());
@@ -2075,10 +2086,41 @@ if ($module == 'initmodule') {
 	print '<input type="hidden" name="module" value="initmodule">';
 
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
-	print $langs->trans("EnterNameOfModuleDesc").'<br>';
 	print '<br>';
 
-	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'"><br>';
+	print '<span class="opacitymedium">'.$langs->trans("ModuleName").'</span> <input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" autofocus>';
+	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc")).'<br>';
+
+	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span> <input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
+	print '<span class="opacitymedium">';
+	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
+	print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+	print '</span>';
+	print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("Version").'</span> <input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
+	print '<span class="opacitymedium">'.$langs->trans("Family").'</span> ';
+	print '<select name="family" id="family" class="minwidth400">';
+	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
+	print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
+	print '<option value="srm">'.$langs->trans("ModuleFamilySrm").'</option>';
+	print '<option value="financial">'.$langs->trans("ModuleFamilyFinancial").'</option>';
+	print '<option value="products">'.$langs->trans("ModuleFamilyProducts").'</option>';
+	print '<option value="projects">'.$langs->trans("ModuleFamilyProjects").'</option>';
+	print '<option value="ecm">'.$langs->trans("ModuleFamilyECM").'</option>';
+	print '<option value="technic">'.$langs->trans("ModuleFamilyTechnic").'</option>';
+	print '<option value="portal">'.$langs->trans("ModuleFamilyPortal").'</option>';
+	print '<option value="interface">'.$langs->trans("ModuleFamilyInterface").'</option>';
+	print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
+	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
+	print '</select><br>';
+	print ajax_combobox("family");
+	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> <input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+	print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("Description").'</span> <input type="text" name="description" value="" class="minwidth500"><br>';
+
+	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span> <input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span> <input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
@@ -2226,7 +2268,7 @@ if ($module == 'initmodule') {
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
+				print load_fiche_titre($form->textwithpicto($langs->trans("DescriptorFile"), $pathtofile), '', '');
 
 				if (!empty($moduleobj)) {
 					print '<div class="underbanner clearboth"></div>';
@@ -2243,8 +2285,10 @@ if ($module == 'initmodule') {
 					print $langs->trans("Numero");
 					print '</td><td>';
 					print $moduleobj->numero;
+					print '<span class="opacitymedium">';
 					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
 					print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+					print '</span>';
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -2267,6 +2311,19 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '<tr><td>';
+					print $langs->trans("Picto");
+					print '</td><td>';
+					print $moduleobj->picto;
+					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
+					print '</td></tr>';
+
+					print '<tr><td>';
+					print $langs->trans("Description");
+					print '</td><td>';
+					print $moduleobj->getDesc();
+					print '</td></tr>';
+
+					print '<tr><td>';
 					print $langs->trans("EditorName");
 					print '</td><td>';
 					print $moduleobj->editor_name;
@@ -2280,12 +2337,6 @@ if ($module == 'initmodule') {
 					}
 					print '</td></tr>';
 
-					print '<tr><td>';
-					print $langs->trans("Description");
-					print '</td><td>';
-					print $moduleobj->getDesc();
-					print '</td></tr>';
-
 					print '</table>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
@@ -2295,7 +2346,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// Readme file
-					print load_fiche_titre($langs->trans("ReadmeFile"), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ReadmeFile"), $pathtofilereadme), '', '');
 
 					print '<!-- readme file -->';
 					if (dol_is_file($dirread.'/'.$pathtofilereadme)) {
@@ -2307,7 +2358,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// ChangeLog
-					print load_fiche_titre($langs->trans("ChangeLog"), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ChangeLog"), $pathtochangelog), '', '');
 
 					print '<!-- changelog file -->';
 					if (dol_is_file($dirread.'/'.$pathtochangelog)) {
@@ -2556,10 +2607,63 @@ if ($module == 'initmodule') {
 						$pathtonote     = strtolower($module).'/'.strtolower($tabobj).'_note.php';
 						$pathtocontact  = strtolower($module).'/'.strtolower($tabobj).'_contact.php';
 						$pathtophpunit  = strtolower($module).'/test/phpunit/'.strtolower($tabobj).'Test.php';
-						$pathtosql      = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
-						$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
-						$pathtosqlkey   = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.key.sql';
-						$pathtosqlextrakey = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.key.sql';
+
+						// Try to load object class file
+						clearstatcache(true);
+						if (function_exists('opcache_invalidate')) {
+							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
+						}
+
+						if (empty($forceddirread) && empty($dirread)) {
+							$result = dol_include_once($pathtoclass);
+							$stringofinclude = "dol_include_once(".$pathtoclass.")";
+						} else {
+							$result = @include_once $dirread.'/'.$pathtoclass;
+							$stringofinclude = "@include_once ".$dirread.'/'.$pathtoclass;
+						}
+						if (class_exists($tabobj)) {
+							try {
+								$tmpobjet = @new $tabobj($db);
+							} catch (Exception $e) {
+								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
+							}
+						} else {
+							print '<span class="warning">'.$langs->trans('Failed to find the class '.$tabobj.' despite the '.$stringofinclude).'</span><br><br>';
+						}
+
+						// Define path for sql file
+						$pathtosql = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'-'.strtolower($module).'.sql';
+						$result = dol_buildpath($pathtosql);
+						if (! dol_is_file($result)) {
+							$pathtosql = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'.sql';
+							$result = dol_buildpath($pathtosql);
+							if (! dol_is_file($result)) {
+								$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($tabobj).'-'.strtolower($module).'.sql';
+								$result = dol_buildpath($pathtosql);
+								if (! dol_is_file($result)) {
+									$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'-'.strtolower($module).'.sql';
+									$result = dol_buildpath($pathtosql);
+									if (! dol_is_file($result)) {
+										$pathtosql = 'install/mysql/tables/llx_'.strtolower($module).'.sql';
+										$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_extrafields.sql';
+										$result = dol_buildpath($pathtosql);
+									} else {
+										$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_extrafields-'.strtolower($module).'.sql';
+									}
+								} else {
+									$pathtosqlextra = 'install/mysql/tables/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields-'.strtolower($module).'.sql';
+								}
+							} else {
+								$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields.sql';
+							}
+						} else {
+							$pathtosqlextra = strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($tabobj).'_extrafields-'.strtolower($module).'.sql';
+						}
+						$pathtosqlroot = preg_replace('/\/llx_.*$/', '', $pathtosql);
+
+						$pathtosqlkey   = preg_replace('/\.sql$/', '.key.sql', $pathtosql);
+						$pathtosqlextrakey   = preg_replace('/\.sql$/', '.key.sql', $pathtosqlextra);
+
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
@@ -2590,6 +2694,10 @@ if ($module == 'initmodule') {
 
 						$urloflist = dol_buildpath('/'.$pathtolist, 1);
 						$urlofcard = dol_buildpath('/'.$pathtocard, 1);
+
+
+
+
 
 						print '<div class="fichehalfleft smallxxx">';
 						// Main DAO class file
@@ -2721,24 +2829,6 @@ if ($module == 'initmodule') {
 
 						print '<br><br><br>';
 
-						clearstatcache(true);
-						if (function_exists('opcache_invalidate')) {
-							opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
-						}
-
-						if (empty($forceddirread) && empty($dirread)) {
-							$result = dol_include_once($pathtoclass);
-						} else {
-							$result = @include_once $dirread.'/'.$pathtoclass;
-						}
-						if (class_exists($tabobj)) {
-							try {
-								$tmpobjet = @new $tabobj($db);
-							} catch (Exception $e) {
-								dol_syslog('Failed to load Constructor of class: '.$e->getMessage(), LOG_WARNING);
-							}
-						}
-
 						if (!empty($tmpobjet)) {
 							$reflector = new ReflectionClass($tabobj);
 							$reflectorproperties = $reflector->getProperties(); // Can also use get_object_vars
@@ -2750,6 +2840,7 @@ if ($module == 'initmodule') {
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
+							print '<input type="hidden" name="page_y" value="">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread ? '@'.$dirread : '')).'">';
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
@@ -2938,8 +3029,8 @@ if ($module == 'initmodule') {
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td class="center tdstickyright tdstickyghostwhite">';
-										print '<input class="button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
-										print '<input class="button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+										print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+										print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
@@ -3071,7 +3162,7 @@ if ($module == 'initmodule') {
 
 							print '</form>';
 						} else {
-							print '<tr><td><span class="warning">'.$langs->trans('Failed to init the object with the new.').'</warning></td></tr>';
+							print '<span class="warning">'.$langs->trans('Failed to init the object with the new '.$tabobj.'($db)').'</warning>';
 						}
 					} catch (Exception $e) {
 						print $e->getMessage();

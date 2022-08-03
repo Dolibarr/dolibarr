@@ -474,6 +474,7 @@ if ($action == 'confirm_crop') {
  * View
  */
 
+$head = '';
 $title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
@@ -505,8 +506,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
-print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50 right"> px &nbsp; <br>';
 
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
@@ -564,12 +565,12 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '
 		      <div class="jc_coords">
 		         '.$langs->trans("NewSizeAfterCropping").':
-		         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>
-		         <label>Y1 <input type="number" class="flat maxwidth50" id="y" name="y" /></label>
-		         <label>X2 <input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
-		         <label>Y2 <input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
-		         <label>W  <input type="number" class="flat maxwidth50" id="w" name="w" /></label>
-		         <label>H  <input type="number" class="flat maxwidth50" id="h" name="h" /></label>
+		         &nbsp; <label>X1=<input type="number" class="flat maxwidth50" id="x" name="x" /></label>
+		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth50" id="y" name="y" /></label>
+		         &nbsp; <label>X2=<input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
+		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
+		         &nbsp; <label>W=<input type="number" class="flat maxwidth50" id="w" name="w" /></label>
+		         &nbsp; <label>H=<input type="number" class="flat maxwidth50" id="h" name="h" /></label>
 		      </div>
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />

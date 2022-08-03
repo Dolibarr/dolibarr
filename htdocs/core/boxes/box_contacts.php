@@ -63,7 +63,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
 	}
 
 	/**
