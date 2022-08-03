@@ -15,6 +15,7 @@
  * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  * Copyright (C) 2021		Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2022       Yoan Mollard         	<opensource@aubrune.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

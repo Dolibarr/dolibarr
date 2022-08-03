@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Yoan Mollard			<opensource@aubrune.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
