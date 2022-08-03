@@ -955,8 +955,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
 
-				preg_match_all('/(<img)/', $out, $reg);
-				if (count($reg[0]) > (getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT") ? getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT") : 1000)) {
+				preg_match_all('/(<img)/i', $out, $reg);
+				if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
 					$out = '';
 				}
 			} while ($oldstringtoclean != $out);
