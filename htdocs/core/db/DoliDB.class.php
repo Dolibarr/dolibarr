@@ -351,6 +351,8 @@ abstract class DoliDB implements Database
 					$results[] = $obj;
 				}
 			}
+
+			$this->free($res);
 			return $results;
 		}
 
