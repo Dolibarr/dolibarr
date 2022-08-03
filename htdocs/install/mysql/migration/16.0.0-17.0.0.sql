@@ -73,3 +73,4 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
