@@ -368,6 +368,7 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
+		$user->rights->adherent->cotisation = new stdClass();
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
