@@ -192,6 +192,7 @@ foreach ($conf->global as $key => $val) {
 			$name = $langs->trans("NoName");
 		}
 		$provider = preg_replace('/-.*$/', '', $key);
+		$provider = ucfirst(strtolower($provider));
 
 		$oauthservices[$key] = $name." (".$provider.")";
 	}
