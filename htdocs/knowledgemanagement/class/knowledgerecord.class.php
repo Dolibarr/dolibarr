@@ -470,7 +470,7 @@ class KnowledgeRecord extends CommonObject
 
 		// Delete all child tables
 		if (!$error) {
-			$elements = array('categorie_knowledgemanagement'); // product_batch is done before
+			$elements = array('categorie_knowledgemanagement');
 			foreach ($elements as $table) {
 				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
