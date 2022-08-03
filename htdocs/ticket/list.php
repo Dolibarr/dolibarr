@@ -824,7 +824,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
+			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth100'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
@@ -1005,7 +1005,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			} elseif ($key == 'subject') {
 				$s = $obj->subject;
 				print '<span title="'.dol_escape_htmltag($s).'">';
-				print $s;
+				print dol_escape_htmltag($s);
 				print '</span>';
 			} elseif ($key == 'type_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);

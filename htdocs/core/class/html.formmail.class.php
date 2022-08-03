@@ -85,7 +85,7 @@ class FormMail extends Form
 	public $toid;
 
 	/**
-	 * @var string replyto name
+	 * @var string 	Reply-to name
 	 */
 	public $replytoname;
 
@@ -95,19 +95,24 @@ class FormMail extends Form
 	public $replytomail;
 
 	/**
-	 * @var string to name
+	 * @var string 	To name
 	 */
 	public $toname;
 
 	/**
-	 * @var string to email
+	 * @var string 	To email
 	 */
 	public $tomail;
 
 	/**
-	 * @var string trackid
+	 * @var string 	Track id
 	 */
 	public $trackid;
+
+	/**
+	 * @var string	If you know a MSGID of an email and want to send the email in reply to it. Will be added into header as In-Reply-To: <...>
+	 */
+	public $inreplyto;
 
 	public $withsubstit; // Show substitution array
 	public $withfrom;
@@ -449,6 +454,7 @@ class FormMail extends Form
 				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
+				$out .= '<input type="hidden" name="inreplyto" value="'.$this->inreplyto.'" />';
 			}
 			if (!empty($this->withfrom)) {
 				if (!empty($this->withfromreadonly)) {
@@ -458,7 +464,7 @@ class FormMail extends Form
 			}
 			foreach ($this->param as $key => $value) {
 				if (is_array($value)) {
-					$out .= "<!-- param key=".$key." is array, we do not output input filed for it -->\n";
+					$out .= "<!-- param key=".$key." is array, we do not output input field for it -->\n";
 				} else {
 					$out .= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
 				}

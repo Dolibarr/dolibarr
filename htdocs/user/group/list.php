@@ -38,10 +38,10 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $contextpage = GETPOST('optioncss', 'aZ09');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Load variable for pagination
@@ -70,7 +70,7 @@ $fieldstosearchall = array(
 );
 
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	if (!$user->rights->user->group_advance->read && !$user->admin) {
+	if (!$user->hasRight("user", "group_advance", "read") && !$user->admin) {
 		accessforbidden();
 	}
 }
@@ -80,7 +80,7 @@ if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->
 	accessforbidden();
 }
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
@@ -121,6 +121,7 @@ if (empty($reshook)) {
  * View
  */
 $title = $langs->trans("ListOfGroups");
+$help_url="";
 llxHeader('', $title, $help_url);
 
 $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";

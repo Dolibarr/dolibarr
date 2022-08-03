@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -954,6 +954,11 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
+
+				preg_match_all('/(<img)/i', $out, $reg);
+				if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+					$out = '';
+				}
 			} while ($oldstringtoclean != $out);
 			break;
 		case 'custom':
@@ -7388,6 +7393,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 			}
+			if (!empty($conf->propal->enabled) && (!is_object($object) || $object->element == 'propal')) {
+				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -10423,7 +10431,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	global $hookmanager, $action, $object, $langs;
 
 	//var_dump($params);
-	if ($params['isDropdown'])
+	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';

@@ -543,6 +543,7 @@ fieldset {
 	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
+	min-inline-size: auto;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {

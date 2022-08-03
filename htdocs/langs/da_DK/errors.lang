@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Du skal først konfigurere din kontopla
 ErrorFailedToFindEmailTemplate=Kunne ikke finde skabelon med kodenavn %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Varighed er ikke defineret i tjenesten. Ingen måde at beregne timeprisen på.
 ErrorActionCommPropertyUserowneridNotDefined=Brugerens ejer kræves
-ErrorActionCommBadType=Den valgte hændelsestype (id: %n, kode: %s) findes ikke i begivenhedstypeordbogen
+ErrorActionCommBadType=Den valgte hændelsestype (id: %s, kode: %s) findes ikke i begivenhedstypeordbogen
 CheckVersionFail=Versionskontrol mislykkedes
 ErrorWrongFileName=Filens navn kan ikke indeholde __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Ikke i ordbogen om betalingsbetingelser, bedes du ændre.
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Kun tilgængelig, hvis du bruger HTTPS-sikre
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s er ikke aktiveret. Så du går måske glip af en masse begivenheder her.
 WarningPaypalPaymentNotCompatibleWithStrict=Værdien 'Strict' gør, at onlinebetalingsfunktionerne ikke fungerer korrekt. Brug 'Lax' i stedet.
 
-<<<<<<< HOVED
-=======
-<<<<<<< HOVED
-<<<<<<< HOVED
->>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Værdien er ikke gyldig
 RequireAtLeastXString = Kræver mindst %s karakter (er)
@@ -347,12 +342,3 @@ BadSetupOfField = Fejl ved dårlig opsætning af feltet
 BadSetupOfFieldClassNotFoundForValidation = Fejl ved dårlig opsætning af feltet: Klassen blev ikke fundet til validering
 BadSetupOfFieldFileNotFound = Fejl ved dårlig opsætning af feltet: Filen blev ikke fundet til inkludering
 BadSetupOfFieldFetchNotCallable = Fejl dårlig opsætning af felt: Hentning kan ikke kaldes på klassen
-<<<<<<< HOVED
-=======
-=======
-=======
->>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
->>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
->>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git

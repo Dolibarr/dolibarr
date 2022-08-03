@@ -50,15 +50,15 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreadperms = ($user->admin || $user->rights->user->user->lire);
+$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify group permissions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$advancedpermsactive = true;
-	$canreadperms = ($user->admin || ($user->rights->user->group_advance->read && $user->rights->user->group_advance->readperms));
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
+	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Security check
@@ -206,7 +206,7 @@ if ($object->id > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

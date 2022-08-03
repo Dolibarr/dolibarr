@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -548,10 +548,18 @@ class CMailFile
 			}
 
 			if (!empty($this->addr_cc)) {
-				$this->message->setCc($this->getArrayAddress($this->addr_cc));
+				try {
+					$this->message->setCc($this->getArrayAddress($this->addr_cc));
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+				}
 			}
 			if (!empty($this->addr_bcc)) {
-				$this->message->setBcc($this->getArrayAddress($this->addr_bcc));
+				try {
+					$this->message->setBcc($this->getArrayAddress($this->addr_bcc));
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+				}
 			}
 			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
