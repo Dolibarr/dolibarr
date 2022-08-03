@@ -122,6 +122,12 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 {
 	global $conf;
 
+	if ($ruleforendofmonth == 1 && $duration_unit == 'y') {
+		// Transform 1 year in 12 months to solve leap years problem
+		$duration_value *= 12;
+		$duration_unit = 'm';
+	}
+
 	if ($duration_value == 0) {
 		return $time;
 	}
