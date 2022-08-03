@@ -923,6 +923,10 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 						// Remove the trick added to solve pb with text without parent tag
 						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
 						$out = preg_replace('/<\/div>$/', '', $out);
+						preg_match_all('/(<img)/', $out, $reg);
+						if (count($reg[0]) > (getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT") ? getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT") : 1000)) {
+							$out = '';
+						}
 					} catch (Exception $e) {
 						//print $e->getMessage();
 						return 'InvalidHTMLString';
