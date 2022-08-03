@@ -622,16 +622,18 @@ if (!function_exists('ftp_connect')) {
 		print '</div>';
 
 		print "</form>";
-
-		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
-		print '<input type="hidden" name="section" value="'.$section.'">';
-		print '<input type="hidden" name="action" value="uploadfile">';
-		print '<td><input type="file" class="flat"  name="userfile[]" multiple></td>';
-		print '<td></td>';
-		print '<td align="center"><button type="submit" class="butAction" name="uploadfile" value="'.$langs->trans("Save").'">'.$langs->trans("Upload").'</button></td>';
-		print '</form>';
+		if ($user->hasRight('ftp', 'write')) {
+			print load_fiche_titre($langs->trans("AttachANewFile"), null, null);
+			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
+			print '<input type="hidden" name="section" value="'.$section.'">';
+			print '<input type="hidden" name="action" value="uploadfile">';
+			print '<td><input type="file" class="flat"  name="userfile[]" multiple></td>';
+			print '<td></td>';
+			print '<td align="center"><button type="submit" class="butAction" name="uploadfile" value="'.$langs->trans("Save").'">'.$langs->trans("Upload").'</button></td>';
+			print '</form>';
+		}
 	} else {
 		$foundsetup = false;
 		$MAXFTP = 20;
