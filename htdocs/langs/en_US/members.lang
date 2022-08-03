@@ -18,6 +18,7 @@ MembershipResearchDescription=If this e-mail address has a former membership, we
 SearchExistingSubscriptionButtonLabel=Search if I am already member
 SetLinkToUser=Link to a Dolibarr user
 SetLinkToThirdParty=Link to a Dolibarr third party
+MemberCountersArePublic=Counters of valid members are public
 MembersCards=Generation of cards for members
 MembersList=List of members
 MembersListToValid=List of draft members (to be validated)

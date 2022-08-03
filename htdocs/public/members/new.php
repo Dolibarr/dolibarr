@@ -748,10 +748,14 @@ if ((!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NE
 	$cunits = new CUnits($db);
 	$units = $cunits->fetchAllAsObject();
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy";
+	$publiccounters = $conf->global->MEMBER_COUNTERS_ARE_PUBLIC;
+
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
-	$sql .= " AND d.statut=1";
+	$sql .= " AND d.statut=1 GROUP BY d.rowid";
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -767,6 +771,7 @@ if ((!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NE
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		if($publiccounters) print '<th class="center">'.$langs->trans("Members").'</th>';
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
 
@@ -812,6 +817,8 @@ if ((!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NE
 			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
+			$membercount = $objp->membercount>0? $objp->membercount: "–";
+			if($publiccounters) print '<td class="center">'.$membercount.'</td>';
 			print '<td class="center"><button class="button button-save reposition" name="typeid" type="submit" name="submit" value="'.$objp->rowid.'">'.$langs->trans("GetMembershipButtonLabel").'</button></td>';
 			print "</tr>";
 			$i++;
