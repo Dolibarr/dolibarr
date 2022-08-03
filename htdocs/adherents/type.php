@@ -233,9 +233,12 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration, COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
+	$sql .= " GROUP BY d.rowid";
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -277,6 +280,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
+		print '<th class="center">'.$langs->trans("Members").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
@@ -306,6 +310,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+			$membercount = $objp->membercount>0? $objp->membercount: "–";
+			print '<td>'.$membercount.'</td>';
 			print '<td class="center">';
 			if ($objp->morphy == 'phy') {
 				print $langs->trans("Physical");
