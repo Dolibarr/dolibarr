@@ -456,6 +456,16 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('02/02/1971 00:00', $result);
 
+		// Test the fix for leap years when adding months or years 
+		$result=dol_print_date(dol_time_plus_duree(dol_time_plus_duree($db->jdate('2024-02-29'), 12, 'm', 1), 2, 'y', 1), 'dayhour', true, $outputlangs);
+		$this->assertEquals('28/02/2027 00:00', $result);
+
+		$result=dol_print_date(dol_time_plus_duree(dol_time_plus_duree($db->jdate('2024-02-25'), 12, 'm', 1), 2, 'y', 1), 'dayhour', true, $outputlangs);
+		$this->assertEquals('25/02/2027 00:00', $result);
+
+		$result=dol_print_date(dol_time_plus_duree($db->jdate('2024-02-29'), 4, 'y', 1), 'dayhour', true, $outputlangs);
+		$this->assertEquals('29/02/2028 00:00', $result);
+
 		return $result;
 	}
 
