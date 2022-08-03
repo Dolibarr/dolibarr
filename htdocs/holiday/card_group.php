@@ -385,7 +385,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$errors[] = $langs->trans('ErrorEndDateCP');
 					break;
 				case 'SQL_Create':
-					$errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
+					$errors[] = $langs->trans('ErrorSQLCreateCP');
 					break;
 				case 'CantCreate':
 					$errors[] = $langs->trans('CantCreateCP');

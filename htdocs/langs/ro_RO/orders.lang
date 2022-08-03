@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=O comandă era deja deschisă legată de această ofertă comercială, așa că nicio altă comandă nu a fost creată automat
 OrdersArea=Comenzi clienţi
 SuppliersOrdersArea=Comenzi de achiziție
 OrderCard=Fişă Comandă

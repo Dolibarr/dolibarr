@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=您必須先設定會計項目表
 ErrorFailedToFindEmailTemplate=無法找到代號為 %s 的模板
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=未在服務中定義時間範圍.無法計算時薪.
 ErrorActionCommPropertyUserowneridNotDefined=需要用戶的擁有者
-ErrorActionCommBadType=選擇的事件類型（id：%n，代碼：%s）在事件類型分類中不存在
+ErrorActionCommBadType=選擇的事件類型（id：%s，代碼：%s）在事件類型分類中不存在
 CheckVersionFail=版本檢查失敗
 ErrorWrongFileName=檔案名稱中不可以有__SOMETHING__
 ErrorNotInDictionaryPaymentConditions=不在支付條款類別中，請修改。
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=僅在使用 HTTPS 安全連線時可用。
 WarningModuleXDisabledSoYouMayMissEventHere=模組 %s 尚未啟用。所以你可能會在這裡錯過很多事件。
 WarningPaypalPaymentNotCompatibleWithStrict=數值 'Strict' 使得線上支付功能無法正常工作。改用“Lax”。
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = 數值無效
 RequireAtLeastXString = 至少需要%s個字元
@@ -347,12 +342,3 @@ BadSetupOfField = 欄位設定錯誤
 BadSetupOfFieldClassNotFoundForValidation = 欄位設定錯誤:沒有發現可驗證的Class
 BadSetupOfFieldFileNotFound = 欄位設定錯誤:未找到要包含的檔案
 BadSetupOfFieldFetchNotCallable = 欄位設定錯誤:無法在Class上調用獲取
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

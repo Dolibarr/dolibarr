@@ -2339,7 +2339,7 @@ img.hideonsmartphone.pictoactionview {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
@@ -2402,6 +2402,10 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
 	object-fit: contain;
+}
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
 }
 
 img.photokanban, div.photokanban {
@@ -4729,9 +4733,8 @@ div#card-errors {
 .ui-dialog-content {
 	font-size: <?php print $fontsize; ?>px !important;
 }
-
-.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
 
 div#dialogforpopup {
@@ -4953,6 +4956,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '36px' : '50px') : '0'; ?>;
+	z-index: 1000;
 }
 
 .exampleapachesetup {
@@ -4988,6 +4992,7 @@ span[phptag] {
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -7026,7 +7031,7 @@ span.clipboardCPValueToPrint, div.clipboardCPValueToPrint {
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
-	display: inline-block;
+	display: inline-block;	/* this will be modifiy on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
 	color: transparent;
 	white-space: nowrap;
 	overflow-x: hidden;
@@ -7314,6 +7319,10 @@ div.clipboardCPValue.hidewithsize {
 
 	#dolpaymenttable {
 		padding: 5px;
+	}
+
+	.lilevel1 span.paddingright {
+		padding-right: 3px;
 	}
 }
 

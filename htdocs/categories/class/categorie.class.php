@@ -332,6 +332,7 @@ class Categorie extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) {
+			$this->error = "No category to search for";
 			return -1;
 		}
 		if (!is_null($type) && !is_numeric($type)) {
@@ -389,6 +390,7 @@ class Categorie extends CommonObject
 
 				return 1;
 			} else {
+				$this->error = "No category found";
 				return 0;
 			}
 		} else {
@@ -827,7 +829,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management' ...)
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset
@@ -1215,9 +1217,10 @@ class Categorie extends CommonObject
 		while ((empty($protection) || $i < $protection) && !empty($this->motherof[$cursor_categ])) {
 			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
 			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
-			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->motherof[$cursor_categ]]['label'].' >> '.$this->cats[$id_categ]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' >> '.$this->cats[$id_categ]['fulllabel'];
 			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
-			$i++; $cursor_categ = $this->motherof[$cursor_categ];
+			$i++;
+			$cursor_categ = $this->motherof[$cursor_categ];
 		}
 		//print 'Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].'<br>'."\n";
 

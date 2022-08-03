@@ -210,7 +210,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			} else {
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type).' paramkey='.htmlentities($key).' paramvalue='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]);
+				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type, ENT_COMPAT, 'UTF-8').' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8').' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8').' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
 				print $errormessage;
 				// Add entry into error log
 				if (function_exists('error_log')) {
@@ -573,7 +573,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -2413,7 +2413,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"activation" => !empty($conf->adherent->enabled) && $user->hasRight("adherent", "write"), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2421,7 +2421,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"activation" => !empty($conf->societe->enabled) && $user->hasRight("societe", "write"), // vs hooking
 				"position" => 10,
 			),
 			array(
@@ -2429,7 +2429,7 @@ function printDropdownQuickadd()
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"activation" => !empty($conf->societe->enabled) && $user->hasRight("societe", "contact", "write"), // vs hooking
 				"position" => 20,
 			),
 			array(
@@ -2437,7 +2437,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"activation" => !empty($conf->propal->enabled) && $user->hasRight("propale", "write"), // vs hooking
 				"position" => 30,
 			),
 
@@ -2446,7 +2446,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"activation" => !empty($conf->commande->enabled) && $user->hasRight("commande", "write"), // vs hooking
 				"position" => 40,
 			),
 			array(
@@ -2454,7 +2454,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->hasRight("facture", "write"), // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2462,7 +2462,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"activation" => !empty($conf->contrat->enabled) && $user->hasRight("contrat", "write"), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2470,7 +2470,7 @@ function printDropdownQuickadd()
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "supplier_proposal",
-				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->hasRight("supplier_invoice", "write"), // vs hooking
 				"position" => 70,
 			),
 			array(
@@ -2478,7 +2478,7 @@ function printDropdownQuickadd()
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "supplier_order",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "commande", "write")) || (!empty($conf->supplier_order->enabled) && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 80,
 			),
 			array(
@@ -2486,7 +2486,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "supplier_invoice",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "write")) || (!empty($conf->supplier_invoice->enabled) && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 90,
 			),
 			array(
@@ -2494,7 +2494,7 @@ function printDropdownQuickadd()
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
-				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"activation" => !empty($conf->product->enabled) && $user->hasRight("produit", "write"), // vs hooking
 				"position" => 100,
 			),
 			array(
@@ -2502,7 +2502,7 @@ function printDropdownQuickadd()
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
-				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"activation" => !empty($conf->service->enabled) && $user->hasRight("service", "write"), // vs hooking
 				"position" => 110,
 			),
 			array(
@@ -2510,7 +2510,7 @@ function printDropdownQuickadd()
 				"title" => "AddUser@users",
 				"name" => "User@users",
 				"picto" => "user",
-				"activation" => $user->rights->user->user->creer, // vs hooking
+				"activation" => $user->hasRight("user", "user", "write"), // vs hooking
 				"position" => 500,
 			),
 		),
@@ -2824,7 +2824,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {
-						$searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, $val['img']);
+						$searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', (empty($val['shortcut']) ? '' : $val['shortcut']), 'searchleft'.$key, $val['img']);
 					}
 				}
 			}
@@ -3370,7 +3370,7 @@ if (!function_exists("llxFooter")) {
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: 'notrequired' },	// for update
+												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3380,7 +3380,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: 'notrequired' },
+												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
 												});
 									  }
 								});

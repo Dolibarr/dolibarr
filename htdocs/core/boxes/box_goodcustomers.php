@@ -69,7 +69,7 @@ class box_goodcustomers extends ModeleBoxes
 			$this->enabled = 0; // not enabled by default. Very slow on large database
 		}
 
-		$this->hidden = !($user->rights->societe->lire);
+		$this->hidden = empty($user->rights->societe->lire);
 	}
 
 	/**

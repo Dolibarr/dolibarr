@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Η Javascript πρέπει να είναι άτομ
 ErrorPasswordsMustMatch=Και οι δύο πληκτρολογήσει τους κωδικούς πρόσβασης πρέπει να ταιριάζουν μεταξύ τους
 ErrorContactEMail=Παρουσιάστηκε τεχνικό σφάλμα. Παρακαλούμε, επικοινωνήστε με τον διαχειριστή με το ακόλουθο μήνυμα ηλεκτρονικού ταχυδρομείου <b>%s</b> και δώστε τον κωδικό σφάλματος <b>%s</b> στο μήνυμά σας ή προσθέστε ένα αντίγραφο οθόνης αυτής της σελίδας.
 ErrorWrongValueForField=Πεδίο <b>%s</b> : &#39; <b>%s</b> &#39; δεν ταιριάζει με τον κανόνα regex <b>%s</b>
+ErrorHtmlInjectionForField=Πεδίο <b>%s</b> : Η τιμή ' <b>%s</b>'  περιέχει κακόβουλα δεδομένα δεν επιτρέπεται
 ErrorFieldValueNotIn=Πεδίο <b>%s</b> : &#39; <b>%s</b> &#39; δεν είναι μια τιμή που βρέθηκε στο πεδίο <b>%s</b> του <b>%s</b>
 ErrorFieldRefNotIn=Πεδίο <b>%s</b> : &#39; <b>%s</b> &#39; δεν είναι <b>%s</b> υπάρχουσα αναφορά
 ErrorsOnXLines=βρέθηκαν σφάλματα %s
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Πρέπει πρώτα να ρυθμί
 ErrorFailedToFindEmailTemplate=Αδυναμία εύρεσης προτύπου με κωδικό όνομα %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Η διάρκεια δεν έχει οριστεί στην υπηρεσία. Δεν υπάρχει τρόπος υπολογισμού της ωριαίας τιμής.
 ErrorActionCommPropertyUserowneridNotDefined=Απαιτείται το owner id του χρήστη
-ErrorActionCommBadType=Ο επιλεγμένος τύπος συμβάντος (αναγνωριστικό: %n, κωδικός: %s) δεν υπάρχει στο λεξικό Τύπου συμβάντος
+ErrorActionCommBadType=Ο επιλεγμένος τύπος συμβάντος (αναγνωριστικό: %s, κωδικός: %s) δεν υπάρχει στο λεξικό Τύπου συμβάντος
 CheckVersionFail=Αποτυχία ελέγχου έκδοσης
 ErrorWrongFileName=Το όνομα του αρχείου δεν μπορεί να έχει __ΚΑΤΙ__ σε αυτό
 ErrorNotInDictionaryPaymentConditions=Δεν υπάρχει στο Λεξικό Όρων Πληρωμής, παρακαλώ τροποποιήστε.
@@ -285,8 +286,9 @@ ErrorPaymentInBothCurrency=Σφάλμα, όλα τα ποσά πρέπει να 
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Προσπαθείτε να πληρώσετε τιμολόγια στο νόμισμα %s από έναν λογαριασμό με το νόμισμα %s
 ErrorInvoiceLoadThirdParty=Δεν είναι δυνατή η φόρτωση αντικειμένου τρίτου μέρους για το τιμολόγιο "%s"
 ErrorInvoiceLoadThirdPartyKey=Το κλειδί τρίτου μέρους "%s" δεν έχει οριστεί για τιμολόγιο "%s"
-ErrorDeleteLineNotAllowedByObjectStatus=Η διαγραφή γραμμής δεν επιτρέπεται από την πραγματική κατάσταση του αντικειμένου
+ErrorDeleteLineNotAllowedByObjectStatus=Η διαγραφή γραμμής δεν επιτρέπεται από την τωρινή κατάσταση του αντικειμένου
 ErrorAjaxRequestFailed=To αίτημα AJAX απέτυχε
+ErrorThirpdartyOrMemberidIsMandatory=Τρίτο μέρος ή Μέλος της εταιρικής σχέσης είναι υποχρεωτικό
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτό δεν είναι μια σταθερή ρύθμιση.
@@ -321,12 +323,8 @@ WarningCreateSubAccounts=Προειδοποίηση, δεν μπορείτε ν�
 WarningAvailableOnlyForHTTPSServers=Διατίθεται μόνο εάν χρησιμοποιείτε ασφαλή σύνδεση HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=Η ενότητα %s δεν έχει ενεργοποιηθεί. Έτσι, μπορεί να χάσετε πολλές λειτουργίες.
 WarningPaypalPaymentNotCompatibleWithStrict=Η τιμή "Αυστηρή" κάνει τις λειτουργίες ηλεκτρονικής πληρωμής να μην λειτουργούν σωστά. Χρησιμοποιήστε την τιμη 'Lax' .
+WarningThemeForcedTo=Προειδοποίηση, έχει γίνει επιβολή του θέματος<b> %s </b> από την κρυφή σταθερά MAIN_FORCETEME
 
-<<<<<<< ΚΕΦΑΛΙΔΑ
-=======
-<<<<<<< ΚΕΦΑΛΙΔΑ
-<<<<<<< ΚΕΦΑΛΙΔΑ
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη
 RequireAtLeastXString = Απαιτεί τουλάχιστον %s χαρακτήρα(ες)
@@ -347,12 +345,3 @@ BadSetupOfField = Σφάλμα κακή ρύθμιση του πεδίου
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
-<<<<<<< ΚΕΦΑΛΙΔΑ
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

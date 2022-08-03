@@ -673,11 +673,10 @@ class Adherent extends CommonObject
 		$this->town = ($this->town ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 		$this->url = $this->url ?clean_url($this->url, 0) : '';
-
+		$this->setUpperOrLowerCase();
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");

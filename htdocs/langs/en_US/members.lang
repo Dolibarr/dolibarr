@@ -81,6 +81,7 @@ Subscription=Subscription
 AnyAmountWithAdvisedAmount=Any amount with a recommended amount of %s %s
 AnyAmountWithoutAdvisedAmount=Any amount
 CanEditAmountShort=Any amount
+CanEditAmountDetail=If yes, the type amount is only an advised amount and the member can pick a higher or lower amount (including free of charge subscription)
 CanEditAmountShortForValues=recommended, any amount
 MembershipDuration=Duration
 GetMembershipButtonLabel=Get membership

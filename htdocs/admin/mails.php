@@ -870,7 +870,7 @@ if ($action == 'edit') {
 		if (!empty($dnsinfo) && is_array($dnsinfo)) {
 			foreach ($dnsinfo as $info) {
 				if (strpos($info['txt'], 'v=spf') !== false) {
-					$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $info['txt']);
+					$text .= ($text ? '<br><br>' : '').$langs->trans("ActualMailSPFRecordFound", $companyemail, $info['txt']);
 				}
 			}
 		}

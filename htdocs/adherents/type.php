@@ -396,7 +396,7 @@ if ($action == 'create') {
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("CanEditAmountShort").'</td><td>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
 	print $form->selectyesno("caneditamount", 0, 1);
 	print '</td></tr>';
 
@@ -474,9 +474,9 @@ if ($rowid > 0) {
 		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("CanEditAmountShort").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
 		print yn($object->caneditamount);
-		print '</tr>';
+		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);

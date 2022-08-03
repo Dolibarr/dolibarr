@@ -3342,7 +3342,6 @@ class Form
 				}
 
 				$outref = $objp->ref;
-				$outval = '';
 				$outbarcode = $objp->barcode;
 				$outqty = 1;
 				$outdiscount = 0;
@@ -3523,48 +3522,52 @@ class Form
 					}
 				}
 
-				$opt = '<option value="'.$outkey.'"';
+				$optstart = '<option value="'.$outkey.'"';
 				if ($selected && $selected == $objp->idprodfournprice) {
-					$opt .= ' selected';
+					$optstart .= ' selected';
 				}
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) {
-					$opt .= ' disabled';
+					$optstart .= ' disabled';
 				}
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0) {
-					$opt .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
+					$optstart .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
 				}
-				$opt .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
-				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
-				$opt .= '>';
+				$optstart .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
 
-				$opt .= $optlabel;
-				$outval .= $outvallabel;
+				$outarrayentry = array(
+					'key' => $outkey,
+					'value' => $outref,
+					'label' => $outvallabel,
+					'qty' => $outqty,
+					'price_qty_ht' => price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
+					'price_unit_ht' => price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
+					'price_ht' => price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+					'tva_tx' => $objp->tva_tx,
+					'default_vat_code' => $objp->default_vat_code,
+					'discount' => $outdiscount,
+					'type' => $outtype,
+					'duration_value' => $outdurationvalue,
+					'duration_unit' => $outdurationunit,
+					'disabled' => (empty($objp->idprodfournprice) ? true : false),
+					'description' => $objp->description
+				);
 
-				$opt .= "</option>\n";
+				$parameters = array(
+					'objp' => &$objp,
+					'optstart' => &$optstart,
+					'optlabel' => &$optlabel,
+					'outvallabel' => &$outvallabel,
+					'outarrayentry' => &$outarrayentry
+				);
+				$reshook = $hookmanager->executeHooks('selectProduitsFournisseurListOption', $parameters, $this);
+
 
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
-				$out .= $opt;
-				array_push(
-					$outarray,
-					array('key'=>$outkey,
-						'value'=>$outref,
-						'label'=>$outval,
-						'qty'=>$outqty,
-						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
-						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
-						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
-						'tva_tx'=>$objp->tva_tx,
-						'default_vat_code'=>$objp->default_vat_code,
-						'discount'=>$outdiscount,
-						'type'=>$outtype,
-						'duration_value'=>$outdurationvalue,
-						'duration_unit'=>$outdurationunit,
-						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
-						'description'=>$objp->description
-					)
-				);
+				$out .= $optstart . ' data-html="'.dol_escape_htmltag($optlabel).'">' . $optlabel . "</option>\n";;
+				array_push($outarray, $outarrayentry);
+
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -4910,9 +4913,10 @@ class Form
 	 *     @param	string			$title       	   	Title
 	 *     @param	string			$question    	   	Question
 	 *     @param 	string			$action      	   	Action
-	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>))
-	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'select', 'multiselect', 'morecss', 'other' or 'onecolumn'...
-	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
+	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>'autofocus' or 'style=...'))
+	 *													'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'select', 'multiselect', 'morecss',
+	 *                                                  'other', 'onecolumn' or 'hidden'...
+	 * 	   @param  	int|string		$selectedchoice  	'' or 'no', or 'yes' or '1', 1, '0' or 0
 	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
@@ -8664,17 +8668,17 @@ class Form
 
 			$possiblelinks = array(
 				'propal'=>array(
-					'enabled'=>(!empty($conf->propal->enabled) ? $conf->propal->enabled : 0),
+					'enabled'=>isModEnabled('propal'),
 					'perms'=>1,
 					'label'=>'LinkToProposal',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
-        'shipping'=>array(
-          'enabled'=>$conf->expedition->enabled,
-          'perms'=>1,
-          'label'=>'LinkToExpedition',
-          'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('shipping').')'),
+				'shipping'=>array(
+					'enabled'=>isModEnabled('expedition'),
+					'perms'=>1,
+					'label'=>'LinkToExpedition',
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('shipping').')'),
 				'order'=>array(
-					'enabled'=>(!empty($conf->commande->enabled) ? $conf->commande->enabled : 0),
+					'enabled'=>isModEnabled('commande'),
 					'perms'=>1,
 					'label'=>'LinkToOrder',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
@@ -8689,14 +8693,14 @@ class Form
 					'label'=>'LinkToTemplateInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
-					'enabled'=>(!empty($conf->contrat->enabled) ? $conf->contrat->enabled : 0),
+					'enabled'=>isModEnabled('contrat'),
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
 							FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."contrat as t, ".$this->db->prefix()."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').') GROUP BY s.rowid, s.nom, s.client, t.rowid, t.ref, t.ref_customer, t.ref_supplier'
 				),
 				'fichinter'=>array(
-					'enabled'=>(!empty($conf->ficheinter->enabled) ? $conf->ficheinter->enabled : 0),
+					'enabled'=>isModEnabled('ficheinter'),
 					'perms'=>1,
 					'label'=>'LinkToIntervention',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
@@ -8715,12 +8719,12 @@ class Form
 					'perms'=>1, 'label'=>'LinkToSupplierInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
 				'ticket'=>array(
-					'enabled'=>(!empty($conf->ticket->enabled) ? $conf->ticket->enabled : 0),
+					'enabled'=>isModEnabled('ticket'),
 					'perms'=>1,
 					'label'=>'LinkToTicket',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')'),
 				'mo'=>array(
-					'enabled'=>(!empty($conf->mrp->enabled) ? $conf->mrp->enabled : 0),
+					'enabled'=>isModEnabled('mrp'),
 					'perms'=>1,
 					'label'=>'LinkToMo',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.rowid, '0' as total_ht FROM ".$this->db->prefix()."societe as s INNER JOIN ".$this->db->prefix()."mrp_mo as t ON t.fk_soc = s.rowid  WHERE  t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('mo').')')
@@ -9384,7 +9388,8 @@ class Form
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
-						$ret .= '<div class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'">'.img_picto('', 'company').'</div>';
+						$ret .= '<div class="divforspanimg photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'>'.img_picto('', 'company').'</div>';
+						$ret .= '<div class="difforspanimgright"></div>';
 					} else {
 						$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
 					}

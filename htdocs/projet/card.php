@@ -515,6 +515,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 
 	print dol_get_fiche_head();
@@ -563,7 +564,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td>';
 		print '<td>';
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
 			print '<script>';
@@ -577,24 +578,28 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							jQuery(".classuseopportunity").hide();
 						}
 					});
-				});';
+					';
+			if (GETPOSTISSET('usage_opportunity') && !GETPOST('usage_opportunity')) {
+				print 'jQuery(".classuseopportunity").hide();';
+			}
+			print '});';
 			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
+			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
 			print '<br>';
 		}
 		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') :'').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 		}
@@ -734,7 +739,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print '</form>';
 
-	// Change probability from status
+	// Change probability from status or role of project
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -744,7 +749,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
                 jQuery("#opp_percent").val(defaultpercent);
         	}
-        	/*init_myfunc();*/
+
+			/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
         		change_percent();
         	});
@@ -873,6 +879,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							jQuery(".classuseopportunity").hide();
 						}
 					});
+				';
+				print '
 				});';
 				print '</script>';
 				print '<br>';
@@ -1330,50 +1338,56 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				}
 			}
 
-			// Add button to create objects from project
+
 			if (!empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON)) {
+				print'<div class="dropdown inline-block">';
+				print'<a style="margin-right: auto;"class="dropdown-toggle butAction" data-toggle="dropdown">'.$langs->trans("Create").'</a>';
+				print '<div class="dropdown-menu">';
+				print '<div class="dropdown-global-search-button-list" >';
 				if (!empty($conf->propal->enabled) && $user->rights->propal->creer) {
 					$langs->load("propal");
-					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
 					$langs->load("orders");
-					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (isModEnabled('facture') && $user->rights->facture->creer) {
 					$langs->load("bills");
-					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
 					$langs->load("supplier_proposal");
-					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->supplier_order->enabled) && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 					$langs->load("suppliers");
-					print dolGetButtonAction('', $langs->trans('AddSupplierOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddSupplierOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->supplier_invoice->enabled) && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 					$langs->load("suppliers");
-					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
 					$langs->load("interventions");
-					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
 					$langs->load("contracts");
-					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
 					$langs->load("trips");
-					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
 				if (!empty($conf->don->enabled) && $user->rights->don->creer) {
 					$langs->load("donations");
-					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
+					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
+				print "</div>";
+				print "</div>";
+				print "</div>";
 			}
-
 			// Clone
 			if ($user->rights->projet->creer) {
 				if ($userWrite > 0) {

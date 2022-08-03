@@ -115,7 +115,7 @@ class Stripe extends CommonObject
 				$tokenstring = $obj->tokenstring;
 
 				$tmparray = json_decode($tokenstring);
-				$key = $tmparray->stripe_user_id;
+				$key = empty($tmparray->stripe_user_id) ? '' : $tmparray->stripe_user_id;
 			} else {
 				$tokenstring = '';
 			}
@@ -642,9 +642,6 @@ class Stripe extends CommonObject
 			}
 			if (!empty($conf->global->STRIPE_BANCONTACT)) {
 				$paymentmethodtypes[] = "bancontact";
-			}
-			if (!empty($conf->global->STRIPE_KLARNA)) {
-				$paymentmethodtypes[] = "klarna";
 			}
 			if (!empty($conf->global->STRIPE_IDEAL)) {
 				$paymentmethodtypes[] = "ideal";

@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Primeiro debe configurar o seu plan de 
 ErrorFailedToFindEmailTemplate=Fallo ao atopar o modelo co nome de código %s 
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración non definida no servizo. Non hai forma de calcular o prezo por hora. 
 ErrorActionCommPropertyUserowneridNotDefined=É preciso o supervisor do usuario
-ErrorActionCommBadType=O tipo de evento seleccionado (id: %n, código: %s) non existe no diccionario Tipo de Evento
+ErrorActionCommBadType=O tipo de evento seleccionado (id: %s, código: %s) non existe no diccionario Tipo de Evento
 CheckVersionFail=Fallou a comprobación da versión
 ErrorWrongFileName=O nome do ficheiro non pode conte  __SOMETHING__ nel
 ErrorNotInDictionaryPaymentConditions=Non está no Dicionario de Condicións de Pagamento. Modifíqueo. 
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Dispoñible só se usa conexión segura HTTP
 WarningModuleXDisabledSoYouMayMissEventHere=Non foi activado o módulo %s . Pode que perda moitos eventos aquí
 WarningPaypalPaymentNotCompatibleWithStrict=O valor "Estricto" fai que as funcións de pago en liña non funcionen correctamente. Use "Laxo" no seu lugar. 
 
-<<<<<<< CABECEIRA
-=======
-<<<<<<< CABECEIRA
-<<<<<<< CABECEIRA
->>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor non válido
 RequireAtLeastXString = Require polo menos %s caracter(es)
@@ -347,12 +342,3 @@ BadSetupOfField = Erro de configuración do campo
 BadSetupOfFieldClassNotFoundForValidation = Erro de configuración do campo: Non se atopou a clase para validación 
 BadSetupOfFieldFileNotFound = Erro de configuración do campo: Non se atopou o ficheiro para a súa inclusión 
 BadSetupOfFieldFetchNotCallable = Erro de configuración do campo: A recuperación non se pode chamar na clase
-<<<<<<< CABECEIRA
-=======
-=======
-=======
->>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
->>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git
->>>>>>> rama '15.0' de git@github.com:Dolibarr/dolibarr.git

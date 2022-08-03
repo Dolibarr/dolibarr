@@ -176,7 +176,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
  * @param	int		$amount		Amount of money to request for
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type, $ref, $amount='9.99')
+function showOnlinePaymentUrl($type, $ref, $amount = '9.99')
 {
 	global $langs;
 
@@ -203,7 +203,7 @@ function showOnlinePaymentUrl($type, $ref, $amount='9.99')
  * @param	int		$amount		Amount of money to request for
  * @return	string			Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount='9.99')
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = '9.99')
 {
 	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$label = $label ? $label : $url;

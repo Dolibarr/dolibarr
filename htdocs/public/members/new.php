@@ -743,8 +743,7 @@ if ((!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NE
 	print "</form>\n";
 	print "<br>";
 	print '</div></div>';
-}
-else {  // Show the table of membership types
+} else {  // Show the table of membership types
 	// Get units
 	$cunits = new CUnits($db);
 	$units = $cunits->fetchAllAsObject();

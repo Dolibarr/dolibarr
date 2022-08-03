@@ -224,6 +224,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
+%_datadir/dolibarr/htdocs/webhook
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/workstation

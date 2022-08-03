@@ -609,7 +609,11 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'd.amount';
 		}
-		$totalarray['val']['d.amount'] += $obj->subscription;
+		if (empty($totalarray['val']['d.amount'])) {
+			$totalarray['val']['d.amount'] = $obj->subscription;
+		} else {
+			$totalarray['val']['d.amount'] += $obj->subscription;
+		}
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
