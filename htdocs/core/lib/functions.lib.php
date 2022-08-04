@@ -10420,6 +10420,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
  *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
  *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
+ * 						 	'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
  *                          ],
  *                          ]
  * // phpcs:enable
@@ -10439,7 +10440,6 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 		}
 	}
-
 	$attr = array(
 		'class' => $class,
 		'href' => empty($url) ? '' : $url,
