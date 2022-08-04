@@ -147,7 +147,8 @@ if ($action == 'presend') {
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid = $trackid;
+	$formmail->trackid = empty($trackid) ? '' : $trackid;
+	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
 
 	// Fill list of recipient with email inside <>.

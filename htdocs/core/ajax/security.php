@@ -42,6 +42,9 @@ if (!defined('NOREQUIRETRAN')) {
 
 require '../../main.inc.php';
 
+$action = GETPOST('action');
+
+
 /*
  * View
  */
@@ -52,10 +55,10 @@ top_httphead();
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if (isset($_GET['action']) && !empty($_GET['action'])) {
-	if ($_GET['action'] == 'getrandompassword' && ($user->admin || $user->rights->api->apikey->generate)) {
+if ($action) {
+	if ($action == 'getrandompassword' && ($user->admin || $user->rights->api->apikey->generate)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$generic = $_GET['generic'] ? true : false;
+		$generic = GETPOST('generic') ? true : false;
 		echo getRandomPassword($generic);
 	}
 }

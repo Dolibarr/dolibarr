@@ -112,6 +112,7 @@ if ($action == 'validate_movements_confirm' && !empty($user->rights->accounting-
 	}
 }
 
+
 /*
  * View
  */
@@ -178,20 +179,40 @@ for ($i = 1; $i <= 12; $i++) {
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-$sql = "SELECT COUNT(b.rowid) as detail,";
-for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
+if (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+	// TODO Analyse is done by finding record not into a closed period
+	$sql = "SELECT COUNT(b.rowid) as detail,";
+	for ($i = 1; $i <= 12; $i++) {
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		if ($j > 12) {
+			$j -= 12;
+		}
+		$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
-	$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	$sql .= " COUNT(b.rowid) as total";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
+	$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
+	$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
+	// Loop on each closed period
+	$sql .= " AND b.doc_date BETWEEN 0 AND 0";
+} else {
+	// Analyse closed record using the unitary flag/date on each record
+	$sql = "SELECT COUNT(b.rowid) as detail,";
+	for ($i = 1; $i <= 12; $i++) {
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
+		if ($j > 12) {
+			$j -= 12;
+		}
+		$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+	}
+	$sql .= " COUNT(b.rowid) as total";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+	$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
+	$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
+	$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
+	$sql .= " AND date_validated IS NULL";
 }
-$sql .= " COUNT(b.rowid) as total";
-$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
-$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
-$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
-$sql .= " AND date_validated IS NULL";
 
 dol_syslog('htdocs/accountancy/closure/index.php', LOG_DEBUG);
 $resql = $db->query($sql);

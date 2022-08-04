@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= ID do módulo
 ModuleBuilderDesc=Esta ferramenta só debe ser utilizada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. A documentación para o desenvolvemento <a href="%s" target="_blank" rel="noopener noreferrer">manual alternativo está aquí</a>
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicación que quere crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MeuMódulo, TendaComercioElectrónico, SincronizarMeuSistema...)
 EnterNameOfObjectDesc=Introduza o nome do obxecto a crear sen espazos. Use maiúsculas para separar palabras (Por exemplo: O meu obxecto, Alumno, Profesor...). Xeraranse o ficheiro de clase CRUD, pero tamén o ficheiro API, páxinas para listar/engadir/editar/eliminar obxectos e ficheiros SQL.
@@ -9,6 +10,7 @@ ModuleBuilderDesc4=Detéctase un módulo como "editable" cando o ficheiro <stron
 NewModule=Novo
 NewObjectInModulebuilder=Novo obxecto
 NewDictionary=Novo dicionario
+ModuleName=Nome do módulo
 ModuleKey=Chave de módulo
 ObjectKey=Chave do obxecto
 DicKey=Chave do dicionario
@@ -153,3 +155,4 @@ LinkToParentMenu=Menú principal (fk_xxxxmenu)
 ListOfTabsEntries=Lista de entradas de pestanas
 TabsDefDesc=Defina aquí as pestanas que proporciona o seu módulo
 TabsDefDescTooltip=As pestanas proporcionadas polo seu módulo/aplicación defínense na matriz <strong> $this->tabs </strong> no ficheiro descritor do módulo. Pode editar este ficheiro manualmente ou usar o editor incorporado.
+BadValueForType=Valor incorrecto para o tipo %s

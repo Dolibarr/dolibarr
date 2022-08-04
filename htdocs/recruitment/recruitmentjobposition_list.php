@@ -216,7 +216,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_RecruitmentJobPosition|FR:Module_RecruitmentJobPosition_FR|ES:Módulo_RecruitmentJobPosition";
 $help_url = '';
-$title = $langs->trans('ListOfPositionsToBeFilled');
+$title = $langs->trans('PositionsToBeFilled');
 $morejs = array();
 $morecss = array();
 

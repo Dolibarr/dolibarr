@@ -548,9 +548,8 @@ if (empty($reshook)) {
 			}
 			//var_dump($object->array_languages);exit;
 
-			if (GETPOST('deletephoto')) {
-				$object->logo = '';
-			} elseif (!empty($_FILES['photo']['name'])) {
+			if (!empty($_FILES['photo']['name'])) {
+				$current_logo = $object->logo;
 				$object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
 
@@ -801,6 +800,13 @@ if (empty($reshook)) {
 				}
 				if ($file_OK) {
 					if (image_format_supported($_FILES['photo']['name']) > 0) {
+						if ($current_logo != $object->logo) {
+							$fileimg = $dir.'/'.$current_logo;
+							$dirthumbs = $dir.'/thumbs';
+							dol_delete_file($fileimg);
+							dol_delete_dir_recursive($dirthumbs);
+						}
+
 						dol_mkdir($dir);
 
 						if (@is_dir($dir)) {
@@ -2520,7 +2526,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$maxfilesizearray = getMaxFileSizeArray();
 				$maxmin = $maxfilesizearray['maxmin'];
 				if ($maxmin > 0) {
-					$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+					print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 				}
 				print '<input type="file" class="flat" name="photo" id="photoinput">';
 				print '</td></tr>';

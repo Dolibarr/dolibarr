@@ -111,12 +111,13 @@ class EmailCollector extends CommonObject
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax250'),
+		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1', 'csslist'=>'tdoverflowmax200'),
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector', 'csslist'=>'tdoverflowmax150'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'csslist'=>'small'),
 		'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com', 'csslist'=>'tdoverflow125'),
-		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)'),
-		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
+		'port'          => array('type'=>'varchar(10)', 'label'=>'EMailHostPort', 'visible'=>1, 'enabled'=>1, 'position'=>91, 'notnull'=>1, 'searchall'=>0, 'comment'=>"IMAP server port", 'help'=>'Example: 993', 'csslist'=>'tdoverflow125', 'default'=>'993'),
+		'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>92, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)', 'default'=>'UTF-8'),
+		'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>-1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
 		'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
 		'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
 		//'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -193,6 +194,7 @@ class EmailCollector extends CommonObject
 
 
 	public $host;
+	public $port;
 	public $hostcharset;
 	public $login;
 	public $password;
@@ -746,7 +748,7 @@ class EmailCollector extends CommonObject
 			$flags .= '/authuser='.$partofauth[0].'/user='.$partofauth[1];
 		}
 
-		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
+		$connectstringserver = '{'.$this->host.':'.$this->port.$flags.'}';
 
 		return $connectstringserver;
 	}
@@ -1854,8 +1856,8 @@ class EmailCollector extends CommonObject
 							$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 							$actioncomm->note_private = $descriptionfull;
 							$actioncomm->fk_project  = $projectstatic->id;
-							$actioncomm->datep       = $date;
-							$actioncomm->datef       = $date;
+							$actioncomm->datep       = $date;	// date of email
+							$actioncomm->datef       = $date;	// date of email
 							$actioncomm->percentage  = -1; // Not applicable
 							$actioncomm->socid       = $thirdpartystatic->id;
 							$actioncomm->contact_id = $contactstatic->id;
@@ -2102,7 +2104,7 @@ class EmailCollector extends CommonObject
 							$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
 							$projecttocreate->title = $subject;
-							$projecttocreate->date_start = $date;
+							$projecttocreate->date_start = $date;	// date of email
 							$projecttocreate->date_end = '';
 							$projecttocreate->opp_status = $id_opp_status;
 							$projecttocreate->opp_percent = $percent_opp_status;
@@ -2210,12 +2212,13 @@ class EmailCollector extends CommonObject
 							$tickettocreate->severity_code = (!empty($conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE) ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
 							$tickettocreate->origin_email = $from;
 							$tickettocreate->fk_user_create = $user->id;
-							$tickettocreate->datec = $date;
+							$tickettocreate->datec = dol_now();
 							$tickettocreate->fk_project = $projectstatic->id;
 							$tickettocreate->notify_tiers_at_create = 0;
 							$tickettocreate->note_private = $descriptionfull;
 							$tickettocreate->entity = $conf->entity;
 							$tickettocreate->email_msgid = $msgid;
+							$tickettocreate->email_date = $date;
 							//$tickettocreate->fk_contact = $contactstatic->id;
 
 							$savesocid = $tickettocreate->socid;
@@ -2310,12 +2313,13 @@ class EmailCollector extends CommonObject
 							$candidaturetocreate->email = $from;
 							//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
 							$candidaturetocreate->fk_user_creat = $user->id;
-							$candidaturetocreate->date_creation = $date;
+							$candidaturetocreate->date_creation = dol_now();
 							$candidaturetocreate->fk_project = $projectstatic->id;
 							$candidaturetocreate->description = $description;
 							$candidaturetocreate->note_private = $descriptionfull;
 							$candidaturetocreate->entity = $conf->entity;
 							$candidaturetocreate->email_msgid = $msgid;
+							$candidaturetocreate->email_date = $date;		// date of email
 							$candidaturetocreate->status = $candidaturetocreate::STATUS_DRAFT;
 							//$candidaturetocreate->fk_contact = $contactstatic->id;
 

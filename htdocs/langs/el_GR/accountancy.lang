@@ -3,7 +3,7 @@ Accountancy=Λογιστική
 Accounting=Λογιστική
 ACCOUNTING_EXPORT_SEPARATORCSV=Διαχωριστικό στηλών για το αρχείο που θα εξαχθεί
 ACCOUNTING_EXPORT_DATE=Μορφή ημερομηνίας για το αρχείο που θα εξαχθεί
-ACCOUNTING_EXPORT_PIECE=Εξαγωγή του αριθμού διακανονισμού
+ACCOUNTING_EXPORT_PIECE=Εξαγωγή του αριθμού καταχώρησης
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Εξαγωγή με καθολικό λογαριασμό
 ACCOUNTING_EXPORT_LABEL=Εξαγωγή ετικέτας
 ACCOUNTING_EXPORT_AMOUNT=Εξαγωγή ποσού
@@ -48,8 +48,9 @@ CountriesNotInEEC=Χώρες που δεν ανήκουν στην Ε.Ε.
 CountriesInEECExceptMe=Χώρες στην Ε.Ε. εκτός από %s
 CountriesExceptMe=Όλες οι χώρες εκτός από %s
 AccountantFiles=Εξαγωγή εγγράφων προέλευσης
-ExportAccountingSourceDocHelp=Με αυτό το εργαλείο, μπορείτε να εξαγάγετε τα συμβάντα (λίστα σε CSV και PDF) που χρησιμοποιούνται για τη δημιουργία της λογιστικής σας.
+ExportAccountingSourceDocHelp=Με αυτό το εργαλείο, μπορείτε να αναζητήσετε και να εξαγάγετε τα συμβάντα πηγής που χρησιμοποιούνται για τη δημιουργία της λογιστικής σας. <br> Το εξαγόμενο αρχείο ZIP θα περιέχει τις λίστες των ζητούμενων στοιχείων σε CSV, καθώς και τα συνημμένα αρχεία τους στην αρχική τους μορφή (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Για να εξαγάγετε τα ημερολόγια σας, χρησιμοποιήστε την καταχώριση μενού %s - %s.
+ExportAccountingProjectHelp=Προσδιορίστε ένα έργο εάν χρειάζεστε μια λογιστική αναφορά μόνο για ένα συγκεκριμένο έργο. Οι εκθέσεις δαπανών και οι πληρωμές δανείων δεν περιλαμβάνονται στις αναφορές του έργου.
 VueByAccountAccounting=Προβολή ανά λογαριασμό λογιστικής
 VueBySubAccountAccounting=Προβολή ανά λογιστικό υπολογαριασμό
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Απενεργοποίηση άμεσης καταγρ
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ενεργοποίηση προσχεδίου εξαγωγής στο ημερολόγιο
 ACCOUNTANCY_COMBO_FOR_AUX=Ενεργοποίηση σύνθετης λίστας για θυγατρικό λογαριασμό (ενδέχεται να είναι αργή εάν έχετε πολλά τρίτα μέρη, διακοπή της δυνατότητας αναζήτησης σε ένα μέρος της αξίας)
 ACCOUNTING_DATE_START_BINDING=Καθορίστε ημερομηνία έναρξης δεσμεύσεων & μεταφοράς στη λογιστική. Κάτω από αυτή την ημερομηνία, οι συναλλαγές δεν θα μεταφερθούν στο λογιστικό.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Κατά τη μεταφορά λογιστικού, επιλέξτε εμφάνιση περιόδου από προεπιλογή
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Στο λογιστικό έμβασμα, ποια είναι η προεπιλεγμένη περίοδος
 
 ACCOUNTING_SELL_JOURNAL=Ημερολόγιο πωλήσεων
 ACCOUNTING_PURCHASE_JOURNAL=Ημερολόγιο αγορών
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για τ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για την εγγραφή συνδρομών
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Λογιστικός λογαριασμός από προεπιλογή για εγγραφή κατάθεσης πελάτη
-UseAuxiliaryAccountOnCustomerDeposit=Χρησιμοποιήστε δευτερεύοντες λογαριασμούς στις γραμμές καταθέσεων πελατών
+UseAuxiliaryAccountOnCustomerDeposit=Αποθηκεύστε τον λογαριασμό πελάτη ως ατομικό λογαριασμό στο καθολικό θυγατρικής για γραμμές προκαταβολών (εάν απενεργοποιηθεί, ο ατομικός λογαριασμός για τις γραμμές προκαταβολών θα παραμείνει κενός)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Λογαριασμός λογιστικής από προεπιλογή για τα αγορασμένα προϊόντα (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Λογαριασμός από προεπιλογή για τα προϊόντα που αγοράστηκαν στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
@@ -300,7 +301,7 @@ ListOfProductsWithoutAccountingAccount=Κατάλογος προϊόντων π�
 ChangeBinding=Αλλάξτε τη σύνδεση
 Accounted=Καταχωρήθηκε στο καθολικό
 NotYetAccounted=Δεν έχει μεταφερθεί ακόμη στη λογιστική
-ShowTutorial=Εμφάνιση εκπαιδευτικού προγράμματος
+ShowTutorial=Εμφάνιση Οδηγού
 NotReconciled=Δεν ταιριάζουν
 WarningRecordWithoutSubledgerAreExcluded=Προειδοποίηση, όλες οι γραμμές χωρίς καθορισμένο λογαριασμό βοηθητικού καθολικού  φιλτράρονται και εξαιρούνται από αυτήν την προβολή
 AccountRemovedFromCurrentChartOfAccount=Λογαριασμός λογιστικής που δεν υπάρχει στο τρέχον λογιστικό σχέδιο
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Απενεργοποίηση δέσ
 
 ## Export
 NotifiedExportDate=Επισημάνετε τις εξαγόμενες γραμμές ως Εξαγόμενες <span class="warning"> (για να τροποποιήσετε μια γραμμή, θα χρειαστεί να διαγράψετε ολόκληρη τη συναλλαγή και να τη μεταφέρετε ξανά στη λογιστική) </span>
-NotifiedValidationDate=Επικύρωση και Κλείδωμα των εξαγόμενων καταχωρήσεων <span class="warning"> (το ίδιο αποτέλεσμα με τη λειτουργία "Κλείσιμο", η τροποποίηση και η διαγραφή των γραμμών ΣΙΓΟΥΡΑ δεν θα είναι δυνατή) </span>
+NotifiedValidationDate=Επικύρωση και Κλείδωμα των εξαγόμενων καταχωρήσεων <span class="warning"> (το ίδιο αποτέλεσμα με τη δυνατότητα "%s", η τροποποίηση και η διαγραφή των γραμμών ΣΙΓΟΥΡΑ δεν θα είναι δυνατή) </span>
 DateValidationAndLock=Ημερομηνία επικύρωσης και κλειδώματος
 ConfirmExportFile=Επιβεβαίωση δημιουργίας του λογιστικού αρχείου εξαγωγής ;
 ExportDraftJournal=Εξαγωγή σχεδίου περιοδικού
@@ -350,7 +351,7 @@ Modelcsv_agiris=Εξαγωγή για Agiris Isacompta
 Modelcsv_LDCompta=Εξαγωγή για LD Compta (v9) (Δοκιμή)
 Modelcsv_LDCompta10=Εξαγωγή για LD Compta (v10 και άνω)
 Modelcsv_openconcerto=Εξαγωγή για OpenConcerto (Test)
-Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
+Modelcsv_configurable=Εξαγωγή CSV με δυνατότητα διαμόρφωσης
 Modelcsv_FEC=Εξαγωγή FEC
 Modelcsv_FEC2=Εξαγωγή FEC (Με γραφή δημιουργίας ημερομηνιών/αντιστροφή εγγράφου)
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
@@ -361,12 +362,12 @@ Modelcsv_charlemagne=Εξαγωγή για το Aplim Charlemagne
 ChartofaccountsId=Λογαριασμός Id
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Λογιστική αρχής
+InitAccountancy=Έναρξη λογιστικής
 InitAccountancyDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για την προετοιμασία ενός λογαριασμού λογιστικής σε προϊόντα και υπηρεσίες που δεν έχουν λογιστικό λογαριασμό που καθορίζεται για τις πωλήσεις και τις αγορές.
 DefaultBindingDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για τον ορισμό ενός προεπιλεγμένου λογαριασμού που θα χρησιμοποιηθεί για να συνδέσει τις εγγραφές συναλλαγών σχετικά με τους μισθούς πληρωμής, τη δωρεά, τους φόρους και τις δεξαμενές όταν δεν έχει ήδη καθοριστεί συγκεκριμένος λογαριασμός λογιστικής.
 DefaultClosureDesc=Αυτή η σελίδα μπορεί να χρησιμοποιηθεί για να ορίσετε τις παραμέτρους που χρησιμοποιούνται για τα λογιστικά κλεισίματα.
 Options=Επιλογές
-OptionModeProductSell=Κατάσταση πωλήσεων
+OptionModeProductSell=Λειτουργία πωλήσεων
 OptionModeProductSellIntra=Mode πωλήσεις που εξάγονται στην ΕΟΚ
 OptionModeProductSellExport=Mode πωλήσεις που εξάγονται σε άλλες χώρες
 OptionModeProductBuy=Κατάσταση αγορών
@@ -379,11 +380,11 @@ OptionModeProductBuyDesc=Εμφάνιση όλων των προϊόντων μ�
 OptionModeProductBuyIntraDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για αγορές σε ΕΟΚ.
 OptionModeProductBuyExportDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για άλλες αγορές στο εξωτερικό.
 CleanFixHistory=Αφαιρέστε τον κωδικό λογιστικής από γραμμές που δεν υπάρχουν στο λογιστικό σχέδιο
-CleanHistory=Επαναφέρετε όλες τις συνδέσεις για το επιλεγμένο έτος
+CleanHistory=Επαναφέρετε όλες τις δεσμεύσεις για το επιλεγμένο έτος
 PredefinedGroups=Προκαθορισμένες ομάδες
 WithoutValidAccount=Χωρίς έγκυρο αποκλειστικό λογαριασμό
 WithValidAccount=Με έγκυρο αποκλειστικό λογαριασμό
-ValueNotIntoChartOfAccount=Αυτή η αξία του λογαριασμού λογιστικής δεν υπάρχει στο λογαριασμό λογαριασμού
+ValueNotIntoChartOfAccount=Αυτή η αξία λογιστικού λογαριασμού δεν υπάρχει στο λογιστικό σχέδιο
 AccountRemovedFromGroup=Ο λογαριασμός αφαιρέθηκε από την ομάδα
 SaleLocal=Τοπική πώληση
 SaleExport=Εξαγωγική πώληση
@@ -427,20 +428,21 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Λυ
 AccountancyErrorMismatchLetterCode=Αναντιστοιχία στον κώδικα συμφιλίωσης
 AccountancyErrorMismatchBalanceAmount=Το υπόλοιπο (%s) δεν είναι ίσο με 0
 AccountancyErrorLetteringBookkeeping=Παρουσιάστηκαν σφάλματα σχετικά με τις συναλλαγές: %s
+ErrorAccountNumberAlreadyExists=Ο λογιστικός αριθμός %s υπάρχει ήδη
 
 ## Import
 ImportAccountingEntries=Λογιστικές εγγραφές
 ImportAccountingEntriesFECFormat=Λογιστικές εγγραφές - Μορφή FEC
 FECFormatJournalCode=Kώδικας ημερολογίου (JournalCode)
 FECFormatJournalLabel=Ετικέτα ημερολογίου (JournalLib)
-FECFormatEntryNum=Αριθμός τεμαχίου (EcritureNum)
-FECFormatEntryDate=Ημερομηνία τεμαχίου (EcritureDate)
+FECFormatEntryNum=Αριθμός καταχώρησης (EcritureNum)
+FECFormatEntryDate=Ημερομηνία καταχώρησης (EcritureDate)
 FECFormatGeneralAccountNumber=Γενικός αριθμός λογαριασμού (CompteNum)
 FECFormatGeneralAccountLabel=Γενική ετικέτα λογαριασμού (CompteLib)
 FECFormatSubledgerAccountNumber=Αριθμός λογαριασμού Βοηθητικού καθολικού (CompAuxNum)
 FECFormatSubledgerAccountLabel=Αριθμός λογαριασμού Βοηθητικού καθολικού (CompAuxLib)
-FECFormatPieceRef=Αναφορά τεμαχίου (PieceRef)
-FECFormatPieceDate=Δημιουργία ημερομηνίας τεμαχίου (PieceDate)
+FECFormatPieceRef=Αναφορά καταχώρησης (PieceRef)
+FECFormatPieceDate=Δημιουργία ημερομηνίας καταχώρησης (PieceDate)
 FECFormatLabelOperation=Λειτουργία ετικέτας (EcritureLib)
 FECFormatDebit=Χρεωστική (Χρεωστική)
 FECFormatCredit=Πίστωση (Πίστωση)

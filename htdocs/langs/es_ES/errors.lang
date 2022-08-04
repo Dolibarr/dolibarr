@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Primero debe configurar su plan de cuen
 ErrorFailedToFindEmailTemplate=No se pudo encontrar la plantilla con el nombre de código %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración no definida en el servicio. No hay forma de calcular el precio por hora.
 ErrorActionCommPropertyUserowneridNotDefined=Se requiere el propietario del usuario
-ErrorActionCommBadType=El tipo de evento seleccionado (id: %n, código: %s) no existe en el diccionario de tipo de evento
+ErrorActionCommBadType=El tipo de evento seleccionado (id: %s, código: %s) no existe en el diccionario de tipo de evento
 CheckVersionFail=Error de verificación de versión
 ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de pago, modifíquelo.
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Disponible solo si usa una conexión segura 
 WarningModuleXDisabledSoYouMayMissEventHere=El módulo %s no se ha habilitado. Así que puede perderse muchos eventos aquí.
 WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las funciones de pago en línea no funcionen correctamente. Utilice 'Lax' en su lugar.
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor no válido
 RequireAtLeastXString = Requiere al menos %s carácter(es)
@@ -347,12 +342,3 @@ BadSetupOfField = Error de configuración incorrecta del campo
 BadSetupOfFieldClassNotFoundForValidation = Error de configuración incorrecta del campo: clase no encontrada para validación
 BadSetupOfFieldFileNotFound = Error de configuración incorrecta del campo: no se encontró el archivo para su inclusión
 BadSetupOfFieldFetchNotCallable = Error de configuración incorrecta del campo: la recuperación no se puede llamar en la clase
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

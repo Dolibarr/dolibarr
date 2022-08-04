@@ -20,7 +20,5 @@ TOKEN_EXPIRED=Token vencido
 TOKEN_EXPIRE_AT=Token expira no
 TOKEN_DELETE=Excluir token salvo
 OAUTH_GOOGLE_NAME=Serviço do Google OAuth
-OAUTH_GOOGLE_DESC=Ir para <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta página e</a> depois "Credenciais" para criar credenciais do OAuth
 OAUTH_GITHUB_NAME=Serviço OAuth GitHub
 OAUTH_GITHUB_SECRET=OAuth GitHub secreto
-OAUTH_GITHUB_DESC=Vá para <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> e, em seguida, "Registrar um novo aplicativo" para criar credenciais do OAuth

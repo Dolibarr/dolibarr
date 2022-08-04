@@ -162,7 +162,7 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>107),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>107),
 	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -336,7 +336,7 @@ $sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effectiv
 $sql .= " t.description, t.fk_task_parent";
 $sql .= " ,t.budget_amount";
 // We'll need these fields in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", cs.fk_categorie, cs.fk_project";
 }
 // Add sum fields
@@ -356,7 +356,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 // We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ)) {
+if ($search_categ > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -1290,9 +1290,12 @@ while ($i < $imaxinloop) {
 					$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 				}
 			}
+			// Budget for task
 			if (!empty($arrayfields['t.budget_amount']['checked'])) {
 				print '<td class="center">';
-				print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+				if ($object->budget_amount) {
+					print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

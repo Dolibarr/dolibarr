@@ -120,9 +120,9 @@ $usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreat
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->send)));
 
-$usercancreateorder = $user->rights->commande->creer;
-$usercancreateinvoice = $user->rights->facture->creer;
-$usercancreatecontract = $user->rights->contrat->creer;
+$usercancreateorder = $user->hasRight('commande', 'creer');
+$usercancreateinvoice = $user->hasRight('facture', 'creer');
+$usercancreatecontract = $user->hasRight('contrat', 'creer');
 $usercancreateintervention = $user->hasRight('ficheinter', 'creer');
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 

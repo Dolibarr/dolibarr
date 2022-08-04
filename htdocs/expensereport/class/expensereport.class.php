@@ -129,6 +129,10 @@ class ExpenseReport extends CommonObject
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
+	public $statuts = array();
+	public $statuts_short = array();
+	public $statuts_logo;
+
 
 	/**
 	 * Draft status
