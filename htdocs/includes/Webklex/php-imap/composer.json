@@ -1,0 +1,55 @@
+{
+    "name": "webklex/php-imap",
+    "type": "library",
+    "description": "PHP IMAP client",
+    "keywords": [
+        "webklex",
+        "imap",
+        "pop3",
+        "php-imap",
+        "mail"
+    ],
+    "homepage": "https://github.com/webklex/php-imap",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Malte Goldenbaum",
+            "email": "github@webklex.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ext-openssl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-iconv": "*",
+        "ext-fileinfo": "*",
+        "nesbot/carbon": ">=1.0",
+        "symfony/http-foundation": ">=2.8.0",
+        "illuminate/pagination": ">=5.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webklex\\PHPIMAP\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
