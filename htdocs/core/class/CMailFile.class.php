@@ -470,12 +470,12 @@ class CMailFile
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
 						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom) {
-							$result = $this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
+							$this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
 						} else {
-							$result = $this->message->setFrom($this->getArrayAddress($this->addr_from));
+							$this->message->setFrom($this->getArrayAddress($this->addr_from));
 						}
 					} else {
-						$result = $this->message->setFrom($this->getArrayAddress($this->addr_from));
+						$this->message->setFrom($this->getArrayAddress($this->addr_from));
 					}
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
@@ -485,7 +485,7 @@ class CMailFile
 			// Set the To addresses with an associative array
 			if (!empty($this->addr_to)) {
 				try {
-					$result = $this->message->setTo($this->getArrayAddress($this->addr_to));
+					$this->message->setTo($this->getArrayAddress($this->addr_to));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
@@ -493,14 +493,14 @@ class CMailFile
 
 			if (!empty($this->reply_to)) {
 				try {
-					$result = $this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
+					$this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
 			}
 
 			try {
-				$result = $this->message->setCharSet($conf->file->character_set_client);
+				$this->message->setCharSet($conf->file->character_set_client);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
 			}
@@ -562,7 +562,11 @@ class CMailFile
 			}
 			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
-				$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
+				try {
+					$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+				}
 			}
 		} else {
 			// Send mail method not correctly defined
