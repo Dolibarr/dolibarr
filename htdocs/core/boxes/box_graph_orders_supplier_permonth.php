@@ -56,7 +56,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->commande->lire);
+		$this->hidden = empty($user->rights->fournisseur->commande->lire);
 	}
 
 	/**

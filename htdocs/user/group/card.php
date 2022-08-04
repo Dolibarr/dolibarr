@@ -32,16 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Defini si peux lire/modifier utilisateurs et permisssions
-$canreadperms = ($user->admin || $user->rights->user->user->lire);
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
-$candisableperms = ($user->admin || $user->rights->user->user->supprimer);
+$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
+$candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
-	$candisableperms = ($user->admin || $user->rights->user->group_advance->delete);
+	$canreadperms = ($user->admin || $user->hasRight("user", "group_advance", "read"));
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';
 }
 
@@ -238,7 +238,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output.'/usergroups';
-	$permissiontoadd = $user->rights->user->user->creer;
+	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -250,7 +250,7 @@ $title = $object->name.' - '.$langs->trans("Card");
 if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
 }
-
+$help_url = "";
 llxHeader('', $title, $help_url);
 
 
@@ -329,7 +329,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -485,8 +485,8 @@ if ($action == 'create') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/usergroups/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->creer;
-			$delallowed = $user->rights->user->user->supprimer;
+			$genallowed = $user->hasRight("user", "user", "write");
+			$delallowed = $user->hasRight("user", "user", "delete");
 
 			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
 

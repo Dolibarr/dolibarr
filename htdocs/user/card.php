@@ -76,15 +76,15 @@ $dateendvalidity = dol_mktime(0, 0, 0, GETPOST('dateendvaliditymonth', 'int'), G
 $dateofbirth = dol_mktime(0, 0, 0, GETPOST('dateofbirthmonth', 'int'), GETPOST('dateofbirthday', 'int'), GETPOST('dateofbirthyear', 'int'));
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 
 $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
@@ -92,8 +92,8 @@ $childids = $user->getAllChildIds(1);	// For later, test on salary visibility
 // Define value to know what current user can do on properties of edited user
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer) || (($user->id != $id) && $user->rights->user->user->creer));
-	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password) || (($user->id != $id) && $user->rights->user->user->password));
+	$caneditfield = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
+	$caneditpassword = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
 }
 
 // Security check
@@ -712,7 +712,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
-	$permissiontoadd = $user->rights->user->user->creer;
+	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1165,7 +1165,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
@@ -1234,9 +1234,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($id, $childids))
-		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+	if ((!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "read")) && in_array($id, $childids))
+		|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
+		|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
 		$langs->load("salaries");
 
 		// THM
@@ -1365,7 +1365,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$title = $langs->trans("User");
 			$linkback = '';
 
-			if ($user->rights->user->user->lire || $user->admin) {
+			if ($user->hasRight("user", "user", "read") || $user->admin) {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
@@ -1413,7 +1413,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= '</a>';
+
+			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -1537,8 +1541,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+				|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
+				|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
 				$langs->load("salaries");
 
 				// Salary
@@ -1621,7 +1625,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
 				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
@@ -1721,15 +1725,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print dol_htmlentitiesbr($object->signature);
 			print "</td></tr>\n";
 
-			// VCard
-			print '<tr><td>'.$langs->trans("VCard").'</td>';
-			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'">';
-			print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
-			print $langs->trans("Download");
-			print '</a>';
-			print "</td></tr>\n";
-
 			print "</table>\n";
 
 			// Credentials
@@ -1809,7 +1804,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>'."\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
@@ -2374,7 +2369,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</td></tr>\n";
 
 			// API key
-			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->rights->api->apikey->generate)) {
+			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				print '<input class="minwidth300" maxsize="32" type="text" id="api_key" name="api_key" value="'.$object->api_key.'" autocomplete="off">';
@@ -2571,7 +2566,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"');
@@ -2716,8 +2711,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-				|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+				|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
+				|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
 					$langs->load("salaries");
 
 				// Salary
@@ -2808,8 +2803,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->lire;
-			$delallowed = $user->rights->user->user->creer;
+			$genallowed = $user->hasRight("user", "user", "read");
+			$delallowed = $user->hasRight("user", "user", "write");
 
 			print $formfile->showdocuments('user', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', empty($soc->default_lang) ? '' : $soc->default_lang);
 			$somethingshown = $formfile->numoffiles;

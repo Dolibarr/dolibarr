@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  *	\ingroup    member
  *	\brief      Page to make mass init of barcode
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -322,26 +323,29 @@ if (isModEnabled('societe')) {
 		dol_print_error($db);
 	}
 
-	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
 
 	$disabledthirdparty = $disabledthirdparty1 = 0;
 
 	if (is_object($modBarCodeThirdparty)) {
-		print $langs->trans("BarCodeNumberManager").": ";
+		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
 		$objthirdparty = new Societe($db);
 		print '<b>'.(isset($modBarCodeThirdparty->name) ? $modBarCodeThirdparty->name : $modBarCodeThirdparty->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeThirdparty->getNextValue($objthirdparty).'</b><br>';
 		$disabledthirdparty = 0;
+		print '<br>';
 	} else {
 		$disabledthirdparty = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<span class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</span> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
+		print '<div class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<br><a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>';
+		print '</div>';
 	}
 	if (empty($nbthirdpartyno)) {
 		$disabledthirdparty1 = 1;
 	}
 
 	$moretagsthirdparty1 = (($disabledthirdparty || $disabledthirdparty1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
-	print '<br><input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbno).'"'.$moretagsthirdparty1.'>';
+	print '<br><input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbthirdpartyno).'"'.$moretagsthirdparty1.'>';
 	$moretagsthirdparty2 = (($nbthirdpartyno == $nbthirdpartytotal) ? ' disabled' : '');
 	print ' &nbsp; ';
 	print '<input type="submit" class="button butActionDelete" name="eraseallthirdpartybarcode" id="eraseallthirdpartybarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsthirdparty2.' onClick="return confirm_erase();">';
@@ -391,28 +395,30 @@ if ($conf->product->enabled || $conf->product->service) {
 		dol_print_error($db);
 	}
 
-	print $langs->trans("CurrentlyNWithoutBarCode", $nbproductno, $nbproducttotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbproductno, $nbproducttotal, $langs->transnoentitiesnoconv("ProductsOrServices"))."\n";
 
 	$disabledproduct = $disabledproduct1 = 0;
 
 	if (is_object($modBarCodeProduct)) {
-		print $langs->trans("BarCodeNumberManager").": ";
+		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
 		$objproduct = new Product($db);
 		print '<b>'.(isset($modBarCodeProduct->name) ? $modBarCodeProduct->name : $modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabledproduct = 0;
+		print '<br>';
 	} else {
 		$disabledproduct = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<span class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</span> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
+		print '<br><div class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<br><a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>';
+		print '</div>';
 	}
 	if (empty($nbproductno)) {
 		$disabledproduct1 = 1;
 	}
 
-	print '<br>';
 	//print '<input type="checkbox" id="erasealreadyset" name="erasealreadyset"> '.$langs->trans("ResetBarcodeForAllRecords").'<br>';
 	$moretagsproduct1 = (($disabledproduct || $disabledproduct1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
-	print '<input type="submit" class="button" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretagsproduct1.'>';
+	print '<input type="submit" class="button" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbproductno)).'"'.$moretagsproduct1.'>';
 	$moretagsproduct2 = (($nbproductno == $nbproducttotal) ? ' disabled' : '');
 	print ' &nbsp; ';
 	print '<input type="submit" class="button butActionDelete" name="eraseallproductbarcode" id="eraseallproductbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsproduct2.' onClick="return confirm_erase();">';

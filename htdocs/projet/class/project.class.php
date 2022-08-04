@@ -1272,7 +1272,7 @@ class Project extends CommonObject
 		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->projet->lire) {
+		if (empty($notooltip) && $user->hasRight('projet', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowProject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';

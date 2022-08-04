@@ -47,6 +47,9 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
+ALTER TABLE llx_user DROP COLUMN idpers1;
+ALTER TABLE llx_user DROP COLUMN idpers2;
+ALTER TABLE llx_user DROP COLUMN idpers3;
 
 
 -- v17
@@ -61,6 +64,18 @@ ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER a
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
 ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
-
 ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+
+ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_product (fk_product);
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
+ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);

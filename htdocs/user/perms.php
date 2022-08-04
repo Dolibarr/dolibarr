@@ -50,13 +50,13 @@ if (!isset($id) || empty($id)) {
 }
 
 // Define if user can read permissions
-$canreaduser = ($user->admin || $user->rights->user->user->lire);
+$canreaduser = ($user->admin || $user->hasRight("user", "user", "read"));
 // Define if user can modify other users and permissions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreaduser = ($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
-	$caneditselfperms = ($user->id == $id && $user->rights->user->self_advance->writeperms);
+	$canreaduser = ($user->admin || ($user->hasRight("user", "user", "read") && $user->hasRight("user", "user_advance", "readperms")));
+	$caneditselfperms = ($user->id == $id && $user->hasRight("user", "self_advance", "writeperms"));
 	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
 
@@ -65,9 +65,9 @@ $socid = 0;
 if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 // A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
-if ($user->id == $id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms) && empty($user->admin))) {
+if ($user->id == $id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->hasRight("user", "self_advance", "readperms")) && empty($user->admin))) {
 	accessforbidden();
 }
 
@@ -249,11 +249,15 @@ if ($result) {
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 
 print '<div class="fichecenter">';

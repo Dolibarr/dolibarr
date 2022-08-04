@@ -396,7 +396,7 @@ if ($resql) {
 				}
 			}
 		} else {
-			print $langs->trans("ChooseABarCode");
+			print '<span class="opacitymedium">'.$langs->trans("ChooseABarCode").'</span>';
 		}
 		print '</td>';
 
@@ -439,7 +439,7 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
-	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
+	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
 	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
 		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
