@@ -434,6 +434,7 @@ VarAmountAllLines=Montant variable (%% tot.) - toutes les lignes identiques
 PaymentTypeVIR=Virement bancaire
 PaymentTypeShortVIR=Virement bancaire
 PaymentTypePRE=Ordre de prélèvement
+PaymentTypePREdetails=(compte *-%s)
 PaymentTypeShortPRE=Ordre de prélèvement
 PaymentTypeLIQ=Espèce
 PaymentTypeShortLIQ=Espèce
