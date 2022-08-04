@@ -138,6 +138,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alph
 
 if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	$error = 0;
+	$nb_post_ip = 0;
 	$origin_email = GETPOST('email', 'alpha');
 	if (empty($origin_email)) {
 		$error++;
@@ -231,6 +232,21 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$object->type_code = GETPOST("type_code", 'aZ09');
 		$object->category_code = GETPOST("category_code", 'aZ09');
 		$object->severity_code = GETPOST("severity_code", 'aZ09');
+		$object->ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
+
+		$sql = "SELECT COUNT(ref) as nb_tickets";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+		$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$i++;
+				$obj = $db->fetch_object($resql);
+				$nb_post_ip = $obj->nb_tickets;
+			}
+		}
 
 		if (!is_object($user)) {
 			$user = new User($db);
@@ -289,12 +305,21 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 
 		$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
-		$id = $object->create($user);
-		if ($id <= 0) {
+		if ($nb_post_ip >= getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000)) {
 			$error++;
-			$errors = ($object->error ? array($object->error) : $object->errors);
-			array_push($object->errors, $object->error ? array($object->error) : $object->errors);
+			$errors = array($langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+			array_push($object->errors, array($langs->trans("AlreadyTooMuchPostOnThisIPAdress")));
 			$action = 'create_ticket';
+		}
+
+		if (!$error) {
+			$id = $object->create($user);
+			if ($id <= 0) {
+				$error++;
+				$errors = ($object->error ? array($object->error) : $object->errors);
+				array_push($object->errors, $object->error ? array($object->error) : $object->errors);
+				$action = 'create_ticket';
+			}
 		}
 
 		if (!$error && $id > 0) {
