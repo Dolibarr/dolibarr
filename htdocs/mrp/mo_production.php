@@ -1169,7 +1169,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td class="right">'.$line->qty.'</td>';
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
+						if ($object->mrptype==0) {  // manufacturing
 						$manufacturingcost = $bomcost;
+						}
+						else { 						// disassemble
+							$manufacturingcost = NULL;
+						}
 						if (empty($manufacturingcost)) {
 							$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
 						}
@@ -1273,7 +1278,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
+							if ($object->mrptype==0) {  // manufacturing
 							$manufacturingcost = $bomcost;
+							}
+							else { 						// disassemble
+								$manufacturingcost = NULL;
+							}
 							if (empty($manufacturingcost)) {
 								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
 							}
