@@ -952,7 +952,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 }
 
 // List of Project
-if ($type == Categorie::TYPE_PROJECT) {
+if ($type == Categorie::TYPE_PROJECT ) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$permission = $user->rights->projet->creer;
@@ -1030,7 +1030,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 }
 
 // List of users
-if ($type == Categorie::TYPE_USER) {
+if ($type == Categorie::TYPE_USER && $user->hasRight("user", "user", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 	$users = $object->getObjectsInCateg($type);
@@ -1099,6 +1099,9 @@ if ($type == Categorie::TYPE_USER) {
 
 		print '</form>'."\n";
 	}
+} else {
+	print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'user');
+	accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
 }
 
 
