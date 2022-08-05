@@ -63,8 +63,8 @@ class box_activity extends ModeleBoxes
 		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
 
 		$this->hidden = !((isModEnabled('facture') && $user->rights->facture->lire)
-			|| (!empty($conf->commande->enabled) && $user->rights->commande->lire)
-			|| (!empty($conf->propal->enabled) && $user->rights->propale->lire)
+			|| (isModEnabled('commande') && $user->rights->commande->lire)
+			|| (isModEnabled('propal') && $user->rights->propale->lire)
 			);
 	}
 

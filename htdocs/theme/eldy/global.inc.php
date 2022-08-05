@@ -543,6 +543,7 @@ fieldset {
 	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
+	min-inline-size: auto;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -2310,7 +2311,7 @@ span.widthpictotitle.pictotitle {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
@@ -5143,6 +5144,7 @@ span[phptag] {
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -7638,6 +7640,10 @@ div.clipboardCPValue.hidewithsize {
 
 	#dolpaymenttable {
 		padding: 5px;
+	}
+
+	.lilevel1 span.paddingright {
+		padding-right: 4px;
 	}
 }
 

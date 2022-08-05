@@ -744,6 +744,7 @@ abstract class CommonObject
 	public function setUpperOrLowerCase()
 	{
 		global $conf;
+
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
@@ -758,6 +759,12 @@ abstract class CommonObject
 		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
+		}
+		if (isset($this->email)) {
+			$this->email = dol_strtolower($this->email);
+		}
+		if (isset($this->personal_email)) {
+			$this->personal_email = dol_strtolower($this->personal_email);
 		}
 	}
 
@@ -5474,7 +5481,7 @@ abstract class CommonObject
 
 				// We save charset_output to restore it because write_file can change it if needed for
 				// output format that does not support UTF8.
-				$sav_charset_output = $outputlangs->charset_output;
+				$sav_charset_output = empty($outputlangs->charset_output) ? '' : $outputlangs->charset_output;
 
 				if (in_array(get_class($this), array('Adherent'))) {
 					$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
@@ -7758,12 +7765,12 @@ abstract class CommonObject
 			} else {
 				$value = '';
 			}
-		} elseif (preg_match('/^(text|html)/', $type)) {
-			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
 			$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
 			$value = implode('<br>', $value);
+		} else {	// text|html|varchar
+			$value = dol_htmlentitiesbr($value);
 		}
 
 		//print $type.'-'.$size.'-'.$value;
@@ -8444,8 +8451,8 @@ abstract class CommonObject
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
+	 *   elseif calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 elseif calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
 	 * @param float		$unitPrice		 Product unit price
@@ -8799,7 +8806,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && ($info['type'] == 'int' || preg_match('/^integer/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
@@ -9058,6 +9065,8 @@ abstract class CommonObject
 			return 'NULL';
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
 			return price2num("$value");
+		} elseif (preg_match('/int$/i', $fieldsentry['type'])) {
+			return (int) $value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
 				return 'true';
