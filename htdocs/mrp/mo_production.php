@@ -1170,10 +1170,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if ($permissiontoupdatecost) {
 						// Defined $manufacturingcost
 						if ($object->mrptype==0) {  // manufacturing
-						$manufacturingcost = $bomcost;
-						}
-						else { 						// disassemble
-							$manufacturingcost = NULL;
+							$manufacturingcost = $bomcost;
+						} else { 						// disassemble
+							$manufacturingcost = null;
 						}
 						if (empty($manufacturingcost)) {
 							$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
@@ -1279,10 +1278,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($permissiontoupdatecost) {
 							// Defined $manufacturingcost
 							if ($object->mrptype==0) {  // manufacturing
-							$manufacturingcost = $bomcost;
-							}
-							else { 						// disassemble
-								$manufacturingcost = NULL;
+								$manufacturingcost = $bomcost;
+							} else { 						// disassemble
+								$manufacturingcost = null;
 							}
 							if (empty($manufacturingcost)) {
 								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
