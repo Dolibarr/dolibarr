@@ -300,14 +300,9 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "docu
 echo '<span class="opacitymedium">'.$langs->trans("DocumentsFunctionalitySetupPage").'</span><br><br>';
 
 
-if ($action == 'edit') {
+if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} elseif (!empty($formSetup->items)) {
-	print $formSetup->generateOutput();
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }

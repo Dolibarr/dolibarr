@@ -18,28 +18,20 @@
 #
 
 # Module label 'ModuleDocumentsFunctionalityName'
-ModuleDocumentsFunctionalityName = DocumentsFunctionality
+ModuleDocumentsFunctionalityName = Documents Functionality
 # Module description 'ModuleDocumentsFunctionalityDesc'
-ModuleDocumentsFunctionalityDesc = DocumentsFunctionality description
+ModuleDocumentsFunctionalityDesc = Add additional features to documents
 
 #
 # Admin page
 #
-DocumentsFunctionalitySetup = DocumentsFunctionality setup
+DocumentsFunctionalitySetup = Documents functionality setup
 Settings = Settings
-DocumentsFunctionalitySetupPage = DocumentsFunctionality setup page
+DocumentsFunctionalitySetupPage = Documents functionality setup page
 DOCUMENTSFUNCTIONALITY_MYPARAM1 = My param 1
 DOCUMENTSFUNCTIONALITY_MYPARAM1Tooltip = My param 1 tooltip
 DOCUMENTSFUNCTIONALITY_MYPARAM2=My param 2
 DOCUMENTSFUNCTIONALITY_MYPARAM2Tooltip=My param 2 tooltip
-
-
-#
-# About page
-#
-About = About
-DocumentsFunctionalityAbout = About DocumentsFunctionality
-DocumentsFunctionalityAboutPage = DocumentsFunctionality about page
 
 #
 # Sample page
