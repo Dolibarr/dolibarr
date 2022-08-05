@@ -1036,7 +1036,7 @@ class FormSetupItem
 	 */
 	public function generateOutputField()
 	{
-		global $conf, $user;
+		global $conf, $user, $langs;
 
 		if (!empty($this->fieldOverride)) {
 			return $this->fieldOverride;
@@ -1064,10 +1064,10 @@ class FormSetupItem
 			if (!empty($conf->use_javascript_ajax)) {
 				$out.= ajax_constantonoff($this->confKey);
 			} else {
-				if ($this->confKey == 1) {
-					$out.= $this->langs('yes');
+				if ($this->fieldValue == 1) {
+					$out.= $langs->trans('yes');
 				} else {
-					$out.= $this->langs('no');
+					$out.= $langs->trans('no');
 				}
 			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
