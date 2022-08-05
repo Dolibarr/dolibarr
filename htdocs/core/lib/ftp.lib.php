@@ -300,7 +300,7 @@ function dol_ftp_mkdir($connect_id, $newdir, $newsection)
 	$newremotefileiso = utf8_decode($newremotefileiso);
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-		return ssh2_sftp_mkdir($connect_id, $newremotefileiso);
+		return ssh2_sftp_mkdir($connect_id, $newremotefileiso, 0777);
 	} else {
 		return @ftp_mkdir($connect_id, $newremotefileiso);
 	}
