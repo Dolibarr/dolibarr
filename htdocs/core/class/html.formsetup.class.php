@@ -835,7 +835,11 @@ class FormSetupItem
 		} elseif ($this->type== 'color') {
 			$out.=  $this->generateInputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				$out.= $this->form->selectyesno($this->confKey, $this->fieldValue, 1);
+			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			$out.= $this->generateInputFieldEmailTemplate();
 		} elseif (preg_match('/category:/', $this->type)) {
@@ -1057,7 +1061,15 @@ class FormSetupItem
 		} elseif ($this->type== 'color') {
 			$out.=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
-			$out.= ajax_constantonoff($this->confKey);
+			if (!empty($conf->use_javascript_ajax)) {
+				$out.= ajax_constantonoff($this->confKey);
+			} else {
+				if ($this->confKey == 1) {
+					$out.= $this->langs('yes');
+				} else {
+					$out.= $this->langs('no');
+				}
+			}
 		} elseif (preg_match('/emailtemplate:/', $this->type)) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
