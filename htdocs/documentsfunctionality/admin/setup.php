@@ -97,67 +97,8 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-// Hôte
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-$item->cssClass = 'minwidth500';
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM1');
-$item->defaultFieldValue = 'default value';
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM1 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM2');
-$item->nameText = $item->getNameText().' more html text ';
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM3
-$item = $formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM3');
-$item->setAsThirdpartyType();
-
 // Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM4')->setAsYesNo();
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM5
-$formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM5')->setAsEmailTemplate('thirdparty');
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM6
-$formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM7
-$formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM7')->setAsProduct();
-
-$formSetup->newItem('Title')->setAsTitle();
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM8
-$item = $formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM8');
-$TField = array(
-	'test01' => $langs->trans('test01'),
-	'test02' => $langs->trans('test02'),
-	'test03' => $langs->trans('test03'),
-	'test04' => $langs->trans('test04'),
-	'test05' => $langs->trans('test05'),
-	'test06' => $langs->trans('test06'),
-);
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('DOCUMENTSFUNCTIONALITY_MYPARAM8');
-
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM9
-$formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM9')->setAsSelect($TField);
-
-
-// Setup conf DOCUMENTSFUNCTIONALITY_MYPARAM10
-$item = $formSetup->newItem('DOCUMENTSFUNCTIONALITY_MYPARAM10');
-$item->setAsColor();
-$item->defaultFieldValue = '#FF0000';
-$item->nameText = $item->getNameText().' more html text ';
-$item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
-//$item->fieldValue = '';
-//$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
-//$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
-//$item->fieldInputOverride = false; // set this var to override field input
-//$item->fieldOutputOverride = false; // set this var to override field output
+$formSetup->newItem('DOCUMENTSFUNCTIONALITY_TITLE_IN_DOC')->setAsYesNo();
 
 
 $setupnotempty =+ count($formSetup->items);

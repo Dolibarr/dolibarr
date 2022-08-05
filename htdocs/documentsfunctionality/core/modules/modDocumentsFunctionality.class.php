@@ -65,7 +65,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		// Module description, used if translation string 'ModuleDocumentsFunctionalityDesc' not found (DocumentsFunctionality is name of module).
 		$this->description = "DocumentsFunctionalityDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "DocumentsFunctionalityDescription";
+		$this->descriptionlong = "DocumentsFunctionalityDescriptionLong";
 
 		// Author
 		$this->editor_name = '';
@@ -141,7 +141,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("documentsfunctionality@documentsfunctionality");
+		$this->langfiles = array("documentsfunctionality");
 
 		// Prerequisites
 		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
@@ -203,7 +203,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		$this->dictionaries = array();
 		/* Example:
 		$this->dictionaries=array(
-			'langs'=>'documentsfunctionality@documentsfunctionality',
+			'langs'=>'documentsfunctionality',
 			// List of tables we want to see into dictonnary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
@@ -297,7 +297,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		// 	'mainmenu'=>'documentsfunctionality',
 		// 	'leftmenu'=>'',
 		// 	'url'=>'/documentsfunctionality/documentsfunctionalityindex.php',
-		// 	'langs'=>'documentsfunctionality@documentsfunctionality', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+		// 	'langs'=>'documentsfunctionality', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		// 	'position'=>1000 + $r,
 		// 	'enabled'=>'$conf->documentsfunctionality->enabled', // Define condition to show or hide menu entry. Use '$conf->documentsfunctionality->enabled' if entry must be visible if module is enabled.
 		// 	'perms'=>'1', // Use 'perms'=>'$user->rights->documentsfunctionality->myobject->read' if you want your menu with a permission rules
@@ -315,7 +315,7 @@ class modDocumentsFunctionality extends DolibarrModules
 			'mainmenu'=>'documentsfunctionality',
 			'leftmenu'=>'myobject',
 			'url'=>'/documentsfunctionality/documentsfunctionalityindex.php',
-			'langs'=>'documentsfunctionality@documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->documentsfunctionality->enabled',  // Define condition to show or hide menu entry. Use '$conf->documentsfunctionality->enabled' if entry must be visible if module is enabled.
 			'perms'=>'$user->rights->documentsfunctionality->myobject->read',			                // Use 'perms'=>'$user->rights->documentsfunctionality->level1->level2' if you want your menu with a permission rules
@@ -329,7 +329,7 @@ class modDocumentsFunctionality extends DolibarrModules
 			'mainmenu'=>'documentsfunctionality',
 			'leftmenu'=>'documentsfunctionality_myobject_list',
 			'url'=>'/documentsfunctionality/myobject_list.php',
-			'langs'=>'documentsfunctionality@documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->documentsfunctionality->enabled',  // Define condition to show or hide menu entry. Use '$conf->documentsfunctionality->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->documentsfunctionality->myobject->read',			                // Use 'perms'=>'$user->rights->documentsfunctionality->level1->level2' if you want your menu with a permission rules
@@ -343,7 +343,7 @@ class modDocumentsFunctionality extends DolibarrModules
 			'mainmenu'=>'documentsfunctionality',
 			'leftmenu'=>'documentsfunctionality_myobject_new',
 			'url'=>'/documentsfunctionality/myobject_card.php?action=create',
-			'langs'=>'documentsfunctionality@documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'documentsfunctionality',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->documentsfunctionality->enabled',  // Define condition to show or hide menu entry. Use '$conf->documentsfunctionality->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->rights->documentsfunctionality->myobject->write',			                // Use 'perms'=>'$user->rights->documentsfunctionality->level1->level2' if you want your menu with a permission rules
@@ -355,7 +355,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
 		/*
-		$langs->load("documentsfunctionality@documentsfunctionality");
+		$langs->load("documentsfunctionality");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='myobject@documentsfunctionality';
@@ -386,7 +386,7 @@ class modDocumentsFunctionality extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
 		/*
-		$langs->load("documentsfunctionality@documentsfunctionality");
+		$langs->load("documentsfunctionality");
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->import_icon[$r]='myobject@documentsfunctionality';
@@ -439,11 +439,11 @@ class modDocumentsFunctionality extends DolibarrModules
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('documentsfunctionality_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality@documentsfunctionality', '$conf->documentsfunctionality->enabled');
-		//$result2=$extrafields->addExtraField('documentsfunctionality_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality@documentsfunctionality', '$conf->documentsfunctionality->enabled');
-		//$result3=$extrafields->addExtraField('documentsfunctionality_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality@documentsfunctionality', '$conf->documentsfunctionality->enabled');
-		//$result4=$extrafields->addExtraField('documentsfunctionality_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'documentsfunctionality@documentsfunctionality', '$conf->documentsfunctionality->enabled');
-		//$result5=$extrafields->addExtraField('documentsfunctionality_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality@documentsfunctionality', '$conf->documentsfunctionality->enabled');
+		//$result1=$extrafields->addExtraField('documentsfunctionality_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality', '$conf->documentsfunctionality->enabled');
+		//$result2=$extrafields->addExtraField('documentsfunctionality_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality', '$conf->documentsfunctionality->enabled');
+		//$result3=$extrafields->addExtraField('documentsfunctionality_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality', '$conf->documentsfunctionality->enabled');
+		//$result4=$extrafields->addExtraField('documentsfunctionality_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'documentsfunctionality', '$conf->documentsfunctionality->enabled');
+		//$result5=$extrafields->addExtraField('documentsfunctionality_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'documentsfunctionality', '$conf->documentsfunctionality->enabled');
 
 		// Permissions
 		$this->remove($options);

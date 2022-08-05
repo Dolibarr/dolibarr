@@ -21,6 +21,7 @@
 ModuleDocumentsFunctionalityName = Documents Functionality
 # Module description 'ModuleDocumentsFunctionalityDesc'
 ModuleDocumentsFunctionalityDesc = Add additional features to documents
+DocumentsFunctionalityDescriptionLong = Add additional features to documents for a better experience
 
 #
 # Admin page
@@ -28,10 +29,7 @@ ModuleDocumentsFunctionalityDesc = Add additional features to documents
 DocumentsFunctionalitySetup = Documents functionality setup
 Settings = Settings
 DocumentsFunctionalitySetupPage = Documents functionality setup page
-DOCUMENTSFUNCTIONALITY_MYPARAM1 = My param 1
-DOCUMENTSFUNCTIONALITY_MYPARAM1Tooltip = My param 1 tooltip
-DOCUMENTSFUNCTIONALITY_MYPARAM2=My param 2
-DOCUMENTSFUNCTIONALITY_MYPARAM2Tooltip=My param 2 tooltip
+DOCUMENTSFUNCTIONALITY_TITLE_IN_DOC = Add title in propal documents
 
 #
 # Sample page
@@ -44,3 +42,8 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+#
+# Buttun action
+#
+AddTitlle=Add title
