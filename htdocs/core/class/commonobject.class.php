@@ -3934,14 +3934,14 @@ abstract class CommonObject
 	/**
 	 * return
 	 *
-	 * @param string $elementType formated like seft::getElementType
+	 * @param string $elementType formatted like seft::getElementType
 	 * @return stdClass
 	 *         {
 	 *              module,
-	 *              myObject,
-	 *              classpath,
-	 *              classfile,
-	 *              classname
+	 *              element,
+	 *              classPath,
+	 *              classFile,
+	 *              className
 	 *         }
 	 */
 	public static function extractElementTypeInfosFromString($elementType)
