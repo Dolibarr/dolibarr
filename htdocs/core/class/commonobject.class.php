@@ -3820,11 +3820,9 @@ abstract class CommonObject
 			$origin = 'order_supplier';
 		}
 
-		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
-		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
-		// Add module part to target type if object has $module property and isn't in core modules.
-		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+
+		// Add module part to target type
+		$targettype = $this->getElementType();
 
 		$parameters = array('targettype'=>$targettype);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
@@ -3874,6 +3872,277 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 * return element type string formated like element_element target_type and target_type
+	 * @return string
+	 */
+	public function getElementType()
+	{
+		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
+		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
+		// Add module part to target type if object has $module property and isn't in core modules.
+		return ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+	}
+
+
+	/**
+	 * Create a new object instance based on the element type
+	 * Fetch the object if id is provided
+	 * Usage : to easily fetch element form element_element with cache
+	 *
+	 * @param DoliDB $db the DoliDB
+	 * @param string $elementType    Type of object ('invoice', 'order', 'expedition_bon', 'myobject@mymodule', ...)
+	 * @param bool   $elementId      Id of element to provide if fetch is needed
+	 * @param int    $maxCacheByType max number of cached element by type
+	 * @return CommonObject object of $elementType, fetched by $elementId
+	 * @throws Exception
+	 */
+	public static function getObjectByElementType($db, $elementType, $elementId = false, $maxCacheByType = 10)
+	{
+		global $conf;
+
+		$data = self::extractElementTypeInfosFromString($elementType);
+
+		$module = $data->module;
+		$className = $data->className;
+
+		if (!empty($conf->$module->enabled)) {
+			dol_syslog('Module not enabled', LOG_INFO);
+			return false;
+		}
+
+		$fileToInclude = '/'.$data->classPath.'/'.$data->classFile.'.class.php';
+		$res = dol_include_once($fileToInclude);
+		if (!$res) {
+			dol_syslog('class file not found : '.$fileToInclude, LOG_WARNING);
+			return false;
+		}
+
+		if (!class_exists($className)) {
+			dol_syslog('class not found : '.$className, LOG_WARNING);
+			return false;
+		}
+
+		if ($elementId === false) {
+			return new $className($db);
+		} else {
+			return self::getObjectFromCache($db, $className, $elementId, $maxCacheByType);
+		}
+	}
+
+	/**
+	 * return
+	 *
+	 * @param string $elementType formated like seft::getElementType
+	 * @return stdClass
+	 *         {
+	 *              module,
+	 *              myObject,
+	 *              classpath,
+	 *              classfile,
+	 *              classname
+	 *         }
+	 */
+	public static function extractElementTypeInfosFromString($elementType)
+	{
+
+		$data = new stdClass();
+
+		$regs = array();
+
+		// Parse $objecttype (ex: project_task)
+		$data->module = $data->element = $elementType;
+
+		// If we ask an resource form external module (instead of default path)
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $elementType, $regs)) {
+			$data->element = $regs[1];
+			$data->module = $regs[2];
+		}
+
+		// If we ask an resource form external module (instead of default path)
+		if (preg_match('/^([^_]+)_([^_]+)/i', $elementType, $regs)) {
+			$data->module = $regs[1];
+			$data->element = $regs[2];
+		}
+
+		// Generic case for $data->classPath
+		$data->classPath = $data->module.'/class';
+
+		// Special cases, to work with non standard path
+		if ($elementType == 'facture' || $elementType == 'invoice') {
+			$data->classPath = 'compta/facture/class';
+			$data->module='facture';
+			$data->element='facture';
+		} elseif ($elementType == 'commande' || $elementType == 'order') {
+			$data->classPath = 'commande/class';
+			$data->module='commande';
+			$data->element='commande';
+		} elseif ($elementType == 'contact') {
+			$data->module = 'societe';
+		} elseif ($elementType == 'propal') {
+			$data->classPath = 'comm/propal/class';
+		} elseif ($elementType == 'shipping') {
+			$data->classPath = 'expedition/class';
+			$data->element = 'expedition';
+			$data->module = 'expedition';
+		} elseif ($elementType == 'delivery') {
+			$data->classPath = 'delivery/class';
+			$data->element = 'delivery';
+			$data->module = 'expedition';
+		} elseif ($elementType == 'contract') {
+			$data->classPath = 'contrat/class';
+			$data->module='contrat';
+			$data->element='contrat';
+		} elseif ($elementType == 'member') {
+			$data->classPath = 'adherents/class';
+			$data->module='adherent';
+			$data->element='adherent';
+		} elseif ($elementType == 'cabinetmed_cons') {
+			$data->classPath = 'cabinetmed/class';
+			$data->module='cabinetmed';
+			$data->element='cabinetmedcons';
+		} elseif ($elementType == 'fichinter') {
+			$data->classPath = 'fichinter/class';
+			$data->module='ficheinter';
+			$data->element='fichinter';
+		} elseif ($elementType == 'task') {
+			$data->classPath = 'projet/class';
+			$data->module='projet';
+			$data->element='task';
+		} elseif ($elementType == 'stock') {
+			$data->classPath = 'product/stock/class';
+			$data->module='stock';
+			$data->element='stock';
+		} elseif ($elementType == 'inventory') {
+			$data->classPath = 'product/inventory/class';
+			$data->module='stock';
+			$data->element='inventory';
+		} elseif ($elementType == 'mo') {
+			$data->classPath = 'mrp/class';
+			$data->module='mrp';
+			$data->element='mo';
+		} elseif ($elementType == 'salary') {
+			$data->classPath = 'salaries/class';
+			$data->module='salaries';
+		} elseif ($elementType == 'chargesociales') {
+			$data->classPath = 'compta/sociales/class';
+			$data->module='tax';
+		} elseif ($elementType == 'tva') {
+			$data->classPath = 'compta/tva/class';
+			$data->module='tax';
+		} elseif ($elementType == 'widthdraw') {
+			$data->classPath = 'compta/prelevement/class';
+			$data->module='prelevement';
+			$data->element='bonprelevement';
+		} elseif ($elementType == 'project') {
+			$data->classPath = 'projet/class';
+			$data->module='projet';
+		} elseif ($elementType == 'project_task') {
+			$data->classPath = 'projet/class';
+			$data->module='projet';
+		} elseif ($elementType == 'action') {
+			$data->classPath = 'comm/action/class';
+			$data->module='agenda';
+			$data->element = 'ActionComm';
+		} elseif ($elementType == 'mailing') {
+			$data->classPath = 'comm/mailing/class';
+		} elseif ($elementType == 'knowledgerecord') {
+			$data->classPath = 'knowledgemanagement/class';
+			$data->module='knowledgemanagement';
+		} elseif ($elementType == 'recruitmentjobposition') {
+			$data->classPath = 'recruitment/class';
+			$data->module='recruitment';
+		} elseif ($elementType == 'recruitmentcandidature') {
+			$data->classPath = 'recruitment/class';
+			$data->module='recruitment';
+		}
+
+		// Generic case for $data->classFile and $data->className
+		$data->classFile = strtolower($data->element); $data->className = ucfirst($data->element);
+
+		if ($elementType == 'invoice_supplier') {
+			$data->classFile = 'fournisseur.facture';
+			$data->className = 'FactureFournisseur';
+			$data->classPath = 'fourn/class';
+			$data->module = 'fournisseur';
+		} elseif ($elementType == 'order_supplier') {
+			$data->classFile = 'fournisseur.commande';
+			$data->className = 'CommandeFournisseur';
+			$data->classPath = 'fourn/class';
+			$data->module = 'fournisseur';
+		} elseif ($elementType == 'supplier_proposal') {
+			$data->classFile = 'supplier_proposal';
+			$data->className = 'SupplierProposal';
+			$data->classPath = 'supplier_proposal/class';
+			$data->module = 'supplier_proposal';
+		} elseif ($elementType == 'stock') {
+			$data->classPath = 'product/stock/class';
+			$data->classFile = 'entrepot';
+			$data->className = 'Entrepot';
+		} elseif ($elementType == 'dolresource') {
+			$data->classPath = 'resource/class';
+			$data->classFile = 'dolresource';
+			$data->className = 'Dolresource';
+			$data->module = 'resource';
+		} elseif ($elementType == 'payment_various') {
+			$data->classPath = 'compta/bank/class';
+			$data->module='tax';
+			$data->classFile = 'paymentvarious';
+			$data->className = 'PaymentVarious';
+		} elseif ($elementType == 'bank_account') {
+			$data->classPath = 'compta/bank/class';
+			$data->module='banque';
+			$data->classFile = 'account';
+			$data->className = 'Account';
+		} elseif ($elementType == 'adherent_type') {
+			$data->classPath = 'adherents/class';
+			$data->module = 'member';
+			$data->classFile='adherent_type';
+			$data->className='AdherentType';
+		}
+
+		// TODO : Add hook here but need to add cache for results if there is a hook (hook could add perfomence loss)
+		//  OR store special elements in database in table like element_type and fetch it Once
+
+		return $data;
+	}
+
+
+	/**
+	 * return an object stored in memory cache
+	 *
+	 * @param DoliDB $db             the DoliDB
+	 * @param string $objetClassName object cs name
+	 * @param int    $objectId       object Id
+	 * @param int    $maxCacheByType max number of storable object fore each type
+	 * @return bool|CommonObject
+	 */
+	public static function getObjectFromCache($db, $objetClassName, $objectId, $maxCacheByType = 10)
+	{
+		global  $globalCacheForCommonObjectGetObjectFromCache;
+
+		if (!class_exists($objetClassName)) {
+			return false;
+		}
+
+		if (empty($globalCacheForCommonObjectGetObjectFromCache[$objetClassName][$objectId])) {
+			$object = new $objetClassName($db);
+			if ($object->fetch($objectId, false) <= 0) {
+				return false;
+			}
+
+			if (is_array($globalCacheForCommonObjectGetObjectFromCache[$objetClassName]) && count($globalCacheForCommonObjectGetObjectFromCache[$objetClassName]) >= $maxCacheByType) {
+				array_shift($globalCacheForCommonObjectGetObjectFromCache[$objetClassName]);
+			}
+
+			$globalCacheForCommonObjectGetObjectFromCache[$objetClassName][$objectId] = $object;
+		} else {
+			$object = $globalCacheForCommonObjectGetObjectFromCache[$objetClassName][$objectId];
+		}
+
+		return $object;
+	}
 	/**
 	 *	Fetch array of objects linked to current object (object of enabled modules only). Links are loaded into
 	 *		this->linkedObjectsIds array +
@@ -3999,103 +4268,17 @@ abstract class CommonObject
 
 			if (!empty($this->linkedObjectsIds)) {
 				$tmparray = $this->linkedObjectsIds;
-				foreach ($tmparray as $objecttype => $objectids) {       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
-					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
-					$module = $element = $subelement = $objecttype;
-					$regs = array();
-					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
-						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs)) {
-						$module = $element = $regs[1];
-						$subelement = $regs[2];
-					}
-
-					$classpath = $element.'/class';
-					// To work with non standard classpath or module name
-					if ($objecttype == 'facture') {
-						$classpath = 'compta/facture/class';
-					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class';
-						$module = 'facture';
-					} elseif ($objecttype == 'propal') {
-						$classpath = 'comm/propal/class';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classpath = 'supplier_proposal/class';
-					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class';
-						$subelement = 'expedition';
-						$module = 'expedition_bon';
-					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class';
-						$subelement = 'delivery';
-						$module = 'delivery_note';
-					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class';
-						$module = 'fournisseur';
-					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class';
-						$subelement = 'fichinter';
-						$module = 'ficheinter';
-					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class';
-						$module = 'adherent';
-					} elseif ($objecttype == 'contact') {
-						 $module = 'societe';
-					}
-					// Set classfile
-					$classfile = strtolower($subelement);
-					$classname = ucfirst($subelement);
-
-					if ($objecttype == 'order') {
-						$classfile = 'commande';
-						$classname = 'Commande';
-					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture';
-						$classname = 'FactureFournisseur';
-					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande';
-						$classname = 'CommandeFournisseur';
-					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal';
-						$classname = 'SupplierProposal';
-					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec';
-						$classname = 'FactureRec';
-					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription';
-						$classname = 'Subscription';
-					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class';
-						$classfile = 'project';
-						$classname = 'Project';
-					} elseif ($objecttype == 'conferenceorboothattendee') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorboothattendee';
-						$classname = 'ConferenceOrBoothAttendee';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'conferenceorbooth') {
-						$classpath = 'eventorganization/class';
-						$classfile = 'conferenceorbooth';
-						$classname = 'ConferenceOrBooth';
-						$module = 'eventorganization';
-					} elseif ($objecttype == 'mo') {
-						$classpath = 'mrp/class';
-						$classfile = 'mo';
-						$classname = 'Mo';
-						$module = 'mrp';
-					}
+				foreach ($tmparray as $objecttype => $objectIds) {       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
+					$data = self::extractElementTypeInfosFromString($objecttype);
+					$module = $data->module;
 
 					// Here $module, $classfile and $classname are set, we can use them.
-					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype)) {
+					if ($conf->$module->enabled && (($data->element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
-							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
-							if (class_exists($classname)) {
-								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
-									$object = new $classname($this->db);
-									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
-										$this->linkedObjects[$objecttype][$i] = $object;
-									}
+							foreach ($objectIds as $i => $objectId) {    // $i is rowid into llx_element_element
+								$object = self::getObjectByElementType($this->db, $objecttype, $objectId);
+								if ($object) {
+									$this->linkedObjects[$objecttype][$i] = $object;
 								}
 							}
 						}
