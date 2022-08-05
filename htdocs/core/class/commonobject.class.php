@@ -4102,7 +4102,7 @@ abstract class CommonObject
 			$data->className='AdherentType';
 		}
 
-		// TODO : Add hook here but need to add cache for results if there is a hook (hook could add perfomence loss)
+		// TODO : Add hook here but need to add cache for results if there is a hook (hook could add performance loss)
 		//  OR store special elements in database in table like element_type and fetch it Once
 
 		return $data;
@@ -4268,22 +4268,22 @@ abstract class CommonObject
 
 			if (!empty($this->linkedObjectsIds)) {
 				$tmparray = $this->linkedObjectsIds;
-				foreach ($tmparray as $objecttype => $objectIds) {       // $objecttype is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
-					$data = self::extractElementTypeInfosFromString($objecttype);
+				foreach ($tmparray as $objectType => $objectIds) {       // $objectType is a module name ('facture', 'mymodule', ...) or a module name with a suffix ('project_task', 'mymodule_myobj', ...)
+					$data = self::extractElementTypeInfosFromString($objectType);
 					$module = $data->module;
 
 					// Here $module, $classfile and $classname are set, we can use them.
 					if ($conf->$module->enabled && (($data->element != $this->element) || $alsosametype)) {
-						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
+						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objectType))) {
 							foreach ($objectIds as $i => $objectId) {    // $i is rowid into llx_element_element
-								$object = self::getObjectByElementType($this->db, $objecttype, $objectId);
+								$object = self::getObjectByElementType($this->db, $objectType, $objectId);
 								if ($object) {
-									$this->linkedObjects[$objecttype][$i] = $object;
+									$this->linkedObjects[$objectType][$i] = $object;
 								}
 							}
 						}
 					} else {
-						unset($this->linkedObjectsIds[$objecttype]);
+						unset($this->linkedObjectsIds[$objectType]);
 					}
 				}
 			}
