@@ -296,9 +296,8 @@ function dol_ftp_mkdir($connect_id, $newdir, $newsection)
 	}
 
 	// Remote file
-	$filename = $file;
-	$remotefile = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$file;
-	$newremotefileiso = utf8_decode($remotefile);
+	$newremotefileiso = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$newdir;
+	$newremotefileiso = utf8_decode($newremotefileiso);
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
 		return ssh2_sftp_mkdir($connect_id, $newremotefileiso);
