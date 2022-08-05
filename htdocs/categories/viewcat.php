@@ -952,7 +952,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 }
 
 // List of Project
-if ($type == Categorie::TYPE_PROJECT ) {
+if ($type == Categorie::TYPE_PROJECT) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$permission = $user->rights->projet->creer;
