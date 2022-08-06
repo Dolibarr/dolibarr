@@ -77,3 +77,5 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
+
+ALTER TABLE `llx_adherent` ADD default_lang VARCHAR(6) NULL DEFAULT NULL AFTER datefin;
