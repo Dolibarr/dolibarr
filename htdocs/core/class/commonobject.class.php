@@ -3873,7 +3873,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * return element type string formated like element_element target_type and target_type
+	 * return element type string formated like element_element target_type and source_type
 	 * @return string
 	 */
 	public function getElementType()
