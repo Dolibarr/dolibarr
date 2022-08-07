@@ -518,7 +518,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday); 
+			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday);
 			$stock = $prod->stock_theorique;
 			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 			$virtualstock = $prod->stock_theorique;
