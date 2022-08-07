@@ -518,13 +518,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0); // This call also ->load_virtual_stock()
-
-			//$result = $prod->load_stats_reception(0, '4');
-			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
-			//print $prod->stats_reception['qty'];
-
-			$stock = '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday); 
+			$stock = $prod->stock_theorique;
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 			$virtualstock = $prod->stock_theorique;
 		} else {
 			if ($fk_warehouse > 0) {
