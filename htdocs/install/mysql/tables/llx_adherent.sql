@@ -71,7 +71,7 @@ create table llx_adherent
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0,   -- certain champ de la fiche sont ils public ou pas ?
   datefin          datetime,                      -- end date of validity of the contribution / date de fin de validite de la cotisation
-  default_lang        varchar(6) NULL,
+  default_lang     varchar(6) DEFAULT NULL,
   note_private     text DEFAULT NULL,
   note_public      text DEFAULT NULL,
   model_pdf		     varchar(255),
