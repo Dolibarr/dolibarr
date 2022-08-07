@@ -1310,8 +1310,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="hidden" name="code_auto" value="1">';
 		}
 
-		print dol_get_fiche_head(null, 'card', '', 0, '');
-
 		print '<table class="border centpercent">';
 
 		// Name, firstname
