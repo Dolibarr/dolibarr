@@ -10836,7 +10836,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
 		if ($useCache) {
-			getObjectFromCache($element_prop['classname'], $element_id, $element_ref, $maxCacheByType);
+			$objecttmp = fetchObjectFromCache($element_prop['classname'], $element_id, $element_ref, $maxCacheByType);
 		} else {
 			$objecttmp = new $element_prop['classname']($db);
 			$ret = $objecttmp->fetch($element_id, $element_ref);
@@ -10860,7 +10860,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
  * @param int    $maxCacheByType max number of storable object fore each type
  * @return bool|CommonObject
  */
-function getObjectFromCache($objetClassName, $objectId, $objectRef = false, $maxCacheByType = 10)
+function fetchObjectFromCache($objetClassName, $objectId, $objectRef = false, $maxCacheByType = 10)
 {
 	global $db,$globalCacheForGetObjectFromCache;
 
