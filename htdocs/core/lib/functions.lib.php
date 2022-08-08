@@ -8500,7 +8500,7 @@ function dol_osencode($str)
 	}
 
 	if ($tmp == 'iso-8859-1') {
-		return utf8_decode($str);
+		return str_replace('?', '', utf8_decode($str));
 	}
 	return $str;
 }
