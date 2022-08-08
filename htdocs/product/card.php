@@ -16,7 +16,7 @@
  * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
  * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
@@ -1728,7 +1728,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+			$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
