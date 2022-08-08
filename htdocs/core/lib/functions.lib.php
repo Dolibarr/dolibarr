@@ -10808,6 +10808,11 @@ function getElementProperties($element_type)
 		'classfile' => $classfile,
 		'classname' => $classname
 	);
+
+	// TODO : Add hook here but need to add cache for results if there is a hook (hook could add performance loss)
+	//  OR **store special elements in database in table like element_type and fetch it Once**
+
+
 	return $element_properties;
 }
 
@@ -10815,12 +10820,14 @@ function getElementProperties($element_type)
  * Fetch an object from its id and element_type
  * Inclusion of classes is automatic
  *
- * @param	int     	$element_id 	Element id
- * @param	string  	$element_type 	Element type
- * @param	string     	$element_ref 	Element ref (Use this or element_id but not both)
- * @return 	int|object 					object || 0 || -1 if error
+ * @param int $element_id Element id
+ * @param string $element_type Element type
+ * @param string $element_ref Element ref (Use this or element_id but not both)
+ * @param bool $useCache if you want to store object in cache
+ * @param int $maxCacheByType number of object in cache for this element type
+ * @return    int|object                    object || 0 || -1 if error
  */
-function fetchObjectByElement($element_id, $element_type, $element_ref = '')
+function fetchObjectByElement($element_id, $element_type, $element_ref = '', $useCache = false, $maxCacheByType = 10)
 {
 	global $conf, $db;
 
@@ -10828,13 +10835,55 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
 	if (is_array($element_prop) && $conf->{$element_prop['module']}->enabled) {
 		dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-		$objecttmp = new $element_prop['classname']($db);
-		$ret = $objecttmp->fetch($element_id, $element_ref);
+		if ($useCache) {
+			getObjectFromCache($element_prop['classname'], $element_id, $element_ref, $maxCacheByType);
+		} else {
+			$objecttmp = new $element_prop['classname']($db);
+			$ret = $objecttmp->fetch($element_id, $element_ref);
+		}
+
 		if ($ret >= 0) {
 			return $objecttmp;
 		}
 	}
 	return 0;
+}
+
+
+
+/**
+ * return an object stored in memory cache
+ *
+ * @param string $objetClassName object cs name
+ * @param int    $objectId       object Id
+ * @param string $objectRef       object ref
+ * @param int    $maxCacheByType max number of storable object fore each type
+ * @return bool|CommonObject
+ */
+function getObjectFromCache($objetClassName, $objectId, $objectRef = false, $maxCacheByType = 10)
+{
+	global $db,$globalCacheForGetObjectFromCache;
+
+	if (!class_exists($objetClassName)) {
+		return false;
+	}
+
+	if (empty($globalCacheForGetObjectFromCache[$objetClassName][$objectId])) {
+		$object = new $objetClassName($db);
+		if ($object->fetch($objectId, $objectRef) <= 0) {
+			return false;
+		}
+
+		if (is_array($globalCacheForGetObjectFromCache[$objetClassName]) && count($globalCacheForGetObjectFromCache[$objetClassName]) >= $maxCacheByType) {
+			array_shift($globalCacheForGetObjectFromCache[$objetClassName]);
+		}
+
+		$globalCacheForGetObjectFromCache[$objetClassName][$objectId] = $object;
+	} else {
+		$object = $globalCacheForGetObjectFromCache[$objetClassName][$objectId];
+	}
+
+	return $object;
 }
 
 /**
