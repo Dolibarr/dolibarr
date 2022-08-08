@@ -10837,13 +10837,15 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 
 		if ($useCache) {
 			$objecttmp = fetchObjectFromCache($element_prop['classname'], $element_id, $element_ref, $maxCacheByType);
+			if (is_object($objecttmp)) {
+				return $objecttmp;
+			}
 		} else {
 			$objecttmp = new $element_prop['classname']($db);
 			$ret = $objecttmp->fetch($element_id, $element_ref);
-		}
-
-		if ($ret >= 0) {
-			return $objecttmp;
+			if ($ret >= 0) {
+				return $objecttmp;
+			}
 		}
 	}
 	return 0;
