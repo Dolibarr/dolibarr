@@ -10858,20 +10858,21 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
  * @param int    $objectId       object Id
  * @param string $objectRef       object ref
  * @param int    $maxCacheByType max number of storable object fore each type
- * @return bool|CommonObject
+ * @return  int|object                    object || 0 || -1 if error
  */
 function fetchObjectFromCache($objetClassName, $objectId, $objectRef = false, $maxCacheByType = 10)
 {
 	global $db,$globalCacheForGetObjectFromCache;
 
 	if (!class_exists($objetClassName)) {
-		return false;
+		return -1;
 	}
 
 	if (empty($globalCacheForGetObjectFromCache[$objetClassName][$objectId])) {
 		$object = new $objetClassName($db);
-		if ($object->fetch($objectId, $objectRef) <= 0) {
-			return false;
+		$res = $object->fetch($objectId, $objectRef);
+		if ($res <= 0) {
+			return $res;
 		}
 
 		if (is_array($globalCacheForGetObjectFromCache[$objetClassName]) && count($globalCacheForGetObjectFromCache[$objetClassName]) >= $maxCacheByType) {
