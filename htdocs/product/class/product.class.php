@@ -1245,7 +1245,7 @@ class Product extends CommonObject
 
 							if ($res > 0) {
 								$label = $langs->trans('BatchStockMouvementAddInGlobal');
-								$res = $this->correct_stock($user, $fk_entrepot, abs($value), (int)empty($addOremove), $label, $price, $inventorycode, '', null, 0);
+								$res = $this->correct_stock($user, $fk_entrepot, abs($value), (int) empty($addOremove), $label, $price, $inventorycode, '', null, 0);
 								if ($res < 0) {
 									$error++;
 								}
@@ -5332,7 +5332,7 @@ class Product extends CommonObject
 	 * @param  array    $extrafields	Array of extrafields
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch=false)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{
 		// phpcs:enable
 		if ($id_entrepot) {
