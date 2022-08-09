@@ -1038,11 +1038,14 @@ class Conf
 		if (!empty($this->file->mailing_limit_sendbyweb)) {
 			$this->global->MAILING_LIMIT_SENDBYWEB = $this->file->mailing_limit_sendbyweb;
 		}
-		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {
+		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {	// Limit by web can't be 0
 			$this->global->MAILING_LIMIT_SENDBYWEB = 25;
 		}
 		if (!empty($this->file->mailing_limit_sendbycli)) {
 			$this->global->MAILING_LIMIT_SENDBYCLI = $this->file->mailing_limit_sendbycli;
+		}
+		if (!empty($this->file->mailing_limit_sendbyday)) {
+			$this->global->MAILING_LIMIT_SENDBYDAY = $this->file->mailing_limit_sendbyday;
 		}
 
 		return 0;

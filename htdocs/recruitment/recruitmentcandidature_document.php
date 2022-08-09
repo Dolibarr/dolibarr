@@ -48,7 +48,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) {
@@ -188,6 +188,7 @@ if ($object->id) {
 	$param = '&id='.$object->id;
 
 	$relativepathwithnofile = 'recruitmentcandidature/'.dol_sanitizeFileName($object->ref).'/';
+	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

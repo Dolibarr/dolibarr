@@ -156,5 +156,6 @@ ModuleSalaryToDefineHourlyRateMustBeEnabled=El módulo &#39;Salarios&#39; debe e
 NewTaskRefSuggested=Referencia de tarea ya utilizada, se requiere una nueva referencia de tarea
 TimeSpentForIntervention=Tiempo dedicado
 TimeSpentForInvoice=Tiempo dedicado
+ServiceToUseOnLines=Service to use on lines by default
 InvoiceGeneratedFromTimeSpent=La factura %s se ha generado desde el tiempo invertido en el proyecto
 UsageBillTimeShort=Uso: Bill time

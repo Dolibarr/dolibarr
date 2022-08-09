@@ -12,7 +12,7 @@ OpenEtablishment=Nyitott létesítmény
 CloseEtablishment=Létesítmény bezárása
 # Dictionary
 DictionaryPublicHolidays=Szabadság - Munkaszüneti napok
-DictionaryDepartment=HRM - Osztálylista
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM – Munkaköri pozíciók
 # Module
 Employees=Alkalmazottak
@@ -70,9 +70,9 @@ RequiredSkills=Szükséges készségek ehhez a munkához
 UserRank=Felhasználói rang
 SkillList=Képességlista
 SaveRank=Rang mentése
-knowHow=Szakértelem
-HowToBe=Hogyan legyünk
-knowledge=tudás
+TypeKnowHow=Szakértelem
+TypeHowToBe=Hogyan legyünk
+TypeKnowledge=tudás
 AbandonmentComment=Elhagyó megjegyzés
 DateLastEval=Utolsó értékelés dátuma
 NoEval=Nem történt értékelés ehhez az alkalmazotthoz
@@ -88,3 +88,4 @@ DeleteSkill = Képesség eltávolítva
 SkillsExtraFields=További tulajdonságok (készségek)
 JobsExtraFields=További tulajdonságok (munkahelyek)
 EvaluationsExtraFields=További tulajdonságok (értékelések)
+NeedBusinessTravels=Üzleti utakra van szükség

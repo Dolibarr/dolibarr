@@ -41,7 +41,7 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 

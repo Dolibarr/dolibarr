@@ -186,7 +186,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 
 			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
 			print __METHOD__." FONTFORPDF=".$result."\n";
-			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
 
 			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";
@@ -226,6 +226,14 @@ class LangTest extends PHPUnit\Framework\TestCase
 				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
+
+				$result=preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
+
+				$result=preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
 			}
 		}
 

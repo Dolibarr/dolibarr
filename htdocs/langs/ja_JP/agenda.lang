@@ -57,6 +57,7 @@ MemberValidatedInDolibarr=構成員%sは承認済
 MemberModifiedInDolibarr=構成員%sが修正された
 MemberResiliatedInDolibarr=構成員%sが解除された
 MemberDeletedInDolibarr=構成員%sが削除された
+MemberExcludedInDolibarr=メンバー%sは除外された
 MemberSubscriptionAddedInDolibarr=構成員%sのサブスクリプション%sは追加済
 MemberSubscriptionModifiedInDolibarr=構成員%sのサブスクリプション%sは変更済
 MemberSubscriptionDeletedInDolibarr=構成員%sのサブスクリプション%sは削除済

@@ -57,6 +57,7 @@ class Paiement extends CommonObject
 
 	public $facid;
 	public $datepaye;
+	public $date;		// same than $datepaye
 
 	/**
 	 * @deprecated
@@ -152,6 +153,7 @@ class Paiement extends CommonObject
 	 * @var string payment external reference
 	 */
 	public $ref_ext;
+
 
 	/**
 	 *	Constructor

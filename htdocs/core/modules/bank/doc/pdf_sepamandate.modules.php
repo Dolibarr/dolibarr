@@ -1,6 +1,4 @@
 <?php
-use Stripe\BankAccount;
-
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *

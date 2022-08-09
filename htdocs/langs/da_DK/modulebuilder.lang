@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Modul id
 ModuleBuilderDesc=Dette værktøj må kun bruges af erfarne brugere eller udviklere. Det giver værktøjer til at bygge eller redigere dit eget modul. Dokumentation for alternativ <a href="%s" target="_blank" rel="noopener noreferrer"> manuel udvikling er her </a> .
 EnterNameOfModuleDesc=Indtast navnet på modulet/applikationen, der skal oprettes uden mellemrum. Brug store bogstaver til at adskille ord (for eksempel: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Indtast navnet på det objekt, der skal oprettes, uden mellemrum. Brug store bogstaver til at adskille ord (for eksempel: Mit objekt, elev, lærer...). CRUD-klassefilen, men også API-fil, sider til liste/tilføj/rediger/slet objekt og SQL-filer vil blive genereret.
@@ -9,6 +10,7 @@ ModuleBuilderDesc4=Et modul registreres som 'redigerbart', når filen <strong> %
 NewModule=Nyt modul
 NewObjectInModulebuilder=Nyt objekt
 NewDictionary=Ny ordbog
+ModuleName=Modulnavn
 ModuleKey=Modul nøgle
 ObjectKey=Objektnøgle
 DicKey=Ordbogsnøgle
@@ -153,3 +155,4 @@ LinkToParentMenu=Forældremenu (fk_xxxxmenu)
 ListOfTabsEntries=Liste over faneposter
 TabsDefDesc=Definer her de faner, som dit modul giver
 TabsDefDescTooltip=Fanerne, der leveres af dit modul/applikation, er defineret i arrayet <strong> $this->tabs </strong> i modulbeskrivelsesfilen. Du kan redigere denne fil manuelt eller bruge den indlejrede editor.
+BadValueForType=Forkert værdi for type %s

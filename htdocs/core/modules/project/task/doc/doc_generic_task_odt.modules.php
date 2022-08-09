@@ -517,9 +517,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				$newfiletmp = preg_replace('/\.(ods|odt)/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
-				$file = $dir.'/'.$newfiletmp.'.odt';
+				$file = $dir . '/' . $newfiletmp . '.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -527,8 +527,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				dol_mkdir($conf->project->dir_temp);
 				if (!is_writable($conf->project->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->project->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->project->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 

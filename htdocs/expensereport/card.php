@@ -263,7 +263,7 @@ if (empty($reshook)) {
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
-			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
