@@ -1240,7 +1240,7 @@ class Product extends CommonObject
 
 							//To know how to revert stockMouvement (add or remove)
 							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
-							$label = $langs->trans('BatchStockMouvementReverting');
+							$label = $langs->trans('BatchStockMouvementAddInGlobal');
 							$res = $this->correct_stock_batch($user, $fk_entrepot, $value, $addOremove, $label, $price, $dlc, $dluo, $batch, $inventorycode, '', null, 0, null, true);
 
 							if ($res > 0) {
