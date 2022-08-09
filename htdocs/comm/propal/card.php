@@ -2283,11 +2283,8 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DatePropal');
-	print '</td>';
-	if ($action != 'editdate' && $usercancreate && $caneditfield) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
-	}
+	$editenable = $action != 'editdate' && $usercancreate && $caneditfield && $object->statut == Propal::STATUS_DRAFT;
+	print $form->editfieldkey("DatePropal", 'date', '', $object, $editenable);
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
 	if ($action == 'editdate' && $usercancreate && $caneditfield) {
