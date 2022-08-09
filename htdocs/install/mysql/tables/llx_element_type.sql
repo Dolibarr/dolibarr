@@ -27,7 +27,7 @@ create table llx_element_type
   element_type		varchar(64) NOT NULL,
   element		    varchar(32) NOT NULL,
   module_name		varchar(31) NOT NULL,
-  class_path		text NOT NULL,
+  class_dir		text NOT NULL,
   class_file		varchar(128) NOT NULL,
 ) ENGINE=innodb;
 
