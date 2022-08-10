@@ -847,7 +847,7 @@ class CMailFile
 					$this->smtps->setPW($loginpass);
 				}
 
-				if (!empty($conf->global->$keyforsmtpauthtype) && $conf->global->$keyforsmtpauthtype === "XOAUTH2") {
+				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -943,8 +943,38 @@ class CMailFile
 				if (!empty($conf->global->$keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
 				}
-				if (!empty($conf->global->$keyforsmtppw)) {
+				if (!empty($conf->global->$keyforsmtppw) && getDolGlobalString($keyforsmtpauthtype) != "XOAUTH2") {
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
+				}
+				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
+					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+					} else {
+						$keyforprovider = '';
+					}
+					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
+					$storage = new DoliStorage($db, $conf);
+					try {
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						if (is_object($tokenobj)) {
+							$this->transport->setAuthMode('XOAUTH2');
+							$this->transport->setPassword($tokenobj->getAccessToken());
+						} else {
+							$this->errors[] = "Token not found";
+						}
+					} catch (Exception $e) {
+						// Return an error if token not found
+						$this->errors[] = $e->getMessage();
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					}
 				}
 				if (!empty($conf->global->$keyforsslseflsigned)) {
 					$this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
