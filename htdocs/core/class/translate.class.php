@@ -640,6 +640,7 @@ class Translate
 				try {
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
 				} catch (Exception $e) {
+					// No exception managed
 				}
 			}
 
