@@ -76,6 +76,16 @@ class CMailFile
 	public $phpmailer; // Contains PHPMailer object (if this method is used)
 
 	/**
+	 * @var Swift_SmtpTransport
+	 */
+	public $transport;
+
+	/**
+	 * @var Swift_Mailer
+	 */
+	public $mailer;
+
+	/**
 	 * @var string CSS
 	 */
 	public $css;
