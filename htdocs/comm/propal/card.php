@@ -315,6 +315,9 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			if (isset($object->duree_validite) && !empty($object->fin_validite)) {
+				$object->fin_validite = $datep + ($object->duree_validite * 24 * 3600);
+			}
 			$result = $object->set_date($user, $datep);
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
