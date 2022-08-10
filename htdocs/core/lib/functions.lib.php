@@ -6821,10 +6821,11 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
 					if (! empty($attrs->item($ii)->name)) {
-						// Delete attribute if not into allowed_attributes
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							// If attribute is 'style'
 							$valuetoclean = $attrs->item($ii)->value;
 
 							if (isset($valuetoclean)) {
@@ -6833,10 +6834,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
 									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
 									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
 									}
+
+									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
 								} while ($oldvaluetoclean != $valuetoclean);
 							}
 

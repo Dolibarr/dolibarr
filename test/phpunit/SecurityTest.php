@@ -382,6 +382,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param13b"]='&#110; &#x6E; &gt; &lt; &quot; <a href=\"j&#x61vascript:alert(document.domain)\">XSS</a>';
 		$_POST["param14"]="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$_POST["param15"]="<img onerror<=alert(document.domain)> src=>0xbeefed";
+		$_POST["param16"]='<a style="z-index: 1000">abc</a>';
+		$_POST["param17"]='<span style="background-image: url(logout.php)">abc</span>';
+		$_POST["param18"]='<span style="background-image: url(...?...action=aaa)">abc</span>';
 		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
 
@@ -553,6 +556,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param15", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<img src="">0xbeefed', $result, 'Test 15b');
+
+		$result=GETPOST('param16', 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<a style=" 1000">abc</a>', $result, 'Test tag a with forbidden attribute z-index');
+
+		$result=GETPOST('param17', 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<span style="background-image: url()">abc</span>', $result, 'Test anytag with a forbidden value for attribute');
+
+		$result=GETPOST('param18', 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('<span style="background-image: url(...?...aaa)">abc</span>', $result, 'Test anytag with a forbidden value for attribute');
 
 		unset($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);
 
