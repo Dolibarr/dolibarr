@@ -2291,5 +2291,5 @@ OauthNotAvailableForAllAndHadToBeCreatedBefore=L'authentification OAUTH2 n'est p
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=Service d'authentification OAUTH2
 DontForgetCreateTokenOauthMod=Un jeton avec les bonnes permissions doit avoir été créé en amont avec le module OAUTH
 MAIN_MAIL_SMTPS_AUTH_TYPE=Méthode d'authentication
-UsePassword=Utiliser un mot de pass
+UsePassword=Utiliser un mot de passe
 UseOauth=Utiliser un jeton d'authentification OAUTH

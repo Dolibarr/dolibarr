@@ -72,8 +72,28 @@ class CMailFile
 	 */
 	public $error = '';
 
+	/**
+	 * @var string[] Array of Error code (or message)
+	 */
+	public $errors = array();
+
 	public $smtps; // Contains SMTPs object (if this method is used)
 	public $phpmailer; // Contains PHPMailer object (if this method is used)
+
+	/**
+	 * @var Swift_SmtpTransport
+	 */
+	public $transport;
+
+	/**
+	 * @var Swift_Mailer
+	 */
+	public $mailer;
+
+	/**
+	 * @var Swift_Plugins_Loggers_ArrayLogger
+	 */
+	public $logger;
 
 	/**
 	 * @var string CSS
@@ -847,7 +867,7 @@ class CMailFile
 					$this->smtps->setPW($loginpass);
 				}
 
-				if (!empty($conf->global->$keyforsmtpauthtype) && $conf->global->$keyforsmtpauthtype === "XOAUTH2") {
+				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
 					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
 					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
@@ -897,7 +917,6 @@ class CMailFile
 					}
 
 					$result = $this->smtps->sendMsg();
-					//print $result;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->dump_mail();
@@ -943,8 +962,38 @@ class CMailFile
 				if (!empty($conf->global->$keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
 				}
-				if (!empty($conf->global->$keyforsmtppw)) {
+				if (!empty($conf->global->$keyforsmtppw) && getDolGlobalString($keyforsmtpauthtype) != "XOAUTH2") {
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
+				}
+				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					$keyforsupportedoauth2array = getDolGlobalString($keyforsmtpoauthservice);
+					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+					} else {
+						$keyforprovider = '';
+					}
+					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
+					$storage = new DoliStorage($db, $conf);
+					try {
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						if (is_object($tokenobj)) {
+							$this->transport->setAuthMode('XOAUTH2');
+							$this->transport->setPassword($tokenobj->getAccessToken());
+						} else {
+							$this->errors[] = "Token not found";
+						}
+					} catch (Exception $e) {
+						// Return an error if token not found
+						$this->errors[] = $e->getMessage();
+						dol_syslog("CMailFile::sendfile: mail end error=".$e->getMessage(), LOG_ERR);
+					}
 				}
 				if (!empty($conf->global->$keyforsslseflsigned)) {
 					$this->transport->setStreamOptions(array('ssl' => array('allow_self_signed' => true, 'verify_peer' => false)));
@@ -978,16 +1027,16 @@ class CMailFile
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
-					$this->error = $e->getMessage();
+					$this->errors[] = $e->getMessage();
 				}
 				if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 					$this->dump_mail();
 				}
 
 				$res = true;
-				if (!empty($this->error) || !$result) {
+				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
