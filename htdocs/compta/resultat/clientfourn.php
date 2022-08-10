@@ -262,8 +262,7 @@ if ($modecompta == 'BOOKKEEPING') {
 } else {
 	if ($modecompta == 'CREANCES-DETTES') {
 		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
-	}
-	else {
+	} else {
 		print_liste_field_titre('');  // Make 4 columns in total whatever $modecompta is
 	}
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
