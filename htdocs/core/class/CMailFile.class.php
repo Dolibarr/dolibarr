@@ -72,6 +72,11 @@ class CMailFile
 	 */
 	public $error = '';
 
+	/**
+	 * @var string[] Array of Error code (or message)
+	 */
+	public $errors = array();
+
 	public $smtps; // Contains SMTPs object (if this method is used)
 	public $phpmailer; // Contains PHPMailer object (if this method is used)
 
@@ -84,6 +89,11 @@ class CMailFile
 	 * @var Swift_Mailer
 	 */
 	public $mailer;
+
+	/**
+	 * @var Swift_Plugins_Loggers_ArrayLogger
+	 */
+	public $logger;
 
 	/**
 	 * @var string CSS
