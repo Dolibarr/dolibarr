@@ -250,9 +250,7 @@ if ($date_endyear) {
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-if ($modecompta != 'CREANCES-DETTES') {
-	print_liste_field_titre('');  // Make 4 columns in total whatever $modecompta is
-}
+
 if ($modecompta == 'BOOKKEEPING') {
 	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
 } else {
@@ -264,6 +262,9 @@ if ($modecompta == 'BOOKKEEPING') {
 } else {
 	if ($modecompta == 'CREANCES-DETTES') {
 		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	else {
+		print_liste_field_titre('');  // Make 4 columns in total whatever $modecompta is
 	}
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 }
