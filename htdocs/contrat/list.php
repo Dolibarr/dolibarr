@@ -110,7 +110,7 @@ $staticcontratligne = new ContratLigne($db);
 
 if ($search_status == '') {
 	// if nothing selected, we select all
-	$search_status = Array('1', '2', '3', '4');
+	$search_status = array('1', '2', '3', '4');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
