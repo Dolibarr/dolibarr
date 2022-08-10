@@ -1642,6 +1642,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				//$s=picto_from_langcode($object->default_lang);
 				//print ($s?$s.' ':'');
 				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
+				print picto_from_langcode($object->lang, 'class="paddingrightonly saturatemedium opacitylow"');
 				print $labellang;
 				print '</td></tr>';
 			}
