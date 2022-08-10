@@ -58,7 +58,7 @@ require_once '../lib/documentsfunctionality.lib.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
-$langs->loadLangs(array("admin", "documentsfunctionality@documentsfunctionality"));
+$langs->loadLangs(array("admin", "documentsfunctionality"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('documentsfunctionalitysetup', 'globalsetup'));
