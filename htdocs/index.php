@@ -162,7 +162,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of project opened
-	if (!empty($conf->project->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->hasRight('projet', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$board = new Project($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -235,7 +235,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->hasRight('fournisseur', 'facture', 'lire'))) {
+	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
