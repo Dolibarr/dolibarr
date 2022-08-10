@@ -522,6 +522,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type = GETPOST('fk_barcode_type');
@@ -702,6 +703,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->sell_or_eat_by_mandatory = GETPOST('sell_or_eat_by_mandatory', 'int');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
@@ -1187,7 +1189,10 @@ $formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
-
+$sellOrEatByMandatoryList = null;
+if (isModEnabled('productbatch')) {
+	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+}
 
 $title = $langs->trans('ProductServiceCard');
 
@@ -1335,7 +1340,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Batch number management
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
@@ -1387,6 +1392,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							</script>';
 					print '</td></tr>';
 				}
+			}
+
+			// SellBy / EatBy mandatory list
+			if (!empty($sellOrEatByMandatoryList)) {
+				print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+				print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, GETPOST('sell_or_eat_by_mandatory', 'int'));
+				print '</td></tr>';
 			}
 		}
 
@@ -1937,6 +1949,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						}
 						print '</td></tr>';
 					}
+
+					// SellBy / EatBy mandatory list
+					if (!empty($sellOrEatByMandatoryList)) {
+						if (GETPOSTISSET('sell_or_eat_by_mandatory')) {
+							$sellOrEatByMandatorySelectedId = GETPOST('sell_or_eat_by_mandatory', 'int');
+						} else {
+							$sellOrEatByMandatorySelectedId = $object->sell_or_eat_by_mandatory;
+						}
+						print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+						print $form->selectarray('sell_or_eat_by_mandatory', $sellOrEatByMandatoryList, $sellOrEatByMandatorySelectedId);
+						print '</td></tr>';
+					}
 				}
 			}
 
@@ -2350,7 +2374,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Batch number management (to batch)
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
@@ -2361,6 +2385,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print $object->batch_mask;
 						print '</td></tr>';
 					}
+
+					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->trans('SellByDate'), $langs->trans('EatByDate')).'</td><td>';
+					print $object->getSellOrEatByMandatoryLabel();
+					print '</td></tr>';
 				}
 			}
 

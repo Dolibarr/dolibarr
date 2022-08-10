@@ -858,6 +858,19 @@ class Reception extends CommonObject
 				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
 				return -1;
 			}
+
+			// check sell-by / eat-by date is mandatory
+			$errorMsgArr = Productlot::checkSellOrEatByMandatoryFromProductAndDates($product, $sellby, $eatby);
+			if (!empty($errorMsgArr)) {
+				$errorMessage = '<b>' . $product->ref . '</b> : ';
+				$errorMessage .= '<ul>';
+				foreach ($errorMsgArr as $errorMsg) {
+					$errorMessage .= '<li>' . $errorMsg . '</li>';
+				}
+				$errorMessage .= '</ul>';
+				$this->error = $errorMessage;
+				return -1;
+			}
 		}
 		unset($product);
 
