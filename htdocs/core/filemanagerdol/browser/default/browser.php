@@ -25,6 +25,8 @@ require '../../connectors/php/config.php'; // This include the define('NOTOKENRE
 
 global $Config;
 
+top_httphead();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
