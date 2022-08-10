@@ -32,6 +32,11 @@ DocumentsFunctionalitySetupPage = Documents functionality setup page
 DOCUMENTSFUNCTIONALITY_TITLE_IN_DOC = Add title in propal documents
 
 #
+# Dictionaries
+#
+docfunc_title=List titles predefined for documents 
+
+#
 # Sample page
 #
 DocumentsFunctionalityArea = Home DocumentsFunctionality
