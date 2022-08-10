@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - members
-MembersTickets=Membership address sheet
 MemberStatusDraftShort=A validar
 MemberStatusActiveShort=Validada
 MemberStatusNoSubscriptionShort=Validada
+ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
+CanEditAmount=Visitor can choose/edit amount of its contribution regardless of the member type

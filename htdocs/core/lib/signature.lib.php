@@ -18,7 +18,7 @@
  */
 
 /**
- * Return string with full Url
+ * Return string with full online Url to accept and sign a quote
  *
  * @param   string	$type		Type of URL ('proposal', ...)
  * @param	string	$ref		Ref of object
@@ -39,8 +39,9 @@ function showOnlineSignatureUrl($type, $ref)
 	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
 		$out .= $url;
 	} else {
-		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	}
+	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;
@@ -50,29 +51,50 @@ function showOnlineSignatureUrl($type, $ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('proposal', ...)
- * @param	string	$ref		Ref of object
- * @return	string				Url string
+ * @param   int		$mode				0=True url, 1=Url formated with colors
+ * @param   string	$type				Type of URL ('proposal', ...)
+ * @param	string	$ref				Ref of object
+ * @param   string  $localorexternal  	0=Url for browser, 1=Url for external access
+ * @return	string						Url string
  */
-function getOnlineSignatureUrl($mode, $type, $ref = '')
+function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 {
-	global $conf, $db, $langs;
+	global $conf, $db, $langs, $dolibarr_main_url_root;
 
 	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$urltouse = DOL_MAIN_URL_ROOT;
+	if ($localorexternal) {
+		$urltouse = $urlwithroot;
+	}
+
+	$securekeyseed = '';
+
 	if ($type == 'proposal') {
-		$out = DOL_MAIN_URL_ROOT.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<font color="#666666">' : '');
+		$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=proposal&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'proposal_ref';
 		}
 		if ($mode == 0) {
 			$out .= urlencode($ref);
 		}
-		$out .= ($mode ? '</font>' : '');
+		$out .= ($mode ? '</span>' : '');
 		if ($mode == 1) {
-			$out .= '&hashp=<font color="#666666">hash_of_file</font>';
+			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref, '0');
+		}
+		/*
+		if ($mode == 1) {
+			$out .= '&hashp=<span style="color: #666666">hash_of_file</span>';
 		} else {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propaltmp = new Propal($db);
@@ -93,12 +115,12 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 			} else {
 				$out .= '&hashp='.$hashp;
 			}
-		}
+		}*/
 	}
 
 	// For multicompany
-	if (!empty($out)) {
-		$out .= "&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 
 	return $out;

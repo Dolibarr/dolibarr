@@ -50,7 +50,7 @@ $Config['Enabled'] = true;
 $extEntity = (empty($entity) ? 1 : $entity); // For multicompany with external access
 
 $Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website) ? '' : '_'.$website).'&entity='.$extEntity.'&file=';
-$Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/'.$entity : '').'/medias/') : ('/website/'.$website));
+$Config['UserFilesAbsolutePathRelative'] = (!empty($entity) ? '/'.$entity : '').(empty($website) ? '/medias/' : ('/website/'.$website));
 
 
 // Fill the following value it you prefer to specify the absolute path for the
@@ -159,7 +159,10 @@ $Config['FileTypesAbsolutePath']['File'] = ($Config['UserFilesAbsolutePath'] == 
 $Config['QuickUploadPath']['File'] = $Config['UserFilesPath'];
 $Config['QuickUploadAbsolutePath']['File'] = $Config['UserFilesAbsolutePath'];
 
-$Config['AllowedExtensions']['Image'] = array('bmp', 'gif', 'jpeg', 'jpg', 'png');
+$Config['AllowedExtensions']['Image'] = array('bmp', 'gif', 'jpeg', 'jpg', 'png', 'ai');
+if (!empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+	$Config['AllowedExtensions']['Image'][] = 'svg';
+}
 $Config['DeniedExtensions']['Image']	= array();
 $Config['FileTypesPath']['Image'] = $Config['UserFilesPath'].'image/';
 $Config['FileTypesAbsolutePath']['Image'] = ($Config['UserFilesAbsolutePath'] == '') ? '' : $Config['UserFilesAbsolutePath'].'image/';

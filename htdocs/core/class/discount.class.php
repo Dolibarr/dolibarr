@@ -148,9 +148,9 @@ class DiscountAbsolute
 		$sql .= " sr.datec,";
 		$sql .= " f.ref as ref_facture_source, f.type as type_facture_source,";
 		$sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as sr";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."facture as f ON sr.fk_facture_source = f.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
 			$sql .= " AND sr.rowid = ".((int) $rowid);
@@ -268,7 +268,7 @@ class DiscountAbsolute
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql = "INSERT INTO ".$this->db->prefix()."societe_remise_except";
 		$sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
 		$sql .= " amount_ht, amount_tva, amount_ttc, tva_tx, vat_src_code,";
 		$sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
@@ -284,7 +284,7 @@ class DiscountAbsolute
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."societe_remise_except");
 			return $this->id;
 		} else {
 			$this->error = $this->db->lasterror().' - sql='.$sql;
@@ -306,7 +306,7 @@ class DiscountAbsolute
 		// Check if we can remove the discount
 		if ($this->fk_facture_source) {
 			$sql = "SELECT COUNT(rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except";
 			$sql .= " WHERE (fk_facture_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_facture IS NOT NULL)"; // Not used as credit note and not used as deposit
 			$sql .= " AND fk_facture_source = ".((int) $this->fk_facture_source);
@@ -329,7 +329,7 @@ class DiscountAbsolute
 		// Check if we can remove the discount
 		if ($this->fk_invoice_supplier_source) {
 			$sql = "SELECT COUNT(rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except";
 			$sql .= " WHERE (fk_invoice_supplier_line IS NOT NULL"; // Not used as absolute simple discount
 			$sql .= " OR fk_invoice_supplier IS NOT NULL)"; // Not used as credit note and not used as deposit
 			$sql .= " AND fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source);
@@ -352,7 +352,7 @@ class DiscountAbsolute
 		$this->db->begin();
 
 		// Delete but only if not used
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
+		$sql = "DELETE FROM ".$this->db->prefix()."societe_remise_except ";
 		if ($this->fk_facture_source) {
 			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same serie
 		} elseif ($this->fk_invoice_supplier_source) {
@@ -370,7 +370,7 @@ class DiscountAbsolute
 		if ($result) {
 			// If source of discount was a credit note or deposit, we change source statut.
 			if ($this->fk_facture_source) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql = "UPDATE ".$this->db->prefix()."facture";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_facture_source);
 
@@ -385,7 +385,7 @@ class DiscountAbsolute
 					return -1;
 				}
 			} elseif ($this->fk_invoice_supplier_source) {
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+				$sql = "UPDATE ".$this->db->prefix()."facture_fourn";
 				$sql .= " set paye=0, fk_statut=1";
 				$sql .= " WHERE (type = 2 or type = 3) AND rowid = ".((int) $this->fk_invoice_supplier_source);
 
@@ -435,7 +435,7 @@ class DiscountAbsolute
 			return -2;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			if ($rowidline) {
 				$sql .= " SET fk_invoice_supplier_line = ".((int) $rowidline);
@@ -451,7 +451,7 @@ class DiscountAbsolute
 				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::link_to_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -481,13 +481,13 @@ class DiscountAbsolute
 	public function unlink_invoice()
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql = "UPDATE ".$this->db->prefix()."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			$sql .= " SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
 		} else {
 			$sql .= " SET fk_facture_line = NULL, fk_facture = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::unlink_invoice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -518,7 +518,7 @@ class DiscountAbsolute
 		dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
 
 		$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
 		$sql .= " WHERE rc.entity = ".$conf->entity;
 		$sql .= " AND rc.discount_type=".((int) $discount_type);
 		if (!empty($discount_type)) {
@@ -533,10 +533,10 @@ class DiscountAbsolute
 			$sql .= " AND rc.fk_user = ".((int) $user->id);
 		}
 		if ($filter) {
-			$sql .= ' AND ('.$filter.')';
+			$sql .= " AND (".$filter.")";
 		}
 		if ($maxvalue) {
-			$sql .= ' AND rc.amount_ttc <= '.price2num($maxvalue);
+			$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
 		}
 
 		$resql = $this->db->query($sql);
@@ -562,7 +562,7 @@ class DiscountAbsolute
 	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount
+	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($invoice, $multicurrency = 0)
@@ -570,15 +570,15 @@ class DiscountAbsolute
 		dol_syslog(get_class($this)."::getSumDepositsUsed", LOG_DEBUG);
 
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-			$sql .= ' AND f.type = 3';
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture as f";
+			$sql .= " WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = ".((int) $invoice->id);
+			$sql .= " AND f.type = 3";
 		} elseif ($invoice->element == 'invoice_supplier') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
-			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-			$sql .= ' AND f.type = 3';
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture_fourn as f";
+			$sql .= " WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = ".((int) $invoice->id);
+			$sql .= " AND f.type = 3";
 		} else {
 			$this->error = get_class($this)."::getSumDepositsUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);
@@ -603,7 +603,7 @@ class DiscountAbsolute
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
-	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount
+	 *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return     int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
@@ -611,15 +611,15 @@ class DiscountAbsolute
 		dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
 
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.', '.$invoice::TYPE_SITUATION).')'; // Find discount coming from credit note or excess received
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture as f";
+			$sql .= " WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = ".((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE.", ".$invoice::TYPE_SITUATION).")"; // Find discount coming from credit note or excess received
 		} elseif ($invoice->element == 'invoice_supplier') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
-			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE).')'; // Find discount coming from credit note or excess paid
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc, ".$this->db->prefix()."facture_fourn as f";
+			$sql .= " WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = ".((int) $invoice->id);
+			$sql .= " AND f.type IN (".$this->db->sanitize($invoice::TYPE_STANDARD.", ".$invoice::TYPE_CREDIT_NOTE).")"; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);
@@ -643,7 +643,7 @@ class DiscountAbsolute
 	 *    	Return amount (with tax) of all converted amount for this credit note
 	 *
 	 *	@param		CommonInvoice	  $invoice	    	Object invoice
-	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
+	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
 	 *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
@@ -651,13 +651,13 @@ class DiscountAbsolute
 		dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
 
 		if ($invoice->element == 'facture' || $invoice->element == 'invoice') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.$invoice->id;
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = ".((int) $invoice->id);
 		} elseif ($invoice->element == 'invoice_supplier') {
-			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
-			$sql .= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.$invoice->id;
+			$sql = "SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = ".((int) $invoice->id);
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);

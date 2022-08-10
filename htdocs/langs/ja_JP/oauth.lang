@@ -9,7 +9,7 @@ HasAccessToken=トークンを生成し、ローカルデータベースに保�
 NewTokenStored=トークンを受け取り、保存した
 ToCheckDeleteTokenOnProvider=ここをクリックすると %s OAuth プロバイダによって保存された承認を確認/削除する
 TokenDeleted=トークンを削除した
-RequestAccess=ここをクリックすると、アクセスをリクエスト/更新し、新規トークンを受け取って保存する
+RequestAccess=ここをクリックすると、アクセスを要求/更新し、新規トークンを受け取って保存する
 DeleteAccess=ここをクリックするとトークンを削除する
 UseTheFollowingUrlAsRedirectURI=OAuthプロバイダーで認証情報を作成するときは、リダイレクトURIとして次のURLを使用する。
 ListOfSupportedOauthProviders=OAuth2プロバイダーから提供された資格情報を入力する。サポートされているOAuth2プロバイダーのみがここにリストされている。これらのサービスは、OAuth2認証を必要とする他のモジュールによって使用される場合がある。
@@ -23,10 +23,10 @@ TOKEN_DELETE=保存されたトークンを削除
 OAUTH_GOOGLE_NAME=OAuthGoogleサービス
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuthGoogleシークレット
-OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">このページ</a>に移動し、次に「資格情報」に移動してOAuth資格情報を作成する
+OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external">このページ</a>に移動し、次に「Credentials」に移動してOAuthクレデンシャルを作成する
 OAUTH_GITHUB_NAME=OAuthGitHubサービス
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuthGitHubシークレット
-OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">このページ</a>に移動し、"新規アプリケーションを登録" してOAuth認証情報を作成する
+OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external">このページ</a>に移動し、次に「新しいアプリケーションを登録する」に移動して、OAuthクレデンシャルを作成する
 OAUTH_STRIPE_TEST_NAME=OAuthストライプテスト
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

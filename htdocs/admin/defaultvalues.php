@@ -46,8 +46,8 @@ $optioncss = GETPOST('optionscss', 'alphanohtml');
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -64,7 +64,7 @@ if (!$sortorder) {
 
 $defaulturl = GETPOST('defaulturl', 'alphanohtml');
 $defaultkey = GETPOST('defaultkey', 'alphanohtml');
-$defaultvalue = GETPOST('defaultvalue', 'none');
+$defaultvalue = GETPOST('defaultvalue', 'restricthtml');
 
 $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
@@ -101,7 +101,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$defaulturl = '';
 	$defaultkey = '';
 	$defaultvalue = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -206,12 +206,12 @@ $param = '&mode='.$mode;
 $enabledisablehtml = $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
 } else {
 	// Button on, click to disable
-	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&amp;token='.newToken().'&amp;value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_DEFAULT_VALUES&token='.newToken().'&value=0'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
@@ -350,17 +350,15 @@ if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
 	$disabled = ' disabled="disabled"';
 }
 print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add">';
-print "</td>\n";
-print '</tr>';
+print '</td>'."\n";
+print '</tr>'."\n";
 
-$result=$object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
 
-if (!is_array($result) && $result<0) {
+if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
-} elseif (count($result)>0) {
-	foreach ($result as $key=>$defaultvalue) {
-		print "\n";
-
+} elseif (is_array($result) && count($result) > 0) {
+	foreach ($result as $key => $defaultvalue) {
 		print '<tr class="oddeven">';
 
 		// Page
@@ -378,11 +376,6 @@ if (!is_array($result) && $result<0) {
 		// Value
 		if ($mode != 'focus' && $mode != 'mandatory') {
 			print '<td>';
-			/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-			print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
-			print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
-			print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
-			*/
 			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print dol_escape_htmltag($defaultvalue->value);
 			else print '<input type="text" name="value" value="'.dol_escape_htmltag($defaultvalue->value).'">';
 			print '</td>';
@@ -399,14 +392,12 @@ if (!is_array($result) && $result<0) {
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
 			print '<div name="'.(!empty($defaultvalue->id) ? $defaultvalue->id : 'none').'"></div>';
-			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+			print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';
 
 		print "</tr>\n";
-		print "\n";
-		$i++;
 	}
 }
 

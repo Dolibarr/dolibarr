@@ -101,6 +101,10 @@ if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
 	$error++;
+} elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+	$langs->load("errors");
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), '', 'errors');
+	$error++;
 }
 
 // Test if remote test is ok
@@ -205,8 +209,8 @@ if (empty($error) && !empty($xml)) {
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
-			if ($constname && $conf->global->$constname != '') {
-				$value = $conf->global->$constname;
+			if ($constname && getDolGlobalString($constname) != '') {
+				$value = getDolGlobalString($constname);
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -388,7 +392,9 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</table>';
 		$out .= '</div>';
 	} else {
-		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
+		print '<div class="error">';
+		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
+		print '</div><br>';
 		$error++;
 	}
 
@@ -407,16 +413,16 @@ if (empty($error) && !empty($xml)) {
 	$checksumget = md5(join(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
-	/*var_dump(count($file_list['added']));
-	var_dump($checksumget);
-	var_dump($checksumtoget);
-	var_dump($checksumget == $checksumtoget);*/
+	//var_dump(count($file_list['added']));
+	//var_dump($checksumget);
+	//var_dump($checksumtoget);
+	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 
 	$outexpectedchecksum = ($checksumtoget ? $checksumtoget : $langs->trans("Unknown"));
 	if ($checksumget == $checksumtoget) {
-		if (count($file_list['added'])) {
+		if (is_array($file_list['added']) && count($file_list['added'])) {
 			$resultcode = 'warning';
 			$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
 			$outcurrentchecksum = $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans($resultcomment).'</span>';

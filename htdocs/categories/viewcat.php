@@ -103,7 +103,7 @@ if ($confirm == 'no') {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 // Remove element from category
-if ($id > 0 && $removeelem > 0) {
+if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 	if ($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
@@ -142,6 +142,11 @@ if ($id > 0 && $removeelem > 0) {
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) {
+		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+		$tmpobject = new Ticket($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'ticket';
 	}
 
 	$result = $object->del_type($tmpobject, $elementtype);
@@ -167,7 +172,13 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 if ($elemid && $action == 'addintocategory' &&
 	(($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
 	 ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
+	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
+	 ($type == Categorie::TYPE_MEMBER && $user->rights->projet->creer) ||
+	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
+	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
    )) {
 	if ($type == Categorie::TYPE_PRODUCT) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -181,6 +192,30 @@ if ($elemid && $action == 'addintocategory' &&
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$newobject = new Societe($db);
 		$elementtype = 'supplier';
+	} elseif ($type == Categorie::TYPE_TICKET) {
+		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+		$newobject = new Ticket($db);
+		$elementtype = 'ticket';
+	} elseif ($type == Categorie::TYPE_PROJECT) {
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+		$newobject = new Project($db);
+		$elementtype = 'project';
+	} elseif ($type == Categorie::TYPE_MEMBER) {
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		$newobject = new Adherent($db);
+		$elementtype = 'member';
+	} elseif ($type == Categorie::TYPE_CONTACT) {
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$newobject = new Contact($db);
+		$elementtype = 'contact';
+	} elseif ($type == Categorie::TYPE_USER) {
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		$newobject = new User($db);
+		$elementtype = 'user';
+	} elseif ($type == Categorie::TYPE_ACCOUNT) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$newobject = new User($db);
+		$elementtype = 'bank_account';
 	}
 	$result = $newobject->fetch($elemid);
 
@@ -189,7 +224,7 @@ if ($elemid && $action == 'addintocategory' &&
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
 	} else {
-		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -346,7 +381,7 @@ if ($cats < 0) {
 	$fulltree = $categstatic->get_full_arbo($type, $object->id, 1);
 
 	// Load possible missing includes
-	if ($conf->global->CATEGORY_SHOW_COUNTS) {
+	if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 		if ($type == Categorie::TYPE_MEMBER) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		}
@@ -372,11 +407,9 @@ if ($cats < 0) {
 		$desc = dol_htmlcleanlastbr($val['description']);
 
 		$counter = '';
-		if ($conf->global->CATEGORY_SHOW_COUNTS) {
+		if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
-			$elements = $type == Categorie::TYPE_ACCOUNT
-				? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
-				: $categstatic->getObjectsInCateg($type, 1);
+			$elements = $categstatic->getObjectsInCateg($type, 1);
 
 			$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 		}
@@ -488,7 +521,8 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 		print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 
@@ -511,7 +545,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$prod->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$prod->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -528,6 +562,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 	}
 }
 
+// List of customers
 if ($type == Categorie::TYPE_CUSTOMER) {
 	$permission = $user->rights->societe->creer;
 
@@ -563,7 +598,8 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 		print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 		print '<table class="noborder centpercent">'."\n";
@@ -584,7 +620,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -601,7 +637,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 	}
 }
 
-
+// List of suppliers
 if ($type == Categorie::TYPE_SUPPLIER) {
 	$permission = $user->rights->societe->creer;
 
@@ -637,7 +673,8 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 		print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 		print '<table class="noborder centpercent">'."\n";
@@ -658,7 +695,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$soc->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$soc->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -686,6 +723,26 @@ if ($type == Categorie::TYPE_MEMBER) {
 	if ($prods < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AssignCategoryTo").' &nbsp;';
+			print $form->selectMembers('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("Save").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -694,7 +751,8 @@ if ($type == Categorie::TYPE_MEMBER) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->adherent->creer);
 		print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";
@@ -718,7 +776,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$member->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$member->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -734,14 +792,33 @@ if ($type == Categorie::TYPE_MEMBER) {
 	}
 }
 
-// Categorie contact
+// List of contacts
 if ($type == Categorie::TYPE_CONTACT) {
 	$permission = $user->rights->societe->creer;
 
 	$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
-	if ($contacts < 0) {
+	if (is_numeric($contacts) && $contacts < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AssignCategoryTo").' &nbsp;';
+			print $form->selectContacts('', '', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -753,14 +830,14 @@ if ($type == Categorie::TYPE_CONTACT) {
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 		$num = count($contacts);
 		$nbtotalofrecords = '';
-		$newcardbutton = '';
+		$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
 		$objsoc = new Societe($db);
 		print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
 
-		if (count($contacts) > 0) {
+		if (is_array($contacts) && count($contacts) > 0) {
 			$i = 0;
 			foreach ($contacts as $key => $contact) {
 				$i++;
@@ -780,7 +857,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$contact->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -807,6 +884,26 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($accounts < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+				print $langs->trans("AddAccountIntoCategory").' &nbsp;';
+			$form->select_comptes('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -838,7 +935,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$account->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -864,6 +961,26 @@ if ($type == Categorie::TYPE_PROJECT) {
 	if ($objects < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddProjectIntoCategory").' &nbsp;';
+			$form->selectProjects('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -896,7 +1013,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$project->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -913,13 +1030,32 @@ if ($type == Categorie::TYPE_PROJECT) {
 }
 
 // List of users
-if ($type == Categorie::TYPE_USER) {
+if ($type == Categorie::TYPE_USER && $user->hasRight("user", "user", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 	$users = $object->getObjectsInCateg($type);
 	if ($users < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddObjectIntoCategory").' &nbsp;';
+			print $form->select_dolusers('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -949,7 +1085,7 @@ if ($type == Categorie::TYPE_USER) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($user->rights->user->user->creer) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$type."&action=unlink&token=".newToken()."&removeelem=".$userentry->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -963,6 +1099,9 @@ if ($type == Categorie::TYPE_USER) {
 
 		print '</form>'."\n";
 	}
+} else {
+	print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'user');
+	accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
 }
 
 
@@ -1008,7 +1147,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 				// Link to delete from category
 				print '<td class="right">';
 				if ($permission) {
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$project->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
@@ -1024,6 +1163,79 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 	}
 }
 
+// List of tickets
+if ($type == Categorie::TYPE_TICKET) {
+	$permission = ($user->rights->categorie->creer || $user->rights->categorie->creer);
+
+	$tickets = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($tickets < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		// Form to add record into a category
+		$showclassifyform = 1;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddTicketIntoCategory").' &nbsp;';
+			$form->selectTickets('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($tickets); $nbtotalofrecords = ''; $newcardbutton = '';
+		print_barre_liste($langs->trans("Ticket"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'ticket', 0, $newcardbutton, '', $limit);
+
+
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Ref").'</td></tr>'."\n";
+
+		if (count($tickets) > 0) {
+			$i = 0;
+			foreach ($tickets as $ticket) {
+				$i++;
+				if ($i > $limit) break;
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap" valign="top">';
+				print $ticket->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$ticket->label."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission) {
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&type=".$typeid."&action=unlink&token=".newToken()."&removeelem=".$ticket->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print '</form>'."\n";
+	}
+}
 
 // End of page
 llxFooter();

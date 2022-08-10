@@ -34,6 +34,8 @@ if (empty($conf) || !is_object($conf)) {
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+$langs->load("ecm");
+
 if (empty($module)) {
 	$module = 'ecm';
 }
@@ -52,7 +54,9 @@ if ($module == 'medias') {
 	$showroot = 1;
 }
 
-
+if (!isset($section)) {
+	$section = 0;
+}
 
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
@@ -88,13 +92,15 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
-	print '</a>';
+	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
+		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+		print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+		print '</a>';
+	}
 }
 
 print "<script>
@@ -102,12 +108,26 @@ $('#acreatedir').on('click', function() {
 	try{
 		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
 		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir.substring(0, section_dir.length - 1);";
+}
+print "
 	} catch{
 		section_dir = '/';
 		section = 0;
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir;";
+}
+print "
 	}
 	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
-	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'%26section_dir%3D'+encodeURI(section_dir)+'%26section%3D'+encodeURI(section)+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section)+'&catParent='+encodeURI(catParent));
 	console.log($('#acreatedir').attr('href'));
 });
 $('#agenerateimgwebp').on('click', function() {
@@ -233,7 +253,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table width="100%" class="liste noborderbottom">'."\n";
+	print '<table class="liste centpercent">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

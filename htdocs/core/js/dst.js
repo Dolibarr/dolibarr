@@ -26,7 +26,8 @@
 $(document).ready(function () {
 
     var timezone = jstz.determine();
-
+	console.log("Timezone detected for user: "+timezone.name());
+	
     // Detect and save TZ and DST
 	var rightNow = new Date();
 	var jan1 = new Date(rightNow.getFullYear(), 0, 1, 0, 0, 0, 0);

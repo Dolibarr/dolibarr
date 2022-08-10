@@ -86,6 +86,11 @@ if (!empty($conf->global->MAILING_DELAY)) {
 if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
 }
 
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-only mode\n";
+	exit(-1);
+}
+
 $user = new User($db);
 // for signature, we use user send as parameter
 if (!empty($login)) {
@@ -163,6 +168,8 @@ if ($resql) {
 						$error++;
 					}
 
+					$thirdpartystatic = new Societe($db);
+
 					// Look on each email and sent message
 					$i = 0;
 					while ($i < $num2) {
@@ -195,6 +202,15 @@ if ($resql) {
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
+						if ($obj->source_type == "thirdparty") {
+							$result = $thirdpartystatic->fetch($obj->source_id);
+
+							if ($result > 0) {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							} else {
+								$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = '';
+							}
+						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;

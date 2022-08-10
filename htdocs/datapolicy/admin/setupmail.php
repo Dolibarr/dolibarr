@@ -151,7 +151,7 @@ $doleditor->Create();
 print '</td><tr>';
 print '</table>';
 
-print '<br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
+print '<br><center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
 
 print '</form>';
 
@@ -160,7 +160,7 @@ print dol_get_fiche_end();
 print '<br><br>';
 
 print $langs->trans('SendAgreementText');
-print '<a class="button" href="'.dol_buildpath('/datapolicy/mailing.php').'">'.$langs->trans('SendAgreement').'</a>';
+print '<a class="button" href="'.DOL_URL_ROOT.'/datapolicy/mailing.php">'.$langs->trans('SendAgreement').'</a>';
 
 llxFooter();
 $db->close();

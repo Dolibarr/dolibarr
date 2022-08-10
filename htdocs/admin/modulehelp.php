@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,9 @@ llxHeader('', $langs->trans("Setup"), $help_url);
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
     width: 100%;
+}
+#id-right {
+	padding-left: unset;
 }
 </style>';
 
@@ -169,6 +173,10 @@ foreach ($modulesdir as $dir) {
 										$moduleposition = '80'; // External modules at end by default
 									}
 
+									if (empty($familyinfo[$familykey]['position'])) {
+										$familyinfo[$familykey]['position'] = '0';
+									}
+
 									$orders[$i] = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
 									$dirmod[$i] = $dir;
 									//print $i.'-'.$dirmod[$i].'<br>';
@@ -247,17 +255,22 @@ if (!empty($conf->global->$const_name)) {
 	$text .= $langs->trans("Disabled");
 }
 $tmp = $objMod->getLastActivationInfo();
-$authorid = $tmp['authorid'];
+$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
 if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
 	$text .= $tmpuser->getNomUrl(1);
 }
-$ip = $tmp['ip'];
+$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
+}
+$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
+if ($lastactivationversion) {
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
+	$text .= $lastactivationversion;
 }
 
 $moreinfo = $text;
@@ -322,7 +335,15 @@ if ($mode == 'desc') {
 
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
-		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $dirofmodule);
+		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $dirofmodule);
+		$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("ExternalModule").' - '.$langs->trans("InstalledInto", $tmpdirofmoduletoshow);
+
+		global $dolibarr_allow_download_external_modules;
+		if (!empty($dolibarr_allow_download_external_modules) && preg_match('/\/custom\//', $dirofmodule)) {
+			// Add a link to download a zip of the module
+			$textexternal .= ' <a href="'.DOL_URL_ROOT.'/admin/tools/export_files.php?export_type=externalmodule&what='.urlencode($moduledir).'&compression=zip&zipfilename_template=module_'.$moduledir.'-'.$version.'.notorig" target="_blank" rel="noopener">'.img_picto('', 'download').'</a>';
+		}
+
 		if ($objMod->editor_name != 'dolibarr') {
 			$textexternal .= '<br><span class="opacitymedium">'.$langs->trans("Publisher").':</span> '.(empty($objMod->editor_name) ? $langs->trans("Unknown") : $objMod->editor_name);
 		}
@@ -331,7 +352,7 @@ if ($mode == 'desc') {
 			$editor_url = 'http://'.$editor_url;
 		}
 		if (!empty($objMod->editor_url) && !preg_match('/dolibarr\.org/i', $objMod->editor_url)) {
-			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
 		}
 		$text .= $textexternal;
 		$text .= '<br>';
@@ -485,7 +506,7 @@ if ($mode == 'feature') {
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
 		foreach ($objMod->module_parts['hooks'] as $key => $val) {
 			if ($key === 'entity') {

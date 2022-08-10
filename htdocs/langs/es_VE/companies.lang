@@ -1,10 +1,15 @@
 # Dolibarr language file - Source file is en_US - companies
+MenuNewCustomer=Nuevo Cliente
+MenuNewProspect=Nuevo Cliente Potencial
 OverAllSupplierProposals=Solicitudes de precios
 LocalTax1IsUsed=Sujeto
 LocalTax2IsUsed=Sujeto
 ProfId1AT=Id prof. 1 (USt.-IdNr)
 ProfId2AT=Id prof. 2 (USt.-Nr)
 ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId2ShortCM=R.I.F.
+ProfId3ShortCM=Decree of creation
 ProfId1ES=CI/ RIF
 ProfId2ES=-
 ProfId3ES=-

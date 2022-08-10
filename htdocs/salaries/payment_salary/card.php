@@ -111,7 +111,7 @@ if ($action == 'delete') {
 /*
 if ($action == 'valide')
 {
-	$facid = $_GET['facid'];
+	$facid = GETPOST('facid', 'int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
@@ -138,7 +138,9 @@ print '</td></tr>';*/
 print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">';
+print $langs->trans("PaymentType".$object->type_code);
+print '</td></tr>';
 
 // Numero
 print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
@@ -180,7 +182,7 @@ $sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, ps.amoun
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps,'.MAIN_DB_PREFIX.'salary as f';
 $sql .= ' WHERE ps.fk_salary = f.rowid';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND ps.rowid = '.$object->id;
+$sql .= ' AND ps.rowid = '.((int) $object->id);
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -248,7 +250,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->rights->salaries->delete) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentSalaryPaid")).'">'.$langs->trans('Delete').'</a>';
 		}

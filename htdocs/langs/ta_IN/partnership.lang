@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=கூட்டு மேலாண்மை
+PartnershipDescription=தொகுதி கூட்டாண்மை மேலாண்மை
+PartnershipDescriptionLong= தொகுதி கூட்டாண்மை மேலாண்மை
+Partnership=கூட்டு
+AddPartnership=கூட்டாண்மையைச் சேர்க்கவும்
+CancelPartnershipForExpiredMembers=கூட்டாண்மை: காலாவதியான சந்தாக்களைக் கொண்ட உறுப்பினர்களின் கூட்டாண்மையை ரத்துசெய்யவும்
+PartnershipCheckBacklink=கூட்டாண்மை: பின்னிணைப்பைக் குறிப்பிடுவதைச் சரிபார்க்கவும்
+
+#
+# Menu
+#
+NewPartnership=புதிய கூட்டாண்மை
+ListOfPartnerships=கூட்டாண்மை பட்டியல்
+
+#
+# Admin page
+#
+PartnershipSetup=கூட்டாண்மை அமைப்பு
+PartnershipAbout=கூட்டாண்மை பற்றி
+PartnershipAboutPage=பக்கத்தைப் பற்றிய கூட்டாண்மை
+partnershipforthirdpartyormember=கூட்டாளர் நிலையை 'மூன்றாம் தரப்பினர்' அல்லது 'உறுப்பினர்' என அமைக்க வேண்டும்
+PARTNERSHIP_IS_MANAGED_FOR=கூட்டாண்மை நிர்வகிக்கப்படுகிறது
+PARTNERSHIP_BACKLINKS_TO_CHECK=சரிபார்க்க பின்னிணைப்புகள்
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=சந்தா காலாவதியாகிவிட்டால், பார்ட்னர்ஷிப்பின் நிலையை ரத்து செய்வதற்கு முந்தைய நாட்களின் Nb
+ReferingWebsiteCheck=இணையதளம் குறிப்பிடுவதை சரிபார்க்கவும்
+ReferingWebsiteCheckDesc=உங்கள் பங்குதாரர்கள் தங்கள் சொந்த இணையதளத்தில் உங்கள் இணையதள டொமைன்களில் பின்னிணைப்பைச் சேர்த்துள்ளார்களா என்பதைச் சரிபார்க்க ஒரு அம்சத்தை நீங்கள் இயக்கலாம்.
+
+#
+# Object
+#
+DeletePartnership=கூட்டாண்மையை நீக்கவும்
+PartnershipDedicatedToThisThirdParty=கூட்டு இந்த மூன்றாம் தரப்பினருக்கு அர்ப்பணிக்கப்பட்டது
+PartnershipDedicatedToThisMember=கூட்டாண்மை இந்த உறுப்பினருக்கு அர்ப்பணிக்கப்பட்டுள்ளது
+DatePartnershipStart=தொடக்க தேதி
+DatePartnershipEnd=கடைசி தேதி
+ReasonDecline=காரணம் மறுக்கவும்
+ReasonDeclineOrCancel=காரணம் மறுக்கவும்
+PartnershipAlreadyExist=கூட்டாண்மை ஏற்கனவே உள்ளது
+ManagePartnership=கூட்டாண்மையை நிர்வகிக்கவும்
+BacklinkNotFoundOnPartnerWebsite=கூட்டாளர் இணையதளத்தில் பின்னிணைப்பு இல்லை
+ConfirmClosePartnershipAsk=இந்தக் கூட்டாண்மையை நிச்சயமாக ரத்துசெய்ய விரும்புகிறீர்களா?
+PartnershipType=கூட்டு வகை
+PartnershipRefApproved=கூட்டாண்மை %s அங்கீகரிக்கப்பட்டது
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=பார்ட்னர்ஷிப் விரைவில் ரத்து செய்யப்படும்
+SendingEmailOnPartnershipRefused=கூட்டு மறுத்தது
+SendingEmailOnPartnershipAccepted=கூட்டாண்மை ஏற்றுக்கொள்ளப்பட்டது
+SendingEmailOnPartnershipCanceled=பார்ட்னர்ஷிப் ரத்து செய்யப்பட்டது
+
+YourPartnershipWillSoonBeCanceledTopic=பார்ட்னர்ஷிப் விரைவில் ரத்து செய்யப்படும்
+YourPartnershipRefusedTopic=கூட்டு மறுத்தது
+YourPartnershipAcceptedTopic=கூட்டாண்மை ஏற்றுக்கொள்ளப்பட்டது
+YourPartnershipCanceledTopic=பார்ட்னர்ஷிப் ரத்து செய்யப்பட்டது
+
+YourPartnershipWillSoonBeCanceledContent=உங்கள் பார்ட்னர்ஷிப் விரைவில் ரத்து செய்யப்படும் என்பதை உங்களுக்குத் தெரிவிக்கிறோம் (பின் இணைப்பு கிடைக்கவில்லை)
+YourPartnershipRefusedContent=உங்கள் கூட்டாண்மை கோரிக்கை நிராகரிக்கப்பட்டது என்பதை நாங்கள் உங்களுக்குத் தெரிவிக்கிறோம்.
+YourPartnershipAcceptedContent=உங்களின் கூட்டாண்மைக் கோரிக்கை ஏற்கப்பட்டது என்பதைத் தெரிவிக்கிறோம்.
+YourPartnershipCanceledContent=உங்கள் பார்ட்னர்ஷிப் ரத்துசெய்யப்பட்டதைத் தெரிவிக்கிறோம்.
+
+CountLastUrlCheckError=கடைசி URL சரிபார்ப்புக்கான பிழைகளின் எண்ணிக்கை
+LastCheckBacklink=கடைசியாக URL சரிபார்த்த தேதி
+ReasonDeclineOrCancel=காரணம் மறுக்கவும்
+
+#
+# Status
+#
+PartnershipDraft=வரைவு
+PartnershipAccepted=ஏற்றுக் கொள்ளப்பட்டது
+PartnershipRefused=மறுத்தார்
+PartnershipCanceled=ரத்து செய்யப்பட்டது
+PartnershipManagedFor=பங்குதாரர்கள்

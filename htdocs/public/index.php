@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 /**
  *     	\file       htdocs/public/index.php
  *		\ingroup    core
- *		\brief      A redirect page to an error
+ *		\brief      A redirect page to an error page
  */
 
 require '../master.inc.php';

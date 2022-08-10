@@ -14,7 +14,8 @@ max_output_size=0
 usage()
 {
   cat <<EO
-Usage: $PROGNAME [options]
+Usage:   $PROGNAME (list|fix) [options]
+Example: optimize_images.sh (list|fix) -i dirtoscan
 
 Script to optimize JPG and PNG images in a directory.
 
@@ -183,8 +184,8 @@ ARGS=$(getopt -s bash --options $SHORTOPTS --longoptions $LONGOPTS --name $PROGN
 # Syntax
 if [ "x$1" != "xlist" -a "x$1" != "xfix" ]
 then
-	echo "Usage: optimize_images.sh (list|fix) -i dirtoscan"
-	exit
+	usage
+	exit 0
 fi
 
 eval set -- "$ARGS"

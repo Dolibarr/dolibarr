@@ -23,10 +23,10 @@ TOKEN_DELETE=Saqlangan belgini o'chirish
 OAUTH_GOOGLE_NAME=OAuth Google xizmati
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=OAuth hisob ma'lumotlarini yaratish uchun <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> sahifasiga o'ting </a>, keyin "Ishonch yorliqlari".
+OAUTH_GOOGLE_DESC=OAuth hisob maʼlumotlarini yaratish uchun <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> bu sahifaga oʻting </a>, soʻng “Hisob maʼlumotlari”.
 OAUTH_GITHUB_NAME=OAuth GitHub xizmati
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Ushbu sahifaga <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">-ga o'ting </a>, keyin OAuth hisob ma'lumotlarini yaratish uchun "yangi dasturni ro'yxatdan o'tkazing".
+OAUTH_GITHUB_DESC=OAuth hisob maʼlumotlarini yaratish uchun <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> bu sahifaga oʻting </a>, soʻng “Yangi ilovani roʻyxatdan oʻtkazing”.
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe testi
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

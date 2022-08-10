@@ -100,7 +100,7 @@ class RejetPrelevement
 		$facs = $this->getListInvoices(1);
 
 		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
-		$lipre = new LignePrelevement($this->db, $user);
+		$lipre = new LignePrelevement($this->db);
 		$lipre->fetch($id);
 
 		$this->db->begin();
@@ -114,12 +114,12 @@ class RejetPrelevement
 		$sql .= ", date_creation";
 		$sql .= ", afacturer";
 		$sql .= ") VALUES (";
-		$sql .= $id;
+		$sql .= ((int) $id);
 		$sql .= ", '".$this->db->idate($date_rejet)."'";
-		$sql .= ", ".$motif;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $motif);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$facturation;
+		$sql .= ", ".((int) $facturation);
 		$sql .= ")";
 
 		$result = $this->db->query($sql);
@@ -222,8 +222,8 @@ class RejetPrelevement
 
 		$sql = "SELECT fk_user_demande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
-		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn=' : '=').$fac->id;
+		$sql .= " WHERE pfd.fk_prelevement_bons = ".((int) $this->bon_id);
+		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn' : '').' = '.((int) $fac->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -296,7 +296,7 @@ class RejetPrelevement
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
-		$sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
+		$sql .= " WHERE pf.fk_prelevement_lignes = ".((int) $this->id);
 		$sql .= " AND f.entity IN  (".getEntity('invoice').")";
 
 		$resql = $this->db->query($sql);

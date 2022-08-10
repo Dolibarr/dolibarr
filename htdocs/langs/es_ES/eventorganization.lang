@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para agregar a terceros cre
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para agregar a terceros creada automáticamente cuando sugieren un stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Plantilla de correo electrónico para enviar después de recibir una sugerencia de conferencia.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Plantilla de correo electrónico para enviar después de recibir sugerencia de stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Plantilla de e-mail para enviar después de que se haya pagado una suscripción a un stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Plantilla de correo electrónico para enviar después de que se haya pagado la inscripción a un stand.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Plantilla de e-mail para enviar después de que se haya pagado una suscripción a un evento.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correo electrónico de acción masiva a asistentes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correo electrónico de acción masiva a ponentes
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filtrar la lista de selección de terceros en la tarjeta / formulario de creación de asistentes con categoría
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filtre la lista de selección de terceros en la tarjeta / formulario de creación de asistentes con el tipo de cliente
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Plantilla de correo electrónico para usar al enviar correos electrónicos de la masa "Enviar correos electrónicos" a los oradores
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Plantilla de correo electrónico para usar al enviar correos electrónicos de la masa "Enviar correos electrónicos" en la lista de asistentes
+EVENTORGANIZATION_FILTERATTENDEES_CAT = En el formulario para crear/agregar un asistente, restringe la lista de terceros a terceros en la categoría
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = En el formulario para crear/agregar un asistente, restringe la lista de terceros a terceros con la naturaleza
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Pago de su stand
 EventOrganizationEmailRegistrationPayment = Registro para un evento
 EventOrganizationMassEmailAttendees = Comunicación a los asistentes
 EventOrganizationMassEmailSpeakers = Comunicación a los ponentes
+ToSpeakers=A los ponentes
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Precio de inscripción
 PriceOfRegistrationHelp=Precio a pagar por registrarse o participar en el evento
 PriceOfBooth=Precio de suscripción para hacer stand
 PriceOfBoothHelp=Precio de suscripción para hacer stand
-EventOrganizationICSLink=Enlace ICS para eventos
+EventOrganizationICSLink=Enlace ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencias o stands
 Attendees=Asistentes
 ListOfAttendeesOfEvent=Lista de asistentes al proyecto del evento
 DownloadICSLink = Descargar enlace ICS
-EVENTORGANIZATION_SECUREKEY = Secure Key del enlace de registro público a una conferencia
+EVENTORGANIZATION_SECUREKEY = Semilla para asegurar la clave de la página de registro público para sugerir una conferencia
 SERVICE_BOOTH_LOCATION = Servicio utilizado para la fila de facturas sobre la ubicación de un stand
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servicio utilizado para la fila de la factura sobre la suscripción de un asistente a una conferencia
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servicio utilizado para la fila de la factura sobre la suscripción de un asistente a un evento
 NbVotes=Número de votos
 #
 # Status

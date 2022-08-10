@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = Мақалаға арналған экстра өр
 GroupOfTicket=Билеттер тобы
 YouCanLinkArticleToATicketCategory=Сіз мақаланы билеттер тобына байланыстыра аласыз (сондықтан мақала жаңа билеттерді іріктеу кезінде ұсынылады)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

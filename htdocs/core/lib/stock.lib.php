@@ -109,6 +109,16 @@ function stock_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_mouvement_extrafields.php';
+	$head[$h][1] = $langs->trans("StockMouvementExtraFields");
+	$head[$h][2] = 'stockMouvementAttributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/inventory_extrafields.php';
+	$head[$h][1] = $langs->trans("InventoryExtraFields");
+	$head[$h][2] = 'inventoryAttributes';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin', 'remove');
 
 	return $head;

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Жолақ модулін орнату
-StripeDesc=Клиенттерге <a href="http://www.stripe.com" target="_blank"> Stripe </a> арқылы несие/несие карталарымен төлемдер үшін Stripe онлайн төлем бетін ұсыну. Бұл сіздің клиенттерге арнайы төлемдерді жасауға немесе белгілі бір Dolibarr объектісіне байланысты төлемдерге рұқсат беру үшін пайдаланылуы мүмкін (шот-фактура, тапсырыс, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Несие картасы немесе Stripe арқылы төлеңіз
 FollowingUrlAreAvailableToMakePayments=Келушілерге Dolibarr нысандары бойынша төлем жасау үшін бетті ұсыну үшін келесі URL мекенжайлары қол жетімді
 PaymentForm=Төлем формасы

@@ -1,5 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2020 Florian HENRY  <florian.henry@scopen.fr>
+-- Copyright (C) 2022 Juanjo Menent  <jmenent@2byte.es>
+
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,6 +21,6 @@
 CREATE TABLE llx_c_product_nature (
      rowid integer AUTO_INCREMENT PRIMARY KEY,
      code tinyint NOT NULL,
-     label varchar(100),
+     label varchar(128),
      active tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;

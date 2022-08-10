@@ -342,6 +342,13 @@ div.cadre table.resultats {
 td.nom {
 	min-width: 160px;
 }
+@media only screen and (max-width: 767px)
+{
+	td.nom {
+		min-width: 100px;
+	}
+}
+
 td.vide {
 	min-width: 60px;
 }

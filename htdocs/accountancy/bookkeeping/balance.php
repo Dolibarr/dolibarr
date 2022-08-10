@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -120,19 +121,19 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 $filter = array();
 if (!empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
-	$param .= '&amp;date_startmonth='.GETPOST('date_startmonth', 'int').'&amp;date_startday='.GETPOST('date_startday', 'int').'&amp;date_startyear='.GETPOST('date_startyear', 'int');
+	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int').'&date_startday='.GETPOST('date_startday', 'int').'&date_startyear='.GETPOST('date_startyear', 'int');
 }
 if (!empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
-	$param .= '&amp;date_endmonth='.GETPOST('date_endmonth', 'int').'&amp;date_endday='.GETPOST('date_endday', 'int').'&amp;date_endyear='.GETPOST('date_endyear', 'int');
+	$param .= '&date_endmonth='.GETPOST('date_endmonth', 'int').'&date_endday='.GETPOST('date_endday', 'int').'&date_endyear='.GETPOST('date_endyear', 'int');
 }
 if (!empty($search_accountancy_code_start)) {
 	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$param .= '&amp;search_accountancy_code_start='.$search_accountancy_code_start;
+	$param .= '&search_accountancy_code_start='.urlencode($search_accountancy_code_start);
 }
 if (!empty($search_accountancy_code_end)) {
 	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$param .= '&amp;search_accountancy_code_end='.$search_accountancy_code_end;
+	$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
 }
 if (!empty($search_ledger_code)) {
 	$filter['t.code_journal'] = $search_ledger_code;
@@ -236,11 +237,11 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			jQuery("#exportcsvbutton").click(function() {
 				event.preventDefault();
@@ -348,7 +349,7 @@ if ($action != 'export_csv') {
 		$sql .= " GROUP BY t.numero_compte";
 
 		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
+		$nrows = $db->num_rows($resql);
 		$opening_balances = array();
 		for ($i = 0; $i < $nrows; $i++) {
 			$arr = $resql->fetch_array();
@@ -416,7 +417,7 @@ if ($action != 'export_csv') {
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan+1).'" class="tdforbreak">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;

@@ -110,7 +110,7 @@ print '<table class="border centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
-print '<input class="button" type="submit" value="'.$langs->trans("Select").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 print '</td></tr>';
 
 // Select the accounts
@@ -137,7 +137,7 @@ if (!empty($cat_id)) {
 		print '</select><br>';
 		print ajax_combobox('cpt_bk');
 		*/
-		print '<input class="button" type="submit" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
+		print '<input type="submit" class="button button-add" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
 	}
 	print '</td></tr>';
 }

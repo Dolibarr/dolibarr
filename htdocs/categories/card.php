@@ -246,7 +246,7 @@ if ($user->rights->categorie->creer) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_5, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -274,7 +274,7 @@ if ($user->rights->categorie->creer) {
 		print dol_get_fiche_end('');
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
+		print '<input type="submit" class="button b" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';

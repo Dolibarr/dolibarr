@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = Extrafält för artikel
 GroupOfTicket=Grupp av biljetter
 YouCanLinkArticleToATicketCategory=Du kan länka en artikel till en biljettgrupp (så artikeln kommer att föreslås under kvalificeringen av nya biljetter)
 SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

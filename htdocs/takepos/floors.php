@@ -93,9 +93,9 @@ if ($action == "update") {
 		$top = 95;
 	}
 	if ($left > 3 or $top > 4) {
-		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
+		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
 	} else {
-		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
+		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place));
 	}
 }
 
@@ -104,11 +104,11 @@ if ($action == "updatename") {
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
+	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
 if ($action == "add") {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
@@ -128,22 +128,20 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <link rel="stylesheet" href="css/pos.css.php?a=xxx">
 <style type="text/css">
 div.tablediv{
-background-image:url(img/table.gif);
--moz-background-size:100% 100%;
--webkit-background-size:100% 100%;
-background-size:100% 100%;
-height:10%;
-width:10%;
-text-align: center;
-font-size:300%;
-color:white;
+	background-image:url(img/table.gif);
+	-moz-background-size:100% 100%;
+	-webkit-background-size:100% 100%;
+	background-size:100% 100%;
+	height:10%;
+	width:10%;
+	text-align: center;
+	font-size:300%;
+	color:white;
 }
+
+/* Color when a table has a pending order/invoice */
 div.red{
-color:red;
-}
-html, body
-{
-height: 100%;
+	color:red;
 }
 </style>
 
@@ -212,9 +210,9 @@ $( document ).ready(function() {
 <?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
 	<?php if ($mode == "edit") {?>
-<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
+<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
 	<?php } else { ?>
-<a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
+<a onclick="window.location.href='floors.php?mode=edit&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
 	<?php } ?>
 </div>
 <?php }
