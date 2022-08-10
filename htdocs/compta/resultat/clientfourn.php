@@ -1529,7 +1529,7 @@ print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Inc
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht_income, 'MT')).'</td>';
 } else {
-	print('<td></td>');
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc_income, 'MT')).'</td>';
 print '</tr>';
@@ -1537,7 +1537,7 @@ print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Out
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
 } else {
-	print('<td></td>');
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
 print '</tr>';
@@ -1545,7 +1545,7 @@ print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Pro
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
 } else {
-	print('<td></td>');
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
 print '</tr>';
