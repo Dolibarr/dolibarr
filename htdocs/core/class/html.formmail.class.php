@@ -428,7 +428,7 @@ class FormMail extends Form
 			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
 			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
-				if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+				if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 					foreach ($this->param['fileinit'] as $file) {
 						$this->add_attached_files($file, basename($file), dol_mimetype($file));
 					}
