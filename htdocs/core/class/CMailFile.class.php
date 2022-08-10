@@ -1008,16 +1008,16 @@ class CMailFile
 				try {
 					$result = $this->mailer->send($this->message, $failedRecipients);
 				} catch (Exception $e) {
-					$this->error = $e->getMessage();
+					$this->errors[] = $e->getMessage();
 				}
 				if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 					$this->dump_mail();
 				}
 
 				$res = true;
-				if (!empty($this->error) || !$result) {
+				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
 					}
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
