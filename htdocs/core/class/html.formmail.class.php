@@ -604,7 +604,7 @@ class FormMail extends Form
 
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
-							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM != $conf->global->MAIN_INFO_SOCIETE_MAIL) {
+							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && getDolGlobalString('MAIN_MAIL_EMAIL_FROM') != getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 								$liste['robot'] = $conf->global->MAIN_MAIL_EMAIL_FROM;
 								if ($this->frommail) {
 									$liste['robot'] .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
