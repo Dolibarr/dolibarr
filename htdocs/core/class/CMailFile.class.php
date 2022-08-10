@@ -992,7 +992,7 @@ class CMailFile
 					} catch (Exception $e) {
 						// Return an error if token not found
 						$this->errors[] = $e->getMessage();
-						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error=".$e->getMessage(), LOG_ERR);
 					}
 				}
 				if (!empty($conf->global->$keyforsslseflsigned)) {
