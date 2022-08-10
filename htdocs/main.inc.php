@@ -197,7 +197,7 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string			$var		Variable name
+ * @param		string|array	$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean|null				true if there is no injection. Stop code if injection found.
  */
