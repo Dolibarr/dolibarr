@@ -148,7 +148,7 @@ if (empty($conf->accounting->enabled)) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (empty($user->hasRight('accounting', 'mouvements', 'lire'))) {
 	accessforbidden();
 }
 
