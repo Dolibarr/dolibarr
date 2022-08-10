@@ -1182,7 +1182,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs;
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-		$errorstomail = (!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
+		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 			$out .= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
