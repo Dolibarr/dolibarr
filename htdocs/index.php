@@ -155,7 +155,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	// Number of actions to do (late)
-	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->rights->agenda->myactions->read) {
+	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->hasRight('agenda', 'myactions', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$board = new ActionComm($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -202,7 +202,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of suppliers orders a deal
-	if (isModEnabled('supplier_order')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->rights->fournisseur->commande->lire) {
+	if (isModEnabled('supplier_order')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$board = new CommandeFournisseur($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -235,7 +235,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->rights->fournisseur->facture->lire)) {
+	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->hasRight('fournisseur', 'facture', 'lire'))) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
