@@ -5049,7 +5049,7 @@ class Product extends CommonObject
 				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddingright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
 			}
 		}
-		$result .= $newref;
+		$result .= dol_escape_htmltag($newref);
 		$result .= $linkend;
 		if ($withpicto != 2) {
 			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
