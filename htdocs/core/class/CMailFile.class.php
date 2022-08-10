@@ -30,6 +30,7 @@
  *      \brief      File of class to send emails (with attachments or not)
  */
 
+use OAuth\Common\Storage\DoliStorage;
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -669,6 +670,8 @@ class CMailFile
 			}
 
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
+			$keyforsmtpauthtype = "MAIN_MAIL_SMTPS_AUTH_TYPE";
+			$keyforsmtpoauthservice = "MAIN_MAIL_SMTPS_OAUTH_SERVICE";
 			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
 			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
@@ -842,6 +845,36 @@ class CMailFile
 				if (!empty($conf->global->$keyforsmtppw)) {
 					$loginpass = $conf->global->$keyforsmtppw;
 					$this->smtps->setPW($loginpass);
+				}
+
+				if (!empty($conf->global->$keyforsmtpauthtype) && $conf->global->$keyforsmtpauthtype === "XOAUTH2") {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					$keyforsupportedoauth2array = $conf->global->$keyforsmtpoauthservice;
+					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+					} else {
+						$keyforprovider = '';
+					}
+					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
+					$storage = new DoliStorage($db, $conf);
+					try {
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						if (is_object($tokenobj)) {
+							$this->smtps->setToken($tokenobj->getAccessToken());
+						} else {
+							$this->error = "Token not found";
+						}
+					} catch (Exception $e) {
+						// Return an error if token not found
+						$this->error = $e->getMessage();
+						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					}
 				}
 
 				$res = true;
