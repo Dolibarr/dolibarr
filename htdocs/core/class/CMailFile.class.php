@@ -917,7 +917,6 @@ class CMailFile
 					}
 
 					$result = $this->smtps->sendMsg();
-					//print $result;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
 						$this->dump_mail();
