@@ -604,6 +604,13 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
+
+		$conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT = 3;
+		$_POST["pagecontentwithlinks"]='<img src="aaa"><img src="bbb"><img src="ccc"><span style="background: url(/ddd)"></span>';
+		$result=GETPOST("pagecontentwithlinks", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('TooManyLinksIntoHTMLString', $result, 'Test on limit on GETPOST fails');
+
 		return $result;
 	}
 
