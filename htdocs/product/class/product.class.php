@@ -5343,13 +5343,15 @@ class Product extends CommonObject
 	 * This function need a lot of load. If you use it on list, use a cache to execute it once for each product id.
 	 * If ENTREPOT_EXTRA_STATUS is set, filtering on warehouse status is possible.
 	 *
-	 * @param  	string 	$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
-	 * 												You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
-	 * @param	int		$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+	 * @param  	string		$option 					'' = Load all stock info, also from closed and internal warehouses, 'nobatch', 'novirtual'
+	 * 													You can also filter on 'warehouseclosed', 'warehouseopen', 'warehouseinternal'
+	 * @param	int|null	$includedraftpoforvirtual	Include draft status of PO for virtual stock calculation
+	 * @param	string		$batchSortField				[=null] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$batchSortOrder				[=null] Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 * @return 	int                  				< 0 if KO, > 0 if OK
 	 * @see    	load_virtual_stock(), loadBatchInfo()
 	 */
-	public function load_stock($option = '', $includedraftpoforvirtual = null)
+	public function load_stock($option = '', $includedraftpoforvirtual = null, $batchSortField = null, $batchSortOrder = null)
 	{
 		// phpcs:enable
 		global $conf;
@@ -5398,7 +5400,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ((!preg_match('/nobatch/', $option)) && $this->hasbatch()) {
-						$this->stock_warehouse[$row->fk_entrepot]->detail_batch = Productbatch::findAll($this->db, $row->rowid, 1, $this->id);
+						$this->stock_warehouse[$row->fk_entrepot]->detail_batch = Productbatch::findAll($this->db, $row->rowid, 1, $this->id, $batchSortField, $batchSortOrder);
 					}
 					$this->stock_reel += $row->reel;
 					$i++;

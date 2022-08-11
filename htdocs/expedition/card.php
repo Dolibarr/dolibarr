@@ -1087,6 +1087,8 @@ if ($action == 'create') {
 				$warehouseObj->get_children_warehouses($warehouse_id, $warehousePicking);
 			}
 
+			$batchSortField = 'pl.sellby,pl.eatby,t.eatby,t.sellby,t.qty';
+			$batchSortOrder = 'ASC,ASC,ASC,ASC,'.(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC');
 			$indiceAsked = 0;
 			while ($indiceAsked < $numAsked) {
 				$product = new Product($db);
@@ -1117,7 +1119,7 @@ if ($action == 'create') {
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
 						$product->fetch($line->fk_product);
-						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						$product->load_stock('warehouseopen', null, $batchSortField, $batchSortOrder); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';

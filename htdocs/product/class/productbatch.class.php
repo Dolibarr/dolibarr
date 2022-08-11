@@ -432,9 +432,11 @@ class Productbatch extends CommonObject
 	 *  @param	int			$fk_product_stock	id product_stock for objet
 	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
 	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
+	 *	@param	string		$sortField			[=null] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *	@param	string		$sortOrder			[=null] Sort order, separated by comma. Example: 'ASC,DESC'. Note: If the quantity fo sortorder values is lower than sortfield, we used the last value for missing values.
 	 *  @return array         					<0 if KO, array of batch
 	 */
-	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
+	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0, $sortField = null, $sortOrder = null)
 	{
 		global $conf;
 
@@ -463,11 +465,15 @@ class Productbatch extends CommonObject
 			$sql .= " AND t.qty <> 0";
 		}
 
-		$sql .= " ORDER BY ";
-		// TODO : use product lifo and fifo when product will implement it
-		if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
-		$sql .= "t.eatby ASC, t.sellby ASC ";
-		$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		if ($sortField == null && $sortOrder == null) {
+			$sql .= " ORDER BY ";
+			// TODO : use product lifo and fifo when product will implement it
+			if ($fk_product > 0) { $sql .= "pl.eatby ASC, pl.sellby ASC, "; }
+			$sql .= "t.eatby ASC, t.sellby ASC ";
+			$sql .= ", t.qty ".(!empty($conf->global->DO_NOT_TRY_TO_DEFRAGMENT_STOCKS_WAREHOUSE)?'DESC':'ASC'); // Note : qty ASC is important for expedition card, to avoid stock fragmentation
+		} else {
+			$sql .= $dbs->order($sortField, $sortOrder);
+		}
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql = $dbs->query($sql);
