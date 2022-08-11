@@ -278,7 +278,7 @@ if (empty($reshook)) {
 		}
 		// Create new object
 		if ($result > 0 && !$error) {
-			$object->oldcopy = clone $object;
+			$object->oldcopy = dol_clone($object);
 
 			// Change values
 			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));

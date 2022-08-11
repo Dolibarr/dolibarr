@@ -1051,9 +1051,7 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			if (empty($this->oldcopy)) {
-				$org = new self($this->db);
-				$org->fetch($this->id);
-				$this->oldcopy = $org;
+				$this->oldcopy = dol_clone($this);
 			}
 
 			// Test if batch management is activated on existing product
