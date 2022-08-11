@@ -3907,12 +3907,16 @@ class Societe extends CommonObject
 		$fullname = $member->getFullName($langs);
 
 		if ($member->morphy == 'mor') {
-			$socname = $member->company? $member->company : $member->societe;
+			if (empty($socname)) {
+				$socname = $member->company? $member->company : $member->societe;
+			}
 			if (!empty($fullname) && empty($socalias)) {
 				$socalias = $fullname;
 			}
 		} elseif (empty($socname) && $member->morphy == 'phy') {
-			$socname = $fullname;
+			if (empty($socname)) {
+				$socname = $fullname;
+			}
 			if (!empty($member->company) && empty($socalias)) {
 				$socalias = $member->company;
 			}
