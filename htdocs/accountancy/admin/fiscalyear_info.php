@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->hasRight('accounting', 'fiscalyear', 'write'))) {
+if ($user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
