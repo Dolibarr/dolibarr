@@ -377,14 +377,14 @@ class Productlot extends CommonObject
 				}
 			}
 
+			// Commit or rollback
 			if ($error) {
 				$this->db->rollback();
 			} else {
 				$this->db->commit();
 			}
 		}
-
-		// Commit or rollback
+		
 		if ($error) {
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
