@@ -47,7 +47,7 @@ $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 if (GETPOSTISSET('mode')) {
 	$mode = GETPOST('mode', 'alpha');
 	if ($mode =='common' || $mode =='commonkanban')
-		dolibarr_set_const( $db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
 } else {
 	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
