@@ -1233,9 +1233,6 @@ if ($id > 0 || !empty($ref)) {
 				} else {
 					$tmpproduct = $conf->cache['product'][$objp->fk_product];
 				}
-				$tmpproduct->id = $objp->fk_product;
-				$tmpproduct->ref = $objp->ref;
-				$tmpproduct->label = $objp->label;
 				print $tmpproduct->getNomUrl(1);
 				print ' - '.$objp->label;
 				print "</td>\n";
