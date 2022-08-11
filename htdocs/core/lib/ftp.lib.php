@@ -276,3 +276,32 @@ function dol_ftp_rmdir($connect_id, $file, $newsection)
 		return @ftp_rmdir($connect_id, $newremotefileiso);
 	}
 }
+
+
+/**
+ * Remove FTP directory
+ *
+ * @param 		resource	$connect_id		Connection handler
+ * @param 		string		$newdir			Dir create
+ * @param 		string		$newsection		$newsection
+ * @return		result
+ */
+function dol_ftp_mkdir($connect_id, $newdir, $newsection)
+{
+
+	global $conf;
+
+	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
+		$newsection = ssh2_sftp_realpath($connect_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
+	}
+
+	// Remote file
+	$newremotefileiso = $newsection.(preg_match('@[\\\/]$@', $newsection) ? '' : '/').$newdir;
+	$newremotefileiso = utf8_decode($newremotefileiso);
+
+	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
+		return ssh2_sftp_mkdir($connect_id, $newremotefileiso, 0777);
+	} else {
+		return @ftp_mkdir($connect_id, $newremotefileiso);
+	}
+}

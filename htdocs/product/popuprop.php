@@ -229,6 +229,7 @@ if ($mode && $mode != '-1') {
 			}
 		}
 
+		$tmpproduct->id = $prodid;
 		$tmpproduct->ref = $vals['ref'];
 		$tmpproduct->label = $vals['label'];
 		$tmpproduct->type = $vals['type'];
