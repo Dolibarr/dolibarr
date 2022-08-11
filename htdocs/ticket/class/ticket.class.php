@@ -870,6 +870,11 @@ class Ticket extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$error = 0;
 
+		if (empty($this->oldcopy) && empty($notrigger)) {
+			$this->oldcopy = new self($this->db);
+			$this->oldcopy->fetch($this->id);
+		}
+
 		// Clean parameters
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -979,10 +984,6 @@ class Ticket extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			if (empty($this->oldcopy)) {
-				$this->oldcopy = new self($this->db);
-				$this->oldcopy->fetch($this->id);
-			}
 			$result = $this->call_trigger('TICKET_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
@@ -1463,6 +1464,10 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED) { // no closed
+			if (empty($this->oldcopy) && empty($notrigger)) {
+				$this->oldcopy = new self($this->db);
+				$this->oldcopy->fetch($this->id);
+			}
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
