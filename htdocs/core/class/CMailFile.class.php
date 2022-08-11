@@ -993,9 +993,9 @@ class CMailFile
 						// Token expired so we refresh it
 						if (is_object($tokenobj) && $expire) {
 							$credentials = new Credentials(
-								getDolGlobalString('OAUTH_'.$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE.'_ID'),
-								getDolGlobalString('OAUTH_'.$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE.'_SECRET'),
-								getDolGlobalString('OAUTH_'.$conf->global->MAIN_MAIL_SMTPS_OAUTH_SERVICE.'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_ID'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_SECRET'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_URLAUTHORIZE')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
