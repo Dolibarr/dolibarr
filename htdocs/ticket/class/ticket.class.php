@@ -212,6 +212,11 @@ class Ticket extends CommonObject
 	 */
 	public $email_date;
 
+	/**
+	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 */
+	public $oldcopy;
+
 
 	public $lines;
 
@@ -974,6 +979,10 @@ class Ticket extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call trigger
+			if (empty($this->oldcopy)) {
+				$this->oldcopy = new self($this->db);
+				$this->oldcopy->fetch($this->id);
+			}
 			$result = $this->call_trigger('TICKET_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
