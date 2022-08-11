@@ -2073,6 +2073,8 @@ class User extends CommonObject
 						$adh->phone = $this->office_phone;
 						$adh->phone_mobile = $this->user_mobile;
 
+						$adh->default_lang = $this->lang;
+
 						$adh->user_id = $this->id;
 						$adh->user_login = $this->login;
 
@@ -2116,6 +2118,8 @@ class User extends CommonObject
 						$tmpobj->phone_pro = $this->office_phone;
 						$tmpobj->phone_mobile = $this->user_mobile;
 						$tmpobj->fax = $this->office_fax;
+
+						$tmpobj->default_lang = $this->lang;
 
 						$tmpobj->address = $this->address;
 						$tmpobj->town = $this->town;

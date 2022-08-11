@@ -112,9 +112,9 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('propalcard', 'globalcard'));
 
-$usercanread = $user->rights->propal->lire;
-$usercancreate = $user->rights->propal->creer;
-$usercandelete = $user->rights->propal->supprimer;
+$usercanread = $user->hasRight("propal", "lire");
+$usercancreate = $user->hasRight("propal", "creer");
+$usercandelete = $user->hasRight("propal", "supprimer");
 
 $usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));

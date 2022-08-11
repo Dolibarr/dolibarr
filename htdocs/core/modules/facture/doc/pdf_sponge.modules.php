@@ -116,30 +116,30 @@ class pdf_sponge extends ModelePDFFactures
 	public $marge_basse;
 
 
-    /**
-     * @var int heightforinfotot
-     */
-    public $heightforinfotot;
+	/**
+	 * @var int heightforinfotot
+	 */
+	public $heightforinfotot;
 
-    /**
-     * @var int heightforfreetext
-     */
-    public $heightforfreetext;
+	/**
+	 * @var int heightforfreetext
+	 */
+	public $heightforfreetext;
 
-    /**
-     * @var int heightforfooter
-     */
-    public $heightforfooter;
+	/**
+	 * @var int heightforfooter
+	 */
+	public $heightforfooter;
 
-    /**
-     * @var int tab_top
-     */
-    public $tab_top;
+	/**
+	 * @var int tab_top
+	 */
+	public $tab_top;
 
-    /**
-     * @var int tab_top_newpage
-     */
-    public $tab_top_newpage;
+	/**
+	 * @var int tab_top_newpage
+	 */
+	public $tab_top_newpage;
 
 	/**
 	 * Issuer
@@ -1243,37 +1243,37 @@ class pdf_sponge extends ModelePDFFactures
 			if (empty($object->mode_reglement_code)
 				&& empty($conf->global->FACTURE_CHQ_NUMBER)
 				&& empty($conf->global->FACTURE_RIB_NUMBER)) {
-					$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
+				$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
 			} elseif (($object->mode_reglement_code == 'CHQ' && empty($conf->global->FACTURE_CHQ_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))
-					|| ($object->mode_reglement_code == 'VIR' && empty($conf->global->FACTURE_RIB_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))) {
-					// Avoid having any valid PDF with setup that is not complete
-					$outputlangs->load("errors");
+				|| ($object->mode_reglement_code == 'VIR' && empty($conf->global->FACTURE_RIB_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))) {
+				// Avoid having any valid PDF with setup that is not complete
+				$outputlangs->load("errors");
 
-					$pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->SetTextColor(200, 0, 0);
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup", $object->mode_reglement_code);
-					$pdf->MultiCell($posxend - $this->marge_gauche, 3, $this->error, 0, 'L', 0);
-					$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetXY($this->marge_gauche, $posy);
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup", $object->mode_reglement_code);
+				$pdf->MultiCell($posxend - $this->marge_gauche, 3, $this->error, 0, 'L', 0);
+				$pdf->SetTextColor(0, 0, 0);
 
-					$posy = $pdf->GetY() + 1;
+				$posy = $pdf->GetY() + 1;
 			}
 
 				// Show payment mode
 			if (!empty($object->mode_reglement_code)
-					&& $object->mode_reglement_code != 'CHQ'
-					&& $object->mode_reglement_code != 'VIR') {
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->SetXY($this->marge_gauche, $posy);
-					$titre = $outputlangs->transnoentities("PaymentMode").':';
-					$pdf->MultiCell($posxend - $this->marge_gauche, 5, $titre, 0, 'L');
+				&& $object->mode_reglement_code != 'CHQ'
+				&& $object->mode_reglement_code != 'VIR') {
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->SetXY($this->marge_gauche, $posy);
+				$titre = $outputlangs->transnoentities("PaymentMode").':';
+				$pdf->MultiCell($posxend - $this->marge_gauche, 5, $titre, 0, 'L');
 
-					$pdf->SetFont('', '', $default_font_size - 2);
-					$pdf->SetXY($posxval, $posy);
-					$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
-					$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posxval, $posy);
+				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
 
-					$posy = $pdf->GetY();
+				$posy = $pdf->GetY();
 			}
 
 					// Show online payment link
@@ -1461,13 +1461,12 @@ class pdf_sponge extends ModelePDFFactures
 				if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 					$this->_pagefoot($pdf, $object, $outputlangs, 1);
 					$pdf->addPage();
-                    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-                        $this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-                        $pdf->setY($this->tab_top_newpage);
-                    }
-                    else{
-                        $pdf->setY($this->marge_haute);
-                    }
+					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
+						$pdf->setY($this->tab_top_newpage);
+					} else {
+						$pdf->setY($this->marge_haute);
+					}
 					$posy = $pdf->GetY();
 				}
 
@@ -1529,13 +1528,12 @@ class pdf_sponge extends ModelePDFFactures
 
 			if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 				$pdf->addPage();
-                if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-                    $this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
-                    $pdf->setY($this->tab_top_newpage);
-                }
-                else {
-                    $pdf->setY($this->marge_haute);
-                }
+				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+					$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
+					$pdf->setY($this->tab_top_newpage);
+				} else {
+					$pdf->setY($this->marge_haute);
+				}
 
 				$posy = $pdf->GetY();
 			}

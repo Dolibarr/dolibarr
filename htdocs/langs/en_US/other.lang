@@ -328,3 +328,6 @@ FailedToGetFile=Failed to get files %s
 ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
 FileWasUpload=File <b>%s</b> was upload
 FTPFailedToUploadFile=Failed to upload file <b>%s</b>.
+AddFolder=Create folder
+FileWasCreateFolder=Folder <b>%s</b> was create
+FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.
