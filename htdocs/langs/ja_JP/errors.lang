@@ -270,7 +270,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=最初に勘定科目表を設定する
 ErrorFailedToFindEmailTemplate=コードネーム%sのテンプレートが見つからない
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=サービスで期間が定義されていない。時給計算する方法がない。
 ErrorActionCommPropertyUserowneridNotDefined=ユーザの所有者が必要
-ErrorActionCommBadType=選択したイベント種別 (id: %n, code: %s) がイベント種別辞書に存在しない
+ErrorActionCommBadType=選択したイベント種別 (id: %s, code: %s) がイベント種別辞書に存在しない
 CheckVersionFail=バージョンチェックに失敗する
 ErrorWrongFileName=ファイル名に__SOMETHING__を含めることはできない
 ErrorNotInDictionaryPaymentConditions=支払条件辞書にないので、変更すること。
@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=HTTPSで保護された接続を使用して
 WarningModuleXDisabledSoYouMayMissEventHere=モジュール%sが有効になっていない。そのため、ここでは多くのイベントを見逃す可能性がある。
 WarningPaypalPaymentNotCompatibleWithStrict=値「Strict」では、現在はオンライン支払機能が正常動作せず。代わりに「Lax」を使用すること。
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
 # Validate
 RequireValidValue = 値が無効.
 RequireAtLeastXString = 少なくとも%s文字(s)が必要
@@ -347,12 +342,3 @@ BadSetupOfField = フィールドの設定エラー
 BadSetupOfFieldClassNotFoundForValidation = フィールドの設定エラー：検証用のクラスが見つからない
 BadSetupOfFieldFileNotFound = フィールドの設定が正しくない：含めるファイルが見つからない
 BadSetupOfFieldFetchNotCallable = フィールドの設定不正エラー：クラスでフェッチを呼び出せない
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」

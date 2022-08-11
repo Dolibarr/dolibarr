@@ -637,7 +637,11 @@ class Translate
 			);
 
 			if (strpos($key, 'Format') !== 0) {
-				$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				try {
+					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				} catch (Exception $e) {
+					// No exception managed
+				}
 			}
 
 			// Crypt string into HTML

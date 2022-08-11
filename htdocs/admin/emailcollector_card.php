@@ -378,55 +378,59 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$connectstringserver = $object->getConnectStringIMAP($usessl);
 
-		try {
-			if ($sourcedir) {
-				//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-				$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+		if ($action == 'scan') {
+			try {
+				if ($sourcedir) {
+					//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+					$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+				}
+				if ($targetdir) {
+					//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+					$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+				}
+
+				$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+				$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+
+				dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
+
+				$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
+				$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+				$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
+				$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
+
+				dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
+
+				$connection = imap_open($connectstringsource, $object->login, $object->password);
+
+				//dol_syslog("end imap_open connection=".var_export($connection, true));
+			} catch (Exception $e) {
+				print $e->getMessage();
 			}
-			if ($targetdir) {
-				//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
-				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+
+			if (!$connection) {
+				$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+				if (function_exists('imap_last_error')) {
+					$morehtml .= '<br>'.imap_last_error();
+				}
+				dol_syslog("Error ".$morehtml, LOG_WARNING);
+				//var_dump(imap_errors())
+			} else {
+				dol_syslog("Imap connected. Now we call imap_num_msg()");
+				$morehtml .= imap_num_msg($connection);
 			}
 
-			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
-
-			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
-
-			$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
-			$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
-			$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
-			$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
-
-			dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
-
-			$connection = imap_open($connectstringsource, $object->login, $object->password);
-
-			//dol_syslog("end imap_open connection=".var_export($connection, true));
-		} catch (Exception $e) {
-			print $e->getMessage();
+			if ($connection) {
+				dol_syslog("Imap close");
+				imap_close($connection);
+			}
+		} else {
+			$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 		}
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	} else {
 		$morehtml .= 'IMAP functions not available on your PHP. ';
-	}
-
-	if (!$connection) {
-		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
-		if (function_exists('imap_last_error')) {
-			$morehtml .= '<br>'.imap_last_error();
-		}
-		dol_syslog("Error ".$morehtml, LOG_WARNING);
-		//var_dump(imap_errors())
-	} else {
-		dol_syslog("Imap connected. Now we call imap_num_msg()");
-		$morehtml .= imap_num_msg($connection);
-	}
-
-	if ($connection) {
-		dol_syslog("Imap close");
-		imap_close($connection);
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -580,11 +584,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1);
 	print '</td><td>';
-	print '<input type="text" name="operationparam">';
+	//print '<input type="text" name="operationparam">';
+	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
+	print $form->textwithpicto('<input type="text" name="operationparam">', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
 	print '<td>';
-	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';

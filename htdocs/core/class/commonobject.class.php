@@ -744,6 +744,7 @@ abstract class CommonObject
 	public function setUpperOrLowerCase()
 	{
 		global $conf;
+
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
@@ -759,8 +760,12 @@ abstract class CommonObject
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
-		$this->email = dol_strtolower($this->email);
-		$this->personal_email = dol_strtolower($this->personal_email);
+		if (isset($this->email)) {
+			$this->email = dol_strtolower($this->email);
+		}
+		if (isset($this->personal_email)) {
+			$this->personal_email = dol_strtolower($this->personal_email);
+		}
 	}
 
 	/**
@@ -6019,7 +6024,7 @@ abstract class CommonObject
 						// Test fetch_array ! is_int($key) because fetch_array result is a mix table with Key as alpha and Key as int (depend db engine)
 						if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && !is_int($key)) {
 							// we can add this attribute to object
-							if (!empty($extrafields) && in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime'))) {
+							if (!empty($extrafields->attributes[$this->table_element]) && in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime'))) {
 								//var_dump($extrafields->attributes[$this->table_element]['type'][$key]);
 								$this->array_options["options_".$key] = $this->db->jdate($value);
 							} else {
@@ -6032,7 +6037,7 @@ abstract class CommonObject
 
 					// If field is a computed field, value must become result of compute
 					foreach ($tab as $key => $value) {
-						if (!empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
 								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
@@ -7760,12 +7765,12 @@ abstract class CommonObject
 			} else {
 				$value = '';
 			}
-		} elseif (preg_match('/^(text|html)/', $type)) {
-			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
 			$value = preg_replace('/./i', '*', $value);
 		} elseif ($type == 'array') {
 			$value = implode('<br>', $value);
+		} else {	// text|html|varchar
+			$value = dol_htmlentitiesbr($value);
 		}
 
 		//print $type.'-'.$size.'-'.$value;
@@ -8446,8 +8451,8 @@ abstract class CommonObject
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	 Set buy price = sell price if ForceBuyingPriceIfNull configured,
-	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
-	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
+	 *   elseif calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
+	 *	 elseif calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
 	 *
 	 * @param float		$unitPrice		 Product unit price
@@ -8801,7 +8806,7 @@ abstract class CommonObject
 	public function isInt($info)
 	{
 		if (is_array($info)) {
-			if (isset($info['type']) && ($info['type'] == 'int' || preg_match('/^integer/i', $info['type']))) {
+			if (isset($info['type']) && (preg_match('/(^int|int$)/i', $info['type']))) {
 				return true;
 			} else {
 				return false;
@@ -9060,6 +9065,8 @@ abstract class CommonObject
 			return 'NULL';
 		} elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) {
 			return price2num("$value");
+		} elseif (preg_match('/int$/i', $fieldsentry['type'])) {
+			return (int) $value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
 				return 'true';

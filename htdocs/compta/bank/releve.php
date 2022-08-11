@@ -387,6 +387,10 @@ if (empty($numref)) {
 	 *   Show list of record into a bank statement
 	 */
 
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+	llxHeader('', $title, $helpurl);
+
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);
 	print dol_get_fiche_head($head, 'statement', $langs->trans("AccountStatement"), -1, 'account');

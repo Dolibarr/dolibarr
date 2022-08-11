@@ -464,6 +464,9 @@ if ($id > 0 || $ref) {
 			if (($action == 'add_price' || $action == 'update_price') && $usercancreate) {
 				$langs->load("suppliers");
 
+				print "<!-- form to add a supplier price -->\n";
+				print '<br>';
+
 				if ($rowid) {
 					$object->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
@@ -480,7 +483,7 @@ if ($id > 0 || $ref) {
 				print '<table class="border centpercent">';
 
 				// Supplier
-				print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Supplier").'</td><td>';
+				print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Supplier").'</td><td>';
 				if ($rowid) {
 					$supplier = new Fournisseur($db);
 					$supplier->fetch($socid);
@@ -636,7 +639,7 @@ if ($id > 0 || $ref) {
 						$currencycodetouse = $conf->currency;
 					}
 					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
-					print ' &nbsp; '.$langs->trans("CurrencyRate").' ';
+					print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
 					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
 					print '</td>';
 					print '</tr>';

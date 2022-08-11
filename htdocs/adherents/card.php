@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
@@ -311,8 +312,8 @@ if (empty($reshook)) {
 			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
 			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
 			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
-			$object->birth       = $birthdate;
-
+			$object->birth		= $birthdate;
+			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid      = GETPOST("typeid", 'int');
 			//$object->note        = trim(GETPOST("comment","alpha"));
 			$object->morphy      = GETPOST("morphy", 'alpha');
@@ -457,6 +458,7 @@ if (empty($reshook)) {
 
 		$userid = GETPOST("userid", 'int');
 		$socid = GETPOST("socid", 'int');
+		$default_lang = GETPOST('default_lang', 'alpha');
 
 		$object->civility_id = $civility_id;
 		$object->firstname   = $firstname;
@@ -498,7 +500,7 @@ if (empty($reshook)) {
 		$object->user_id     = $userid;
 		$object->socid = $socid;
 		$object->public      = $public;
-
+		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -621,6 +623,11 @@ if (empty($reshook)) {
 			}
 		}
 		$action = ($result < 0 || !$error) ?  '' : 'create';
+
+		if (!$error && $backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
@@ -894,6 +901,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Card");
@@ -1358,6 +1366,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+			print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print '</td>';
+			print '</tr>';
+		}
+
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
 		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
@@ -1797,6 +1813,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+			print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+			print $labellang;
+			print '</td></tr>';
+		}
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';

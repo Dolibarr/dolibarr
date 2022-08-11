@@ -1722,10 +1722,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.GETPOST('label').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth200" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
@@ -1818,7 +1818,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print dol_get_fiche_end();
 
-	dol_set_focus('#label');
+	dol_set_focus('#bank');
 
 	print $form->buttonsSaveCancel("Add");
 }

@@ -27,7 +27,9 @@ Following changes may create regressions for some external modules, but were nec
 For users:
 ---------------
 
-NEW: PHP 8.1 compatibility
+NEW: PHP 8.1 compatibility. 
+     Warning: Application works correctly with PHP8 and 8.1 but you may experience a lot of PHP warning into the PHP server log files (depending 
+     on the PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
 NEW: Can show ZATCA QR-Code on PDFs

@@ -102,19 +102,24 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getNumberInvoicesPieChart('customers');
-print '<br>';
+if (isModEnabled('facture')) {
+	print getNumberInvoicesPieChart('customers');
+	print '<br>';
+}
 
-if (!empty($conf->fournisseur->enabled)) {
+if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print getNumberInvoicesPieChart('fourn');
 	print '<br>';
 }
 
-print getCustomerInvoiceDraftTable($max, $socid);
-
-if (!empty($conf->fournisseur->enabled)) {
+if (isModEnabled('facture')) {
+	print getCustomerInvoiceDraftTable($max, $socid);
 	print '<br>';
+}
+
+if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print getDraftSupplierTable($max, $socid);
+	print '<br>';
 }
 
 print '</div><div class="fichetwothirdright">';
@@ -273,7 +278,7 @@ if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 
 
 // Last modified supplier invoices
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
 
@@ -400,7 +405,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 
 // Latest donations
-if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -490,7 +495,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 /**
  * Social contributions to pay
  */
-if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
+if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 	if (!$socid) {
 		$chargestatic = new ChargeSociales($db);
 
@@ -582,7 +587,7 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && !empty($conf->commande->enabled) && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+if (isModEnabled('facture') && isModEnabled('commande') && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 

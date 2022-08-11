@@ -52,7 +52,7 @@ Ace                    1.4.14        BSD                         Yes            
 ChartJS                3.7.1         MIT License                 Yes             JS library for graph
 CKEditor               4.18          LGPL-2.1+                   Yes             Editor WYSIWYG
 jQuery                 3.6.0         MIT License                 Yes             JS library
-jQuery UI              1.13.1        GPL and MIT License         Yes             JS library plugin UI
+jQuery UI              1.13.2        GPL and MIT License         Yes             JS library plugin UI
 jQuery select2         4.0.13        GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
 jQuery blockUI         2.70.0        GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors

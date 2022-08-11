@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -955,6 +955,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
 			} while ($oldstringtoclean != $out);
+
+			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+			$reg = array();
+			preg_match_all('/(<img|url\()/i', $out, $reg);
+			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+				return 'TooManyLinksIntoHTMLString';
+			}
+
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -6816,10 +6824,11 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
 					if (! empty($attrs->item($ii)->name)) {
-						// Delete attribute if not into allowed_attributes
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							// If attribute is 'style'
 							$valuetoclean = $attrs->item($ii)->value;
 
 							if (isset($valuetoclean)) {
@@ -6828,10 +6837,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
 									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
 									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
 									}
+
+									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
 								} while ($oldvaluetoclean != $valuetoclean);
 							}
 
@@ -7387,6 +7400,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+			}
+			if (!empty($conf->propal->enabled) && (!is_object($object) || $object->element == 'propal')) {
+				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
@@ -9145,6 +9161,7 @@ function printCommonFooter($zone = 'private')
 
 		print "\n";
 		if (!empty($conf->use_javascript_ajax)) {
+			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and madatory fields, tuning info, ... -->\n";
 			print '<script>'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 
@@ -10426,7 +10443,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	global $hookmanager, $action, $object, $langs;
 
 	//var_dump($params);
-	if ($params['isDropdown'])
+	if (!empty($params['isDropdown']))
 		$class = "dropdown-item";
 	else {
 		$class = 'butAction';
