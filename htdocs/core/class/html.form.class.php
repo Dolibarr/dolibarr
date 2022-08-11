@@ -200,9 +200,11 @@ class Form
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
+	 * @param	string	$gm				'auto' or 'tzuser' or 'tzserver' (when $typeofdata is a date)
+	 * @param	string	$editaction		[=''] use GETPOST default action or set action to edit mode
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto', $editaction = '')
 	{
 		global $conf, $langs, $db;
 
@@ -217,7 +219,10 @@ class Form
 		if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !preg_match('/^select;|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
 			$ret .= $this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
-			$editmode = (GETPOST('action', 'aZ09') == 'edit'.$htmlname);
+			if ($editaction == '') {
+				$editaction = GETPOST('action', 'aZ09');
+			}
+			$editmode = ($editaction == 'edit'.$htmlname);
 			if ($editmode) {
 				$ret .= "\n";
 				$ret .= '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';

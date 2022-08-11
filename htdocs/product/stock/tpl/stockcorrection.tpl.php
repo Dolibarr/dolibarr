@@ -29,6 +29,10 @@ if (empty($conf) || !is_object($conf)) {
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
+/**
+ * @var Product $object
+ */
+
 $productref = '';
 if ($object->element == 'product') {
 	$productref = $object->ref;
@@ -39,6 +43,17 @@ $langs->load("productbatch");
 
 if (empty($id)) {
 	$id = $object->id;
+}
+
+$sellByCss = '';
+$eatByCss = '';
+if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY) {
+	$sellByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY) {
+	$eatByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+	$sellByCss = 'fieldrequired';
+	$eatByCss = 'fieldrequired';
 }
 
 print '<script type="text/javascript" language="javascript">
@@ -121,13 +136,13 @@ if (!empty($conf->productbatch->enabled) &&
 	print '</tr>';
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-		print '<td>'.$langs->trans("SellByDate").'</td><td>';
+		print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
 		print '</td>';
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
 		print '</td>';

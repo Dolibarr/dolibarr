@@ -689,3 +689,6 @@ ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NUL
 
 -- Add input reason on invoice
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+
+-- Make sell-by or eat-by date mandatory
+ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
