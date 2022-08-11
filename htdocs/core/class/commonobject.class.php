@@ -141,7 +141,7 @@ abstract class CommonObject
 	public $linkedObjectsFullLoaded = array();
 
 	/**
-	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
+	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
 
