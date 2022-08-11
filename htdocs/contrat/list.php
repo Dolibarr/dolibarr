@@ -887,8 +887,8 @@ while ($i < min($num, $limit)) {
 		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center">';
-			print $socstatic->country;
+			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($socstatic->country).'">';
+			print dol_escape_htmltag($socstatic->country);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

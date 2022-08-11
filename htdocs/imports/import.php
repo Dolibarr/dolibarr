@@ -1818,7 +1818,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
@@ -1974,7 +1974,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			if (empty($nboferrors)) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
 			} else {

@@ -170,7 +170,8 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = clone $object;
+	$object->oldcopy = dol_clone($object);
+
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;

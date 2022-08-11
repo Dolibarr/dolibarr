@@ -2108,7 +2108,7 @@ CreateCandidature=Create job application
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
-OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\s*([^\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\s([^\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\s*([^\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\s([^\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Opening hours
 OpeningHoursDesc=Enter here the regular opening hours of your company.
 ResourceSetup=Configuration of Resource module
@@ -2287,4 +2287,12 @@ DoesNotWorkWithAllThemes=Will not work with all themes
 NoName=No name
 ShowAdvancedOptions= Show advanced options
 HideAdvancedoptions= Hide advanced options
-CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is: 
+CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is:
+OauthNotAvailableForAllAndHadToBeCreatedBefore=OAUTH2 authentication is not available for all hosts, and a token with the right permissions must have been created upstream with the OAUTH module
+MAIN_MAIL_SMTPS_OAUTH_SERVICE=OAUTH2 authentication service
+DontForgetCreateTokenOauthMod=A token with the right permissions must have been created upstream with the OAUTH module
+MAIN_MAIL_SMTPS_AUTH_TYPE=Authentification method
+UsePassword=Use a password
+UseOauth=Use a OAUTH token
+Images=Images
+MaxNumberOfImagesInGetPost=Max number of images allowed in GETPOST check

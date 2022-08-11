@@ -112,9 +112,9 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('propalcard', 'globalcard'));
 
-$usercanread = $user->rights->propal->lire;
-$usercancreate = $user->rights->propal->creer;
-$usercandelete = $user->rights->propal->supprimer;
+$usercanread = $user->hasRight("propal", "lire");
+$usercancreate = $user->hasRight("propal", "creer");
+$usercandelete = $user->hasRight("propal", "supprimer");
 
 $usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
@@ -1851,7 +1851,7 @@ if ($action == 'create') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
 			$objectsrc->remise_absolue = $remise_absolue;	// deprecated
 			$objectsrc->remise_percent = $remise_percent;
-			$objectsrc->update_price(1, - 1, 1);
+			$objectsrc->update_price(1, 'auto', 1);
 		}
 
 		print "\n<!-- ".$classname." info -->";

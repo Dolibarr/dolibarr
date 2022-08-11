@@ -130,7 +130,7 @@ if ($invoiceid > 0) {
 	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>}
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
 	  console.log('Failed to discover: ', discoverResult.error);
@@ -141,7 +141,7 @@ if ($invoiceid > 0) {
 	  // cashier here and let them select which to connect to (see below).
 	  selectedReader = discoverResult.discoveredReaders[0];
 	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
-	  
+
 	  terminal.connectReader(selectedReader).then(function(connectResult) {
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
@@ -160,7 +160,7 @@ if ($invoiceid > 0) {
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
-		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
 		} else {
 		document.getElementById("card-present-alert").innerHTML = '';
@@ -388,7 +388,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
@@ -398,7 +398,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
-			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';  
+			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 			console.log(result.error)
 		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
@@ -409,7 +409,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
-				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>'; 
+				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
 				console.log("Capture paymentIntent successfull "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
@@ -423,7 +423,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		});
 
 			}
-			});	
+			});
 		  }
 		});
 	  }
@@ -655,6 +655,10 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	}
 }
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {
 	$newclass = $class.($button["class"] ? " ".$button["class"] : "");
@@ -665,6 +669,14 @@ if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
 	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\');">'.$langs->trans("Reported").'</button>';
 }
 ?>
+
+<?php
+// Add code from hooks
+$parameters=array();
+$hookmanager->executeHooks('completePayment', $parameters, $invoice);
+print $hookmanager->resPrint;
+?>
+
 </div>
 
 </body>

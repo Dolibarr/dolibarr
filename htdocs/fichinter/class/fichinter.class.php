@@ -533,7 +533,7 @@ class Fichinter extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!$error) {
-				$this->oldcopy = clone $this;
+				$this->oldcopy = dol_clone($this);
 			}
 
 			if (!$error) {
@@ -1422,7 +1422,7 @@ class Fichinter extends CommonObject
 			}
 
 			if (!$error) {
-				$this->oldcopy = clone $this;
+				$this->oldcopy = dol_clone($this);
 				$this->ref_client = $ref_client;
 			}
 

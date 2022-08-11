@@ -25,6 +25,8 @@ require '../../../../main.inc.php';
 
 $langs->load("ecm");
 
+top_httphead();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--

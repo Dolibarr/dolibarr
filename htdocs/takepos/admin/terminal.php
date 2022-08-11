@@ -70,6 +70,8 @@ $terminaltouse = $terminal;
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
+	$res = dolibarr_set_const($db, "TAKEPOS_TERMINAL_NAME_".$terminaltouse, (!empty(GETPOST('terminalname'.$terminaltouse, 'restricthtml')) ? GETPOST('terminalname'.$terminaltouse, 'restricthtml') : $langs->trans("TerminalName", $terminaltouse)), 'chaine', 0, '', $conf->entity);
+
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
@@ -147,6 +149,11 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
+
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TerminalNameDesc").'</td>';
+print '<td>';
+print '<input type="text" name="terminalname'.$terminal.'" value="'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$terminal, $langs->trans("TerminalName", $terminal)).'" >';
+print '</td></tr>';
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td>';
