@@ -655,6 +655,10 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	}
 }
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {
 	$newclass = $class.($button["class"] ? " ".$button["class"] : "");

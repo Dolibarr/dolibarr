@@ -291,6 +291,7 @@ ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by current ob
 ErrorAjaxRequestFailed=Request failed
 ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
+ErrorQuantityIsLimitedTo=Quantity is limited to %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

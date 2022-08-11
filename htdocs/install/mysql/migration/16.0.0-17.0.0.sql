@@ -47,6 +47,9 @@ ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
 ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
+ALTER TABLE llx_user DROP COLUMN idpers1;
+ALTER TABLE llx_user DROP COLUMN idpers2;
+ALTER TABLE llx_user DROP COLUMN idpers3;
 
 
 -- v17
@@ -73,3 +76,6 @@ ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
+
+ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
