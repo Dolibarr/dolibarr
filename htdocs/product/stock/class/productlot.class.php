@@ -384,7 +384,7 @@ class Productlot extends CommonObject
 				$this->db->commit();
 			}
 		}
-		
+
 		if ($error) {
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 			return -1 * $error;
