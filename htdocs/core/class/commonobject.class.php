@@ -9954,7 +9954,7 @@ abstract class CommonObject
 			}
 		}
 
-		return $error ? -1 * $error : $ok;
+		return $error ? (-1 * $error) : $ok;
 	}
 
 	/**
