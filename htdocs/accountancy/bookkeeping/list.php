@@ -220,7 +220,7 @@ if (empty($conf->accounting->enabled)) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->hasRight('accounting', 'mouvements', 'lire'))) {
+if ($user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -881,7 +881,7 @@ if (empty($reshook)) {
 	}
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-	if (!empty($user->hasRight('accounting', 'mouvements', 'export'))) {
+	if ($user->hasRight('accounting', 'mouvements', 'export')) {
 		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 
