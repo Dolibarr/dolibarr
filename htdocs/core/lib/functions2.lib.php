@@ -1278,7 +1278,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	// Get counter in database
 	$counter = 0;
-	$sql = "SELECT ".$sqlstring." as val";
+	$sql = "SELECT MAX(CAST(".$sqlstring." AS INTEGER)) as val";
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
@@ -1298,24 +1298,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
-		$num = $db->num_rows($resql);
-
-		$i = 0;
-		$numericValues = [];
-		while ($i < $num) {
-			$i++;
-			$obj = $db->fetch_object($resql);
-
-			if (!$obj) {
-				dol_print_error($db);
-				break;
-			}
-
-			if (preg_match('/^[\d]*$/', $obj->val) > 0) {
-				$numericValues[] = intval($obj->val);
-			}
-		}
-		$counter = empty($numericValues) ? 0 : max($numericValues);
+		$obj = $db->fetch_object($resql);
+		$counter = $obj->val;
 	} else {
 		dol_print_error($db);
 	}
