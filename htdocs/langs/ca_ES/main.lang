@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -69,7 +75,7 @@ ErrorFailedToSaveFile=Error, el registre del fitxer ha fallat.
 ErrorCannotAddThisParentWarehouse=Esteu intentant afegir un magatzem primari que ja és fill d'un mag    atzem existent
 FieldCannotBeNegative=El camp "%s" no pot ser negatiu
 MaxNbOfRecordPerPage=Màx. nombre de registres per pàgina
-NotAuthorized=No està autoritzat per fer-ho.
+NotAuthorized=No estàs autoritzat per a fer-ho.
 SetDate=Indica la data
 SelectDate=Seleccioneu una data
 SeeAlso=Veure també %s
@@ -549,8 +555,8 @@ Paid=Pagat
 Topic=Assumpte
 ByCompanies=Per empresa
 ByUsers=Per usuari
-Links=Links
-Link=Link
+Links=Enllaços
+Link=Enllaç
 Rejects=Devolucions
 Preview=Vista prèvia
 NextStep=Següent pas
@@ -621,7 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Arxius i documents adjunts
 JoinMainDoc=Unir al document principal
-JoinMainDocOrLastGenerated=Send the main document or the last generated one if not found
+JoinMainDocOrLastGenerated=Envieu el document principal o l'últim generat si no el trobeu
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -712,7 +718,7 @@ FeatureDisabled=Funció desactivada
 MoveBox=Mou el panell
 Offered=Oferta
 NotEnoughPermissions=No té autorització per aquesta acció
-UserNotInHierachy=This action is reserved to the supervisors of this user
+UserNotInHierachy=Aquesta acció està reservada als supervisors d'aquest usuari
 SessionName=Nom sesió
 Method=Mètode
 Receive=Recepció
@@ -802,7 +808,6 @@ URLPhoto=Url de la foto/logo
 SetLinkToAnotherThirdParty=Enllaça amb un altre tercer
 LinkTo=Enllaça a
 LinkToProposal=Enllaça a pressupost
-LinkToExpedition= Link to expedition
 LinkToOrder=Enllaça a comanda
 LinkToInvoice=Enllaça a factura
 LinkToTemplateInvoice=Enllaçar a plantilla de factura
@@ -932,8 +937,8 @@ WebSites=Pàgines web
 WebSiteAccounts=Comptes de lloc web
 ExpenseReport=Informe de despeses
 ExpenseReports=Informes de despeses
-HR=RRHH
-HRAndBank=RRHH i banc
+HR=RH
+HRAndBank=RH i Banc
 AutomaticallyCalculated=Calculat automàticament
 TitleSetToDraft=Torna a esborrany
 ConfirmSetToDraft=Estàs segur que vols tornar a l'estat Esborrany?
@@ -1176,7 +1181,9 @@ ConfirmAllocateCommercial=Assigna la confirmació del representant de vendes
 ConfirmAllocateCommercialQuestion=Esteu segur que voleu assignar els registres seleccionats (%s)?
 CommercialsAffected=Representants comercials afectats
 CommercialAffected=Representant de vendes afectat
-YourMessage=Your message
-YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
-UrlToCheck=Url to check
-Automation=Automation
+YourMessage=El teu missatge
+YourMessageHasBeenReceived=S'ha rebut el teu missatge. Et respondrem o contactarem el més aviat possible.
+UrlToCheck=URL per a comprovar
+Automation=Automatització
+CreatedByEmailCollector=Creat pel recol·lector de correu electrònic
+CreatedByPublicPortal=Creat a partir del portal públic

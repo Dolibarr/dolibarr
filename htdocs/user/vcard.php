@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
-$user2 = new user($db);
+$user2 = new User($db);
 
 
 $id = GETPOST('id', 'int');
@@ -76,8 +76,8 @@ $v->setAddress("", "", $user2->address, $user2->town, $user2->state, $user2->zip
 $v->setLabel("", "", $user2->address, $user2->town, $user2->state, $user2->zip, $country, "TYPE=WORK");
 
 $v->setEmail($user2->email, "TYPE=WORK");
-$v->setNote($user2->note);
-$v->setTitle($user2->poste);
+$v->setNote($user2->note_public);
+$v->setTitle($user2->job);
 
 // Data from linked company
 if ($company->id) {
