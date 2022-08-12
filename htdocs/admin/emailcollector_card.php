@@ -224,7 +224,7 @@ if ($action == 'deleteoperation') {
 	}
 }
 
-if ($action == 'confirm_collect') {
+if ($action == 'collect') {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 	$res = $object->doCollectOneCollector();
