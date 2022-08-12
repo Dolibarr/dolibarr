@@ -182,7 +182,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
  */
 function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
 {
-	$iResult = ((int)$iHours * 3600) + ((int)$iMinutes * 60) + (int)$iSeconds;
+	$iResult = ((int) $iHours * 3600) + ((int) $iMinutes * 60) + (int) $iSeconds;
 	return $iResult;
 }
 
@@ -266,9 +266,9 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
 		} elseif ($format == 'allhourminsec') {
-		    return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
 		} elseif ($format == 'allhourmin') {
-		    return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
 		} elseif ($format == 'allhour') {
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600)));
 		}
@@ -862,7 +862,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
-				if($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
 				// Geneva fast in Switzerland
 			}
 		}
