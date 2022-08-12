@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Ligazón para configurar Stripe WebHook para chamar a
 PaymentWillBeRecordedForNextPeriod=O pago será rexistrado para o seguinte período.
 ClickHereToTryAgain=<a href="%s"> Faga clic aquí para tentalo de novo ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode facer clic aquí para activar o rexistro de cliente de Stripe:%s
+TERMINAL_LOCATION=Localización (enderezo) dos terminais

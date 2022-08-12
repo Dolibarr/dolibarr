@@ -48,9 +48,8 @@ CountriesNotInEEC=Țări care nu se află în CEE
 CountriesInEECExceptMe=Țările din CEE, cu excepția celor din %s
 CountriesExceptMe=Toate țările, cu excepția %s
 AccountantFiles=Export documente sursă
-ExportAccountingSourceDocHelp=Cu acest instrument, poți căuta și exporta evenimentele sursă care sunt utilizate pentru generare tranzacții contabilitate.<br> Fișierul ZIP exportat va conține listele de articole solicitate în CSV, precum și fișierele atașate acestora în formatul lor original (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Cu acest instrument, poți exporta evenimentele sursă (listă în CSV și PDF) care sunt utilizate pentru a genera operaţiunile de contabilitate.
 ExportAccountingSourceDocHelp2=Pentru export jurnale, foloseşte meniul %s - %s.
-ExportAccountingProjectHelp=Specifică un proiect dacă ai nevoie de un raport contabil numai pentru un anumit proiect. Rapoartele de cheltuieli și plățile împrumuturilor nu sunt incluse în rapoartele de proiect.
 VueByAccountAccounting=Vizualizare după contul contabil
 VueBySubAccountAccounting=Vizualizați după subcont contabil
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Dacă configurezi contul contabil pe linii de raport
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor de cheltuieli și contul contabil a taxelor lor
 
 Closure=Închidere anuală
-DescClosure=Consultă aici numărul de mișcări lunar care nu sunt încă validate și blocate
+DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
 OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
 AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
 NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Dezactivați legarea și transferul
 
 ## Export
 NotifiedExportDate=Marcare linii exportate ca Exportate <span class="warning">(pentru a modifica o linie, va trebui să ștergi întreaga tranzacție și să o retransferi în contabilitate)</span>
-NotifiedValidationDate=Validare și blocare intrări exportate <span class="warning">(același efect ca și caracteristica "%s", modificarea și ștergerea liniilor NU vor mai fi posibile)</span>
+NotifiedValidationDate=Validare şi blocare înregistrări exportate <span class="warning">(același efect ca și caracteristica "Închidere", modificarea și ștergerea liniilor NU  vor MAI fi posibile)</span>
 DateValidationAndLock=Dată de validare şi blocare
 ConfirmExportFile=Confirmare generare fișier de export contabil?
 ExportDraftJournal=Export jurnal schiţă

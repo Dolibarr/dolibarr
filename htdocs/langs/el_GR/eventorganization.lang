@@ -18,7 +18,7 @@
 # Generic
 #
 ModuleEventOrganizationName = Οργάνωση Εκδηλώσεων
-EventOrganizationDescription = Οργάνωση εκδήλωσης μέσω Ενότητας Έργου
+EventOrganizationDescription = Οργάνωση εκδήλωσης μέσω της Ενότητας Έργου
 EventOrganizationDescriptionLong= Διαχειριστείτε τη διοργάνωση μιας εκδήλωσης (παράσταση, συνέδρια, συμμετέχοντες ή ομιλητές, με δημόσιες σελίδες για πρόταση, ψηφοφορία ή εγγραφή)
 #
 # Menu
@@ -48,7 +48,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Πρότυπο email για α
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Πρότυπο email για χρήση κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου από τη μαζική αποστολή "Αποστολή email" σε ομιλητές
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Πρότυπο email για χρήση κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου από τη μαζική αποστολή "Αποστολή email" στη λίστα συμμετεχόντων
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Στη φόρμα δημιουργίας/προσθήκης συμμετέχοντα, περιορίζει τη λίστα τρίτων μόνο σε τρίτα μέρη της κατηγορίας
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα δημιουργίας/προσθήκης συμμετέχοντα, τη λίστα τρίτων μερών περιορίζεται σε τρίτα μέρη με τη φύση
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα για τη δημιουργία/προσθήκης ενός συμμετέχοντα, περιορίζει τη λίστα τρίτων σε τρίτα μέρη με τη φύση
 
 #
 # Object
@@ -60,11 +60,13 @@ ConferenceOrBoothTab = Συνέδριο ή Περίπτερο
 AmountPaid = Ποσό που καταβλήθηκε
 DateOfRegistration = Ημερομηνία εγγραφής
 ConferenceOrBoothAttendee = Συμμετέχων σε συνέδριο ή περίπτερο
+ApplicantOrVisitor=Αιτών ή επισκέπτης
+Speaker=Ομιλητής
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Το αίτημά σας για συνδιάσκεψη ελήφθη
+YourOrganizationEventConfRequestWasReceived = Το αίτημά σας για συνέδριο ελήφθη
 YourOrganizationEventBoothRequestWasReceived = Το αίτημά σας για περίπτερο ελήφθη
 EventOrganizationEmailAskConf = Αίτημα για συνέδριο
 EventOrganizationEmailAskBooth = Αίτημα για περίπτερο
@@ -78,7 +80,7 @@ ToSpeakers=Σε ομιλητές
 # Event
 #
 AllowUnknownPeopleSuggestConf=Επιτρέψτε σε όλους να προτείνουν συνέδρια
-AllowUnknownPeopleSuggestConfHelp=Επιτρέψτε σε άγνωστα άτομα να προτείνουν μια διάσκεψη που θέλουν να κάνουν
+AllowUnknownPeopleSuggestConfHelp=Επιτρέψτε σε άγνωστα άτομα να προτείνουν ένα συνέδριο που θέλουν να διοργανώσουν
 AllowUnknownPeopleSuggestBooth=Επιτρέψτε σε όλους να κάνουν αίτηση για περίπτερο
 AllowUnknownPeopleSuggestBoothHelp=Επιτρέψτε σε άγνωστα άτομα να κάνουν αίτηση για περίπτερο
 PriceOfRegistration=Τιμή εγγραφής
@@ -90,19 +92,19 @@ ConferenceOrBoothInformation=Πληροφορίες για το συνέδριο
 Attendees=Συμμετέχοντες
 ListOfAttendeesOfEvent=Λίστα συμμετεχόντων της εκδήλωσης
 DownloadICSLink = Λήψη συνδέσμου ICS
-EVENTORGANIZATION_SECUREKEY = Seed για να εξασφαλίσετε το κλειδί για τη δημόσια σελίδα εγγραφής για να προτείνετε μια διάσκεψη
+EVENTORGANIZATION_SECUREKEY = Seed για να εξασφαλίσετε το κλειδί για τη δημόσια σελίδα εγγραφής για την πρόταση συνεδρίου
 SERVICE_BOOTH_LOCATION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη θέση του περιπτέρου
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη συνδρομή ενός συμμετέχοντος σε μια εκδήλωση
 NbVotes=Αριθμός ψήφων
 #
 # Status
 #
-EvntOrgDraft = Πρόχειρο
+EvntOrgDraft = Προσχέδιο
 EvntOrgSuggested = Προτεινόμενα
 EvntOrgConfirmed = Επιβεβαιωμένο
 EvntOrgNotQualified = Μη επιλεγμένο
 EvntOrgDone = Ολοκληρωμένες
-EvntOrgCancelled = Ακυρώθηκε
+EvntOrgCancelled = Ακυρωμένες
 #
 # Public page
 #
@@ -113,7 +115,7 @@ EvntOrgRegistrationConfHelpMessage = Εδώ, μπορείτε να προτεί�
 EvntOrgRegistrationBoothHelpMessage = Εδώ, μπορείτε να κάνετε αίτηση για να έχετε ένα περίπτερο κατά τη διάρκεια της εκδήλωσης.
 ListOfSuggestedConferences = Λίστα προτεινόμενων συνεδρίων
 ListOfSuggestedBooths = Λίστα προτεινόμενων περιπτέρων
-ListOfConferencesOrBooths=Κατάλογος συνεδρίων ή περιπτέρων του έργου εκδήλωσης
+ListOfConferencesOrBooths=Λίστα συνεδρίων ή περιπτέρων του έργου εκδήλωσης
 SuggestConference = Προτείνετε ένα νέο συνέδριο
 SuggestBooth = Προτείνετε ένα περίπτερο
 ViewAndVote = Δείτε και ψηφίστε για προτεινόμενες εκδηλώσεις
@@ -121,12 +123,12 @@ PublicAttendeeSubscriptionGlobalPage = Δημόσιος σύνδεσμος γι�
 PublicAttendeeSubscriptionPage = Δημόσιος σύνδεσμος για εγγραφή σε αυτήν την εκδήλωση μόνο 
 MissingOrBadSecureKey = Το κλειδί ασφαλείας δεν είναι έγκυρο ή λείπει
 EvntOrgWelcomeMessage = Αυτή η φόρμα σάς επιτρέπει να εγγραφείτε ως νέος συμμετέχων στην εκδήλωση: <b> %s </b>
-EvntOrgDuration = Αυτή η διάσκεψη ξεκινά στις %s και τελειώνει στις %s.
-ConferenceAttendeeFee = Χρέωση συμμετεχόντων στο συνέδριο για την εκδήλωση : «%s» που διεξάγεται από %s έως %s.
+EvntOrgDuration = Αυτό το συνέδριο ξεκινά στις %s και τελειώνει στις %s.
+ConferenceAttendeeFee = Χρέωση συμμετεχόντων στο συνέδριο για την εκδήλωση : "%s" που διεξάγεται από %s έως %s.
 BoothLocationFee = Θέση περιπτέρου για την εκδήλωση : "%s" που διεξάγεται από %s έως %s
-EventType = Τύπος συμβάντος
-LabelOfBooth=Ετικέτα περιπτέρου
-LabelOfconference=Ετικέτα συνεδρίου
+EventType = Τύπος εκδήλωσης
+LabelOfBooth=Ταμπέλα περιπτέρου
+LabelOfconference=Ταμπέλα συνεδρίου
 ConferenceIsNotConfirmed=Η εγγραφή δεν είναι διαθέσιμη, το συνέδριο δεν έχει επιβεβαιωθεί ακόμα
 DateMustBeBeforeThan=Το %s πρέπει να είναι πριν από το %s
 DateMustBeAfterThan=Το %s πρέπει να είναι μετά το %s
@@ -136,9 +138,10 @@ OrganizationEventConfRequestWasReceived=Η πρότασή σας για μια �
 OrganizationEventBoothRequestWasReceived=Το αίτημά σας για ένα περίπτερο έχει ληφθεί
 OrganizationEventPaymentOfBoothWasReceived=Η πληρωμή για το περίπτερό σας έχει καταγραφεί
 OrganizationEventPaymentOfRegistrationWasReceived=Η πληρωμή σας για την εγγραφή της εκδήλωσής έχει καταγραφεί
-OrganizationEventBulkMailToAttendees=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση ως συμμετέχων
+OrganizationEventBulkMailToAttendees=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση
 OrganizationEventBulkMailToSpeakers=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση ως ομιλητής
 OrganizationEventLinkToThirdParty=Σύνδεσμος με τρίτο μέρος (πελάτη, προμηθευτή ή συνεργάτη)
+OrganizationEvenLabelName=Δημόσια ονομασία του συνεδρίου ή του περιπτέρου
 
 NewSuggestionOfBooth=Αίτηση για περίπτερο
 NewSuggestionOfConference=Αίτηση για συνέδριο
