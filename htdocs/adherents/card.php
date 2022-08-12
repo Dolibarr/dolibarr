@@ -278,7 +278,7 @@ if (empty($reshook)) {
 		}
 		// Create new object
 		if ($result > 0 && !$error) {
-			$object->oldcopy = clone $object;
+			$object->oldcopy = dol_clone($object);
 
 			// Change values
 			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));
@@ -582,36 +582,15 @@ if (empty($reshook)) {
 				$id = $object->id;
 			} else {
 				$db->rollback();
-
-				if ($object->error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
+
 			// Auto-create thirdparty on member creation
 			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
 				if ($result > 0) {
-					// User creation
+					// Create third party out of a member
 					$company = new Societe($db);
-
-					$companyalias = '';
-					$fullname = $object->getFullName($langs);
-
-					if ($object->morphy == 'mor') {
-						$companyname = $object->company;
-						if (!empty($fullname)) {
-							$companyalias = $fullname;
-						}
-					} else {
-						$companyname = $fullname;
-						if (!empty($object->company)) {
-							$companyalias = $object->company;
-						}
-					}
-
-					$result = $company->create_from_member($object, $companyname, $companyalias);
-
+					$result = $company->create_from_member($object);
 					if ($result < 0) {
 						$langs->load("errors");
 						setEventMessages($langs->trans($company->error), null, 'errors');
@@ -1560,7 +1539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Create form popup
 			$formquestion = array();
 			if ($object->email) {
-				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL ?true:false));
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? true : false));
 			}
 			if (!empty($conf->mailman->enabled) && !empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value'=>'');
@@ -1591,7 +1570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+			$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_CANCELATION');
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);

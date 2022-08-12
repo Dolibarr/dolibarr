@@ -263,9 +263,7 @@ class Dolresource extends CommonObject
 		}
 
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		// Update request
