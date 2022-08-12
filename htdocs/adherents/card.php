@@ -582,36 +582,15 @@ if (empty($reshook)) {
 				$id = $object->id;
 			} else {
 				$db->rollback();
-
-				if ($object->error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
+
 			// Auto-create thirdparty on member creation
 			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
 				if ($result > 0) {
-					// User creation
+					// Create third party out of a member
 					$company = new Societe($db);
-
-					$companyalias = '';
-					$fullname = $object->getFullName($langs);
-
-					if ($object->morphy == 'mor') {
-						$companyname = $object->company;
-						if (!empty($fullname)) {
-							$companyalias = $fullname;
-						}
-					} else {
-						$companyname = $fullname;
-						if (!empty($object->company)) {
-							$companyalias = $object->company;
-						}
-					}
-
-					$result = $company->create_from_member($object, $companyname, $companyalias);
-
+					$result = $company->create_from_member($object);
 					if ($result < 0) {
 						$langs->load("errors");
 						setEventMessages($langs->trans($company->error), null, 'errors');
