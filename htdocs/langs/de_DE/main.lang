@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -802,7 +808,6 @@ URLPhoto=URL für Foto/Bild
 SetLinkToAnotherThirdParty=Link zu einem anderen Geschäftspartner
 LinkTo=Link zu
 LinkToProposal=Link zu Angebot
-LinkToExpedition= Link zur Sendung
 LinkToOrder=Link zur Bestellung
 LinkToInvoice=Link zur Rechnung
 LinkToTemplateInvoice=Link zur Rechnungsvorlage
@@ -1180,3 +1185,5 @@ YourMessage=Ihre Nachricht
 YourMessageHasBeenReceived=Ihre Nachricht wurde erfasst. Wir werden Ihnen so schnell wie möglich antworten.
 UrlToCheck=Zu überprüfende URL
 Automation=Automatisierung
+CreatedByEmailCollector=Erstellt durch E-Mail-Collector
+CreatedByPublicPortal=Erstellt aus dem öffentlichen Portal

@@ -48,9 +48,8 @@ CountriesNotInEEC=Az EGK-n kívüli országok
 CountriesInEECExceptMe=Az EGK országai, kivéve %s
 CountriesExceptMe=Minden ország, kivéve %s
 AccountantFiles=Forrásdokumentumok exportálása
-ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Ezzel az eszközzel exportálhatja azokat a forráseseményeket (listát CSV-ben és PDF-ben), amelyek a könyvelés létrehozására szolgálnak.
 ExportAccountingSourceDocHelp2=A naplók exportálásához használja a %s - %s menüpontot.
-ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Megtekintés könyvelési fiók szerint
 VueBySubAccountAccounting=Megtekintés könyvelési alfiók szerint
 
@@ -162,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Tranzakció közvetlen rögzítésének letiltása a b
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Piszkozatexport engedélyezése a naplóban
 ACCOUNTANCY_COMBO_FOR_AUX=Kombinációs lista engedélyezése a leányfiókhoz (lassú lehet, ha sok harmadik fél van, és megszakad az érték egy részének keresése)
 ACCOUNTING_DATE_START_BINDING=Határozzon meg egy dátumot a könyvelésben a kötés és átvitel megkezdéséhez. Ezen időpont alatt a tranzakciók nem kerülnek át a könyvelésbe.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=A könyvelési átutalásnál mi az alapértelmezetten kiválasztott időszak
 
 ACCOUNTING_SELL_JOURNAL=Eladó napló
 ACCOUNTING_PURCHASE_JOURNAL=Vásárlási napló
@@ -183,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Számviteli fiók az adományok regisztrálásához
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számviteli fiók az előfizetések regisztrálásához
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Alapértelmezés szerint számlaszámla az ügyfél befizetésének regisztrálásához
-UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+UseAuxiliaryAccountOnCustomerDeposit=Ügyfélszámla tárolása egyéni számlaként a leányfőkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Alapértelmezés szerint a vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Alapértelmezés szerint az EGK-ban vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Ha a számviteli számlát a költségjelentés-soro
 DescVentilDoneExpenseReport=Itt megtekintheti a költségjelentések sorainak listáját és a díjak elszámolási számláját
 
 Closure=Éves zárás
-DescClosure=Tekintse meg itt a még nem érvényesített és zárolatlan mozgások számát havi bontásban
+DescClosure=Itt tekintheti meg a még nem érvényesített és zárolt mozgások számát havi bontásban
 OverviewOfMovementsNotValidated=Nem érvényesített és zárolt mozgások áttekintése
 AllMovementsWereRecordedAsValidated=Minden mozgást érvényesítettként és zárolva rögzítettünk
 NotAllMovementsCouldBeRecordedAsValidated=Nem minden mozgást lehetett érvényesítettként és zároltként rögzíteni
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=A kötés és átvitel letiltása a
 
 ## Export
 NotifiedExportDate=Az exportált sorok megjelölése exportáltként (a sorok módosítása nem lehetséges)
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Érvényesítse az exportált bejegyzéseket (a sorok módosítása vagy törlése nem lehetséges)
 DateValidationAndLock=Dátumellenőrzés és zárolás
 ConfirmExportFile=A számviteli exportfájl létrehozásának megerősítése?
 ExportDraftJournal=Vázlatos napló exportálása
@@ -428,7 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sajn
 AccountancyErrorMismatchLetterCode=Nem egyezik az egyeztető kód
 AccountancyErrorMismatchBalanceAmount=Az egyenleg (%s) nem egyenlő 0-val
 AccountancyErrorLetteringBookkeeping=Hibák történtek a következő tranzakciókkal kapcsolatban: %s
-ErrorAccountNumberAlreadyExists=The accounting number %s already exists
+ErrorAccountNumberAlreadyExists=Az %s számviteli szám már létezik
 
 ## Import
 ImportAccountingEntries=Számviteli bejegyzések
