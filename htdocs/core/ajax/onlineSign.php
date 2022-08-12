@@ -72,7 +72,7 @@ if ($type == 'proposal') {
 	$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
 }
 
-if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
+if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.$entity, $SECUREKEY, '0')) {
 	http_response_code(403);
 	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
 	exit(-1);
