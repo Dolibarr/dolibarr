@@ -583,9 +583,8 @@ if (empty($reshook)) {
 			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
-
 			}
-			
+
 			// Auto-create thirdparty on member creation
 			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
 				if ($result > 0) {
