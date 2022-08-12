@@ -56,7 +56,7 @@ class modEventOrganization extends DolibarrModules
 		$this->description = "EventOrganizationDescription";
 		$this->descriptionlong = "EventOrganizationDescriptionLong";
 
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 
 		// Key used in llx_const table to save module status enabled/disabled (where EVENTORGANIZATION is value of property name of module in uppercase)
