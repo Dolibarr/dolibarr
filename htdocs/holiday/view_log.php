@@ -489,6 +489,7 @@ while ($i < min($num, $limit)) {
 
 	// Type
 	if (!empty($arrayfields['cpl.fk_type']['checked'])) {
+		$label = '';
 		if (!empty($alltypeleaves[$holidaylogstatic->type])) {
 			if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
 				$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
