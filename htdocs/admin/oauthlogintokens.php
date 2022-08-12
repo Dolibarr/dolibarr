@@ -77,7 +77,7 @@ if ($action == 'setconst' && $user->admin) {
 		$constnote = dol_escape_htmltag($setupconst['note']);
 
 		$result = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -96,7 +96,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 

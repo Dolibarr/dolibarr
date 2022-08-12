@@ -1813,7 +1813,7 @@ class Adherent extends CommonObject
 				if (!$error) {
 					// Create payment line for invoice
 					$paiement_id = $paiement->create($user);
-					if (!$paiement_id > 0) {
+					if (!($paiement_id > 0)) {
 						$this->error = $paiement->error;
 						$this->errors = $paiement->errors;
 						$error++;

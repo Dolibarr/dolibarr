@@ -56,72 +56,72 @@ if ($action == 'setvalue' && $user->admin) {
 
 	if (empty($conf->stripeconnect->enabled)) {
 		$result = dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY", GETPOST('STRIPE_TEST_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY", GETPOST('STRIPE_TEST_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_ID", GETPOST('STRIPE_TEST_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY", GETPOST('STRIPE_TEST_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_PUBLISHABLE_KEY", GETPOST('STRIPE_LIVE_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY", GETPOST('STRIPE_LIVE_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_ID", GETPOST('STRIPE_LIVE_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY", GETPOST('STRIPE_LIVE_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	// Stock decrement
@@ -131,12 +131,12 @@ if ($action == 'setvalue' && $user->admin) {
 
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	if (empty($conf->use_javascript_ajax)) {
 		$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}

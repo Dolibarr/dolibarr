@@ -134,7 +134,7 @@ if ($action == 'add_payment') {
 				$payment->fetch($paymentid);
 				if ($expensereport->total_ttc - $payment->amount == 0) {
 					$result = $expensereport->setPaid($expensereport->id, $user);
-					if (!$result > 0) {
+					if (!($result > 0)) {
 						setEventMessages($payment->error, $payment->errors, 'errors');
 						$error++;
 					}
