@@ -870,9 +870,8 @@ class Ticket extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$error = 0;
 
-		if (empty($this->oldcopy) && empty($notrigger)) {
-			$this->oldcopy = new self($this->db);
-			$this->oldcopy->fetch($this->id);
+		if (empty($notrigger)) {
+			$this->oldcopy = dol_clone($this, 1);
 		}
 
 		// Clean parameters
@@ -1464,9 +1463,8 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED) { // no closed
-			if (empty($this->oldcopy) && empty($notrigger)) {
-				$this->oldcopy = new self($this->db);
-				$this->oldcopy->fetch($this->id);
+			if (empty($notrigger)) {
+				$this->oldcopy = dol_clone($this, 1);
 			}
 			$this->db->begin();
 
