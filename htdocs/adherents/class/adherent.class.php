@@ -961,10 +961,10 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Fonction qui supprime l'adherent et les donnees associees
+	 *  Fonction to delete a member and its data
 	 *
 	 *  @param	int		$rowid		Id of member to delete
-	 *	@param	User		$user		User object
+	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
 	 */
