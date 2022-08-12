@@ -1539,7 +1539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Create form popup
 			$formquestion = array();
 			if ($object->email) {
-				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL ?true:false));
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? true : false));
 			}
 			if (!empty($conf->mailman->enabled) && !empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value'=>'');
@@ -1570,7 +1570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+			$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_CANCELATION');
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
