@@ -2296,4 +2296,3 @@ UsePassword=Use a password
 UseOauth=Use a OAUTH token
 Images=Images
 MaxNumberOfImagesInGetPost=Max number of images allowed in GETPOST check
-CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is:

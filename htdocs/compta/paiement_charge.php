@@ -169,13 +169,8 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
-	if ($mesg) {
-		print "<div class=\"error\">$mesg</div>";
-	}
-
-	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';

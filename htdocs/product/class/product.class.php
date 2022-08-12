@@ -1051,9 +1051,7 @@ class Product extends CommonObject
 
 		if ($result >= 0) {
 			if (empty($this->oldcopy)) {
-				$org = new self($this->db);
-				$org->fetch($this->id);
-				$this->oldcopy = $org;
+				$this->oldcopy = dol_clone($this);
 			}
 
 			// Test if batch management is activated on existing product
@@ -1929,7 +1927,7 @@ class Product extends CommonObject
 		global $conf;
 		$result = 0;
 
-		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
+		// We do a first search with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
 		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.default_vat_code,";
