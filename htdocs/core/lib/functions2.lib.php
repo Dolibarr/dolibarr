@@ -1276,7 +1276,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$maskLike = str_replace(dol_string_nospecial($maskperso[$key]), $maskpersonew[$key], $maskLike);
 	}
 
-    // Get counter in database
+	// Get counter in database
 	$counter = 0;
 
 	$sql = "SELECT ".$sqlstring." as val";
