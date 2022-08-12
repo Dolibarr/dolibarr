@@ -777,7 +777,7 @@ if ($resql) {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		if (empty($reshook)) {
-		   if ($user->rights->stock->mouvement->creer) {
+			if ($user->rights->stock->mouvement->creer) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
 			}
 
