@@ -7277,7 +7277,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__FACTOTALTTC_2DC__']	= is_object($object) ? price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto') : '';
 			$substitutionarray['__FACREST_2D__']		= is_object($object) ? number_format($resteapayer, 2, ',', ' ') : '';
 			$substitutionarray['__FACREST_2DC__']		= is_object($object) ? price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-        }
+		}
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
