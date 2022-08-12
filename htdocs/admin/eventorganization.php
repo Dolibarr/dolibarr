@@ -368,7 +368,7 @@ if ($action == 'edit') {
 					if ($resprod > 0) {
 						print $product->getNomUrl(1);
 					} elseif ($resprod < 0) {
-						setEventMessages(null, $object->errors, "errors");
+						setEventMessages($product->error, $product->errors, "errors");
 					}
 				} else {
 					print getDolGlobalString($constname);
