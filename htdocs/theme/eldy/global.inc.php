@@ -865,6 +865,13 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.nomarginleft {
+	margin-<?php print $left; ?>: unset;
+}
+.nomarginright {
+	margin-<?php print $right; ?>: unset;
+}
+
 .cursordefault {
 	cursor: default;
 }
