@@ -185,7 +185,7 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // values using a ",". In this case, Dolibarr will check login/pass for each value in
 // order defined into value. However, note that this can't work with all values.
 // Examples:
-// $dolibarr_main_authentication='dolibarr';		// Use the password defined into application on user record.
+// $dolibarr_main_authentication='dolibarr';		// Use the password defined into application on user file (default).
 // $dolibarr_main_authentication='http';			// Use the HTTP Basic authentication
 // $dolibarr_main_authentication='ldap';			// Check the password into a LDAP server
 // $dolibarr_main_authentication='ldap,dolibarr';	// You can set several mode using a comma as a separator.

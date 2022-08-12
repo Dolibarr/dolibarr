@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/stripetest_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/generic_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -40,6 +40,7 @@ $keyforprovider = GETPOST('keyforprovider', 'aZ09');
 if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
+$genericstring = 'OTHER';
 
 
 /**
@@ -48,7 +49,7 @@ if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthju
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/generic_oauthcallback.php');
 
 
 /**
@@ -67,8 +68,8 @@ $serviceFactory->setHttpClient($httpClient);
 $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
-$keyforparamid = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
-$keyforparamsecret = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
+$keyforparamid = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_'.$genericstring.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
 	getDolGlobalString($keyforparamid),
 	getDolGlobalString($keyforparamsecret),
@@ -77,21 +78,28 @@ $credentials = new Credentials(
 
 $requestedpermissionsarray = array();
 if (GETPOST('state')) {
-	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to retrieve some parameters back
+	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 }
-/*if ($action != 'delete' && empty($requestedpermissionsarray))
-{
+if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
-}*/
+}
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-//$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
+$apiService = $serviceFactory->createService($genericstring, $credentials, $storage, $requestedpermissionsarray);
 
-$servicesuffix = ($keyforprovider ? '-'.$keyforprovider : '');
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token SET service = 'StripeTest".$db->escape($servicesuffix)."', entity = ".((int) $conf->entity);
-$db->query($sql);
+/*
+var_dump($genericstring.($keyforprovider ? '-'.$keyforprovider : ''));
+var_dump($credentials);
+var_dump($storage);
+var_dump($requestedpermissionsarray);
+*/
+
+if (empty($apiService)) {
+	print 'Error, failed to create serviceFactory';
+	exit;
+}
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
@@ -110,9 +118,8 @@ if (!getDolGlobalString($keyforparamsecret)) {
  * Actions
  */
 
-
 if ($action == 'delete') {
-	$storage->clearToken('StripeTest');
+	$storage->clearToken($genericstring);
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
@@ -120,7 +127,7 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (GETPOST('code')) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
@@ -132,7 +139,7 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 
 	//print dol_get_fiche_head();
 	// retrieve the CSRF state parameter
-	$state = isset($_GET['state']) ? $_GET['state'] : null;
+	$state = GETPOSTISSET('state') ? GETPOST('state') : null;
 	//print '<table>';
 
 	// This was a callback request from service, get the token
@@ -141,8 +148,8 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 		//var_dump($state);
 		//var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
 
-		//$token = $apiService->requestAccessToken($_GET['code'], $state);
-		$token = $apiService->requestAccessToken($_GET['code']);
+		//$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+		$token = $apiService->requestAccessToken(GETPOST('code'));
 		// Github is a service that does not need state to be stored.
 		// Into constructor of GitHub, the call
 		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
@@ -158,8 +165,7 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else { // If entry on page with no parameter, we arrive here
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
@@ -167,11 +173,9 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
 	if (GETPOST('state')) {
-		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+		$url = $apiService->getAuthorizationUri(array('state' => GETPOST('state')));
 	} else {
-		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
-		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
+		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
 	}
 
 	// we go on oauth provider authorization page

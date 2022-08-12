@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-$apiService = $serviceFactory->createService('GitHub'.($keyforprovider ? '-'.$keyforprovider : ''), $credentials, $storage, $requestedpermissionsarray);
+$apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');

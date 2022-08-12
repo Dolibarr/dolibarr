@@ -187,10 +187,14 @@ class Tickets extends DolibarrApi
 		if (is_array($this->ticket->cache_logs_ticket) && count($this->ticket->cache_logs_ticket) > 0) {
 			$num = count($this->ticket->cache_logs_ticket);
 			$i = 0;
+			$user_action = new User($this->db);
+
 			while ($i < $num) {
+				$userstring = '';
 				if ($this->ticket->cache_logs_ticket[$i]['fk_user_create'] > 0) {
-					$user_action = new User($this->db);
 					$user_action->fetch($this->ticket->cache_logs_ticket[$i]['fk_user_create']);
+
+					$userstring = dolGetFirstLastname($user_action->firstname, $user_action->lastname);
 				}
 
 				// Now define messages
@@ -198,7 +202,7 @@ class Tickets extends DolibarrApi
 				'id' => $this->ticket->cache_logs_ticket[$i]['id'],
 				'fk_user_author' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
 				'fk_user_action' => $this->ticket->cache_logs_ticket[$i]['fk_user_create'],
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
+				'fk_user_action_string' => $userstring,
 				'message' => $this->ticket->cache_logs_ticket[$i]['message'],
 				'datec' => $this->ticket->cache_logs_ticket[$i]['datec'],
 				);
@@ -243,6 +247,7 @@ class Tickets extends DolibarrApi
 		}
 
 		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
