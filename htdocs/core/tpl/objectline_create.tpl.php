@@ -48,6 +48,7 @@ if (!isset($dateSelector)) {
 	global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 }
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+
 if (!isset($dateSelector)) {
 	$dateSelector = 1; // For backward compatibility
 } elseif (empty($dateSelector)) {
@@ -734,7 +735,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
-						console.log("Load unit price end, we got value "+data.price_ht);
+						console.log("Load unit price end, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
 						$('#date_start').removeAttr('type');
 						$('#date_end').removeAttr('type');
@@ -755,7 +756,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
-						jQuery("#price_ht").val(data.price_ht);
+						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC') {
+							jQuery("#price_ttc").val(data.price_ttc);
+						} else {
+							jQuery("#price_ht").val(data.price_ht);
+						}
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
 							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>

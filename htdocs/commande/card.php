@@ -119,6 +119,7 @@ $usercancancel = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancrea
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'send'));
 $usercangeneretedoc = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'generetedoc'));
 
+$usermustrespectpricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -647,6 +648,9 @@ if (empty($reshook)) {
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
@@ -739,6 +743,7 @@ if (empty($reshook)) {
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
+				$price_min_ttc = $prod->price_min_ttc;
 				$price_base_type = $prod->price_base_type;
 
 				// If price per segment
@@ -746,6 +751,7 @@ if (empty($reshook)) {
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
@@ -769,6 +775,7 @@ if (empty($reshook)) {
 							$pu_ht = price($prodcustprice->lines[0]->price);
 							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_min =  price($prodcustprice->lines[0]->price_min);
+							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
@@ -946,10 +953,19 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
-				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-				setEventMessages($mesg, null, 'errors');
-			} else {
+			if ($usermustrespectpricemin) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				}
+			}
+
+			if (!$error) {
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, $pu_ht_devise);
 
@@ -1017,9 +1033,12 @@ if (empty($reshook)) {
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
-		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0);
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		//$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty'), 'MS');
 
@@ -1068,13 +1087,25 @@ if (empty($reshook)) {
 			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
+			$price_min_ttc = $product->price_min_ttc;
+			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
+				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
+			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
-				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-				$error++;
-				$action = 'editline';
+			if ($usermustrespectpricemin) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				}
 			}
 		} else {
 			$type = GETPOST('type');

@@ -141,7 +141,7 @@ if (!empty($conf->global->INVOICE_DISALLOW_REOPEN)) {
 }
 $usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->unvalidate)));
 
-$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usermustrespectpricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
 $usercancreatemargin = (!empty($user->rights->margins->creer) ? $user->rights->margins->creer : 0);
 $usercanreadallmargin = (!empty($user->rights->margins->liretous) ? $user->rights->margins->liretous : 0);
 $usercancreatewithdrarequest = (!empty($user->rights->prelevement->bons->creer) ? $user->rights->prelevement->bons->creer : 0);
@@ -2010,6 +2010,9 @@ if (empty($reshook)) {
 		$product_desc =(GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
@@ -2126,6 +2129,7 @@ if (empty($reshook)) {
 				$pu_ht = $datapriceofproduct['pu_ht'];
 				$pu_ttc = $datapriceofproduct['pu_ttc'];
 				$price_min = $datapriceofproduct['price_min'];
+				$price_min_ttc = $datapriceofproduct['price_min_ttc'];
 				$price_base_type = $datapriceofproduct['price_base_type'];
 				$tva_tx = $datapriceofproduct['tva_tx'];
 				$tva_npr = $datapriceofproduct['tva_npr'];
@@ -2238,6 +2242,7 @@ if (empty($reshook)) {
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
+				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 			}
 
 			// Margin
@@ -2256,6 +2261,7 @@ if (empty($reshook)) {
 			$price2num_pu_ht = price2num($pu_ht);
 			$price2num_remise_percent = price2num($remise_percent);
 			$price2num_price_min = price2num($price_min);
+			$price2num_price_min_ttc = price2num($price_min_ttc);
 			if (empty($price2num_pu_ht)) {
 				$price2num_pu_ht = 0;
 			}
@@ -2265,11 +2271,24 @@ if (empty($reshook)) {
 			if (empty($price2num_price_min)) {
 				$price2num_price_min = 0;
 			}
+			if (empty($price2num_price_min_ttc)) {
+				$price2num_price_min_ttc = 0;
+			}
 
-			if ($usercanproductignorepricemin && (!empty($price_min) && ($price2num_pu_ht * (1 - $price2num_remise_percent / 100) < $price2num_price_min))) {
-				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-				setEventMessages($mesg, null, 'errors');
-			} else {
+			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
+			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				}
+			}
+
+			if (!$error) {
 				// Add batchinfo if the detail_batch array is defined
 				if (!empty($conf->productbatch->enabled) && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
 					$langs->load('productbatch');
@@ -2360,10 +2379,14 @@ if (empty($reshook)) {
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
-		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		$qty = GETPOST('qty');
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		//$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+
+		$qty = GETPOST('qty');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -2434,15 +2457,28 @@ if (empty($reshook)) {
 
 			$price_min = $product->price_min;
 			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
-				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
+				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
+			}
+			$price_min_ttc = $product->price_min_ttc;
+			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
+				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
 			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if ($usercanproductignorepricemin && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
-				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-				$error++;
+			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				}
 			}
 		} else {
 			$type = GETPOST('type');
