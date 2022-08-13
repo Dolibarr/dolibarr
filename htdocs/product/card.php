@@ -667,16 +667,16 @@ if (empty($reshook)) {
 				if (count($object->errors)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					if($object->error == 'ErrorProductAlreadyExists') {	
-						// permet une action personnallisée quand il y a tentative d'ajouter un produit 
+					if ($object->error == 'ErrorProductAlreadyExists') {
+						// permet une action personnallisée quand il y a tentative d'ajouter un produit
 						// avec un numéro de référence existant.
 						$reshook = $hookmanager->executeHooks('onProductAlreadyExists', $parameters, $object, $action);
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						}							
-						if($object->error) {
+						}
+						if ($object->error) {
 							// L'erreur de l'objet a pu être effacée par la fonction
-							setEventMessages($langs->trans($object->error), null, 'errors');	
+							setEventMessages($langs->trans($object->error), null, 'errors');
 						}
 					} else {
 						setEventMessages($langs->trans($object->error), null, 'errors');
