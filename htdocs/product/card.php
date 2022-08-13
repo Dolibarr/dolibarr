@@ -19,6 +19,7 @@
  * Copyright (C) 2019-2022  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
+ * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -666,7 +667,20 @@ if (empty($reshook)) {
 				if (count($object->errors)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					if($object->error == 'ErrorProductAlreadyExists') {	
+						// permet une action personnallisée quand il y a tentative d'ajouter un produit 
+						// avec un numéro de référence existant.
+						$reshook = $hookmanager->executeHooks('onProductAlreadyExists', $parameters, $object, $action);
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}							
+						if($object->error) {
+							// L'erreur de l'objet a pu être effacée par la fonction
+							setEventMessages($langs->trans($object->error), null, 'errors');	
+						}
+					} else {
+						setEventMessages($langs->trans($object->error), null, 'errors');
+					}
 				}
 				$action = "create";
 			}
