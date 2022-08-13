@@ -130,7 +130,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 
 		// We get cursor rule
 		$mask=!empty($conf->global->EXPENSEREPORT_SAND_MASK)?$conf->global->EXPENSEREPORT_SAND_MASK:"";
-		
+
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
