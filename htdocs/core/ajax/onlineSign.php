@@ -53,6 +53,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 include '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 
@@ -123,9 +124,11 @@ if ($action == "importSignature") {
 
 			if (!$error) {
 				// Defined modele of doc
-				$directdownloadlink = $object->getLastMainDocLink('proposal');
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('proposal');	// url to download the $object->last_main_doc
 
-				if (preg_match('/\.pdf/i', $directdownloadlink)) {
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
 					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
 					$sourcefile = $upload_dir.$ref.".pdf";
 
@@ -148,7 +151,7 @@ if ($action == "importSignature") {
 						// Index the new file and update the last_main_doc property of object.
 						$object->indexFile($newpdffilename, 1);
 					}
-				} elseif (preg_match('/\.odt/i', $directdownloadlink)) {
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
 					// Adding signature on .ODT not yet supported
 					// TODO
 				} else {

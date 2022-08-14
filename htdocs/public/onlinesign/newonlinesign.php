@@ -39,7 +39,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -51,7 +51,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal"));
@@ -125,6 +124,7 @@ $creditor = $mysoc->name;
 
 $type = $source;
 if ($source == 'proposal') {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
 	$object->fetch(0, $ref, '', $entity);
 } else {
@@ -318,11 +318,14 @@ if ($source == 'proposal') {
 	// Object
 
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
-	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
+	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
+
+	$last_main_doc_file = $object->last_main_doc;
+
 	if ($object->status == $object::STATUS_VALIDATED) {
-		if (empty($object->last_main_doc) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
-			// It seems document has never been generated, or was generated and the deleted.
+		if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			// It seems document has never been generated, or was generated and then deleted.
 			// So we try to regenerate it with its default template.
 			$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
 			$object->generateDocument($defaulttemplate, $langs);
@@ -335,13 +338,11 @@ if ($source == 'proposal') {
 			print $langs->trans("DownloadDocument").'</a>';
 		}
 	} else {
-		$last_main_doc_file = $object->last_main_doc;
-
 		if ($object->status == $object::STATUS_NOTSIGNED) {
 			$directdownloadlink = $object->getLastMainDocLink('proposal');
 			if ($directdownloadlink) {
 				print '<br><a href="'.$directdownloadlink.'">';
-				print img_mime($object->last_main_doc, '');
+				print img_mime($last_main_doc_file, '');
 				print $langs->trans("DownloadDocument").'</a>';
 			}
 		} elseif ($object->status == $object::STATUS_SIGNED || $object->status == $object::STATUS_BILLED) {
@@ -366,8 +367,6 @@ if ($source == 'proposal') {
 	print '<input type="hidden" name="source" value="'.GETPOST("source", 'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 	print '</td></tr>'."\n";
-
-	// TODO Add link to download PDF (similar code than for invoice)
 }
 
 
