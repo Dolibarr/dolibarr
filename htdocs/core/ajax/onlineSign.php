@@ -69,7 +69,7 @@ $type = $mode;
 // Check securitykey
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = isset($conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {

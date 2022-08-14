@@ -136,7 +136,7 @@ if ($source == 'proposal') {
 // Check securitykey
 $securekeyseed = '';
 if ($source == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
 if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
