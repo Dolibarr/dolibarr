@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
  * Copyright (C) 2020     	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2022     	Christian Humpel		<christian.humpel@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,6 +280,36 @@ class Boms extends DolibarrApi
 		);
 	}
 
+	/**
+	 * Get lines of an BOM
+	 *
+	 * @param int   $id             Id of BOM
+	 *
+	 * @url	GET {id}/lines
+	 *
+	 * @return array
+	 */
+	public function getLines($id)
+	{
+		if (!DolibarrApiAccess::$user->rights->bom->read) {
+			throw new RestException(401);
+		}
+
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'BOM not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->commande->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$this->bom->getLinesArray();
+		$result = array();
+		foreach ($this->bom->lines as $line) {
+			array_push($result, $this->_cleanObjectDatas($line));
+		}
+		return $result;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
