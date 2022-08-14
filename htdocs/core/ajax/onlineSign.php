@@ -70,7 +70,7 @@ $type = $mode;
 // Check securitykey
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
 if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
@@ -133,19 +133,44 @@ if ($action == "importSignature") {
 					$sourcefile = $upload_dir.$ref.".pdf";
 
 					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
 						$pdf = pdf_getInstance();
-						$pdf->Open();
-						$pdf->AddPage();
-						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
 
-						for ($i=1; $i<($pagecount+1); $i++) {
-							if ($i>1) $pdf->AddPage();
-							$tppl=$pdf->importPage($i);
-							$pdf->useTemplate($tppl);
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
 						}
 
-						$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
-						$pdf->Close();
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						for ($i=1; $i<($pagecount+1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+						// TODO Get position of box from PDF template
+						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+						$wforimg = $s['w'] - 20 - $xforimgstart;
+
+						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
+						//$pdf->Close();
 						$pdf->Output($newpdffilename, "F");
 
 						// Index the new file and update the last_main_doc property of object.
