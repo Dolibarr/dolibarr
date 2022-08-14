@@ -122,27 +122,43 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+				// Defined modele of doc
+				$directdownloadlink = $object->getLastMainDocLink('proposal');
 
-				$pdf = pdf_getInstance();
-				$pdf->Open();
-				$pdf->AddPage();
-				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");		// original PDF
+				if (preg_match('/\.pdf/i', $directdownloadlink)) {
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
 
-				for ($i=1;$i<($pagecount+1);$i++) {
-					if ($i>1) $pdf->AddPage();
-					$tppl=$pdf->importPage($i);
-					$pdf->useTemplate($tppl);
+					if (dol_is_file($sourcefile)) {
+						$pdf = pdf_getInstance();
+						$pdf->Open();
+						$pdf->AddPage();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+
+						for ($i=1; $i<($pagecount+1); $i++) {
+							if ($i>1) $pdf->AddPage();
+							$tppl=$pdf->importPage($i);
+							$pdf->useTemplate($tppl);
+						}
+
+						$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
+						$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+				} elseif (preg_match('/\.odt/i', $directdownloadlink)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
 				}
+			}
 
-				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
-				$pdf->Close();
-				$pdf->Output($newpdffilename, "F");
-
+			if (!$error) {
 				$db->begin();
-
-				// Index the new file and update the last_main_doc property of object.
-				$object->indexFile($newpdffilename, 1);
 
 				$online_sign_ip = getUserRemoteIP();
 				$online_sign_name = '';		// TODO Ask name on form to sign

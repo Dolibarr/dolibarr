@@ -321,6 +321,13 @@ if ($source == 'proposal') {
 	print '<tr class="CTableRow2"><td class="CTableRow2 tdtop">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
 	if ($object->status == $object::STATUS_VALIDATED) {
+		if (empty($object->last_main_doc) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			// It seems document has never been generated, or was generated and the deleted.
+			// So we try to regenerate it with its default template.
+			$defaulttemplate = '';		// We force the use an empty string instead of $object->model_pdf to be sure to use a "main" default template and not the last one used.
+			$object->generateDocument($defaulttemplate, $langs);
+		}
+
 		$directdownloadlink = $object->getLastMainDocLink('proposal');
 		if ($directdownloadlink) {
 			print '<br><a href="'.$directdownloadlink.'">';
