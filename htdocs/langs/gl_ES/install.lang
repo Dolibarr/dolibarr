@@ -28,7 +28,6 @@ ErrorPHPVersionTooLow=A versión de PHP é moi antiga. Requírese a versión %s 
 ErrorPHPVersionTooHigh=Versión de PHP demasiado alta. Requírese a versión %s ou inferior.
 ErrorConnectedButDatabaseNotFound=Conexión correcta ao servidor pero non se atopou a base de datos '%s'.
 ErrorDatabaseAlreadyExists=A base de datos '%s' xa existe.
-ErrorNoMigrationFilesFoundForParameters=Non se atopou ningún ficheiro de migración para as versións seleccionadas
 IfDatabaseNotExistsGoBackAndUncheckCreate=Se a base de datos non existe, volte atrás e marque a opción "Crear base de datos".
 IfDatabaseExistsGoBackAndCheckCreate=Se a base de datos xa existe, volte atrás e desmarque a opción "Crear base de datos".
 WarningBrowserTooOld=A versión do navegador é antiga de mais. É moi recomendable actualizar o seu navegador a unha versión recente de Firefox, Chrome ou Opera.

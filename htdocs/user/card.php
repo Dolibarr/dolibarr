@@ -572,7 +572,7 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
 
-							if (!$result > 0) {
+							if (!($result > 0)) {
 								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 							} else {
 								// Create thumbs
@@ -1165,7 +1165,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
+	if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
@@ -1234,9 +1234,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<input class="maxwidth200 maxwidth150onsmartphone" type="text" name="job" value="'.dol_escape_htmltag(GETPOST('job', 'alphanohtml')).'">';
 	print '</td></tr>';
 
-	if ((!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "read")) && in_array($id, $childids))
-		|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
-		|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
+	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($id, $childids))
+		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
 		$langs->load("salaries");
 
 		// THM
@@ -1541,8 +1541,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
-				|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
+				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
 				$langs->load("salaries");
 
 				// Salary
@@ -1625,7 +1625,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
+			if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
 				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
@@ -2567,7 +2567,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->hasRight("categorie", "read"))) {
+			if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"');
@@ -2712,8 +2712,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
-				|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
-				|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
+				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
 					$langs->load("salaries");
 
 				// Salary

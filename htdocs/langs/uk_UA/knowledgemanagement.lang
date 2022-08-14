@@ -46,7 +46,7 @@ KnowledgeRecords = статті
 KnowledgeRecord = стаття
 KnowledgeRecordExtraFields = Додаткові поля для ст
 GroupOfTicket=Група квитків
-YouCanLinkArticleToATicketCategory=Ви можете прив’язати статтю до групи квитків (тому стаття буде запропонована під час кваліфікації нових квитків)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Пропонується для квитків, коли група
 
 SetObsolete=Встановити як застаріле

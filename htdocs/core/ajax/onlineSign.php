@@ -58,7 +58,7 @@ $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
-$mode = GETPOST('mode', 'aZ09');
+$mode = GETPOST('mode', 'aZ09');	// 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
 $error = 0;

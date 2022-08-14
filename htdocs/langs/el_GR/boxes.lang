@@ -46,7 +46,6 @@ BoxMyLastBookmarks=Σελιδοδείκτες: τελευταίοι %s
 BoxOldestExpiredServices=Παλαιότερες ενεργές υπηρεσίες που έχουν λήξει
 BoxLastExpiredServices=Τελευταίες %s παλαιότερες επαφές με ενεργές υπηρεσίες που έληξαν
 BoxTitleLastActionsToDo=Τελευταίες %s ενέργειες προς πραγματοποίηση
-BoxTitleOldestActionsToDo=Το παλαιότερο %sσυμβάν που δεν ολοκληρώθηκε
 BoxTitleLastContracts=Τελευταία %s τροποποιημένα συμβόλαια
 BoxTitleLastModifiedDonations=Τελευταίες %s τροποποιημένες δωρεές
 BoxTitleLastModifiedExpenses=Τελευταίες  %s αναφορές εξόδων που τροποποιήθηκαν

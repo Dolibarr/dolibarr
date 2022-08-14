@@ -120,7 +120,7 @@ if ($user->socid > 0) {
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (empty($user->hasRight('societe', 'client', 'voir')) || $socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
 	}
 }

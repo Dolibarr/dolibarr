@@ -46,7 +46,6 @@ BoxMyLastBookmarks=Meine %s neuesten Lesezeichen
 BoxOldestExpiredServices=Die ältesten abgelaufenen aktiven Dienste
 BoxLastExpiredServices=Neueste Verträge mit abgelaufenen Leistungen (maximal %s)
 BoxTitleLastActionsToDo=Anstehende Termine/Aufgaben (maximal %s)
-BoxTitleOldestActionsToDo=Ältestes %s-Ereignis, das nicht abgeschlossen werden soll
 BoxTitleLastContracts=Zuletzt bearbeitete Verträge (maximal %s)
 BoxTitleLastModifiedDonations=Letzte %s Spenden, die geändert wurden
 BoxTitleLastModifiedExpenses=Neueste %s Spesenabrechnungen, die geändert wurden

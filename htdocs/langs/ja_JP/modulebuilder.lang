@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - loan
-IdModule= モジュールID
 ModuleBuilderDesc=このツールは、経験豊富なユーザまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank" rel="noopener noreferrer">手動開発のドキュメントは、ここ</a>にある。
 EnterNameOfModuleDesc=作成するモジュール/アプリケーションの名前をスペースなしで入力する。大文字を使用して単語を区切る（例：MyModule、EcommerceForShop、SyncWithMySystem ...）
 EnterNameOfObjectDesc=作成するオブジェクトの名前をスペースなしで入力する。大文字を使用して単語を区切る（例：MyObject、Student、Teacher ...）。 CRUDクラスファイルだけでなく、APIファイル、オブジェクトを一覧表示/追加/編集/削除するページ、およびSQLファイルが生成される。
@@ -10,7 +9,6 @@ ModuleBuilderDesc4=ファイル<strong>%s </strong>がモジュールディレ�
 NewModule=新規モジュール
 NewObjectInModulebuilder=新規オブジェクト
 NewDictionary=新規辞書
-ModuleName=モジュール名
 ModuleKey=モジュールキー
 ObjectKey=オブジェクトキー
 DicKey=辞書キー

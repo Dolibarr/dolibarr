@@ -49,7 +49,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
 if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
 	accessforbidden();
 }
-if ($user->hasRight('compta', 'resultat', 'lire') && $user->hasRight('accounting', 'comptarapport', 'lire') && $user->hasRight('accounting', 'mouvements', 'lire') && $user->hasRight('asset', 'read') && $user->hasRight('intracommreport', 'read')) {
+if (!$user->hasRight('compta', 'resultat', 'lire') && !$user->hasRight('accounting', 'comptarapport', 'lire') && !$user->hasRight('accounting', 'mouvements', 'lire') && !$user->hasRight('asset', 'read') && !$user->hasRight('intracommreport', 'read')) {
 	accessforbidden();
 }
 
