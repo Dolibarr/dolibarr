@@ -300,7 +300,7 @@ class Boms extends DolibarrApi
 			throw new RestException(404, 'BOM not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->commande->id)) {
+		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->bom->getLinesArray();
