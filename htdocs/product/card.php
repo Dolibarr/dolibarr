@@ -674,7 +674,7 @@ if (empty($reshook)) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						}
 						if ($object->error) {
-							// check again to prevent translation issue, 
+							// check again to prevent translation issue,
 							// as error may have been cleared in hook function
 							setEventMessages($langs->trans($object->error), null, 'errors');
 						}
