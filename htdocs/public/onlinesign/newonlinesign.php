@@ -39,7 +39,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -126,7 +126,7 @@ $type = $source;
 if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
-	$result= $object->fetch(0, $ref);
+	$result= $object->fetch(0, $ref, '', $entity);
 } else {
 	accessforbidden('Bad value for source');
 	exit;
