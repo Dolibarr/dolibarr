@@ -515,7 +515,8 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @return	int								<0 if KO, >0 if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null){
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null)
+	{
 
 		global $mysoc, $conf, $langs, $user;
 
@@ -523,29 +524,29 @@ class BOM extends CommonObject
 		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT){
+		if ($this->statut == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
-			if (empty($qty)){
+			if (empty($qty)) {
 				$qty = 0;
 			}
-			if (empty($qty_frozen)){
+			if (empty($qty_frozen)) {
 				$qty_frozen = 0;
 			}
-			if (empty($disable_stock_change)){
+			if (empty($disable_stock_change)) {
 				$disable_stock_change = 0;
 			}
-			if (empty($efficiency)){
+			if (empty($efficiency)) {
 				$efficiency = 1.0;
 			}
-			if (empty($fk_bom_child)){
+			if (empty($fk_bom_child)) {
 				$fk_bom_child = null;
 			}
-			if (empty($import_key)){
+			if (empty($import_key)) {
 				$import_key = null;
 			}
-			if (empty($position)){
+			if (empty($position)) {
 				$position = -1;
 			}
 
@@ -557,7 +558,7 @@ class BOM extends CommonObject
 
 			// Rank to use
 			$rankToUse = $position;
-			if ($rankToUse == -1){
+			if ($rankToUse == -1) {
 				$rangMax = $this->line_max();
 				$rankToUse = $rangMax + 1;
 			}
@@ -579,7 +580,7 @@ class BOM extends CommonObject
 
 			$result = $this->line->create($user);
 
-			if ($result > 0){
+			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
 				return $this->line->id;
@@ -589,12 +590,10 @@ class BOM extends CommonObject
 				$this->db->rollback();
 				return -2;
 			}
-
-		} else{
+		} else {
 			dol_syslog(get_class($this)."::addLine status of BOM must be Draft to allow use of ->addLine()", LOG_ERR);
 			return -3;
 		}
-
 	}
 
 	/**
