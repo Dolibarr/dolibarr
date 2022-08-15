@@ -131,7 +131,7 @@ $arrayfields = array(
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -189,11 +189,11 @@ $error = 0;
 
 // Permission to list
 if ($mode == 'employee') {
-	if (empty($user->hasRight("salaries", "read"))) {
+	if (!$user->hasRight("salaries", "read")) {
 		accessforbidden();
 	}
 } else {
-	if (empty($user->hasRight("user", "user", "read")) && empty($user->admin)) {
+	if (!$user->hasRight("user", "user", "read") && empty($user->admin)) {
 		accessforbidden();
 	}
 }
@@ -441,7 +441,7 @@ if ($search_categ == -2) {
 if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
-if ($mode == 'employee' && empty($user->hasRight("salaries", "readall"))) {
+if ($mode == 'employee' && !$user->hasRight("salaries", "readall")) {
 	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
@@ -939,9 +939,9 @@ while ($i < $imaxinloop) {
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	$canreadhrmdata = 0;
-	if ((!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "read")) && in_array($obj->rowid, $childids))
-		|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
-		|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
+	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;

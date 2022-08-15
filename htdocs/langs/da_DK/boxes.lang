@@ -46,7 +46,6 @@ BoxMyLastBookmarks=Bogmærker: seneste %s
 BoxOldestExpiredServices=Ældste aktive udløbne tjenester
 BoxLastExpiredServices=Latest %s oldest contacts with active expired services
 BoxTitleLastActionsToDo=Latest %s actions to do
-BoxTitleOldestActionsToDo=Ældste %s hændelse, der ikke skal fuldføres
 BoxTitleLastContracts=Seneste %s kontrakter, der blev ændret
 BoxTitleLastModifiedDonations=Seneste %s donationer, som blev ændret
 BoxTitleLastModifiedExpenses=Seneste %s udgiftsrapporter, der blev ændret

@@ -3135,8 +3135,7 @@ class ContratLigne extends CommonObjectLine
 
 		$this->db->begin();
 
-		$this->oldcopy = new ContratLigne($this->db);
-		$this->oldcopy->fetch($this->id);
+		$this->oldcopy = dol_clone($this);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

@@ -48,9 +48,8 @@ CountriesNotInEEC=Países non CEE
 CountriesInEECExceptMe=Todos os paises incluidos na CEE excepto %s
 CountriesExceptMe=Todos os países excepto %s
 AccountantFiles=Exportar documentos contables
-ExportAccountingSourceDocHelp=Con esta ferramenta, pode buscar e exportar os eventos de orixe que se utilizan para xerar a súa contabilidade. <br> O ficheiro ZIP exportado conterá as listas de elementos solicitados en CSV, así como os seus ficheiros anexos no seu formato orixinal (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Con esta ferramenta, pode exportar os eventos de orixe (listaxe en CSV e PDF) que se empregan para xerar a súa contabilidade.
 ExportAccountingSourceDocHelp2=Para exportar as súas revistas, use a entrada de menú %s - %s
-ExportAccountingProjectHelp=Especifique un proxecto se precisa un informe contable só para un proxecto específico. Os informes de gastos e pagamentos de préstamos non están incluídos nos informes do proxecto.
 VueByAccountAccounting=Ver por conta contable
 VueBySubAccountAccounting=Ver pos subconta contable
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Se configura as contas contables dos tipos de inform
 DescVentilDoneExpenseReport=Consulte aquí as liñas de informes de gastos e as súas contas contables
 
 Closure=Peche anual
-DescClosure=Consulte aquí o número de movementos por mes que aínda non están validados e bloqueados
+DescClosure=Consulte aquí o número de movementos por mes aínda non validados e bloqueados
 OverviewOfMovementsNotValidated=Visión xeral dos movementos non validados e bloqueados
 AllMovementsWereRecordedAsValidated=Todos os movementos rexistráronse como validados e bloqueados
 NotAllMovementsCouldBeRecordedAsValidated=Non se puideron rexistrar todos os movementos como validados e bloqueados
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactivar a ligazón e transferenc
 
 ## Export
 NotifiedExportDate=Marcar as liñas exportadas como Exportadas <span class="warning"> (para modificar unha liña, terá que eliminar toda a transacción e transferila de novo á contabilidade) </span>
-NotifiedValidationDate=Validar e bloquear as entradas exportadas <span class="warning"> (o mesmo efecto que a función "%s", a modificación e eliminación das liñas DEFINITIVAMENTE non será posible) </span>
+NotifiedValidationDate=Validar e bloquear as entradas exportadas <span class="warning"> (o mesmo efecto que a función "Peche", a modificación e eliminación das liñas DEFINITIVAMENTE non será posible) </span>
 DateValidationAndLock=Data validación e bloqueo
 ConfirmExportFile=Confirmación da xeración do ficheiro de exportación contable? 
 ExportDraftJournal=Exportar libro borrador

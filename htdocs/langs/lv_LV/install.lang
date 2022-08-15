@@ -28,7 +28,6 @@ ErrorPHPVersionTooLow=PHP versija ir pārāk veca. Nepieciešama versija %s vai 
 ErrorPHPVersionTooHigh=PHP versija ir pārāk augsta. Nepieciešama versija %s vai vecāka versija.
 ErrorConnectedButDatabaseNotFound=Savienojums ar serveri ir veiksmīgs, bet datubāze '%s' nav atrasta.
 ErrorDatabaseAlreadyExists=Datubāze '%s' jau eksistē.
-ErrorNoMigrationFilesFoundForParameters=Atlasītajām versijām nav atrasts neviens migrācijas fails
 IfDatabaseNotExistsGoBackAndUncheckCreate=Ja datubāze neeksistē, atgriezieties un atzīmējiet opciju "Izveidot datubāzi".
 IfDatabaseExistsGoBackAndCheckCreate=Ja datu bāze jau pastāv, dodieties atpakaļ un izņemiet ķeksi "Izveidot datu bāzi".
 WarningBrowserTooOld=Pārlūkprogrammas versija ir pārāk veca. Ļoti ieteicams jaunināt pārlūku uz jaunāko Firefox, Chrome vai Opera versiju.

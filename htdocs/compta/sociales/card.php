@@ -192,7 +192,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer) {
 	} elseif (!$dateperiod) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Period")), null, 'errors');
 		$action = 'create';
-	} elseif (!$actioncode > 0) {
+	} elseif (!($actioncode > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 	} elseif (empty($amount)) {

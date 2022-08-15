@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivat pentru a a
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
 ErrorContactEMail=A apărut o eroare tehnică. Contactați administratorul tehnic la următoarea adresă de email <b>%s</b> și furnizați-i codul de eroare <b>%s</b> în mesaj sau adăugați-i o copie de ecran a acestei pagini.
 ErrorWrongValueForField=Câmpul <b>%s</b>: '<b>%s</b>' nu se potrivește cu regula regex <b>%s</b>
+ErrorHtmlInjectionForField=Câmpul <b>%s</b>: Valoarea '<b>%s</b>' conține date rău intenționate nepermise
 ErrorFieldValueNotIn=Câmpul <b>%s</b>: '<b>%s</b>' nu este o valoare găsită în câmpul <b>%s</b> din <b>%s</b>
 ErrorFieldRefNotIn=Câmpul <b>%s</b>: '<b>%s</b>' nu este o <b> %s </b> referinţă existentă
 ErrorsOnXLines=%s erori găsite 
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Trebuie să setezi mai întâi planul d
 ErrorFailedToFindEmailTemplate=Nu s-a găsit șablonul cu numele de cod %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Durata nu este definită pentru serviciu. Nicio modalitate de a calcula prețul pe oră.
 ErrorActionCommPropertyUserowneridNotDefined=Utilizatorul deţinător este obligatoriu
-ErrorActionCommBadType=Tipul evenimentului selectat (id: %s, cod: %s) nu există în dicţionarul Tipuri evenimente
+ErrorActionCommBadType=Tipul de eveniment selectat (id:%s , cod: %s) nu există în dicționarul Tip de eveniment
 CheckVersionFail=Verificarea versiunii a eşuat
 ErrorWrongFileName=Numele fișierului nu poate să conțină _SOMETHING_ în el
 ErrorNotInDictionaryPaymentConditions=Nu se află în dicționarul Condiții de plată, vă rugăm să modificați.
@@ -287,11 +288,14 @@ ErrorInvoiceLoadThirdParty=Nu se poate încărca obiectul terț pentru factura "
 ErrorInvoiceLoadThirdPartyKey=Cheia pentru terțul "%s" nu este setată pentru factura "%s"
 ErrorDeleteLineNotAllowedByObjectStatus=Ștergerea liniei nu este permisă de starea curentă a obiectului
 ErrorAjaxRequestFailed=Solicitare eşuată
+ErrorThirpdartyOrMemberidIsMandatory=Terțul sau Membrul unui parteneriat este obligatoriu
+ErrorFailedToWriteInTempDirectory=Eșec la scrierea în directorul temp
+ErrorQuantityIsLimitedTo=Cantitatea este limitată la  %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 
-WarningMandatorySetupNotComplete=Click aici pentru a seta parametrii obligatorii
+WarningMandatorySetupNotComplete=Clic aici pentru a configura parametrii principali
 WarningEnableYourModulesApplications=Click aici pentru a activa modulele şi aplicaţiile tale
 WarningSafeModeOnCheckExecDir=Atenţie, opţiunea PHP <b>safe_mode</b> este activă deci comanda trebuie să fie într-un director declarat în parametrul PHP <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Un marcaj cu acest titlu sau adresă (URL) există deja.
@@ -321,6 +325,7 @@ WarningCreateSubAccounts=Atenție, nu puteți crea direct un cont secundar, treb
 WarningAvailableOnlyForHTTPSServers=Disponibil numai dacă se utilizează conexiunea securizată HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=Modulul %s nu a fost activat. Este posibil să pierdeți o mulțime de evenimente aici. 
 WarningPaypalPaymentNotCompatibleWithStrict=Valoarea 'Strictă' face ca funcțiile de plată online să nu funcționeze corect. Folosiți în schimb 'Lax'.
+WarningThemeForcedTo=Atenție, tema <b>%s</b> a fost forțată de constanta ascunsă MAIN_FORCETHEME 
 
 # Validate
 RequireValidValue = Valoare invalidă
