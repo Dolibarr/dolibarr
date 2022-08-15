@@ -505,14 +505,15 @@ class BOM extends CommonObject
 	/**
 	 * Add an BOM line into database (linked to BOM)
 	 *
-	 * @param $fk_product
-	 * @param $qty
-	 * @param $qty_frozen
-	 * @param $disable_stock_change
-	 * @param $efficiency
-	 * @param $fk_bom_child
-	 * @param $import_key
-	 * @return int
+	 * @param	int		$fk_product				Id of product
+	 * @param	float	$qty					Quantity
+	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
+	 * @param	float	$efficiency				Efficiency in MO
+	 * @param	int		$position				Position of BOM-Line in BOM-Lines
+	 * @param	int		$fk_bom_child			Id of BOM Child
+	 * @param	string	$import_key				Import Key
+	 * @return	int								<0 if KO, >0 if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null){
 
