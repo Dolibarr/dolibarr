@@ -44,6 +44,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
