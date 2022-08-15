@@ -503,6 +503,100 @@ class BOM extends CommonObject
 	}
 
 	/**
+	 * Add an BOM line into database (linked to BOM)
+	 *
+	 * @param $fk_product
+	 * @param $qty
+	 * @param $qty_frozen
+	 * @param $disable_stock_change
+	 * @param $efficiency
+	 * @param $fk_bom_child
+	 * @param $import_key
+	 * @return int
+	 */
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null){
+
+		global $mysoc, $conf, $langs, $user;
+
+		$logtext = "::addLine bomid=$this->id, qty=$qty, fk_product=$fk_product, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
+		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
+		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
+
+		if ($this->statut == self::STATUS_DRAFT){
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($qty)){
+				$qty = 0;
+			}
+			if (empty($qty_frozen)){
+				$qty_frozen = 0;
+			}
+			if (empty($disable_stock_change)){
+				$disable_stock_change = 0;
+			}
+			if (empty($efficiency)){
+				$efficiency = 1.0;
+			}
+			if (empty($fk_bom_child)){
+				$fk_bom_child = null;
+			}
+			if (empty($import_key)){
+				$import_key = null;
+			}
+			if (empty($position)){
+				$position = -1;
+			}
+
+			$qty = price2num($qty);
+			$efficiency = price2num($efficiency);
+			$position = price2num($position);
+
+			$this->db->begin();
+
+			// Rank to use
+			$rankToUse = $position;
+			if ($rankToUse == -1){
+				$rangMax = $this->line_max();
+				$rankToUse = $rangMax + 1;
+			}
+
+			// Insert line
+			$this->line = new BOMLine($this->db);
+
+			$this->line->context = $this->context;
+
+			$this->line->fk_bom = $this->id;
+			$this->line->fk_product = $fk_product;
+			$this->line->qty = $qty;
+			$this->line->qty_frozen = $qty_frozen;
+			$this->line->disable_stock_change = $disable_stock_change;
+			$this->line->efficiency = $efficiency;
+			$this->line->fk_bom_child = $fk_bom_child;
+			$this->line->import_key = $import_key;
+			$this->line->position = $rankToUse;
+
+			$result = $this->line->create($user);
+
+			if ($result > 0){
+				$this->calculateCosts();
+				$this->db->commit();
+				return $this->line->id;
+			} else {
+				$this->error = $this->line->error;
+				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+
+		} else{
+			dol_syslog(get_class($this)."::addLine status of BOM must be Draft to allow use of ->addLine()", LOG_ERR);
+			return -3;
+		}
+
+	}
+
+	/**
 	 *  Delete a line of object in database
 	 *
 	 *	@param  User	$user       User that delete

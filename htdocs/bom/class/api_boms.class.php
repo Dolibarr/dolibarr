@@ -311,6 +311,51 @@ class Boms extends DolibarrApi
 		return $result;
 	}
 
+	/**
+	 * Add a line to given BOM
+	 *
+	 * @param int   $id             Id of BOM to update
+	 * @param array $request_data   BOMLine data
+	 *
+	 * @url	POST {id}/lines
+	 *
+	 * @return int
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->bom->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'BOM not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$updateRes = $this->bom->addLine(
+			$request_data->fk_product,
+			$request_data->qty,
+			$request_data->qty_frozen,
+			$request_data->disable_stock_change,
+			$request_data->efficiency,
+			$request_data->postion,
+			$request_data->fk_bom_child,
+			$request_data->import_key
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->bom->error);
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
