@@ -79,4 +79,4 @@ ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
 
 ALTER TABLE llx_element_element CHANGE sourcetype sourcetype VARCHAR(64) NOT NULL;
-ALTER TABLE llx_element_element CHANGE targettype targettype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
