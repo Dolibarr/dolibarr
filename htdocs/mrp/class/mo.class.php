@@ -1588,14 +1588,13 @@ class Mo extends CommonObject
 		$uCost =  (!empty($tmpProduct->cost_price)) ? $tmpProduct->cost_price : $tmpProduct->pmp;
 		if (empty($uCost)) {
 			$productFournisseur = new ProductFournisseur($this->db);
-			if (is_a($productFournisseur, 'ProductFournisseur')){
+			if (is_a($productFournisseur, 'ProductFournisseur')) {
 				if ($productFournisseur->find_min_price_product_fournisseur($tmpProduct->id) > 0) {
 					$uCost = $productFournisseur->fourn_unitprice;
 				}
-			}else{
+			} else {
 				setEventMessage($langs->trans('errorLoadProductFournisseur'));
 			}
-
 		}
 
 		return $uCost;
@@ -1607,10 +1606,11 @@ class Mo extends CommonObject
 	 * calculate the real_cost and sheduled_cost for the object
 	 * @return void
 	 */
-	public function calculateCostLines(){
+	public function calculateCostLines()
+	{
 		global $db, $user;
 		// foreach lines
-		if (is_array($this->lines) && count($this->lines)){
+		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($db);
 			$Tpredicted = array();
@@ -1618,17 +1618,15 @@ class Mo extends CommonObject
 			$totalRealCost = 0;
 			$totalPredictedCost = 0;
 
-			foreach ($this->lines as &$line){
-
+			foreach ($this->lines as &$line) {
 				// sur la ligne on récupère le produit
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 				// si produit
 				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-
 					// on récupere le best price pour ce produit
 					$productunitCost = $this->getProductUnitCost($tmpproduct);
 
-					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME){
+					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
 						// sql to co
 						$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
 						$sql .= ' WHERE m.fk_mo = '.$this->id;
@@ -1640,17 +1638,15 @@ class Mo extends CommonObject
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
 
-							if (!$Tpredicted[$line->fk_product]){
+							if (!$Tpredicted[$line->fk_product]) {
 								$Tpredicted[$line->fk_product]['predictedCost'] = $productunitCost * $obj->Allqty;
 								$Tpredicted[$line->fk_product]['Allqty'] = $obj->Allqty;
 								$Tpredicted[$line->fk_product]['productunitCost'] = $productunitCost;
 							}
 						}
-
 					}
 
 					if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
-
 						$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
 						$sqlConsumed .= ' WHERE m.fk_mo = ' . $this->id;
 						$sqlConsumed .= ' AND  m.fk_product = ' . $line->fk_product;
@@ -1659,24 +1655,21 @@ class Mo extends CommonObject
 
 						if ($resql) {
 							$obj = $db->fetch_object($resql);
-						//	echo $obj->Allqty . "<br>";
+							//	echo $obj->Allqty . "<br>";
 
 							if (!$Treal[$line->fk_product]) {
 								$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
 							}
 						}
 					}
-
-				}else if ($tmpproduct->type == $tmpproduct::TYPE_SERVICE){
-
+				} elseif ($tmpproduct->type == $tmpproduct::TYPE_SERVICE) {
 				}
-
 			}//end foreach
 
-			foreach ($Tpredicted as $cost){
+			foreach ($Tpredicted as $cost) {
 				$totalPredictedCost += $cost['predictedCost'];
 			}
-			foreach ($Treal as $cost){
+			foreach ($Treal as $cost) {
 				$totalRealCost += $cost['realCost'];
 			}
 
@@ -1686,13 +1679,13 @@ class Mo extends CommonObject
 			// we can change the status before using $this->update()
 			// for now we use a query
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET predicted_cost = ".doubleval( $totalPredictedCost). " ,";
-			$sql .= " SET real_cost = ".doubleval( $totalRealCost) ;
+			$sql .= " SET predicted_cost = ".doubleval($totalPredictedCost). " ,";
+			$sql .= " SET real_cost = ".doubleval($totalRealCost);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
-			//	var_dump('updated');
+				//	var_dump('updated');
 			}
 
 
@@ -1768,11 +1761,6 @@ class Mo extends CommonObject
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');*/
-
-
-
-
-
 	}
 }
 
