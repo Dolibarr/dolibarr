@@ -66,7 +66,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 	$value = (GETPOST($code) ? GETPOST($code) : 1);
 
 	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 		$errors[] = $db->lasterror();
 	}
@@ -86,7 +86,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 
 	$res = dolibarr_del_const($db, $code, $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 		$errors[] = $db->lasterror();
 	}

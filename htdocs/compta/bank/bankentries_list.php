@@ -361,7 +361,7 @@ if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 	}
-	if (!$bankaccountid > 0) {
+	if (!($bankaccountid > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}

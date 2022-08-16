@@ -24,7 +24,7 @@ MessageOK=Nachricht auf der Rückseite für eine bestätigte Zahlung
 MessageKO=Nachrichtenseite für stornierte Zahlung
 ContentOfDirectoryIsNotEmpty=Dieses Verzeichnis ist nicht leer.
 DeleteAlsoContentRecursively=Markieren, um alle Inhalte rekursiv zu löschen
-PoweredBy=Unterstützt von
+PoweredBy=Powered by
 YearOfInvoice=Jahr der Rechnung
 PreviousYearOfInvoice=Vorangehendes Jahr des Rechnungsdatums
 NextYearOfInvoice=Folgendes Jahr des Rechnungsdatums
@@ -234,7 +234,7 @@ ImageEditor=Bildbearbeitung
 YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Sie ein aktives Abonnement für das nachfolgende Ereignis bei %s / %s haben.
 YouReceiveMailBecauseOfNotification2=\n\nEreignis: 
 ThisIsListOfModules=Dies ist eine Liste von ausgewählten Modulen für die Demo (nur die gängigsten Module sind enthalten). Bearbeiten Sie die Auswahl und eine personalisierte Demo zu erhalten und klicken dann bitte auf "Start".
-UseAdvancedPerms=Verwenden Sie die erweiterten Berechtigungen einiger Module
+UseAdvancedPerms=Erweiterte Berechtigungen einiger Module verwenden
 FileFormat=Dateiformat
 SelectAColor=Farbe wählen
 AddFiles=Dateien hinzufügen
@@ -304,3 +304,24 @@ ConfirmBtnCommonContent = Sind Sie sicher, dass Sie "%s" möchten?
 ConfirmBtnCommonTitle = Aktion bestätigen
 CloseDialog = schließen
 Autofill = Automatisches Ausfüllen
+
+# externalsite
+ExternalSiteSetup=Konfigurations-Link auf externe Website
+ExternalSiteURL=URL der externen Seite zur Einbettung in einen HTML-iframe
+ExternalSiteModuleNotComplete=Modul ExternalSite wurde nicht richtig konfiguriert.
+ExampleMyMenuEntry=Mein Menü-Eintrag
+
+# FTP
+FTPClientSetup=Einrichtung des FTP- oder SFTP-Client-Moduls
+NewFTPClient=Neue FTP/FTPS-Verbindungs-Konfiguration
+FTPArea=FTP/FTPS-Bereich
+FTPAreaDesc=Diese Ansicht zeigt Ihnen den Inhalt eines FTP- oder SFTP-Servers an.
+SetupOfFTPClientModuleNotComplete=Die Konfiguration des FTP- oder SFTP-Client-Moduls scheint unvollständig zu sein
+FTPFeatureNotSupportedByYourPHP=Ihre PHP-Umgebung unterstützt keine FTP- oder SFTP-Funktionen
+FailedToConnectToFTPServer=Verbindung zum Server fehlgeschlagen (Server %s, Port %s)
+FailedToConnectToFTPServerWithCredentials=Anmeldung am Server mit eingegebenem Benutzernamen/Passwort fehlgeschlagen
+FTPFailedToRemoveFile=Konnte Datei <b>%s</b> nicht entfernen. Überprüfen Sie die Berechtigungen.
+FTPFailedToRemoveDir=Konnte Verzeichnis <b>%s</b> nicht entfernen. Überprüfen Sie die Berechtigungen und ob das Verzeichnis leer ist.
+FTPPassiveMode=Passives FTP
+ChooseAFTPEntryIntoMenu=Wählen Sie eine FTP/SFTP-Site aus dem Menü...
+FailedToGetFile=Folgende Datei(en) konnte(n) nicht geladen werden: %s

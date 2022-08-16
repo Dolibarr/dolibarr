@@ -28,7 +28,6 @@ ErrorPHPVersionTooLow=PHP-versionen er for gammel. Version %s eller nyere er på
 ErrorPHPVersionTooHigh=PHP-versionen er for høj. Version %s eller lavere er påkrævet.
 ErrorConnectedButDatabaseNotFound=Forbindelsen til serveren lykkedes, men databasen '%s' blev ikke fundet.
 ErrorDatabaseAlreadyExists=Databasen '%s' eksisterer allerede.
-ErrorNoMigrationFilesFoundForParameters=Der blev ikke fundet nogen migreringsfil for de valgte versioner
 IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke eksisterer, skal du gå tilbage og markere "Opret database".
 IfDatabaseExistsGoBackAndCheckCreate=Hvis databasen allerede eksisterer, skal du gå tilbage og fjerne markeringen i "Opret database".
 WarningBrowserTooOld=Versionen af browseren er for gammel. Det anbefales at opgradere din browser til en nyere version af Firefox, Chrome eller Opera.

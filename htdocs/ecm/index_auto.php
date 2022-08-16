@@ -74,7 +74,7 @@ if ($module == 'invoice_supplier' && $sortfield == "fullname") {
 $ecmdir = new EcmDirectory($db);
 if ($section) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
