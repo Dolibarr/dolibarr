@@ -1577,7 +1577,7 @@ class Mo extends CommonObject
 	 *  OTHERWISE LOWEST SUPPLIER PRICE
 	 *
 	 * @param $tmpProduct
-	 * @return mixed
+	 * @return float|int
 	 */
 	public  function getProductUnitCost(&$tmpProduct)
 	{
