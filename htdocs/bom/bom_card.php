@@ -194,7 +194,7 @@ if (empty($reshook)) {
 			$rangmax = $object->line_max(0);
 			$ranktouse = $rangmax + 1;
 
-			$bomline->position = ($ranktouse + 1);
+			$bomline->position = $ranktouse;
 
 			$result = $bomline->create($user);
 			if ($result <= 0) {
