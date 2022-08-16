@@ -236,7 +236,7 @@ class DoliDBMysqli extends DoliDB
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
 		$tmp = false;
 		try {
-			$tmp = new mysqli("127.0.0.1", $login, $passwd, $name, $port);
+			$tmp = new mysqli($host, $login, $passwd, $name, $port);
 		} catch (Exception $e) {
 			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
 		}
