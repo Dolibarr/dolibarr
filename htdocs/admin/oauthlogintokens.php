@@ -190,7 +190,6 @@ if ($mode == 'setup' && $user->admin) {
 		$tokenobj = null;
 		// Token
 		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 		// Dolibarr storage
 		$storage = new DoliStorage($db, $conf);
 		try {
