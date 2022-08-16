@@ -1576,7 +1576,8 @@ class Mo extends CommonObject
 	 *  OTHERWISE PMP
 	 *  OTHERWISE LOWEST SUPPLIER PRICE
 	 *
-	 * @param $tmpProduct
+	 * @param $tmpProduct temp product
+	 *
 	 * @return float|int
 	 */
 	public  function getProductUnitCost(&$tmpProduct)
