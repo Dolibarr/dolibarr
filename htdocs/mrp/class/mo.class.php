@@ -1631,8 +1631,8 @@ class Mo extends CommonObject
 					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME){
 						// sql to co
 						$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
-						$sql .= ' WHERE m.fk_mo = '.$this->id;
-						$sql .= ' AND  m.fk_product = '.$line->fk_product;
+						$sql .= ' WHERE m.fk_mo = '.(int) $this->id;
+						$sql .= ' AND  m.fk_product = '.(int) $line->fk_product;
 						$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
 						//echo $sql . '<br>';
 						$resql = $this->db->query($sql);
@@ -1652,8 +1652,8 @@ class Mo extends CommonObject
 					if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
 
 						$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
-						$sqlConsumed .= ' WHERE m.fk_mo = ' . $this->id;
-						$sqlConsumed .= ' AND  m.fk_product = ' . $line->fk_product;
+						$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
+						$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
 						$sqlConsumed .= ' AND  m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
 						$resql = $this->db->query($sqlConsumed);
 
