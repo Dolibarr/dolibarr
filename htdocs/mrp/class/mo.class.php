@@ -417,7 +417,7 @@ class Mo extends CommonObject
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
-			$this->caculateCostLines();
+			$this->calculateCostLines();
 		}
 		return $result;
 	}
@@ -1607,7 +1607,7 @@ class Mo extends CommonObject
 	 * calculate the real_cost and sheduled_cost for the object
 	 * @return void
 	 */
-	public function caculateCostLines(){
+	public function calculateCostLines(){
 		global $db, $user;
 		// foreach lines
 		if (is_array($this->lines) && count($this->lines)){
