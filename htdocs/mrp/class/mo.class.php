@@ -1569,15 +1569,15 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * return the product cost
+	 * * return the product cost
 	 *
 	 * Rules
 	 *  COST PRICE
 	 *  OTHERWISE PMP
 	 *  OTHERWISE LOWEST SUPPLIER PRICE
 	 *
-	 * @param $fk_product
-	 * @return float
+	 * @param $tmpProduct
+	 * @return mixed
 	 */
 	public  function getProductUnitCost(&$tmpProduct)
 	{
@@ -1635,7 +1635,7 @@ class Mo extends CommonObject
 						$sql .= ' AND  m.fk_product = '.$line->fk_product;
 						$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
 						//echo $sql . '<br>';
-						$resql = $db->query($sql);
+						$resql = $this->db->query($sql);
 
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
@@ -1658,7 +1658,7 @@ class Mo extends CommonObject
 						$resql = $this->db->query($sqlConsumed);
 
 						if ($resql) {
-							$obj = $db->fetch_object($resql);
+							$obj = $this->db->fetch_object($resql);
 						//	echo $obj->Allqty . "<br>";
 
 							if (!$Treal[$line->fk_product]) {
