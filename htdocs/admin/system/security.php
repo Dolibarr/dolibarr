@@ -491,6 +491,15 @@ print '<br>';
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;\")</span><br>";
 print '<br>';
 
+print '<strong>MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";
+print '<br>';
+
+print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCESTS) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCESTS).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomaines\")</span><br>";
+print '<br>';
+
 
 print '<br>';
 
