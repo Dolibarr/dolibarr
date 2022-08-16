@@ -1588,14 +1588,13 @@ class Mo extends CommonObject
 		$uCost =  (!empty($tmpProduct->cost_price)) ? $tmpProduct->cost_price : $tmpProduct->pmp;
 		if (empty($uCost)) {
 			$productFournisseur = new ProductFournisseur($this->db);
-			if (is_a($productFournisseur, 'ProductFournisseur')){
+			if (is_a($productFournisseur, 'ProductFournisseur')) {
 				if ($productFournisseur->find_min_price_product_fournisseur($tmpProduct->id) > 0) {
 					$uCost = $productFournisseur->fourn_unitprice;
 				}
-			}else{
+			} else {
 				setEventMessage($langs->trans('errorLoadProductFournisseur'));
 			}
-
 		}
 
 		return $uCost;
@@ -1607,10 +1606,11 @@ class Mo extends CommonObject
 	 * calculate the real_cost and sheduled_cost for the object
 	 * @return void
 	 */
-	public function calculateCostLines(){
+	public function calculateCostLines()
+	{
 		global $db, $user;
 		// foreach lines
-		if (is_array($this->lines) && count($this->lines)){
+		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($db);
 			$Tpredicted = array();
@@ -1618,17 +1618,15 @@ class Mo extends CommonObject
 			$totalRealCost = 0;
 			$totalPredictedCost = 0;
 
-			foreach ($this->lines as &$line){
-
+			foreach ($this->lines as &$line) {
 				// sur la ligne on récupère le produit
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 				// si produit
 				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-
 					// on récupere le best price pour ce produit
 					$productunitCost = $this->getProductUnitCost($tmpproduct);
 
-					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME){
+					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
 						// sql to co
 						$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
 						$sql .= ' WHERE m.fk_mo = '.(int) $this->id;
@@ -1640,17 +1638,15 @@ class Mo extends CommonObject
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
 
-							if (!$Tpredicted[$line->fk_product]){
+							if (!$Tpredicted[$line->fk_product]) {
 								$Tpredicted[$line->fk_product]['predictedCost'] = $productunitCost * $obj->Allqty;
 								$Tpredicted[$line->fk_product]['Allqty'] = $obj->Allqty;
 								$Tpredicted[$line->fk_product]['productunitCost'] = $productunitCost;
 							}
 						}
-
 					}
 
 					if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
-
 						$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
 						$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
 						$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
@@ -1659,24 +1655,20 @@ class Mo extends CommonObject
 
 						if ($resql) {
 							$obj = $this->db->fetch_object($resql);
-						//	echo $obj->Allqty . "<br>";
 
 							if (!$Treal[$line->fk_product]) {
 								$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
 							}
 						}
 					}
-
-				}else if ($tmpproduct->type == $tmpproduct::TYPE_SERVICE){
-
+				} elseif ($tmpproduct->type == $tmpproduct::TYPE_SERVICE) {
 				}
-
 			}//end foreach
 
-			foreach ($Tpredicted as $cost){
+			foreach ($Tpredicted as $cost) {
 				$totalPredictedCost += $cost['predictedCost'];
 			}
-			foreach ($Treal as $cost){
+			foreach ($Treal as $cost) {
 				$totalRealCost += $cost['realCost'];
 			}
 
@@ -1686,93 +1678,15 @@ class Mo extends CommonObject
 			// we can change the status before using $this->update()
 			// for now we use a query
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET predicted_cost = ".doubleval( $totalPredictedCost). " ,";
-			$sql .= " SET real_cost = ".doubleval( $totalRealCost) ;
+			$sql .= " SET predicted_cost = ".doubleval($totalPredictedCost). " ,";
+			$sql .= " SET real_cost = ".doubleval($totalRealCost);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
-			//	var_dump('updated');
+				//	var_dump('updated');
 			}
-
-
-
-			//echo '<pre>' . var_export($Tcalculate, true) . '</pre>';
 		}
-
-
-		/*global $conf;
-
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$this->unit_cost = 0;
-		$this->total_cost = 0;
-
-		if (is_array($this->lines) && count($this->lines)) {
-
-
-			foreach ($this->lines as &$line) {
-				$tmpproduct->cost_price = 0;
-				$tmpproduct->pmp = 0;
-				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-
-				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-					if (empty($line->fk_bom_child)) {
-						if ($result < 0) {
-							$this->error = $tmpproduct->error;
-							return -1;
-						}
-						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-						if (empty($line->unit_cost)) {
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								$line->unit_cost = $productFournisseur->fourn_unitprice;
-							}
-						}
-
-						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-
-						$this->total_cost += $line->total_cost;
-					} else {
-						$bom_child = new BOM($this->db);
-						$res = $bom_child->fetch($line->fk_bom_child);
-						if ($res > 0) {
-							$bom_child->calculateCosts();
-							$line->childBom[] = $bom_child;
-							$this->total_cost += $bom_child->total_cost * $line->qty;
-						} else {
-							$this->error = $bom_child->error;
-							return -2;
-						}
-					}
-				} else {
-					//Convert qty to hour
-					$unit = measuringUnitString($line->fk_unit);
-					$qty = convertDurationtoHour($line->qty, $unit);
-
-					if ($conf->workstation->enabled) {
-						if ($tmpproduct->fk_default_workstation) {
-							$workstation = new Workstation($this->db);
-							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
-
-							if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
-							else {
-								$this->error = $workstation->error;
-								return -3;
-							}
-						}
-					} else {
-						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
-					}
-
-					$this->total_cost += $line->total_cost;
-				}
-			}
-
-			$this->total_cost = price2num($this->total_cost, 'MT');*/
-
-
-
-
-
 	}
 }
 
