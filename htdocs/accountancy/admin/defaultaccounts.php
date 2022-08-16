@@ -81,22 +81,22 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled('societe')) {
 	$list_account[] = '---Deposits---';
 }
 
@@ -266,7 +266,7 @@ print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUS
 print '</td>';
 print '</tr>';
 
-if (!empty($conf->societe->enabled) && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') != '-1') {
+if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') != '-1') {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
