@@ -126,6 +126,16 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
 	}
+
+	// Referrer-Policy
+	if (!defined('WEBSITE_MAIN_SECURITY_FORCERP')) {
+		// The constant WEBSITE_MAIN_SECURITY_FORCECSP should never be defined by page, but the variable used just after may be
+
+		// For public web sites, we use the same default value than "strict-origin-when-cross-origin"
+		$referrerpolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', "strict-origin-when-cross-origin");
+
+		header("Referrer-Policy: ".$referrerpolicy);
+	}
 }
 
 // A lang was forced, so we change weblangs init

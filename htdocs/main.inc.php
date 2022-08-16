@@ -1461,6 +1461,16 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	} else {
 		header("Content-Security-Policy: ".constant('MAIN_SECURITY_FORCECSP'));
 	}
+
+	// Referrer-Policy
+	// Say if we must provide the referrer when we jump onto another web page.
+	// Default browser are 'strict-origin-when-cross-origin', we want more so we use 'same-origin' so we don't send any referrer when going into another web site
+	if (!defined('MAIN_SECURITY_FORCERP')) {
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
+
+		header("Referrer-Policy: ".$referrerpolicy);
+	}
+
 	if ($forcenocache) {
 		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 	}
