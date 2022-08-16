@@ -141,10 +141,21 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	if (!defined('WEBSITE_MAIN_SECURITY_FORCESTS')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCESTS should never be defined by page, but the variable used just after may be
 
-		// Example: "max-age=31536000; includeSubDomaines"
+		// Example: "max-age=31536000; includeSubDomains"
 		$sts = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS');
 		if (!empty($sts)) {
 			header("Strict-Transport-Security: ".$sts);
+		}
+	}
+
+	// Permissions-Policy (old name was Feature-Policy)
+	if (!defined('WEBSITE_MAIN_SECURITY_FORCEPP')) {
+		// The constant WEBSITE_MAIN_SECURITY_FORCEPP should never be defined by page, but the variable used just after may be
+
+		// Example: "camera: 'none'; microphone: 'none';"
+		$pp = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP');
+		if (!empty($pp)) {
+			header("Permissions-Policy: ".$pp);
 		}
 	}
 }

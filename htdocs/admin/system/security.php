@@ -497,9 +497,11 @@ print '<br>';
 print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCESTS) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCESTS).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomaines\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCESTS</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCESTS) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCESTS).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
 print '<br>';
 
+print '<strong>WEBSITE_MAIN_SECURITY_FORCEPP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCEPP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCEPP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera: 'none'; microphone: 'none';\")</span><br>";
+print '<br>';
 
 print '<br>';
 
