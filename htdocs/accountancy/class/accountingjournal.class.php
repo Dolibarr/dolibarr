@@ -429,7 +429,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf, $langs;
 
-		if (empty($conf->asset->enabled)) {
+		if (!isModEnabled('asset')) {
 			return array();
 		}
 
