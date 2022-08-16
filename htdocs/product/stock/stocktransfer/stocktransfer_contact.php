@@ -25,17 +25,7 @@
  *       \brief      Tab to manage contacts/adresses of proposal
  */
 
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
-require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
+require '../../../main.inc.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
 
