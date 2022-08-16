@@ -172,7 +172,19 @@ if (empty($reshook)) {
 	if (GETPOST('save', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
-		if (!GETPOST("subject", 'alphanohtml')) {
+		if (!GETPOST("type_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTypeRequest")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("category_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketCategory")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("severity_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketSeverity")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("subject", 'alphanohtml')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			$action = 'create';

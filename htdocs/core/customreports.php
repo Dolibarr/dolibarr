@@ -93,19 +93,19 @@ $object = null;
 $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
-	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => $conf->societe->enabled, 'ClassPath' => "/contact/class/contact.class.php"),
-	'proposal' => array('label' => 'Proposals', 'ObjectClassName' => 'Propal', 'enabled' => $conf->propal->enabled, 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => $conf->commande->enabled, 'ClassPath' => "/commande/class/commande.class.php"),
-	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/facture/class/facture.class.php"),
-	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => $conf->facture->enabled, 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
-	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => $conf->contrat->enabled, 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
-	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => $conf->bom->enabled),
-	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => $conf->mrp->enabled, 'ClassPath' => "/mrp/class/mo.class.php"),
-	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => $conf->ticket->enabled),
-	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
-	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => $conf->adherent->enabled, 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
+	'thirdparty' => array('label' => 'ThirdParties', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
+	'contact' => array('label' => 'Contacts', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societ'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'proposal' => array('label' => 'Proposals', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
+	'order' => array('label' => 'Orders', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'invoice' => array('label' => 'Invoices', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
+	'invoice_template'=>array('label' => 'PredefinedInvoices', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs'=>'bills'),
+	'contract' => array('label' => 'Contracts', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'contractdet' => array('label' => 'ContractLines', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contrat'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs'=>'contracts'),
+	'bom' => array('label' => 'BOM', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
+	'mo' => array('label' => 'MO', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
+	'ticket' => array('label' => 'Ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
+	'member' => array('label' => 'Adherent', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/adherent.class.php", 'langs'=>'members'),
+	'cotisation' => array('label' => 'Subscriptions', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('adherent'), 'ClassPath' => "/adherents/class/subscription.class.php", 'langs'=>'members'),
 );
 
 // Complete $arrayoftype by external modules

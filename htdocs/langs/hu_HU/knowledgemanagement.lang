@@ -18,37 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Tudásmenedzsment rendszer
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Tudásmenedzsment (KM) vagy Help-Desk bázis kezelése
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Tudáskezelő rendszer beállítása
 Settings = Beállítások
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Tudáskezelő rendszer beállítási oldala
 
 
 #
 # About page
 #
 About = Névjegy
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = A tudásmenedzsmentről
+KnowledgeManagementAboutPage = Tudáskezelés az oldalról
 
 KnowledgeManagementArea = Tudásmenedzsment
 MenuKnowledgeRecord = Tudásbázis
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Árucikk
-KnowledgeRecordExtraFields = Extrafields for Article
+ListKnowledgeRecord = Cikkek listája
+NewKnowledgeRecord = Új cikk
+ValidateReply = A megoldás érvényesítése
+KnowledgeRecords = Cikkek
+KnowledgeRecord = Cikk
+KnowledgeRecordExtraFields = Extra mezők a cikkhez
 GroupOfTicket=Jegyek csoportjai
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=A cikket összekapcsolhatja egy jegycsoporttal (így a cikk kiemelve lesz a csoport minden jegyén)
+SuggestedForTicketsInGroup=Jegyekhez ajánlott, ha csoport van
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Beállítás elavultként
+ConfirmCloseKM=Megerősíti, hogy a cikk elavultként zárult be?
+ConfirmReopenKM=Szeretné visszaállítani ezt a cikket "Érvényesített" állapotba?

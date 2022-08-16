@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - loan
-IdModule= Moduļa ID
 ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina utilītas, lai izveidotu vai rediģētu savu moduli. Dokumentācija alternatīvai <a href="%s" target="_blank" rel="noopener noreferrer"> manuālai izstrādei ir pieejama šeit </a>.
 EnterNameOfModuleDesc=Ievadiet izveidojamā moduļa/lietojumprogrammas nosaukumu bez atstarpēm. Izmantojiet lielos burtus, lai atdalītu vārdus (piemēram, MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Ievadiet izveidojamā objekta nosaukumu bez atstarpēm. Izmantojiet lielos burtus, lai atdalītu vārdus (piemēram: MyObject, Student, Teacher...). Tiks ģenerēts CRUD klases fails, kā arī API fails, lapas, lai uzskaitītu/pievienotu/rediģētu/dzēstu objektu un SQL faili.
@@ -10,7 +9,6 @@ ModuleBuilderDesc4=Modulis identificēts kā "rediģējams", kad moduļa saknes 
 NewModule=Jauns modulis
 NewObjectInModulebuilder=Jauns objekts
 NewDictionary=Jauna vārdnīca
-ModuleName=Moduļa nosaukums
 ModuleKey=Moduļa atslēga
 ObjectKey=Objekta atslēga
 DicKey=Vārdnīcas atslēga

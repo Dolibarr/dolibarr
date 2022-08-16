@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Konferenzbeitrag oder Stand
 AmountPaid = Bezahlter Betrag
 DateOfRegistration = Datum der Anmeldung
 ConferenceOrBoothAttendee = Referent eines Konferenzbeitrags oder Standinhaber
+ApplicantOrVisitor=Bewerber oder Besucher
+Speaker=Referent
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Ihre Zahlung für Ihre Veranst
 OrganizationEventBulkMailToAttendees=Dies ist eine Erinnerung, dass Sie Teilnehmer der Veranstaltung sind
 OrganizationEventBulkMailToSpeakers=Dies ist eine Erinnerung, dass Sie an der Veranstaltung als Referent teilnehmen
 OrganizationEventLinkToThirdParty=Verknüpfung mit Geschäftspartner (Kunde, Lieferant oder Partner)
+OrganizationEvenLabelName=Öffentlicher Name des Konferenzbeitrags oder des Standes
 
 NewSuggestionOfBooth=Bewerbung für einen Stand
 NewSuggestionOfConference=Bewerbung für einen Konferenzbeitrag

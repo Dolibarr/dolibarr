@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Conferinţe sau Stand-uri
 AmountPaid = Suma plătită
 DateOfRegistration = Dată înregistrare
 ConferenceOrBoothAttendee = Participant la Conferinţă sau Stand
+ApplicantOrVisitor=Aplicant sau vizitator
+Speaker=Speaker
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Plata ta pentru înscrierea la
 OrganizationEventBulkMailToAttendees=Aceasta este un reminder cu privire la participarea ta la eveniment
 OrganizationEventBulkMailToSpeakers=Acesta este un reminder cu privire la participarea ta ca speaker la eveniment
 OrganizationEventLinkToThirdParty=Link către un terț (client, furnizor sau partener)
+OrganizationEvenLabelName=Nume public conferință sau stand
 
 NewSuggestionOfBooth=Aplicare pentru stand
 NewSuggestionOfConference=Aplicare pentru conferinţă

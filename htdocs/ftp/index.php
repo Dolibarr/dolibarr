@@ -41,6 +41,7 @@ $result = restrictedArea($user, 'ftp', '');
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $section = GETPOST('section');
+$newfolder = GETPOST('newfolder');
 if (!$section) {
 	$section = '/';
 }
@@ -101,7 +102,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result = $ecmdir->fetch(GETPOST("section", 'int'));
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -141,11 +142,8 @@ if ($action == 'uploadfile') {
 		$mesg = $resultarray['mesg'];
 	}
 	if ($conn_id && $ok && !$mesg) {
-		// var_dump($_FILES['userfile']['name']);
 		$nbfile = count($_FILES['userfile']['name']);
-		$i = 0;
-		for (; $i < $nbfile; $i++) {
-			var_dump($i);
+		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
 			$fileupload = $_FILES['userfile']['name'][$i];
 			$fileuploadpath = $_FILES['userfile']['tmp_name'][$i];
@@ -157,6 +155,30 @@ if ($action == 'uploadfile') {
 				dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
 				setEventMessages($langs->trans("FTPFailedToUploadFile", $fileupload), null, 'errors');
 			}
+		}
+		$action = '';
+	} else {
+		dol_print_error('', $mesg);
+	}
+}
+
+if ($action == 'addfolder') {
+	// set up a connection or die
+	if (!$conn_id) {
+		$newsectioniso = utf8_decode($section);
+		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
+		$conn_id = $resultarray['conn_id'];
+		$ok = $resultarray['ok'];
+		$mesg = $resultarray['mesg'];
+	}
+	if ($conn_id && $ok && !$mesg) {
+		$result = dol_ftp_mkdir($conn_id, $newfolder, $newsectioniso);
+
+		if ($result) {
+			setEventMessages($langs->trans("FileWasCreateFolder", $newfolder), null, 'mesgs');
+		} else {
+			dol_syslog("ftp/index.php ftp_delete", LOG_ERR);
+			setEventMessages($langs->trans("FTPFailedToCreateFolder", $newfolder), null, 'errors');
 		}
 		$action = '';
 	} else {
@@ -632,6 +654,16 @@ if (!function_exists('ftp_connect')) {
 			print '<td><input type="file" class="flat"  name="userfile[]" multiple></td>';
 			print '<td></td>';
 			print '<td align="center"><button type="submit" class="butAction" name="uploadfile" value="'.$langs->trans("Save").'">'.$langs->trans("Upload").'</button></td>';
+			print '</form>';
+			print load_fiche_titre($langs->trans("AddFolder"), null, null);
+			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="numero_ftp" value="'.$numero_ftp.'">';
+			print '<input type="hidden" name="section" value="'.$section.'">';
+			print '<input type="hidden" name="action" value="addfolder">';
+			print '<td><input type="text" class="flat"  name="newfolder" multiple></td>';
+			print '<td></td>';
+			print '<td align="center"><button type="submit" class="butAction" name="addfolder" value="'.$langs->trans("Save").'">'.$langs->trans("AddFolder").'</button></td>';
 			print '</form>';
 		}
 	} else {

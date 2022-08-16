@@ -46,7 +46,7 @@ KnowledgeRecords = Άρθρα
 KnowledgeRecord = Άρθρο
 KnowledgeRecordExtraFields = Επιπλέον πεδία για το άρθρο
 GroupOfTicket=Ομάδα εισιτηρίων
-YouCanLinkArticleToATicketCategory=Μπορείτε να συνδέσετε ένα άρθρο με μια ομάδα εισιτηρίων (έτσι το άρθρο θα προταθεί κατά το άνοιγμα νέων εισιτηρίων)
+YouCanLinkArticleToATicketCategory=Μπορείτε να συνδέσετε το άρθρο με μια ομάδα ticket (έτσι το άρθρο θα επισημαίνεται σε όλα τα tickets αυτής της ομάδας)
 SuggestedForTicketsInGroup=Προτείνεται για εισιτήρια όταν η ομάδα είναι
 
 SetObsolete=Ορισμός ως ξεπερασμένο

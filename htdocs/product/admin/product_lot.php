@@ -36,6 +36,9 @@ if (!$user->admin || (empty($conf->productbatch->enabled)))
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 
+$error = 0;
+
+
 /*
  * Actions
  */
@@ -46,9 +49,10 @@ if ($action == 'updateMaskLot') {
 	$maskconstbatch = GETPOST('maskconstLot', 'alpha');
 	$maskbatch = GETPOST('maskLot', 'alpha');
 
-	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-
-	if (!$res > 0) $error++;
+	if ($maskconstbatch) {
+		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -59,9 +63,10 @@ if ($action == 'updateMaskLot') {
 	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
 	$maskbatch = GETPOST('maskSN', 'alpha');
 
-	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-
-	if (!$res > 0) $error++;
+	if ($maskconstbatch) {
+		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
