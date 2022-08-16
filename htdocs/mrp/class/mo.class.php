@@ -59,6 +59,11 @@ class Mo extends CommonObject
 	 */
 	public $picto = 'mrp';
 
+	/** @var double cost of the object related to toconsume  role in lines  	*/
+	public $sheduled_cost;
+
+	/** @var double cost of the object related to consumed  role in lines  	*/
+	public $real_cost;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1; // To produce
@@ -66,6 +71,11 @@ class Mo extends CommonObject
 	const STATUS_PRODUCED = 3;
 	const STATUS_CANCELED = 9;
 
+	/** PRODUCTION ROLE const  */
+	const PRODUCTION_ROLE_TO_CONSUME ='toconsume';
+	const PRODUCTION_ROLE_CONSUMED ='consumed';
+	const PRODUCTION_ROLE_TO_PRODUCE ='toproduce';
+	const PRODUCTION_ROLE_PRODUCED ='produced';
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -105,7 +115,7 @@ class Mo extends CommonObject
 		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200'),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>43, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
@@ -122,6 +132,8 @@ class Mo extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
 		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
+		'sheduled_cost' => array('type'=>'real', 'label'=>'sheduledCost', 'enabled'=>1, 'visible'=>1, 'position'=>1041, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
+		'real_cost' => array('type'=>'real', 'label'=>'realCost', 'enabled'=>1, 'visible'=>1, 'position'=>1042, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
 	);
 	public $rowid;
 	public $entity;
@@ -405,6 +417,7 @@ class Mo extends CommonObject
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
+			$this->caculateCostLines();
 		}
 		return $result;
 	}
@@ -1553,6 +1566,213 @@ class Mo extends CommonObject
 		} else {
 			return $MoParent;
 		}
+	}
+
+	/**
+	 * return the product cost
+	 *
+	 * Rules
+	 *  COST PRICE
+	 *  OTHERWISE PMP
+	 *  OTHERWISE LOWEST SUPPLIER PRICE
+	 *
+	 * @param $fk_product
+	 * @return float
+	 */
+	public  function getProductUnitCost(&$tmpProduct)
+	{
+		global $user, $langs;
+
+		$uCost = 0;
+
+		$uCost =  (!empty($tmpProduct->cost_price)) ? $tmpProduct->cost_price : $tmpProduct->pmp;
+		if (empty($uCost)) {
+			$productFournisseur = new ProductFournisseur($this->db);
+			if (is_a($productFournisseur, 'ProductFournisseur')){
+				if ($productFournisseur->find_min_price_product_fournisseur($tmpProduct->id) > 0) {
+					$uCost = $productFournisseur->fourn_unitprice;
+				}
+			}else{
+				setEventMessage($langs->trans('errorLoadProductFournisseur'));
+			}
+
+		}
+
+		return $uCost;
+	}
+
+
+
+	/**
+	 * calculate the real_cost and sheduled_cost for the object
+	 * @return void
+	 */
+	public function caculateCostLines(){
+		global $db, $user;
+		// foreach lines
+		if (is_array($this->lines) && count($this->lines)){
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$tmpproduct = new Product($db);
+			$Tsheduled = array();
+			$Treal = array();
+			$totalRealCost = 0;
+			$totalSheduledCost = 0;
+
+			foreach ($this->lines as &$line){
+
+				// sur la ligne on récupère le produit
+				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
+				// si produit
+				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+
+					// on récupere le best price pour ce produit
+					$productunitCost = $this->getProductUnitCost($tmpproduct);
+
+					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME){
+						// sql to co
+						$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
+						$sql .= ' WHERE m.fk_mo = '.$this->id;
+						$sql .= ' AND  m.fk_product = '.$line->fk_product;
+						$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
+						//echo $sql . '<br>';
+						$resql = $db->query($sql);
+
+						if ($resql) {
+							$obj = $db->fetch_object($resql);
+
+							if (!$Tsheduled[$line->fk_product]){
+								$Tsheduled[$line->fk_product]['sheduledCost'] = $productunitCost * $obj->Allqty;
+								$Tsheduled[$line->fk_product]['Allqty'] = $obj->Allqty;
+								$Tsheduled[$line->fk_product]['productunitCost'] = $productunitCost;
+							}
+						}
+
+					}
+
+					if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
+
+						$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
+						$sqlConsumed .= ' WHERE m.fk_mo = ' . $this->id;
+						$sqlConsumed .= ' AND  m.fk_product = ' . $line->fk_product;
+						$sqlConsumed .= ' AND  m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
+						$resql = $db->query($sqlConsumed);
+
+						if ($resql) {
+							$obj = $db->fetch_object($resql);
+						//	echo $obj->Allqty . "<br>";
+
+							if (!$Treal[$line->fk_product]) {
+								$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
+							}
+						}
+					}
+
+				}else if ($tmpproduct->type == $tmpproduct::TYPE_SERVICE){
+
+				}
+
+			}//end foreach
+
+			foreach ($Tsheduled as $cost){
+				$totalSheduledCost += $cost['sheduledCost'];
+			}
+			foreach ($Treal as $cost){
+				$totalRealCost += $cost['realCost'];
+			}
+
+			$this->sheduled_cost = $totalSheduledCost;
+			$this->real_cost = $totalRealCost;
+
+			// we can change the status before using $this->update()
+			// for now we use a query
+			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
+			$sql .= " SET sheduled_cost = ".doubleval( $totalSheduledCost). " ,";
+			$sql .= " SET real_cost = ".doubleval( $totalRealCost) ;
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				var_dump('updated');
+			}
+
+
+
+			//echo '<pre>' . var_export($Tcalculate, true) . '</pre>';
+		}
+
+
+		/*global $conf;
+
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$this->unit_cost = 0;
+		$this->total_cost = 0;
+
+		if (is_array($this->lines) && count($this->lines)) {
+
+
+			foreach ($this->lines as &$line) {
+				$tmpproduct->cost_price = 0;
+				$tmpproduct->pmp = 0;
+				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
+
+				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+					if (empty($line->fk_bom_child)) {
+						if ($result < 0) {
+							$this->error = $tmpproduct->error;
+							return -1;
+						}
+						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($line->unit_cost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+								$line->unit_cost = $productFournisseur->fourn_unitprice;
+							}
+						}
+
+						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+						$this->total_cost += $line->total_cost;
+					} else {
+						$bom_child = new BOM($this->db);
+						$res = $bom_child->fetch($line->fk_bom_child);
+						if ($res > 0) {
+							$bom_child->calculateCosts();
+							$line->childBom[] = $bom_child;
+							$this->total_cost += $bom_child->total_cost * $line->qty;
+						} else {
+							$this->error = $bom_child->error;
+							return -2;
+						}
+					}
+				} else {
+					//Convert qty to hour
+					$unit = measuringUnitString($line->fk_unit);
+					$qty = convertDurationtoHour($line->qty, $unit);
+
+					if ($conf->workstation->enabled) {
+						if ($tmpproduct->fk_default_workstation) {
+							$workstation = new Workstation($this->db);
+							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+
+							if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							else {
+								$this->error = $workstation->error;
+								return -3;
+							}
+						}
+					} else {
+						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
+					}
+
+					$this->total_cost += $line->total_cost;
+				}
+			}
+
+			$this->total_cost = price2num($this->total_cost, 'MT');*/
+
+
+
+
+
 	}
 }
 

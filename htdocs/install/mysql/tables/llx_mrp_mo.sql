@@ -41,6 +41,8 @@ CREATE TABLE llx_mrp_mo(
 	fk_bom integer, 
 	fk_project integer,
 	last_main_doc varchar(255),
-    fk_parent_line integer
+    fk_parent_line integer,
+    sheduled_cost double(24,8) DEFAULT 0,
+    real_cost double(24,8) DEFAULT 0
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
