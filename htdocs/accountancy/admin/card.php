@@ -66,7 +66,7 @@ if (GETPOST('cancel', 'alpha')) {
 	exit;
 }
 
-if ($action == 'add' && $user->rights->accounting->chartofaccount) {
+if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -127,7 +127,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			}
 		}
 	}
-} elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'edit' && $user->hasRight('accounting', 'chartofaccount')) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -184,7 +184,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 		header("Location: ".$urltogo);
 		exit();
 	}
-} elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'delete' && $user->hasRight('accounting', 'chartofaccount')) {
 	$result = $object->fetch($id);
 
 	if (!empty($object->id)) {
@@ -419,13 +419,13 @@ if ($action == 'create') {
 			 */
 			print '<div class="tabsAction">';
 
-			if (!empty($user->rights->accounting->chartofaccount)) {
+			if ($user->hasRight('accounting', 'chartofaccount')) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			}
 
-			if (!empty($user->rights->accounting->chartofaccount)) {
+			if ($user->hasRight('accounting', 'chartofaccount')) {
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';

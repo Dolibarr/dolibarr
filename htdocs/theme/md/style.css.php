@@ -613,6 +613,9 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.onholidayallday:not(.weekend) input {
+	background-color: #f8f7f0;
+}
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
@@ -622,6 +625,13 @@ td.leftborder, td.hide6 {
 td.rightborder {
 	border-right: 1px solid #ccc;
 }
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
+}
+
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;

@@ -174,6 +174,8 @@ if (empty($reshook)) {
 		}
 
 		$action = '';
+		// Redirect to refresh the tab information
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 	}
 
 	if (in_array($action, array('confirm_consumeorproduce', 'confirm_consumeandproduceall')) && $permissiontoproduce) {
