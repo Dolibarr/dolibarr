@@ -191,7 +191,7 @@ class FormProduct
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
 		}
 
-		$sql = "SELECT w.rowid, w.ref as label, w.type, w.nb_operators_required,w.thm_operator_estimated,w.thm_machine_estimated";
+		$sql = "SELECT w.rowid, w.ref as ref, w.label as label, w.type, w.nb_operators_required,w.thm_operator_estimated,w.thm_machine_estimated";
 		$sql .= " FROM ".$this->db->prefix()."workstation_workstation as w";
 		$sql .= " WHERE 1 = 1";
 		if (!empty($fk_product) && $fk_product > 0) {
