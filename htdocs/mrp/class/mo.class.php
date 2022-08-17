@@ -1604,7 +1604,7 @@ class Mo extends CommonObject
 
 
 	/**
-	 * calculate the real_cost and sheduled_cost for the object
+	 * calculate the real_cost and predicted_cost for the object
 	 * @return void
 	 */
 	public function calculateCostLines()
