@@ -1013,7 +1013,9 @@ class Conf
 					}
 
 					if (empty($handler_file_found)) {
-						throw new Exception('Missing log handler file '.$handler.'.php');
+						// If log handler has been removed of is badly setup, we must be able to continue code.
+						//throw new Exception('Missing log handler file '.$handler.'.php');
+						continue;
 					}
 
 					require_once $handler_file_found;

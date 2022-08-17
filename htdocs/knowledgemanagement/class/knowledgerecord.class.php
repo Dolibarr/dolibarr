@@ -467,6 +467,24 @@ class KnowledgeRecord extends CommonObject
 			$this->error .= $this->db->lasterror();
 			$errorflag = -1;
 		}
+
+		// Delete all child tables
+		if (!$error) {
+			$elements = array('categorie_knowledgemanagement');
+			foreach ($elements as $table) {
+				if (!$error) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql .= " WHERE fk_knowledgemanagement = ".(int) $this->id;
+
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+			}
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
