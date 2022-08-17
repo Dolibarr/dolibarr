@@ -181,7 +181,6 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-    
 			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
 
 			if ($result <= 0) {
