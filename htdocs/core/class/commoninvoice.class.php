@@ -574,8 +574,13 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusDraft');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusDraft');
 			} elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
-				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedUnpaid');
-				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedUnpaid');
+				if ($status == 3) {
+					$labelStatus = $langs->transnoentitiesnoconv('BillStatusCanceled');
+					$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusCanceled');
+				} else {
+					$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedUnpaid');
+					$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedUnpaid');
+				}
 				$statusType = 'status5';
 			} elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');

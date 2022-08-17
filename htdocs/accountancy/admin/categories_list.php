@@ -111,7 +111,7 @@ $tabrowid[32] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[32] = !empty($conf->accounting->enabled);
+$tabcond[32] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -875,7 +875,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$formaccounting = new FormAccounting($db);
 	}
 

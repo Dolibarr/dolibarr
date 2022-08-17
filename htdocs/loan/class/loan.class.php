@@ -220,7 +220,7 @@ class Loan extends CommonObject
 		}
 
 		// Check parameters
-		if (!$newcapital > 0 || empty($this->datestart) || empty($this->dateend)) {
+		if (!($newcapital > 0) || empty($this->datestart) || empty($this->dateend)) {
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}

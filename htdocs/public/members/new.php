@@ -257,7 +257,7 @@ if (empty($reshook) && $action == 'add') {
 	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
-		// email a peu pres correct et le login n'existe pas
+		// E-mail looks OK and login does not exist
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
 		$adh->public      = $public;
@@ -375,6 +375,16 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!$mailfile->sendfile()) {
 					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+				}
+			}
+
+			// Auto-create thirdparty on member creation
+			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+				$company = new Societe($db);
+				$result = $company->create_from_member($adh);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
 				}
 			}
 
@@ -565,7 +575,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 		print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
 		print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass1", "none", 2)).'"></td></tr>'."\n";
-		print '<tr><td>'.$langs->trans("PasswordAgain").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
+		print '<tr><td>'.$langs->trans("PasswordRetype").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
 	}
 	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';

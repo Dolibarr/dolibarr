@@ -1581,6 +1581,7 @@ class Societe extends CommonObject
 							$lmember->phone = $this->phone;
 							$lmember->state_id = $this->state_id;
 							$lmember->country_id = $this->country_id;
+							$lmember->default_lang = $this->default_lang;
 
 							$result = $lmember->update($user, 0, 1, 1, 1); // Use nosync to 1 to avoid cyclic updates
 							if ($result < 0) {
@@ -2290,7 +2291,7 @@ class Societe extends CommonObject
 		$desc = trim($desc);
 
 		// Check parameters
-		if (!$remise > 0) {
+		if (!($remise > 0)) {
 			$this->error = $langs->trans("ErrorWrongValueForParameter", "1");
 			return -1;
 		}
@@ -4024,12 +4025,25 @@ class Societe extends CommonObject
 		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+		$fullname = $member->getFullName($langs);
 
-		$name = $socname ? $socname : $member->societe;
-		if (empty($name)) {
-			$name = $member->getFullName($langs);
+		if ($member->morphy == 'mor') {
+			if (empty($socname)) {
+				$socname = $member->company? $member->company : $member->societe;
+			}
+			if (!empty($fullname) && empty($socalias)) {
+				$socalias = $fullname;
+			}
+		} elseif (empty($socname) && $member->morphy == 'phy') {
+			if (empty($socname)) {
+				$socname = $fullname;
+			}
+			if (!empty($member->company) && empty($socalias)) {
+				$socalias = $member->company;
+			}
 		}
 
+		$name = $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parametres

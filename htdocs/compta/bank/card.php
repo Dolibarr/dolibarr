@@ -846,6 +846,9 @@ if ($action == 'create') {
 		$object = new Account($db);
 		$object->fetch(GETPOST('id', 'int'));
 
+		$title = $object->ref." - ".$langs->trans("Card");
+		llxHeader("", $title, $help_url);
+
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
@@ -1014,7 +1017,7 @@ if ($action == 'create') {
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 
-		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		if (!empty($conf->accounting->enabled)) {
 			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
