@@ -1039,7 +1039,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			$langs->load('trips');
 			if ($modecompta == 'CREANCES-DETTES') {
-				$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+				$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, p.total_ht as amount_ht, p.total_ttc as amount_ttc";
 				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql .= " WHERE p.entity IN (".getEntity('expensereport').")";
@@ -1047,7 +1047,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				$column = 'p.date_valid';
 			} else {
-				$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht, sum(p.total_ttc) as amount_ttc";
+				$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, p.total_ht as amount_ht, p.total_ttc as amount_ttc";
 				$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
