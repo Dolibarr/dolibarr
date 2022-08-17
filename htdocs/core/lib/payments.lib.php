@@ -499,9 +499,9 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 
 	print '	</div>
 			<div  class = "center" style = "font-size: 14px; position: fixed; bottom: 0px; width: 100%; z-index: -1;">
-				<br /><hr>';
+				<br><hr>';
 	print '		<b>'.$fromcompany->name.'</b>
-				<br />'.(!empty($line1) ? $line1.'<br />' : '');
-	print $line2.'<br />.&nbsp;';
+				<br>'.(!empty($line1) ? $line1.'<br>' : '');
+	print $line2.'<br>.&nbsp;';
 	print '	</div>';
 }
