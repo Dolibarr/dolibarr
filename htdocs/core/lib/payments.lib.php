@@ -424,7 +424,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 	// Capital
 	if ($fromcompany->capital) {
 		if (is_numeric($fromcompany->capital) && $fromcompany->capital > 0)	$line1 .= ($line1 ? ' - ' : '').$langs->transnoentities('CapitalOf', price($fromcompany->capital, 0, $langs, 0, 0, 0, $conf->currency));
-		else																$line1 .= ($line1 ? ' - ' : '').$langs->transnoentities('CapitalOf', $fromcompany->capital).' '.$langs->transnoentities('Currency'.$conf->currency);
+		else $line1 .= ($line1 ? ' - ' : '').$langs->transnoentities('CapitalOf', $fromcompany->capital).' '.$langs->transnoentities('Currency'.$conf->currency);
 	}
 	// Second line of company infos
 	// Prof Id 1
@@ -497,12 +497,11 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 	}
 
-    print '	</div>
+	print '	</div>
 			<div  class = "center" style = "font-size: 14px; position: fixed; bottom: 0px; width: 100%; z-index: -1;">
 				<br /><hr>';
-    print '		<b>'.$fromcompany->name.'</b>
+	print '		<b>'.$fromcompany->name.'</b>
 				<br />'.(!empty($line1) ? $line1.'<br />' : '');
-    print $line2.'<br />.&nbsp;';
-    print '	</div>';
+	print $line2.'<br />.&nbsp;';
+	print '	</div>';
 }
-

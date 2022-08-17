@@ -1567,9 +1567,9 @@ if ($ispaymentok) {
 		if ($result < 0) $error++;
 	}
 
-    print '<span class="titlepublicpayment"><strong>'.$langs->trans("YourPaymentHasBeenRecorded")."</strong></span><br><br>\n";
+	print '<span class="titlepublicpayment"><strong>'.$langs->trans("YourPaymentHasBeenRecorded")."</strong></span><br><br>\n";
 	if ($TRANSACTIONID) {
-		print '<span style="font-size: 20px;">'.$langs->trans("ThisIsTransactionId",$TRANSACTIONID)."</span><br><br><br>\n";
+		print '<span style="font-size: 20px;">'.$langs->trans("ThisIsTransactionId", $TRANSACTIONID)."</span><br><br><br>\n";
 	}
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
