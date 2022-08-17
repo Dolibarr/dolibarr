@@ -6230,8 +6230,8 @@ class Form
 				} elseif ($usecalendar == 'jquery') {
 					if (!$disabled) {
 						// Output javascript for datepicker
-						$minYear = $conf->global->MIN_YEAR_SELECT_DATE ? $conf->global->MIN_YEAR_SELECT_DATE : (date('Y') - 10);
-						$maxYear = $conf->global->MAX_YEAR_SELECT_DATE ? $conf->global->MAX_YEAR_SELECT_DATE : (date('Y') + 10);
+						$minYear = $conf->global->MIN_YEAR_SELECT_DATE ? $conf->global->MIN_YEAR_SELECT_DATE : (date('Y') - 100);
+						$maxYear = $conf->global->MAX_YEAR_SELECT_DATE ? $conf->global->MAX_YEAR_SELECT_DATE : (date('Y') + 100);
 
 						$retstring .= "<script type='text/javascript'>";
 						$retstring .= "$(function(){ $('#".$prefix."').datepicker({
