@@ -1128,7 +1128,7 @@ class BOM extends CommonObject
 					}
 				} else {
 					//Convert qty to hour
-					$unit = measuringUnitString($line->fk_unit);
+					$unit = measuringUnitString($line->fk_unit, '', '', 1);
 					$qty = convertDurationtoHour($line->qty, $unit);
 
 					if ($conf->workstation->enabled) {
