@@ -48,6 +48,8 @@ ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
 
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
+
 ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
 ALTER TABLE llx_user DROP COLUMN idpers3;
