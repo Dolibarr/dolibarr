@@ -95,13 +95,14 @@ function addDispatchLine(index, type, mode)
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
 			qtyDispatched = parseFloat($("#qty_dispatched_" + index).val()) + 1;
-			if (mode != 'allmissingconsume' || mode != 'alltoproduce') mode = 'lessone';
 
 		}
 		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
 				var qtymax = parseFloat($($row).data('max-qty'));
+				if(qtymax === 'undefined') qtymax = 1;
 		}
 	}
+
 
 	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
 		var count = 0;
@@ -110,7 +111,6 @@ function addDispatchLine(index, type, mode)
 		while (count < qty) {
 			//If remaining qty needed is inferior to qtymax, qtymax = remaining qty needed
 			if ((qtyalreadyused + qtymax) > qtyOrdered) qtymax = qtyOrdered - qtyalreadyused;
-
 			//If first line, we replace value, not add line
 			if(count === 0){
 				$("#"+inputId+"-"+index+"-"+nbrTrs).val(qtymax);
