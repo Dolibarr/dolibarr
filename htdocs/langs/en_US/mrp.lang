@@ -115,4 +115,4 @@ MOChild=MO Child
 predictedCost= Predicted cost
 realCost= Real cost
 errorCostUpdatingInDb= error on updating costs in db
-errorLoadProductSupplier=
+errorLoadProductSupplierClass=error on load product Supplier class

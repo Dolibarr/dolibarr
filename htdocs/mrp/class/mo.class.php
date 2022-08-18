@@ -1592,7 +1592,7 @@ class Mo extends CommonObject
 					$uCost = $productFournisseur->fourn_unitprice;
 				}
 			} else {
-				setEventMessage($langs->trans('errorLoadProductSupplier'));
+				setEventMessage($langs->trans('errorLoadProductSupplierClass'));
 			}
 		}
 
