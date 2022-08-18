@@ -112,3 +112,5 @@ MOAndLines=Manufacturing Orders and lines
 MoChildGenerate=Generate Child Mo
 ParentMo=MO Parent
 MOChild=MO Child
+expectedworkload=Expected workload
+consumedTimes= Consumed times
