@@ -1344,10 +1344,10 @@ class EmailCollector extends CommonObject
 			2.1 multipart/alternative
 			2.1.1 text/plain
 			2.1.2 text/html
-			 2.2 message/rfc822
-			 2.2 multipart/alternative
-			 2.2.1 text/plain
-			 2.2.2 text/html
+			2.2 message/rfc822
+			2.2 multipart/alternative
+			2.2.1 text/plain
+			2.2.2 text/html
 			 */
 			dol_syslog("Start of loop on email", LOG_INFO, 1);
 
