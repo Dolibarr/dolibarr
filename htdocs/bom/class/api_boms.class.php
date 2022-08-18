@@ -436,13 +436,13 @@ class Boms extends DolibarrApi
 		//Check the rowid is a line of current bom object
 		$lineIdIsFromObject = false;
 		foreach ($this->bom->lines as $bl) {
-			if ($bl->id == $lineid){
+			if ($bl->id == $lineid) {
 				$lineIdIsFromObject = true;
 				break;
 			}
 		}
 		if (!$lineIdIsFromObject) {
-			throw new RestException(500,'Line to delete (rowid: '.$lineid.') is not a line of BOM (id: '.$this->bom->id.')');
+			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of BOM (id: '.$this->bom->id.')');
 		}
 
 		$updateRes = $this->bom->deleteline(DolibarrApiAccess::$user, $lineid);

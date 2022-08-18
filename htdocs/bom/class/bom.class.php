@@ -668,8 +668,8 @@ class BOM extends CommonObject
 			$this->line->context = $this->context;
 
 			// Rank to use
-			$rankToUse = (int)$position;
-			if($rankToUse != $line->oldcopy->position) { // check if position have a new value
+			$rankToUse = (int) $position;
+			if ($rankToUse != $line->oldcopy->position) { // check if position have a new value
 				foreach ($this->lines as $bl) {
 					if ($bl->position >= $rankToUse AND $bl->position < ($line->oldcopy->position + 1)) { // move rank up
 						$bl->position++;
@@ -1386,7 +1386,6 @@ class BOM extends CommonObject
 			}
 		}
 	}
-
 }
 
 
