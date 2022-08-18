@@ -709,7 +709,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Lines to consume
 
 		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
 		print '<div class="clearboth"></div>';
 
 		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumeline&token='.newToken();
@@ -1069,7 +1068,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</table>';
-		print '</div>';
 
 		// default warehouse processing
 		print '<script type="text/javascript">
@@ -1085,7 +1083,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Lines to produce
 
 		print '</div>';
-		print '<div class="fichehalfright">';
 		print '<div class="clearboth"></div>';
 
 		$nblinetoproduce = 0;
@@ -1357,7 +1354,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</table>';
-		print '</div>';
 
 		print '</div>';
 		print '</div>';
