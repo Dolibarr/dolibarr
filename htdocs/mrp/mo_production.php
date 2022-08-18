@@ -1014,6 +1014,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 						$i = 1;
 						print '<!-- Enter line to consume -->'."\n";
+						$maxQty = 1;
+						print '<tr data-max-qty="'.$maxQty.'" name="batch_'.$line->id.'_'.$i.'">';
 						print '<tr name="batch_'.$line->id.'_'.$i.'">';
 						// Ref
 						print '<td><span class="opacitymedium">'.$langs->trans("ToConsume").'</span></td>';
@@ -1332,6 +1334,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 						print '<!-- Enter line to produce -->'."\n";
+						$maxQty = 1;
+						print '<tr data-max-qty="'.$maxQty.'" name="batch_'.$line->id.'_'.$i.'">';
 						print '<tr name="batch_'.$line->id.'_'.$i.'">';
 						print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
 						$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
