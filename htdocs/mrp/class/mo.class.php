@@ -1582,9 +1582,7 @@ class Mo extends CommonObject
 	 */
 	public  function getProductUnitCost(&$tmpProduct)
 	{
-		global $user, $langs;
-
-		$uCost = 0;
+		global  $langs;
 
 		$uCost =  (!empty($tmpProduct->cost_price)) ? $tmpProduct->cost_price : $tmpProduct->pmp;
 		if (empty($uCost)) {
@@ -1594,7 +1592,7 @@ class Mo extends CommonObject
 					$uCost = $productFournisseur->fourn_unitprice;
 				}
 			} else {
-				setEventMessage($langs->trans('errorLoadProductFournisseur'));
+				setEventMessage($langs->trans('errorLoadProductSupplier'));
 			}
 		}
 
@@ -1609,7 +1607,7 @@ class Mo extends CommonObject
 	 */
 	public function calculateCostLines()
 	{
-		global $db, $user;
+		global $db, $langs;
 		// foreach lines
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -1620,51 +1618,59 @@ class Mo extends CommonObject
 			$totalPredictedCost = 0;
 
 			foreach ($this->lines as &$line) {
-				// sur la ligne on récupère le produit
+
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				// si produit
-				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-					// on récupere le best price pour ce produit
-					$productunitCost = $this->getProductUnitCost($tmpproduct);
+				if ($result > 0){
 
-					if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
-						// sql to co
-						$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
-						$sql .= ' WHERE m.fk_mo = '.(int) $this->id;
-						$sql .= ' AND  m.fk_product = '.(int) $line->fk_product;
-						$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
-						//echo $sql . '<br>';
-						$resql = $this->db->query($sql);
+					// PRODUCT
+					if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
 
-						if ($resql) {
-							$obj = $this->db->fetch_object($resql);
+						$productunitCost = $this->getProductUnitCost($tmpproduct);
 
-							if (!$Tpredicted[$line->fk_product]) {
-								$Tpredicted[$line->fk_product]['predictedCost'] = $productunitCost * $obj->Allqty;
-								$Tpredicted[$line->fk_product]['Allqty'] = $obj->Allqty;
-								$Tpredicted[$line->fk_product]['productunitCost'] = $productunitCost;
+						if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
+							// sql
+							$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
+							$sql .= ' WHERE m.fk_mo = '.(int) $this->id;
+							$sql .= ' AND  m.fk_product = '.(int) $line->fk_product;
+							$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
+
+							$resql = $this->db->query($sql);
+
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+
+								if (!$Tpredicted[$line->fk_product]) {
+									$Tpredicted[$line->fk_product]['predictedCost'] = $productunitCost * $obj->Allqty;
+									$Tpredicted[$line->fk_product]['Allqty'] = $obj->Allqty;
+									$Tpredicted[$line->fk_product]['productunitCost'] = $productunitCost;
+								}
 							}
 						}
-					}
 
-					if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
-						$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
-						$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
-						$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
-						$sqlConsumed .= ' AND  m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
-						$resql = $this->db->query($sqlConsumed);
+						if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
 
-						if ($resql) {
-							$obj = $this->db->fetch_object($resql);
+							$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
+							$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
+							$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
+							$sqlConsumed .= ' AND  m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
+							$resql = $this->db->query($sqlConsumed);
 
-							if (!$Treal[$line->fk_product]) {
-								$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
+							if ($resql) {
+								$obj = $this->db->fetch_object($resql);
+
+								if (!$Treal[$line->fk_product]) {
+									$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
+								}
 							}
 						}
+
+						// SERVICE
+					} elseif ($tmpproduct->type == $tmpproduct::TYPE_SERVICE) {
+						// This part is to be considered in a later development.
 					}
-				} elseif ($tmpproduct->type == $tmpproduct::TYPE_SERVICE) {
 				}
-			}//end foreach
+
+			}
 
 			foreach ($Tpredicted as $cost) {
 				$totalPredictedCost += $cost['predictedCost'];
@@ -1673,19 +1679,23 @@ class Mo extends CommonObject
 				$totalRealCost += $cost['realCost'];
 			}
 
-			$this->predicted_cost = $totalPredictedCost;
-			$this->real_cost = $totalRealCost;
 
-			// we can change the status before using $this->update()
-			// for now we use a query
+
+			// we could use the update function here. via
+			// $this->predicted_cost = price2num($totalPredictedCost,'MT');
+			// $this->real_cost = price2num($totalRealCost,'MT');
+			// but we should first check the status and change it on the fly if necessary to restore it after the update.
+			// we prefer to go directly through a request to avoid this.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET predicted_cost = ".doubleval($totalPredictedCost). " ,";
-			$sql .= " SET real_cost = ".doubleval($totalRealCost);
+			$sql .= " SET predicted_cost = ".doubleval(price2num($totalPredictedCost,'MT')). " ,";
+			$sql .= " real_cost = ".doubleval(price2num($totalRealCost,'MT'));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
-			if ($resql) {
-				//	var_dump('updated');
+
+			if (!$resql) {
+				setEventMessage($langs->trans("errorCostUpdatingInDb"));
+
 			}
 		}
 	}
