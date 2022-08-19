@@ -2920,6 +2920,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);	// InfraS add
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -7145,7 +7147,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if ($object->fetch_optionals() > 0) {
 					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $object->array_options['options_'.$key];
+							$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = $extrafields->showOutputField($key, $object->array_options['options_'.$key], '', $object->table_element);
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_date($object->array_options['options_'.$key], 'day');
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LOCALE__'] = dol_print_date($object->array_options['options_'.$key], 'day', 'tzserver', $outputlangs);
@@ -7260,7 +7262,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) {
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
-
+		if ($object->element =='facture') {
+			if (is_object($object)) {
+				$totalpaye			= $object->getSommePaiement();
+				$totalcreditnotes	= $object->getSumCreditNotesUsed();
+				$totaldeposits		= $object->getSumDepositsUsed();
+				$resteapayer		= price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+			}
+			$substitutionarray['__FACDATE__']			= is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '') : '';
+			$substitutionarray['__FACDATELIMREG__']		= is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '') : '';
+			$substitutionarray['__FACTOTALTTC_2D__']	= is_object($object) ? number_format($object->total_ttc, 2, ',', ' ') : '';
+			$substitutionarray['__FACTOTALHT_2D__']		= is_object($object) ? number_format($object->total_ht, 2, ',', ' ') : '';
+			$substitutionarray['__FACTOTALHT_2DC__']	= is_object($object) ? price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+			$substitutionarray['__FACTOTALTTC_2DC__']	= is_object($object) ? price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+			$substitutionarray['__FACREST_2D__']		= is_object($object) ? number_format($resteapayer, 2, ',', ' ') : '';
+			$substitutionarray['__FACREST_2DC__']		= is_object($object) ? price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto') : '';
+		}
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
@@ -8678,6 +8695,9 @@ function printCommonFooter($zone = 'private')
 								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
 								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
 								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
+
+								// Add 'field required' class on closest td for all input elements : input, textarea and select
+								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
 						}
 					}
