@@ -67,6 +67,9 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
+
+$isStockServiceHandling = (getDolGlobalString("STOCK_SUPPORTS_SERVICES") == 1) ? 1 : 0;
+
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) {
@@ -690,6 +693,262 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
+ 	// TO PRODUCE
+	print load_fiche_titre($langs->trans('Production'), $newcardbutton, '', 0, '', '');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
+
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Product").'</td>';
+	print '<td class="right">'.$langs->trans("Qty").'</td>';
+	if ($permissiontoupdatecost) {
+		if (empty($bomcost)) {
+			print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+		} else {
+			print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
+		}
+	}
+	print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
+	print '<td>';
+	if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+		print $langs->trans("Warehouse");
+	}
+	print '</td>';
+	if (isModEnabled('productbatch')) {
+		print '<td>';
+		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+			print $langs->trans("Batch");
+		}
+		print '</td>';
+		print '<td></td>';
+	}
+	print '</tr>';
+
+	if ($action == 'addproduceline') {
+		print '<!-- Add line to produce -->'."\n";
+		print '<tr class="liste_titre">';
+		print '<td>';
+		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+		print '</td>';
+		// Qty
+		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+		// Cost price
+		print '<td></td>';
+
+		// Qty already produced
+		print '<td colspan="2">';
+		// Warehouse
+		print '<input type="submit" class="button buttongen button-add" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button buttongen button-cancel" name="canceladdproducelinebutton" value="'.$langs->trans("Cancel").'">';
+		print '</td>';
+		// Lot - serial
+		if (isModEnabled('productbatch')) {
+			print '<td></td>';
+		}
+		// Action
+		if ($permissiontodelete) {
+			print '<td></td>';
+		}
+		print '</tr>';
+	}
+
+	if (!empty($object->lines)) {
+		$nblinetoproduce = 0;
+		foreach ($object->lines as $line) {
+			if ($line->role == 'toproduce') {
+				$nblinetoproduce++;
+			}
+		}
+
+		$nblinetoproducecursor = 0;
+		foreach ($object->lines as $line) {
+			if ($line->role == 'toproduce') {
+				$i = 1;
+
+				$nblinetoproducecursor++;
+
+				$tmpproduct = new Product($db);
+				$tmpproduct->fetch($line->fk_product);
+
+				$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
+				$alreadyproduced = 0;
+				foreach ($arrayoflines as $line2) {
+					$alreadyproduced += $line2['qty'];
+				}
+
+				$suffix = '_'.$line->id;
+				print '<!-- Line to dispatch '.$suffix.' -->'."\n";
+				// hidden fields for js function
+				print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
+				print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
+
+				print '<tr>';
+				print '<td>'.$tmpproduct->getNomUrl(1);
+				print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
+				print '</td>';
+				print '<td class="right">'.$line->qty.'</td>';
+				if ($permissiontoupdatecost) {
+					// Defined $manufacturingcost
+					$manufacturingcost = 0;
+					if ($object->mrptype == 0) {	// If MO is a "Manufacture" type (and not "Disassemble"
+						$manufacturingcost = $bomcost;
+						if (empty($manufacturingcost)) {
+							$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+						}
+						if (empty($manufacturingcost)) {
+							$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
+						}
+					}
+
+					print '<td class="right nowraponall">';
+					if ($manufacturingcost) {
+						print price($manufacturingcost);
+					}
+					print '</td>';
+				}
+				print '<td class="right nowraponall">';
+				if ($alreadyproduced) {
+					print '<script>';
+					print 'jQuery(document).ready(function() {
+							jQuery("#expandtoproduce'.$line->id.'").click(function() {
+								console.log("Expand mrp_production line '.$line->id.'");
+								jQuery(".expanddetailtoproduce'.$line->id.'").toggle();';
+					if ($nblinetoproduce == $nblinetoproducecursor) {
+						print 'if (jQuery("#tablelinestoproduce").hasClass("nobottom")) { jQuery("#tablelinestoproduce").removeClass("nobottom"); } else { jQuery("#tablelinestoproduce").addClass("nobottom"); }';
+					}
+					print '
+							});
+						});';
+					print '</script>';
+					if (empty($conf->use_javascript_ajax)) {
+						print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
+					}
+					print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
+					if (empty($conf->use_javascript_ajax)) {
+						print '</a>';
+					}
+				}
+				print ' '.$alreadyproduced;
+				print '</td>';
+				print '<td>'; // Warehouse
+				print '</td>';
+				if (isModEnabled('productbatch')) {
+					print '<td></td>'; // Lot
+				}
+
+				if ($permissiontodelete && $line->origin_type == 'free') {
+					$href = $_SERVER["PHP_SELF"];
+					$href .= '?id='.$object->id;
+					$href .= '&action=deleteline';
+					$href .= '&lineid='.$line->id;
+					print '<td class="center">';
+					print '<a class="reposition" href="'.$href.'">';
+					print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
+					print '</a>';
+					print '</td>';
+				}
+				print '</tr>';
+
+				// Show detailed of already consumed with js code to collapse
+				foreach ($arrayoflines as $line2) {
+					print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
+					print '<td>';
+					$tmpstockmovement->id = $line2['fk_stock_movement'];
+					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$tmpstockmovement->id.'">'.img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"').'</a>';
+					print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
+					print '</td>';
+					// Qty
+					print '<td></td>';
+					// Cost price
+					if ($permissiontoupdatecost) {
+						print '<td></td>';
+					}
+					// Qty already produced
+					print '<td class="right">'.$line2['qty'].'</td>';
+					print '<td class="tdoverflowmax150">';
+					if ($line2['fk_warehouse'] > 0) {
+						$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
+						if ($result > 0) {
+							print $tmpwarehouse->getNomUrl(1);
+						}
+					}
+					print '</td>';
+					if (isModEnabled('productbatch')) {
+						print '<td>';
+						if ($line2['batch'] != '') {
+							$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+							print $tmpbatch->getNomUrl(1);
+						}
+						print '</td>';
+						print '<td></td>';
+					}
+					print '</tr>';
+				}
+
+				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print '<!-- Enter line to produce -->'."\n";
+					print '<tr name="batch_'.$line->id.'_'.$i.'">';
+					print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
+					$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
+					if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
+						$preselected = 0;
+					}
+					print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+					if ($permissiontoupdatecost) {
+						// Defined $manufacturingcost
+						$manufacturingcost = 0;
+						if ($object->mrptype == 0) {	// If MO is a "Manufacture" type (and not "Disassemble"
+							$manufacturingcost = $bomcost;
+							if (empty($manufacturingcost)) {
+								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
+							}
+							if (empty($manufacturingcost)) {
+								$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
+							}
+						}
+
+						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+							$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : ($manufacturingcost ? price($manufacturingcost) : ''));
+							print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
+						} else {
+							print '<td><input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.($manufacturingcost ? $manufacturingcost : '').'"></td>';
+						}
+					}
+					print '<td></td>';
+					print '<td>';
+					if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+						$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
+						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth200 csswarehouse_'.$line->id.'_'.$i);
+					} else {
+						print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+					}
+					print '</td>';
+					if (isModEnabled('productbatch')) {
+						print '<td>';
+						if ($tmpproduct->status_batch) {
+							$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
+							print '<input type="text" class="width50" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
+						}
+						print '</td>';
+						// Batch number in same column than the stock movement picto
+						print '<td>';
+						if ($tmpproduct->status_batch) {
+							$type = 'batch';
+							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
+						}
+						print '</td>';
+					}
+					print '</tr>';
+				}
+			}
+		}
+	}
+
+	print '</table>';
+	// END TO PRODUCE
+
+
 	/*
 	 * Lines
 	 */
@@ -808,8 +1067,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</tr>';
 		}
 
-		// Lines to consume
-
+		// LINES TO CONSUME
 		if (!empty($object->lines)) {
 			$nblinetoconsume = 0;
 
@@ -818,393 +1076,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$tmpprod = new Product($db);
 				$tmpprod->fetch($line->fk_product);
+				// si nous ne gerons pas les stock service
+				// les lignes de services vont apparaître dans la liste à consommer au même titre que les produits
+				//$handleingTest = $isStockServiceHandling ? $line->role == 'toconsume' && $tmpprod->isProduct() : $line->role == 'toconsume' ;
 
-				if ($line->role == 'toconsume' && $tmpprod->isProduct()) {
-					$nblinetoconsume++;
-				}
-			}
-
-
-			$nblinetoconsumecursor = 0;
-			foreach ($object->lines as $line) {
-				if ($line->role == 'toconsume') {
-					$nblinetoconsumecursor++;
-
-					$tmpproduct = new Product($db);
-					$tmpproduct->fetch($line->fk_product);
-
-					if ($tmpproduct->isProduct()) {
-
-
-					$linecost = price2num($tmpproduct->pmp, 'MT');
-
-					if ($object->qty > 0) {
-						// add free consume line cost to bomcost
-						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-						if (empty($costprice)) {
-							require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
-							$productFournisseur = new ProductFournisseur($db);
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								$costprice = $productFournisseur->fourn_unitprice;
-							} else {
-								$costprice = 0;
-							}
-						}
-						$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
-						$bomcost += $linecost;
+				if (!$isStockServiceHandling){
+					if ($line->role == 'toconsume' && $tmpprod->isProduct()){
+						$nblinetoconsume++;
 					}
-
-					$bomcost = price2num($bomcost, 'MU');
-
-					$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-					$alreadyconsumed = 0;
-					foreach ($arrayoflines as $line2) {
-						$alreadyconsumed += $line2['qty'];
-					}
-
-					$suffix = '_' . $line->id;
-					print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
-					// hidden fields for js function
-					print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $line->qty . '">';
-					print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . $alreadyconsumed . '">';
-
-					print '<tr>';
-					// Product
-					print '<td>' . $tmpproduct->getNomUrl(1);
-					print '<br><span class="opacitymedium small">' . $tmpproduct->label . '</span>';
-					print '</td>';
-					// Qty
-					print '<td class="right nowraponall">';
-					$help = '';
-					if ($line->qty_frozen) {
-						$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("QuantityFrozen") . '</strong>: ' . yn(1) . ' (' . $langs->trans("QuantityConsumedInvariable") . ')';
-					}
-					if ($line->disable_stock_change) {
-						$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("DisableStockChange") . '</strong>: ' . yn(1) . ' (' . (($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")) . ')';
-					}
-					if ($help) {
-						print $form->textwithpicto($line->qty, $help, -1);
-					} else {
-						print price2num($line->qty, 'MS');
-					}
-					print '</td>';
-					// Cost price
-					if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-						print '<td class="right nowraponall">';
-						print price($linecost);
-						print '</td>';
-					}
-					// Already consumed
-					print '<td class="right">';
-					if ($alreadyconsumed) {
-						print '<script>';
-						print 'jQuery(document).ready(function() {
-								jQuery("#expandtoproduce' . $line->id . '").click(function() {
-									console.log("Expand mrp_production line ' . $line->id . '");
-									jQuery(".expanddetail' . $line->id . '").toggle();';
-						if ($nblinetoconsume == $nblinetoconsumecursor) {    // If it is the last line
-							print 'if (jQuery("#tablelines").hasClass("nobottom")) { jQuery("#tablelines").removeClass("nobottom"); } else { jQuery("#tablelines").addClass("nobottom"); }';
-						}
-						print '
-								});
-							});';
-						print '</script>';
-						if (empty($conf->use_javascript_ajax)) {
-							print '<a href="' . $_SERVER["PHP_SELF"] . '?collapse=' . $collapse . ',' . $line->id . '">';
-						}
-						print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce' . $line->id . '"');
-						if (empty($conf->use_javascript_ajax)) {
-							print '</a>';
-						}
-					} else {
-						if ($nblinetoconsume == $nblinetoconsumecursor) {    // If it is the last line
-							print '<script>jQuery("#tablelines").removeClass("nobottom");</script>';
-						}
-					}
-					print ' ' . price2num($alreadyconsumed, 'MS');
-					print '</td>';
-					// Warehouse
-					print '<td>';
-					print '</td>';
-					// Stock
-					if (isModEnabled('stock')) {
-						print '<td class="nowraponall right">';
-						if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
-							print img_warning($langs->trans('StockTooLow')) . ' ';
-						}
-						print price2num($tmpproduct->stock_reel, 'MS'); // Available
-						print '</td>';
-					}
-					// Lot
-					if (isModEnabled('productbatch')) {
-						print '<td></td>';
-					}
-					// Action delete line
-					if ($permissiontodelete) {
-						$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id);
-						print '<td class="center">';
-						print '<a class="reposition" href="' . $href . '">';
-						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
-						print '</a>';
-						print '</td>';
-					}
-					print '</tr>';
-
-					// Show detailed of already consumed with js code to collapse
-					foreach ($arrayoflines as $line2) {
-						print '<tr class="expanddetail' . $line->id . ' hideobject opacitylow">';
-
-						// Date
-						print '<td>';
-						$tmpstockmovement->id = $line2['fk_stock_movement'];
-						print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?search_ref=' . $tmpstockmovement->id . '">' . img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"') . '</a>';
-						print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
-						print '</td>';
-
-						// Already consumed
-						print '<td></td>';
-
-						// Qty
-						print '<td class="right">' . $line2['qty'] . '</td>';
-
-						// Cost price
-						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-							print '<td></td>';
-						}
-
-						// Warehouse
-						print '<td class="tdoverflowmax150">';
-						if ($line2['fk_warehouse'] > 0) {
-							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
-							if ($result > 0) {
-								print $tmpwarehouse->getNomUrl(1);
-							}
-						}
-						print '</td>';
-
-						// Stock
-						if (isModEnabled('stock')) {
-							print '<td></td>';
-						}
-
-						// Lot Batch
-						if (isModEnabled('productbatch')) {
-							print '<td>';
-							if ($line2['batch'] != '') {
-								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
-								print $tmpbatch->getNomUrl(1);
-							}
-							print '</td>';
-						}
-
-						// Action delete line
-						if ($permissiontodelete) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id) . '&fk_movement=' . ((int)$line2['fk_stock_movement']);
-							print '<td class="center">';
-							print '<a class="reposition" href="' . $href . '">';
-							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
-							print '</a>';
-							print '</td>';
-						}
-
-						print '</tr>';
-					}
-
-					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-						$i = 1;
-						print '<!-- Enter line to consume -->' . "\n";
-						print '<tr name="batch_' . $line->id . '_' . $i . '">';
-						// Ref
-						print '<td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
-						$preselected = (GETPOSTISSET('qty-' . $line->id . '-' . $i) ? GETPOST('qty-' . $line->id . '-' . $i) : max(0, $line->qty - $alreadyconsumed));
-						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
-							$preselected = 0;
-						}
-
-						$disable = '';
-						if (!empty($conf->global->MRP_NEVER_CONSUME_MORE_THAN_EXPECTED) && ($line->qty - $alreadyconsumed) <= 0) {
-							$disable = 'disabled';
-						}
-
-						// Qty
-						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
-
-						// Cost
-						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-							print '<td></td>';
-						}
-
-						// Already consumed
-						print '<td></td>';
-
-						// Warehouse
-						print '<td>';
-						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-							if (empty($line->disable_stock_change)) {
-								$preselected = (GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i) ? GETPOST('idwarehouse-' . $line->id . '-' . $i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
-								print $formproduct->selectWarehouses($preselected, 'idwarehouse-' . $line->id . '-' . $i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth200 csswarehouse_' . $line->id . '_' . $i);
-							} else {
-								print '<span class="opacitymedium">' . $langs->trans("DisableStockChange") . '</span>';
-							}
-						} else {
-							print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
-						}
-						print '</td>';
-
-						// Stock
-						if (isModEnabled('stock')) {
-							print '<td></td>';
-						}
-
-						// Lot / Batch
-						if (isModEnabled('productbatch')) {
-							print '<td>';
-							if ($tmpproduct->status_batch) {
-								$preselected = (GETPOSTISSET('batch-' . $line->id . '-' . $i) ? GETPOST('batch-' . $line->id . '-' . $i) : '');
-								print '<input type="text" class="width50" name="batch-' . $line->id . '-' . $i . '" value="' . $preselected . '" list="batch-' . $line->id . '-' . $i . '">';
-								print $formproduct->selectLotDataList('batch-' . $line->id . '-' . $i, 0, $line->fk_product, '', '');
-
-								$type = 'batch';
-								print ' ' . img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . ((int)$line->id) . ', \'' . dol_escape_js($type) . '\', \'qtymissingconsume\')"');
-							}
-							print '</td>';
-						}
-
-						// Action delete line
-						if ($permissiontodelete) {
-							print '<td></td>';
-						}
-
-						print '</tr>';
-					}
-				} // if product
-				} // if toconsume
-			}
-		}
-
-		print '</table>';
-
-		// default warehouse processing
-		print '<script type="text/javascript">
-			$(document).ready(function () {
-				$("select[name=fk_default_warehouse]").change(function() {
-                    var fk_default_warehouse = $("option:selected", this).val();
-					$("select[name^=idwarehouse-]").val(fk_default_warehouse).change();
-                });
-			});
-		</script>';
-
-       //---------------------------------------ATM INSERTION--------------------------------------------------------------
-		// TITLE TO TEMPS CONSOMMÉS STARTING TABLE
-		$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumelineService&token='.newToken();
-		$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
-		$parameters = array('morecss'=>'reposition');
-
-		$newcardbutton = '';
-		if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLinesService'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
-		}
-
-		print load_fiche_titre($langs->trans('TimeToConsume'), $newcardbutton, '', 0, '', '', '');
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder noshadow centpercent nobottom">';
-
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Service").'</td>';
-		// expected workload
-		print '<td class="right">'.$langs->trans("expectedworkload").'</td>';
-
-		// consumed times
-		print '<td class="right">'.$langs->trans("consumedTimes").'</td>';
-
-		// User
-		print '<td class="right">'.$langs->trans("User").'</td>';
-
-		// Warehouse
-		/*print '<td>';
-		 if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-			print $langs->trans("Warehouse");
-
-			// Select warehouse to force it everywhere
-			if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-				$listwarehouses = $tmpwarehouse->list_array(1);
-				if (count($listwarehouses) > 1) {
-					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
-				} elseif (count($listwarehouses) == 1) {
-					print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
-				}
-			}
-		}
-		print '</td>';
-		*/
-		/*if (isModEnabled('stock')) {
-			// Available
-			print '<td align="right">';
-			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-				print $langs->trans("Stock");
-			}
-			print '</td>';
-		}
-		// Lot - serial
-		if (isModEnabled('productbatch')) {
-			print '<td>';
-			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-				print $langs->trans("Batch");
-			}
-			print '</td>';
-		}*/
-		// Action
-		if ($permissiontodelete) {
-			print '<td></td>';
-		}
-		print '</tr>';
-
-		if ($action == 'addconsumelineService') { //@todo change action name
-			print '<!-- Add line to consume -->'."\n";
-			print '<tr class="liste_titre">';
-			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '1', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
-			print '</td>';
-			// Qty
-			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-
-			// Qty already consumed
-			print '<td colspan="2">';
-			// Warehouse
-			print '<input type="submit" class="button buttongen button-add" name="addconsumelineServicebutton" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelineServicebutton" value="'.$langs->trans("Cancel").'">';
-			print '</td>';
-			/*if (isModEnabled('stock')) {
-				print '<td></td>';
-			}
-			// Lot - serial
-			if (isModEnabled('productbatch')) {
-				print '<td></td>';
-			}*/
-			// Action
-			if ($permissiontodelete) {
-				print '<td></td>';
-			}
-			print '</tr>';
-		}
-
-		// Lines to consume
-
-		if (!empty($object->lines)) {
-			$nblinetoconsume = 0;
-
-
-				foreach ($object->lines as $line) {
-
-					$tmpprod = new Product($db);
-					$tmpprod->fetch($line->fk_product);
-					if ($line->role == 'toconsume' && $tmpproduct->isService()) {
+				}else{
+					if ($line->role == 'toconsume'){
 						$nblinetoconsume++;
 					}
 				}
-			$nblinetoconsumecursor = 0;
 
+			}
+
+
+			$nblinetoconsumecursor = 0;
 			foreach ($object->lines as $line) {
 				if ($line->role == 'toconsume') {
 					$nblinetoconsumecursor++;
@@ -1212,14 +1101,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
 
-					if ($tmpproduct->isService()) {
+					// si je gère les stocks service j'affiche tout sinon si je suis un produit , je l'affiche
+					$traitment = ($isStockServiceHandling) ? 1 : ($tmpproduct->type == '0') ? 1 : 0;
+
+					if ($traitment) {
+
 
 						$linecost = price2num($tmpproduct->pmp, 'MT');
 
 						if ($object->qty > 0) {
 							// add free consume line cost to bomcost
-							//$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-							/*if (empty($costprice)) {
+							$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+							if (empty($costprice)) {
 								require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 								$productFournisseur = new ProductFournisseur($db);
 								if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
@@ -1227,12 +1120,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								} else {
 									$costprice = 0;
 								}
-							}*/
-							//$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
-							//$bomcost += $linecost;
+							}
+							$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
+							$bomcost += $linecost;
 						}
 
-						//$bomcost = price2num($bomcost, 'MU');
+						$bomcost = price2num($bomcost, 'MU');
 
 						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 						$alreadyconsumed = 0;
@@ -1251,43 +1144,42 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td>' . $tmpproduct->getNomUrl(1);
 						print '<br><span class="opacitymedium small">' . $tmpproduct->label . '</span>';
 						print '</td>';
-						// Qty  ExpectedWorkload
+						// Qty
 						print '<td class="right nowraponall">';
 						$help = '';
-						/*if ($line->qty_frozen) {
+						if ($line->qty_frozen) {
 							$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("QuantityFrozen") . '</strong>: ' . yn(1) . ' (' . $langs->trans("QuantityConsumedInvariable") . ')';
 						}
 						if ($line->disable_stock_change) {
 							$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("DisableStockChange") . '</strong>: ' . yn(1) . ' (' . (($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")) . ')';
-						}*/
+						}
 						if ($help) {
 							print $form->textwithpicto($line->qty, $help, -1);
 						} else {
 							print price2num($line->qty, 'MS');
 						}
 						print '</td>';
-						// consumedTimes
+						// Cost price
 						if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-							print '<td class="right nowraponall1">';
+							print '<td class="right nowraponall">';
 							print price($linecost);
 							print '</td>';
 						}
-						// Already consumed (consumedTimes)
+						// Already consumed
 						print '<td class="right">';
 						if ($alreadyconsumed) {
 							print '<script>';
 							print 'jQuery(document).ready(function() {
-								jQuery("#expandtoproduce' . $line->id . '").click(function() {
-									console.log("Expand mrp_production line ' . $line->id . '");
-									jQuery(".expanddetail' . $line->id . '").toggle();';
+									jQuery("#expandtoproduce' . $line->id . '").click(function() {
+										console.log("Expand mrp_production line ' . $line->id . '");
+										jQuery(".expanddetail' . $line->id . '").toggle();';
 							if ($nblinetoconsume == $nblinetoconsumecursor) {    // If it is the last line
 								print 'if (jQuery("#tablelines").hasClass("nobottom")) { jQuery("#tablelines").removeClass("nobottom"); } else { jQuery("#tablelines").addClass("nobottom"); }';
 							}
 							print '
-								});
-							});';
+									});
+								});';
 							print '</script>';
-
 							if (empty($conf->use_javascript_ajax)) {
 								print '<a href="' . $_SERVER["PHP_SELF"] . '?collapse=' . $collapse . ',' . $line->id . '">';
 							}
@@ -1302,10 +1194,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print ' ' . price2num($alreadyconsumed, 'MS');
 						print '</td>';
-						// ---
-						print '<td>';
-						print '</td>';
-						/*// Warehouse
+						// Warehouse
 						print '<td>';
 						print '</td>';
 						// Stock
@@ -1320,7 +1209,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						// Lot
 						if (isModEnabled('productbatch')) {
 							print '<td></td>';
-						}*/
+						}
 						// Action delete line
 						if ($permissiontodelete) {
 							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id);
@@ -1459,12 +1348,397 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							print '</tr>';
 						}
-					} // if SERVICE
+				} // if product
 				} // if toconsume
 			}
 		}
 
 		print '</table>';
+
+		// default warehouse processing
+		print '<script type="text/javascript">
+			$(document).ready(function () {
+				$("select[name=fk_default_warehouse]").change(function() {
+                    var fk_default_warehouse = $("option:selected", this).val();
+					$("select[name^=idwarehouse-]").val(fk_default_warehouse).change();
+                });
+			});
+		</script>';
+
+       //---------------------------------------ATM INSERTION--------------------------------------------------------------
+		if (!$isStockServiceHandling){
+			// TITLE TO TEMPS CONSOMMÉS STARTING TABLE
+			$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumelineService&token='.newToken();
+			$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
+			$parameters = array('morecss'=>'reposition');
+
+			$newcardbutton = '';
+			if ($action != 'consumeorproduce' && $action != 'consumeandproduceall') {
+				$newcardbutton = dolGetButtonTitle($langs->trans('AddNewConsumeLinesService'), '', 'fa fa-plus-circle size15x', $url, '', $permissiontoaddaconsumeline, $parameters);
+			}
+
+			print load_fiche_titre($langs->trans('TimeToConsume'), $newcardbutton, '', 0, '', '', '');
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder noshadow centpercent nobottom">';
+
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Service").'</td>';
+			// expected workload
+			print '<td class="right">'.$langs->trans("expectedworkload").'</td>';
+
+			// consumed times
+			print '<td class="right">'.$langs->trans("consumedTimes").'</td>';
+
+			// User
+			print '<td class="right">'.$langs->trans("User").'</td>';
+
+			// Warehouse
+			/*print '<td>';
+			 if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+				print $langs->trans("Warehouse");
+
+				// Select warehouse to force it everywhere
+				if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					$listwarehouses = $tmpwarehouse->list_array(1);
+					if (count($listwarehouses) > 1) {
+						print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+					} elseif (count($listwarehouses) == 1) {
+						print '<br><span class="opacitymedium">' . $langs->trans("ForceTo") . '</span> ' . $form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth300', 1);
+					}
+				}
+			}
+			print '</td>';
+			*/
+			/*if (isModEnabled('stock')) {
+				// Available
+				print '<td align="right">';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("Stock");
+				}
+				print '</td>';
+			}
+			// Lot - serial
+			if (isModEnabled('productbatch')) {
+				print '<td>';
+				if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+					print $langs->trans("Batch");
+				}
+				print '</td>';
+			}*/
+			// Action
+			if ($permissiontodelete) {
+				print '<td></td>';
+			}
+			print '</tr>';
+
+			if ($action == 'addconsumelineService') { //@todo change action name
+				print '<!-- Add line to consume -->'."\n";
+				print '<tr class="liste_titre">';
+				print '<td>';
+				print $form->select_produits('', 'productidtoadd', '1', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+				print '</td>';
+				// Qty
+				print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
+
+				// Qty already consumed
+				print '<td colspan="2">';
+				// Warehouse
+				print '<input type="submit" class="button buttongen button-add" name="addconsumelineServicebutton" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelineServicebutton" value="'.$langs->trans("Cancel").'">';
+				print '</td>';
+				/*if (isModEnabled('stock')) {
+					print '<td></td>';
+				}
+				// Lot - serial
+				if (isModEnabled('productbatch')) {
+					print '<td></td>';
+				}*/
+				// Action
+				if ($permissiontodelete) {
+					print '<td></td>';
+				}
+				print '</tr>';
+			}
+
+			// Lines to consume
+
+			if (!empty($object->lines)) {
+				$nblinetoconsume = 0;
+
+
+				foreach ($object->lines as $line) {
+
+					$tmpprod = new Product($db);
+					$tmpprod->fetch($line->fk_product);
+					if ($line->role == 'toconsume' && $tmpproduct->isService()) {
+						$nblinetoconsume++;
+					}
+				}
+				$nblinetoconsumecursor = 0;
+
+				foreach ($object->lines as $line) {
+					if ($line->role == 'toconsume') {
+						$nblinetoconsumecursor++;
+
+						$tmpproduct = new Product($db);
+						$tmpproduct->fetch($line->fk_product);
+
+						if ($tmpproduct->isService()) {
+
+							$linecost = price2num($tmpproduct->pmp, 'MT');
+
+							if ($object->qty > 0) {
+								// add free consume line cost to bomcost
+								//$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+								/*if (empty($costprice)) {
+									require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
+									$productFournisseur = new ProductFournisseur($db);
+									if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+										$costprice = $productFournisseur->fourn_unitprice;
+									} else {
+										$costprice = 0;
+									}
+								}*/
+								//$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
+								//$bomcost += $linecost;
+							}
+
+							//$bomcost = price2num($bomcost, 'MU');
+
+							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
+							$alreadyconsumed = 0;
+							foreach ($arrayoflines as $line2) {
+								$alreadyconsumed += $line2['qty'];
+							}
+
+							$suffix = '_' . $line->id;
+							print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+							// hidden fields for js function
+							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $line->qty . '">';
+							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . $alreadyconsumed . '">';
+
+							print '<tr>';
+							// Product
+							print '<td>' . $tmpproduct->getNomUrl(1);
+							print '<br><span class="opacitymedium small">' . $tmpproduct->label . '</span>';
+							print '</td>';
+							// Qty  ExpectedWorkload
+							print '<td class="right nowraponall">';
+							$help = '';
+							/*if ($line->qty_frozen) {
+								$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("QuantityFrozen") . '</strong>: ' . yn(1) . ' (' . $langs->trans("QuantityConsumedInvariable") . ')';
+							}
+							if ($line->disable_stock_change) {
+								$help .= ($help ? '<br>' : '') . '<strong>' . $langs->trans("DisableStockChange") . '</strong>: ' . yn(1) . ' (' . (($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")) . ')';
+							}*/
+							if ($help) {
+								print $form->textwithpicto($line->qty, $help, -1);
+							} else {
+								print price2num($line->qty, 'MS');
+							}
+							print '</td>';
+							// consumedTimes
+							if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
+								print '<td class="right nowraponall1">';
+								print price($linecost);
+								print '</td>';
+							}
+							// Already consumed (consumedTimes)
+							print '<td class="right">';
+							if ($alreadyconsumed) {
+								print '<script>';
+								print 'jQuery(document).ready(function() {
+								jQuery("#expandtoproduce' . $line->id . '").click(function() {
+									console.log("Expand mrp_production line ' . $line->id . '");
+									jQuery(".expanddetail' . $line->id . '").toggle();';
+								if ($nblinetoconsume == $nblinetoconsumecursor) {    // If it is the last line
+									print 'if (jQuery("#tablelines").hasClass("nobottom")) { jQuery("#tablelines").removeClass("nobottom"); } else { jQuery("#tablelines").addClass("nobottom"); }';
+								}
+								print '
+								});
+							});';
+								print '</script>';
+
+								if (empty($conf->use_javascript_ajax)) {
+									print '<a href="' . $_SERVER["PHP_SELF"] . '?collapse=' . $collapse . ',' . $line->id . '">';
+								}
+								print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce' . $line->id . '"');
+								if (empty($conf->use_javascript_ajax)) {
+									print '</a>';
+								}
+							} else {
+								if ($nblinetoconsume == $nblinetoconsumecursor) {    // If it is the last line
+									print '<script>jQuery("#tablelines").removeClass("nobottom");</script>';
+								}
+							}
+							print ' ' . price2num($alreadyconsumed, 'MS');
+							print '</td>';
+							// ---
+							print '<td>';
+							print '</td>';
+							/*// Warehouse
+							print '<td>';
+							print '</td>';
+							// Stock
+							if (isModEnabled('stock')) {
+								print '<td class="nowraponall right">';
+								if ($tmpproduct->stock_reel < ($line->qty - $alreadyconsumed)) {
+									print img_warning($langs->trans('StockTooLow')) . ' ';
+								}
+								print price2num($tmpproduct->stock_reel, 'MS'); // Available
+								print '</td>';
+							}
+							// Lot
+							if (isModEnabled('productbatch')) {
+								print '<td></td>';
+							}*/
+							// Action delete line
+							if ($permissiontodelete) {
+								$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id);
+								print '<td class="center">';
+								print '<a class="reposition" href="' . $href . '">';
+								print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
+								print '</a>';
+								print '</td>';
+							}
+							print '</tr>';
+
+							// Show detailed of already consumed with js code to collapse
+							foreach ($arrayoflines as $line2) {
+								print '<tr class="expanddetail' . $line->id . ' hideobject opacitylow">';
+
+								// Date
+								print '<td>';
+								$tmpstockmovement->id = $line2['fk_stock_movement'];
+								print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?search_ref=' . $tmpstockmovement->id . '">' . img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"') . '</a>';
+								print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
+								print '</td>';
+
+								// Already consumed
+								print '<td></td>';
+
+								// Qty
+								print '<td class="right">' . $line2['qty'] . '</td>';
+
+								// Cost price
+								if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
+									print '<td></td>';
+								}
+
+								// Warehouse
+								print '<td class="tdoverflowmax150">';
+								if ($line2['fk_warehouse'] > 0) {
+									$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
+									if ($result > 0) {
+										print $tmpwarehouse->getNomUrl(1);
+									}
+								}
+								print '</td>';
+
+								// Stock
+								if (isModEnabled('stock')) {
+									print '<td></td>';
+								}
+
+								// Lot Batch
+								if (isModEnabled('productbatch')) {
+									print '<td>';
+									if ($line2['batch'] != '') {
+										$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+										print $tmpbatch->getNomUrl(1);
+									}
+									print '</td>';
+								}
+
+								// Action delete line
+								if ($permissiontodelete) {
+									$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id) . '&fk_movement=' . ((int)$line2['fk_stock_movement']);
+									print '<td class="center">';
+									print '<a class="reposition" href="' . $href . '">';
+									print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
+									print '</a>';
+									print '</td>';
+								}
+
+								print '</tr>';
+							}
+
+							if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
+								$i = 1;
+								print '<!-- Enter line to consume -->' . "\n";
+								print '<tr name="batch_' . $line->id . '_' . $i . '">';
+								// Ref
+								print '<td><span class="opacitymedium">' . $langs->trans("ToConsume") . '</span></td>';
+								$preselected = (GETPOSTISSET('qty-' . $line->id . '-' . $i) ? GETPOST('qty-' . $line->id . '-' . $i) : max(0, $line->qty - $alreadyconsumed));
+								if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-' . $line->id . '-' . $i)) {
+									$preselected = 0;
+								}
+
+								$disable = '';
+								if (!empty($conf->global->MRP_NEVER_CONSUME_MORE_THAN_EXPECTED) && ($line->qty - $alreadyconsumed) <= 0) {
+									$disable = 'disabled';
+								}
+
+								// Qty
+								print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
+
+								// Cost
+								if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
+									print '<td></td>';
+								}
+
+								// Already consumed
+								print '<td></td>';
+
+								// Warehouse
+								print '<td>';
+								if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+									if (empty($line->disable_stock_change)) {
+										$preselected = (GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i) ? GETPOST('idwarehouse-' . $line->id . '-' . $i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
+										print $formproduct->selectWarehouses($preselected, 'idwarehouse-' . $line->id . '-' . $i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth200 csswarehouse_' . $line->id . '_' . $i);
+									} else {
+										print '<span class="opacitymedium">' . $langs->trans("DisableStockChange") . '</span>';
+									}
+								} else {
+									print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
+								}
+								print '</td>';
+
+								// Stock
+								if (isModEnabled('stock')) {
+									print '<td></td>';
+								}
+
+								// Lot / Batch
+								if (isModEnabled('productbatch')) {
+									print '<td>';
+									if ($tmpproduct->status_batch) {
+										$preselected = (GETPOSTISSET('batch-' . $line->id . '-' . $i) ? GETPOST('batch-' . $line->id . '-' . $i) : '');
+										print '<input type="text" class="width50" name="batch-' . $line->id . '-' . $i . '" value="' . $preselected . '" list="batch-' . $line->id . '-' . $i . '">';
+										print $formproduct->selectLotDataList('batch-' . $line->id . '-' . $i, 0, $line->fk_product, '', '');
+
+										$type = 'batch';
+										print ' ' . img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . ((int)$line->id) . ', \'' . dol_escape_js($type) . '\', \'qtymissingconsume\')"');
+									}
+									print '</td>';
+								}
+
+								// Action delete line
+								if ($permissiontodelete) {
+									print '<td></td>';
+								}
+
+								print '</tr>';
+							}
+						} // if SERVICE
+					} // if toconsume
+				}
+			}
+
+			print '</table>';
+		}
+
 
 		//--------------------------------------END ATM InSERTION -------------------------------------------------------------
 
@@ -1496,258 +1770,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		print load_fiche_titre($langs->trans('Production'), $newcardbutton, '', 0, '', '');
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelinestoproduce" class="noborder noshadow nobottom centpercent">';
-
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Product").'</td>';
-		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		if ($permissiontoupdatecost) {
-			if (empty($bomcost)) {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("UnitCost"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
-			} else {
-				print '<td class="right">'.$form->textwithpicto($langs->trans("ManufacturingPrice"), $langs->trans("AmountUsedToUpdateWAP")).'</td>';
-			}
-		}
-		print '<td class="right">'.$langs->trans("QtyAlreadyProduced").'</td>';
-		print '<td>';
-		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-			print $langs->trans("Warehouse");
-		}
-		print '</td>';
-		if (isModEnabled('productbatch')) {
-			print '<td>';
-			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-				print $langs->trans("Batch");
-			}
-			print '</td>';
-			print '<td></td>';
-		}
-		print '</tr>';
-
-		if ($action == 'addproduceline') {
-			print '<!-- Add line to produce -->'."\n";
-			print '<tr class="liste_titre">';
-			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
-			print '</td>';
-			// Qty
-			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			// Cost price
-			print '<td></td>';
-
-			// Qty already produced
-			print '<td colspan="2">';
-			// Warehouse
-			print '<input type="submit" class="button buttongen button-add" name="addproducelinebutton" value="'.$langs->trans("Add").'">';
-			print '<input type="submit" class="button buttongen button-cancel" name="canceladdproducelinebutton" value="'.$langs->trans("Cancel").'">';
-			print '</td>';
-			// Lot - serial
-			if (isModEnabled('productbatch')) {
-				print '<td></td>';
-			}
-			// Action
-			if ($permissiontodelete) {
-				print '<td></td>';
-			}
-			print '</tr>';
-		}
-
-		if (!empty($object->lines)) {
-			$nblinetoproduce = 0;
-			foreach ($object->lines as $line) {
-				if ($line->role == 'toproduce') {
-					$nblinetoproduce++;
-				}
-			}
-
-			$nblinetoproducecursor = 0;
-			foreach ($object->lines as $line) {
-				if ($line->role == 'toproduce') {
-					$i = 1;
-
-					$nblinetoproducecursor++;
-
-					$tmpproduct = new Product($db);
-					$tmpproduct->fetch($line->fk_product);
-
-					$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
-					$alreadyproduced = 0;
-					foreach ($arrayoflines as $line2) {
-						$alreadyproduced += $line2['qty'];
-					}
-
-					$suffix = '_'.$line->id;
-					print '<!-- Line to dispatch '.$suffix.' -->'."\n";
-					// hidden fields for js function
-					print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
-					print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyproduced.'">';
-
-					print '<tr>';
-					print '<td>'.$tmpproduct->getNomUrl(1);
-					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
-					print '</td>';
-					print '<td class="right">'.$line->qty.'</td>';
-					if ($permissiontoupdatecost) {
-						// Defined $manufacturingcost
-						$manufacturingcost = 0;
-						if ($object->mrptype == 0) {	// If MO is a "Manufacture" type (and not "Disassemble"
-							$manufacturingcost = $bomcost;
-							if (empty($manufacturingcost)) {
-								$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
-							}
-							if (empty($manufacturingcost)) {
-								$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
-							}
-						}
-
-						print '<td class="right nowraponall">';
-						if ($manufacturingcost) {
-							print price($manufacturingcost);
-						}
-						print '</td>';
-					}
-					print '<td class="right nowraponall">';
-					if ($alreadyproduced) {
-						print '<script>';
-						print 'jQuery(document).ready(function() {
-							jQuery("#expandtoproduce'.$line->id.'").click(function() {
-								console.log("Expand mrp_production line '.$line->id.'");
-								jQuery(".expanddetailtoproduce'.$line->id.'").toggle();';
-						if ($nblinetoproduce == $nblinetoproducecursor) {
-							print 'if (jQuery("#tablelinestoproduce").hasClass("nobottom")) { jQuery("#tablelinestoproduce").removeClass("nobottom"); } else { jQuery("#tablelinestoproduce").addClass("nobottom"); }';
-						}
-						print '
-							});
-						});';
-						print '</script>';
-						if (empty($conf->use_javascript_ajax)) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?collapse='.$collapse.','.$line->id.'">';
-						}
-						print img_picto($langs->trans("ShowDetails"), "chevron-down", 'id="expandtoproduce'.$line->id.'"');
-						if (empty($conf->use_javascript_ajax)) {
-							print '</a>';
-						}
-					}
-					print ' '.$alreadyproduced;
-					print '</td>';
-					print '<td>'; // Warehouse
-					print '</td>';
-					if (isModEnabled('productbatch')) {
-						print '<td></td>'; // Lot
-					}
-
-					if ($permissiontodelete && $line->origin_type == 'free') {
-						$href = $_SERVER["PHP_SELF"];
-						$href .= '?id='.$object->id;
-						$href .= '&action=deleteline';
-						$href .= '&lineid='.$line->id;
-						print '<td class="center">';
-						print '<a class="reposition" href="'.$href.'">';
-						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
-						print '</a>';
-						print '</td>';
-					}
-					print '</tr>';
-
-					// Show detailed of already consumed with js code to collapse
-					foreach ($arrayoflines as $line2) {
-						print '<tr class="expanddetailtoproduce'.$line->id.' hideobject opacitylow">';
-						print '<td>';
-						$tmpstockmovement->id = $line2['fk_stock_movement'];
-						print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_ref='.$tmpstockmovement->id.'">'.img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"').'</a>';
-						print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
-						print '</td>';
-						// Qty
-						print '<td></td>';
-						// Cost price
-						if ($permissiontoupdatecost) {
-							print '<td></td>';
-						}
-						// Qty already produced
-						print '<td class="right">'.$line2['qty'].'</td>';
-						print '<td class="tdoverflowmax150">';
-						if ($line2['fk_warehouse'] > 0) {
-							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
-							if ($result > 0) {
-								print $tmpwarehouse->getNomUrl(1);
-							}
-						}
-						print '</td>';
-						if (isModEnabled('productbatch')) {
-							print '<td>';
-							if ($line2['batch'] != '') {
-								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
-								print $tmpbatch->getNomUrl(1);
-							}
-							print '</td>';
-							print '<td></td>';
-						}
-						print '</tr>';
-					}
-
-					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
-						print '<!-- Enter line to produce -->'."\n";
-						print '<tr name="batch_'.$line->id.'_'.$i.'">';
-						print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
-						$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
-						if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
-							$preselected = 0;
-						}
-						print '<td class="right"><input type="text" class="width50 right" id="qtytoproduce-'.$line->id.'-'.$i.'" name="qtytoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						if ($permissiontoupdatecost) {
-							// Defined $manufacturingcost
-							$manufacturingcost = 0;
-							if ($object->mrptype == 0) {	// If MO is a "Manufacture" type (and not "Disassemble"
-								$manufacturingcost = $bomcost;
-								if (empty($manufacturingcost)) {
-									$manufacturingcost = price2num($tmpproduct->cost_price, 'MU');
-								}
-								if (empty($manufacturingcost)) {
-									$manufacturingcost = price2num($tmpproduct->pmp, 'MU');
-								}
-							}
-
-							if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-								$preselected = (GETPOSTISSET('pricetoproduce-'.$line->id.'-'.$i) ? GETPOST('pricetoproduce-'.$line->id.'-'.$i) : ($manufacturingcost ? price($manufacturingcost) : ''));
-								print '<td class="right"><input type="text" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-							} else {
-								print '<td><input type="hidden" class="width50 right" name="pricetoproduce-'.$line->id.'-'.$i.'" value="'.($manufacturingcost ? $manufacturingcost : '').'"></td>';
-							}
-						}
-						print '<td></td>';
-						print '<td>';
-						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-							$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
-							print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth200 csswarehouse_'.$line->id.'_'.$i);
-						} else {
-							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
-						}
-						print '</td>';
-						if (isModEnabled('productbatch')) {
-							print '<td>';
-							if ($tmpproduct->status_batch) {
-								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
-								print '<input type="text" class="width50" name="batchtoproduce-'.$line->id.'-'.$i.'" value="'.$preselected.'">';
-							}
-							print '</td>';
-							// Batch number in same column than the stock movement picto
-							print '<td>';
-							if ($tmpproduct->status_batch) {
-								$type = 'batch';
-								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$line->id.', \''.$type.'\', \'qtymissing\')"');
-							}
-							print '</td>';
-						}
-						print '</tr>';
-					}
-				}
-			}
-		}
-
-		print '</table>';
 
 		print '</div>';
 		print '</div>';
