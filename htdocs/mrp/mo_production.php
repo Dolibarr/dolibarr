@@ -1187,8 +1187,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontodelete) {
 				print '<td></td>';
 			}
-
-
 			print '</tr>';
 		}
 
