@@ -925,9 +925,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Lot
 					if (isModEnabled('productbatch')) {
 						if ($conf->productbatch->enabled) {
-							print '<td align="right">';
-							if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
-							print '</td>';
+							print '<td></td>';
 						}					}
 					// Action delete line
 					if ($permissiontodelete) {
@@ -1250,11 +1248,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td>'; // Warehouse
 					print '</td>';
 					if (isModEnabled('productbatch')) {
-						if ($conf->productbatch->enabled) {
-							print '<td align="right">';
-							if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
-							print '</td>';
-						}					}
+						print '<td></td>';
+					}
 
 					if ($permissiontodelete && $line->origin_type == 'free') {
 						$href = $_SERVER["PHP_SELF"];
