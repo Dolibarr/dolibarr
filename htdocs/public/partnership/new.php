@@ -177,7 +177,7 @@ if (empty($reshook) && $action == 'add') {
 	$urlback = '';
 
 	$db->begin();
-	
+
 	/*if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
@@ -194,7 +194,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	
+
 	if (empty(GETPOST('email'))) {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
@@ -241,10 +241,10 @@ if (empty($reshook) && $action == 'add') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$object = $partnership;
 
-			/* 
+			/*
 			$partnershipt = new PartnershipType($db);
 			$partnershipt->fetch($object->typeid);
-			
+
 			if ($object->email) {
 				$subject = '';
 				$msg = '';
@@ -322,7 +322,7 @@ if (empty($reshook) && $action == 'add') {
 					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
 				}
 			}*/
-			
+
 			// test if societe or email already exist
 			$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
 			$result = $db->query($sql);
@@ -344,7 +344,7 @@ if (empty($reshook) && $action == 'add') {
 				$sql .= ", fk_departement = ".(($GETPOSTISSET('state_id') ? GETPOST('state_id') : "null")).", note_private = ".(($GETPOSTISSET('note_private') ? GETPOST('note_private') : "null"));
 				$sql .= " WHERE rowid = ".((int) $company->id);
 				$resql = $db->query($sql);
-				
+
 				$object->fk_soc = $company->id;
 			}
 
