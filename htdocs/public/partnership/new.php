@@ -67,7 +67,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other"));   // maybe change this one
 
 // Security check
 if (empty($conf->partnership->enabled)) {
@@ -177,11 +177,15 @@ if (empty($reshook) && $action == 'add') {
 	$urlback = '';
 
 	$db->begin();
-
+	
 	/*if (GETPOST('typeid') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
 	}*/
+	if (!GETPOST('societe')) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("societe"))."<br>\n";
+	}
 	if (!GETPOST('lastname')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
@@ -190,6 +194,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
+	
 	if (empty(GETPOST('email'))) {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
@@ -211,7 +216,8 @@ if (empty($reshook) && $action == 'add') {
 			$partnership->fk_soc = 0;
 		}
 
-		$partnership->statut      = -1;
+		// need to change this part
+		$partnership->statut      = 0;
 		$partnership->firstname   = GETPOST('firstname');
 		$partnership->lastname    = GETPOST('lastname');
 		$partnership->address     = GETPOST('address');
@@ -235,10 +241,10 @@ if (empty($reshook) && $action == 'add') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$object = $partnership;
 
-			/*
+			/* 
 			$partnershipt = new PartnershipType($db);
 			$partnershipt->fetch($object->typeid);
-
+			
 			if ($object->email) {
 				$subject = '';
 				$msg = '';
@@ -278,6 +284,7 @@ if (empty($reshook) && $action == 'add') {
 			*/
 
 			// Send email to the foundation to say a new member subscribed with autosubscribe form
+			/*
 			if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
 				  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
 				// Define link to login card
@@ -314,7 +321,33 @@ if (empty($reshook) && $action == 'add') {
 				if (!$mailfile->sendfile()) {
 					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
 				}
+			}*/
+			
+			// test if societe or email already exist
+			$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
+			$result = $db->query($sql);
+			if ($result) {
+				$num = $db->num_rows($result);
 			}
+			if ($num = 0) {
+				//create thirdparty
+				$company = new Societe($db);
+				$resultat=$company->create($user);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
+				}
+				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+				$sql .= " SET name = ".(GETPOST('societe')).", email = ".(GETPOST('email'));
+				$sql .= ", address = ".(($GETPOSTISSET('address') ? GETPOST('address') : "null")).", zip = ".(($GETPOSTISSET('zipcode') ? GETPOST('zipcode') : "null"));
+				$sql .= ", town = ".(($GETPOSTISSET('town') ? GETPOST('town') : "null")).", fk_pays = ".(($GETPOSTISSET('country_id') ? GETPOST('country_id') : "null"));
+				$sql .= ", fk_departement = ".(($GETPOSTISSET('state_id') ? GETPOST('state_id') : "null")).", note_private = ".(($GETPOSTISSET('note_private') ? GETPOST('note_private') : "null"));
+				$sql .= " WHERE rowid = ".((int) $company->id);
+				$resql = $db->query($sql);
+				
+				$object->fk_soc = $company->id;
+			}
+
 
 			if (!empty($backtopage)) {
 				$urlback = $backtopage;
