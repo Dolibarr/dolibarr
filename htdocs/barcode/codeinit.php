@@ -355,7 +355,7 @@ if (isModEnabled('societe')) {
 
 
 // For products
-if ($conf->product->enabled || $conf->product->service) {
+if (isModEnabled('product') || $conf->product->service) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="mode" value="label">';
 	print '<input type="hidden" name="action" value="initbarcodeproducts">';
