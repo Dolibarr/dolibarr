@@ -1100,13 +1100,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					$tmpproduct = new Product($db);
 					$tmpproduct->fetch($line->fk_product);
-
-					// si je gère les stocks service j'affiche tout sinon si je suis un produit , je l'affiche
-					$traitment = ($isStockServiceHandling) ? 1 : ($tmpproduct->type == '0') ? 1 : 0;
-
+					// we don't want to split product and service in separate table if handling service stock desabled
+					$traitment = $isStockServiceHandling ? 1 : ($tmpproduct->isProduct() ? true : false);
 					if ($traitment) {
-
-
 						$linecost = price2num($tmpproduct->pmp, 'MT');
 
 						if ($object->qty > 0) {
@@ -1488,7 +1484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							$linecost = price2num($tmpproduct->pmp, 'MT');
 
-							if ($object->qty > 0) {
+							//if ($object->qty > 0) {
 								// add free consume line cost to bomcost
 								//$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 								/*if (empty($costprice)) {
@@ -1502,7 +1498,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}*/
 								//$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
 								//$bomcost += $linecost;
-							}
+							//}
 
 							//$bomcost = price2num($bomcost, 'MU');
 
@@ -1516,6 +1512,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
 							// hidden fields for js function
 							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $line->qty . '">';
+							//$qty rempalcé par time
+							// Duration - Time spent
+
 							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . $alreadyconsumed . '">';
 
 							print '<tr>';
@@ -1535,7 +1534,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							if ($help) {
 								print $form->textwithpicto($line->qty, $help, -1);
 							} else {
-								print price2num($line->qty, 'MS');
+								//if ($action == 'editline' && $_GET['lineid'] == $obj_time->rowid) {
+								//	print '<input type="hidden" name="old_duration" value="'.$obj_time->element_duration.'">';
+								//	print $form->select_duration('new_duration', $obj_time->element_duration, 0, 'text');
+								//} else {
+									print convertSecondToTime($line->qty, 'allhourmin');
+								//}
+								//print price2num($line->qty, 'MS');
 							}
 							print '</td>';
 							// consumedTimes
@@ -1572,7 +1577,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									print '<script>jQuery("#tablelines").removeClass("nobottom");</script>';
 								}
 							}
-							print ' ' . price2num($alreadyconsumed, 'MS');
+							print ' ' . convertSecondToTime($alreadyconsumed, 'allhourmin');  //price2num($alreadyconsumed, 'MS');
 							print '</td>';
 							// ---
 							print '<td>';
@@ -1681,8 +1686,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}
 
 								// Qty
-								print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
+								//print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . ">";
 
+								//@todo renommer les input pour chaque ligne
+								//$durationtouse = (GETPOST('timespent_duration') ? GETPOST('timespent_duration') : '');
+								print '<td class="right">';
+
+								if (GETPOSTISSET('timespent_duration-'. $line->id . '-' . $i .'-hour') || GETPOSTISSET('timespent_duration-'.$line->id . '-' . $i.'-min')) {
+
+									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int") ;
+									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int");
+
+									$durationtouse = ($hour * 3600 + $min * 60);
+									var_dump($durationtouse);
+								}
+
+								print $form->select_duration('timespent_duration-'.$line->id . '-' . $i.'-' , $durationtouse, 0, 'text');
+								print '</td>';
 								// Cost
 								if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
 									print '<td></td>';
