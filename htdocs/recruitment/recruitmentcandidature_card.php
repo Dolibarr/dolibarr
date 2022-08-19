@@ -257,7 +257,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("RecruitmentCandidature");
+$title = $object->ref." - ".$langs->trans('Card');
 $help_url = '';
 llxHeader('', $title, $help_url);
 
