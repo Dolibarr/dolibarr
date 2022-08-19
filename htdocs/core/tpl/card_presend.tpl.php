@@ -146,6 +146,11 @@ if ($action == 'presend') {
 		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'recruitmentcandidature' ) {
+		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->fromtype = 'special';
+	}
 
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
