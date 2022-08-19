@@ -616,13 +616,13 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null)
 	{
 
 		global $mysoc, $conf, $langs, $user;
 
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
-		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
+		$logtext .= ", import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
 		if ($this->statut == self::STATUS_DRAFT) {
@@ -640,9 +640,6 @@ class BOM extends CommonObject
 			}
 			if (empty($efficiency)) {
 				$efficiency = 1.0;
-			}
-			if (empty($fk_bom_child)) {
-				$fk_bom_child = null;
 			}
 			if (empty($import_key)) {
 				$import_key = null;
@@ -688,7 +685,6 @@ class BOM extends CommonObject
 			$this->line->qty_frozen = $qty_frozen;
 			$this->line->disable_stock_change = $disable_stock_change;
 			$this->line->efficiency = $efficiency;
-			$this->line->fk_bom_child = $fk_bom_child;
 			$this->line->import_key = $import_key;
 			$this->line->position = $rankToUse;
 

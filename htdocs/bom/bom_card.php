@@ -197,7 +197,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Add line
+	// Update line
 	if ($action == 'updateline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
@@ -213,26 +213,24 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$bomline = new BOMLine($db);
-		$bomline->fetch($lineid);
-		$bomline->qty = $qty;
-		$bomline->qty_frozen = (int) $qty_frozen;
-		$bomline->disable_stock_change = (int) $disable_stock_change;
-		$bomline->efficiency = $efficiency;
+		if (!$error) {
 
-		$result = $bomline->update($user);
-		if ($result <= 0) {
-			setEventMessages($bomline->error, $bomline->errors, 'errors');
-			$action = '';
-		} else {
-			unset($_POST['idprod']);
-			unset($_POST['qty']);
-			unset($_POST['qty_frozen']);
-			unset($_POST['disable_stock_change']);
+			$bomline = new BOMLine($db);
+			$bomline->fetch($lineid);
 
-			$object->fetchLines();
+			$result = $object->updateLine($lineid, $qty, (int)$qty_frozen, (int)$disable_stock_change, $efficiency, $bomline->position, $bomline->import_key);
 
-			$object->calculateCosts();
+			if ($result <= 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			} else {
+				unset($_POST['idprod']);
+				unset($_POST['qty']);
+				unset($_POST['qty_frozen']);
+				unset($_POST['disable_stock_change']);
+
+				$object->fetchLines();
+			}
 		}
 	}
 }
