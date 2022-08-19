@@ -107,21 +107,29 @@ function addDispatchLine(index, type, mode)
 	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
 		var count = 0;
 		var qtyalreadyused = 0;
+		var error = 0;
 
-		while (count < qty) {
-			//If remaining qty needed is inferior to qtymax, qtymax = remaining qty needed
-			if ((qtyalreadyused + qtymax) > qtyOrdered) qtymax = qtyOrdered - qtyalreadyused;
+		while (qtyalreadyused < qty) {
+			//If remaining qty needed is inferior to qty asked, qtymax = qty asked - qty already used
+			if ((qtyalreadyused + qtymax) > qty) qtymax = qty - qtyalreadyused;
 			//If first line, we replace value, not add line
 			if(count === 0){
 				$("#"+inputId+"-"+index+"-"+nbrTrs).val(qtymax);
 			} else {
-				addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row);
+				var res = addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row);
+				if(res === -1){
+					error = 1;
+					break;
+				}
 				nbrTrs++;
 			}
-
 			qtyalreadyused = qtyalreadyused + qtymax;
 			count++;
 			$row = $("tr[name='" + type + '_' + index + "_1']").clone(true);
+		}
+
+		if(error === 0) {
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
 		}
 	}
 	else addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row)
@@ -146,8 +154,10 @@ function addDispatchLine(index, type, mode)
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 1) {
 		window.alert("Quantity can't be split");
+		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
 		window.alert("No remain qty to dispatch");
+		return -1;
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		var re1 = new RegExp('_'+index+'_1', 'g');
@@ -205,8 +215,6 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		$("#"+inputId+"-"+index+(nbrTrs)).data('index', index);
 		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
 			let currentQtyDispatched = qtyDispatched+qty;
-			console.log( $row.find("input[id^='"+inputId+"']"));
-			if((currentQtyDispatched+qty) > qtyOrdered) $row.find("input[id^='"+inputId+"']").val(qtyOrdered - currentQtyDispatched);
 			$row.find("input[id^='"+inputId+"']").val(qty);
 		}
 	}
