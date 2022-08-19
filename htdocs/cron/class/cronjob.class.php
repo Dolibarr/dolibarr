@@ -718,7 +718,7 @@ class Cronjob extends CommonObject
 		}
 
 		if (empty($this->pid)) {
-			$this->pid = NULL;
+			$this->pid = null;
 		}
 
 		// Check parameters
@@ -939,7 +939,7 @@ class Cronjob extends CommonObject
 		$this->frequency = '';
 		$this->status = 0;
 		$this->processing = 0;
-		$this->pid = NULL;
+		$this->pid = null;
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
@@ -1332,7 +1332,7 @@ class Cronjob extends CommonObject
 
 		$this->datelastresult = dol_now();
 		$this->processing = 0;
-		$this->pid = NULL;
+		$this->pid = null;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
