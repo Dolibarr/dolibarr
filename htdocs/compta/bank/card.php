@@ -758,7 +758,7 @@ if ($action == 'create') {
 			}
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td>'.$object->iban.'&nbsp;';
+			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
 			if (!empty($object->iban)) {
 				if (!checkIbanForAccount($object)) {
 					print img_picto($langs->trans("IbanNotValid"), 'warning');
