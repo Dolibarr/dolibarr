@@ -187,7 +187,7 @@ if ($search_date_end && empty($search_date_endyear)) {
 	$search_date_endday = $tmparray['mday'];
 }
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

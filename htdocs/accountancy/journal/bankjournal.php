@@ -83,7 +83,7 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
