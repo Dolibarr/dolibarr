@@ -395,7 +395,7 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-        if (isset($request_data->desc)) $request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		if (isset($request_data->desc)) $request_data->desc = checkVal($request_data->desc, 'restricthtml');
 		if (isset($request_data->label)) $request_data->label = checkVal($request_data->label);
 
 		$propalline = new PropaleLigne($this->db);
