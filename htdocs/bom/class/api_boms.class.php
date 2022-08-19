@@ -344,7 +344,7 @@ class Boms extends DolibarrApi
 			$request_data->qty_frozen,
 			$request_data->disable_stock_change,
 			$request_data->efficiency,
-			$request_data->postion,
+			$request_data->position,
 			$request_data->fk_bom_child,
 			$request_data->import_key
 		);
@@ -353,6 +353,103 @@ class Boms extends DolibarrApi
 			return $updateRes;
 		} else {
 			throw new RestException(400, $this->bom->error);
+		}
+	}
+
+	/**
+	 * Update a line to given BOM
+	 *
+	 * @param int   $id             Id of BOM to update
+	 * @param int   $lineid         Id of line to update
+	 * @param array $request_data   BOMLine data
+	 *
+	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @return array|bool
+	 */
+	public function putLine($id, $lineid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->bom->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'BOM not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$updateRes = $this->bom->updateLine(
+			$lineid,
+			$request_data->qty,
+			$request_data->qty_frozen,
+			$request_data->disable_stock_change,
+			$request_data->efficiency,
+			$request_data->position,
+			$request_data->fk_bom_child,
+			$request_data->import_key
+		);
+
+		if ($updateRes > 0) {
+			$result = $this->get($id);
+			unset($result->line);
+			return $this->_cleanObjectDatas($result);
+		}
+		return false;
+	}
+
+	/**
+	 * Delete a line to given BOM
+	 *
+	 *
+	 * @param int   $id             Id of BOM to update
+	 * @param int   $lineid         Id of line to delete
+	 *
+	 * @url	DELETE {id}/lines/{lineid}
+	 *
+	 * @return int
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteLine($id, $lineid)
+	{
+		if (!DolibarrApiAccess::$user->rights->bom->write) {
+			throw new RestException(401);
+		}
+
+		$result = $this->bom->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'BOM not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		//Check the rowid is a line of current bom object
+		$lineIdIsFromObject = false;
+		foreach ($this->bom->lines as $bl) {
+			if ($bl->id == $lineid) {
+				$lineIdIsFromObject = true;
+				break;
+			}
+		}
+		if (!$lineIdIsFromObject) {
+			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of BOM (id: '.$this->bom->id.')');
+		}
+
+		$updateRes = $this->bom->deleteline(DolibarrApiAccess::$user, $lineid);
+		if ($updateRes > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(405, $this->bom->error);
 		}
 	}
 
