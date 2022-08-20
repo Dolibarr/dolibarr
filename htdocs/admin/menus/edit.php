@@ -177,7 +177,7 @@ if ($action == 'add') {
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
+	if (!$error && !GETPOST('menuId') && GETPOST('type') != 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
