@@ -362,9 +362,9 @@ if ($result) {
 			$amount_ht[$obj->socid] = $obj->amount;
 			$amount[$obj->socid] = $obj->amount_ttc;
 			$fullname = $obj->name;
-			if (!empty($obj->name_alias)) {
-				$fullname .= ' ('.$obj->name_alias.')';
-			}
+		if (!empty($obj->name_alias)) {
+			$fullname .= ' ('.$obj->name_alias.')';
+		}
 			$name[$obj->socid] = $fullname;
 			$address_zip[$obj->socid] = $obj->zip;
 			$address_town[$obj->socid] = $obj->town;
