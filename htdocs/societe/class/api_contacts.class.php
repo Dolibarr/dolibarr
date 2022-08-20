@@ -96,6 +96,10 @@ class Contacts extends DolibarrApi
 		if ($includeroles) {
 			$this->contact->fetchRoles();
 		}
+		
+		if (isModEnabled('mailing')) {
+			$this->contact->getNoEmail();
+		}
 
 		return $this->_cleanObjectDatas($this->contact);
 	}
@@ -139,6 +143,10 @@ class Contacts extends DolibarrApi
 
 		if ($includeroles) {
 			$this->contact->fetchRoles();
+		}
+		
+		if (isModEnabled('mailing')) {
+			$this->contact->getNoEmail();
 		}
 
 		return $this->_cleanObjectDatas($this->contact);
@@ -250,6 +258,9 @@ class Contacts extends DolibarrApi
 					if ($includeroles) {
 						$contact_static->fetchRoles();
 					}
+					if (isModEnabled('mailing')) {
+						$contact_static->getNoEmail();
+					}
 
 					$obj_ret[] = $this->_cleanObjectDatas($contact_static);
 				}
@@ -285,6 +296,9 @@ class Contacts extends DolibarrApi
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
+		if (isModEnabled('mailing') && !empty($this->contact->email)) {
+			$this->contact->setNoEmail($this->contact->no_email);
+		}
 		return $this->contact->id;
 	}
 
@@ -315,6 +329,10 @@ class Contacts extends DolibarrApi
 				continue;
 			}
 			$this->contact->$field = $value;
+		}
+		
+		if (isModEnabled('mailing') && !empty($this->contact->email)) {
+			$this->contact->setNoEmail($this->contact->no_email);
 		}
 
 		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update')) {
