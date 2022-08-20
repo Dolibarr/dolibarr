@@ -186,7 +186,9 @@ if (!empty($year)) {
 if (!empty($month)) {
 	$headerparams['month'] = $month;
 }
-$headerparams['q'] = $q;
+if (!empty($q)) {
+	$headerparams['q'] = $q;
+}
 
 $tableparams = array();
 if (!empty($selected_cat)) {
@@ -205,6 +207,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -226,6 +229,9 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
+
+$exportlink="";
+$namelink="";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
