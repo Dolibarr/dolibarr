@@ -296,7 +296,7 @@ class Contacts extends DolibarrApi
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contact", array_merge(array($this->contact->error), $this->contact->errors));
 		}
-		if (isModEnabled('mailing') && !empty($this->contact->email)) {
+		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
 		return $this->contact->id;
@@ -331,7 +331,7 @@ class Contacts extends DolibarrApi
 			$this->contact->$field = $value;
 		}
 
-		if (isModEnabled('mailing') && !empty($this->contact->email)) {
+		if (isModEnabled('mailing') && !empty($this->contact->email) && isset($this->contact->no_email)) {
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
 
