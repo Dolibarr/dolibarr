@@ -96,7 +96,7 @@ class Contacts extends DolibarrApi
 		if ($includeroles) {
 			$this->contact->fetchRoles();
 		}
-		
+
 		if (isModEnabled('mailing')) {
 			$this->contact->getNoEmail();
 		}
@@ -144,7 +144,7 @@ class Contacts extends DolibarrApi
 		if ($includeroles) {
 			$this->contact->fetchRoles();
 		}
-		
+
 		if (isModEnabled('mailing')) {
 			$this->contact->getNoEmail();
 		}
@@ -330,7 +330,7 @@ class Contacts extends DolibarrApi
 			}
 			$this->contact->$field = $value;
 		}
-		
+
 		if (isModEnabled('mailing') && !empty($this->contact->email)) {
 			$this->contact->setNoEmail($this->contact->no_email);
 		}
