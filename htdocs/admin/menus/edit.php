@@ -172,12 +172,12 @@ if ($action == 'add') {
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
+	if (!$error && GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('menuId') && GETPOST('type') != 'left') {
+	if (!$error && !GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
