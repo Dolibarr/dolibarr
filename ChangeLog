@@ -233,10 +233,8 @@ FIX: #18704
 FIX: #20444
 FIX: #20448 missing preg_replace for vat rate when adding a free line
 FIX: #20476 migration postgresql 13.0.x to 14.0.x packaging type
-FIX: #20487 missing letter D in constant THIRDPARTIES_DISABLE_RELATED_…
 FIX: #20487 missing letter D in constant THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB
 FIX: #20527 Accountancy - Unbalanced entry proposed when an employee are declared on a social contribution
-FIX: #20527 Accountancy Unbalanced entry proposed when an employee are declared on social contribution
 FIX: #20621 signature online with proposal with n page.
 FIX: #20696
 FIX: #20828
@@ -272,7 +270,7 @@ FIX: fourn/commande/card.php Added "$object" parameter to $formfile->showdocumen
 FIX: french traductions for payment methods
 FIX: hook for dol_format_address
 FIX: Index page for "Sales" give wrong URL link to Intervention
-FIX: issue Dolibarr#21495 for v15
+FIX: issue Dolibarr #21495 for v15
 FIX: label and get_substitutionarray_each_var_object on ODT generation
 FIX: load product stock in inventory lines
 FIX: missing morecss for multiselectarray
