@@ -929,14 +929,14 @@ if (empty($reshook)) {
 	}
 }
 
-
 /*
  * View
  */
 
 $form = new Form($db);
 
-if (!defined('INCLUDE_INVOICE_PAGE_FROM_OTHER_PAGE')) {
+// llxHeader
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -947,15 +947,19 @@ if (!defined('INCLUDE_INVOICE_PAGE_FROM_OTHER_PAGE')) {
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 	$arrayofcss = array(
 		'/takepos/css/pos.css.php',
-		'/takepos/js/jquery.colorbox-min.js'
 	);
 	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
 	$disablejs = 0;
 	$disablehead = 0;
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+	print '<body>'."\n";
+} else {
+	top_httphead('text/html', 1);
 }
 
 ?>
+<!-- invoice.php -->
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
@@ -1689,7 +1693,8 @@ if ($action == "search") {
 
 print '</div>';
 
-
-if (!defined('INCLUDE_INVOICE_PAGE_FROM_OTHER_PAGE')) {
-	llxFooter();
+// llxFooter
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	print '</body></html>';
 }
+

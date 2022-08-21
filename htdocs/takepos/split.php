@@ -53,6 +53,11 @@ if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
+
+/*
+ * Actions
+ */
+
 if ($action=="split") {
 	$line = GETPOST('line', 'int');
 	$split = GETPOST('split', 'int');
@@ -139,6 +144,9 @@ if ($invoiceid > 0) {
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$arrayofcss[] = '/takepos/css/colorful.css';
+}
 $arrayofjs = array();
 
 $head = '';
@@ -152,15 +160,7 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 $arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
-
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
 <body class="takepossplitphp">
 
 <script>
