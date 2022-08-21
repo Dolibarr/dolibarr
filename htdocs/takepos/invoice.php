@@ -69,11 +69,6 @@ if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 	accessforbidden();
 }
 
-
-/*
- * View
- */
-
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "") {
@@ -84,23 +79,8 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 			exit;
 		}
 	}
-	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-	}
-	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-	$arrayofcss = array(
-	'/takepos/css/pos.css.php',
-	'/takepos/js/jquery.colorbox-min.js'
-	);
-	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
-	$disablejs = 0;
-	$disablehead = 0;
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 }
+
 
 /**
  * Abort invoice creationg with a given error message
@@ -949,11 +929,31 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
 
 $form = new Form($db);
+
+if (!defined('INCLUDE_INVOICE_PAGE_FROM_OTHER_PAGE')) {
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	}
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array(
+		'/takepos/css/pos.css.php',
+		'/takepos/js/jquery.colorbox-min.js'
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
+	$disablejs = 0;
+	$disablehead = 0;
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+}
 
 ?>
 <script type="text/javascript">
@@ -1688,3 +1688,8 @@ if ($action == "search") {
 }
 
 print '</div>';
+
+
+if (!defined('INCLUDE_INVOICE_PAGE_FROM_OTHER_PAGE')) {
+	llxFooter();
+}
