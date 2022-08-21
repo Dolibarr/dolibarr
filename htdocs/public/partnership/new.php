@@ -236,6 +236,28 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 		}
 
+		$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+		}
+		if ($num = 0) {
+			//create thirdparty
+			$company = new Societe($db);
+			$resultat=$company->create($user);
+			if ($result < 0) {
+				$error++;
+				$errmsg .= join('<br>', $company->errors);
+			}
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " SET name = ".(GETPOST('societe')).", email = ".(GETPOST('email'));
+			$sql .= ", address = ".(($GETPOSTISSET('address') ? GETPOST('address') : "null")).", zip = ".(($GETPOSTISSET('zipcode') ? GETPOST('zipcode') : "null"));
+			$sql .= ", town = ".(($GETPOSTISSET('town') ? GETPOST('town') : "null")).", fk_pays = ".(($GETPOSTISSET('country_id') ? GETPOST('country_id') : "null"));
+			$sql .= ", fk_departement = ".(($GETPOSTISSET('state_id') ? GETPOST('state_id') : "null")).", note_private = ".(($GETPOSTISSET('note_private') ? GETPOST('note_private') : "null"));
+			$sql .= " WHERE rowid = ".((int) $company->id);
+			$resql = $db->query($sql);
+			$partnership->fk_soc = $company->id;
+		}
 		$result = $partnership->create($user);
 		if ($result > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -324,29 +346,7 @@ if (empty($reshook) && $action == 'add') {
 			}*/
 
 			// test if societe or email already exist
-			$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
-			$result = $db->query($sql);
-			if ($result) {
-				$num = $db->num_rows($result);
-			}
-			if ($num = 0) {
-				//create thirdparty
-				$company = new Societe($db);
-				$resultat=$company->create($user);
-				if ($result < 0) {
-					$error++;
-					$errmsg .= join('<br>', $company->errors);
-				}
-				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-				$sql .= " SET name = ".(GETPOST('societe')).", email = ".(GETPOST('email'));
-				$sql .= ", address = ".(($GETPOSTISSET('address') ? GETPOST('address') : "null")).", zip = ".(($GETPOSTISSET('zipcode') ? GETPOST('zipcode') : "null"));
-				$sql .= ", town = ".(($GETPOSTISSET('town') ? GETPOST('town') : "null")).", fk_pays = ".(($GETPOSTISSET('country_id') ? GETPOST('country_id') : "null"));
-				$sql .= ", fk_departement = ".(($GETPOSTISSET('state_id') ? GETPOST('state_id') : "null")).", note_private = ".(($GETPOSTISSET('note_private') ? GETPOST('note_private') : "null"));
-				$sql .= " WHERE rowid = ".((int) $company->id);
-				$resql = $db->query($sql);
-
-				$object->fk_soc = $company->id;
-			}
+			
 
 
 			if (!empty($backtopage)) {

@@ -248,7 +248,70 @@ class Partnership extends CommonObject
 		}
 
 		$this->status = 0;
-		return $this->createCommon($user, $notrigger);
+
+		global $conf, $langs;
+
+		$error = 0;
+
+		$now = dol_now();
+
+		// Clean parameters
+		$this->import_key = trim($this->import_key);
+
+		if (!$this->date_creation) {
+			$this->date_creation = $now;
+		}
+		
+
+		$this->db->begin();
+
+		// Insert partnership	
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."partnership";
+		$sql .= " (ref, date_creation,fk_user_creat,fk_user_modif,fk_type,entity,import_key)";
+		$sql .= " VALUES (";
+		$sql .= " '(PROV)'";
+		$sql .= ", '".$this->db->idate($this->datec)."'";
+		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because partnership can be created by a guest or a script
+		$sql .= ", null ";
+		$sql .= ", ".((int) $this->fk_type);
+		$sql .= ", ".$conf->entity;
+		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."partnership");
+			if ($id > 0) {
+				$this->id = $id;
+				$this->ref = (string) $id;
+
+				// Update minor fields
+				$result = $this->update($user, 1, 1, 0, 0, 'add'); // nosync is 1 to avoid update data of user
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+
+				if (count($this->errors)) {
+					dol_syslog(get_class($this)."::create ".implode(',', $this->errors), LOG_ERR);
+					$this->db->rollback();
+					return -3;
+				} else {
+					$this->db->commit();
+					return $this->id;
+				}
+			} else {
+				$this->error = 'Failed to get last insert id';
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
