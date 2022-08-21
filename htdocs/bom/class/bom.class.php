@@ -513,7 +513,7 @@ class BOM extends CommonObject
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
-	 * @return	int								<0 if KO, >0 if OK
+	 * @return	int								<0 if KO, Id of created object if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null)
 	{
@@ -557,10 +557,17 @@ class BOM extends CommonObject
 			$this->db->begin();
 
 			// Rank to use
+			$rangMax = $this->line_max();
 			$rankToUse = $position;
-			if ($rankToUse == -1) {
-				$rangMax = $this->line_max();
+			if ($rankToUse <= 0 or $rankToUse > $rangMax) { // New line after existing lines
 				$rankToUse = $rangMax + 1;
+			} else { // New line between the existing lines
+				foreach ($this->lines as $bl) {
+					if ($bl->position >= $rankToUse) {
+						$bl->position++;
+						$bl->update($user);
+					}
+				}
 			}
 
 			// Insert line
@@ -583,7 +590,114 @@ class BOM extends CommonObject
 			if ($result > 0) {
 				$this->calculateCosts();
 				$this->db->commit();
-				return $this->line->id;
+				return $result;
+			} else {
+				$this->error = $this->line->error;
+				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			dol_syslog(get_class($this)."::addLine status of BOM must be Draft to allow use of ->addLine()", LOG_ERR);
+			return -3;
+		}
+	}
+
+	/**
+	 * Update an BOM line into database
+	 *
+	 * @param 	int		$rowid					Id of line to update
+	 * @param	float	$qty					Quantity
+	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
+	 * @param	float	$efficiency				Efficiency in MO
+	 * @param	int		$position				Position of BOM-Line in BOM-Lines
+	 * @param	int		$fk_bom_child			Id of BOM Child
+	 * @param	string	$import_key				Import Key
+	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
+	 */
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null)
+	{
+
+		global $mysoc, $conf, $langs, $user;
+
+		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
+		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
+		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
+
+		if ($this->statut == self::STATUS_DRAFT) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($qty)) {
+				$qty = 0;
+			}
+			if (empty($qty_frozen)) {
+				$qty_frozen = 0;
+			}
+			if (empty($disable_stock_change)) {
+				$disable_stock_change = 0;
+			}
+			if (empty($efficiency)) {
+				$efficiency = 1.0;
+			}
+			if (empty($fk_bom_child)) {
+				$fk_bom_child = null;
+			}
+			if (empty($import_key)) {
+				$import_key = null;
+			}
+			if (empty($position)) {
+				$position = -1;
+			}
+
+			$qty = price2num($qty);
+			$efficiency = price2num($efficiency);
+			$position = price2num($position);
+
+			$this->db->begin();
+
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new BOMLine($this->db);
+			$line->fetch($rowid);
+			$line->fetch_optionals();
+
+			$staticLine = clone $line;
+			$line->oldcopy = $staticLine;
+			$this->line = $line;
+			$this->line->context = $this->context;
+
+			// Rank to use
+			$rankToUse = (int) $position;
+			if ($rankToUse != $line->oldcopy->position) { // check if position have a new value
+				foreach ($this->lines as $bl) {
+					if ($bl->position >= $rankToUse AND $bl->position < ($line->oldcopy->position + 1)) { // move rank up
+						$bl->position++;
+						$bl->update($user);
+					}
+					if ($bl->position <= $rankToUse AND $bl->position > ($line->oldcopy->position)) { // move rank down
+						$bl->position--;
+						$bl->update($user);
+					}
+				}
+			}
+
+
+			$this->line->fk_bom = $this->id;
+			$this->line->qty = $qty;
+			$this->line->qty_frozen = $qty_frozen;
+			$this->line->disable_stock_change = $disable_stock_change;
+			$this->line->efficiency = $efficiency;
+			$this->line->fk_bom_child = $fk_bom_child;
+			$this->line->import_key = $import_key;
+			$this->line->position = $rankToUse;
+
+			$result = $this->line->update($user);
+
+			if ($result > 0) {
+				$this->calculateCosts();
+				$this->db->commit();
+				return $result;
 			} else {
 				$this->error = $this->line->error;
 				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
@@ -611,7 +725,38 @@ class BOM extends CommonObject
 			return -2;
 		}
 
-		return $this->deleteLineCommon($user, $idline, $notrigger);
+		$this->db->begin();
+
+		//Fetch current line from the database and then clone the object and set it in $oldline property
+		$line = new BOMLine($this->db);
+		$line->fetch($idline);
+		$line->fetch_optionals();
+
+		$staticLine = clone $line;
+		$line->oldcopy = $staticLine;
+		$this->line = $line;
+		$this->line->context = $this->context;
+
+		$result = $this->line->delete($user, $notrigger);
+
+		//Positions (rank) reordering
+		foreach ($this->lines as $bl) {
+			if ($bl->position > ($line->oldcopy->position)) { // move rank down
+				$bl->position--;
+				$bl->update($user);
+			}
+		}
+
+		if ($result > 0) {
+			$this->calculateCosts();
+			$this->db->commit();
+			return $result;
+		} else {
+			$this->error = $this->line->error;
+			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -2;
+		}
 	}
 
 	/**
