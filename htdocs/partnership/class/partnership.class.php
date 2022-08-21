@@ -261,11 +261,11 @@ class Partnership extends CommonObject
 		if (!$this->date_creation) {
 			$this->date_creation = $now;
 		}
-		
+
 
 		$this->db->begin();
 
-		// Insert partnership	
+		// Insert partnership
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."partnership";
 		$sql .= " (ref, date_creation,fk_user_creat,fk_user_modif,fk_type,entity,import_key)";
 		$sql .= " VALUES (";

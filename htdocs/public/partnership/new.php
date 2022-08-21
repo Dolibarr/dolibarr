@@ -346,7 +346,7 @@ if (empty($reshook) && $action == 'add') {
 			}*/
 
 			// test if societe or email already exist
-			
+
 
 
 			if (!empty($backtopage)) {
