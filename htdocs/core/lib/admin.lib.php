@@ -1552,10 +1552,10 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !empty($conf->global->$const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !empty($conf->global->$const_name)) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified
