@@ -895,8 +895,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print ' '.$alreadyproduced;
 				print '</td>';
-				print '<td>'; // Warehouse
-				print '</td>';
+				print '<td></td>'; // Warehouse
 				if (isModEnabled('productbatch')) {
 					print '<td></td>'; // Lot
 				}
@@ -1112,7 +1111,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<td></td>';
 			}
 			// Qty already consumed
-			print '<td colspan="2">';
+			print '<td colspan="3">';
 			// Warehouse
 			print '<input type="submit" class="button buttongen button-add" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
 			print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelinebutton" value="'.$langs->trans("Cancel").'">';
@@ -1450,8 +1449,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// consumed times
 			print '<td class="right">'.$langs->trans("consumedTimes").'</td>';
 
-			// User
-			print '<td class="right">'.$langs->trans("User").'</td>';
+			// --
+			print '<td class="right" colspan="3"></td>';
 
 			// Action
 			if ($permissiontodelete) {
@@ -1459,7 +1458,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			print '</tr>';
 
-			// Action addconsumelineService
+			// Action FORM addconsumelineService
 			if ($action == 'addconsumelineService') { //@todo change action name
 				print '<!-- Add line to consume -->'."\n";
 				print '<tr class="liste_titre">';
@@ -1473,18 +1472,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '</td>';
 
 				// Qty already consumed
-				print '<td colspan="2">';
-				// Warehouse
+				print '<td colspan="4">';
+
 				print '<input type="submit" class="button buttongen button-add" name="addconsumelineServicebutton" value="'.$langs->trans("Add").'">';
 				print '<input type="submit" class="button buttongen button-cancel" name="canceladdconsumelineServicebutton" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
-				/*if (isModEnabled('stock')) {
-					print '<td></td>';
-				}
-				// Lot - serial
-				if (isModEnabled('productbatch')) {
-					print '<td></td>';
-				}*/
+
 				// Action
 				if ($permissiontodelete) {
 					print '<td></td>';
@@ -1598,8 +1591,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							print ' ' . convertSecondToTime($alreadyconsumed, 'allhourmin');  //price2num($alreadyconsumed, 'MS');
 							print '</td>';
 							// ---
-							print '<td>';
-							print '</td>';
+							print '<td class="right t" colspan="3"></td>';
+							//print '<td class="right"></td>';
 
 							// Action delete line
 							if ($permissiontodelete) {
@@ -1614,42 +1607,45 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							// Show detailed of already consumed with js code to collapse
 							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-							foreach ($arrayoflines as $line2) {
-								print '<tr class="expanddetail' . $line->id . ' hideobject opacitylow">';
+							if (is_array($arrayoflines) && count($arrayoflines) >  0){
+								foreach ($arrayoflines as $line2) {
+									print '<tr class="expanddetail' . $line->id . ' hideobject opacitylow">';
 
-								// Date
+									// Date
 
-								print '<td>';
-								//$tmpstockmovement->id = $line2['fk_stock_movement'];
-								//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?search_ref=' . $tmpstockmovement->id . '">' . img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"') . '</a>';
-								print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
-								print '</td>';
-
-								// Already consumed
-								print '<td></td>';
-
-								// Qty
-								print '<td class="right">' . convertSecondToTime($line2['qty']) . '</td>';
-
-								// Cost price
-								if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-									print '<td></td>';
-								}
-
-								print '<td></td>';
-
-								// Action delete line
-								if ($permissiontodelete) {
-									$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line2['rowid']);
-									print '<td class="center">';
-									print '<a class="reposition" href="' . $href . '">';
-									print img_picto($langs->trans('TooltipDeleteAndRevertTimeSpent'), 'delete');
-									print '</a>';
+									print '<td>';
+									//$tmpstockmovement->id = $line2['fk_stock_movement'];
+									//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?search_ref=' . $tmpstockmovement->id . '">' . img_picto($langs->trans("StockMovement"), 'movement', 'class="paddingright"') . '</a>';
+									print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
 									print '</td>';
-								}
 
-								print '</tr>';
+									// Already consumed
+									print '<td></td>';
+
+									// Qty
+									print '<td class="right">' . convertSecondToTime($line2['qty']) . '</td>';
+
+									// Cost price
+									if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
+										print '<td></td>';
+									}
+
+									print '<td colspan="3"></td>';
+
+									// Action delete line
+									if ($permissiontodelete) {
+										$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line2['rowid']);
+										print '<td class="center">';
+										print '<a class="reposition" href="' . $href . '">';
+										print img_picto($langs->trans('TooltipDeleteAndRevertTimeSpent'), 'delete');
+										print '</a>';
+										print '</td>';
+									}
+
+									print '</tr>';
+								}
 							}
+
 
 							if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 								$i = 1;
@@ -1667,10 +1663,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									$disable = 'disabled';
 								}
 
-								// Qty
-								//print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . ">";
-
-								//@todo renommer les input pour chaque ligne
 								print '<td class="right">';
 
 								if (GETPOSTISSET('timespent_duration-'. $line->id . '-' . $i .'-hour') || GETPOSTISSET('timespent_duration-'.$line->id . '-' . $i.'-min')) {
@@ -1678,53 +1670,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int") ;
 									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int");
 
-									$durationtouse = ($hour * 3600 + $min * 60);
-									//var_dump($durationtouse);
+									$durationtouse = (($hour * 3600) + ($min * 60));
+
+								}
+								// consumeandproduceall : we want to calculate the maximum time remaining with regard to the time already consumed
+								if ($action == 'consumeandproduceall'){
+									$durationtouse =  $line->qty - $alreadyconsumed;
 								}
 
 								print $form->select_duration('timespent_duration-'.$line->id . '-' . $i.'-' , $durationtouse, 0, 'text');
 								print '</td>';
-								// Cost
-								if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
-									print '<td></td>';
-								}
 
-								// Already consumed
-								print '<td></td>';
-
-								// Warehouse
-								print '<td>';
-								if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-									if (empty($line->disable_stock_change)) {
-										$preselected = (GETPOSTISSET('idwarehouse-' . $line->id . '-' . $i) ? GETPOST('idwarehouse-' . $line->id . '-' . $i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
-										print $formproduct->selectWarehouses($preselected, 'idwarehouse-' . $line->id . '-' . $i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth200 csswarehouse_' . $line->id . '_' . $i);
-									} else {
-										print '<span class="opacitymedium">' . $langs->trans("DisableStockChange") . '</span>';
-									}
-								} else {
-									print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
-								}
-								print '</td>';
-
-								// Stock
-								if (isModEnabled('stock')) {
-									print '<td></td>';
-								}
-
-								// Lot / Batch
-								if (isModEnabled('productbatch')) {
-									print '<td>';
-									if ($tmpproduct->status_batch) {
-										$preselected = (GETPOSTISSET('batch-' . $line->id . '-' . $i) ? GETPOST('batch-' . $line->id . '-' . $i) : '');
-										print '<input type="text" class="width50" name="batch-' . $line->id . '-' . $i . '" value="' . $preselected . '" list="batch-' . $line->id . '-' . $i . '">';
-										print $formproduct->selectLotDataList('batch-' . $line->id . '-' . $i, 0, $line->fk_product, '', '');
-
-										$type = 'batch';
-										print ' ' . img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine(' . ((int)$line->id) . ', \'' . dol_escape_js($type) . '\', \'qtymissingconsume\')"');
-									}
-									print '</td>';
-								}
-
+								print '<td><span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span></td>';
+								print '<td colspan="3"></td>';
 								// Action delete line
 								if ($permissiontodelete) {
 									print '<td></td>';
