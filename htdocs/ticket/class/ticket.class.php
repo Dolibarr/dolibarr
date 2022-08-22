@@ -212,6 +212,11 @@ class Ticket extends CommonObject
 	 */
 	public $email_date;
 
+	/**
+	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 */
+	public $oldcopy;
+
 
 	public $lines;
 
@@ -865,6 +870,10 @@ class Ticket extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$error = 0;
 
+		if (empty($notrigger)) {
+			$this->oldcopy = dol_clone($this, 1);
+		}
+
 		// Clean parameters
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -1454,6 +1463,9 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED) { // no closed
+			if (empty($notrigger)) {
+				$this->oldcopy = dol_clone($this, 1);
+			}
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
