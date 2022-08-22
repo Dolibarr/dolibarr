@@ -260,12 +260,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
 		if (isModEnabled('prelevement')) {
-			include_once DOL_DOCUMENT_ROOT . '/compta/prelevement/class/bonprelevement.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
 			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
 		}
 		if (isModEnabled('paymentbybanktransfer')) {
-			include_once DOL_DOCUMENT_ROOT . '/compta/prelevement/class/bonprelevement.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
 			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
 		}
