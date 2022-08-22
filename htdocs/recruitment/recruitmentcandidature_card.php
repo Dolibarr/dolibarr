@@ -257,12 +257,18 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
+if ($action == 'create') {
+	$title    = $langs->trans('NewCandidature');
+	$help_url = '';
+} else {
+	$title = $object->ref." - ".$langs->trans('Card');
+	$help_url = '';
+}
+
+llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	$title = $langs->trans('NewCandidature');
-	$help_url = '';
-	llxHeader('', $title, $help_url);
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("RecruitmentCandidature")), '', 'object_'.$object->picto);
 
@@ -299,9 +305,6 @@ if ($action == 'create') {
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit') {
-	$title = $object->ref." - ".$langs->trans('Card');
-	$help_url = '';
-	llxHeader('', $title, $help_url);
 
 	print load_fiche_titre($langs->trans("RecruitmentCandidature"), '', 'object_'.$object->picto);
 
@@ -338,10 +341,6 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
-
-	$title = $object->ref." - ".$langs->trans('Card');
-	$help_url = '';
-	llxHeader('', $title, $help_url);
 
 	$head = recruitmentcandidaturePrepareHead($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
