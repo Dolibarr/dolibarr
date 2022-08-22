@@ -162,7 +162,7 @@ if (empty($reshook)) {
 		// Line to produce
 		$moline->fk_mo = $object->id;
 
-		if (GETPOSTISSET('timespent_duration_expected_workload-hour') || GETPOSTISSET('timespent_duration_expected_workload-min') ){
+		if (GETPOSTISSET('timespent_duration_expected_workload-hour') || GETPOSTISSET('timespent_duration_expected_workload-min')){
 			$h = GETPOSTISSET('timespent_duration_expected_workload-hour') ? GETPOST('timespent_duration_expected_workload-hour','int') * 3600 : 0;
 			$m = GETPOSTISSET('timespent_duration_expected_workload-min') ? GETPOST('timespent_duration_expected_workload-min','int') * 60 : 0;
 			$moline->qty = $h + $m;
