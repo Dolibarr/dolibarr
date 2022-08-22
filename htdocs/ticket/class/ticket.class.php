@@ -870,9 +870,10 @@ class Ticket extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$error = 0;
 
-		if (empty($notrigger)) {
-			$this->oldcopy = dol_clone($this, 1);
-		}
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		//if (empty($this->oldcopy)) {
+		//	$this->oldcopy = dol_clone($this);
+		//}
 
 		// Clean parameters
 		if (isset($this->ref)) {
@@ -1463,13 +1464,12 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED) { // no closed
-			if (empty($notrigger)) {
-				$this->oldcopy = dol_clone($this, 1);
-			}
+			$this->oldcopy = dol_clone($this);
+
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1518,9 +1518,10 @@ class Ticket extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$this->db->begin();
 
 		$this->oldcopy = dol_clone($this);
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {

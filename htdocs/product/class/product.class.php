@@ -1050,6 +1050,7 @@ class Product extends CommonObject
 		}
 
 		if ($result >= 0) {
+			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 			if (empty($this->oldcopy)) {
 				$this->oldcopy = dol_clone($this);
 			}

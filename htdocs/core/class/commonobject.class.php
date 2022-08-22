@@ -8918,11 +8918,12 @@ abstract class CommonObject
 
 
 	/**
-	 * Function to prepare a part of the query for insert.
-	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
-	 * $this->${field} should be a clean value. The page can run
+	 * Function to prepare a part of the query for insert by returning an array with all properties of object.
 	 *
-	 * @return array
+	 * Note $this->${field} are set by the page that make the createCommon() or the updateCommon().
+	 * $this->${field} should be a clean and string value (so date are formated for SQL insert).
+	 *
+	 * @return array		Array with all values of each properties to update
 	 */
 	protected function setSaveQuery()
 	{
@@ -8950,7 +8951,7 @@ abstract class CommonObject
 				}
 			} elseif ($this->isInt($info) || $this->isFloat($info)) {
 				if ($field == 'entity' && is_null($this->{$field})) {
-					$queryarray[$field] = $conf->entity;
+					$queryarray[$field] = ((int) $conf->entity);
 				} else {
 					// $this->{$field} may be null, '', 0, '0', 123, '123'
 					if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
@@ -9378,6 +9379,11 @@ abstract class CommonObject
 
 		$now = dol_now();
 
+		// $this->oldcopy should have been set by the caller of update
+		//if (empty($this->oldcopy)) {
+		//	$this->oldcopy = dol_clone($this);
+		//}
+
 		$fieldvalues = $this->setSaveQuery();
 
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
@@ -9423,6 +9429,7 @@ abstract class CommonObject
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
+
 		if (!$error) {
 			$res = $this->db->query($sql);
 			if (!$res) {
