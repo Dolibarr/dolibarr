@@ -3146,7 +3146,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Subsidiaries list
-			if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES)) {
+			if (!empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 
