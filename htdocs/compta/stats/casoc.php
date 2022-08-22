@@ -346,7 +346,7 @@ $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-$sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
+$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
