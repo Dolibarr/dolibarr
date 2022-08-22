@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +42,15 @@ if (!defined('NOREQUIREHTML')) {
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
+
+$hookmanager->initHooks(array('takepospay'));
 
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
