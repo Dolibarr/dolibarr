@@ -416,7 +416,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_approve)) {
+		if (!empty($object->user_approve) && is_object($object->user_approve)) {
 			if ($object->user_approve->id) {
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
