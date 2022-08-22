@@ -216,7 +216,7 @@ if (empty($reshook)) {
 
 					if ($qtytoprocess != 0 || $hourToProcess > 0 || $minToProcess > 0 ) {
 
-						if ($tmpproduct->type == Product::TYPE_PRODUCT){
+						if ($tmpproduct->type == Product::TYPE_PRODUCT) {
 
 							// Check warehouse is set if we should have to
 							if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
@@ -249,8 +249,8 @@ if (empty($reshook)) {
 								}
 							}
 
-						}else if ($tmpproduct->type == Product::TYPE_SERVICE){
-							if ($isStockServiceHandling){
+						}else if ($tmpproduct->type == Product::TYPE_SERVICE) {
+							if ($isStockServiceHandling) {
 								// Check warehouse is set if we should have to
 								if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
 									//@todo et que je  suis un produit
@@ -1139,7 +1139,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				//$handleingTest = $isStockServiceHandling ? $line->role == 'toconsume' && $tmpprod->isProduct() : $line->role == 'toconsume' ;
 
 				if (!$isStockServiceHandling) {
-					if ($line->role == 'toconsume' && $tmpprod->isProduct()){
+					if ($line->role == 'toconsume' && $tmpprod->isProduct()) {
 						$nblinetoconsume++;
 					}
 				}else {
@@ -1417,7 +1417,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		</script>';
 
        //----------------------------------------------------------------------------------------------------
-		if (!$isStockServiceHandling){
+		if (!$isStockServiceHandling) {
 			// TITLE TO TEMPS CONSOMMÉS STARTING TABLE
 			$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumelineService&token='.newToken();
 			$permissiontoaddaconsumeline = $object->status != $object::STATUS_PRODUCED && $object->status != $object::STATUS_CANCELED;
@@ -1599,7 +1599,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							// Show detailed of already consumed with js code to collapse
 							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-							if (is_array($arrayoflines) && count($arrayoflines) >  0){
+							if (is_array($arrayoflines) && count($arrayoflines) >  0) {
 								foreach ($arrayoflines as $line2) {
 									print '<tr class="expanddetail' . $line->id . ' hideobject opacitylow">';
 
@@ -1666,7 +1666,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 								}
 								// consumeandproduceall : we want to calculate the maximum time remaining with regard to the time already consumed
-								if ($action == 'consumeandproduceall'){
+								if ($action == 'consumeandproduceall') {
 									$durationtouse =  $line->qty - $alreadyconsumed;
 								}
 
