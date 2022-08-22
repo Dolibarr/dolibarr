@@ -1510,7 +1510,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'barcode', 'class="pictofixedwidth"');
@@ -2207,7 +2207,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Barcode
-			if (!empty($conf->barcode->enabled)) {
+			if (isModEnabled('barcode')) {
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				print img_picto('', 'barcode');
@@ -2687,7 +2687,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			print '<tr><td>';
 			print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
 			print '</td>';

@@ -620,7 +620,7 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->fourn_barcode = $obj->barcode; // deprecated
 					$this->fourn_fk_barcode_type = $obj->fk_barcode_type; // deprecated
 					$this->supplier_barcode = $obj->barcode;
@@ -730,7 +730,7 @@ class ProductFournisseur extends Product
 
 				$prodfourn->packaging = $record["packaging"];
 
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$prodfourn->supplier_barcode = $record["barcode"];
 					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
@@ -1178,7 +1178,7 @@ class ProductFournisseur extends Product
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
 		}
 
