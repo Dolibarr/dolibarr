@@ -1228,7 +1228,7 @@ llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
-if (!empty($conf->barcode->enabled) && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
+if (isModEnabled('barcode') && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 	$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
 	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 	foreach ($dirbarcode as $dirroot) {

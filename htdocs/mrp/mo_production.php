@@ -1425,7 +1425,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			});
 		</script>';
 
-       //---------------------------------------ATM INSERTION--------------------------------------------------------------
+       //----------------------------------------------------------------------------------------------------
 		if (!$isStockServiceHandling){
 			// TITLE TO TEMPS CONSOMMÉS STARTING TABLE
 			$url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addconsumelineService&token='.newToken();
@@ -1700,7 +1700,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 
-		//--------------------------------------END ATM InSERTION -------------------------------------------------------------
+		//--------------------------------------END-------------------------------------------------------------
 
 
 
