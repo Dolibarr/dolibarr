@@ -48,9 +48,8 @@ CountriesNotInEEC=Nicht-EU Länder
 CountriesInEECExceptMe=EU-Länder außer %s
 CountriesExceptMe=Alle Länder außer %s
 AccountantFiles=Belegdokumente exportieren
-ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse suchen und exportieren, die zum Erstellen Ihrer Buchhaltung verwendet werden. <br> Die exportierte ZIP-Datei enthält die Listen der angeforderten Buchhaltungsdaten im CSV-Format sowie die zugehörigen Dokumente im Originalformat (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (CSV-Liste und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet werden.
 ExportAccountingSourceDocHelp2=Um Ihre Journale zu exportieren, verwenden Sie den Menüeintrag %s - %s.
-ExportAccountingProjectHelp=Geben Sie ein Projekt an, wenn Sie einen Buchhaltungsbericht nur für ein bestimmtes Projekt benötigen. Spesenabrechnungen und Darlehenszahlungen sind in den Projektberichten nicht enthalten.
 VueByAccountAccounting=Ansicht nach Buchungskonto
 VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Ü
 
 ## Export
 NotifiedExportDate=Exportierte Zeilen als exportiert kennzeichnen <span class="warning">(um eine Zeile zu ändern, müssen Sie die gesamte Transaktion löschen und erneut in die Buchhaltung übertragen)</span>
-NotifiedValidationDate=Festschreiben der exportierten Einträge <span class="warning">(gleiche Wirkung wie die Funktion  "%s", Änderungen und Löschungen der Zeilen sind danach DEFINITIV NICHT möglich)</span>
+NotifiedValidationDate=Festschreiben der exportierten Einträge <span class="warning">(gleiche Wirkung wie die "Abschluss"-Funktion, Änderungen und Löschungen der Zeilen sind DEFINITIV NICHT möglich)</span>
 DateValidationAndLock=Festschreibungsdatum
 ConfirmExportFile=Exportdatei der Buchhaltung erstellen?
 ExportDraftJournal=Entwurfsjournal exportieren

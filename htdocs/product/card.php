@@ -16,9 +16,10 @@
  * Copyright (C) 2016-2022	Charlene Benke		 <charlene@patas-monkey.com>
  * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
+ * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -666,7 +667,20 @@ if (empty($reshook)) {
 				if (count($object->errors)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					if ($object->error == 'ErrorProductAlreadyExists') {
+						// allow to hook on ErrorProductAlreadyExists in any module
+						$reshook = $hookmanager->executeHooks('onProductAlreadyExists', $parameters, $object, $action);
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+						if ($object->error) {
+							// check again to prevent translation issue,
+							// as error may have been cleared in hook function
+							setEventMessages($langs->trans($object->error), null, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans($object->error), null, 'errors');
+					}
 				}
 				$action = "create";
 			}
@@ -1190,15 +1204,24 @@ if (!empty($conf->accounting->enabled)) {
 
 
 $title = $langs->trans('ProductServiceCard');
+
 $help_url = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+	if ($action == 'create') {
+		$title = $langs->trans("NewProduct");
+	} else {
+		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+	}
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+	if ($action == 'create') {
+		$title = $langs->trans("NewService");
+	} else {
+		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+	}
 }
 
 llxHeader('', $title, $help_url);
@@ -1964,7 +1987,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+			$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
@@ -1974,7 +1997,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
 				print '<tr><td>'.$langs->trans("PublicUrl").'</td><td>';
 				print img_picto('', 'globe', 'class="pictofixedwidth"');
-				print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
+				print '<input type="text" name="url" class="quatrevingtpercent" value="'.(GETPOSTISSET('url') ? GETPOST('url') : $object->url).'">';
 				print '</td></tr>';
 			}
 

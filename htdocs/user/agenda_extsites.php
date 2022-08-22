@@ -120,7 +120,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
-			if (!$result > 0) {
+			if (!($result > 0)) {
 				$error++;
 			}
 		}
@@ -148,7 +148,11 @@ $formother = new FormOther($db);
 $arrayofjs = array();
 $arrayofcss = array();
 
-llxHeader('', $langs->trans("UserSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('ExtSites');
+$help_url = '';
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';

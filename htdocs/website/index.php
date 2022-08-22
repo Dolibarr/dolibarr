@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -587,7 +587,7 @@ if ($action == 'addsite' && $usercanedit) {
 	if (!$error && !GETPOST('WEBSITE_REF', 'alpha')) {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("WebsiteName")), null, 'errors');
 	}
 	if (!$error && !preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF', 'alpha'))) {
 		$error++;
@@ -1230,7 +1230,7 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete)
 		exit;
 	} else {
 		$db->rollback();
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -2745,7 +2745,7 @@ if (!GETPOST('hide_websitemenu')) {
 			if ($website->status == $website::STATUS_VALIDATED) {
 				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("WebsiteMustBeDisabled")).'">';
 			} else {
-				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
+				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
 			}
 
 			// Regenerate all pages
@@ -2938,12 +2938,12 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($pagepreviousid) {
 			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'&token='.newToken().'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
 		} else {
-			print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("Previous")).'</span>';
+			print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
 		}
 		if ($pagenextid) {
 			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'&token='.newToken().'">'.img_next($langs->trans("NextContainer")).'</a>';
 		} else {
-			print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("Next")).'</span>';
+			print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
 		}
 
 		print '</span>';
@@ -2969,7 +2969,12 @@ if (!GETPOST('hide_websitemenu')) {
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
-				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsite'), '', 'confirm_deletesite', $formquestion, 0, 1, 200);
+				if ($atleastonepage) {
+					$langs->load("errors");
+					$formquestion[] = array('type' => 'onecolumn', 'value' => '<div class="warning">'.$langs->trans("WarningPagesWillBeDeleted").'</div>');
+				}
+
+				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWebsite'), '', 'confirm_deletesite', $formquestion, 0, 1, 210 + ($atleastonepage ? 70 : 0), 580);
 
 				print $formconfirm;
 			}
@@ -3384,6 +3389,7 @@ if ($action == 'editcss') {
 	$htmltext = '';
 	print $form->textwithpicto($langs->trans('MainLanguage'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_LANG');
 	print '</td><td>';
+	print img_picto('', 'language', 'class="picotfixedwidth"');
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : ($object->lang ? $object->lang : '0')), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
 	print '</td>';
 	print '</tr>';
@@ -3393,6 +3399,7 @@ if ($action == 'editcss') {
 	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
 	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
+	print img_picto('', 'language', 'class="picotfixedwidth"');
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
 	print '</tr>';
@@ -3400,13 +3407,7 @@ if ($action == 'editcss') {
 	// VirtualHost
 	print '<tr><td class="tdtop">';
 
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/{s1}'.$websitekey.'{s2}');
-	$htmltext = str_replace(array('{s1}', '{s2}'), array('<i>', '</i>'), $htmltext);
-	$htmltext .= '<br>';
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
-	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
-
+	$htmltext = $langs->trans("VirtualhostDesc");
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
@@ -3420,7 +3421,7 @@ if ($action == 'editcss') {
 	$maxfilesizearray = getMaxFileSizeArray();
 	$maxmin = $maxfilesizearray['maxmin'];
 	if ($maxmin > 0) {
-		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
 	print '</tr></td>';
@@ -3552,7 +3553,7 @@ if ($action == 'createsite') {
 	}
 
 	print '<!-- Add site -->'."\n";
-	//print '<div class="fichecenter">';
+	print '<div class="tabBar tabBarWithBottom">';
 
 	print '<table class="border centpercent">';
 
@@ -3571,7 +3572,7 @@ if ($action == 'createsite') {
 	}
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $form->textwithpicto($langs->trans('WebSite'), $langs->trans("Example").': www.mywebsite.com, myportal, ...');
+	print $form->textwithpicto($langs->trans('WebsiteName'), $langs->trans("Example").': MyPortal, www.mywebsite.com, ...');
 	print '</td><td>';
 	print '<input type="text" class="flat maxwidth300" name="WEBSITE_REF" value="'.dol_escape_htmltag($siteref).'" autofocus>';
 	print '</td></tr>';
@@ -3580,7 +3581,16 @@ if ($action == 'createsite') {
 	print $langs->trans('MainLanguage');
 	print '</td><td>';
 	$shortlangcode = preg_replace('/[_-].*$/', '', trim($langs->defaultlang));
+	print img_picto('', 'language', 'class="pictofixedwidth"');
 	print $formadmin->select_language((GETPOSTISSET('WEBSITE_LANG') ? GETPOST('WEBSITE_LANG', 'aZ09comma') : $shortlangcode), 'WEBSITE_LANG', 0, null, 1, 0, 0, 'minwidth300', 2, 0, 0, array(), 1);
+	print '</td></tr>';
+
+	print '<tr><td>';
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
+	print '</td><td>';
+	print img_picto('', 'language', 'class="pictofixedwidth"');
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -3590,28 +3600,22 @@ if ($action == 'createsite') {
 	print '</td></tr>';
 
 	print '<tr><td>';
-	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
-	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
-	print '</td></tr>';
 
-	print '<tr><td>';
-
-	$htmltext = $langs->trans("SetHereVirtualHost", '{s1}');
-	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>', $htmltext);
+	$htmltext = $langs->trans("VirtualhostDesc");
+	/*$htmltext = str_replace('{s1}', DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>', $htmltext);
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
-	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);*/
 
-	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
+
+	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="virtualhost" value="'.dol_escape_htmltag(GETPOST('virtualhost', 'alpha')).'">';
 	print '</td></tr>';
 
-
 	print '</table>';
+	print '</div>';
 
 	if ($action == 'createsite') {
 		print '<div class="center">';
@@ -4324,8 +4328,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+
+			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+			$selectedfields = '';
+			$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 			print_barre_liste($langs->trans("Results"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1, 1, 1);
 
@@ -4375,7 +4381,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$totalnbwords = 0;
 
 			foreach ($listofpages['list'] as $answerrecord) {
-				if (get_class($answerrecord) == 'WebsitePage') {
+				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
 					print '<tr>';
 
 					// Type of container

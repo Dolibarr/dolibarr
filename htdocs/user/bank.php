@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 			{
 				$objectuser->fetch($id);
 
-				$objectuser->oldcopy = clone $objectuser;
+				$objectuser->oldcopy = dol_clone($objectuser);
 
 				$db->begin();
 
@@ -277,7 +277,10 @@ $form = new Form($db);
 
 $childids = $user->getAllChildIds(1);
 
-llxHeader(null, $langs->trans("BankAccounts"));
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('BankAccounts');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 

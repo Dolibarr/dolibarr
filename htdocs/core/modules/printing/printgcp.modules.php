@@ -137,7 +137,6 @@ class printing_printgcp extends PrintingDriver
 				$this->errors[] = $e->getMessage();
 				$token_ok = false;
 			}
-			//var_dump($this->errors);exit;
 
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds

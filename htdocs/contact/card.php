@@ -375,7 +375,7 @@ if (empty($reshook)) {
 						$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-						if (!$result > 0) {
+						if (!($result > 0)) {
 							$errors[] = "ErrorFailedToSaveFile";
 						} else {
 							$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
@@ -567,19 +567,21 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
+$objsoc = new Societe($db);
+if ($socid > 0) {
+	$objsoc->fetch($socid);
+}
+
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+
 llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
-
-$objsoc = new Societe($db);
-if ($socid > 0) {
-	$objsoc->fetch($socid);
-}
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
@@ -622,8 +624,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Show tabs
 		$head = contact_prepare_head($object);
-
-		$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 	}
 
 	if ($user->rights->societe->contact->creer) {
@@ -643,8 +643,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->country      = $tmparray['label'];
 			}
 
-			$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 			$linkback = '';
+
 			print load_fiche_titre($title, $linkback, 'address');
 
 			// Show errors

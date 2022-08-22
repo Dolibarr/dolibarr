@@ -326,7 +326,8 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
- 
+WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
+
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)

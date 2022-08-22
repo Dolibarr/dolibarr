@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
@@ -277,7 +278,7 @@ if (empty($reshook)) {
 		}
 		// Create new object
 		if ($result > 0 && !$error) {
-			$object->oldcopy = clone $object;
+			$object->oldcopy = dol_clone($object);
 
 			// Change values
 			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));
@@ -311,8 +312,8 @@ if (empty($reshook)) {
 			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
 			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
 			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
-			$object->birth       = $birthdate;
-
+			$object->birth		= $birthdate;
+			$object->default_lang = GETPOST('default_lang', 'alpha');
 			$object->typeid      = GETPOST("typeid", 'int');
 			//$object->note        = trim(GETPOST("comment","alpha"));
 			$object->morphy      = GETPOST("morphy", 'alpha');
@@ -457,6 +458,7 @@ if (empty($reshook)) {
 
 		$userid = GETPOST("userid", 'int');
 		$socid = GETPOST("socid", 'int');
+		$default_lang = GETPOST('default_lang', 'alpha');
 
 		$object->civility_id = $civility_id;
 		$object->firstname   = $firstname;
@@ -498,7 +500,7 @@ if (empty($reshook)) {
 		$object->user_id     = $userid;
 		$object->socid = $socid;
 		$object->public      = $public;
-
+		$object->default_lang = $default_lang;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -580,36 +582,15 @@ if (empty($reshook)) {
 				$id = $object->id;
 			} else {
 				$db->rollback();
-
-				if ($object->error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
+
 			// Auto-create thirdparty on member creation
 			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
 				if ($result > 0) {
-					// User creation
+					// Create third party out of a member
 					$company = new Societe($db);
-
-					$companyalias = '';
-					$fullname = $object->getFullName($langs);
-
-					if ($object->morphy == 'mor') {
-						$companyname = $object->company;
-						if (!empty($fullname)) {
-							$companyalias = $fullname;
-						}
-					} else {
-						$companyname = $fullname;
-						if (!empty($object->company)) {
-							$companyalias = $object->company;
-						}
-					}
-
-					$result = $company->create_from_member($object, $companyname, $companyalias);
-
+					$result = $company->create_from_member($object);
 					if ($result < 0) {
 						$langs->load("errors");
 						setEventMessages($langs->trans($company->error), null, 'errors');
@@ -621,6 +602,11 @@ if (empty($reshook)) {
 			}
 		}
 		$action = ($result < 0 || !$error) ?  '' : 'create';
+
+		if (!$error && $backtopage) {
+			header("Location: ".$backtopage);
+			exit;
+		}
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
@@ -677,7 +663,8 @@ if (empty($reshook)) {
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
 					//fallback on the old configuration.
-					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
+					$langs->load("errors");
+					setEventMessages('<a href="'.DOL_URL_ROOT.'/adherents/admin/member_emails.php">'.$langs->trans('WarningMandatorySetupNotComplete').'</a>', null, 'errors');
 					$error++;
 				} else {
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -893,6 +880,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Card");
@@ -1357,6 +1345,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+			print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+			print '</td>';
+			print '</tr>';
+		}
+
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
 		print $form->selectyesno("public", (GETPOSTISSET("public") ? GETPOST("public", 'alphanohtml', 2) : $object->public), 1);
@@ -1543,7 +1539,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Create form popup
 			$formquestion = array();
 			if ($object->email) {
-				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL ?true:false));
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (getDolGlobalString('ADHERENT_DEFAULT_SENDINFOBYMAIL') ? true : false));
 			}
 			if (!empty($conf->mailman->enabled) && !empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[] = array('type'=>'other', 'label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"), 'value'=>'');
@@ -1574,7 +1570,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage = null;
-			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_CANCELATION;
+			$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_CANCELATION');
 
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -1796,6 +1792,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Birth Date
 		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+			print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
+			print $labellang;
+			print '</td></tr>';
+		}
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
@@ -2029,9 +2038,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if ($useonlinepayment) {
 				print '<br>';
-
+				if (empty($amount)) {   // Take the maximum amount among what the member is supposed to pay / has paid in the past
+					$amount = price(max($adht->amount, $object->first_subscription_amount, $object->last_subscription_amount));
+				}
+				if (empty($amount)) {
+					$amount = 0;
+				}
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-				print showOnlinePaymentUrl('membersubscription', $object->ref);
+				print showOnlinePaymentUrl('membersubscription', $object->ref, $amount);
 			}
 
 			print '</div><div class="fichehalfright">';

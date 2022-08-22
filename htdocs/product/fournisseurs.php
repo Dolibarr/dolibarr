@@ -464,6 +464,9 @@ if ($id > 0 || $ref) {
 			if (($action == 'add_price' || $action == 'update_price') && $usercancreate) {
 				$langs->load("suppliers");
 
+				print "<!-- form to add a supplier price -->\n";
+				print '<br>';
+
 				if ($rowid) {
 					$object->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
@@ -471,7 +474,6 @@ if ($id > 0 || $ref) {
 					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
-				print "<!-- form to add a supplier price -->\n";
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="save_price">';
@@ -911,10 +913,10 @@ END;
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => (!empty($conf->multicurrency->enabled)), 'checked'=>0, 'position'=>10),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
-					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>15),
-					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>16),
+					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>0, 'position'=>15),
+					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => !empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING), 'checked'=>0, 'position'=>17),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => $conf->barcode->enabled, 'checked'=>1, 'position'=>18),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>1, 'position'=>18),
 				);
 
 				// fetch optionals attributes and labels

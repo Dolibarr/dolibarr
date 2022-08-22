@@ -76,7 +76,7 @@ if (!$urlfile) {
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
 $result = $ecmdir->fetch(GETPOST("section", 'alpha'));
-if (!$result > 0) {
+if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
 }

@@ -618,7 +618,7 @@ class Account extends CommonObject
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 
-					return -3;
+					return -4;
 				}
 			}
 
@@ -630,7 +630,7 @@ class Account extends CommonObject
 			$this->errors = $accline->errors;
 			$this->db->rollback();
 
-			return -2;
+			return -5;
 		}
 	}
 

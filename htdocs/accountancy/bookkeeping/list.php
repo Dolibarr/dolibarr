@@ -214,7 +214,7 @@ if (empty($listofformat[$formatexportset])) {
 
 $error = 0;
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -1133,6 +1133,10 @@ $line = new BookKeepingLine();
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {

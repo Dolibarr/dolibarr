@@ -3060,7 +3060,7 @@ class FactureFournisseur extends CommonInvoice
 		// Clear fields
 		$object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
 		$object->author             = $user->id;
-		$object->user_valid         = '';
+		$object->user_valid         = 0;
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';

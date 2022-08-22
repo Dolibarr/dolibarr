@@ -1507,12 +1507,13 @@ class Propal extends CommonObject
 	/**
 	 *	Load a proposal from database. Get also lines.
 	 *
-	 *	@param      int			$rowid		id of object to load
-	 *	@param		string		$ref		Ref of proposal
-	 *	@param		string		$ref_ext	Ref ext of proposal
-	 *	@return     int         			>0 if OK, <0 if KO
+	 *	@param      int			$rowid			Id of object to load
+	 *	@param		string		$ref			Ref of proposal
+	 *	@param		string		$ref_ext		Ref ext of proposal
+	 *	@param		int			$forceentity	Entity id to force when searching on ref or ref_ext
+	 *	@return     int         				>0 if OK, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $forceentity = 0)
 	{
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
@@ -1551,10 +1552,15 @@ class Propal extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
 
-		if ($ref) {
-			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+		if (!empty($ref)) {
+			if (!empty($forceentity)) {
+				$sql .= " WHERE p.entity = ".(int) $forceentity; // Check only the current entity because we may have the same reference in several entities
+			} else {
+				$sql .= " WHERE p.entity IN (".getEntity('propal').")";
+			}
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		} else {
+			// Dont't use entity if you use rowid
 			$sql .= " WHERE p.rowid = ".((int) $rowid);
 		}
 
@@ -2614,8 +2620,22 @@ class Propal extends CommonObject
 
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
+		if (empty($conf->global->PROPALE_KEEP_OLD_SIGNATURE_INFO)) {
+			$date_signature = $now;
+			$fk_user_signature = $user->id;
+		} else {
+			$this->info($this->id);
+			if (!isset($this->date_signature) || $this->date_signature == '') {
+				$date_signature = $now;
+				$fk_user_signature = $user->id;
+			} else {
+				$date_signature = $this->date_signature;
+				$fk_user_signature = $this->user_signature->id;
+			}
+		}
+
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($date_signature)."', fk_user_signature=".$fk_user_signature;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -2662,7 +2682,7 @@ class Propal extends CommonObject
 				$this->oldcopy= clone $this;
 				$this->statut = $status;
 				$this->status = $status;
-				$this->date_signature = $now;
+				$this->date_signature = $date_signature;
 				$this->note_private = $newprivatenote;
 			}
 
@@ -3798,7 +3818,7 @@ class Propal extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param   	null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

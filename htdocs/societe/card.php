@@ -647,7 +647,7 @@ if (empty($reshook)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-								if (!$result > 0) {
+								if (!($result > 0)) {
 									$errors[] = "ErrorFailedToSaveFile";
 								} else {
 									// Create thumbs
@@ -813,7 +813,7 @@ if (empty($reshook)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-							if (!$result > 0) {
+							if (!($result > 0)) {
 								$errors[] = "ErrorFailedToSaveFile";
 							} else {
 								// Create thumbs
@@ -965,10 +965,12 @@ if ($socid > 0 && empty($object->id)) {
 }
 
 $title = $langs->trans("ThirdParty");
+if ($action == 'create') {
+	$title = $langs->trans("NewThirdParty");
+}
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
-
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
@@ -1143,7 +1145,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-					if (!$result > 0) {
+					if (!($result > 0)) {
 						$errors[] = "ErrorFailedToSaveFile";
 					} else {
 						// Create thumbs
