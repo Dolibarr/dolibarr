@@ -1678,18 +1678,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print '</table>';
 		}
-
-
 		//--------------------------------------END-------------------------------------------------------------
-
-
-
-
-
-
-
-		// Lines to produce
-
 		print '</div>';
 		print '<div class="clearboth"></div>';
 
