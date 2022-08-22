@@ -895,7 +895,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 				print ' '.$alreadyproduced;
 				print '</td>';
-				print '<td></td>'; // Warehouse
+				print '<td colspan="2"></td>';
 				if (isModEnabled('productbatch')) {
 					print '<td></td>'; // Lot
 				}
@@ -945,6 +945,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 						print '</td>';
 						print '<td></td>';
+
 					}
 					print '</tr>';
 				}
