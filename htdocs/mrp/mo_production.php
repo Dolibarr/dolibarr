@@ -162,13 +162,12 @@ if (empty($reshook)) {
 		// Line to produce
 		$moline->fk_mo = $object->id;
 
-		if (GETPOSTISSET('timespent_duration_expected_workload-hour') || GETPOSTISSET('timespent_duration_expected_workload-min')){
+		if (GETPOSTISSET('timespent_duration_expected_workload-hour') || GETPOSTISSET('timespent_duration_expected_workload-min')) {
 			$h = GETPOSTISSET('timespent_duration_expected_workload-hour') ? GETPOST('timespent_duration_expected_workload-hour','int') * 3600 : 0;
 			$m = GETPOSTISSET('timespent_duration_expected_workload-min') ? GETPOST('timespent_duration_expected_workload-min','int') * 60 : 0;
 			$moline->qty = $h + $m;
-
-		}else{
-			$moline->qty = GETPOST('qtytoadd', 'int'); ;
+		}else {
+			$moline->qty = GETPOST('qtytoadd', 'int');
 		}
 
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
@@ -212,7 +211,7 @@ if (empty($reshook)) {
 					|| (GETPOSTISSET('timespent_duration-'.$line->id.'-'.$i.'-min') &&  !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min')) )
 				) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
-					$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour') : 0 ;
+					$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour') : 0;
 					$minToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min') : 0;
 
 					if ($qtytoprocess != 0 || $hourToProcess > 0 || $minToProcess > 0 ) {
@@ -251,8 +250,6 @@ if (empty($reshook)) {
 							}
 
 						}else if ($tmpproduct->type == Product::TYPE_SERVICE){
-
-							//@todo attention si stock service activé ! changer la duplication de code ici !!!
 							if ($isStockServiceHandling){
 								// Check warehouse is set if we should have to
 								if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
@@ -287,13 +284,8 @@ if (empty($reshook)) {
 								}
 
 							}
-
-
-							// conversion heure min vers seconde dans qtytoprocess
 							$qtytoprocess = ($hourToProcess * 3600 + $minToProcess * 60);
-
 						}
-
 						$checkTypeProduct = $tmpproduct->type == Product::TYPE_PRODUCT;
 						// SAVE MO_PRODUCTION  OBJECT
 						if (!$error) {
@@ -1146,19 +1138,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				// les lignes de services vont apparaître dans la liste à consommer au même titre que les produits
 				//$handleingTest = $isStockServiceHandling ? $line->role == 'toconsume' && $tmpprod->isProduct() : $line->role == 'toconsume' ;
 
-				if (!$isStockServiceHandling){
+				if (!$isStockServiceHandling) {
 					if ($line->role == 'toconsume' && $tmpprod->isProduct()){
 						$nblinetoconsume++;
 					}
-				}else{
-					if ($line->role == 'toconsume'){
+				}else {
+					if ($line->role == 'toconsume') {
 						$nblinetoconsume++;
 					}
 				}
-
 			}
-
-
 			$nblinetoconsumecursor = 0;
 			foreach ($object->lines as $line) {
 				if ($line->role == 'toconsume') {
