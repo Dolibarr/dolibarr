@@ -128,7 +128,7 @@ if ($action == 'getProducts') {
 	}
 
 	$barcode_rules = getDolGlobalString('TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT');
-	if (!empty($conf->barcode->enabled) && !empty($barcode_rules)) {
+	if (isModEnabled('barcode') && !empty($barcode_rules)) {
 		$barcode_rules_list = array();
 
 		// get barcode rules

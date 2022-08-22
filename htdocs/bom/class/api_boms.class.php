@@ -391,7 +391,6 @@ class Boms extends DolibarrApi
 			$request_data->disable_stock_change,
 			$request_data->efficiency,
 			$request_data->position,
-			$request_data->fk_bom_child,
 			$request_data->import_key
 		);
 

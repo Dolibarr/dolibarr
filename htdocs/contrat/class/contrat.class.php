@@ -3132,10 +3132,12 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		if (empty($this->oldcopy)) {
+			$this->oldcopy = dol_clone($this);
+		}
 
 		$this->db->begin();
-
-		$this->oldcopy = dol_clone($this);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

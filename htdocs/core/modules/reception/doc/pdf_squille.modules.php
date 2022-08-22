@@ -856,20 +856,20 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		// Show barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$posx = 105;
 		} else {
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
