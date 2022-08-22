@@ -489,6 +489,11 @@ if ($num > 0) {
 			}
 		}
 
+		$reg = array();
+		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
+			$langs->load($reg[1]);
+		}
+
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
 		$object->label = preg_replace('/:.*$/', '', $obj->label);
@@ -499,10 +504,6 @@ if ($num > 0) {
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
 		$object->module_name = $obj->module_name;
-		$reg = array();
-		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
-			$langs->load($reg[1]);
-		}
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
