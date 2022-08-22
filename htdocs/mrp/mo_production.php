@@ -1449,7 +1449,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				// Qty
 				print '<td class="right">';
-				print $form->select_duration('timespent_duration_expected_workload-', 0 );
+				print $form->select_duration('timespent_duration_expected_workload-', 0);
 				print '</td>';
 
 				// Qty already consumed
@@ -1552,7 +1552,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							//print '<td class="right"></td>';
 							// Action delete line
 							if ($permissiontodelete) {
-								$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line->id);
+								$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
 								print '<td class="center">';
 								print '<a class="reposition" href="' . $href . '">';
 								print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
@@ -1580,7 +1580,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									print '<td colspan="3"></td>';
 									// Action delete line
 									if ($permissiontodelete) {
-										$href = $_SERVER["PHP_SELF"] . '?id=' . ((int)$object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line2['rowid']);
+										$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int)$line2['rowid']);
 										print '<td class="center">';
 										print '<a class="reposition" href="' . $href . '">';
 										print img_picto($langs->trans('TooltipDeleteAndRevertTimeSpent'), 'delete');
@@ -1606,8 +1606,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}
 								print '<td class="right">';
 								if (GETPOSTISSET('timespent_duration-'. $line->id . '-' . $i .'-hour') || GETPOSTISSET('timespent_duration-'.$line->id . '-' . $i.'-min')) {
-									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int") ;
-									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int");
+									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',"int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour', "int") ;
+									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min',"int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min', "int");
 									$durationtouse = (($hour * 3600) + ($min * 60));
 
 								}
@@ -1615,7 +1615,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								if ($action == 'consumeandproduceall') {
 									$durationtouse =  $line->qty - $alreadyconsumed;
 								}
-								print $form->select_duration('timespent_duration-'.$line->id . '-' . $i.'-' , $durationtouse, 0, 'text');
+								print $form->select_duration('timespent_duration-'.$line->id . '-' . $i.'-', $durationtouse, 0, 'text');
 								print '</td>';
 								print '<td><span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span></td>';
 								print '<td colspan="3"></td>';
