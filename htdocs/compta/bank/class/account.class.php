@@ -618,7 +618,7 @@ class Account extends CommonObject
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 
-					return -3;
+					return -4;
 				}
 			}
 
@@ -630,7 +630,7 @@ class Account extends CommonObject
 			$this->errors = $accline->errors;
 			$this->db->rollback();
 
-			return -2;
+			return -5;
 		}
 	}
 
@@ -1381,6 +1381,7 @@ class Account extends CommonObject
 	public function getNomUrl($withpicto = 0, $mode = '', $option = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs, $user;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 		$result = '';
 		$label = img_picto('', $this->picto).' <u class="paddingrightnow">'.$langs->trans("BankAccount").'</u>';
@@ -1389,7 +1390,7 @@ class Account extends CommonObject
 		}
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
-		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;
+		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
 		$label .= '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
 		$label .= '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
@@ -1707,19 +1708,20 @@ class Account extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		// Example of IBAN FR7630001007941234567890185
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
 		$this->bank            = 'MyBank';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
-		$this->code_banque     = '123';
-		$this->code_guichet    = '456';
-		$this->number          = 'ABC12345';
-		$this->cle_rib         = '50';
+		$this->code_banque     = '30001';
+		$this->code_guichet    = '00794';
+		$this->number          = '12345678901';
+		$this->cle_rib         = '85';
 		$this->bic             = 'AA12';
-		$this->iban            = 'FR999999999';
-		$this->domiciliation   = 'My bank address';
+		$this->iban            = 'FR7630001007941234567890185';
+		$this->domiciliation   = 'Banque de France';
 		$this->proprio         = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
@@ -2389,7 +2391,7 @@ class AccountLine extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Transaction").'</u>:<br>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("BankTransactionLine").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $this->id).'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

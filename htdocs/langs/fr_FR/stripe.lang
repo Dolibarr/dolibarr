@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour app
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe: %s
+TERMINAL_LOCATION=Emplacement (adresse) des terminaux

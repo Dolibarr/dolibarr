@@ -138,7 +138,7 @@ $candelete = 0;
 if (!empty($user->rights->expensereport->supprimer)) {
 	$candelete = 1;
 }
-if ($object->statut == ExpenseReport::STATUS_DRAFT && !empty($user->rights->expensereport->write) && in_array($object->fk_user_author, $childids)) {
+if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
 	$candelete = 1;
 }
 
@@ -263,7 +263,7 @@ if (empty($reshook)) {
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
-			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
@@ -1950,7 +1950,7 @@ if ($action == 'create') {
 
 			// Payments already done (from payment on this expensereport)
 			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
-			$sql .= "c.code as p_code, c.libelle as payment_type,";
+			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
@@ -1969,18 +1969,20 @@ if ($action == 'create') {
 					$objp = $db->fetch_object($resql);
 
 					$paymentexpensereportstatic->id = $objp->rowid;
-					$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+					$paymentexpensereportstatic->datep = $db->jdate($objp->dp);
 					$paymentexpensereportstatic->ref = $objp->rowid;
 					$paymentexpensereportstatic->num_payment = $objp->num_payment;
-					$paymentexpensereportstatic->payment_code = $objp->payment_code;
+					$paymentexpensereportstatic->type_code = $objp->payment_code;
+					$paymentexpensereportstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddseven">';
 					print '<td>';
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->p_code) != ("PaymentType".$objp->p_code) ? $langs->trans("PaymentType".$objp->p_code) : $objp->payment_type;
+					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
+					// Bank account
 					if (!empty($conf->banque->enabled)) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;

@@ -324,10 +324,11 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
-			// Test if sql is allowed
+			// Test if th SQL is allowed SQL
 			if ($onlysqltoimportwebsite) {
-				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);
-				// Remove all strings contents
+				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);	// Replace the \' seque,ce
+
+				// Remove all strings contents including the ' so we can analyse SQL instruction only later
 				$l = strlen($newsql);
 				$is = 0;
 				$quoteopen = 0;
@@ -348,11 +349,12 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				$newsqlclean = str_replace(array("null"), '__000__', $newsqlclean);
 				//print $newsqlclean."<br>\n";
 
-				// A very small control. This can still by bypassed by adding a second SQL request concatenated
 				$qualified = 0;
+
+				// A very small control. This can still by bypassed by adding a second SQL request concatenated
 				if (preg_match('/^--/', $newsqlclean)) {
 					$qualified = 1;
-				} elseif (preg_match('/^UPDATE llx_website SET fk_default_home = \d+\+\d+ WHERE rowid = \d+;$/', $newsqlclean)) {
+				} elseif (preg_match('/^UPDATE llx_website SET \w+ = \d+\+\d+ WHERE rowid = \d+;$/', $newsqlclean)) {
 					$qualified = 1;
 				} elseif (preg_match('/^INSERT INTO llx_website_page\([a-z0-9_\s,]+\) VALUES\([0-9_\s,\+]+\);$/', $newsqlclean)) {
 					// Insert must match
@@ -360,11 +362,18 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					$qualified = 1;
 				}
 
+				// Another check to allow some legitimate original urls
+				if (!$qualified) {
+					if (preg_match('/^UPDATE llx_website SET \w+ = \'[a-zA-Z,\s]*\' WHERE rowid = \d+;$/', $sql)) {
+						$qualified = 1;
+					}
+				}
+
 				if (!$qualified) {
 					$error++;
 					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
 					//print "newsqlclean = ".$newsqlclean."<br>\n";
-					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains non allowed instructions.", LOG_DEBUG);
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains non allowed instructions.", LOG_WARNING);
 					dol_syslog('$newsqlclean='.$newsqlclean, LOG_DEBUG);
 					break;
 				}
@@ -424,6 +433,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					$error++;
 					break;
 				}
+
 				$from = '__'.$cursor.'__';
 				$to = $listofinsertedrowid[$cursor];
 				$newsql = str_replace($from, $to, $newsql);
@@ -683,7 +693,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 
 	$h = 0;
 	$head = array();
-	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
+	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
@@ -1542,10 +1552,10 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified

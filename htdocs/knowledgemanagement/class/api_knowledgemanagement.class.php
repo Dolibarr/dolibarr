@@ -125,18 +125,19 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Get a list of knowledgerecords
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string	       	$sortfield	        Sort field
+	 * @param string	       	$sortorder	        Sort order
+	 * @param int		       	$limit		        Limit for list
+	 * @param int		       	$page		        Page number
+	 * @param int				$category   		Use this param to filter list by category
+	 * @param string           	$sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /knowledgerecords/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
 	{
 		global $db, $conf;
 
@@ -166,6 +167,9 @@ class KnowledgeManagement extends DolibarrApi
 		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		}
+		if ($category > 0) {
+			$sql .= ", ".$this->db->prefix()."categorie_knowledgemanagement as c";
+		}
 		$sql .= " WHERE 1 = 1";
 
 		// Example of use $mode
@@ -187,6 +191,11 @@ class KnowledgeManagement extends DolibarrApi
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		}
+		// Select products of given category
+		if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".((int) $category);
+			$sql .= " AND c.fk_knowledgemanagement = t.rowid";
 		}
 		if ($sqlfilters) {
 			$errormessage = '';

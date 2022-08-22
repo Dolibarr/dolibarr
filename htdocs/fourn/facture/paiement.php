@@ -199,7 +199,7 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
-				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement(1));
+				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
 					if ($multicurrency_amounts[$cursorfacid] && (abs($multicurrency_amounts[$cursorfacid]) > abs($multicurrency_amountsresttopay[$cursorfacid]))) {

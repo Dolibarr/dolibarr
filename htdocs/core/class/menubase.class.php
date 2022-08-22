@@ -181,21 +181,21 @@ class Menubase
 		if (!isset($this->enabled)) {
 			$this->enabled = '1';
 		}
-		$this->menu_handler = trim($this->menu_handler);
-		$this->module = trim($this->module);
-		$this->type = trim($this->type);
-		$this->mainmenu = trim($this->mainmenu);
-		$this->leftmenu = trim($this->leftmenu);
+		$this->menu_handler = trim((string) $this->menu_handler);
+		$this->module = trim((string) $this->module);
+		$this->type = trim((string) $this->type);
+		$this->mainmenu = trim((string) $this->mainmenu);
+		$this->leftmenu = trim((string) $this->leftmenu);
 		$this->fk_menu = (int) $this->fk_menu; // If -1, fk_mainmenu and fk_leftmenu must be defined
-		$this->fk_mainmenu = trim($this->fk_mainmenu);
-		$this->fk_leftmenu = trim($this->fk_leftmenu);
+		$this->fk_mainmenu = trim((string) $this->fk_mainmenu);
+		$this->fk_leftmenu = trim((string) $this->fk_leftmenu);
 		$this->position = (int) $this->position;
-		$this->url = trim($this->url);
-		$this->target = trim($this->target);
-		$this->title = trim($this->title);
-		$this->langs = trim($this->langs);
-		$this->perms = trim($this->perms);
-		$this->enabled = trim($this->enabled);
+		$this->url = trim((string) $this->url);
+		$this->target = trim((string) $this->target);
+		$this->title = trim((string) $this->title);
+		$this->langs = trim((string) $this->langs);
+		$this->perms = trim((string) $this->perms);
+		$this->enabled = trim((string) $this->enabled);
 		$this->user = (int) $this->user;
 		if (empty($this->position)) {
 			$this->position = 0;

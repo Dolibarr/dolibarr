@@ -74,6 +74,7 @@ if ($invoiceid > 0) {
 	}
 }
 
+$head = '';
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 

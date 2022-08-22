@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 
 $id = GETPOST('id', 'int');
 
@@ -46,7 +47,7 @@ if (empty($object->thirdparty)) {
 $socid = $object->thirdparty->id;
 
 // Sort & Order fields
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -167,7 +168,7 @@ if ($object->thirdparty->client) {
 	}
 }
 
-if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) {
+if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
@@ -230,7 +231,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='propal' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('propal').')';
-	$datePrint = 'c.datep';
+	$dateprint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
 } elseif ($type_element == 'order') {
@@ -443,6 +444,8 @@ if ($sql_select) {
 
 
 	$i = 0;
+	$total_qty = 0;
+	$total_ht = 0;
 	while (($objp = $db->fetch_object($resql)) && $i < min($num, $limit)) {
 		$documentstatic->id = $objp->doc_id;
 		$documentstatic->ref = $objp->doc_number;

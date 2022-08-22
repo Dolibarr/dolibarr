@@ -216,6 +216,11 @@ class CActionComm
 						if ($obj->module == 'shipping' && !empty($conf->expedition->enabled) && !empty($user->rights->expedition->lire)) {
 							$qualified = 1;
 						}
+						// For case module = 'myobject@eventorganization'
+						$tmparray = preg_split("/@/", $obj->module, -1);
+						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && !empty($conf->eventorganization->enabled)) {
+							$qualified = 1;
+						}
 						// For the generic case with type = 'module...' and module = 'myobject@mymodule'
 						$regs = array();
 						if (preg_match('/^module/', $obj->type)) {

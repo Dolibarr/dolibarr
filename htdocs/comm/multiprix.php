@@ -75,7 +75,7 @@ if ($_socid > 0) {
 	// We load data of thirdparty
 	$objsoc = new Societe($db);
 	$objsoc->id = $_socid;
-	$objsoc->fetch($_socid, $to);
+	$objsoc->fetch($_socid);
 
 
 	$head = societe_prepare_head($objsoc);
@@ -141,7 +141,6 @@ if ($_socid > 0) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		print '<table class="noborder centpercent">';
-		$tag = !$tag;
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("PriceLevel").'</td>';

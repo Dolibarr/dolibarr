@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Le javascript ne doit pas être désactivé pour qu
 ErrorPasswordsMustMatch=Les 2 mots de passe saisis doivent correspondre
 ErrorContactEMail=Une erreur technique est apparue. Merci de contacter l'administrateur à l'email suivant <b>%s</b> en lui indiquant le code erreur <b>%s</b> dans votre message ou mieux en fournissant une copie d'écran de cette page.
 ErrorWrongValueForField=Champ <b>%s</b>: '<b>%s</b>' ne respecte pas la règle <b>%s</b>
+ErrorHtmlInjectionForField=Champ <b> %s </b> : La valeur ' <b> %s </b> ' contient une donnée malveillante non autorisée
 ErrorFieldValueNotIn=Champ <b>%s</b>: '<b>%s</b>' n'est pas une valeur disponible dans le champ <b>%s</b> de la table <b>%s</b>
 ErrorFieldRefNotIn=Champ <b>%s</b>: '<b>%s</b>' n'est pas une référence existante comme <b>%s</b>
 ErrorsOnXLines=Erreurs sur <b>%s</b> enregistrement(s) source
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Vous devez d’abord configurer votre p
 ErrorFailedToFindEmailTemplate=Aucun gabarit trouvé avec le code %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Durée non définie sur le service. Pas moyen de calculer le prix horaire.
 ErrorActionCommPropertyUserowneridNotDefined=Le propriétaire de l'utilisateur est requis
-ErrorActionCommBadType=Le type d'événement sélectionné (id: %n, code: %s) n'existe pas dans le dictionnaire des types d'événement
+ErrorActionCommBadType=Le type d'événement sélectionné (id : %s, code : %s) n'existe pas dans le dictionnaire des types d'événements
 CheckVersionFail=Échec de la vérification de version
 ErrorWrongFileName=Le nom du fichier ne peut pas contenir __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Pas dans le dictionnaire des conditions de paiement, veuillez modifier.
@@ -283,12 +284,18 @@ ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs 
 ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produit
 ErrorPaymentInBothCurrency=Erreur, tous les montants doivent être entrés dans la même colonne.
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Vous essayez de payer une facture en monnaie %s depuis un compte en %s
-ErrorAjaxRequestFailed=La requête a échoué
+ErrorInvoiceLoadThirdParty=Impossible de charger l'objet tiers pour la facture "%s"
+ErrorInvoiceLoadThirdPartyKey=Clé tiers "%s" non définie pour la facture "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Supprimer une ligne n'est pas autorisée par l'état actuel de l'objet
+ErrorAjaxRequestFailed=Demande échouée
+ErrorThirpdartyOrMemberidIsMandatory=Définir un tiers ou un adhérent dans le partenariat est obligatoire
+ErrorFailedToWriteInTempDirectory=Impossible d'écrire dans le répertoire temporaire
+ErrorQuantityIsLimitedTo=La quantité est limitée à %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
 WarningPasswordSetWithNoAccount=Un mot de passe a été fixé pour cet adhérent. Cependant, aucun compte d'utilisateur n'a été créé. Donc, ce mot de passe est stocké, mais ne peut être utilisé pour accéder à Dolibarr. Il peut être utilisé par un module/interface externe, mais si vous n'avez pas besoin de définir ni login ni mot de passe pour un adhérent, vous pouvez désactiver l'option «Gérer un login pour chaque adhérent" depuis la configuration du module Adhérents. Si vous avez besoin de gérer un login, mais pas de mot de passe, vous pouvez laisser ce champ vide pour éviter cet avertissement. Remarque: L'email peut également être utilisé comme login si l'adhérent est lié à un utilisateur.
-WarningMandatorySetupNotComplete=Cliquez ici pour configurer les paramètres obligatoires
+WarningMandatorySetupNotComplete=Cliquez ici pour configurer les paramètres principaux
 WarningEnableYourModulesApplications=Cliquez ici pour activer vos modules et applications
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Un marque-page avec ce titre ou cette destination (URL) existe déjà.
@@ -318,6 +325,7 @@ WarningCreateSubAccounts=Attention, vous ne pouvez pas créer directement un com
 WarningAvailableOnlyForHTTPSServers=Disponible uniquement si une connexion sécurisée HTTPS est utilisée
 WarningModuleXDisabledSoYouMayMissEventHere=Le module %s n’a pas été activé. Par conséquent, il se peut que vous manquiez beaucoup d’événements ici.
 WarningPaypalPaymentNotCompatibleWithStrict=La valeur 'Strict' fait que les fonctionnalités de paiement en ligne ne fonctionnent pas correctement. Utilisez plutôt 'Lax'.
+WarningThemeForcedTo=Attention, le choix du thème a été forcé à <b> %s </b> par la constante cachée MAIN_FORCETHEME
 
 # Validate
 RequireValidValue = Valeur non valide

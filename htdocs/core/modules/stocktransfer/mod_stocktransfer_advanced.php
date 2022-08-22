@@ -80,7 +80,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskStockTransfer" value="'.$conf->global->STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskStockTransfer" value="'.getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -133,7 +133,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK;
+		$mask = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

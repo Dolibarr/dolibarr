@@ -174,7 +174,7 @@ if ($action == 'search') {
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$params[] = 'p.barcode';
 		}
 		$sql .= natural_search($params, $key);

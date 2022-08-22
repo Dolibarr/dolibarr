@@ -108,16 +108,19 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
 
-$usercanread = $user->rights->commande->lire;
-$usercancreate = $user->rights->commande->creer;
-$usercandelete = $user->rights->commande->supprimer;
+$usercanread = $user->hasRight("commande", "lire");
+$usercancreate = $user->hasRight("commande", "creer");
+$usercandelete = $user->hasRight("commande", "supprimer");
 // Advanced permissions
-$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->close)));
-$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->validate)));
-$usercancancel = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->annuler)));
-$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send);
 
-$usercancreatepurchaseorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'close')));
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'validate')));
+$usercancancel = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('commande', 'order_advance', 'annuler')));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'send'));
+$usercangeneretedoc = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->hasRight('commande', 'order_advance', 'generetedoc'));
+
+$usermustrespectpricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
@@ -645,6 +648,9 @@ if (empty($reshook)) {
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
@@ -737,6 +743,7 @@ if (empty($reshook)) {
 				$pu_ht = $prod->price;
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
+				$price_min_ttc = $prod->price_min_ttc;
 				$price_base_type = $prod->price_base_type;
 
 				// If price per segment
@@ -744,6 +751,7 @@ if (empty($reshook)) {
 					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
@@ -767,6 +775,7 @@ if (empty($reshook)) {
 							$pu_ht = price($prodcustprice->lines[0]->price);
 							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_min =  price($prodcustprice->lines[0]->price_min);
+							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
 							$price_base_type = $prodcustprice->lines[0]->price_base_type;
 							$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
@@ -944,10 +953,19 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
-				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-				setEventMessages($mesg, null, 'errors');
-			} else {
+			if ($usermustrespectpricemin) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+				}
+			}
+
+			if (!$error) {
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, $pu_ht_devise);
 
@@ -1015,9 +1033,12 @@ if (empty($reshook)) {
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
-		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0);
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
+		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		//$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
 		$qty = price2num(GETPOST('qty'), 'MS');
 
@@ -1066,13 +1087,25 @@ if (empty($reshook)) {
 			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
 				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 			}
+			$price_min_ttc = $product->price_min_ttc;
+			if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($object->thirdparty->price_level)) {
+				$price_min_ttc = $product->multiprices_min_ttc[$object->thirdparty->price_level];
+			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
-				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
-				$error++;
-				$action = 'editline';
+			if ($usermustrespectpricemin) {
+				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
+					setEventMessages($mesg, null, 'errors');
+					$error++;
+					$action = 'editline';
+				}
 			}
 		} else {
 			$type = GETPOST('type');
@@ -1484,8 +1517,12 @@ if (empty($reshook)) {
  *	View
  */
 
-$title = $langs->trans('Order')." - ".$langs->trans('Card');
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewOrder");
+}
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
@@ -1609,7 +1646,7 @@ if ($action == 'create' && $usercancreate) {
 		$fk_account         = $soc->fk_account;
 		$availability_id    = 0;
 		$shipping_method_id = $soc->shipping_method_id;
-		$warehouse_id       = $soc->warehouse_id;
+		$warehouse_id       = $soc->fk_warehouse;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
@@ -1698,7 +1735,7 @@ if ($action == 'create' && $usercancreate) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact', 'class="pictofixedwidth"');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1, 'maxwidth200 widthcentpercentminusx');
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, !empty($srccontactslist)?$srccontactslist:"", '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1722,7 +1759,7 @@ if ($action == 'create' && $usercancreate) {
 	// Date delivery planned
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
-	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
+	$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date);
 	print $form->selectDate($date_delivery ? $date_delivery : -1, 'liv_', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
@@ -1803,7 +1840,12 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
+	$parameters = array();
+	if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		$parameters['objectsrc'] =  $objectsrc;
+	}
+	$parameters['socid'] = $socid;
+
 	// Note that $action and $object may be modified by hook
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 	print $hookmanager->resPrint;
@@ -2738,7 +2780,7 @@ if ($action == 'create' && $usercancreate) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
-						if ($user->rights->ficheinter->creer) {
+						if ($user->hasRight('ficheinter', 'creer')) {
 							print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 						} else {
 							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2750,7 +2792,7 @@ if ($action == 'create' && $usercancreate) {
 				if (!empty($conf->contrat->enabled) && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
-					if ($user->rights->contrat->creer) {
+					if ($user->hasRight('contrat', 'creer')) {
 						print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 					}
 				}
@@ -2762,7 +2804,7 @@ if ($action == 'create' && $usercancreate) {
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 						if ((isModEnabled('expedition_bon') && $user->rights->expedition->creer) || ($conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)) {
-							if ($user->rights->expedition->creer) {
+							if ($user->hasRight('expedition', 'creer')) {
 								print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
 							} else {
 								print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
@@ -2781,7 +2823,7 @@ if ($action == 'create' && $usercancreate) {
 				// Create bill and Classify billed
 				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
 				if ($object->statut > Commande::STATUS_DRAFT && !$object->billed && $object->total_ttc >= 0) {
-					if (isModEnabled('facture') && $user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+					if (isModEnabled('facture') && $user->hasRight('facture', 'creer') && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 						print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;token='.newToken().'&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
 					}
 					if ($usercancreate && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {

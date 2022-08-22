@@ -548,9 +548,8 @@ if (empty($reshook)) {
 			}
 			//var_dump($object->array_languages);exit;
 
-			if (GETPOST('deletephoto')) {
-				$object->logo = '';
-			} elseif (!empty($_FILES['photo']['name'])) {
+			if (!empty($_FILES['photo']['name'])) {
+				$current_logo = $object->logo;
 				$object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
 
@@ -648,7 +647,7 @@ if (empty($reshook)) {
 								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-								if (!$result > 0) {
+								if (!($result > 0)) {
 									$errors[] = "ErrorFailedToSaveFile";
 								} else {
 									// Create thumbs
@@ -801,13 +800,20 @@ if (empty($reshook)) {
 				}
 				if ($file_OK) {
 					if (image_format_supported($_FILES['photo']['name']) > 0) {
+						if ($current_logo != $object->logo) {
+							$fileimg = $dir.'/'.$current_logo;
+							$dirthumbs = $dir.'/thumbs';
+							dol_delete_file($fileimg);
+							dol_delete_dir_recursive($dirthumbs);
+						}
+
 						dol_mkdir($dir);
 
 						if (@is_dir($dir)) {
 							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-							if (!$result > 0) {
+							if (!($result > 0)) {
 								$errors[] = "ErrorFailedToSaveFile";
 							} else {
 								// Create thumbs
@@ -959,10 +965,12 @@ if ($socid > 0 && empty($object->id)) {
 }
 
 $title = $langs->trans("ThirdParty");
+if ($action == 'create') {
+	$title = $langs->trans("NewThirdParty");
+}
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('Card');
 }
-
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 
 llxHeader('', $title, $help_url);
@@ -1137,7 +1145,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 					$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
 
-					if (!$result > 0) {
+					if (!($result > 0)) {
 						$errors[] = "ErrorFailedToSaveFile";
 					} else {
 						// Create thumbs
@@ -1502,7 +1510,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'barcode', 'class="pictofixedwidth"');
@@ -2199,7 +2207,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Barcode
-			if (!empty($conf->barcode->enabled)) {
+			if (isModEnabled('barcode')) {
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				print img_picto('', 'barcode');
@@ -2518,7 +2526,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$maxfilesizearray = getMaxFileSizeArray();
 				$maxmin = $maxfilesizearray['maxmin'];
 				if ($maxmin > 0) {
-					$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+					print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 				}
 				print '<input type="file" class="flat" name="photo" id="photoinput">';
 				print '</td></tr>';
@@ -2679,7 +2687,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			print '<tr><td>';
 			print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
 			print '</td>';
@@ -3032,6 +3040,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print "</td></tr>\n";
 		}
+
+		// Link user (you must create a contact to get a user)
+		/*
+		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+		if ($object->user_id) {
+			$dolibarr_user = new User($db);
+			$result = $dolibarr_user->fetch($object->user_id);
+			print $dolibarr_user->getLoginUrl(-1);
+		} else {
+			//print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
+			if (!$object->user_id && $user->rights->user->user->creer) {
+				print '<a class="aaa" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create_user&token='.newToken().'">'.img_picto($langs->trans("CreateDolibarrLogin"), 'add').' '.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
+		}
+		print '</td></tr>';
+		*/
 
 		// Webservices url/key
 		if (!empty($conf->syncsupplierwebservices->enabled)) {

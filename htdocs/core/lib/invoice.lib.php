@@ -254,7 +254,9 @@ function supplier_invoice_rec_prepare_head($object)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+	if (($mode == 'customers' && isModEnabled('facture') && !empty($user->rights->facture->lire))
+		|| ($mode = 'suppliers') && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && !empty($user->rights->facture->lire)
+		) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -954,6 +956,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 						$i++;
 						$total += $obj->total_ht;
 						$total_ttc += $obj->total_ttc;
+						$totalam += $obj->am;
 						continue;
 					}
 

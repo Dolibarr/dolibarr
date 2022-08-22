@@ -24,7 +24,7 @@ FinancialCommitment=مالی وابستگی
 InterestAmount=دلچسپی
 CapitalRemain=سرمایہ باقی ہے۔
 TermPaidAllreadyPaid = یہ اصطلاح پہلے سے ادا کی جاتی ہے۔
-CantUseScheduleWithLoanStartedToPaid = ادائیگی شروع ہونے کے ساتھ قرض کے لیے شیڈیولر استعمال نہیں کر سکتے
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = اگر آپ شیڈول استعمال کرتے ہیں تو آپ دلچسپی میں ترمیم نہیں کر سکتے
 # Admin
 ConfigLoan=ماڈیول قرض کی ترتیب

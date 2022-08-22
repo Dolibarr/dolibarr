@@ -366,10 +366,11 @@ class Contrat extends CommonObject
 	 *  @param	int|string	$date_start		Date start (now if empty)
 	 *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param	string		$comment		Comment
+	 *  @param	int|string	$date_end		Date end
 	 *	@return	int							<0 if KO, >0 if OK
 	 *  @see ()
 	 */
-	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
+	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '', $date_end = '')
 	{
 		if (empty($date_start)) {
 			$date_start = dol_now();
@@ -387,7 +388,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
+				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
@@ -667,7 +668,7 @@ class Contrat extends CommonObject
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
 		} else {
-			$sql .= " WHERE rowid=".(int) $id;
+			$sql .= " WHERE rowid = ".(int) $id;
 		}
 		if ($ref_customer) {
 			$sql .= " AND ref_customer = '".$this->db->escape($ref_customer)."'";
@@ -676,7 +677,7 @@ class Contrat extends CommonObject
 			$sql .= " AND ref_supplier = '".$this->db->escape($ref_supplier)."'";
 		}
 		if ($ref) {
-			$sql .= " AND ref='".$this->db->escape($ref)."'";
+			$sql .= " AND ref = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -723,10 +724,13 @@ class Contrat extends CommonObject
 
 					// Retrieve all extrafields
 					// fetch optionals attributes and labels
-					$this->fetch_optionals();
+					$result = $this->fetch_optionals();
 
 					// Lines
-					$result = $this->fetch_lines();
+					if ($result >= 0 && !empty($this->table_element_line)) {
+						$result = $this->fetch_lines();
+					}
+
 					if ($result < 0) {
 						$this->error = $this->db->lasterror();
 						return -3;
@@ -3128,11 +3132,12 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		if (empty($this->oldcopy)) {
+			$this->oldcopy = dol_clone($this);
+		}
 
 		$this->db->begin();
-
-		$this->oldcopy = new ContratLigne($this->db);
-		$this->oldcopy->fetch($this->id);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

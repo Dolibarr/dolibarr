@@ -61,8 +61,8 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		$this->hidden = !(
 			(isModEnabled('facture') && !empty($user->rights->facture->lire))
-		 || (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire))
-		 || (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire))
+			|| (isModEnabled('commande') && !empty($user->rights->commande->lire))
+			|| (isModEnabled('propal') && !empty($user->rights->propale->lire))
 		);
 	}
 

@@ -304,9 +304,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 /*
  *	View
  */
-
-llxHeader("", $langs->trans("VariousPayment"));
-
 $form = new Form($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
@@ -323,6 +320,13 @@ if ($id) {
 		exit;
 	}
 }
+
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewVariousPayment");
+}
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 $options = array();
 
@@ -584,6 +588,8 @@ if ($id) {
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlright = '';
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
@@ -613,7 +619,7 @@ if ($id) {
 	}
 	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Accountancy code
 	print '<tr><td class="nowrap">';

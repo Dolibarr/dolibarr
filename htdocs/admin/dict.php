@@ -622,34 +622,33 @@ $sourceList = array();
 if ($id == 11) {
 	$elementList = array(
 		'' => '',
-		'societe' => $langs->trans('ThirdParty'),
+		'agenda' => img_picto('', 'action', 'class="pictofixedwidth"').$langs->trans('Agenda'),
+		'dolresource' => img_picto('', 'resource', 'class="pictofixedwidth"').$langs->trans('Resource'),
+		'societe' => img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans('ThirdParty'),
 		// 'proposal' => $langs->trans('Proposal'),
 		// 'order' => $langs->trans('Order'),
 		// 'invoice' => $langs->trans('Bill'),
-		'supplier_proposal' => $langs->trans('SupplierProposal'),
-		'order_supplier' => $langs->trans('SupplierOrder'),
-		'invoice_supplier' => $langs->trans('SupplierBill'),
 		// 'intervention' => $langs->trans('InterventionCard'),
 		// 'contract' => $langs->trans('Contract'),
-		'project' => $langs->trans('Project'),
-		'project_task' => $langs->trans('Task'),
-		'ticket' => $langs->trans('Ticket'),
-		'agenda' => $langs->trans('Agenda'),
-		'dolresource' => $langs->trans('Resource'),
-		// old deprecated
-		'propal' => $langs->trans('Proposal'),
-		'commande' => $langs->trans('Order'),
-		'facture' => $langs->trans('Bill'),
-		'fichinter' => $langs->trans('InterventionCard'),
-		'contrat' => $langs->trans('Contract'),
+		'project' => img_picto('', 'project', 'class="pictofixedwidth"').$langs->trans('Project'),
+		'project_task' => img_picto('', 'projecttask', 'class="pictofixedwidth"').$langs->trans('Task'),
+		'propal' => img_picto('', 'propal', 'class="pictofixedwidth"').$langs->trans('Proposal'),
+		'commande' => img_picto('', 'order', 'class="pictofixedwidth"').$langs->trans('Order'),
+		'facture' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans('Bill'),
+		'fichinter' => img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans('InterventionCard'),
+		'contrat' => img_picto('', 'contract', 'class="pictofixedwidth"').$langs->trans('Contract'),
+		'ticket' => img_picto('', 'ticket', 'class="pictofixedwidth"').$langs->trans('Ticket'),
+		'supplier_proposal' => img_picto('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans('SupplierProposal'),
+		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
+		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
 	);
-	if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
-		$elementList["societe"] = $langs->trans('ThirdParty');
+	if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
 	}
 
 	complete_elementList_with_modules($elementList);
 
-	asort($elementList);
+	//asort($elementList);
 	$sourceList = array(
 		'internal' => $langs->trans('Internal'),
 		'external' => $langs->trans('External')
@@ -1202,7 +1201,6 @@ if (GETPOST('from')) {
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 
 /*
@@ -1222,14 +1220,16 @@ if ($id > 0) {
 		$sql .= natural_search("code_iso", $search_code);
 	} elseif ($search_code != '' && $id == 28) {
 		$sql .= natural_search("h.code", $search_code);
-	} elseif ($search_code != '' && $id == 32) {
+	} elseif ($search_code != '' && ($id == 7 || $id == 32)) {
 		$sql .= natural_search("a.code", $search_code);
 	} elseif ($search_code != '' && $id == 3) {
 		$sql .= natural_search("r.code_region", $search_code);
-	} elseif ($search_code != '' && $id == 7) {
-		$sql .= natural_search("a.code", $search_code);
-	} elseif ($search_code != '' && $id == 10) {
+	} elseif ($search_code != '' && ($id == 8 || $id == 10)) {
 		$sql .= natural_search("t.code", $search_code);
+	} elseif ($search_code != '' && $id == 1) {
+		$sql .= natural_search("f.code", $search_code);
+	} elseif ($search_code != '' && $id == 2) {
+		$sql .= natural_search("d.code_departement", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
@@ -1960,7 +1960,7 @@ if ($id > 0) {
 								$valuetoshow = price($valuetoshow);
 							}
 							if ($value == 'private') {
-								$valuetoshow = yn($elementList[$valuetoshow]);
+								$valuetoshow = yn($valuetoshow);
 							} elseif ($value == 'libelle_facture') {
 								$langs->load("bills");
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
@@ -2090,6 +2090,8 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($obj->{$value});
 							} elseif ($value == 'block_if_negative') {
 								$valuetoshow = yn($obj->{$value});
+							} elseif ($value == 'icon') {
+								$valuetoshow = $obj->{$value}." ".img_picto("",  $obj->{$value});
 							} elseif ($value == 'type_duration') {
 								$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 								$valuetoshow =$TDurationTypes[$obj->{$value}];
@@ -2373,9 +2375,15 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
-		} elseif (in_array($value, array('element', 'source'))) {	//Example: the type and source of the element (for contact types)
+		} elseif (in_array($value, array('element', 'source'))) {	// Example: the type and source of the element (for contact types)
+			$tmparray = array();
+			if ($value == 'element') {
+				$tmparray = $elementList;
+			} else {
+				$tmparray = $sourceList;
+			}
 			print '<td>';
-			print $form->selectarray($value, $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''));
+			print $form->selectarray($value, $tmparray, (!empty($obj->{$value}) ? $obj->{$value}:''), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth250');
 			print '</td>';
 		} elseif (in_array($value, array('public', 'use_default'))) {
 			// Fields 0/1 with a combo select Yes/No

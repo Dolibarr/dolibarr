@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
 ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢,損失搜尋部份數值的能力）
 ACCOUNTING_DATE_START_BINDING=定義開始綁定和轉移會計的日期。小於此日期，交易將不會轉入會計。
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=在會計轉帳時，預設選擇為週期顯示
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=銷售日記帳
 ACCOUNTING_PURCHASE_JOURNAL=採購日記帳
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=會計帳戶預設註冊客戶存款
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -279,7 +279,7 @@ DescVentilExpenseReportMore=如果您在費用報表類型上設定會計帳戶�
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
 Closure=年度關閉
-DescClosure=請在此處查詢依照月份的未驗證與未鎖定移動數
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=未驗證和未鎖定的移動概覽
 AllMovementsWereRecordedAsValidated=所有動作都被記錄為已驗證並鎖定
 NotAllMovementsCouldBeRecordedAsValidated=並非所有動作都可以記錄為已驗證與已鎖定
@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=抱�
 AccountancyErrorMismatchLetterCode=協調代碼不匹配
 AccountancyErrorMismatchBalanceAmount=餘額（%s）不等於0
 AccountancyErrorLetteringBookkeeping=交易發生錯誤：%s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=會計條目

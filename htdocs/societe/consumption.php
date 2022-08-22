@@ -361,7 +361,8 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
+		// We test both case description is correctly saved of was save after dol_escape_htmltag().
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_escape_htmltag($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}

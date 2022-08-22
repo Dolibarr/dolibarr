@@ -52,19 +52,15 @@ $formcompany = new FormCompany($db);
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setcodeclient') {
-	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON", $value, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'setcodecompta') {
-	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON", $value, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -314,10 +310,8 @@ if ($action == 'setprofid') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_UNIQUE";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -327,10 +321,8 @@ if ($action == 'setprofidmandatory') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_MANDATORY";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -340,10 +332,8 @@ if ($action == 'setprofidinvoicemandatory') {
 	$status = GETPOST('status', 'alpha');
 
 	$idprof = "SOCIETE_".$value."_INVOICE_MANDATORY";
-	if (dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity) > 0) {
-		//header("Location: ".$_SERVER["PHP_SELF"]);
-		//exit;
-	} else {
+	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -352,10 +342,8 @@ if ($action == 'setprofidinvoicemandatory') {
 if ($action == 'sethideinactivethirdparty') {
 	$status = GETPOST('status', 'alpha');
 
-	if (dolibarr_set_const($db, "COMPANY_HIDE_INACTIVE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+	$result = dolibarr_set_const($db, "COMPANY_HIDE_INACTIVE_IN_COMBOBOX", $status, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
 		dol_print_error($db);
 	}
 }
@@ -371,6 +359,7 @@ if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
+
 
 /*
  * 	View
@@ -616,7 +605,7 @@ foreach ($dirsociete as $dirroot) {
 
 				if ($modulequalified) {
 					print '<tr class="oddeven"><td width="100">';
-					print $module->name;
+					print dol_escape_htmltag($module->name);
 					print "</td><td>\n";
 					if (method_exists($module, 'info')) {
 						print $module->info($langs);
@@ -630,7 +619,7 @@ foreach ($dirsociete as $dirroot) {
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						//}
@@ -646,7 +635,7 @@ foreach ($dirsociete as $dirroot) {
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.urlencode($name).'&token='.newToken().'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -667,7 +656,7 @@ foreach ($dirsociete as $dirroot) {
 					// Preview
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf') {
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+						$linkspec = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
@@ -765,7 +754,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if ($conf->accounting->enabled) {
+if (!empty($conf->accounting->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';

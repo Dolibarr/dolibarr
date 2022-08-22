@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Tranzakció közvetlen rögzítésének letiltása a b
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Piszkozatexport engedélyezése a naplóban
 ACCOUNTANCY_COMBO_FOR_AUX=Kombinációs lista engedélyezése a leányfiókhoz (lassú lehet, ha sok harmadik fél van, és megszakad az érték egy részének keresése)
 ACCOUNTING_DATE_START_BINDING=Határozzon meg egy dátumot a könyvelésben a kötés és átvitel megkezdéséhez. Ezen időpont alatt a tranzakciók nem kerülnek át a könyvelésbe.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=A könyvelési átutaláshoz válassza ki az időszakot alapértelmezés szerint
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=A könyvelési átutalásnál mi az alapértelmezetten kiválasztott időszak
 
 ACCOUNTING_SELL_JOURNAL=Eladó napló
 ACCOUNTING_PURCHASE_JOURNAL=Vásárlási napló
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Számviteli fiók az adományok regisztrálásához
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számviteli fiók az előfizetések regisztrálásához
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Alapértelmezés szerint számlaszámla az ügyfél befizetésének regisztrálásához
-UseAuxiliaryAccountOnCustomerDeposit=Használjon alszámlákat az ügyfelek betéti sorain
+UseAuxiliaryAccountOnCustomerDeposit=Ügyfélszámla tárolása egyéni számlaként a leányfőkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Alapértelmezés szerint a vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Alapértelmezés szerint az EGK-ban vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
@@ -279,7 +279,7 @@ DescVentilExpenseReportMore=Ha a számviteli számlát a költségjelentés-soro
 DescVentilDoneExpenseReport=Itt megtekintheti a költségjelentések sorainak listáját és a díjak elszámolási számláját
 
 Closure=Éves zárás
-DescClosure=Tekintse meg itt a még nem érvényesített és zárolatlan mozgások számát havi bontásban
+DescClosure=Itt tekintheti meg a még nem érvényesített és zárolt mozgások számát havi bontásban
 OverviewOfMovementsNotValidated=Nem érvényesített és zárolt mozgások áttekintése
 AllMovementsWereRecordedAsValidated=Minden mozgást érvényesítettként és zárolva rögzítettünk
 NotAllMovementsCouldBeRecordedAsValidated=Nem minden mozgást lehetett érvényesítettként és zároltként rögzíteni
@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sajn
 AccountancyErrorMismatchLetterCode=Nem egyezik az egyeztető kód
 AccountancyErrorMismatchBalanceAmount=Az egyenleg (%s) nem egyenlő 0-val
 AccountancyErrorLetteringBookkeeping=Hibák történtek a következő tranzakciókkal kapcsolatban: %s
+ErrorAccountNumberAlreadyExists=Az %s számviteli szám már létezik
 
 ## Import
 ImportAccountingEntries=Számviteli bejegyzések

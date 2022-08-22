@@ -92,8 +92,8 @@ if ($socid > 0) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			if (!$num > 0) {
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			if ($num <= 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 
 			$solde = 0;

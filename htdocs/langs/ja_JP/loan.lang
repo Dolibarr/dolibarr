@@ -24,7 +24,7 @@ FinancialCommitment=財政的コミットメント
 InterestAmount=興味
 CapitalRemain=資本は残る
 TermPaidAllreadyPaid = この期間は既に支払われている
-CantUseScheduleWithLoanStartedToPaid = 支払が開始されたローンにスケジューラを使用できない
+CantUseScheduleWithLoanStartedToPaid = 支払いが開始されたローンのタイムラインを生成できません
 CantModifyInterestIfScheduleIsUsed = スケジュールを使用する場合、利息を変更することはできない
 # Admin
 ConfigLoan=モジュールローンの構成

@@ -804,9 +804,13 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("Shipment");
+if ($action == 'create2') {
+	$title = $langs->trans("CreateShipment");
+}
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+llxHeader('', $title, 'Expedition', $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -1311,10 +1315,10 @@ if ($action == 'create') {
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
 										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -1521,6 +1525,12 @@ if ($action == 'create') {
 											print $productlotObject->getNomUrl(1);
 										} else {
 											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 										}
 										print ' ('.$dbatch->qty.')';
 										$quantityToBeDelivered -= $deliverableQty;
@@ -2565,8 +2575,8 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright">';

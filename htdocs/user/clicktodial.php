@@ -43,6 +43,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+
 /*
  * Actions
  */
@@ -74,11 +75,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-
 $form = new Form($db);
-
-llxHeader("", "ClickToDial");
-
 
 if ($id > 0) {
 	$object = new User($db);
@@ -86,6 +83,10 @@ if ($id > 0) {
 	$object->getrights();
 	$object->fetch_clicktodial();
 
+	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+	$title = $person_name." - ".$langs->trans('ClickToDial');
+	$help_url = '';
+	llxHeader('', $title, $help_url);
 
 	$head = user_prepare_head($object);
 
@@ -104,7 +105,11 @@ if ($id > 0) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
