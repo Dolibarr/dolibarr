@@ -164,7 +164,7 @@ if (empty($reshook)) {
 			$h = GETPOSTISSET('timespent_duration_expected_workload-hour') ? GETPOST('timespent_duration_expected_workload-hour', 'int') * 3600 : 0;
 			$m = GETPOSTISSET('timespent_duration_expected_workload-min') ? GETPOST('timespent_duration_expected_workload-min', 'int') * 60 : 0;
 			$moline->qty = $h + $m;
-		}else {
+		} else {
 			$moline->qty = GETPOST('qtytoadd',  'int');
 		}
 
@@ -211,12 +211,8 @@ if (empty($reshook)) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 					$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int') : 0;
 					$minToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int') : 0;
-
-					if ($qtytoprocess != 0 || $hourToProcess > 0 || $minToProcess > 0 ) {
-
+					if ($qtytoprocess != 0 || $hourToProcess > 0 || $minToProcess > 0) {
 						if ($tmpproduct->type == Product::TYPE_PRODUCT) {
-
-							// Check warehouse is set if we should have to
 							if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
 								if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
 									$langs->load("errors");
@@ -247,12 +243,11 @@ if (empty($reshook)) {
 								}
 							}
 
-						}elseif ($tmpproduct->type == Product::TYPE_SERVICE) {
+						} elseif ($tmpproduct->type == Product::TYPE_SERVICE) {
 							if ($isStockServiceHandling) {
 								// Check warehouse is set if we should have to
 								if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-									//@todo et que je  suis un produit
-									if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+									if (!(GETPOST('idwarehouse-'.$line->id.'-'.$i, 'int') > 0)) {	// If there is no warehouse set.
 										$langs->load("errors");
 										setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 										$error++;
@@ -308,9 +303,7 @@ if (empty($reshook)) {
 
 							$pos++;
 						}
-
 					} // END $qtytoprocess != 0
-
 					$i++;
 				}
 			}
