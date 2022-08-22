@@ -154,24 +154,22 @@ if (empty($reshook)) {
 		$result = $object->setStatut($object::STATUS_INPROGRESS, 0, '', 'MRP_REOPEN');
 	}
 
-	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton')
-		|| ($action == 'confirm_addconsumelineService' && GETPOST('addconsumelineServicebutton') ) && $permissiontoadd)
-		|| ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
+	if (($action == 'confirm_addconsumeline' && GETPOST('addconsumelinebutton') || ($action == 'confirm_addconsumelineService' && GETPOST('addconsumelineServicebutton')) && $permissiontoadd) || ($action == 'confirm_addproduceline' && GETPOST('addproducelinebutton') && $permissiontoadd)) {
 		$moline = new MoLine($db);
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
 
 		if (GETPOSTISSET('timespent_duration_expected_workload-hour') || GETPOSTISSET('timespent_duration_expected_workload-min')) {
-			$h = GETPOSTISSET('timespent_duration_expected_workload-hour') ? GETPOST('timespent_duration_expected_workload-hour','int') * 3600 : 0;
-			$m = GETPOSTISSET('timespent_duration_expected_workload-min') ? GETPOST('timespent_duration_expected_workload-min','int') * 60 : 0;
+			$h = GETPOSTISSET('timespent_duration_expected_workload-hour') ? GETPOST('timespent_duration_expected_workload-hour', 'int') * 3600 : 0;
+			$m = GETPOSTISSET('timespent_duration_expected_workload-min') ? GETPOST('timespent_duration_expected_workload-min', 'int') * 60 : 0;
 			$moline->qty = $h + $m;
 		}else {
-			$moline->qty = GETPOST('qtytoadd', 'int');
+			$moline->qty = GETPOST('qtytoadd',  'int');
 		}
 
 		$moline->fk_product = GETPOST('productidtoadd', 'int');
-		if (GETPOST('addconsumelinebutton') || GETPOST('addconsumelineServicebutton')) {
+		if (GETPOST('addconsumelinebutton', 'alphanohtml') || GETPOST('addconsumelineServicebutton', 'alphanohtml')) {
 			$moline->role = 'toconsume';
 		} else {
 			$moline->role = 'toproduce';
@@ -211,8 +209,8 @@ if (empty($reshook)) {
 					|| (GETPOSTISSET('timespent_duration-'.$line->id.'-'.$i.'-min') &&  !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min')) )
 				) {
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
-					$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour') : 0;
-					$minToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min') : 0;
+					$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int') : 0;
+					$minToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int') : 0;
 
 					if ($qtytoprocess != 0 || $hourToProcess > 0 || $minToProcess > 0 ) {
 
@@ -249,7 +247,7 @@ if (empty($reshook)) {
 								}
 							}
 
-						}else if ($tmpproduct->type == Product::TYPE_SERVICE) {
+						}elseif ($tmpproduct->type == Product::TYPE_SERVICE) {
 							if ($isStockServiceHandling) {
 								// Check warehouse is set if we should have to
 								if (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
