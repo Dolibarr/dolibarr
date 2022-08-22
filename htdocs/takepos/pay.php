@@ -53,6 +53,30 @@ if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
+
+/*
+ * View
+ */
+
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs = array();
+
+$head = '';
+$title = '';
+$disablejs = 0;
+$disablehead = 0;
+
+$head='<link rel="stylesheet" href="css/pos.css.php">';
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$head .= '<link rel="stylesheet" href="css/colorful.css">';
+}
+
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+?>
+<body>
+<?php
+
 if (!empty($conf->stripe->enabled)) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
@@ -98,10 +122,6 @@ function fetchConnectionToken() {
 }
 </script>
 <?php }
-
-/*
- * View
- */
 
 if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
@@ -175,16 +195,6 @@ if ($invoiceid > 0) {
 </script>
 <?php
 
-$arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs = array();
-
-$head = '';
-$title = '';
-$disablejs = 0;
-$disablehead = 0;
-
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
@@ -219,14 +229,6 @@ if ($resql) {
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
-<body>
 
 <script>
 <?php

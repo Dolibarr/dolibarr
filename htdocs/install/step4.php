@@ -83,7 +83,7 @@ if ($db->ok) {
 	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
 	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8"></td></tr>';
-	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordAgain").' :</label></td><td>';
+	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';
 	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8"></td></tr>';
 	print '</table>';
 

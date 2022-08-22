@@ -138,7 +138,7 @@ if ($id) {
 	}
 	print '</tr>';
 
-	$editenabled = (($action == 'edit') && !empty($user->hasRight("user", "user", "write")));
+	$editenabled = (($action == 'edit') && $user->hasRight("user", "user", "write"));
 
 	// Note
 	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';

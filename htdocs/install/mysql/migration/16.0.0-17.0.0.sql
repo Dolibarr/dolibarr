@@ -34,6 +34,8 @@
 
 -- Missing in v16 or lower
 
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
+
 ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
 ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
@@ -42,10 +44,9 @@ ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
-
-ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
 ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
@@ -54,31 +55,34 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
-ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
 
-ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
-
--- Allow users to make subscriptions of any amount during membership subscription
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
-
-ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
-
-ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
-
-ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
-
-ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+  -- Allow users to make subscriptions of any amount during membership subscription
 
 ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_product (fk_product);
 
-ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
-ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
-
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
 
-ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
 
--- Make sell-by or eat-by date mandatory
+ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
+  -- Make sell-by or eat-by date mandatory
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+
+ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_cronjob ADD COLUMN pid integer;

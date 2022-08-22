@@ -2745,7 +2745,7 @@ if (!GETPOST('hide_websitemenu')) {
 			if ($website->status == $website::STATUS_VALIDATED) {
 				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("WebsiteMustBeDisabled")).'">';
 			} else {
-				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
+				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
 			}
 
 			// Regenerate all pages

@@ -1043,7 +1043,8 @@ abstract class CommonObject
 			// Add entry into index
 			if ($initsharekey) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				// TODO We can't, we dont' have full path of file, only last_main_doc adn ->element, so we must rebuild full path first
+
+				// TODO We can't, we dont' have full path of file, only last_main_doc and ->element, so we must first rebuild full path $destfull
 				/*
 				$ecmfile->filepath = $rel_dir;
 				$ecmfile->filename = $filename;
@@ -4941,7 +4942,7 @@ abstract class CommonObject
 	 *
 	 *	@param	string      		$action				GET/POST action
 	 *	@param  CommonObjectLine 	$line			    Selected object line to output
-	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  string	    		$var               	Not used
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields

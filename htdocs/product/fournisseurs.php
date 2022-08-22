@@ -913,10 +913,10 @@ END;
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => (!empty($conf->multicurrency->enabled)), 'checked'=>0, 'position'=>10),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
-					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>15),
-					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>16),
+					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>0, 'position'=>15),
+					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => !empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING), 'checked'=>0, 'position'=>17),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => $conf->barcode->enabled, 'checked'=>1, 'position'=>18),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => !empty($conf->barcode->enabled), 'checked'=>1, 'position'=>18),
 				);
 
 				// fetch optionals attributes and labels
