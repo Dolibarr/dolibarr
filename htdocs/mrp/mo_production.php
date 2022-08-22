@@ -1097,13 +1097,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($permissiontodelete) {
 			print '<td></td>';
 		}
+		print '<td></td>';
 		print '</tr>';
 
 		if ($action == 'addconsumeline') {
 			print '<!-- Add line to consume -->'."\n";
 			print '<tr class="liste_titre">';
 			print '<td>';
-			print $form->select_produits('', 'productidtoadd', '0', 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
+			$filterProduct = $isStockServiceHandling ? '' : 0;
+			print $form->select_produits('', 'productidtoadd', $filterProduct, 0, 0, -1, 2, '', 1, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			// Qty
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
