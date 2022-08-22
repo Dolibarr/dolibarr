@@ -1605,7 +1605,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									$disable = 'disabled';
 								}
 								print '<td class="right">';
-								if (GETPOSTISSET('timespent_duration-'. $line->id . '-' . $i .'-hour') || GETPOSTISSET('timespent_duration-'.$line->id . '-' . $i.'-min')){
+								if (GETPOSTISSET('timespent_duration-'. $line->id . '-' . $i .'-hour') || GETPOSTISSET('timespent_duration-'.$line->id . '-' . $i.'-min')) {
 									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour', "int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',  "int");
 									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min', "int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min', "int");
 									$durationtouse = (($hour * 3600) + ($min * 60));
