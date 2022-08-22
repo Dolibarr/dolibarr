@@ -217,7 +217,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 
 		// need to change this part
-		$partnership->statut      = 0;
+		$partnership->status      = 0;
 		$partnership->firstname   = GETPOST('firstname');
 		$partnership->lastname    = GETPOST('lastname');
 		$partnership->address     = GETPOST('address');
@@ -235,8 +235,8 @@ if (empty($reshook) && $action == 'add') {
 		if ($ret < 0) {
 			$error++;
 		}
-
-		$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
+		// test if societe already exist
+		$sql =	"SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE nom='".GETPOST('societe')."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -257,6 +257,10 @@ if (empty($reshook) && $action == 'add') {
 			$sql .= " WHERE rowid = ".((int) $company->id);
 			$resql = $db->query($sql);
 			$partnership->fk_soc = $company->id;
+		}
+		else {
+			$don=$result->fetch();
+			$partnership->fk_soc =$don['rowid'];
 		}
 		$result = $partnership->create($user);
 		if ($result > 0) {
@@ -345,7 +349,6 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}*/
 
-			// test if societe or email already exist
 
 
 
