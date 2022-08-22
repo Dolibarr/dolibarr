@@ -13,6 +13,7 @@
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
+ * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ if (!empty($conf->propal->enabled)) {
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -267,7 +268,10 @@ if (empty($reshook)) {
 						$sub_qty[$j]['id_batch'] = GETPOST($batch, 'int'); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
-						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+						//var_dump($qty);
+						//var_dump($batch);
+						//var_dump($sub_qty[$j]['q']);
+						//var_dump($sub_qty[$j]['id_batch']);
 
 						$j++;
 						$batch = "batchl".$i."_".$j;
@@ -304,7 +308,6 @@ if (empty($reshook)) {
 					$qty = "qtyl".$i.'_'.$j;
 				}
 			} else {
-				//var_dump(GETPOST($qty,'alpha')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty, 'int') > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
@@ -325,7 +328,6 @@ if (empty($reshook)) {
 		//var_dump($batch_line[2]);
 
 		if ($totalqty > 0) {		// There is at least one thing to ship
-			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -427,10 +429,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -473,7 +475,6 @@ if (empty($reshook)) {
 		//	}
 		//}
 	} elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer) {
-		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -803,9 +804,13 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("Shipment");
+if ($action == 'create2') {
+	$title = $langs->trans("CreateShipment");
+}
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+llxHeader('', $title, 'Expedition', $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -814,7 +819,7 @@ if (empty($action)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -901,7 +906,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (!empty($conf->project->enabled)) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($object->fk_project)) {
 					$projectid = $object->fk_project;
@@ -981,7 +986,7 @@ if ($action == 'create') {
 			print "</td></tr>\n";
 
 			// Other attributes
-			$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
+			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $expe, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1177,7 +1182,7 @@ if ($action == 'create') {
 
 					// Qty already shipped
 					print '<td class="center">';
-					$quantityDelivered = $object->expeditions[$line->id];
+					$quantityDelivered = isset($object->expeditions[$line->id]) ? $object->expeditions[$line->id] : '';
 					print $quantityDelivered;
 					print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
 					print ''.$unit_order.'</td>';
@@ -1187,14 +1192,18 @@ if ($action == 'create') {
 					if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$quantityToBeDelivered = 0;
 					} else {
-						$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+						if (is_numeric($quantityDelivered)) {
+							$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+						} else {
+							$quantityToBeDelivered = $quantityAsked;
+						}
 					}
 
 					$warehouseObject = null;
 					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
-						$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
+						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
 						$deliverableQty = min($quantityToBeDelivered, $stock);
 						if ($deliverableQty < 0) {
 							$deliverableQty = 0;
@@ -1210,6 +1219,7 @@ if ($action == 'create') {
 								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
 								if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 									print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
 								}
 
@@ -1305,10 +1315,10 @@ if ($action == 'create') {
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
 										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -1460,6 +1470,11 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children
+									continue;
+								}
+
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
@@ -1510,6 +1525,12 @@ if ($action == 'create') {
 											print $productlotObject->getNomUrl(1);
 										} else {
 											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 										}
 										print ' ('.$dbatch->qty.')';
 										$quantityToBeDelivered -= $deliverableQty;
@@ -1564,7 +1585,8 @@ if ($action == 'create') {
 						}
 					}
 
-					// Line extrafield
+					// Display lines for extrafields of the Shipment line
+					// $line is a 'Order line'
 					if (!empty($extrafields)) {
 						//var_dump($line);
 						$colspan = 5;
@@ -1573,6 +1595,7 @@ if ($action == 'create') {
 						$srcLine = new OrderLine($db);
 						$srcLine->id = $line->id;
 						$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+
 						$expLine->array_options = array_merge($expLine->array_options, $srcLine->array_options);
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
@@ -1709,7 +1732,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if (0) {    // Do not change on shipment
@@ -2091,7 +2114,7 @@ if ($action == 'create') {
 			//if ($filter) $sql.= $filter;
 			$sql .= " ORDER BY obj.fk_product";
 
-			dol_syslog("get list of shipment lines", LOG_DEBUG);
+			dol_syslog("expedition/card.php get list of shipment lines", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -2407,7 +2430,8 @@ if ($action == 'create') {
 				}
 				print "</tr>";
 
-				// Display lines extrafields
+				// Display lines extrafields.
+				// $line is a line of shipment
 				if (!empty($extrafields)) {
 					$colspan = 6;
 					if ($origin && $origin_id > 0) {
@@ -2461,19 +2485,19 @@ if ($action == 'create') {
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
 				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate))) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&token='.newToken().'&id='.$object->id, '');
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
+					print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
 			}
 
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
-				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
+				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
+					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
@@ -2481,50 +2505,50 @@ if ($action == 'create') {
 			if (empty($user->socid)) {
 				if ($object->statut > 0) {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					} else {
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 					}
 				}
 			}
 
 			// Create bill
-			if (!empty($conf->facture->enabled) && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
+			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
 				if ($user->rights->facture->creer) {
 					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					// If we do that, we must also make this option official.
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
 				}
 			}
 
 			// This is just to generate a delivery receipt
 			//var_dump($object->linkedObjectsIds['delivery']);
 			if ($conf->delivery_note->enabled && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED) && $user->rights->expedition->delivery->creer && empty($object->linkedObjectsIds['delivery'])) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
+				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"].'?action=create_delivery&token='.newToken().'&id='.$object->id, '');
 			}
 			// Close
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
 				if ($user->rights->expedition->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-					if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'&token='.newToken().'">'.$langs->trans($label).'</a>';
+					print dolGetButtonAction('', $langs->trans($label), 'default', $_SERVER["PHP_SELF"].'?action='. $paramaction .'&token='.newToken().'&id='.$object->id, '');
 				}
 			}
 
 			// Cancel
 			if ($object->statut == Expedition::STATUS_VALIDATED) {
 				if ($user->rights->expedition->supprimer) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>';
+					print dolGetButtonAction('', $langs->trans('Cancel'), 'danger', $_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
 			// Delete
 			if ($user->rights->expedition->supprimer) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 			}
 		}
 
@@ -2551,8 +2575,8 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright">';

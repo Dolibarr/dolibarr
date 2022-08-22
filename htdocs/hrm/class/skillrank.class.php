@@ -414,15 +414,15 @@ class SkillRank extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = ".((int) $value);
+				} elseif ($key != 'customsql' && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
@@ -807,7 +807,7 @@ class SkillRank extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('skillrankdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -877,27 +877,11 @@ class SkillRank extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -930,6 +914,7 @@ class SkillRank extends CommonObject
 	{
 		$this->lines = array();
 
+		/*
 		$objectline = new SkillRankLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_skillrank = '.((int) $this->id)));
 
@@ -941,6 +926,7 @@ class SkillRank extends CommonObject
 			$this->lines = $result;
 			return $this->lines;
 		}
+		*/
 	}
 
 	/**

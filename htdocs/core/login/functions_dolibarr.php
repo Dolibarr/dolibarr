@@ -143,7 +143,11 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0) {
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO entity '".$entitytotest."' not allowed for user '".$obj->rowid."'", LOG_NOTICE);
+
 							$login = ''; // force authentication failure
+							if ($mc->db->lasterror()) {
+								$_SESSION["dol_loginmesg"] = $mc->db->lasterror();
+							}
 						}
 					}
 				}

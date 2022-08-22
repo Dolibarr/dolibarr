@@ -142,7 +142,7 @@ if (!empty($search_ledger_code)) {
 	}
 }
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -349,7 +349,7 @@ if ($action != 'export_csv') {
 		$sql .= " GROUP BY t.numero_compte";
 
 		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
+		$nrows = $db->num_rows($resql);
 		$opening_balances = array();
 		for ($i = 0; $i < $nrows; $i++) {
 			$arr = $resql->fetch_array();

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - stripe
+StripeDesc=Ofrezca a sus clientes una página de pago en línea para pagos con tarjetas de crédito/débito a través de <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Esto se puede utilizar para permitir que sus clientes realicen pagos ad-hoc o pagos relacionados con un objeto particular de Dolibarr (factura, pedido, ...)
 StripeOrCBDoPayment=Paga con tarjeta de crédito o Stripe
 STRIPE_PAYONLINE_SENDEMAIL=Notificación por correo electrónico después de un intento de pago (exitoso o fallido)
 StripeDoPayment=Paga con Stripe

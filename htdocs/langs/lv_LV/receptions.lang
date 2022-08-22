@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Produkta saņemšanas iestatīšana
+ReceptionDescription=Pārdevēja pieņemšanas vadība (izveidot pieņemšanas dokumentus)
+ReceptionsSetup=Pārdevēja pieņemšanas iestatīšana
 RefReception=Ref. uzņemšana
 Reception=Reģistratūra
 Receptions=Pieņemšanas

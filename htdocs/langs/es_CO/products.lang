@@ -241,3 +241,7 @@ ProductSupplierExtraFields=Atributos adicionales (precios de proveedores)
 DeleteLinkedProduct=Eliminar el producto secundario vinculado a la combinación
 AmountUsedToUpdateWAP=Cantidad a utilizar para actualizar el precio medio ponderado
 PMPValue=Precio promedio ponderado
+mandatoryPeriodNeedTobeSet=Nota: Debe definirse el período (fecha de inicio y finalización)
+mandatoryHelper=Marque esto si desea un mensaje para el usuario al crear / validar una factura, propuesta comercial, orden de venta sin ingresar una fecha de inicio y finalización en las líneas con este servicio. <br> Tenga en cuenta que el mensaje es una advertencia y no un error de bloqueo.
+SwitchOnSaleStatus=Activar estado de venta
+SwitchOnPurchaseStatus=Activar estado de compra

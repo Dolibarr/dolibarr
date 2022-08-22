@@ -117,11 +117,11 @@ $arrayfields = array(
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : 'help'
 		);
@@ -443,7 +443,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -452,7 +452,13 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
-
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 foreach ($object->fields as $key => $val) {
 	if ($key == 'statut') {
 		continue;
@@ -508,16 +514,22 @@ if (!empty($arrayfields['t.statut']['checked'])) {
 }
 
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>'."\n";
 
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 foreach ($object->fields as $key => $val) {
 	if ($key == 'statut') {
 		continue;
@@ -562,7 +574,9 @@ if (!empty($arrayfields['t.statut']['checked'])) {
 }
 
 // Action column
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 print '</tr>'."\n";
 
 // Loop on record
@@ -585,6 +599,18 @@ while ($i < min($num, $limit)) {
 	// Show here line of result
 	print '<tr class="oddeven">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	foreach ($warehouse->fields as $key => $val) {
 		if ($key == 'statut') {
 			continue;
@@ -677,7 +703,7 @@ while ($i < min($num, $limit)) {
 			}
 		} else {
 			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 		}
 		print '</td>';
 		if (!$i) {
@@ -704,15 +730,17 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

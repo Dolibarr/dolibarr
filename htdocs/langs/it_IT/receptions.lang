@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Product Reception setup
+ReceptionDescription=Gestione accoglienza fornitori (Crea documenti di accoglienza)
+ReceptionsSetup=Configurazione della reception del fornitore
 RefReception=Ref. reception
 Reception=In ricezione
 Receptions=Receptions

@@ -106,9 +106,11 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
-		if ((empty($bank->ics) && $type !== 'bank-transfer')
+		// ICS is not mandatory with payment by bank transfer
+		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
-		) {
+		) {*/
+		if (empty($bank->ics) && $type !== 'bank-transfer') {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
 			$action = '';
@@ -449,9 +451,17 @@ if ($resql) {
 
 			// RIB
 			print '<td>';
-			print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-			if ($bac->verif() <= 0) {
-				print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+			if ($bac->id > 0) {
+				if (!empty($bac->iban) || !empty($bac->bic)) {
+					print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+					if ($bac->verif() <= 0) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error_message));
+					}
+				} else {
+					print img_warning($langs->trans("IBANNotDefined"));
+				}
+			} else {
+				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
 

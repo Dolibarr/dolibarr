@@ -30,7 +30,6 @@ AddBankRecord=Ajouter une entrée
 AddBankRecordLong=Ajouter une entrée manuellement
 Conciliated=Reconcilié
 BankLineConciliated=Entrée reconciliée avec reçu bancaire
-Reconciled=Réconcilié
 SocialContributionPayment=Règlement charge sociale
 MenuBankInternalTransfer=Transfert interne
 TransferTo=À

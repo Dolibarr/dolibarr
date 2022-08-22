@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,12 +67,17 @@ $colspan = 3; // Col total ht + col edit + col delete
 if (!empty($inputalsopricewithtax)) {
 	$colspan++; // We add 1 if col total ttc
 }
-if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) {
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	$colspan++;
+}
+
+
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
@@ -84,7 +90,7 @@ $coldisplay = 0;
 
 $coldisplay++;
 ?>
-	<td>
+	<td class="linecoldesc minwidth250onall">
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -170,7 +176,11 @@ $coldisplay++;
 	}
 
 	// Show autofill date for recuring invoices
-	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec') {
+	if (!empty($conf->service->enabled) && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
+		if ($line->element == 'invoice_supplier_det_rec') {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
 		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
@@ -183,10 +193,10 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 	}
 
@@ -255,7 +265,7 @@ $coldisplay++;
 	}
 	?>
 
-	<td class="nowrap right">
+	<td class="nowraponall right linecoldiscount">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : $line->remise_percent).'"';

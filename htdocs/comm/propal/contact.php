@@ -107,19 +107,14 @@ if ($action == 'addcontact' && $user->rights->propale->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->propale->creer)
-{
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
  * View
  */
-$title = $langs->trans('Proposal')." - ".$langs->trans('ContactsAddresses');
+$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $help_url = "EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos";
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
@@ -143,7 +138,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->propal->creer) {

@@ -261,6 +261,7 @@ if (!$error) {
 				$error++;
 			}
 		}
+
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
 			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
@@ -909,6 +910,8 @@ function write_conf_file($conffile)
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
 		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path

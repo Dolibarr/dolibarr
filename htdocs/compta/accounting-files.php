@@ -19,11 +19,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
-  *  \file       htdocs/compta/accounting-files.php
-  *  \ingroup    compta
-  *  \brief      Page to show portoflio and files of a thirdparty and download it
-  */
+/**
+ *  \file       htdocs/compta/accounting-files.php
+ *  \ingroup    compta
+ *  \brief      Page to show portoflio and files of a thirdparty and download it
+ */
 
 if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
 	if (!defined('NOTOKENRENEWAL')) {
@@ -47,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 
+if (!empty($conf->project->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
 // Constant to define payment sens
 const PAY_DEBIT = 0;
 const PAY_CREDIT = 1;
@@ -64,6 +69,7 @@ $date_stopMonth = GETPOST('date_stopmonth', 'int');
 $date_stopYear = GETPOST('date_stopyear', 'int');
 $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel');
 $action = GETPOST('action', 'aZ09');
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
@@ -127,7 +133,7 @@ if (empty($entity)) {
 $error = 0;
 
 $listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled), 'perms' => !empty($user->rights->facture->lire)),
+	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
 	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
 	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
@@ -175,6 +181,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Vendor invoices
 		if (GETPOST('selectsupplierinvoices') && !empty($listofchoices['selectsupplierinvoices']['perms'])) {
@@ -186,9 +193,10 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms'])) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -208,6 +216,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datedon between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Payments of salaries
 		if (GETPOST('selectpaymentsofsalaries') && !empty($listofchoices['selectpaymentsofsalaries']['perms'])) {
@@ -219,6 +228,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Social contributions
 		if (GETPOST('selectsocialcontributions') && !empty($listofchoices['selectsocialcontributions']['perms'])) {
@@ -230,6 +240,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE t.date_ech between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Various payments
 		if (GETPOST('selectvariouspayment') && !empty($listofchoices['selectvariouspayment']['perms'])) {
@@ -240,9 +251,10 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
+			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
 		}
 		// Loan payments
-		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms'])) {
+		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms']) && empty($projectid)) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -460,7 +472,15 @@ if ($result && $action == "dl" && !$error) {
 	$log .= ','.$langs->transnoentitiesnoconv("Country");
 	$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
 	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
-	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';
+	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
+	if (!empty($projectid)) {
+		$project = new Project($db);
+		$project->fetch($projectid);
+		if ($project->ref) {
+			$zipname .= '_'.$project->ref;
+		}
+	}
+	$zipname .='_export.zip';
 
 	dol_delete_file($zipname);
 
@@ -561,11 +581,13 @@ print $form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0, '', '', '
 print "\n";
 
 // Export is for current company only
+$socid = 0;
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 	$mc->getInfo($conf->entity);
 	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
 	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+		$socid = $mc->id;
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;
@@ -575,6 +597,16 @@ if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 }
 
 print '<br>';
+
+// Project filter
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+	$langs->load('projects');
+	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";
+	print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, '');
+	print '<span class="classfortooltip" style="padding: 0px; padding: 0px; padding-right: 3px !important;" title="'.$langs->trans('ExportAccountingProjectHelp').'"><span class="fas fa-info-circle  em088 opacityhigh" style=" vertical-align: middle; cursor: help"></span></span>';
+	print '<br>';
+}
 
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
@@ -588,14 +620,13 @@ foreach ($listofchoices as $choice => $val) {
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
-print '<input type="submit" class="button" name="search" value="'.$langs->trans("Search").'">';
+print '<input type="submit" class="button small" name="search" value="'.$langs->trans("Search").'">';
 
 print '</form>'."\n";
 
 print dol_get_fiche_end();
 
 if (!empty($date_start) && !empty($date_stop)) {
-	$param = 'action=searchfiles';
 	$param .= '&date_startday='.GETPOST('date_startday', 'int');
 	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int');
 	$param .= '&date_startyear='.GETPOST('date_startyear', 'int');
@@ -603,13 +634,30 @@ if (!empty($date_start) && !empty($date_stop)) {
 	$param .= '&date_stopmonth='.GETPOST('date_stopmonth', 'int');
 	$param .= '&date_stopyear='.GETPOST('date_stopyear', 'int');
 	foreach ($listofchoices as $choice => $val) {
-		$param .= '&'.$choice.'='.(GETPOST($choice, 'int') ? 1 : 0);
+		if (GETPOST($choice, 'int')) {
+			$param .= '&'.$choice.'=1';
+		}
 	}
-	print '<form name="dl" action="'.$_SERVER["PHP_SELF"].'?action=dl" method="POST">'."\n";
-	print '<input type="hidden" name="token" value="'.currentToken().'">';
+
+	$TData = dol_sort_array($filesarray, $sortfield, $sortorder);
+
+
+	$filename = dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.newToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
+	if (empty($TData)) {
+		print " disabled";
+	}
+	print '>'."\n";
+	print $langs->trans("Download");
+	print '</a><br>';
+
+	$param .= '&action=searchfiles';
+
+	/*
+	print '<input type="hidden" name="token" value="'.currentToken().'">';
 	print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
 	print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
 	print '<input type="hidden" name="date_startyear" value="'.GETPOST('date_startyear', 'int').'" />';
@@ -620,8 +668,13 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
 	}
 
-	print '<input class="butAction butDownload" type="submit" value="'.$langs->trans("Download").'" />';
+	print '<input class="butAction butDownload small marginleftonly" type="submit" value="'.$langs->trans("Download").'"';
+	if (empty($TData)) {
+		print " disabled";
+	}
+	print '/>';
 	print '</form>'."\n";
+	*/
 
 	print '<br>';
 
@@ -645,172 +698,181 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td class="center">'.$langs->trans("Currency").'</td>';
 	}
 	print '</tr>';
-	if ($result) {
-		$TData = dol_sort_array($filesarray, $sortfield, $sortorder);
 
-		if (empty($TData)) {
-			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td></td>';
+	if (empty($TData)) {
+		print '<tr class="oddeven"><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<td></td>';
+		}
+		print '</tr>';
+	} else {
+		// Sort array by date ASC to calculate balance
+
+		$totalET_debit = 0;
+		$totalIT_debit = 0;
+		$totalVAT_debit = 0;
+		$totalET_credit = 0;
+		$totalIT_credit = 0;
+		$totalVAT_credit = 0;
+
+		// Display array
+		foreach ($TData as $data) {
+			$html_class = '';
+			//if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
+			//elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+			print '<tr class="oddeven '.$html_class.'">';
+
+			// Type
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans($data['item'])).'">'.$langs->trans($data['item']).'</td>';
+
+			// Date
+			print '<td class="center">';
+			print dol_print_date($data['date'], 'day');
+			print "</td>\n";
+
+			// Date due
+			print '<td class="center">';
+			print dol_print_date($data['date_due'], 'day');
+			print "</td>\n";
+
+			// Ref
+			print '<td class="nowraponall tdoverflowmax150">';
+
+			if ($data['item'] == 'Invoice') {
+				$invoice->id = $data['id'];
+				$invoice->ref = $data['ref'];
+				$invoice->total_ht = $data['amount_ht'];
+				$invoice->total_ttc = $data['amount_ttc'];
+				$invoice->total_tva = $data['amount_vat'];
+				$invoice->multicurrency_code = $data['currency'];
+				print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+			} elseif ($data['item'] == 'SupplierInvoice') {
+				$supplier_invoice->id = $data['id'];
+				$supplier_invoice->ref = $data['ref'];
+				$supplier_invoice->total_ht = $data['amount_ht'];
+				$supplier_invoice->total_ttc = $data['amount_ttc'];
+				$supplier_invoice->total_tva = $data['amount_vat'];
+				$supplier_invoice->multicurrency_code = $data['currency'];
+				print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
+			} elseif ($data['item'] == 'ExpenseReport') {
+				$expensereport->id = $data['id'];
+				$expensereport->ref = $data['ref'];
+				print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
+			} elseif ($data['item'] == 'SalaryPayment') {
+				$salary_payment->id = $data['id'];
+				$salary_payment->ref = $data['ref'];
+				print $salary_payment->getNomUrl(1);
+			} elseif ($data['item'] == 'Donation') {
+				$don->id = $data['id'];
+				$don->ref = $data['ref'];
+				print $don->getNomUrl(1, 0, '', 0);
+			} elseif ($data['item'] == 'SocialContributions') {
+				$charge_sociales->id = $data['id'];
+				$charge_sociales->ref = $data['ref'];
+				print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
+			} elseif ($data['item'] == 'VariousPayment') {
+				$various_payment->id = $data['id'];
+				$various_payment->ref = $data['ref'];
+				print $various_payment->getNomUrl(1, '', 0, 0);
+			} elseif ($data['item'] == 'LoanPayment') {
+				$payment_loan->id = $data['id'];
+				$payment_loan->ref = $data['ref'];
+				print $payment_loan->getNomUrl(1, 0, 0, '', 0);
+			} else {
+				print $data['ref'];
 			}
-			print '</tr>';
-		} else {
-			// Sort array by date ASC to calculate balance
+			print '</td>';
 
-			$totalET_debit = 0;
-			$totalIT_debit = 0;
-			$totalVAT_debit = 0;
-			$totalET_credit = 0;
-			$totalIT_credit = 0;
-			$totalVAT_credit = 0;
-
-			// Display array
-			foreach ($TData as $data) {
-				$html_class = '';
-				//if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-				//elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
-				print '<tr class="oddeven '.$html_class.'">';
-
-				// Type
-				print '<td>'.$langs->trans($data['item']).'</td>';
-
-				// Date
-				print '<td class="center">';
-				print dol_print_date($data['date'], 'day');
-				print "</td>\n";
-
-				// Date due
-				print '<td class="center">';
-				print dol_print_date($data['date_due'], 'day');
-				print "</td>\n";
-
-				// Ref
-				print '<td class="nowraponall">';
-
-				if ($data['item'] == 'Invoice') {
-					$invoice->id = $data['id'];
-					$invoice->ref = $data['ref'];
-					$invoice->total_ht = $data['amount_ht'];
-					$invoice->total_ttc = $data['amount_ttc'];
-					$invoice->total_tva = $data['amount_vat'];
-					$invoice->multicurrency_code = $data['currency'];
-					print $invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-				} elseif ($data['item'] == 'SupplierInvoice') {
-					$supplier_invoice->id = $data['id'];
-					$supplier_invoice->ref = $data['ref'];
-					$supplier_invoice->total_ht = $data['amount_ht'];
-					$supplier_invoice->total_ttc = $data['amount_ttc'];
-					$supplier_invoice->total_tva = $data['amount_vat'];
-					$supplier_invoice->multicurrency_code = $data['currency'];
-					print $supplier_invoice->getNomUrl(1, '', 0, 0, '', 0, 0, 0);
-				} elseif ($data['item'] == 'ExpenseReport') {
-					$expensereport->id = $data['id'];
-					$expensereport->ref = $data['ref'];
-					print $expensereport->getNomUrl(1, 0, 0, '', 0, 0);
-				} elseif ($data['item'] == 'SalaryPayment') {
-					$salary_payment->id = $data['id'];
-					$salary_payment->ref = $data['ref'];
-					print $salary_payment->getNomUrl(1);
-				} elseif ($data['item'] == 'Donation') {
-					$don->id = $data['id'];
-					$don->ref = $data['ref'];
-					print $don->getNomUrl(1, 0, '', 0);
-				} elseif ($data['item'] == 'SocialContributions') {
-					$charge_sociales->id = $data['id'];
-					$charge_sociales->ref = $data['ref'];
-					print $charge_sociales->getNomUrl(1, 0, 0, 0, 0);
-				} elseif ($data['item'] == 'VariousPayment') {
-					$various_payment->id = $data['id'];
-					$various_payment->ref = $data['ref'];
-					print $various_payment->getNomUrl(1, '', 0, 0);
-				} elseif ($data['item'] == 'LoanPayment') {
-					$payment_loan->id = $data['id'];
-					$payment_loan->ref = $data['ref'];
-					print $payment_loan->getNomUrl(1, 0, 0, '', 0);
-				} else {
-					print $data['ref'];
-				}
-				print '</td>';
-
-				// File link
-				print '<td>';
-				if (!empty($data['files'])) {
-					foreach ($data['files'] as $id => $filecursor) {
-						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
+			// File link
+			print '<td class="tdoverflowmax150">';
+			if (!empty($data['files'])) {
+				foreach ($data['files'] as $id => $filecursor) {
+					$tmppreview = $formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name'], 0);
+					if ($tmppreview) {
+						print $tmppreview;
 					}
+					$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
+					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
+					if (empty($tmppreview)) {
+						print img_picto('', 'generic', '', false, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
+					}
+					print $filename;
+					print '</a><br>';
 				}
-				print "</td>\n";
+			}
+			print "</td>\n";
 
-				// Paid
-				print '<td aling="left">'.$data['paid'].'</td>';
+			// Paid
+			print '<td class="center">'.($data['paid'] ? yn($data['paid']) : '').'</td>';
 
-				// Total ET
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</td>\n";
-				// Total IT
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</td>\n";
-				// Total VAT
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</td>\n";
+			// Total ET
+			print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</span></td>\n";
+			// Total IT
+			print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</span></td>\n";
+			// Total VAT
+			print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
 
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
-				print '<td class="center">'.$data['thirdparty_code']."</td>\n";
+			print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
-				print '<td class="center">'.$data['country_code']."</td>\n";
+			print '<td class="center">'.$data['country_code']."</td>\n";
 
-				print '<td class="tdoverflowmax150 right" title="'.dol_escape_htmltag($data['vatnum']).'">'.dol_escape_htmltag($data['vatnum'])."</td>\n";
+			// VAT number
+			print '<td class="tdoverflowmax150 right" title="'.dol_escape_htmltag($data['vatnum']).'">'.dol_escape_htmltag($data['vatnum'])."</td>\n";
 
-				if ($data['sens']) {
-					$totalET_credit += $data['amount_ht'];
-					$totalIT_credit += $data['amount_ttc'];
-					$totalVAT_credit += $data['amount_vat'];
-				} else {
-					$totalET_debit -= $data['amount_ht'];
-					$totalIT_debit -= $data['amount_ttc'];
-					$totalVAT_debit -= $data['amount_vat'];
-				}
-
-				if (!empty($conf->multicurrency->enabled)) {
-					print '<td class="center">'.$data['currency']."</td>\n";
-				}
-
-				print "</tr>\n";
+			if ($data['sens']) {
+				$totalET_credit += $data['amount_ht'];
+				$totalIT_credit += $data['amount_ttc'];
+				$totalVAT_credit += $data['amount_vat'];
+			} else {
+				$totalET_debit -= $data['amount_ht'];
+				$totalIT_debit -= $data['amount_ttc'];
+				$totalVAT_debit -= $data['amount_vat'];
 			}
 
-			// Total credits
-			print '<tr class="liste_total">';
-			print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Income').'</td>';
-			print '<td align="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
-			print '<td colspan="4"></td>';
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<td></td>';
+				print '<td class="center">'.$data['currency']."</td>\n";
 			}
-			print "</tr>\n";
-			// Total debits
-			print '<tr class="liste_total">';
-			print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Outcome').'</td>';
-			print '<td align="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
-			print '<td colspan="4"></td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td></td>';
-			}
-			print "</tr>\n";
-			// Balance
-			print '<tr class="liste_total">';
-			print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
-			print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
-			print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
-			print '<td colspan="4"></td>';
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<td></td>';
-			}
+
 			print "</tr>\n";
 		}
+
+		// Total credits
+		print '<tr class="liste_total">';
+		print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Income').'</td>';
+		print '<td align="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
+		print '<td colspan="4"></td>';
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<td></td>';
+		}
+		print "</tr>\n";
+		// Total debits
+		print '<tr class="liste_total">';
+		print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Outcome').'</td>';
+		print '<td align="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
+		print '<td colspan="4"></td>';
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<td></td>';
+		}
+		print "</tr>\n";
+		// Balance
+		print '<tr class="liste_total">';
+		print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
+		print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
+		print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
+		print '<td colspan="4"></td>';
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<td></td>';
+		}
+		print "</tr>\n";
 	}
+
 	print "</table>";
 	print '</div>';
 }

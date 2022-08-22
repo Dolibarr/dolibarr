@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/bank/class/account.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/bank.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -204,6 +205,19 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 		$result = $localobject->needIBAN();
 		//print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
 		$this->assertEquals(1, $result);
+
+		// Test checkIbanForAccount for FR account
+		$result = checkIbanForAccount($localobject);
+		print __METHOD__." checkIbanForAccount(".$localobject->iban.") = ".$result."\n";
+		$this->assertTrue($result);
+
+		// Test checkIbanForAccount for CI account
+		$localobject2=new Account($this->savdb);
+		$localobject2->country = 'CI';
+		$localobject2->iban = 'CI77A12312341234123412341234';
+		$result = checkIbanForAccount($localobject2);
+		print __METHOD__." checkIbanForAccount(".$localobject2->iban.") = ".$result."\n";
+		$this->assertTrue($result);
 
 		return $localobject->id;
 	}

@@ -111,7 +111,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Load translation files required by the page
 					$langs->loadLangs(array('other', 'main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
+					$_SESSION["dol_loginmesg"] = (empty($_SESSION["dol_loginmesg"]) ? '' : $_SESSION["dol_loginmesg"].', ').$langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
 				}
 			}
 		}
@@ -187,7 +187,8 @@ if (!function_exists('dol_loginfunction')) {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
-		// Set cookie for timeout management
+		// Set cookie for timeout management. We set it as a cookie so we will be able to use it to set timeout on next page before the session start
+		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
@@ -448,7 +449,7 @@ function encodedecode_dbpassconf($level = 0)
  * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
  * @param       int         $length                 Length of random string (Used only if $generic is true)
  * @return		string		    					New value for password
- * @see dol_hash()
+ * @see dol_hash(), dolJSToSetRandomPassword()
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
@@ -525,4 +526,35 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	}
 
 	return $generated_password;
+}
+
+/**
+ * Ouput javacript to autoset a generated password using default module into a HTML element.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofbutton	HTML name of button
+ * @return		string		    				HTML javascript code to set a password
+ * @see getRandomPassword()
+ */
+function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token')
+{
+	global $conf;
+
+	if (!empty($conf->use_javascript_ajax)) {
+		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
+		print '$(document).ready(function () {
+            $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
+				console.log("We click on the button to suggest a key");
+            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+            		action: \'getrandompassword\',
+            		generic: true,
+					token: \''.dol_escape_js(newToken()).'\'
+				},
+				function(result) {
+					$("#'.dol_escape_js($htmlname).'").val(result);
+				});
+            });
+		});'."\n";
+		print '</script>';
+	}
 }

@@ -384,13 +384,9 @@ class Productlot extends CommonObject
 			 $this->import_key = trim($this->import_key);
 		}
 
-		// Check parameters
-		// Put here code to add a control on parameters values
-
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		// Update request
@@ -468,11 +464,11 @@ class Productlot extends CommonObject
 
 		//if (!$error) {
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change PRODUCTLOT to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			//}

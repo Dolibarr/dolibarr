@@ -74,7 +74,7 @@ $socid = 0;
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-$permissiontoadd = $$user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+$permissiontoadd = $user->rights->projet->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$object->project = clone $projectstatic;
 
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -119,10 +119,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
-
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Task'));
+$title = $object->ref . ' - ' . $langs->trans("Documents");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$projectstatic->fetch_thirdparty();
@@ -190,7 +195,7 @@ if ($object->id > 0) {
 				print '<br>';
 			}
 			if (!empty($conf->eventorganization->enabled)) {
-				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 			}
@@ -200,8 +205,10 @@ if ($object->id > 0) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -243,7 +250,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

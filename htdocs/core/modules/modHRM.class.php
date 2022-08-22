@@ -214,28 +214,28 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		// Evaluation
-		$this->rights[$r][0] = 4020; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
 		$r++;
 
-		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4022; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify your evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->write)
 		$r++;
 
-		$this->rights[$r][0] = 4022; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Validate evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation_advance';
 		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->validate)
 		$r++;
 
-		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4025; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
@@ -243,11 +243,27 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		// Comparison
-		$this->rights[$r][0] = 4030; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4028; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'See comparison menu'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'compare_advance';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->compare_advance->read)
+		$r++;
+
+		// Read employee
+		$this->rights[$r][0] = 4031; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read personal information'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read_personal_information';
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->read_personal_information->read)
+		$r++;
+
+		// Write employee
+		$this->rights[$r][0] = 4032; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Write personal information'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write_personal_information';
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->write_personal_information->write)
 		$r++;
 	}
 
@@ -264,7 +280,7 @@ class modHRM extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$result = $this->_load_tables('/install/mysql/tables/', 'hrm');
+		$result = $this->_load_tables('/install/mysql/', 'hrm');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

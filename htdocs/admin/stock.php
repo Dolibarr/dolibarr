@@ -209,7 +209,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -394,7 +394,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if ($conf->invoice->enabled) {
+if (!empty($conf->invoice->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -408,7 +408,7 @@ if ($conf->invoice->enabled) {
 	print "</tr>\n";
 }
 
-if ($conf->order->enabled) {
+if (!empty($conf->order->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';
@@ -422,7 +422,7 @@ if ($conf->order->enabled) {
 	print "</tr>\n";
 }
 
-if ($conf->expedition->enabled) {
+if (!empty($conf->expedition->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td class="right">';
@@ -643,7 +643,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
+print $formproduct->selectWarehouses(!empty($conf->global->MAIN_DEFAULT_WAREHOUSE) ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
 print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";

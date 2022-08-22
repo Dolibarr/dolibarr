@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
@@ -545,7 +545,9 @@ if (empty($reshook)) {
 					$resql = $db->query($sql);
 				}
 			}
-			//var_dump($sql);	var_dump($newcu);		var_dump($num); exit;
+			//var_dump($sql);
+			//var_dump($newcu);
+			//var_dump($num); exit;
 
 			if (!$error) {
 				$stripecu = $newcu;
@@ -680,8 +682,9 @@ $title = $langs->trans("ThirdParty");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
+$help_url = '';
 
-llxHeader();
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -750,12 +753,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<table class="border tableforfield centpercent">';
 
 	// Type Prospect/Customer/Supplier
-	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td colspan="2">';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="2">'.$object->prefix_comm.'</td></tr>';
 	}
 
 	if ($object->client) {
@@ -782,7 +785,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
 		if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
@@ -812,7 +815,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
-				print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print img_picto($langs->trans("CreateCustomerOnStripe"), 'stripe');
+				print '<input type="submit" class="buttonreset nomargintop nomarginbottom noborderbottom nopaddingtopimp nopaddingbottomimp" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
 			}
 			print '</td></tr>';
@@ -836,16 +840,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
 		$thirdTypeArray['customer'] = $langs->trans("customer");
-		if ($conf->propal->enabled && $user->rights->propal->lire) {
+		if (isModEnabled('propal') && $user->rights->propal->lire) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
-		if ($conf->commande->enabled && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->rights->commande->lire) {
 			$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 		}
-		if ($conf->facture->enabled && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->rights->facture->lire) {
 			$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 		}
-		if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+		if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 			$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 		}
 	}
@@ -997,8 +1001,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '<td>';
 							print $companypaymentmodetemp->id;
 							print '</td>';
-							print '<td>';
-							print $companypaymentmodetemp->label;
+							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->label).'">';
+							print dol_escape_htmltag($companypaymentmodetemp->label);
 							print '</td>';
 							print '<td>';
 							print $companypaymentmodetemp->stripe_card_ref;
@@ -1286,6 +1290,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
 	}
 
+
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
 	$rib_list = $object->get_all_rib();
@@ -1426,7 +1431,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
-				$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 				if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 					$genbutton .= ' disabled';
@@ -1451,6 +1456,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
+				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=createbanonstripe">';
+				print img_picto($langs->trans("CreateBAN"), 'stripe');
+				print '</a>';
+
 				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';
@@ -1469,7 +1478,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (!empty($conf->prelevement->enabled)) {
 				$colspan += 2;
 			}
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 		}
 
 		print '</table>';
@@ -1529,7 +1538,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$out.= ajax_combobox('model');
 	//print $out;
 	$buttonlabel=$langs->trans("Generate");
-	$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+	$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 	$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
 	$genbutton.= '>';
 	print $genbutton;
@@ -1622,7 +1631,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '</table>';
 	print '</div>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1681,7 +1690,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
 	print $formother->select_month($companypaymentmode->exp_date_month, 'exp_date_month', 1);
-	print $formother->select_year($companypaymentmode->exp_date_year, 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print $formother->selectyear($companypaymentmode->exp_date_year, 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';
@@ -1713,10 +1722,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.GETPOST('label').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth200" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
@@ -1783,7 +1792,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print '</table>';
 
-	if ($conf->prelevement->enabled) {
+	if (isModEnabled('prelevement')) {
 		print '<br>';
 
 		print '<table class="border centpercent">';
@@ -1809,7 +1818,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print dol_get_fiche_end();
 
-	dol_set_focus('#label');
+	dol_set_focus('#bank');
 
 	print $form->buttonsSaveCancel("Add");
 }
@@ -1839,7 +1848,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
 	print $formother->select_month(GETPOST('exp_date_month', 'int'), 'exp_date_month', 1);
-	print $formother->select_year(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print $formother->selectyear(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';

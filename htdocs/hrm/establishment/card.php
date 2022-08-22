@@ -135,14 +135,14 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$result = $object->update($user);
 
 			if ($result > 0) {
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 		exit;
 	}
 }

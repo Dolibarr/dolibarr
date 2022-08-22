@@ -103,8 +103,8 @@ class box_produits_alerte_stock extends ModeleBoxes
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
-				$parameters = array('boxproductalertstocklist'=>1);
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$parameters = array('boxproductalertstocklist' => 1, 'boxcode' => $this->boxcode);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
 			$sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";

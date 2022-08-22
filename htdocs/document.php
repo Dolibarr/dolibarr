@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ if ($user->socid > 0) {
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (empty($user->rights->societe->client->voir) || $socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
 	}
 }
@@ -162,6 +163,11 @@ if (!empty($hashp)) {
 		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
+		}
+		$entity = $ecmfile->entity;
+		if ($entity != $conf->entity) {
+			$conf->entity = $entity;
+			$conf->setValues($db);
 		}
 	} else {
 		$langs->load("errors");

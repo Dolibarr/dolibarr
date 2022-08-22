@@ -23,7 +23,7 @@
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
 
-if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must ne renew the token.
+if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must not renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 	}
@@ -203,25 +203,30 @@ if ($action == 'builddoc') {
 			$forceimgscalewidth = (empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
 			$forceimgscaleheight = (empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
 
-			for ($i = 0; $i < $numberofsticker; $i++) {
-				$arrayofrecords[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'code'=>$code,
-					'encoding'=>$encoding,
-					'is2d'=>$is2d,
-					'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
-				);
+			$MAXSTICKERS = 1000;
+			if ($numberofsticker <= $MAXSTICKERS) {
+				for ($i = 0; $i < $numberofsticker; $i++) {
+					$arrayofrecords[] = array(
+						'textleft'=>$textleft,
+						'textheader'=>$textheader,
+						'textfooter'=>$textfooter,
+						'textright'=>$textright,
+						'code'=>$code,
+						'encoding'=>$encoding,
+						'is2d'=>$is2d,
+						'photo'=>$barcodeimage	// Photo must be a file that exists with format supported by TCPDF
+					);
+				}
+			} else {
+				$mesg = $langs->trans("ErrorQuantityIsLimitedTo", $MAXSTICKERS);
+				$error++;
 			}
 		}
 
 		$i++;
-		$mesg = '';
 
 		// Build and output PDF
-		if ($mode == 'label') {
+		if (!$error && $mode == 'label') {
 			if (!count($arrayofrecords)) {
 				$mesg = $langs->trans("ErrorRecordNotFound");
 			}
@@ -240,7 +245,7 @@ if ($action == 'builddoc') {
 			}
 		}
 
-		if ($result <= 0 || $mesg) {
+		if ($result <= 0 || $mesg || $error) {
 			if (empty($mesg)) {
 				$mesg = 'Error '.$result;
 			}
@@ -271,8 +276,6 @@ print '<br>';
 
 print '<span class="opacitymedium">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</span><br>';
 print '<br>';
-
-dol_htmloutput_errors($mesg);
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
@@ -374,24 +377,24 @@ jQuery(document).ready(function() {
 </script>';
 
 // Checkbox to select from free text
-print '<input id="fillmanually" type="radio" '.((!GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode") == 'fillmanually') ? 'checked ' : '').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueManually").' &nbsp; ';
+print '<input id="fillmanually" type="radio" '.((!GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode") == 'fillmanually') ? 'checked ' : '').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"><label for="fillmanually"> '.$langs->trans("FillBarCodeTypeAndValueManually").'</label>';
 print '<br>';
 
 if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)) {
-	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';
 	$form->select_produits(GETPOST('productid', 'int'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
-	print ' &nbsp; <input type="submit" class="button" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+	print ' &nbsp; <input type="submit" class="button small" id="submitproduct" name="submitproduct" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }
 
 if (!empty($user->rights->societe->lire)) {
-	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';
 	print $form->select_company(GETPOST('socid', 'int'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
-	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector small" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }
 

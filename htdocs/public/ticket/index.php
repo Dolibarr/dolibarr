@@ -28,11 +28,11 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');       // If this page is public (can be called outside logged session)
 }
 if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+	define('NOIPCHECK', '1');     // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');

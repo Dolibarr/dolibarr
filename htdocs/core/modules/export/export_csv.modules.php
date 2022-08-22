@@ -275,6 +275,7 @@ class ExportCsv extends ModeleExports
 				$newvalue = $outputlangs->transnoentities($reg[1]);
 			}
 
+			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
@@ -338,13 +339,16 @@ class ExportCsv extends ModeleExports
 		$newvalue = dol_htmlcleanlastbr($newvalue);
 		//print $charset.' '.$newvalue."\n";
 
-		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
+		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is 1, we can keep record as it is but we must add quotes)
 		$oldvalue = $newvalue;
 		$newvalue = str_replace("\r", '', $newvalue);
 		$newvalue = str_replace("\n", '\n', $newvalue);
 		if (!empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue) {
-			// If strict use of CSV rules, we just add quote
-			$newvalue = $oldvalue;
+			// If we must use enclusure on text with CR/LF)
+			if ($conf->global->USE_STRICT_CSV_RULES == 1) {
+				// If we use strict CSV rules (original value must remain but we add quote)
+				$newvalue = $oldvalue;
+			}
 			$addquote = 1;
 		}
 

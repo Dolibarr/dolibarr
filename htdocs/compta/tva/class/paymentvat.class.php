@@ -97,6 +97,28 @@ class PaymentVAT extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int ID
+	 */
+	public $chid;
+
+	/**
+	 * @var string lib
+	 * @deprecated
+	 * @see $label
+	 */
+	public $lib;
+
+	/**
+	 * @var integer|string datepaye
+	 */
+	public $datepaye;
+
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

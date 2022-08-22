@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = فریق ثالث میں شامل کر
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = تیسری پارٹیوں میں شامل کرنے کے لیے زمرہ خود بخود بن جاتا ہے جب وہ بوتھ تجویز کرتے ہیں۔
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = کانفرنس کی تجویز موصول ہونے کے بعد بھیجنے کے لیے ای میل کا سانچہ۔
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = بوتھ کی تجویز موصول ہونے کے بعد بھیجنے کے لیے ای میل کا سانچہ۔
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = بوتھ پر رجسٹریشن کے بعد بھیجنے کے لیے ای میل کا ٹیمپلیٹ ادا ہو چکا ہے۔
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = کسی تقریب میں رجسٹریشن کے بعد بھیجنے کے لیے ای میل کا ٹیمپلیٹ ادا ہو چکا ہے۔
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = حاضرین کو اجتماعی ای میل کا سانچہ
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = مقررین کو مساج کرنے کے ای میل کا سانچہ
-EVENTORGANIZATION_FILTERATTENDEES_CAT = زمرہ کے ساتھ شرکاء کے تخلیق کارڈ/فارم میں تھرڈ پارٹی کی منتخب فہرست کو فلٹر کریں۔
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = گاہک کی قسم کے ساتھ شرکاء کے تخلیق کارڈ/فارم میں تیسرے فریق کی منتخب فہرست کو فلٹر کریں۔
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = اپنے بوتھ کی ادائیگی
 EventOrganizationEmailRegistrationPayment = ایک تقریب کے لیے رجسٹریشن
 EventOrganizationMassEmailAttendees = شرکاء کے لیے مواصلت
 EventOrganizationMassEmailSpeakers = مقررین سے مواصلت
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=رجسٹریشن کی قیمت
 PriceOfRegistrationHelp=رجسٹر کرنے یا ایونٹ میں شرکت کے لیے ادا کرنے کی قیمت
 PriceOfBooth=ایک بوتھ کھڑا کرنے کے لیے سبسکرپشن کی قیمت
 PriceOfBoothHelp=ایک بوتھ کھڑے کرنے کے لئے سبسکرپشن کی قیمت
-EventOrganizationICSLink=واقعات کے لیے ICS لنک کریں۔
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=کانفرنس یا بوتھ کی معلومات
 Attendees=حاضرین
 ListOfAttendeesOfEvent=ایونٹ پروجیکٹ کے شرکاء کی فہرست
 DownloadICSLink = ICS لنک ڈاؤن لوڈ کریں۔
-EVENTORGANIZATION_SECUREKEY = ایک کانفرنس سے عوامی رجسٹریشن لنک کی محفوظ کلید
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = بوتھ کے مقام کے بارے میں انوائس قطار کے لیے استعمال کی جانے والی سروس
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = کانفرنس میں شرکت کرنے والے کی رکنیت کے بارے میں انوائس قطار کے لیے استعمال ہونے والی خدمت
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=ووٹوں کی تعداد
 #
 # Status

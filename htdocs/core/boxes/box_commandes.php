@@ -60,7 +60,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->commande->lire);
+		$this->hidden = empty($user->rights->commande->lire);
 	}
 
 	/**
@@ -139,6 +139,8 @@ class box_commandes extends ModeleBoxes
 					$commandestatic->total_ht = $objp->total_ht;
 					$commandestatic->total_tva = $objp->total_tva;
 					$commandestatic->total_ttc = $objp->total_ttc;
+					$commandestatic->date = $date;
+					$commandestatic->date_modification = $datem;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -179,8 +181,8 @@ class box_commandes extends ModeleBoxes
 					}
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

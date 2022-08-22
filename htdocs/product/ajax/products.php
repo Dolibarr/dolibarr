@@ -51,7 +51,8 @@ $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'int');
-$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);
+$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
+$status_purchase = ((GETPOST('status_purchase', 'int') >= 0) ? GETPOST('status_purchase', 'int') : - 1);	// status purchase when mode = customer
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $price_level = GETPOST('price_level', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -260,7 +261,7 @@ if ($action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

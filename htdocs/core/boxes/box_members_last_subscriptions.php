@@ -142,7 +142,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $staticmember->getNomUrl(-1, 32, 'subscription'),
+						'text' => $staticmember->getNomUrl(-1, 32, 'card'),
 						'asis' => 1,
 					);
 

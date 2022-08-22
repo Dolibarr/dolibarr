@@ -118,7 +118,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 

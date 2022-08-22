@@ -134,4 +134,6 @@ HolidaysToApprove=Concedii de aprobat
 NobodyHasPermissionToValidateHolidays=Nimeni nu are permisiunea de a valida concedii
 HolidayBalanceMonthlyUpdate=Actualizare lunară a evidenţei concediilor
 XIsAUsualNonWorkingDay=%s este de obicei o zi NElucrătoare
+BlockHolidayIfNegative=Blocare dacă soldul este negativ
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=Crearea acestei cereri de concediu este blocată deoarece soldul tău este negativ
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Cererea de concediu %s trebuie să fie schiţă, anulată sau refuzată pentru a fi ștearsă

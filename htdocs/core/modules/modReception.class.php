@@ -189,7 +189,7 @@ class modReception extends DolibarrModules
 		if ($idcontacts && !empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) {
 			$this->export_fields_array[$r] += array('sp.rowid'=>'IdContact', 'sp.lastname'=>'Lastname', 'sp.firstname'=>'Firstname', 'sp.note_public'=>'NotePublic');
 		}
-		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
+		//$this->export_TypeFields_array[$r]=array('s.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label','co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','ed.qty'=>"Text");
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text',
 			'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text',

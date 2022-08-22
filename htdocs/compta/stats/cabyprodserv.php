@@ -455,7 +455,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$classslink,
+		$paramslink,
 		'class="right"',
 		$sortfield,
 		$sortorder

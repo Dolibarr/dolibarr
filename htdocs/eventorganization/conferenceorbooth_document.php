@@ -58,7 +58,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) {
@@ -257,7 +257,7 @@ if (!empty($withproject)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";

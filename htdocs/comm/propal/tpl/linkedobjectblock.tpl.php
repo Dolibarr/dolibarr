@@ -30,7 +30,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE comm/propal/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE comm/propal/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 

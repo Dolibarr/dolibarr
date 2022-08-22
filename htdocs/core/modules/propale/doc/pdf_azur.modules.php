@@ -154,12 +154,12 @@ class pdf_azur extends ModelePDFPropales
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
+		$this->watermark = '';
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -240,6 +240,11 @@ class pdf_azur extends ModelePDFPropales
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
+		}
+
+		//  Show Draft Watermark
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->PROPALE_DRAFT_WATERMARK))) {
+			$this->watermark = $conf->global->PROPALE_DRAFT_WATERMARK;
 		}
 
 		$nblines = count($object->lines);
@@ -721,6 +726,9 @@ class pdf_azur extends ModelePDFPropales
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == 1) {
@@ -964,6 +972,9 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
+			if ($object->deposit_percent > 0) {
+				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', $object->deposit_percent, $lib_condition_paiement);
+			}
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
 			$posy = $pdf->GetY() + 3;
@@ -1455,9 +1466,10 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  Propal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *  @return	void
 	 */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
 		global $conf, $langs;
 
@@ -1470,11 +1482,6 @@ class pdf_azur extends ModelePDFPropales
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
-
-		//  Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->PROPALE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->PROPALE_DRAFT_WATERMARK);
-		}
 
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
@@ -1726,7 +1733,7 @@ class pdf_azur extends ModelePDFPropales
 	{
 		global $conf;
 		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

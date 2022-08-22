@@ -36,10 +36,10 @@ $langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
 $error = 0;
 
 $action = GETPOST('action', 'aZ09');
+
 $id = GETPOST('id', 'int');
 $ikoffset = GETPOST('ikoffset', 'int');
 $coef = GETPOST('coef', 'int');
-
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 $fk_range = GETPOST('fk_range', 'int');
 
@@ -62,9 +62,16 @@ if ($action == 'updateik') {
 		}
 	}
 
-	$expIk->setValues($_POST);
-	$result = $expIk->create($user);
+	$expIk->coef = $coef;
+	$expIk->ikoffset = $ikoffset;
+	$expIk->fk_c_exp_tax_cat = $fk_c_exp_tax_cat;
+	$expIk->fk_range = $fk_range;
 
+	if ($expIk->id > 0) {
+		$result = $expIk->update($user);
+	} else {
+		$result = $expIk->create($user);
+	}
 	if ($result > 0) {
 		setEventMessages('SetupSaved', null, 'mesgs');
 

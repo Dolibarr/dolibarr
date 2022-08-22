@@ -134,4 +134,6 @@ HolidaysToApprove=منظوری کے لیے چھٹیاں
 NobodyHasPermissionToValidateHolidays=کسی کو بھی تعطیلات کی توثیق کرنے کی اجازت نہیں ہے۔
 HolidayBalanceMonthlyUpdate=چھٹیوں کے بیلنس کی ماہانہ اپ ڈیٹ
 XIsAUsualNonWorkingDay=%s عام طور پر غیر کام کا دن ہوتا ہے۔
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=چھوڑنے کی درخواست %s کو مسودہ، منسوخ یا حذف کرنے سے انکار کیا جانا چاہیے

@@ -174,7 +174,7 @@ class modService extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
 		$keyforselect = 'product';
@@ -210,7 +210,7 @@ class modService extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
@@ -229,7 +229,7 @@ class modService extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
@@ -244,7 +244,7 @@ class modService extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
@@ -363,7 +363,7 @@ class modService extends DolibarrModules
 				if (!empty($conf->stock->enabled)) {
 					$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 				}
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty', 'pa.incdec'=>'ComposedProductIncDecStock'));
@@ -379,7 +379,7 @@ class modService extends DolibarrModules
 				if (!empty($conf->stock->enabled)) {
 					$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 				}
 				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('pa.qty'=>'Numeric'));
@@ -395,7 +395,7 @@ class modService extends DolibarrModules
 				if (!empty($conf->stock->enabled)) {
 					$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'virtualproduct', 'p.seuil_stock_alerte'=>'virtualproduct', 'p.desiredstock'=>'virtualproduct', 'p.pmp'=>'virtualproduct'));
 				}
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'virtualproduct'));
 				}
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct", 'pa.incdec'=>'subproduct'));
@@ -576,7 +576,7 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.localtax2_tx'=>'LT2', 'p.localtax2_type'=>'LT2Type'));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -667,7 +667,7 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) {
 			$import_sample = array_merge($import_sample, array('p.localtax2_tx'=>'', 'p.localtax2_type'=>''));
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$import_sample = array_merge($import_sample, array('p.barcode'=>''));
 		}
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -693,7 +693,7 @@ class modService extends DolibarrModules
 		}
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
 
@@ -786,7 +786,7 @@ class modService extends DolibarrModules
 				}
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-						'sp.packagning'=>'1',
+						'sp.packagning'=>'10',
 					));
 				}
 

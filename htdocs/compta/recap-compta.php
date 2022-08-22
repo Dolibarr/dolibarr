@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 
@@ -116,7 +116,7 @@ if ($id > 0) {
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	print dol_get_fiche_end();
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
@@ -158,7 +158,7 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -168,7 +168,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
+					'status' => $fac->getLibStatut(2, $totalpaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);

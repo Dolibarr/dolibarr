@@ -293,7 +293,7 @@ $mend = $tmp['mon'];
 
 $total = 0;
 $subtotalcoll = 0;
-$subtotalpaye = 0;
+$subtotalpaid = 0;
 $subtotal = 0;
 $i = 0;
 $mcursor = 0;
@@ -536,7 +536,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print '<td class="nowrap right">'.price(price2num($x_paye_sum, 'MT')).'</td>';
 
 	$subtotalcoll = $subtotalcoll + $x_coll_sum;
-	$subtotalpaye = $subtotalpaye + $x_paye_sum;
+	$subtotalpaid = $subtotalpaid + $x_paye_sum;
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	$total = $total + $diff;
@@ -552,12 +552,12 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 		print '<tr class="liste_total">';
 		print '<td class="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m / 3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
 		print '<td class="nowrap right">'.price(price2num($subtotalcoll, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num($subtotalpaye, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtotalpaid, 'MT')).'</td>';
 		print '<td class="nowrap right">'.price(price2num($subtotal, 'MT')).'</td>';
 		print '<td>&nbsp;</td></tr>';
 		$i = 0;
 		$subtotalcoll = 0;
-		$subtotalpaye = 0;
+		$subtotalpaid = 0;
 		$subtotal = 0;
 	}
 }

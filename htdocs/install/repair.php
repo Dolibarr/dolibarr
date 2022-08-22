@@ -94,8 +94,8 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 // Init data
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -176,7 +176,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -1218,7 +1219,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci and row_format=dynamic (for mysql/mariadb only)</td></tr>';
 
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
@@ -1240,11 +1241,18 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-			print '<!-- '.$sql.' -->';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
-				$resql = $db->query($sql);
-				print ' - Done ('.($resql ? 'OK' : 'KO').')';
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
 			} else {
 				print ' - Disabled';
 			}

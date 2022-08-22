@@ -104,6 +104,7 @@ $form = new Form($db);
 $title = $langs->trans("BillOfMaterials").' - '.$langs->trans("Files");
 
 $help_url = 'EN:Module_BOM';
+$morehtmlref = "";
 
 llxHeader('', $title, $help_url);
 

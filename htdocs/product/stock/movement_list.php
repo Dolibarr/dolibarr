@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -59,6 +59,7 @@ $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$backtopage = GETPOST("backtopage", "alpha");
 
 $idproduct = GETPOST('idproduct', 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -127,7 +128,7 @@ $arrayfields = array(
 	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>"Author", 'checked'=>0, 'position'=>120),
 	'm.inventorycode'=>array('label'=>"InventoryCodeShort", 'checked'=>1, 'position'=>130),
 	'm.label'=>array('label'=>"MovementLabel", 'checked'=>1, 'position'=>140),
@@ -223,7 +224,7 @@ if (empty($reshook)) {
 		$search_qty = '';
 		$search_fk_projet=0;
 		$sall = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -593,7 +594,7 @@ $movement = new MouvementStock($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -777,7 +778,11 @@ if ($msid) {
 } else {
 	$title = $langs->trans("ListOfStockMovements");
 	if ($id) {
-		$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		if (!empty($object->ref)) {
+			$title .= ' ('.$object->ref.')';
+		} else {
+			$title .= ' ('.$langs->trans("ForThisWarehouse").')';
+		}
 	}
 }
 
@@ -800,7 +805,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
@@ -903,7 +908,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 		print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 		print "</td></tr>";
@@ -937,12 +942,17 @@ if ($action == "transfert") {
 if ((empty($action) || $action == 'list') && $id > 0) {
 	print "<div class=\"tabsAction\">\n";
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
-	}
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+																								   // modified by hook
+	if (empty($reshook)) {
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
+		}
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		}
 	}
 
 	print '</div><br>';

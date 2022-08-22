@@ -92,14 +92,14 @@ class DoliDBMysqli extends DoliDB
 		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
 		$this->db = $this->connect($host, $user, $pass, '', $port);
 
-		if ($this->db->connect_errno) {
-			$this->connected = false;
-			$this->ok = false;
-			$this->error = $this->db->connect_error;
-			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
-		} else {
+		if ($this->db && empty($this->db->connect_errno)) {
 			$this->connected = true;
 			$this->ok = true;
+		} else {
+			$this->connected = false;
+			$this->ok = false;
+			$this->error = empty($this->db) ? 'Failed to connect' : $this->db->connect_error;
+			dol_syslog(get_class($this)."::DoliDBMysqli Connect error: ".$this->error, LOG_ERR);
 		}
 
 		// If server connection is ok, we try to connect to the database
@@ -169,6 +169,18 @@ class DoliDBMysqli extends DoliDB
 
 
 	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return " FORCE INDEX(".preg_replace('/[^a-z0-9_]/', '', $nameofindex).")";
+	}
+
+
+	/**
 	 *  Convert a SQL request in Mysql syntax to native syntax
 	 *
 	 *  @param     string	$line   SQL request line to convert
@@ -179,6 +191,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		return $line;
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -191,7 +204,13 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-		return $this->db->select_db($database);
+		$result = false;
+		try {
+			$result = $this->db->select_db($database);
+		} catch (Exception $e) {
+			// Nothing done on error
+		}
+		return $result;
 	}
 
 
@@ -203,7 +222,7 @@ class DoliDBMysqli extends DoliDB
 	 * @param   string  $passwd Password
 	 * @param   string  $name 	Name of database (not used for mysql, used for pgsql)
 	 * @param   integer $port 	Port of database server
-	 * @return  mysqli  		Database access object
+	 * @return  mysqli|null		Database access object
 	 * @see close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -215,7 +234,13 @@ class DoliDBMysqli extends DoliDB
 		// Can also be
 		// mysqli::init(); mysql::options(MYSQLI_INIT_COMMAND, 'SET AUTOCOMMIT = 0'); mysqli::options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
 		// return mysqli::real_connect($host, $user, $pass, $db, $port);
-		return new mysqli($host, $login, $passwd, $name, $port);
+		$tmp = false;
+		try {
+			$tmp = new mysqli($host, $login, $passwd, $name, $port);
+		} catch (Exception $e) {
+			dol_syslog(get_class($this)."::connect failed", LOG_DEBUG);
+		}
+		return $tmp;
 	}
 
 	/**
@@ -266,7 +291,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * 	@param	int		$result_mode	Result mode
+	 * 	@param	int		$result_mode	Result mode (Using 1=MYSQLI_USE_RESULT instead of 0=MYSQLI_STORE_RESULT will not buffer the result and save memory)
 	 *	@return	bool|mysqli_result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
@@ -446,7 +471,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return $this->db->real_escape_string($stringtoencode);
+		return $this->db->real_escape_string((string) $stringtoencode);
 	}
 
 	/**
@@ -457,7 +482,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeunderscore($stringtoencode)
 	{
-		return str_replace('_', '\_', $stringtoencode);
+		return str_replace('_', '\_', (string) $stringtoencode);
 	}
 
 	/**
@@ -733,6 +758,9 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
 
+		$pk = '';
+		$sqluq = $sqlk = array();
+
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "CREATE TABLE ".$table."(";
@@ -966,7 +994,7 @@ class DoliDBMysqli extends DoliDB
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{
 		// phpcs:enable
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
 		$resql = $this->query($sql);
 		if (!$resql) {
@@ -979,14 +1007,14 @@ class DoliDBMysqli extends DoliDB
 		}
 
 		// Redo with localhost forced (sometimes user is created on %)
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'localhost' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
 		$resql = $this->query($sql);
 
-		$sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
+		$sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
 		$resql = $this->query($sql);
 		if (!$resql) {
-			$this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'  IDENTIFIED BY '*****'";
+			$this->error = "Connected user not allowed to GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."'";
 			return -1;
 		}
 

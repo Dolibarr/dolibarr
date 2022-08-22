@@ -134,4 +134,6 @@ HolidaysToApprove=Vacacións para aprobar
 NobodyHasPermissionToValidateHolidays=Ninguén ten permisos para validar vacacións
 HolidayBalanceMonthlyUpdate=Actualización mensual do saldo de vacacións
 XIsAUsualNonWorkingDay=%s é habitualmente un día NON laboral
+BlockHolidayIfNegative=Bloquear se o saldo é negativo
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=Bloqueouse a creación desta solicitude de días porque o seu saldo é negativo
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=A solicitude de saída %s debe estar en borrador, cancelada ou rexeitada para ser eliminada 

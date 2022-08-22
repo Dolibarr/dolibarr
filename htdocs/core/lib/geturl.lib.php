@@ -36,7 +36,7 @@
  * @param	string[]  $allowedschemes		List of schemes that are allowed ('http' + 'https' only by default)
  * @param	int		  $localurl				0=Only external URL are possible, 1=Only local URL, 2=Both external and local URL are allowed.
  * @param	int		  $ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
- * @return	array						    Returns an associative array containing the response from the server array('content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
+ * @return	array						    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1)
 {
@@ -87,7 +87,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Turning off the server and peer verification(TrustManager Concept).
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
 	// Restrict use to some protocols only
 	$protocols = 0;
@@ -106,6 +106,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
 	curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+
+	/*
+	if ($maxsize) {
+		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);
+	} */
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // We want response
@@ -225,7 +230,14 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			}
 
 			// Common check on ip (local and external)
-			$arrayofmetadataserver = array('100.100.100.200' => 'Alibaba', '192.0.0.192'=> 'Oracle', '192.80.8.124'=>'Packet');
+			// See list on https://tagmerge.com/gist/a7b9d57ff8ec11d63642f8778609a0b8
+			// Not evasive url that ar enot IP are excluded by test on IP v4/v6 validity.
+			$arrayofmetadataserver = array(
+				'100.100.100.200' => 'Alibaba',
+				'192.0.0.192' => 'Oracle',
+				'192.80.8.124' => 'Packet',
+				'100.88.222.5' => 'Tencent cloud',
+			);
 			foreach ($arrayofmetadataserver as $ipofmetadataserver => $nameofmetadataserver) {
 				if ($iptocheck == $ipofmetadataserver) {
 					$info['http_code'] = 400;

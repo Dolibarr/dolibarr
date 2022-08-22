@@ -38,7 +38,7 @@ $langs->load("modulebuilder");
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
 print '<br>';
 
 // Load $extrafields->attributes
@@ -73,7 +73,7 @@ print "</tr>\n";
 
 if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
 	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
-		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1)) {
+		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
 			// continue;
 		}*/

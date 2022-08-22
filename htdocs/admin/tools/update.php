@@ -61,7 +61,11 @@ $version = '0.0';
 if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
-	$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+	if (function_exists('simplexml_load_string')) {
+		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+	} else {
+		$sfurl = 'xml_not_available';
+	}
 }
 
 
@@ -82,7 +86,10 @@ if (function_exists('curl_init')) {
 	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
 
 	if ($action == 'getlastversion') {
-		if ($sfurl) {
+		if ($sfurl == 'xml_not_available') {
+			$langs->load("errors");
+			print $langs->trans("LastStableVersion").' : <b class="error">'.$langs->trans("ErrorFunctionNotAvailableInPHP", 'simplexml_load_string').'</b><br>';
+		} elseif ($sfurl) {
 			$i = 0;
 			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
 				$title = $sfurl->channel[0]->item[$i]->title;

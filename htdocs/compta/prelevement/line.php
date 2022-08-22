@@ -262,12 +262,20 @@ if ($id) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	if ($type == 'bank-transfer') {
+		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
+	} else {
+		$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	}
 	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql .= " AND f.fk_soc = s.rowid";
-	$sql .= " AND pf.fk_facture = f.rowid";
+	if ($type == 'bank-transfer') {
+		$sql .= " AND pf.fk_facture_fourn = f.rowid";
+	} else {
+		$sql .= " AND pf.fk_facture = f.rowid";
+	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	$sql .= " AND pl.rowid = ".((int) $id);
 	if ($socid) {

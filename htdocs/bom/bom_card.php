@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -179,24 +181,10 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$bomline = new BOMLine($db);
-			$bomline->fk_bom = $id;
-			$bomline->fk_product = $idprod;
-			$bomline->fk_bom_child = $bom_child_id;
-			$bomline->qty = $qty;
-			$bomline->qty_frozen = (int) $qty_frozen;
-			$bomline->disable_stock_change = (int) $disable_stock_change;
-			$bomline->efficiency = $efficiency;
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
 
-			// Rang to use
-			$rangmax = $object->line_max(0);
-			$ranktouse = $rangmax + 1;
-
-			$bomline->position = ($ranktouse + 1);
-
-			$result = $bomline->create($user);
 			if ($result <= 0) {
-				setEventMessages($bomline->error, $bomline->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			} else {
 				unset($_POST['idprod']);
@@ -205,13 +193,11 @@ if (empty($reshook)) {
 				unset($_POST['disable_stock_change']);
 
 				$object->fetchLines();
-
-				$object->calculateCosts();
 			}
 		}
 	}
 
-	// Add line
+	// Update line
 	if ($action == 'updateline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
@@ -227,26 +213,23 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$bomline = new BOMLine($db);
-		$bomline->fetch($lineid);
-		$bomline->qty = $qty;
-		$bomline->qty_frozen = (int) $qty_frozen;
-		$bomline->disable_stock_change = (int) $disable_stock_change;
-		$bomline->efficiency = $efficiency;
+		if (!$error) {
+			$bomline = new BOMLine($db);
+			$bomline->fetch($lineid);
 
-		$result = $bomline->update($user);
-		if ($result <= 0) {
-			setEventMessages($bomline->error, $bomline->errors, 'errors');
-			$action = '';
-		} else {
-			unset($_POST['idprod']);
-			unset($_POST['qty']);
-			unset($_POST['qty_frozen']);
-			unset($_POST['disable_stock_change']);
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key);
 
-			$object->fetchLines();
+			if ($result <= 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			} else {
+				unset($_POST['idprod']);
+				unset($_POST['qty']);
+				unset($_POST['qty_frozen']);
+				unset($_POST['disable_stock_change']);
 
-			$object->calculateCosts();
+				$object->fetchLines();
+			}
 		}
 	}
 }
@@ -474,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (! empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -518,8 +501,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td>'.price($object->total_cost).'</td></tr>';
+	$object->calculateCosts();
+	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
 	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
 
 	// Other attributes
@@ -581,47 +564,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 
 		print "</form>\n";
-		?>
 
-		<script type="text/javascript" language="javascript">
-			$(document).ready(function() {
-				// When clicking on collapse
-				$(".collapse_bom").click(function() {
-					console.log("We click on collapse");
-					var id_bom_line = $(this).attr('id').replace('collapse-', '');
-					console.log($(this).html().indexOf('folder-open'));
-					if($(this).html().indexOf('folder-open') <= 0) {
-						$('[parentid="'+ id_bom_line +'"]').show();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-					}
-					else {
-						$('[parentid="'+ id_bom_line +'"]').hide();
-						$(this).html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-					}
-
-					return false;
-				});
-
-				// To Show all the sub bom lines
-				$("#show_all").click(function() {
-					console.log("We click on show all");
-					$("[class^=sub_bom_lines]").show();
-					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder-open')); ?>');
-					return false;
-				});
-
-				// To Hide all the sub bom lines
-				$("#hide_all").click(function() {
-					console.log("We click on hide all");
-					$("[class^=sub_bom_lines]").hide();
-					$("[class^=collapse_bom]").html('<?php echo dol_escape_js(img_picto('', 'folder')); ?>');
-					return false;
-				});
-
-			});
-		</script>
-
-		<?php
+		mrpCollapseBomManagement();
 	}
 
 
@@ -675,7 +619,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Create MO
-			if ($conf->mrp->enabled) {
+			if (isModEnabled('mrp')) {
 				if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write)) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&token='.newToken().'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>'."\n";
 				}
@@ -742,7 +686,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/bom/bom_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

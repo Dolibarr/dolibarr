@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'delete') {
+	if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -304,14 +304,11 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 /*
  *	View
  */
-
-llxHeader("", $langs->trans("VariousPayment"));
-
 $form = new Form($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -323,6 +320,13 @@ if ($id) {
 		exit;
 	}
 }
+
+$title = $object->ref." - ".$langs->trans('Card');
+if ($action == 'create') {
+	$title = $langs->trans("NewVariousPayment");
+}
+$help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
+llxHeader('', $title, $help_url);
 
 $options = array();
 
@@ -481,7 +485,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		// Associated project
@@ -543,11 +547,17 @@ if ($id) {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
+	// Confirmation of the removal of the Various Payment
+	if ($action == 'delete') {
+		$text = $langs->trans('ConfirmDeleteVariousPayment');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
+	}
+
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->banque->modifier) {
@@ -578,6 +588,8 @@ if ($id) {
 	$morehtmlref .= '</div>';
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlright = '';
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';
@@ -607,7 +619,7 @@ if ($id) {
 	}
 	print '<tr><td>'.$langs->trans("Sens").'</td><td>'.$sens.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 
 	// Accountancy code
 	print '<tr><td class="nowrap">';

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Configuración de recepción de productos
+ReceptionDescription=Gestión de recepción de proveedores (Crear documentos de recepción)
 Reception=Recepción
 ReceptionsArea=Área de recepciones
 ListOfReceptions=Lista de recepciones
@@ -25,5 +25,4 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidad de producto de la orden d
 ValidateOrderFirstBeforeReception=Primero debes validar el pedido antes de poder realizar recepciones.
 ReceptionsReceiptModel=Plantillas de documentos para recepciones
 NoMorePredefinedProductToDispatch=No más productos predefinidos para enviar
-ByingPrice=Precio de oferta
 ReceptionUnClassifyCloseddInDolibarr=Recepción %s re-abrir

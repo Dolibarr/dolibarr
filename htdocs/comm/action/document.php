@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -139,7 +139,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
 
-	$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
+	$linkback = img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="hideonsmartphone pictoactionview"');
 	$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
 
 	// Link to other agenda views
@@ -159,7 +159,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		$morehtmlref .= $langs->trans('Project').': ';
@@ -201,7 +201,8 @@ if ($object->id > 0) {
 	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datep, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datep, 'day', 'tzuser');
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		print dol_print_date($object->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 	}
 	if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));
@@ -214,7 +215,8 @@ if ($object->id > 0) {
 	if (empty($object->fulldayevent)) {
 		print dol_print_date($object->datef, 'dayhour', 'tzuser');
 	} else {
-		print dol_print_date($object->datef, 'day', 'tzuser');
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		print dol_print_date($object->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 	}
 	if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 		print img_warning($langs->trans("Late"));

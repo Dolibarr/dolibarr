@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -216,7 +222,7 @@ UserGroup=User group
 UserGroups=User groups
 NoUserGroupDefined=No user group defined
 Password=Password
-PasswordRetype=Retype your password
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=Note that a lot of features/modules are disabled in this demonstration.
 Name=Name
 NameSlashCompany=Name / Company
@@ -244,6 +250,7 @@ Designation=Description
 DescriptionOfLine=Description of line
 DateOfLine=Date of line
 DurationOfLine=Duration of line
+ParentLine=Parent line ID
 Model=Doc template
 DefaultModel=Default doc template
 Action=Event
@@ -344,7 +351,7 @@ KiloBytes=Kilobytes
 MegaBytes=Megabytes
 GigaBytes=Gigabytes
 TeraBytes=Terabytes
-UserAuthor=Ceated by
+UserAuthor=Created by
 UserModif=Updated by
 b=b.
 Kb=Kb
@@ -517,6 +524,7 @@ or=or
 Other=Other
 Others=Others
 OtherInformations=Other information
+Workflow=Workflow
 Quantity=Quantity
 Qty=Qty
 ChangedBy=Changed by
@@ -619,6 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Attached files and documents
 JoinMainDoc=Join main document
+JoinMainDocOrLastGenerated=Send the main document or the last generated one if not found
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -709,6 +718,7 @@ FeatureDisabled=Feature disabled
 MoveBox=Move widget
 Offered=Offered
 NotEnoughPermissions=You don't have permission for this action
+UserNotInHierachy=This action is reserved to the supervisors of this user
 SessionName=Session name
 Method=Method
 Receive=Receive
@@ -798,6 +808,7 @@ URLPhoto=URL of photo/logo
 SetLinkToAnotherThirdParty=Link to another third party
 LinkTo=Link to
 LinkToProposal=Link to proposal
+LinkToExpedition= Link to expedition
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice
 LinkToTemplateInvoice=Link to template invoice
@@ -1164,3 +1175,16 @@ NotClosedYet=Not yet closed
 ClearSignature=Reset signature
 CanceledHidden=Canceled hidden
 CanceledShown=Canceled shown
+Terminate=Terminate
+Terminated=Terminated
+AddLineOnPosition=Add line on position (at the end if empty)
+ConfirmAllocateCommercial=Assign sales representative confirmation
+ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
+CommercialsAffected=Sales representatives affected
+CommercialAffected=Sales representative affected
+YourMessage=Your message
+YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
+UrlToCheck=Url to check
+Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal

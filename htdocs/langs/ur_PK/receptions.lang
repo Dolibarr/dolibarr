@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=پروڈکٹ ریسپشن سیٹ اپ
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=حوالہ استقبالیہ
 Reception=استقبالیہ
 Receptions=استقبالیہ

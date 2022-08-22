@@ -128,7 +128,7 @@ if (GETPOST('cancel', 'alpha')) {
 if ($action == "reopen") {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
-		setEventMessages($object->error, $object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = 'view';
@@ -647,7 +647,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright">>';
+		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -659,11 +659,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</td></tr>';
 
 		print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
-		print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
+		print '<span class="amount">'.price($object->opening, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		print "</td></tr>";
 		foreach ($arrayofpaymentmode as $key => $val) {
 			print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
-			print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
+			print '<span class="amount">'.price($object->$key, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print "</td></tr>";
 		}
 

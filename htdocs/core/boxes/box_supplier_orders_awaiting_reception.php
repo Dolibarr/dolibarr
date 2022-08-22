@@ -58,7 +58,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->commande->lire);
+		$this->hidden = !($user->hasRight('fournisseur', 'commande', 'lire'));
 	}
 
 	/**
@@ -162,7 +162,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '.($delivery_date ? dol_print_date($delivery_date, 'day', 'tzuserrel') : '').'</span>',
+						'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-flip-dolly" ></i> '.($delivery_date ? dol_print_date($delivery_date, 'day', 'tzuserrel') : '').'</span>',
 						'asis' => 1
 					);
 
@@ -172,7 +172,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
-						'text' => $langs->trans("NoSupplierOrder"),
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</span>',
 					);
 				}
 
@@ -187,7 +187,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 		} else {
 			$this->info_box_contents[0][] = array(
 				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

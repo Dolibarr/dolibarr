@@ -410,3 +410,4 @@ DefaultBOMDesc=இந்த தயாரிப்பைத் தயாரிக
 Rank=தரவரிசை
 SwitchOnSaleStatus=விற்பனை நிலையை இயக்கவும்
 SwitchOnPurchaseStatus=கொள்முதல் நிலையை இயக்கவும்
+StockMouvementExtraFields= Extra Fields (stock mouvement)

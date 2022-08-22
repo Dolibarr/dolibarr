@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022 Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
@@ -168,6 +168,10 @@ if ($action == 'update') {
 
 	if (GETPOSTISSET('DOC_SHOW_FIRST_SALES_REP')) {
 		dolibarr_set_const($db, "DOC_SHOW_FIRST_SALES_REP", GETPOST('DOC_SHOW_FIRST_SALES_REP', 'alpha'), 'chaine', 0, '', $conf->entity);
+  }
+
+	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
+		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
 	if (GETPOSTISSET('PDF_USE_A')) {
@@ -253,7 +257,7 @@ print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
 $head = pdf_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'general', $langs->trans("PDF"), -1, 'pdf');
+print dol_get_fiche_head($head, 'general', '', -1, '');
 
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";
@@ -313,7 +317,7 @@ print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Par
 
 // Show sender name
 
-/* Set option as hidden because no need of this for 99.99% of users.
+/* Set option as hidden because no need of this for 99.99% of users. Having it as hidden feature is enough.
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
@@ -325,7 +329,7 @@ print '</td></tr>';
 
 // Hide VAT Intra on address
 
-print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_TVAINTRA_NOT_IN_ADDRESS');
 } else {
@@ -344,7 +348,7 @@ for ($i = 1; $i <= 6; $i++) {
 		$pid = img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 	}
 	if ($pid) {
-		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 		$keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);
@@ -482,7 +486,7 @@ print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" v
 print '</td></tr>';
 
 // Show project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
 	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
@@ -568,7 +572,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
 
-// Show sales representative
+// Show the first sales representative
 
 print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP");
 print ' <span class="opacitymedium">('.$langs->trans("SalesRepresentativeInfo").')</span>';
@@ -578,6 +582,17 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
+}
+
+// Show alias in thirdparty name
+
+/* Disabled because not yet completely implemented (does not work when we force a contact on object)
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
+	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
+}
+*/
 
 // Show online payment link on invoices
 

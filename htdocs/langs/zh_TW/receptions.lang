@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=產品收貨設定
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=收貨參考
 Reception=收貨
 Receptions=收貨(s)

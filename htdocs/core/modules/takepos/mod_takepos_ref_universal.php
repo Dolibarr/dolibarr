@@ -119,7 +119,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string      Value if KO, <0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $db, $conf;
 

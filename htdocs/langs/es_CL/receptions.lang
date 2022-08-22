@@ -14,7 +14,6 @@ OtherReceptionsForSameOrder=Otras recepciones para este pedido.
 ReceptionsAndReceivingForSameOrder=Recepciones y recibos por este pedido.
 ReceptionsToValidate=Recepciones para validar
 StatusReceptionCanceled=Cancelado
-StatusReceptionValidated=Validado (productos a enviar o ya enviados)
 StatusReceptionProcessed=Procesada
 StatusReceptionProcessedShort=Procesada
 ConfirmDeleteReception=¿Estás seguro de que deseas eliminar esta recepción?

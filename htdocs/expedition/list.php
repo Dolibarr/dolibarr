@@ -116,7 +116,7 @@ $fieldstosearchall = array(
 	'e.ref'=>"Ref",
 	's.nom'=>"ThirdParty",
 	'e.note_public'=>'NotePublic',
-	'e.shipping_method_id'=>'SendingMethod',
+	//'e.fk_shipping_method'=>'SendingMethod', // TODO fix this, does not work
 	'e.tracking_number'=>"TrackingNumber",
 );
 if (empty($user->socid)) {
@@ -134,7 +134,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>7),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers, 'position'=>8),
 	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'position'=>9),
-	'e.shipping_method_id'=>array('label'=>$langs->trans('SendingMethod'), 'checked'=>1, 'position'=>10),
+	'e.fk_shipping_method'=>array('label'=>$langs->trans('SendingMethod'), 'checked'=>1, 'position'=>10),
 	'e.tracking_number'=>array('label'=>$langs->trans("TrackingNumber"), 'checked'=>1, 'position'=>11),
 	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'position'=>12),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -196,7 +196,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -211,6 +211,34 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// If massaction is close
+if ($massaction == 'classifyclose') {
+	$error=0;
+	$selectids = GETPOST('toselect', 'array');
+	foreach ($selectids as $selectid) {
+		//	$object->fetch($selectid);
+		$object->fetch($selectid);
+		$result = $object->setClosed();
+	}
+
+	$massaction = $action = 'classifyclose';
+
+	if ($result < 0) {
+		$error++;
+	}
+
+
+	if (!$error) {
+		$db->commit();
+
+		setEventMessage($langs->trans("Close Done"));
+		header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		$db->rollback();
+		exit;
+	}
+}
 
 /*
  * View
@@ -489,7 +517,7 @@ $param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
+	'classifyclose'=>$langs->trans("Close"),
 	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (in_array($massaction, array('presend'))) {
@@ -532,11 +560,11 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
@@ -544,7 +572,7 @@ if ($user->rights->societe->client->voir || $socid) {
 if ($user->rights->user->user->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
@@ -583,7 +611,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', ''));
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1); // This also change content of $arrayfields
 }
@@ -593,6 +621,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -654,7 +689,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
-if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
@@ -714,13 +749,18 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre middle">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 }
@@ -751,8 +791,8 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
-	print_liste_field_titre($arrayfields['e.shipping_method_id']['label'], $_SERVER["PHP_SELF"], "e.fk_shipping_method", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
+	print_liste_field_titre($arrayfields['e.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "e.fk_shipping_method", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -781,7 +821,9 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['e.billed']['label'], $_SERVER["PHP_SELF"], "e.billed", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 $typenArray = $formcompany->typent_array(1);
@@ -804,6 +846,18 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="nowraponall">';
@@ -901,7 +955,7 @@ while ($i < min($num, $limit)) {
 		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 		print "</td>\n";
 	}
-	if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+	if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 		// Get code using getLabelFromKey
 		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 		print '<td class="center">';
@@ -980,15 +1034,17 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	print '<td class="nowrap" align="center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

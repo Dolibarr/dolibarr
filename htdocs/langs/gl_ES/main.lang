@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -244,6 +250,7 @@ Designation=Descrición
 DescriptionOfLine=Descrición de liña
 DateOfLine=Data da liña
 DurationOfLine=Permanecia da liña
+ParentLine=ID da liña principal
 Model=Padrón de documento
 DefaultModel=Padrón por defecto do documento
 Action=Acción
@@ -517,6 +524,7 @@ or=ou
 Other=Outro
 Others=Outros
 OtherInformations=Outra información
+Workflow=Fluxo de traballo
 Quantity=Cantidade
 Qty=Cant.
 ChangedBy=Modificado por
@@ -619,6 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Ficheiros e documentos axuntados
 JoinMainDoc=Engadir ao documento principal
+JoinMainDocOrLastGenerated=Envíe o documento principal ou o último xerado se non se atopa
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -709,6 +718,7 @@ FeatureDisabled=Función desactivada
 MoveBox=Mover panel
 Offered=S/Custo
 NotEnoughPermissions=Non ten permisos para esta acción
+UserNotInHierachy=Esta acción está reservada aos supervisores deste usuario
 SessionName=Nome sesión
 Method=Método
 Receive=Recepción
@@ -1164,3 +1174,16 @@ NotClosedYet=Aínda non pechado
 ClearSignature=Restablecer sinatura
 CanceledHidden=Cancelado oculto 
 CanceledShown=Cancelado amosar
+Terminate=Terminar
+Terminated=De baixa
+AddLineOnPosition=Engadir liña na posición (ao final se está baleira)
+ConfirmAllocateCommercial=Asignar a confirmación do representante de vendas
+ConfirmAllocateCommercialQuestion=Está certo de querer asignar o(s) rexistro(s) seleccionado(s) a %s?
+CommercialsAffected=Representantes de vendas afectados
+CommercialAffected=Representante de vendas afectado
+YourMessage=A súa mensaxe
+YourMessageHasBeenReceived=Recibiuse a súa mensaxe. Atenderemos ou contactaremos con vostede canto antes.
+UrlToCheck=URL para comprobar
+Automation=Automatización
+CreatedByEmailCollector=Creado por Recolector de Correo
+CreatedByPublicPortal=Creado a partir do portal público

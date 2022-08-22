@@ -47,6 +47,9 @@ $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $facid = GETPOST('facid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -110,6 +113,18 @@ $arrayfields = array();
  * Actions
  */
 
+if ($cancel) {
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	header("Location: ".DOL_URL_ROOT.'/fourn/facture/list.php');
+	exit;
+}
+
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_account = "";
@@ -172,7 +187,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
+				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
 				$cursorfacid = substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = (GETPOST($key) ? price2num(GETPOST($key)) : 0);
@@ -184,7 +199,7 @@ if (empty($reshook)) {
 				if ($result <= 0) {
 					dol_print_error($db);
 				}
-				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->total_ttc - $tmpinvoice->getSommePaiement(1));
+				$multicurrency_amountsresttopay[$cursorfacid] = price2num($tmpinvoice->multicurrency_total_ttc - $tmpinvoice->getSommePaiement(1));
 				if ($multicurrency_amounts[$cursorfacid]) {
 					// Check amount
 					if ($multicurrency_amounts[$cursorfacid] && (abs($multicurrency_amounts[$cursorfacid]) > abs($multicurrency_amountsresttopay[$cursorfacid]))) {
@@ -204,7 +219,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if ($_POST['paiementid'] <= 0) {
+		if (GETPOST('paiementid') <= 0) {
 			setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('PaymentMode')), null, 'errors');
 			$error++;
 		}
@@ -253,6 +268,8 @@ if (empty($reshook)) {
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
+		$multicurrency_code = array();
+
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
 			$tmpinvoice = new FactureFournisseur($db);
@@ -261,6 +278,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -270,6 +288,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		//var_dump($amounts);
@@ -289,12 +308,16 @@ if (empty($reshook)) {
 			$paiement->datepaye     = $datepaye;
 			$paiement->amounts      = $amounts; // Array of amounts
 			$paiement->multicurrency_amounts = $multicurrency_amounts;
+			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->paiementid   = GETPOST('paiementid', 'int');
-
 			$paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
+			$paiement->fk_account   = GETPOST('accountid', 'int');
 
 			if (!$error) {
+				// Create payment and update this->multicurrency_amounts if this->amounts filled or
+				// this->amounts if this->multicurrency_amounts filled.
+				// This also set ->amount and ->multicurrency_amount
 				$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty);
 				if ($paiement_id < 0) {
 					setEventMessages($paiement->error, $paiement->errors, 'errors');
@@ -303,7 +326,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $paiement->addPaymentToBank($user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, '', '');
+				$result = $paiement->addPaymentToBank($user, 'payment_supplier', '(SupplierInvoicePayment)', $accountid, GETPOST('chqemetteur'), GETPOST('chqbank'));
 				if ($result < 0) {
 					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$error++;
@@ -479,20 +502,20 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print $form->selectDate($dateinvoice, '', '', '', 0, "addpaiement", 1, 1, 0, '', '', $object->date);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
-			$form->select_types_paiements(empty($_POST['paiementid']) ? $obj->fk_mode_reglement : $_POST['paiementid'], 'paiementid');
+			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
 			if (!empty($conf->banque->enabled)) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-				$form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2);
+				print $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
 				print '</td></tr>';
 			} else {
 				print '<tr><td>&nbsp;</td></tr>';
 			}
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement']) ? '' : $_POST['num_paiement']).'"></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(!GETPOST('num_paiement') ? '' : GETPOST('num_paiement')).'"></td></tr>';
 			print '<tr><td>'.$langs->trans('Comments').'</td>';
 			print '<td class="tdtop">';
-			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(empty($_POST['comment']) ? '' : $_POST['comment']).'</textarea></td></tr>';
+			print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(!GETPOST('comment') ? '' : GETPOST('comment')).'</textarea></td></tr>';
 			print '</table>';
 			print dol_get_fiche_end();
 
@@ -668,10 +691,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 										}
 											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
+											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
-										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
+										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									}
 								}
 								print "</td>";
@@ -776,11 +799,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			// Save + Cancel Buttons
 			if ($action != 'add_paiement') {
-				print '<br><div class="center"><input type="checkbox" checked name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-				print '<p>&nbsp;</p>';
-				print '<br><input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
-				print '<p>&nbsp;</p>';
-				print '<br><input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)"></div>';
+				print '<br><div class="center">';
+				print '<input type="checkbox" checked id="closepaidinvoices" name="closepaidinvoices"> <label for="closepaidinvoices">'.$langs->trans("ClosePaidInvoicesAutomatically").'</label><br>';
+				print '<input type="submit" class="button" value="'.$langs->trans('ToMakePayment').'">';
+				print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</div>';
 			}
 
 			// Form to confirm payment

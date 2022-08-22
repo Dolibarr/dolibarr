@@ -250,6 +250,7 @@ if ($date_endyear) {
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
+
 if ($modecompta == 'BOOKKEEPING') {
 	print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
 } else {
@@ -261,6 +262,8 @@ if ($modecompta == 'BOOKKEEPING') {
 } else {
 	if ($modecompta == 'CREANCES-DETTES') {
 		print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], 'amount_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	} else {
+		print_liste_field_titre('');  // Make 4 columns in total whatever $modecompta is
 	}
 	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], 'amount_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 }
@@ -934,33 +937,29 @@ if ($modecompta == 'BOOKKEEPING') {
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			if ($modecompta == 'CREANCES-DETTES') {
-				//$column = 's.dateep';	// We use the date of salary
-				$column = 'p.datep';
+				$column = 's.dateep';	// We use the date of end of period of salary
+
+				$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, s.label as label, date_format($column,'%Y-%m') as dm, sum(s.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+				$sql .= " WHERE s.entity IN (".getEntity('salary').")";
+				if (!empty($date_start) && !empty($date_end)) {
+					$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+				}
+				$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, s.label, dm";
 			} else {
 				$column = 'p.datep';
-			}
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
-			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid=p.fk_salary";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
-			$sql .= " WHERE s.entity IN (".getEntity('salary').")";
-			if (!empty($date_start) && !empty($date_end)) {
-				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+				$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = p.fk_salary";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+				$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
+				if (!empty($date_start) && !empty($date_end)) {
+					$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+				}
+				$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
 			}
-			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
-
-			// For backward compatibility with old module salary
-			$column = 'p.datep';
-			$sql .= " UNION ";
-			$sql .= " SELECT u.rowid, u.firstname, u.lastname, p.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
-			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
-			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
-			if (!empty($date_start) && !empty($date_end)) {
-				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-			}
-			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
@@ -975,7 +974,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= $db->order($newsortfield, $sortorder);
 		}
 
-		dol_syslog("get payment salaries");
+		dol_syslog("get salaries");
 		$result = $db->query($sql);
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
@@ -1529,18 +1528,24 @@ print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht_income, 'MT')).'</td>';
+} else {
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc_income, 'MT')).'</td>';
 print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
+} else {
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
 print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
+} else {
+	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
 print '</tr>';

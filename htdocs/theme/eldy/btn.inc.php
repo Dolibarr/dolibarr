@@ -147,9 +147,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-	background: var(--butactiondeletebg);
+	background: var(--butactiondeletebg) !important;
 	/* border: 1px solid #633; */
-	color: #633;
+	color: #633 !important;
 }
 
 .butActionDelete:hover {
@@ -278,8 +278,8 @@ a.btnTitle.btnTitleSelected {
 	display: block;
 }
 
-div.pagination li:first-child a.btnTitle{
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .button-title-separator{

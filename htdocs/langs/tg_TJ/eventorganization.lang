@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Категория барои илов
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Категория барои ба шахсони сеюм илова кардан ба таври худкор ҳангоми пешниҳоди стенд офарида мешавад
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Шаблон почтаи электронӣ барои фиристодани пас аз гирифтани пешниҳоди конфронс.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Шаблон почтаи электронӣ барои фиристодани пас аз пешниҳоди стенд.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Шаблон почтаи оммавӣ барои иштирокчиён
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Шаблон почтаи оммавӣ ба баромадкунандагон
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Филтр кардани рӯйхати интихобкардаи тарафи сеюм дар корт/варақаи иштироккунандагон бо категория
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Филтр кардани рӯйхати интихобкардаи тарафи сеюм дар корт/форма барои иштироккунандагон бо намуди муштарӣ
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Payment of your booth
 EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Алоқа ба иштирокчиён
 EventOrganizationMassEmailSpeakers = Муошират бо баромадкунандагон
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Нархи бақайдгирӣ
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Нархи обуна барои стенд
 PriceOfBoothHelp=Нархи обуна барои стенд
-EventOrganizationICSLink=ICS -ро барои рӯйдодҳо пайваст кунед
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=Маълумот дар бораи конфронс ё Бут
 Attendees=Иштирокчиён
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Истиноди ICS -ро зеркашӣ кунед
-EVENTORGANIZATION_SECUREKEY = Калиди бехатарии истиноди бақайдгирии оммавӣ ба конфронс
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Хидмате, ки барои сатри ҳисобнома -фактура дар бораи макони дӯкон истифода мешавад
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Хидмате, ки дар сатри ҳисобнома -фактура дар бораи обунаи иштирокчии конфронс истифода мешавад
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Шумораи овозҳо
 #
 # Status

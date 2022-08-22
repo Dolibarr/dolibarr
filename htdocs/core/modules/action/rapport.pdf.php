@@ -63,6 +63,14 @@ class CommActionRapport
 
 	public $marge_basse;
 
+	public $format;
+
+	public $type;
+
+	public $page_hauteur;
+
+	public $page_largeur;
+
 
 	/**
 	 * Constructor
@@ -125,7 +133,7 @@ class CommActionRapport
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".$this->month."-".$this->year.".pdf";
+		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {
@@ -261,7 +269,7 @@ class CommActionRapport
 				if (!preg_match('/^'.preg_quote($obj->label, '/').'/', $obj->note)) {
 					$text = $obj->label."\n";
 				}
-				$text .= dolGetFirstLineOfText(dol_string_nohtmltag($obj->note), 2);
+				$text .= dolGetFirstLineOfText(dol_string_nohtmltag($obj->note), 1);
 				// Add status to text
 				$text .= "\n";
 				$status = $outputlangs->trans("Status").': '.dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1, 1));

@@ -62,7 +62,7 @@ if ($action == 'update' && !$cancel) {
 
 
 // Send sms
-if ($action == 'send' && !$_POST['cancel']) {
+if ($action == 'send' && !$cancel) {
 	$error = 0;
 
 	$smsfrom = '';

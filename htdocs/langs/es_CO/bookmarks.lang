@@ -6,5 +6,6 @@ ShowBookmark=Mostrar marcador
 ReplaceWindow=Reemplazar pestaña actual
 BehaviourOnClick=Comportamiento cuando se selecciona una URL de marcador
 SetHereATitleForLink=Establecer un nombre para el marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use un link externo/absoluto (https://ejemplo.com) o un link interno/relativo (/mypage.php). También puede usar un teléfono como tel: 0123456.
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página vinculada debe abrirse en la pestaña actual o en una nueva pestaña
 BookmarksMenuShortCut=Ctrl + Mayús + m

@@ -230,8 +230,6 @@ class modApi extends DolibarrModules
 	{
 		$sql = array();
 
-		$result = $this->_load_tables('/api/sql/');
-
 		return $this->_init($sql, $options);
 	}
 

@@ -90,6 +90,7 @@ CategorieRecursivHelp=Если опция включена, то при доба
 AddProductServiceIntoCategory=Добавить следующий продукт/услугу
 AddCustomerIntoCategory=Присвоить категорию клиенту
 AddSupplierIntoCategory=Присвоить категорию поставщику
+AssignCategoryTo=Присвоить категорию
 ShowCategory=Показать тег/категорию
 ByDefaultInList=По умолчанию в списке
 ChooseCategory=Выберите категорию

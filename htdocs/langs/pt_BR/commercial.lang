@@ -41,7 +41,6 @@ ActionDoneBy=Evento feito por
 ActionAC_TEL=Chamada telefônica
 ActionAC_PROP=Enviar proposta por correio
 ActionAC_EMAIL=Enviar e-mail
-ActionAC_EMAIL_IN=Recepção de e-mail
 ActionAC_INT=Intervenção no lugar
 ActionAC_FAC=Enviar fatura de cliente por correio
 ActionAC_REL=Enviar fatura de cliente por correio (lembrete)

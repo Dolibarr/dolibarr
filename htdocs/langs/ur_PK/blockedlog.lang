@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=ان ممالک کی فہرست جہاں �
 OnlyNonValid=غیر درست
 TooManyRecordToScanRestrictFilters=اسکین/تجزیہ کرنے کے لیے بہت زیادہ ریکارڈز۔ براہ کرم مزید پابندی والے فلٹرز کے ساتھ فہرست کو محدود کریں۔
 RestrictYearToExport=ایکسپورٹ کرنے کے لیے مہینے/سال کو محدود کریں۔
+BlockedLogEnabled=System to track events into unalterable logs has been enabled
+BlockedLogDisabled=System to track events into unalterable logs has been disabled after some recording were done. We saved a special Fingerprint to track the chain as broken
+BlockedLogDisabledBis=System to track events into unalterable logs has been disabled. This is possible because no record were done yet.

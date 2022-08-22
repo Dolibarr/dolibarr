@@ -115,7 +115,7 @@ class Stripe extends CommonObject
 				$tokenstring = $obj->tokenstring;
 
 				$tmparray = json_decode($tokenstring);
-				$key = $tmparray->stripe_user_id;
+				$key = empty($tmparray->stripe_user_id) ? '' : $tmparray->stripe_user_id;
 			} else {
 				$tokenstring = '';
 			}
@@ -291,6 +291,34 @@ class Stripe extends CommonObject
 	}
 
 	/**
+	 * Get the Stripe reader Object from its ID
+	 *
+	 * @param	string	$reader	   			Reader ID
+	 * @param	string	$key				''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int	$status				Status (0=test, 1=live)
+	 * @return 	\Stripe\Terminal\Reader|null		Stripe Reader or null if not found
+	 */
+	public function getSelectedReader($reader, $key = '', $status = 0)
+	{
+		$selectedreader = null;
+
+		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+				$selectedreader = \Stripe\Terminal\Reader::retrieve(''.$reader.'');
+			} else {
+				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve(''.$reader.'', array("stripe_account" => $key));
+			}
+		} catch (Exception $e) {
+			$this->error = $e->getMessage();
+		}
+
+		return $selectedreader;
+	}
+
+	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
 	 * But if we change something on object to pay (amount or other), reusing same payment intent is not allowed by Stripe.
@@ -350,7 +378,7 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND)) {
+		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND) && empty($conf->global->STRIPE_CARD_PRESENT)) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
@@ -424,6 +452,9 @@ class Stripe extends CommonObject
 			if (!empty($conf->global->STRIPE_SOFORT)) {
 				$paymentmethodtypes[] = "sofort";
 			}
+			if (!empty($conf->global->STRIPE_CARD_PRESENT) && $mode == 'terminal') {
+				$paymentmethodtypes = array("card_present");
+			}
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -455,6 +486,11 @@ class Stripe extends CommonObject
 			}
 			if (!empty($conf->global->STRIPE_KLARNA)) {
 				unset($dataforintent['setup_future_usage']);
+			}
+			if (!empty($conf->global->STRIPE_CARD_PRESENT) && $mode == 'terminal') {
+				unset($dataforintent['setup_future_usage']);
+				$dataforintent["capture_method"] = "manual";
+				$dataforintent["confirmation_method"] = "manual";
 			}
 			if (!is_null($payment_method)) {
 				$dataforintent["payment_method"] = $payment_method;
@@ -531,12 +567,12 @@ class Stripe extends CommonObject
 				$this->code = $e->getStripeCode();
 				$this->declinecode = $e->getDeclineCode();
 			} catch (Exception $e) {
-				/*var_dump($dataforintent);
-				var_dump($description);
-				var_dump($key);
-				var_dump($paymentintent);
-				var_dump($e->getMessage());
-				var_dump($e);*/
+				//var_dump($dataforintent);
+				//var_dump($description);
+				//var_dump($key);
+				//var_dump($paymentintent);
+				//var_dump($e->getMessage());
+				//var_dump($e);
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = '';
@@ -695,11 +731,11 @@ class Stripe extends CommonObject
 					$_SESSION["stripe_setup_intent"] = $setupintent;
 				}*/
 			} catch (Exception $e) {
-				/*var_dump($dataforintent);
-				 var_dump($description);
-				 var_dump($key);
-				 var_dump($setupintent);
-				 var_dump($e->getMessage());*/
+				//var_dump($dataforintent);
+				//var_dump($description);
+				//var_dump($key);
+				//var_dump($setupintent);
+				//var_dump($e->getMessage());
 				$error++;
 				$this->error = $e->getMessage();
 			}
@@ -780,7 +816,8 @@ class Stripe extends CommonObject
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
-					//var_dump($a);var_dump($stripeacc);exit;
+					//var_dump($a);
+					//var_dump($stripeacc);exit;
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {

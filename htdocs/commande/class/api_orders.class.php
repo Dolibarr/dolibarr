@@ -133,8 +133,16 @@ class Orders extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->commande->contacts_ids = $tmparray;
+		}
 		$this->commande->fetchObjectLinked();
+
+		// Add online_payment_url, cf #20477
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
@@ -229,7 +237,14 @@ class Orders extends DolibarrApi
 				$commande_static = new Commande($this->db);
 				if ($commande_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$commande_static->contacts_ids = $commande_static->liste_contact(-1, 'external', 1);
+					$tmparray = $commande_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$commande_static->contacts_ids = $tmparray;
+					}
+					// Add online_payment_url, cf #20477
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
+
 					$obj_ret[] = $this->_cleanObjectDatas($commande_static);
 				}
 				$i++;
@@ -335,8 +350,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->addline(
 			$request_data->desc,
@@ -403,8 +418,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->updateline(
 			$lineid,
@@ -430,7 +445,8 @@ class Orders extends DolibarrApi
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
 			0,
-			$request_data->ref_ext
+			$request_data->ref_ext,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {
@@ -574,7 +590,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
@@ -704,7 +720,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @return  array
 	 */
@@ -734,6 +750,10 @@ class Orders extends DolibarrApi
 		$result = $this->commande->fetch($id);
 
 		$this->commande->fetchObjectLinked();
+
+		//fix #20477 : add online_payment_url
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
@@ -974,7 +994,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function getOrderShipments($id)
 	{
@@ -1030,7 +1050,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function createOrderShipment($id, $warehouse_id)
 	{

@@ -196,9 +196,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -316,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (! empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -414,7 +411,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
 				}
 			}
 
@@ -464,7 +461,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/inventory/inventory_info.php?id='.$object->id);
+		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/inventory/inventory_info.php?id='.$object->id);
 		$morehtmlcenter = '';
 
 		// List of actions on element

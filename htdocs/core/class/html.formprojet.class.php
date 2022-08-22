@@ -56,27 +56,33 @@ class FormProjets
 	/**
 	 *	Output a combo list with projects qualified for a third party / user
 	 *
-	 *	@param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *	@param  string	$selected   	Id project preselected ('' or id of project)
-	 *	@param  string	$htmlname   	Name of HTML field
-	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Return only html options lines without the select tag
-	 *	@param	int		$show_empty		Add an empty line
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
-	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
-	 *  @param	int		$disabled		Disabled
-	 *  @param  int     $mode           0 for HTML mode and 1 for JSON mode
-	 *  @param  string  $filterkey      Key to filter
-	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @param  int     $forceaddid     Force to add project id in list, event if not qualified
-	 *  @param  string  $morecss        More css
-	 *	@param  int     $htmlid         Html id to use instead of htmlname
-	 *	@return string           		Return html content
+	 *	@param	int				$socid      			Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *	@param  string|Project	$selected   			Id of preselected project or Project (or ''). Note: If you know the ref, you can also provide it into $selected_input_value to save one request in some cases.
+	 *	@param  string			$htmlname   			Name of HTML field
+	 *	@param	int				$maxlength				Maximum length of label
+	 *	@param	int				$option_only			Return only html options lines without the select tag
+	 *	@param	int				$show_empty				Add an empty line
+	 *  @param	int				$discard_closed 		Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
+	 *  @param	int				$forcefocus				Force focus on field (works with javascript only)
+	 *  @param	int				$disabled				Disabled
+	 *  @param  int     		$mode           		0 for HTML mode and 1 for JSON mode
+	 *  @param  string  		$filterkey      		Key to filter
+	 *  @param  int     		$nooutput       		No print output. Return it only.
+	 *  @param  int     		$forceaddid     		Force to add project id in list, event if not qualified
+	 *  @param  string  		$morecss        		More css
+	 *	@param  int     		$htmlid         		Html id to use instead of htmlname
+	 *	@return string           						Return html content
 	 */
 	public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '')
 	{
 		// phpcs:enable
 		global $langs, $conf, $form;
+
+		$selected_input_value = '';
+		if (is_object($selected)) {
+			$selected_input_value = $selected->ref;
+			$selected = $selected->id;
+		}
 
 		$out = '';
 
@@ -89,22 +95,20 @@ class FormProjets
 				$project->fetch($selected);
 				$selected_input_value = $project->ref;
 			}
-			$urloption = 'socid='.$socid.'&htmlname='.$htmlname.'&discardclosed='.$discard_closed;
+			$urloption = 'socid='.((int) $socid).'&htmlname='.urlencode($htmlname).'&discardclosed='.((int) $discard_closed);
+
+			$out .= '<input type="text" class="minwidth200'.($morecss ? ' '.$morecss : '').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
 				//  'update' => array(
 				//      'projectid' => 'id'
 				//  )
 			));
-
-			$out .= '<input type="text" class="minwidth200'.($morecss ? ' '.$morecss : '').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		} else {
 			$out .= $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
 		}
 		if ($discard_closed > 0) {
-			if (class_exists('Form')) {
-				if (!is_object($form)) {
-					$form = new Form($this->db);
-				}
+			if (!empty($form)) {
 				$out .= $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			}
 		}
@@ -187,14 +191,9 @@ class FormProjets
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Use select2 selector
 			if (!empty($conf->use_javascript_ajax)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
-				$out .= $comboenhancement;
 				$morecss .= ' minwidth100';
 			}
-
 			if (empty($option_only)) {
 				$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlid.'" name="'.$htmlname.'">';
 			}
@@ -280,6 +279,15 @@ class FormProjets
 				if (empty($option_only)) {
 					$out .= '</select>';
 				}
+
+				// Use select2 selector
+				if (!empty($conf->use_javascript_ajax)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
+					$out .= $comboenhancement;
+					$morecss .= ' minwidth100';
+				}
+
 				if (empty($nooutput)) {
 					print $out;
 					return '';

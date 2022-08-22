@@ -159,7 +159,7 @@ class Subscriptions extends DolibarrApi
 			$subscription->$field = $value;
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
+			throw new RestException(500, 'Error when creating contribution', array_merge(array($subscription->error), $subscription->errors));
 		}
 		return $subscription->id;
 	}
@@ -193,7 +193,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
 		}
 	}
 

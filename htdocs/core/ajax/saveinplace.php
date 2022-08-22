@@ -103,6 +103,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	}
 
 	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
+
 	$feature = $newelement;
 	$feature2 = $subelement;
 	$object_id = $fk_element;

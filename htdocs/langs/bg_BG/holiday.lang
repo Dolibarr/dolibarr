@@ -134,4 +134,6 @@ HolidaysToApprove=Молби за отпуск за одобрение
 NobodyHasPermissionToValidateHolidays=Никой няма права за валидиране на молби за отпуск
 HolidayBalanceMonthlyUpdate=Monthly update of holiday balance
 XIsAUsualNonWorkingDay=%s is usualy a NON working day
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted

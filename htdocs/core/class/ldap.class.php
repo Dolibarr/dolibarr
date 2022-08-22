@@ -234,7 +234,7 @@ class Ldap
 					}
 				}
 
-				if (is_resource($this->connection)) {
+				if (is_resource($this->connection) ||  is_object($this->connection)) {
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug

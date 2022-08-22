@@ -761,13 +761,6 @@ class UserGroup extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('groupdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -785,7 +778,7 @@ class UserGroup extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

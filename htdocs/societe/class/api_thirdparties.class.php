@@ -425,8 +425,9 @@ class Thirdparties extends DolibarrApi
 			// TODO Mutualise the list into object societe.class.php
 			$objects = array(
 				'Adherent' => '/adherents/class/adherent.class.php',
+				'Don' => '/don/class/don.class.php',
 				'Societe' => '/societe/class/societe.class.php',
-				'Categorie' => '/categories/class/categorie.class.php',
+				//'Categorie' => '/categories/class/categorie.class.php',
 				'ActionComm' => '/comm/action/class/actioncomm.class.php',
 				'Propal' => '/comm/propal/class/propal.class.php',
 				'Commande' => '/commande/class/commande.class.php',
@@ -442,12 +443,13 @@ class Thirdparties extends DolibarrApi
 				'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
 				'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
 				'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-				'Livraison' => '/delivery/class/delivery.class.php',
+				'Delivery' => '/delivery/class/delivery.class.php',
 				'Product' => '/product/class/product.class.php',
 				'Project' => '/projet/class/project.class.php',
 				'Ticket' => '/ticket/class/ticket.class.php',
 				'User' => '/user/class/user.class.php',
-				'Account' => '/compta/bank/class/account.class.php'
+				'Account' => '/compta/bank/class/account.class.php',
+				'ConferenceOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 			);
 
 			//First, all core objects must update their tables
@@ -1409,7 +1411,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0) {
 			return array("success" => $result);
 		} else {
-			throw new RestException(500);
+			throw new RestException(500, 'Error generating the document '.$this->error);
 		}
 	}
 

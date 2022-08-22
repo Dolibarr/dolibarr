@@ -111,7 +111,7 @@ $tabrowid[32] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[32] = !empty($conf->accounting->enabled);
+$tabcond[32] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -148,10 +148,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
-		if ($value == 'range_account' && empty($_POST['range_account'])) {
+		if ($value == 'range_account' && !GETPOST('range_account')) {
 			continue;
 		}
-		if (($value == 'country' || $value == 'country_id') && (!empty($_POST['country_id']))) {
+		if (($value == 'country' || $value == 'country_id') && GETPOST('country_id')) {
 			continue;
 		}
 		if (!GETPOSTISSET($value) || GETPOST($value) == '') {
@@ -195,17 +195,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
 	}
 
-	// Clean some parameters
-	if ($_POST["accountancy_code"] <= 0) {
-		$_POST["accountancy_code"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_sell"] <= 0) {
-		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_buy"] <= 0) {
-		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
-	}
-
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
@@ -243,7 +232,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'formula') {
+			if (GETPOST($listfieldvalue[$i]) == '' && !$listfieldvalue[$i] == 'formula') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
 				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
@@ -283,8 +272,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
-			if ($field == 'fk_country' && $_POST['country'] > 0) {
-				$_POST[$listfieldvalue[$i]] = $_POST['country'];
+			if ($field == 'fk_country' && GETPOST('country') > 0) {
+				$_POST[$listfieldvalue[$i]] = GETPOST('country');
 			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
@@ -292,10 +281,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'range_account') {
+			if (GETPOST($listfieldvalue[$i]) == '' && !$listfieldvalue[$i] == 'range_account') {
 				$sql .= "null"; // For range_account, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -886,7 +875,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$formaccounting = new FormAccounting($db);
 	}
 

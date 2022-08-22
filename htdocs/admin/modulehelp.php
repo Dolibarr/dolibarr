@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,6 +173,10 @@ foreach ($modulesdir as $dir) {
 										$moduleposition = '80'; // External modules at end by default
 									}
 
+									if (empty($familyinfo[$familykey]['position'])) {
+										$familyinfo[$familykey]['position'] = '0';
+									}
+
 									$orders[$i] = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
 									$dirmod[$i] = $dir;
 									//print $i.'-'.$dirmod[$i].'<br>';
@@ -250,19 +255,19 @@ if (!empty($conf->global->$const_name)) {
 	$text .= $langs->trans("Disabled");
 }
 $tmp = $objMod->getLastActivationInfo();
-$authorid = $tmp['authorid'];
+$authorid = (empty($tmp['authorid']) ? '' : $tmp['authorid']);
 if ($authorid > 0) {
 	$tmpuser = new User($db);
 	$tmpuser->fetch($authorid);
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationAuthor").':</span> ';
 	$text .= $tmpuser->getNomUrl(1);
 }
-$ip = $tmp['ip'];
+$ip = (empty($tmp['ip']) ? '' : $tmp['ip']);
 if ($ip) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationIP").':</span> ';
 	$text .= $ip;
 }
-$lastactivationversion = $tmp['lastactivationversion'];
+$lastactivationversion = (empty($tmp['lastactivationversion']) ? '' : $tmp['lastactivationversion']);
 if ($lastactivationversion) {
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("LastActivationVersion").':</span> ';
 	$text .= $lastactivationversion;
@@ -501,7 +506,7 @@ if ($mode == 'feature') {
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddHooks").':</strong> ';
-	if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['hooks']) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks'])) {
 		$i = 0;
 		foreach ($objMod->module_parts['hooks'] as $key => $val) {
 			if ($key === 'entity') {

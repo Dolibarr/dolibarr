@@ -84,7 +84,32 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+
+		$error = 0;
+
+		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+		if ($codecontact=='SUPPORTTEC') {
+			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+			foreach ($internal_contacts as $key => $contact) {
+				if ($contact['id'] !== $contactid) {
+					//print "user à effacer : ".$useroriginassign;
+					$result = $object->delete_contact($contact['rowid']);
+					if ($result<0) {
+						$error ++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			}
+			$ret = $object->assignUser($user, $contactid);
+			if ($ret < 0) {
+				$error ++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (empty($error)) {
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
 	}
 
 	if ($result >= 0) {
@@ -112,6 +137,16 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 // Efface un contact
 if ($action == 'deletecontact' && $user->rights->ticket->write) {
 	if ($object->fetch($id, '', $track_id)) {
+		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+		foreach ($internal_contacts as $key => $contact) {
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
+				$ret = $object->assignUser($user, null);
+				if ($ret < 0) {
+					$error ++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
@@ -161,14 +196,17 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		if ($object->fk_user_create > 0) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
-			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
 			$morehtmlref .= $fuser->getNomUrl(-1);
-		}
-		if (!empty($object->origin_email)) {
+		} elseif (!empty($object->email_msgid)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+		} elseif (!empty($object->origin_email)) {
+			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 		}
 
 		// Thirdparty
@@ -186,7 +224,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->ticket->write) {

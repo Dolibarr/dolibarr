@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -66,7 +66,7 @@ $object->info($object->id);
 $head = actions_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
-$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
+$linkback = img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="hideonsmartphone pictoactionview"');
 $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
 
 // Link to other agenda views
@@ -86,7 +86,7 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 //$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	$morehtmlref .= $langs->trans('Project').': ';

@@ -71,7 +71,7 @@ class box_fournisseurs extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -95,9 +95,15 @@ class box_fournisseurs extends ModeleBoxes
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdpartystatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND s.rowid = ".((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.tms DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -128,7 +134,7 @@ class box_fournisseurs extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 

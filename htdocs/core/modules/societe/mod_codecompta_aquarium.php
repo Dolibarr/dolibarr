@@ -103,7 +103,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr></table>';
 		$texte .= '</form>';
 

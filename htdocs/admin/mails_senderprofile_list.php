@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -557,6 +557,7 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {

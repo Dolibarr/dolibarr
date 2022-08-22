@@ -104,7 +104,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -138,7 +138,11 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		// Get entities
 		$entity = getEntity('ordernumber', 1, $object);
 
-		$date = ($object->date_commande ? $object->date_commande : $object->date);
+		if (is_object($object)) {
+			$date = ($object->date_commande ? $object->date_commande : $object->date);
+		} else {
+			$date = dol_now();
+		}
 
 		$numFinal = get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 

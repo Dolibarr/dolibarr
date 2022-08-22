@@ -147,7 +147,7 @@ if ($socid > 0) {
 	$objcon = new stdClass();
 
 	$out = '';
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 			$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
@@ -157,13 +157,13 @@ if ($socid > 0) {
 	}
 
 	$newcardbutton = '';
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&socid='.urlencode($socid);

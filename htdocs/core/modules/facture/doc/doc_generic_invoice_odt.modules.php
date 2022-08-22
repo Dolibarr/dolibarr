@@ -89,7 +89,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -159,7 +158,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte .= $conf->global->FACTURE_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify"value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -180,7 +179,13 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			$texte .= '</div>';
 		}
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="FACTURE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
@@ -273,7 +278,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -282,11 +287,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
@@ -295,8 +300,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				dol_mkdir($conf->facture->dir_temp);
 				if (!is_writable($conf->facture->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->facture->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->facture->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -383,10 +388,10 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Define substitution array
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);	// Set tags __...__
 				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
-				$array_objet = $this->get_substitutionarray_object($object, $outputlangs);
-				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
+				$array_objet = $this->get_substitutionarray_object($object, $outputlangs);			// Set tags object_...
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);				// Set tags myuser_...
 				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_propal = is_object($propal_object) ? $this->get_substitutionarray_object($propal_object, $outputlangs, 'propal') : array();

@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2020	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2022	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -216,6 +216,12 @@ class Adherent extends CommonObject
 	public $public;
 
 	/**
+	 * Default language code of member (en_US, ...)
+	 * @var string
+	 */
+	public $default_lang;
+
+	/**
 	 * @var string photo of member
 	 */
 	public $photo;
@@ -328,6 +334,7 @@ class Adherent extends CommonObject
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
 		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 150),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=> 153),
 		'note_private' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_public' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'datevalid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 165),
@@ -659,8 +666,7 @@ class Adherent extends CommonObject
 		$nbrowsaffected = 0;
 		$error = 0;
 
-		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".
-			$this->email);
+		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
@@ -671,11 +677,10 @@ class Adherent extends CommonObject
 		$this->town = ($this->town ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 		$this->url = $this->url ?clean_url($this->url, 0) : '';
-
+		$this->setUpperOrLowerCase();
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
@@ -693,7 +698,9 @@ class Adherent extends CommonObject
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
 		$sql .= ", login = ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", societe = ".($this->company ? "'".$this->db->escape($this->company)."'" : ($this->societe ? "'".$this->db->escape($this->societe)."'" : "null"));
-		$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");
+		if ($this->socid) {
+			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");	 // Must be modified only when creating from a third-party
+		}
 		$sql .= ", address = ".($this->address ? "'".$this->db->escape($this->address)."'" : "null");
 		$sql .= ", zip = ".($this->zip ? "'".$this->db->escape($this->zip)."'" : "null");
 		$sql .= ", town = ".($this->town ? "'".$this->db->escape($this->town)."'" : "null");
@@ -710,12 +717,11 @@ class Adherent extends CommonObject
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", public = '".$this->db->escape($this->public)."'";
 		$sql .= ", statut = ".$this->db->escape($this->statut);
+		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql .= ", birth = ".($this->birth ? "'".$this->db->idate($this->birth)."'" : "null");
-		if ($this->socid) {
-			$sql .= ", fk_soc = '".$this->db->escape($this->socid)."'"; // Must be modified only when creating from a third-party
-		}
+
 		if ($this->datefin) {
 			$sql .= ", datefin = '".$this->db->idate($this->datefin)."'"; // Must be modified only when deleting a subscription
 		}
@@ -836,6 +842,8 @@ class Adherent extends CommonObject
 						$luser->office_phone = $this->phone;
 						$luser->user_mobile = $this->phone_mobile;
 
+						$luser->lang = $this->default_lang;
+
 						$luser->fk_member = $this->id;
 
 						$result = $luser->update($user, 0, 1, 1); // Use nosync to 1 to avoid cyclic updates
@@ -871,6 +879,7 @@ class Adherent extends CommonObject
 						$lthirdparty->state_id = $this->state_id;
 						$lthirdparty->country_id = $this->country_id;
 						//$lthirdparty->phone_mobile=$this->phone_mobile;
+						$lthirdparty->default_lang = $this->default_lang;
 
 						$result = $lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
 
@@ -963,10 +972,10 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Fonction qui supprime l'adherent et les donnees associees
+	 *  Fonction to delete a member and its data
 	 *
 	 *  @param	int		$rowid		Id of member to delete
-	 *	@param	User		$user		User object
+	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
 	 */
@@ -1317,7 +1326,7 @@ class Adherent extends CommonObject
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
 		$sql .= " d.tms as datem,";
-		$sql .= " d.datefin as datefin,";
+		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
 		$sql .= " d.country,";
@@ -1409,6 +1418,8 @@ class Adherent extends CommonObject
 				$this->datevalid = $this->db->jdate($obj->datev);
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->birth = $this->db->jdate($obj->birthday);
+
+				$this->default_lang = $obj->default_lang;
 
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
@@ -1536,9 +1547,9 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	int	        $date        		Date of effect of subscription
 	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
+	 *	@param	int			$accountid			Id bank account. NOT USED.
+	 *	@param	string		$operation			Code of payment mode (if Id bank account provided). Example: 'CB', ... NOT USED.
+	 *	@param	string		$label				Label operation (if Id bank account provided).
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
@@ -1805,6 +1816,7 @@ class Adherent extends CommonObject
 				$paiement = new Paiement($this->db);
 				$paiement->datepaye = $paymentdate;
 				$paiement->amounts = $amounts;
+				$paiement->paiementcode = $operation;
 				$paiement->paiementid = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
 				$paiement->num_payment = $num_chq;
 				$paiement->note_public = $label;
@@ -1814,7 +1826,7 @@ class Adherent extends CommonObject
 				if (!$error) {
 					// Create payment line for invoice
 					$paiement_id = $paiement->create($user);
-					if (!$paiement_id > 0) {
+					if (!($paiement_id > 0)) {
 						$this->error = $paiement->error;
 						$this->errors = $paiement->errors;
 						$error++;
@@ -2164,7 +2176,7 @@ class Adherent extends CommonObject
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
 			$withpictoimg = 0;
@@ -2282,7 +2294,15 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -2550,6 +2570,7 @@ class Adherent extends CommonObject
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
+		$this->default_lang = '';
 
 		$this->typeid = 1; // Id type adherent
 		$this->type = 'Type adherent'; // Libelle type adherent
@@ -2770,24 +2791,10 @@ class Adherent extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_mod) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_mod);
-					$this->user_modification = $muser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_mod;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->date_modification = $this->db->jdate($obj->datem);

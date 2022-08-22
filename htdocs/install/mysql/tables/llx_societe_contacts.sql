@@ -13,9 +13,11 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
---
+-- 
 -- ========================================================================
 
+-- This table contains the contacts by default of a thirdparty
+-- Such contacts will be added to document automatiall if their role match the one expected by the document.
 
 create table llx_societe_contacts
 (

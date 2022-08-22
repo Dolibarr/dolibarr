@@ -227,11 +227,14 @@ class modUser extends DolibarrModules
 			'u.office_phone'=>'Phone', 'u.user_mobile'=>"Mobile", 'u.office_fax'=>'Fax',
 			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
-			'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
+			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
-			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId",
+			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany",
+			'u.fk_member'=>"MemberId",
+			"a.firstname"=>"MemberFirstname",
+			"a.lastname"=>"MemberLastname",
 			'g.nom'=>"Group"
 		);
 		$this->export_TypeFields_array[$r] = array(
@@ -240,9 +243,17 @@ class modUser extends DolibarrModules
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
 			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
-			'u.fk_user'=>"List:user:login",
+			'u.fk_user'=>"FormSelect:select_dolusers",
 			'u.birth'=>'Date',
-			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
+			'u.datepreviouslogin'=>'Date',
+			'u.fk_socpeople'=>'FormSelect:selectcontacts',
+			'u.fk_soc'=>"FormSelect:select_company",
+			'u.tjm'=>"Numeric", 'u.thm'=>"Numeric", 'u.fk_member'=>"Numeric",
+			'u.weeklyhours'=>"Numeric",
+			'u.dateemployment'=>"Date", 'u.dateemploymentend'=>"Date", 'u.salary'=>"Numeric",
+			'u.color'=>'Text', 'u.api_key'=>'Text',
+			'a.firstname'=>'Text',
+			'a.lastname'=>'Text',
 			'g.nom'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
@@ -252,11 +263,12 @@ class modUser extends DolibarrModules
 			'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
 			'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
 			'u.fk_user'=>'user', 'u.thm'=>'user', 'u.tjm'=>'user', 'u.weeklyhours'=>'user',
-			'u.dateemployment'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
+			'u.dateemployment'=>'user', 'u.dateemploymentend'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
 			'u.birth'=>'user',
 			'u.datec'=>"user", 'u.tms'=>"user",
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
+			'a.firstname'=>"member", 'a.lastname'=>"member",
 			'g.nom'=>"Group"
 		);
 		$keyforselect = 'user';
@@ -272,6 +284,7 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user as ug ON u.rowid = ug.fk_user';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
@@ -292,7 +305,7 @@ class modUser extends DolibarrModules
 			'u.office_phone'=>"Phone", 'u.user_mobile'=>"Mobile", 'u.office_fax'=>"Fax",
 			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
-			'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
+			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation",
 			'u.statut'=>'Status'

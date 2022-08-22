@@ -40,6 +40,7 @@ class modTicket extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+		$langs->load("ticket");
 
 		$this->db = $db;
 
@@ -103,10 +104,20 @@ class modTicket extends DolibarrModules
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
+		$default_signature = $langs->trans('TicketMessageMailSignatureText', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
-			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0)
+			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0),
+			4 => array('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'chaine', 0, 'Automatically mark ticket as read when created from backend', 0),
+			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
+			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
+			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
+			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
+			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_signature, 'Signature to use by default for messages sent from Dolibarr', 0),
+			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0)
 		);
 
 
@@ -123,10 +134,10 @@ class modTicket extends DolibarrModules
 		$this->dictionaries = array(
 			'langs' => 'ticket',
 			'tabname' => array(
-				MAIN_DB_PREFIX."c_ticket_type",
-				MAIN_DB_PREFIX."c_ticket_severity",
-				MAIN_DB_PREFIX."c_ticket_category",
-				MAIN_DB_PREFIX."c_ticket_resolution"
+				"c_ticket_type",
+				"c_ticket_severity",
+				"c_ticket_category",
+				"c_ticket_resolution"
 			),
 			'tablib' => array(
 				"TicketDictType",
@@ -160,8 +171,8 @@ class modTicket extends DolibarrModules
 			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
 			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home'),
 			2=>array('file'=>'box_ticket_by_severity.php', 'enabledbydefaulton'=>'ticketindex'),
-			3=>array('file'=>'box_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
-			4=>array('file'=>'box_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
+			3=>array('file'=>'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
+			4=>array('file'=>'box_graph_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
 			5=>array('file'=>'box_new_vs_close_ticket.php', 'enabledbydefaulton'=>'ticketindex')
 		); // Boxes list
 
@@ -319,6 +330,11 @@ class modTicket extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
+		$result = $this->_load_tables('/install/mysql/', 'ticket');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);

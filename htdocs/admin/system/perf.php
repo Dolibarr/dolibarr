@@ -51,6 +51,9 @@ print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
 
+print '<br>';
+print '<hr>';
+
 // Recupere la version de PHP
 $phpversion = version_php();
 print "<br><strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";

@@ -113,7 +113,7 @@ if (empty($reshook)) {
 	// Action modif mot de passe
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
 		// Verify code
 		if (!$ok) {

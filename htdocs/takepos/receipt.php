@@ -48,7 +48,7 @@ if (!isset($action)) {
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->loadLangs(array("main", "cashdesk", "companies"));
+$langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
@@ -66,10 +66,10 @@ if (empty($user->rights->takepos->run)) {
  * View
  */
 
-top_httphead('text/html');
+top_httphead('text/html', 1);
 
 if ($place > 0) {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
@@ -80,6 +80,7 @@ $object = new Facture($db);
 $object->fetch($facid);
 
 // Call to external receipt modules if exist
+$parameters = array();
 $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
@@ -89,7 +90,6 @@ if (!empty($hookmanager->resPrint)) {
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<html>
 <body>
 <style>
 .right {

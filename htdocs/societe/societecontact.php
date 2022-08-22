@@ -111,13 +111,6 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -135,17 +128,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
 		$head = societe_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 

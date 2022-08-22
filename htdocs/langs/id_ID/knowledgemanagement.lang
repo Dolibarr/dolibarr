@@ -46,5 +46,9 @@ KnowledgeRecords = Artikel
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafields untuk Artikel
 GroupOfTicket=Kelompok tiket
-YouCanLinkArticleToATicketCategory=Anda dapat menautkan artikel ke grup tiket (sehingga artikel akan disarankan selama kualifikasi tiket baru)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Disarankan untuk tiket saat grup
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

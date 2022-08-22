@@ -134,4 +134,6 @@ HolidaysToApprove=Рухсатӣ барои тасдиқ
 NobodyHasPermissionToValidateHolidays=Ҳеҷ кас иҷозати таътилро надорад
 HolidayBalanceMonthlyUpdate=Навсозии ҳармоҳаи тавозуни истироҳат
 XIsAUsualNonWorkingDay=%s одатан рӯзи корӣ нест
+BlockHolidayIfNegative=Block if balance negative
+LeaveRequestCreationBlockedBecauseBalanceIsNegative=The creation of this leave request is blocked because your balance is negative
 ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted=Leave request %s must be draft, canceled or refused to be deleted

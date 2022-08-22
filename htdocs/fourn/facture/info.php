@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -44,6 +44,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercardinfo'));
 
 $object = new FactureFournisseur($db);
 
@@ -53,17 +54,14 @@ $object = new FactureFournisseur($db);
  */
 
 $form = new Form($db);
-
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Info');
-$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
-
 $object->fetch($id, $ref);
 $object->fetch_thirdparty();
-
 $object->info($object->id);
-
 $alreadypaid = $object->getSommePaiement();
+
+$title = $object->ref." - ".$langs->trans('Info');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');
@@ -81,7 +79,7 @@ if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0
 	$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 }
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->facture->creer) {
@@ -115,7 +113,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $morehtmlref .= '</div>';
 
-$object->totalpaye = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaid = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

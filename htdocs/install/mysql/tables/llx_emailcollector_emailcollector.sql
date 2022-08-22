@@ -22,6 +22,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         label varchar(255), 
         description text,
         host varchar(255),
+        port varchar(10) DEFAULT '993',
         hostcharset varchar(16) DEFAULT 'UTF-8',
         login varchar(128), 
         password varchar(128),
@@ -38,6 +39,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
         fk_user_creat integer NOT NULL, 
         fk_user_modif integer, 
+        position INTEGER NOT NULL DEFAULT 0,
         import_key varchar(14), 
         status integer NOT NULL
         -- END MODULEBUILDER FIELDS

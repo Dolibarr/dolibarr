@@ -56,7 +56,6 @@ $projectid  = GETPOST('projectid', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
-$search_fk_status = GETPOST('search_fk_statut', 'array');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
@@ -136,11 +135,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -185,7 +184,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'presendonclose' && $massaction != 'close') {
 	$massaction = '';
 }
 
@@ -329,13 +328,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formTicket = new FormTicket($db);
 
-$now = dol_now();
-
 $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('TicketList');
+$title = $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
@@ -594,8 +591,10 @@ if ($projectid > 0 || $project_ref) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstat->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -621,10 +620,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
+	if (is_array($val) && count($val)) {
+		foreach ($val as $skey) {
 			if ($skey != '') {
-				$param .= '&search_'.$key.'[]='.urlencode($skey);
+				$param .= (!empty($val)) ? '&search_'.$key.'[]='.urlencode($skey) : "";
 			}
 		}
 	} elseif ($search[$key] != '') {
@@ -692,7 +691,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($permissiontoadd) {
-	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
+	$arrayofmassactions['presendonclose'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
 	$arrayofmassactions['reopen'] = img_picto('', 'folder-open', 'class="pictofixedwidth"').$langs->trans("ReOpen");
 }
 if ($permissiontodelete) {
@@ -744,6 +743,17 @@ $modelmail = "ticket";
 $objecttmp = new Ticket($db);
 $trackid = 'tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+// confirm auto send on close
+if ($massaction == 'presendonclose') {
+	$hidden_form = array([
+		"type" => "hidden",
+		"name" => "massaction",
+		"value" => "close"
+	]);
+	$selectedchoice = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? "yes" : "no";
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
@@ -813,7 +823,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
+			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth100'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
@@ -825,7 +835,9 @@ foreach ($object->fields as $key => $val) {
 				$arrayofstatus[$key2] = $val2;
 			}
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			//var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
+			//var_dump($arrayofstatus);
+			//var_dump($search['fk_statut']);
+			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);
@@ -942,6 +954,7 @@ if (isset($extrafields->attributes[$object->table_element]['computed']) && is_ar
 $i = 0;
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$now = dol_now();
 
 $cacheofoutputfield = array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
@@ -952,6 +965,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
+	$object->status = $object->fk_statut; // fk_statut is deprecated
 
 	// Show here line of result
 	print '<tr class="oddeven">';
@@ -990,7 +1004,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			} elseif ($key == 'subject') {
 				$s = $obj->subject;
 				print '<span title="'.dol_escape_htmltag($s).'">';
-				print $s;
+				print dol_escape_htmltag($s);
 				print '</span>';
 			} elseif ($key == 'type_code') {
 				$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
@@ -1033,6 +1047,26 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				}
 			} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			} elseif ($key == 'ref') {
+				print $object->showOutputField($val, $key, $obj->$key, '');
+
+				// display a warning on untreated tickets
+				$is_open = ($object->status != Ticket::STATUS_CLOSED && $object->status != Ticket::STATUS_CANCELED );
+				$should_show_warning = (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) || !empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE));
+				if ($is_open && $should_show_warning) {
+					$date_last_msg_sent = (int) $object->date_last_msg_sent;
+					$hour_diff = ($now - $date_last_msg_sent) / 3600 ;
+
+					if (!empty($conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE && $date_last_msg_sent == 0)) {
+						$creation_date =  $object->datec;
+						$hour_diff_creation = ($now - $creation_date) / 3600 ;
+						if ($hour_diff_creation > $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE) {
+							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', $conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+						}
+					} elseif (!empty($conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) && $hour_diff > $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE) {
+						print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', $conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE), 'warning');
+					}
+				}
 			} else {	// Example: key=fk_soc, obj->key=123 val=array('type'=>'integer', ...
 				$tmp = explode(':', $val['type']);
 				if ($tmp[0] == 'integer' && !empty($tmp[1]) && class_exists($tmp[1])) {

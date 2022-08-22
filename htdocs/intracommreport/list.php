@@ -82,7 +82,7 @@ $form = new Form($db);
 
 /*
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('intracommreport');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 */
 
@@ -125,7 +125,7 @@ $arrayfields = array(
 );
 /*
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
@@ -217,7 +217,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'intracommreport as i';
 
-// if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
+// if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
 
 $sql .= ' WHERE i.entity IN ('.getEntity('intracommreport').')';
 

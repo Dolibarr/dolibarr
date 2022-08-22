@@ -55,8 +55,23 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 	define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
 }
 
+// Response for preflight requests (used by browser when into a CORS context)
+if (!empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'OPTIONS' && !empty($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+	http_response_code(204);
+	exit;
+}
+
 // When we request url to get the json file, we accept Cross site so we can include the descriptor into an external tool.
 if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+}
+// When we request url to get an API, we accept Cross site so we can make js API call inside another website
+if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Origin: *');
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
@@ -85,7 +100,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].$_SERVER['PATH_INFO'];
+	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (!empty($conf->global->MAIN_NGINX_FIX)) {
@@ -142,6 +157,25 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
+
+// If MAIN_API_DEBUG is set to 1, we save logs into file "dolibarr_api.log"
+if (!empty($conf->global->MAIN_API_DEBUG)) {
+	$r = $api->r;
+	$r->onCall(function () use ($r) {
+		// Don't log Luracast Restler Explorer recources calls
+		//if (!preg_match('/^explorer/', $r->url)) {
+		//	'method'  => $api->r->requestMethod,
+		//	'url'     => $api->r->url,
+		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
+		//	'version' => $api->r->getRequestedApiVersion(),
+		//	'data'    => $api->r->getRequestData(),
+		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//}
+	});
+}
+
 
 // Enable the Restler API Explorer.
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
@@ -222,6 +256,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 								if ($file_searched == 'api_login.class.php' && !empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
 									continue;
 								}
+
+								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
 
 								$regapi = array();
 								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
@@ -304,7 +340,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 		foreach ($listofendpoints as $endpointrule) {
 			$tmparray = explode(':', $endpointrule);
-			if ($classfile == $tmparray[0] && $tmparray[1] == 1) {
+			if (($classfile == $tmparray[0] || $classfile.'api' == $tmparray[0]) && $tmparray[1] == 1) {
 				$endpointisallowed = true;
 				break;
 			}

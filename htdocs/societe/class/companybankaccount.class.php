@@ -127,7 +127,7 @@ class CompanyBankAccount extends Account
 					// End call triggers
 
 					if (!$error) {
-						return 1;
+						return $this->id;
 					} else {
 						return 0;
 					}
@@ -136,7 +136,7 @@ class CompanyBankAccount extends Account
 				}
 			}
 		} else {
-			print $this->db->error();
+			$this->error = $this->db->lasterror();
 			return 0;
 		}
 	}
@@ -150,7 +150,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -207,7 +207,11 @@ class CompanyBankAccount extends Account
 				return 1;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans('ErrorDuplicateField');
+			} else {
+				$this->error = $this->db->lasterror();
+			}
 			return -1;
 		}
 	}
@@ -289,8 +293,6 @@ class CompanyBankAccount extends Account
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);

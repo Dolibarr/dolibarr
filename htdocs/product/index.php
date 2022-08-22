@@ -139,7 +139,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	$sql .= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 	$result = $db->query($sql);
@@ -293,7 +293,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	}
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order("p.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -360,8 +360,8 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				print $product_static->getNomUrl(1, '', 16);
 				print "</td>\n";
 				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
-				print "<td>";
-				print dol_print_date($db->jdate($objp->datem), 'day');
+				print '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';
+				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
@@ -420,7 +420,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 print '</div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

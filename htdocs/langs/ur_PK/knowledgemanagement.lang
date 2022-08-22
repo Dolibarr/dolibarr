@@ -46,5 +46,9 @@ KnowledgeRecords = مضامین
 KnowledgeRecord = مضمون
 KnowledgeRecordExtraFields = آرٹیکل کے لیے ایکسٹرا فیلڈز
 GroupOfTicket=ٹکٹوں کا گروپ
-YouCanLinkArticleToATicketCategory=آپ کسی مضمون کو ٹکٹ گروپ سے جوڑ سکتے ہیں (لہذا نئے ٹکٹوں کی اہلیت کے دوران مضمون تجویز کیا جائے گا)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=جب گروپ ہوتا ہے تو ٹکٹوں کے لیے تجویز کیا جاتا ہے۔
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

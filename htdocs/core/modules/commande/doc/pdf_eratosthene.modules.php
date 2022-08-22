@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
  *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eratosthène
+ *	\brief      File of Class to generate PDF orders with template Eratosthene
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
@@ -163,12 +163,12 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
+		$this->watermark = '';
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -219,6 +219,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+
+		// Show Draft Watermark
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
+			$this->watermark = $conf->global->COMMANDE_DRAFT_WATERMARK;
+		}
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
@@ -609,7 +614,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						}
 
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}
@@ -830,6 +835,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == $pageposafter) {
@@ -960,6 +968,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
+			if ($object->deposit_percent > 0) {
+				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', $object->deposit_percent, $lib_condition_paiement);
+			}
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
 			$posy = $pdf->GetY() + 3;
@@ -1234,35 +1245,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
 							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
 						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
-							$totalvat .= $tvaval['vatcode'].$tvacompl;
-						} else {
-							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
-						}
-						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', 1);
-					}
-				}
-
-				// VAT
-				foreach ($this->tva_array as $tvakey => $tvaval) {
-					if ($tvakey != 0) {    // On affiche pas taux 0
-						$this->atleastoneratenotnull++;
-
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-						$tvacompl = '';
-						if (preg_match('/\*/', $tvakey)) {
-							$tvakey = str_replace('*', '', $tvakey);
-							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
-						$totalvat .= ' ';
-						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
-							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
-						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 							$totalvat .= ($tvaval['vatcode'] ? $tvaval['vatcode'] : vatrate($tvaval['vatrate'], 1)).$tvacompl;
 						} else {
 							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
@@ -1478,11 +1460,6 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
-		}
-
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -1557,7 +1534,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
 		}
 
 		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
@@ -1745,7 +1722,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		// phpcs:enable
 		global $conf;
 		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 
 

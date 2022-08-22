@@ -55,11 +55,6 @@ $error = 0;
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 $datetime = dol_now();
@@ -83,6 +78,10 @@ if (GETPOST("ref")) {
 	$account = $object->id;
 }
 
+$title = $object->ref.' - '.$langs->trans("Graph");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
+
 $result = dol_mkdir($conf->bank->dir_temp);
 if ($result < 0) {
 	$langs->load("errors");
@@ -95,7 +94,7 @@ if ($result < 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql .= " WHERE b.fk_account = ba.rowid";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($account && $_GET["option"] != 'all') {
+	if ($account && GETPOST("option") != 'all') {
 		$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 	}
 
@@ -137,7 +136,7 @@ if ($result < 0) {
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
@@ -165,7 +164,7 @@ if ($result < 0) {
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 
@@ -279,7 +278,7 @@ if ($result < 0) {
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
@@ -307,7 +306,7 @@ if ($result < 0) {
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev < '".$db->escape($year)."-01-01'";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 
@@ -415,7 +414,7 @@ if ($result < 0) {
 		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
@@ -540,7 +539,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount > 0";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -575,7 +574,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount < 0";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
@@ -649,7 +648,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
@@ -676,7 +675,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
-		if ($account && $_GET["option"] != 'all') {
+		if ($account && GETPOST("option") != 'all') {
 			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m')";
@@ -748,7 +747,7 @@ if ($account) {
 	if (!preg_match('/,/', $account)) {
 		$moreparam = '&month='.$month.'&year='.$year.($mode == 'showalltime' ? '&mode=showalltime' : '');
 
-		if ($_GET["option"] != 'all') {
+		if (GETPOST("option") != 'all') {
 			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
 		} else {

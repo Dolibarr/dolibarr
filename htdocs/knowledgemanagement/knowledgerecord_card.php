@@ -44,7 +44,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'knowledgerecordcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new KnowledgeRecord($db);
@@ -175,24 +175,21 @@ if ($action == 'create') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -225,10 +222,10 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
@@ -239,7 +236,7 @@ if (($id || $ref) && $action == 'edit') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -369,7 +366,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->projet->enabled)) {
+	 if (! empty($conf->project->enabled)) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
@@ -414,7 +411,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
@@ -524,7 +521,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

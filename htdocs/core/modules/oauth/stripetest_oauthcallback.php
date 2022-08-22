@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,12 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 
-
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
+$keyforprovider = GETPOST('keyforprovider', 'aZ09');
+if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
+	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
+}
 
 
 /**
@@ -64,9 +67,11 @@ $serviceFactory->setHttpClient($httpClient);
 $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
+$keyforparamid = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_STRIPE_TEST'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
-	$conf->global->OAUTH_STRIPE_TEST_ID,
-	$conf->global->STRIPE_TEST_SECRET_KEY,
+	getDolGlobalString($keyforparamid),
+	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
 
@@ -84,13 +89,21 @@ if (GETPOST('state')) {
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 //$apiService = $serviceFactory->createService('StripeTest', $credentials, $storage, $requestedpermissionsarray);
 
-$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token set service='StripeTest', entity=".$conf->entity;
+$servicesuffix = ($keyforprovider ? '-'.$keyforprovider : '');
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token SET service = 'StripeTest".$db->escape($servicesuffix)."', entity = ".((int) $conf->entity);
 $db->query($sql);
 
 // access type needed to have oauth provider refreshing token
 //$apiService->setAccessType('offline');
 
 $langs->load("oauth");
+
+if (!getDolGlobalString($keyforparamid)) {
+	accessforbidden('Setup of service is not complete. Customer ID is missing');
+}
+if (!getDolGlobalString($keyforparamsecret)) {
+	accessforbidden('Setup of service is not complete. Secret key is missing');
+}
 
 
 /*
@@ -148,6 +161,8 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 } else // If entry on page with no parameter, we arrive here
 {
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
+	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
+	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
@@ -156,7 +171,7 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	} else {
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->OAUTH_STRIPE_TEST_ID.'&scope=read_write';
+		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
 	}
 
 	// we go on oauth provider authorization page

@@ -69,7 +69,7 @@ class PartnershipType extends CommonObject
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20, 'showoncombobox'=>1),
+		'code' =>array('type'=>'varchar(32)', 'label'=>'Code', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'label' =>array('type'=>'varchar(64)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25, 'showoncombobox'=>1),
 		'active' =>array('type'=>'integer', 'label'=>'Active', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
 	);
@@ -434,7 +434,7 @@ class PartnershipType extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('myobjectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -516,27 +516,11 @@ class PartnershipType extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);

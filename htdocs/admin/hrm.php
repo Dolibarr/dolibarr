@@ -57,7 +57,7 @@ $type = 'myobject';
 
 $arrayofparameters = array(
 	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
-	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'textarea','enabled'=>1),
+	'HRM_DEFAULT_SKILL_DESCRIPTION'=>array('type'=>'varchar','enabled'=>1),
 );
 
 $error = 0;
@@ -279,7 +279,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'HRMTEST_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -421,7 +421,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'HRMTEST_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -540,21 +540,10 @@ if ($action == 'edit') {
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
-				if (!empty($conf->use_javascript_ajax)) {
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
-                        $("#generate_token'.$constname.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$constname.'").val(token);
-            				});
-                         });
-                    });';
-					print '</script>';
-				}
+
+				// Add button to autosuggest a key
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
 				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);

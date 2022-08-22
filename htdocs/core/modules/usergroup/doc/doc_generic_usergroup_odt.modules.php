@@ -88,7 +88,6 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$this->option_tva = 0; // Manage the vat option USERGROUP_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -124,7 +123,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="USERGROUP_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+		if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 			$texte .= '<input type="hidden" name="param2" value="USERGROUP_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="USERGROUP_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USERGROUP_ADDON_PDF_ODT_CLOSED">';
@@ -163,14 +162,14 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= $conf->global->USERGROUP_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="Button" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+			if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 				// Model for creation
 				$list = ModelePDFUserGroup::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';
@@ -282,7 +281,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -291,11 +290,11 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -303,8 +302,8 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				dol_mkdir($conf->user->dir_temp);
 				if (!is_writable($conf->user->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->user->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->user->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
