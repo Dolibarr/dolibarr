@@ -257,8 +257,7 @@ if (empty($reshook) && $action == 'add') {
 			$sql .= " WHERE rowid = ".((int) $company->id);
 			$resql = $db->query($sql);
 			$partnership->fk_soc = $company->id;
-		}
-		else {
+		} else {
 			$don=$result->fetch();
 			$partnership->fk_soc =$don['rowid'];
 		}
