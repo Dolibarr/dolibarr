@@ -55,6 +55,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
+
 ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
 
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
