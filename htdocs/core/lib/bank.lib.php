@@ -291,6 +291,24 @@ function checkIbanForAccount(Account $account)
 }
 
 /**
+ * Returns the iban human readable
+ *
+ * @param Account $account Account object
+ * @return string
+ */
+function getIbanHumanReadable(Account $account)
+{
+	if ($account->getCountryCode() == 'FR') {
+		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$iban = new PHP_IBAN\IBAN($ibantoprint);
+		return $iban->HumanFormat();
+	}
+
+	return $account->iban;
+}
+
+/**
  * 		Check account number informations for a bank account
  *
  * 		@param	Account		$account    A bank account
