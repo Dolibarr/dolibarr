@@ -2079,6 +2079,10 @@ if ($action == 'create') {
 
 	// Date
 	if ($object->methode_commande_id > 0) {
+		$usehourmin = 0;
+		if (!empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) {
+			$usehourmin = 1;
+		}
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>';
 		print $object->date_commande ? dol_print_date($object->date_commande, $usehourmin ? 'dayhour' : 'day') : '';
 		if ($object->hasDelay() && !empty($object->date_delivery) && !empty($object->date_commande)) {
