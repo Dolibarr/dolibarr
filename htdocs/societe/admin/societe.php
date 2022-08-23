@@ -245,7 +245,6 @@ if ($action == "setdisableParentCompagny") {
 	if (!($res > 0)) {
 		$error++;
 	} else {
-		$res = dolibarr_set_const($db, "SOCIETE_DISABLE_SUBSIDIARIES", $val, 'yesno', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
