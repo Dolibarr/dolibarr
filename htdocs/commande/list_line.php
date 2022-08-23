@@ -189,9 +189,9 @@ $arrayfields = array(
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
 	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>-1, 'position'=>69),
-	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
+	'cdet.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>80),
-	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
+	'cdet.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
 	'c.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>90),
 	'c.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>95),
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
@@ -314,458 +314,12 @@ if (empty($reshook)) {
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array');
-		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-		$validate_invoices = GETPOST('validate_invoices', 'int');
-
-		$errors = array();
-
-		$TFact = array();
-		$TFactThird = array();
-		$TFactThirdNbLines = array();
-
-		$nb_bills_created = 0;
-		$lastid= 0;
-		$lastref = '';
-
-		$db->begin();
-
-		$nbOrders = is_array($orders) ? count($orders) : 1;
-
-		foreach ($orders as $id_order) {
-			$cmd = new Commande($db);
-			if ($cmd->fetch($id_order) <= 0) {
-				continue;
-			}
-			$cmd->fetch_thirdparty();
-
-			$objecttmp = new Facture($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
-				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
-				$objecttmp = $TFactThird[$cmd->socid];
-			} else {
-				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
-				$objecttmp->socid = $cmd->socid;
-				$objecttmp->thirdparty = $cmd->thirdparty;
-
-				$objecttmp->type = $objecttmp::TYPE_STANDARD;
-				$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
-				$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
-
-				$objecttmp->fk_project = $cmd->fk_project;
-				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
-				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $cmd->ref_client;
-				}
-
-				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-				if (empty($datefacture)) {
-					$datefacture = dol_now();
-				}
-
-				$objecttmp->date = $datefacture;
-				$objecttmp->origin    = 'commande';
-				$objecttmp->origin_id = $id_order;
-
-				$objecttmp->array_options = $cmd->array_options; // Copy extrafields
-
-				$res = $objecttmp->create($user);
-
-				if ($res > 0) {
-					$nb_bills_created++;
-					$lastref = $objecttmp->ref;
-					$lastid = $objecttmp->id;
-
-					$TFactThird[$cmd->socid] = $objecttmp;
-					$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
-				} else {
-					$langs->load("errors");
-					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
-					$error++;
-				}
-			}
-
-			if ($objecttmp->id > 0) {
-				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_order);
-
-				if ($res == 0) {
-					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
-					$error++;
-				}
-
-				if (!$error) {
-					$lines = $cmd->lines;
-					if (empty($lines) && method_exists($cmd, 'fetch_lines')) {
-						$cmd->fetch_lines();
-						$lines = $cmd->lines;
-					}
-
-					$fk_parent_line = 0;
-					$num = count($lines);
-
-					for ($i = 0; $i < $num; $i++) {
-						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
-						// If we build one invoice for several orders, we must put the ref of order on the invoice line
-						if (!empty($createbills_onebythird)) {
-							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
-						}
-
-						if ($lines[$i]->subprice < 0) {
-							// Negative line, we create a discount line
-							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc = $objecttmp->socid;
-							$discount->amount_ht = abs($lines[$i]->total_ht);
-							$discount->amount_tva = abs($lines[$i]->total_tva);
-							$discount->amount_ttc = abs($lines[$i]->total_ttc);
-							$discount->tva_tx = $lines[$i]->tva_tx;
-							$discount->fk_user = $user->id;
-							$discount->description = $desc;
-							$discountid = $discount->create($user);
-							if ($discountid > 0) {
-								$result = $objecttmp->insert_discount($discountid);
-								//$result=$discount->link_to_invoice($lineid,$id);
-							} else {
-								setEventMessages($discount->error, $discount->errors, 'errors');
-								$error++;
-								break;
-							}
-						} else {
-							// Positive line
-							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
-							// Date start
-							$date_start = false;
-							if ($lines[$i]->date_debut_prevue) {
-								$date_start = $lines[$i]->date_debut_prevue;
-							}
-							if ($lines[$i]->date_debut_reel) {
-								$date_start = $lines[$i]->date_debut_reel;
-							}
-							if ($lines[$i]->date_start) {
-								$date_start = $lines[$i]->date_start;
-							}
-							//Date end
-							$date_end = false;
-							if ($lines[$i]->date_fin_prevue) {
-								$date_end = $lines[$i]->date_fin_prevue;
-							}
-							if ($lines[$i]->date_fin_reel) {
-								$date_end = $lines[$i]->date_fin_reel;
-							}
-							if ($lines[$i]->date_end) {
-								$date_end = $lines[$i]->date_end;
-							}
-							// Reset fk_parent_line for no child products and special product
-							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-								$fk_parent_line = 0;
-							}
-
-							// Extrafields
-							if (method_exists($lines[$i], 'fetch_optionals')) {
-								$lines[$i]->fetch_optionals();
-								$array_options = $lines[$i]->array_options;
-							}
-
-							$objecttmp->context['createfromclone'];
-
-							$rang = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
-							//there may already be rows from previous orders
-							if (!empty($createbills_onebythird)) {
-								$rang = $TFactThirdNbLines[$cmd->socid];
-							}
-
-							$result = $objecttmp->addline(
-								$desc,
-								$lines[$i]->subprice,
-								$lines[$i]->qty,
-								$lines[$i]->tva_tx,
-								$lines[$i]->localtax1_tx,
-								$lines[$i]->localtax2_tx,
-								$lines[$i]->fk_product,
-								$lines[$i]->remise_percent,
-								$date_start,
-								$date_end,
-								0,
-								$lines[$i]->info_bits,
-								$lines[$i]->fk_remise_except,
-								'HT',
-								0,
-								$product_type,
-								$rang,
-								$lines[$i]->special_code,
-								$objecttmp->origin,
-								$lines[$i]->rowid,
-								$fk_parent_line,
-								$lines[$i]->fk_fournprice,
-								$lines[$i]->pa_ht,
-								$lines[$i]->label,
-								$array_options,
-								100,
-								0,
-								$lines[$i]->fk_unit
-							);
-							if ($result > 0) {
-								$lineid = $result;
-								if (!empty($createbills_onebythird)) //increment rang to keep order
-									$TFactThirdNbLines[$rcp->socid]++;
-							} else {
-								$lineid = 0;
-								$error++;
-								break;
-							}
-							// Defined the new fk_parent_line
-							if ($result > 0 && $lines[$i]->product_type == 9) {
-								$fk_parent_line = $result;
-							}
-						}
-					}
-				}
-			}
-
-			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
-
-			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
-				$TFactThird[$cmd->socid] = $objecttmp;
-			} else {
-				$TFact[$objecttmp->id] = $objecttmp;
-			}
-		}
-
-		// Build doc with all invoices
-		$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
-		$toselect = array();
-
-		if (!$error && $validate_invoices) {
-			$massaction = $action = 'builddoc';
-
-			foreach ($TAllFact as &$objecttmp) {
-				$result = $objecttmp->validate($user);
-				if ($result <= 0) {
-					$error++;
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-					break;
-				}
-
-				$id = $objecttmp->id; // For builddoc action
-
-				// Builddoc
-				$donotredirect = 1;
-				$upload_dir = $conf->facture->dir_output;
-				$permissiontoadd = $user->rights->facture->creer;
-
-				// Call action to build doc
-				$savobject = $object;
-				$object = $objecttmp;
-				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-				$object = $savobject;
-			}
-
-			$massaction = $action = 'confirm_createbills';
-		}
-
-		if (!$error) {
-			$db->commit();
-
-			if ($nb_bills_created == 1) {
-				$texttoshow = $langs->trans('BillXCreated', '{s1}');
-				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
-				setEventMessages($texttoshow, null, 'mesgs');
-			} else {
-				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
-			}
-
-			// Make a redirect to avoid to bill twice if we make a refresh or back
-			$param = '';
-			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-				$param .= '&contextpage='.urlencode($contextpage);
-			}
-			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.urlencode($limit);
-			}
-			if ($sall) {
-				$param .= '&sall='.urlencode($sall);
-			}
-			if ($socid > 0) {
-				$param .= '&socid='.urlencode($socid);
-			}
-			if ($search_status != '') {
-				$param .= '&search_status='.urlencode($search_status);
-			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
-			}
-			if ($search_ref) {
-				$param .= '&search_ref='.urlencode($search_ref);
-			}
-			if ($search_company) {
-				$param .= '&search_company='.urlencode($search_company);
-			}
-			if ($search_ref_customer) {
-				$param .= '&search_ref_customer='.urlencode($search_ref_customer);
-			}
-			if ($search_user > 0) {
-				$param .= '&search_user='.urlencode($search_user);
-			}
-			if ($search_sale > 0) {
-				$param .= '&search_sale='.urlencode($search_sale);
-			}
-			if ($search_total_ht != '') {
-				$param .= '&search_total_ht='.urlencode($search_total_ht);
-			}
-			if ($search_total_vat != '') {
-				$param .= '&search_total_vat='.urlencode($search_total_vat);
-			}
-			if ($search_total_ttc != '') {
-				$param .= '&search_total_ttc='.urlencode($search_total_ttc);
-			}
-			if ($search_project_ref >= 0) {
-				$param .= "&search_project_ref=".urlencode($search_project_ref);
-			}
-			if ($show_files) {
-				$param .= '&show_files='.urlencode($show_files);
-			}
-			if ($optioncss != '') {
-				$param .= '&optioncss='.urlencode($optioncss);
-			}
-			if ($billed != '') {
-				$param .= '&billed='.urlencode($billed);
-			}
-
-			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
-			exit;
-		} else {
-			$db->rollback();
-
-			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];
-			$_GET["originid"] = $_POST["originid"];
-			if (!empty($errors)) {
-				setEventMessages(null, $errors, 'errors');
-			} else {
-				setEventMessages("Error", null, 'errors');
-			}
-			$error++;
-		}
-	}
 }
-if ($action == 'validate' && $permissiontoadd) {
-	if (GETPOST('confirm') == 'yes') {
-		$objecttmp = new $objectclass($db);
-		$db->begin();
-		$error = 0;
-		foreach ($toselect as $checked) {
-			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 0) {
-					if (!empty($objecttmp->fk_warehouse)) {
-						$idwarehouse = $objecttmp->fk_warehouse;
-					} else {
-						$idwarehouse = 0;
-					}
-					if ($objecttmp->valid($user, $idwarehouse)) {
-						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
-					} else {
-						setEventMessage($objecttmp->error, $objecttmp->errors, 'errors');
-						$error++;
-					}
-				} else {
-					$langs->load("errors");
-					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
-					$error++;
-				}
-			} else {
-				dol_print_error($db);
-				$error++;
-			}
-		}
-		if ($error) {
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
-	}
-}
-if ($action == 'shipped' && $permissiontoadd) {
-	if (GETPOST('confirm') == 'yes') {
-		$objecttmp = new $objectclass($db);
-		$db->begin();
-		$error = 0;
-		foreach ($toselect as $checked) {
-			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
-					if ($objecttmp->cloture($user)) {
-						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
-					} else {
-						setEventMessage($langs->trans('CantBeClosed'), 'errors');
-						$error++;
-					}
-				} else {
-					$langs->load("errors");
-					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
-					$error++;
-				}
-			} else {
-				dol_print_error($db);
-				$error++;
-			}
-		}
-		if ($error) {
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
-	}
-}
+
 // Closed records
-if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
-	$db->begin();
+// if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
 
-	$objecttmp = new $objectclass($db);
-	$nbok = 0;
-	foreach ($toselect as $toselectid) {
-		$result = $objecttmp->fetch($toselectid);
-		if ($result > 0) {
-			$result = $objecttmp->classifyBilled($user, 0);
-			if ($result <= 0) {
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
-			} else {
-				$nbok++;
-			}
-		} else {
-			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-			$error++;
-			break;
-		}
-	}
-
-	if (!$error) {
-		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		}
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
+// }
 
 /*
  * View
@@ -796,7 +350,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.pho
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
-$sql .= ' c.rowid, c.ref, c.total_ht, c.total_tva, c.total_ttc, c.ref_client, c.fk_user_author,';
+$sql .= ' c.rowid, c.ref, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
@@ -806,7 +360,7 @@ $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shippin
 $sql .= ' c.fk_input_reason, c.import_key';
 
 // Détail commande
-$sql .= ', cdet.description, cdet.qty, ';
+$sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.total_ht, cdet.total_tva, cdet.total_ttc, ';
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
@@ -959,13 +513,13 @@ if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
 if ($search_total_ht != '') {
-	$sql .= natural_search('c.total_ht', $search_total_ht, 1);
+	$sql .= natural_search('cdet.total_ht', $search_total_ht, 1);
 }
 if ($search_total_vat != '') {
-	$sql .= natural_search('c.total_tva', $search_total_vat, 1);
+	$sql .= natural_search('cdet.total_tva', $search_total_vat, 1);
 }
 if ($search_total_ttc != '') {
-	$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
+	$sql .= natural_search('cdet.total_ttc', $search_total_ttc, 1);
 }
 if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
@@ -1231,33 +785,26 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'GenerateOrdersSuppliers'=>img_picto('', 'doc', 'class="pictofixedwidth"').$langs->trans("GenerateOrdersSupplie"),
 	);
-	if ($permissiontovalidate) {
-		$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
-	}
-	if ($permissiontosendbymail) {
-		$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
-	}
-	if ($permissiontoclose) {
-		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
-	}
-	if ($permissiontocancel) {
-		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
-	}
-	if (!empty($conf->invoice->enabled) && $user->rights->facture->creer) {
-		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
-	}
-	if ($permissiontoclose) {
-		$arrayofmassactions['setbilled'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("ClassifyBilled");
-	}
-	if ($permissiontodelete) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-	}
-	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
-		$arrayofmassactions = array();
-	}
+	// if ($permissiontovalidate) {
+	// 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
+	// }
+	// if ($permissiontosendbymail) {
+	// 	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
+	// }
+	// if ($permissiontoclose) {
+	// 	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
+	// }
+	// if ($permissiontocancel) {
+	// 	$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
+	// }
+	// if ($permissiontodelete) {
+	// 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	// }
+	// if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
+	// 	$arrayofmassactions = array();
+	// }
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$url = DOL_URL_ROOT.'/commande/card.php?action=create';
@@ -1287,61 +834,6 @@ if ($resql) {
 	$objecttmp = new Commande($db);
 	$trackid = 'ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
-	if ($massaction == 'prevalidate') {
-		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
-	}
-	if ($massaction == 'preshipped') {
-		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("CloseOrder"), $langs->trans("ConfirmCloseOrder"), "shipped", null, '', 0, 200, 500, 1);
-	}
-
-	if ($massaction == 'createbills') {
-		print '<input type="hidden" name="massaction" value="confirm_createbills">';
-
-		print '<table class="noborder" width="100%" >';
-		print '<tr>';
-		print '<td class="titlefield">';
-		print $langs->trans('DateInvoice');
-		print '</td>';
-		print '<td>';
-		print $form->selectDate('', '', '', '', '', '', 1, 1);
-		print '</td>';
-		print '</tr>';
-		print '<tr>';
-		print '<td>';
-		print $langs->trans('CreateOneBillByThird');
-		print '</td>';
-		print '<td>';
-		print $form->selectyesno('createbills_onebythird', '', 1);
-		print '</td>';
-		print '</tr>';
-		print '<tr>';
-		print '<td>';
-		print $langs->trans('ValidateInvoices');
-		print '</td>';
-		print '<td>';
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
-			print $form->selectyesno('validate_invoices', 0, 1, 1);
-			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
-		} else {
-			print $form->selectyesno('validate_invoices', 0, 1);
-		}
-		if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
-			print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
-		} else {
-			print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("OptionToSetOrderBilledNotEnabled").'</span>';
-		}
-		print '</td>';
-		print '</tr>';
-		print '</table>';
-
-		print '<br>';
-		print '<div class="center">';
-		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
-		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print '<br>';
-	}
 
 	if ($sall) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -1552,7 +1044,7 @@ if ($resql) {
 		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
 		print '</td>';
 	}
-	if (!empty($arrayfields['c.total_ht']['checked'])) {
+	if (!empty($arrayfields['cdet.total_ht']['checked'])) {
 		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_total_ht" value="'.dol_escape_htmltag($search_total_ht).'">';
@@ -1564,7 +1056,7 @@ if ($resql) {
 		print '<input class="flat" type="text" size="4" name="search_total_vat" value="'.dol_escape_htmltag($search_total_vat).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['c.total_ttc']['checked'])) {
+	if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
 		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
@@ -1778,14 +1270,14 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "c.fk_input_reason", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['c.total_ht']['checked'])) {
-		print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['cdet.total_ht']['checked'])) {
+		print_liste_field_titre($arrayfields['cdet.total_ht']['label'], $_SERVER["PHP_SELF"], 'cdet.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 	if (!empty($arrayfields['c.total_vat']['checked'])) {
-		print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'c.total_tva', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['c.total_vat']['label'], $_SERVER["PHP_SELF"], 'cdet.total_tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
-	if (!empty($arrayfields['c.total_ttc']['checked'])) {
-		print_liste_field_titre($arrayfields['c.total_ttc']['label'], $_SERVER["PHP_SELF"], 'c.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
+		print_liste_field_titre($arrayfields['cdet.total_ttc']['label'], $_SERVER["PHP_SELF"], 'cdet.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 	if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
 		print_liste_field_titre($arrayfields['c.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_code', '', $param, '', $sortfield, $sortorder);
@@ -1824,9 +1316,9 @@ if ($resql) {
 	$totalarray = array(
 		'nbfield' => 0,
 		'val' => array(
-			'c.total_ht' => 0,
-			'c.total_tva' => 0,
-			'c.total_ttc' => 0,
+			'cdet.total_ht' => 0,
+			'cdet.total_tva' => 0,
+			'cdet.total_ttc' => 0,
 		),
 		'pos' => array(),
 	);
@@ -2195,18 +1687,18 @@ if ($resql) {
 			}
 		}
 		// Amount HT
-		if (!empty($arrayfields['c.total_ht']['checked'])) {
+		if (!empty($arrayfields['cdet.total_ht']['checked'])) {
 			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ht';
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ht';
 			}
-			if (isset($totalarray['val']['c.total_ht'])) {
-				$totalarray['val']['c.total_ht'] += $obj->total_ht;
+			if (isset($totalarray['val']['cdet.total_ht'])) {
+				$totalarray['val']['cdet.total_ht'] += $obj->total_ht;
 			} else {
-				$totalarray['val']['c.total_ht'] = $obj->total_ht;
+				$totalarray['val']['cdet.total_ht'] = $obj->total_ht;
 			}
 		}
 		// Amount VAT
@@ -2216,20 +1708,20 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_tva';
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_tva';
 			}
-			$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			$totalarray['val']['cdet.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
-		if (!empty($arrayfields['c.total_ttc']['checked'])) {
+		if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
 			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
 			}
-			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			$totalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
 		}
 
 		// Currency
