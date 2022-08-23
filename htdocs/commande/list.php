@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
- * Copyright (C) 2021		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021	   	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,9 +71,6 @@ $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_end_mon
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_start_month', 'int'), GETPOST('search_datedelivery_start_day', 'int'), GETPOST('search_datedelivery_start_year', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
 $search_product_category = GETPOST('search_product_category', 'int');
-
-
-
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -207,9 +204,6 @@ $arrayfields = array(
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
-
-
-
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -245,8 +239,6 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
-		$search_refProduct = '';
-		$search_descProduct = '';
 		$search_ref = '';
 		$search_ref_customer = '';
 		$search_company = '';
@@ -800,9 +792,6 @@ $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason, c.import_key';
-
-
-
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -823,11 +812,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
-
-
 $sql .= ', '.MAIN_DB_PREFIX.'commande as c';
-
-
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
@@ -864,13 +849,6 @@ if ($socid > 0) {
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($search_refProduct) {
-	$sql .= natural_search('pr.ref', $search_refProduct);
-}
-if ($search_descProduct) {
-	$sql .= natural_search('pr.label', $search_descProduct);
-	$sql .= natural_search('cdet.description', $search_descProduct);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -1336,8 +1314,6 @@ if ($resql) {
 		print '<br>';
 	}
 
-
-
 	if ($sall) {
 		foreach ($fieldstosearchall as $key => $val) {
 			$fieldstosearchall[$key] = $langs->trans($val);
@@ -1418,25 +1394,12 @@ if ($resql) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-
 	// Action column
 	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
-	}
-
-
-	// Product Description
-	if (!empty($arrayfields['pr.desc']['checked'])) {
-		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_descProduct" value="'.dol_escape_htmltag($search_descProduct).'">';
-		print '</td>';
-	}
-	// Product QtyOrdered
-	if (!empty($arrayfields['cdet.qty']['checked'])) {
-		print '<td class="liste_titre"></td>';
 	}
 
 	// Ref
@@ -1705,15 +1668,6 @@ if ($resql) {
 	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
-
-
-	if (!empty($arrayfields['pr.desc']['checked'])) {
-		print_liste_field_titre($arrayfields['pr.desc']['label'], $_SERVER["PHP_SELF"], 'pr.desc', '', $param, '', $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['cdet.qty']['checked'])) {
-		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
-	}
-
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1884,8 +1838,6 @@ if ($resql) {
 	}
 	$total_ht = 0;
 	$total_margin = 0;
-
-
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	$last_num = min($num, $limit);
