@@ -78,6 +78,7 @@ if ($invoice->socid > 0) {
 }
 $vatRateDefault = get_default_tva($mysoc, $soc);
 
+
 /*
  * View
  */
@@ -87,6 +88,8 @@ $arrayofjs = array();
 
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 ?>
+<body>
+
 <script>
 	var vatRate = '<?php echo dol_escape_js($vatRateDefault); ?>';
 
@@ -116,8 +119,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 		$('#desc').focus()
 	});
 </script>
-</head>
-<body>
+
 <br>
 <center>
 <input type="text" id="desc" name="desc" class="takepospay" style="width:40%;" placeholder="<?php echo $langs->trans('Description'); ?>">

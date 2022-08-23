@@ -15,6 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// This page return an image of a photo
+
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (!defined('NOREQUIRESOC')) {
@@ -74,6 +76,7 @@ if ($query == "cat") {
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
+	exit;
 } elseif ($query == "pro") {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -86,15 +89,18 @@ if ($query == "cat") {
 	$file = array_pop($match);
 	if ($file == "") {
 		header('Location: ../../public/theme/common/nophoto.png');
+		exit;
 	} else {
 		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			header('Location: '.$file.'&cache=1');
+			exit;
 		} else {
 			header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+			exit;
 		}
 	}
 } else {
-	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resized when downloaded.
 
 	// The file
 	$filename = $query.".jpg";

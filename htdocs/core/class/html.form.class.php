@@ -1408,7 +1408,7 @@ class Form
 			if (count($scrit) > 1) {
 				$sql .= ")";
 			}
-			if (!empty($conf->barcode->enabled)) {
+			if (isModEnabled('barcode')) {
 				$sql .= " OR s.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			}
 			$sql .= " OR s.code_client LIKE '".$this->db->escape($prefix.$filterkey)."%' OR s.code_fournisseur LIKE '".$this->db->escape($prefix.$filterkey)."%'";
@@ -2691,7 +2691,7 @@ class Form
 			if (count($scrit) > 1) {
 				$sql .= ")";
 			}
-			if (!empty($conf->barcode->enabled)) {
+			if (isModEnabled('barcode')) {
 				$sql .= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			}
 			$sql .= ')';
@@ -3254,7 +3254,7 @@ class Form
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$sql .= ", pfp.barcode";
 		}
 		$sql .= " FROM ".$this->db->prefix()."product as p";
@@ -3305,7 +3305,7 @@ class Form
 			if (count($scrit) > 1) {
 				$sql .= ")";
 			}
-			if (!empty($conf->barcode->enabled)) {
+			if (isModEnabled('barcode')) {
 				$sql .= " OR p.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 				$sql .= " OR pfp.barcode LIKE '".$this->db->escape($prefix.$filterkey)."%'";
 			}
@@ -3402,7 +3402,7 @@ class Form
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$optlabel .= ' <span class="opacitymedium">('.$objp->ref_fourn.')</span>';
 				}
-				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+				if (isModEnabled('barcode') && !empty($objp->barcode)) {
 					$optlabel .= ' ('.$outbarcode.')';
 				}
 				$optlabel .= ' - '.dol_trunc($label, $maxlengtharticle);
@@ -3411,7 +3411,7 @@ class Form
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
 					$outvallabel .= ' ('.$objRefFourn.')';
 				}
-				if (!empty($conf->barcode->enabled) && !empty($objp->barcode)) {
+				if (isModEnabled('barcode') && !empty($objp->barcode)) {
 					$outvallabel .= ' ('.$outbarcode.')';
 				}
 				$outvallabel .= ' - '.dol_trunc($label, $maxlengtharticle);
@@ -10072,7 +10072,7 @@ class Form
 		$ret .= '<div class="divadvancedsearchfieldcomp inline-block">';
 		//$ret .= '<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$ret .= '<a href="#" class="dropdownsearch-toggle unsetcolor">';
-		$ret .= '<span class="fas fa-filter linkobject boxfilter pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
+		$ret .= '<span class="fas fa-filter linkobject boxfilter paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Filters")).'" id="idsubimgproductdistribution"></span>';
 		//$ret .= $langs->trans("Filters");
 		$ret .= '</a>';
 
