@@ -863,7 +863,7 @@ class AccountingAccount extends CommonObject
 				if (!empty($buyer->code_compta_product)) {
 					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
-					$suggestedaccountingaccountfor = 'thridparty';
+					$suggestedaccountingaccountfor = 'thirdparty';
 				}
 			}
 

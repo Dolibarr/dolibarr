@@ -1583,7 +1583,7 @@ class ExtraFields
 			if (!empty($value)) {
 				//$value=price($value);
 				$sizeparts = explode(",", $size);
-				$number_decimals = $sizeparts[1];
+				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
 				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
 		} elseif ($type == 'boolean') {
