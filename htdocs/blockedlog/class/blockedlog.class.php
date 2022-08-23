@@ -510,7 +510,7 @@ class BlockedLog
 			}
 		} elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various') {
 			$datepayment = $object->datepaye ? $object->datepaye : ($object->datepaid ? $object->datepaid : $object->datep);
-			$paymenttypeid = $object->paiementid ? $object->paiementid : ($object->paymenttype ? $object->paymenttype : $object->type_payment);
+			$paymenttypeid = $object->paiementid ? $object->paiementid : (isset($object->paymenttype) ? $object->paymenttype : (isset($object->type_payment)?$object->type_payment:0);
 
 			$this->object_data->ref = $object->ref;
 			$this->object_data->date = $datepayment;
