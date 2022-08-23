@@ -55,8 +55,12 @@ class DoliStorage implements TokenStorageInterface
 
 	private $conf;
 	private $key;
-	private $stateKey;
+	//private $stateKey;
 	private $keyforprovider;
+
+	public $state;
+	public $date_creation;
+	public $date_modification;
 
 
 	/**
@@ -122,8 +126,10 @@ class DoliStorage implements TokenStorageInterface
 			$resql = $this->db->query($sql);
 		} else {
 			// save
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity)";
-			$sql.= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($serializedToken)."', ".((int) $conf->entity).")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity, datec)";
+			$sql .= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($serializedToken)."', ".((int) $conf->entity).", ";
+			$sql .= " '".$this->db->idate(dol_now())."'";
+			$sql .= ")";
 			$resql = $this->db->query($sql);
 		}
 		//print $sql;
@@ -140,7 +146,7 @@ class DoliStorage implements TokenStorageInterface
 		// get from db
 		dol_syslog("hasAccessToken service=".$service);
 
-		$sql = "SELECT token FROM ".MAIN_DB_PREFIX."oauth_token";
+		$sql = "SELECT token, datec, tms, state FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($service.(empty($this->keyforprovider) ? '' : '-'.$this->keyforprovider))."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 		$resql = $this->db->query($sql);
@@ -150,8 +156,14 @@ class DoliStorage implements TokenStorageInterface
 		$result = $this->db->fetch_array($resql);
 		if ($result) {
 			$token = unserialize($result['token']);
+			$this->date_creation = $this->db->jdate($result['datec']);
+			$this->date_modification = $this->db->jdate($result['tms']);
+			$this->state = $result['state'];
 		} else {
 			$token = '';
+			$this->date_creation = null;
+			$this->date_modification = null;
+			$this->state = '';
 		}
 
 		$this->tokens[$service] = $token;
@@ -217,9 +229,7 @@ class DoliStorage implements TokenStorageInterface
 	{
 		global $conf;
 
-		// TODO save or update
-
-		dol_syslog("storeAuthorizationState service=".$service);
+		dol_syslog("storeAuthorizationState service=".$service." state=".$state);
 
 		if (!isset($this->states) || !is_array($this->states)) {
 			$this->states = array();
@@ -228,7 +238,10 @@ class DoliStorage implements TokenStorageInterface
 		//$states[$service] = $state;
 		$this->states[$service] = $state;
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_state";
+		//$newstate = preg_replace('/\-.*$/', '', $state);
+		$newstate = $state;
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 		$resql = $this->db->query($sql);
@@ -238,14 +251,14 @@ class DoliStorage implements TokenStorageInterface
 		$obj = $this->db->fetch_array($resql);
 		if ($obj) {
 			// update
-			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_state";
-			$sql.= " SET state = '".$this->db->escape($state)."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+			$sql.= " SET state = '".$this->db->escape($newstate)."'";
 			$sql.= " WHERE rowid = ".((int) $obj['rowid']);
 			$resql = $this->db->query($sql);
 		} else {
-			// save
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_state (service, state, entity)";
-			$sql.= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($state)."', ".((int) $conf->entity).")";
+			// insert (should not happen)
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity)";
+			$sql.= " VALUES ('".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
 			$resql = $this->db->query($sql);
 		}
 
@@ -261,7 +274,7 @@ class DoliStorage implements TokenStorageInterface
 		// get state from db
 		dol_syslog("hasAuthorizationState service=".$service);
 
-		$sql = "SELECT state FROM ".MAIN_DB_PREFIX."oauth_state";
+		$sql = "SELECT state FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($service.($this->keyforprovider?'-'.$this->keyforprovider:''))."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
 

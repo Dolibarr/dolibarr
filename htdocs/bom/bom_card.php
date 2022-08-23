@@ -219,7 +219,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Add line
+	// Update line
 	if ($action == 'updateline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
@@ -621,7 +621,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
 			$tagidfortablednd = 'tablelinesservice';
 			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
-		}
+	}
 
 		print '<div class="div-table-responsive-no-min">';
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {

@@ -218,7 +218,6 @@ if ($mode == 'setup' && $user->admin) {
 		$tokenobj = null;
 		// Token
 		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 		// Dolibarr storage
 		$storage = new DoliStorage($db, $conf);
 		try {
@@ -281,7 +280,7 @@ if ($mode == 'setup' && $user->admin) {
 		print "</tr>\n";
 
 		print '<tr class="oddeven">';
-		print '<td'.($key['required'] ? ' class="required"' : '').'>';
+		print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 		//var_dump($key);
 		print $langs->trans("OAuthIDSecret").'</td>';
 		print '<td>';
@@ -292,14 +291,13 @@ if ($mode == 'setup' && $user->admin) {
 		print '</tr>'."\n";
 
 		print '<tr class="oddeven">';
-		print '<td'.($key['required'] ? ' class="required"' : '').'>';
+		print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 		//var_dump($key);
 		print $langs->trans("IsTokenGenerated");
 		print '</td>';
 		print '<td>';
 		if (is_object($tokenobj)) {
-			// TODO Read in database to get the date of creation of token
-			print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : ');
+			print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
 		}
@@ -324,7 +322,7 @@ if ($mode == 'setup' && $user->admin) {
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td'.($key['required'] ? ' class="required"' : '').'>';
+		print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 		//var_dump($key);
 		print $langs->trans("Token").'</td>';
 		print '<td colspan="2">';
@@ -332,7 +330,7 @@ if ($mode == 'setup' && $user->admin) {
 		if (is_object($tokenobj)) {
 			//var_dump($tokenobj);
 			$tokentoshow = $tokenobj->getAccessToken();
-			print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'<br>';
+			print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
 			//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 			//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 			//var_dump($tokenobj->getExtraParams());
@@ -357,7 +355,7 @@ if ($mode == 'setup' && $user->admin) {
 
 			// Token expired
 			print '<tr class="oddeven">';
-			print '<td'.($key['required'] ? ' class="required"' : '').'>';
+			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 			//var_dump($key);
 			print $langs->trans("TOKEN_EXPIRED");
 			print '</td>';
@@ -368,7 +366,7 @@ if ($mode == 'setup' && $user->admin) {
 
 			// Token expired at
 			print '<tr class="oddeven">';
-			print '<td'.($key['required'] ? ' class="required"' : '').'>';
+			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
 			//var_dump($key);
 			print $langs->trans("TOKEN_EXPIRE_AT");
 			print '</td>';

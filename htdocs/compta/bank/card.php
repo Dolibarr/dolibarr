@@ -68,6 +68,15 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 $id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
 $fieldid = GETPOST("id", 'int') ? 'rowid' : 'ref';
 
+if (GETPOST("id", 'int') || GETPOST("ref")) {
+	if (GETPOST("id", 'int')) {
+		$object->fetch(GETPOST("id", 'int'));
+	}
+	if (GETPOST("ref")) {
+		$object->fetch(0, GETPOST("ref"));
+	}
+}
+
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -319,6 +328,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -333,15 +343,15 @@ if (!empty($conf->accounting->enabled)) {
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
+if ($action == 'create') {
+	$title = $langs->trans("NewFinancialAccount");
+} elseif (!empty($object->ref)) {
+	$title = $object->ref." - ".$langs->trans("Card");
+}
+llxHeader("", $title, $help_url);
 
 // Creation
-
 if ($action == 'create') {
-	$object = new Account($db);
-
-	$title = $langs->trans("NewFinancialAccount");
-	llxHeader("", $title, $help_url);
-
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
@@ -597,25 +607,8 @@ if ($action == 'create') {
 
 	print '</form>';
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Visu et edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	// View and edit mode
 	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
-		$object = new Account($db);
-		if (GETPOST("id", 'int')) {
-			$object->fetch(GETPOST("id", 'int'));
-		}
-		if (GETPOST("ref")) {
-			$object->fetch(0, GETPOST("ref"));
-			$_GET["id"] = $object->id;
-		}
-
-		$title = $object->ref." - ".$langs->trans("Card");
-		llxHeader("", $title, $help_url);
-
 		// Show tabs
 		$head = bank_prepare_head($object);
 		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
@@ -758,7 +751,7 @@ if ($action == 'create') {
 			}
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td>'.$object->iban.'&nbsp;';
+			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
 			if (!empty($object->iban)) {
 				if (!checkIbanForAccount($object)) {
 					print img_picto($langs->trans("IbanNotValid"), 'warning');
@@ -843,12 +836,6 @@ if ($action == 'create') {
 	/* ************************************************************************** */
 
 	if (GETPOST('id', 'int') && $action == 'edit' && $user->rights->banque->configurer) {
-		$object = new Account($db);
-		$object->fetch(GETPOST('id', 'int'));
-
-		$title = $object->ref." - ".$langs->trans("Card");
-		llxHeader("", $title, $help_url);
-
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {

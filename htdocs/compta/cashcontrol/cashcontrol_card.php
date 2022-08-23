@@ -128,7 +128,7 @@ if (GETPOST('cancel', 'alpha')) {
 if ($action == "reopen") {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
-		setEventMessages($object->error, $object->error, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = 'view';

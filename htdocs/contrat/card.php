@@ -2020,12 +2020,15 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
 
 		/*
 		 * Buttons
 		 */
-
-		if ($user->socid == 0) {
+		if ($user->socid == 0 && $action != 'presend' && $action != 'editline') {
 			print '<div class="tabsAction">';
 
 			$parameters = array();
@@ -2135,11 +2138,6 @@ if ($action == 'create') {
 			}
 
 			print "</div>";
-		}
-
-		// Select mail models is same action as presend
-		if (GETPOST('modelselected')) {
-			$action = 'presend';
 		}
 
 		if ($action != 'presend') {

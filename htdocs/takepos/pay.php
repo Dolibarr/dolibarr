@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ if (!defined('NOREQUIREHTML')) {
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -49,9 +50,35 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place 
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
+$hookmanager->initHooks(array('takepospay'));
+
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
+
+
+/*
+ * View
+ */
+
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs = array();
+
+$head = '';
+$title = '';
+$disablejs = 0;
+$disablehead = 0;
+
+$head='<link rel="stylesheet" href="css/pos.css.php">';
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$head .= '<link rel="stylesheet" href="css/colorful.css">';
+}
+
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+?>
+<body>
+<?php
 
 if (!empty($conf->stripe->enabled)) {
 	$service = 'StripeTest';
@@ -98,10 +125,6 @@ function fetchConnectionToken() {
 }
 </script>
 <?php }
-
-/*
- * View
- */
 
 if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
@@ -175,16 +198,6 @@ if ($invoiceid > 0) {
 </script>
 <?php
 
-$arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs = array();
-
-$head = '';
-$title = '';
-$disablejs = 0;
-$disablehead = 0;
-
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
@@ -219,14 +232,6 @@ if ($resql) {
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
-<body>
 
 <script>
 <?php

@@ -9376,16 +9376,16 @@ function dol_set_focus($selector)
 /**
  * Return getmypid() or random PID when function is disabled
  * Some web hosts disable this php function for security reasons
- * and sometimes we can't redeclare function
+ * and sometimes we can't redeclare function.
  *
  * @return	int
  */
 function dol_getmypid()
 {
 	if (!function_exists('getmypid')) {
-		return mt_rand(1, 32768);
+		return mt_rand(99900000, 99965535);
 	} else {
-		return getmypid();
+		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
 
