@@ -229,7 +229,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note.'"></td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)) {
+	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
 		if ($object->fk_bank) {
 			$bankline = new AccountLine($db);
@@ -325,7 +325,7 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
 	// Bank line
-	if (isModEnabled("banque") && ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)) {
+	if (isModEnabled("banque") && (!empty($conf->global->ADHERENT_BANK_USE) || $object->fk_bank)) {
 		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 		if ($object->fk_bank) {
 			$bankline = new AccountLine($db);
