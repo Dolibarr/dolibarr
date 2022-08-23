@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=A szolgáltatás működéséhez a JavaScriptet nem
 ErrorPasswordsMustMatch=Mindkét beírt jelszónak meg kell egyeznie egymással
 ErrorContactEMail=Technikai hiba történt. Kérjük, forduljon a rendszergazdához a következő e-mail címre: <b>%s</b>, és adja meg üzenetében a <b>%s</b> hibakódot, vagy adja hozzá az oldal képernyőpéldányát.
 ErrorWrongValueForField=Mező: <b>%s</b>: '<b>%s</b>' nem egyezik a <b>%s</b> reguláris kifejezéssel
+ErrorHtmlInjectionForField=<b> %s </b> mező : Az ' <b> %s a09a4b739f17f értéket nem tartalmazó
 ErrorFieldValueNotIn=Mező: <b>%s</b>: "<b>%s</b>" nem található a <b>%s</b>/<b>%s</b> mezőben
 ErrorFieldRefNotIn=Mező: <b>%s</b>: '<b>%s</b>' nem <b>%s</b> létező hivatkozás
 ErrorsOnXLines=%s hiba található
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Először be kell állítania a számla
 ErrorFailedToFindEmailTemplate=Nem sikerült megtalálni a %s kódnevű sablont
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=A szolgáltatás időtartama nincs meghatározva. Nincs mód az óraárak kiszámítására.
 ErrorActionCommPropertyUserowneridNotDefined=A felhasználó tulajdonosa kötelező
-ErrorActionCommBadType=A kiválasztott eseménytípus (azonosító: %n, kód: %s) nem létezik az Eseménytípus szótárban
+ErrorActionCommBadType=Selected event type (id: %s, code: %s) do not exist in Event Type dictionary
 CheckVersionFail=A verzióellenőrzés sikertelen
 ErrorWrongFileName=A fájl nevében nem lehet __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nem szerepel a Fizetési feltételek szótárban, kérjük módosítsa.
@@ -285,13 +286,16 @@ ErrorPaymentInBothCurrency=Hiba, minden összeget ugyanabba az oszlopba kell be�
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Ön %s pénznemben próbálja kifizetni a számlákat %s pénznemű számláról
 ErrorInvoiceLoadThirdParty=Nem lehet betölteni harmadik féltől származó objektumot az „%s” számlához
 ErrorInvoiceLoadThirdPartyKey=Harmadik féltől származó „%s” kulcs nincs beállítva az „%s” számlához
-ErrorDeleteLineNotAllowedByObjectStatus=A sor törlését az objektum tényleges állapota nem teszi lehetővé
+ErrorDeleteLineNotAllowedByObjectStatus=A sor törlését az objektum aktuális állapota nem teszi lehetővé
 ErrorAjaxRequestFailed=Kérés sikertelen
+ErrorThirpdartyOrMemberidIsMandatory=Harmadik fél vagy partnerségi tag kötelező
+ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
+ErrorQuantityIsLimitedTo=Quantity is limited to %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=A PHP paraméter upload_max_filesize (%s) magasabb, mint a PHP post_max_size (%s) paramétere. Ez nem következetes beállítás.
 WarningPasswordSetWithNoAccount=Jelszó lett beállítva ehhez a taghoz. Felhasználói fiók azonban nem jött létre. Tehát ez a jelszó tárolva van, de nem használható a Dolibarr-ba való bejelentkezéshez. Külső modul/interfész használhatja, de ha nem kell bejelentkezési nevet vagy jelszót megadnia egy taghoz, akkor letilthatja a "Bejelentkezés kezelése minden taghoz" opciót a Tagmodul beállításainál. Ha kezelnie kell a bejelentkezést, de nincs szüksége jelszóra, a figyelmeztetés elkerülése érdekében hagyja üresen ezt a mezőt. Megjegyzés: Az e-mail bejelentkezésként is használható, ha a tag egy felhasználóhoz kapcsolódik.
-WarningMandatorySetupNotComplete=Kattintson ide a kötelező paraméterek beállításához
+WarningMandatorySetupNotComplete=Kattintson ide a fő paraméterek beállításához
 WarningEnableYourModulesApplications=Kattintson ide a modulok és alkalmazások engedélyezéséhez
 WarningSafeModeOnCheckExecDir=Figyelem, a PHP <b>safe_mode</b> opciója be van kapcsolva, ezért a parancsot a <b>safe_mode_exec_dir</b> php paraméter által deklarált könyvtárban kell tárolni.
 WarningBookmarkAlreadyExists=Már létezik egy könyvjelző ezzel a címmel vagy ezzel a céllal (URL).
@@ -321,12 +325,8 @@ WarningCreateSubAccounts=Figyelem, nem hozhat létre közvetlenül alfiókot, l�
 WarningAvailableOnlyForHTTPSServers=Csak HTTPS biztonságos kapcsolat használata esetén érhető el.
 WarningModuleXDisabledSoYouMayMissEventHere=A %s modul nincs engedélyezve. Így sok eseményről lemaradhat itt.
 WarningPaypalPaymentNotCompatibleWithStrict=A 'Strict' érték miatt az online fizetési funkciók nem működnek megfelelően. Használja helyette a „Lax” szót.
+WarningThemeForcedTo=Figyelmeztetés, a témát a MAIN_FORCETHEME rejtett állandó az <b> %s </b> értékre kényszerítette
 
-<<<<<<< FEJ
-=======
-<<<<<<< FEJ
-<<<<<<< FEJ
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
 # Validate
 RequireValidValue = Az érték nem érvényes
 RequireAtLeastXString = Legalább %s karakter szükséges
@@ -347,12 +347,3 @@ BadSetupOfField = Hiba a mező rossz beállításában
 BadSetupOfFieldClassNotFoundForValidation = Hiba a mező rossz beállításában: Az osztály nem található az ellenőrzéshez
 BadSetupOfFieldFileNotFound = Hiba a mező rossz beállításában: A fájl nem található a felvételhez
 BadSetupOfFieldFetchNotCallable = Hiba a mező rossz beállításában: A lekérés nem hívható az osztályban
-<<<<<<< FEJ
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága
->>>>>>> git@github.com:Dolibarr/dolibarr.git '15.0' ága

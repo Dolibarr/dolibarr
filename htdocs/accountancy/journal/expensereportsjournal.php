@@ -58,7 +58,7 @@ if ($in_bookkeeping == '') {
 $now = dol_now();
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

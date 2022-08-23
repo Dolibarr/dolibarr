@@ -453,7 +453,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (empty($reshook)) {
 		if ($mode == 'source') {
 			$withCountry = 0;
-			if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+			if (isset($targetcompany->country_code) && !empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 				$withCountry = 1;
 			}
 

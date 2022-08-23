@@ -28,7 +28,6 @@ ErrorPHPVersionTooLow=Versiune PHP este prea veche. Versiunea %s sau mai nouă e
 ErrorPHPVersionTooHigh=Versiune PHP prea nouă. Versiunea %s sau mai veche este necesară.
 ErrorConnectedButDatabaseNotFound=Conectarea la server a reușit, dar baza de date '%s' nu a fost găsită.
 ErrorDatabaseAlreadyExists=Baza de date  '%s' există deja.
-ErrorNoMigrationFilesFoundForParameters=Nu a fost găsit niciun fișier de migrare pentru versiunile selectate
 IfDatabaseNotExistsGoBackAndUncheckCreate=Dacă baza de date nu există, reveniți și bifați opțiunea "Creare bază de date".
 IfDatabaseExistsGoBackAndCheckCreate=Dacă baza de date există deja, du-te înapoi şi debifează opţiunea "Creare bază de date".
 WarningBrowserTooOld=Versiunea browserului este prea veche. Este recomandat să vă actualizați browserul la o versiune recentă de Firefox, Chrome sau Opera.

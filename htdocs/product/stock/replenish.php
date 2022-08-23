@@ -467,7 +467,7 @@ if ($usevirtualstock) {
 		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
 		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
 
-		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToProduce .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToProduce .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
 		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
@@ -623,7 +623,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input type="submit" class="button small" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<input type="submit" class="button smallpaddingimp" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
 
 print '</form>';
@@ -697,7 +697,7 @@ $texte = $langs->trans('Replenishment');
 
 print '<br>';
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">';
 
 if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	print_barre_liste(
@@ -894,7 +894,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, 'stock').'</td>';
 
-		print '<td>'.$objp->label;
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">';
+		print dol_escape_htmltag($objp->label);
 		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
 		print '</td>';
 

@@ -713,7 +713,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if ($conf->accounting->enabled) {
+if (!empty($conf->accounting->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';

@@ -250,7 +250,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 78;
-		$this->rights[$r][1] = 'Read subscriptions';
+		$this->rights[$r][1] = 'Read membership fees';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -258,7 +258,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 79;
-		$this->rights[$r][1] = 'Create/modify/remove subscriptions';
+		$this->rights[$r][1] = 'Create/modify/remove membership fees';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';

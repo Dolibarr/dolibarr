@@ -62,7 +62,7 @@ if ($action == 'add') {		// $provider is OAUTH_XXX
 			setEventMessages($langs->trans("AOAuthEntryForThisProviderAndLabelAlreadyHasAKey"), null, 'errors');
 			$error++;
 		} else {
-			dolibarr_set_const($db, $constname, 'ToComplete', 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, $constname, $langs->trans('ToComplete'), 'chaine', 0, '', $conf->entity);
 			setEventMessages($langs->trans("OAuthProviderAdded"), null);
 		}
 	}
@@ -77,6 +77,16 @@ if ($action == 'update') {
 			// If we reset this provider, we also remove the secret
 			if (!dolibarr_set_const($db, $constvalue.'_SECRET', GETPOST($constvalue.'_ID') ? GETPOST($constvalue.'_SECRET') : '', 'chaine', 0, '', $conf->entity)) {
 				$error++;
+			}
+			if (GETPOSTISSET($constvalue.'_URLAUTHORIZE')) {
+				if (!dolibarr_set_const($db, $constvalue.'_URLAUTHORIZE', GETPOST($constvalue.'_URLAUTHORIZE'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			}
+			if (GETPOSTISSET($constvalue.'_SCOPE')) {
+				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', GETPOST($constvalue.'_SCOPE'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
 			}
 		}
 	}
@@ -147,11 +157,17 @@ print '<table class="noborder centpercent">';
 
 $i = 0;
 
-//var_dump($list);
+// Define $listinsetup
 foreach ($conf->global as $key => $val) {
 	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
 		$provider = preg_replace('/_ID$/', '', $key);
-		$listinsetup[] = array($provider.'_NAME', $provider.'_ID', $provider.'_SECRET', 'OAUTH Provider '.str_replace('OAUTH_', '', $provider));
+		$listinsetup[] = array(
+			$provider.'_NAME',
+			$provider.'_ID',
+			$provider.'_SECRET',
+			$provider.'_URLAUTHORIZE',	// For custom oauth links
+			$provider.'_SCOPE'			// For custom oauth links
+		);
 	}
 }
 
@@ -178,12 +194,16 @@ foreach ($listinsetup as $key) {
 
 	$i++;
 
-	print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
 	// Api Name
 	$label = $langs->trans($keyforsupportedoauth2array);
+	print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
 	print '<td>';
 	print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
-	print $label;
+	if ($label == $keyforsupportedoauth2array) {
+		print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+	} else {
+		print $label;
+	}
 	if ($keyforprovider) {
 		print ' (<b>'.$keyforprovider.'</b>)';
 	} else {
@@ -201,8 +221,15 @@ foreach ($listinsetup as $key) {
 		$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 		print '<tr class="oddeven value">';
 		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-		print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'">';
+		print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
 		print '</td></tr>';
+
+		if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
+			print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
+			print '</td></tr>';
+		}
 	} else {
 		print '<tr class="oddeven value">';
 		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
@@ -213,14 +240,32 @@ foreach ($listinsetup as $key) {
 	// Api Id
 	print '<tr class="oddeven value">';
 	print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
-	print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
+	print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.getDolGlobalString($key[1]).'">';
 	print '</td></tr>';
 
 	// Api Secret
 	print '<tr class="oddeven value">';
 	print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
-	print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
+	print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
 	print '</td></tr>';
+
+	// TODO Move this into token generation
+	if ($supported) {
+		if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("Scopes").'</td>';
+			print '<td>';
+			print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
+			print '</td></tr>';
+		} else {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("Scopes").'</td>';
+			print '<td>';
+			//print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
+			print $supportedoauth2array[$keyforsupportedoauth2array]['defaultscope'];
+			print '</td></tr>';
+		}
+	}
 }
 
 print '</table>'."\n";

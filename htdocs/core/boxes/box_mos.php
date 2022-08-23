@@ -60,7 +60,7 @@ class box_mos extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->bom->read);
+		$this->hidden = empty($user->rights->bom->read);
 	}
 
 	/**

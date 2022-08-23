@@ -15,6 +15,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// This page return an image of a QR code
+
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
@@ -45,6 +47,13 @@ require '../../core/modules/barcode/doc/tcpdfbarcode.modules.php';
 
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+
+
+/*
+ * View
+ */
+
+// The buildBarCode does not include the http headers but this is a page that just return an image.
 
 if (GETPOSTISSET("key")) {
 	$key = GETPOST('key');

@@ -48,9 +48,8 @@ CountriesNotInEEC=Zomlje koje nisu u EEC
 CountriesInEECExceptMe=Zemlje u EEC-u osim %s
 CountriesExceptMe=Sve zemlje osim %s
 AccountantFiles=Izvoz izvornih dokumenata
-ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Pomoću ovog alata možete izvesti izvorne događaje (popis u CSV-u i PDF-ovima) koji se koriste za generiranje vašeg računovodstva.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
-ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=If you setup accounting account on type of expense r
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 Closure=Godišnje zatvaranje
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accou
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Potvrda datuma i zaključavanje
 ConfirmExportFile=Potvrda generiranja datoteke za izvoz računovodstva?
 ExportDraftJournal=Export draft journal

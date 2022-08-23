@@ -775,16 +775,16 @@ class User extends CommonObject
 				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 				// instead of "read", "write", "delete"
 				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
-					return $this->rights->$rightsPath->lire;
+					return $this->rights->$rightsPath->$permlevel1->lire;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
-					return $this->rights->$rightsPath->create;
+					return $this->rights->$rightsPath->$permlevel1->creer;
 				}
 				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
-					return $this->rights->$rightsPath->create;
+					return $this->rights->$rightsPath->$permlevel1->create;
 				}
 				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
-					return $this->rights->$rightsPath->supprimer;
+					return $this->rights->$rightsPath->$permlevel1->supprimer;
 				}
 			}
 		} else {
@@ -797,7 +797,7 @@ class User extends CommonObject
 				return $this->rights->$rightsPath->lire;
 			}
 			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
-				return $this->rights->$rightsPath->create;
+				return $this->rights->$rightsPath->creer;
 			}
 			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
 				return $this->rights->$rightsPath->create;
@@ -1864,7 +1864,6 @@ class User extends CommonObject
 		$this->address						= trim((string) $this->address);
 		$this->zip							= trim((string) $this->zip);
 		$this->town							= trim((string) $this->town);
-		$this->setUpperOrLowerCase();
 
 		$this->state_id						= ($this->state_id > 0 ? $this->state_id : 0);
 		$this->country_id					= ($this->country_id > 0 ? $this->country_id : 0);
@@ -1890,6 +1889,8 @@ class User extends CommonObject
 		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
+
+		$this->setUpperOrLowerCase();
 
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
@@ -2072,6 +2073,8 @@ class User extends CommonObject
 						$adh->phone = $this->office_phone;
 						$adh->phone_mobile = $this->user_mobile;
 
+						$adh->default_lang = $this->lang;
+
 						$adh->user_id = $this->id;
 						$adh->user_login = $this->login;
 
@@ -2115,6 +2118,8 @@ class User extends CommonObject
 						$tmpobj->phone_pro = $this->office_phone;
 						$tmpobj->phone_mobile = $this->user_mobile;
 						$tmpobj->fax = $this->office_fax;
+
+						$tmpobj->default_lang = $this->lang;
 
 						$tmpobj->address = $this->address;
 						$tmpobj->town = $this->town;

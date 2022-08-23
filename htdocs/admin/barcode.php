@@ -190,7 +190,7 @@ foreach ($dirbarcode as $reldir) {
 
 
 // Select barcode numbering module
-if ($conf->product->enabled) {
+if (isModEnabled('product')) {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -252,7 +252,7 @@ if ($conf->product->enabled) {
 }
 
 // Select barcode numbering module
-if ($conf->societe->enabled) {
+if (isModEnabled('societe')) {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -396,7 +396,7 @@ if ($resql) {
 				}
 			}
 		} else {
-			print $langs->trans("ChooseABarCode");
+			print '<span class="opacitymedium">'.$langs->trans("ChooseABarCode").'</span>';
 		}
 		print '</td>';
 
@@ -439,7 +439,7 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
-	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.$conf->global->GENBARCODE_LOCATION.'">';
+	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
 	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
 		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
@@ -450,7 +450,7 @@ if (!isset($_SERVER['WINDIR'])) {
 }
 
 // Module products
-if (!empty($conf->product->enabled)) {
+if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
@@ -461,7 +461,7 @@ if (!empty($conf->product->enabled)) {
 }
 
 // Module thirdparty
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
