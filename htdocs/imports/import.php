@@ -636,29 +636,29 @@ if ($step == 3 && $datatoimport) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
-			$maxphp = (int)substr($maxphp, 0, -1) * 1;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp)) {
-			$maxphp = (int)substr($maxphp, 0, -1) * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp)) {
-			$maxphp = (int)substr($maxphp, 0, -1) * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp)) {
-			$maxphp = (int)substr($maxphp, 0, -1) * 1024 * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024 * 1024;
 		}
 		$maxphp2 = @ini_get('post_max_size'); // In unknown
 		if (preg_match('/k$/i', $maxphp2)) {
-			$maxphp2 = (int)substr($maxphp2, 0, -1) * 1;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp2)) {
-			$maxphp2 = (int)substr($maxphp2, 0, -1) * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp2)) {
-			$maxphp2 = (int)substr($maxphp2, 0, -1) * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp2)) {
-			$maxphp2 = (int)substr($maxphp2, 0, -1) * 1024 * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024 * 1024;
 		}
 		// Now $max and $maxphp and $maxphp2 are in Kb
 		$maxmin = $max;
