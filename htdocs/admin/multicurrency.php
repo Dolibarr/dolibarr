@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
-if (!$user->admin || empty($conf->multicurrency->enabled)) {
+if (!$user->admin || !isModEnabled('multicurrency')) {
 	accessforbidden();
 }
 
