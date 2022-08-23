@@ -315,10 +315,11 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if (isset($object->duree_validite) && !empty($object->fin_validite)) {
-				$object->fin_validite = $datep + ($object->duree_validite * 24 * 3600);
-			}
 			$result = $object->set_date($user, $datep);
+			if ($result > 0 && !empty($object->duree_validite) && !empty($object->fin_validite)) {
+				$datev = $datep + ($object->duree_validite * 24 * 3600);
+				$result = $object->set_echeance($user, $datev, 1);
+			}
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
 			} elseif (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2301,13 +2302,16 @@ if ($action == 'create') {
 	// Date of proposal
 	print '<tr>';
 	print '<td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DatePropal');
-	print '</td>';
-	if ($action != 'editdate' && $usercancreate && $caneditfield) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
-	}
-	print '</tr></table>';
+	// print '<table class="nobordernopadding" width="100%"><tr><td>';
+	// print $langs->trans('DatePropal');
+	// print '</td>';
+	// if ($action != 'editdate' && $usercancreate && $caneditfield) {
+	// 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+	// }
+
+	// print '</tr></table>';
+	$editenable = $usercancreate && $caneditfield && $object->statut == Propal::STATUS_DRAFT;
+	print $form->editfieldkey("DatePropal", 'date', '', $object, $editenable);
 	print '</td><td class="valuefield">';
 	if ($action == 'editdate' && $usercancreate && $caneditfield) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
