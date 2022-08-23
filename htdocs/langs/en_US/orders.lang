@@ -96,6 +96,7 @@ OrdersStatisticsSuppliers=Purchase order statistics
 NumberOfOrdersByMonth=Number of orders by month
 AmountOfOrdersByMonthHT=Amount of orders by month (excl. tax)
 ListOfOrders=List of orders
+ListOrderLigne=Lines of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to delivered? Once an order is delivered, it can be set to billed.
 ConfirmDeleteOrder=Are you sure you want to delete this order?

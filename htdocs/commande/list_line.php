@@ -75,7 +75,6 @@ $search_product_category = GETPOST('search_product_category', 'int');
 // Détail commande
 $search_refProduct = GETPOST('search_refProduct', 'alpha');
 $search_descProduct = GETPOST('search_descProduct', 'alpha');
-$check_orderdetail = GETPOST('check_orderdetail', 'alpha');
 
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -169,6 +168,10 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	// Détail commande
+	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
+	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1),
+	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>20),
@@ -210,13 +213,6 @@ $arrayfields = array(
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
-
-// Détail commande
-if (!empty($check_orderdetail)) {
-	$arrayfields['cdet.qty'] = array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1);
-	$arrayfields['pr.desc'] = array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1);
-	$arrayfields['pr.ref'] = array('label'=>'ProductRef', 'checked'=>1, 'position'=>1);
-}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -810,10 +806,8 @@ $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shippin
 $sql .= ' c.fk_input_reason, c.import_key';
 
 // Détail commande
-if (!empty($check_orderdetail)) {
-	$sql .= ', cdet.description, cdet.qty, ';
-	$sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
-}
+$sql .= ', cdet.description, cdet.qty, ';
+$sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
@@ -837,13 +831,9 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 }
 
 // Détail commande
-if (!empty($check_orderdetail)) {
-	$sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande=c.rowid';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product';
-} else {
-	$sql .= ', '.MAIN_DB_PREFIX.'commande as c';
-}
+$sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande=c.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product';
 
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
@@ -1351,11 +1341,6 @@ if ($resql) {
 		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
-	}
-
-	// Détail commande
-	if (!empty($conf->global->ORDER_ADD_OPTION_SHOW_DETAIL_LIST)) {
-		print '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_orderdetail" name="check_orderdetail" class="check_orderdetail"'.($check_orderdetail ? ' checked' : '').'><label for="check_orderdetail"> <span class="check_orderdetail_text">'.$langs->trans("OrderShowDetail").'</span></label> &nbsp; </div>';
 	}
 
 	if ($sall) {
