@@ -166,6 +166,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "PDF_SHOW_LINK_TO_ONLINE_PAYMENT", GETPOST('PDF_SHOW_LINK_TO_ONLINE_PAYMENT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
+	if (GETPOSTISSET('DOC_SHOW_FIRST_SALES_REP')) {
+		dolibarr_set_const($db, "DOC_SHOW_FIRST_SALES_REP", GETPOST('DOC_SHOW_FIRST_SALES_REP', 'alpha'), 'chaine', 0, '', $conf->entity);
+  }
+
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -567,6 +571,18 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
+
+// Show the first sales representative
+
+print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP");
+print ' <span class="opacitymedium">('.$langs->trans("SalesRepresentativeInfo").')</span>';
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('DOC_SHOW_FIRST_SALES_REP');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
+}
 
 // Show alias in thirdparty name
 
