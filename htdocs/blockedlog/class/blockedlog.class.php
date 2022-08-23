@@ -151,7 +151,7 @@ class BlockedLog
 		}
 
 		/* Supplier
-		if (!empty($conf->fournisseur->enabled)) {
+		if (isModEnabled("fournisseur")) {
 			 $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
 			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
 			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
