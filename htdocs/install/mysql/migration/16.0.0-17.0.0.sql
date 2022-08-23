@@ -60,7 +60,19 @@ ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
 ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
 
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
-  -- Allow users to make subscriptions of any amount during membership subscription
+
+
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
+ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+
+ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN acces_type integer DEFAULT 0;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN oauth_service varchar(128) DEFAULT NULL;
+
 
 ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
 
