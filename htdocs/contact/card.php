@@ -1625,7 +1625,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			// Childs list
-			if (empty($conf->global->SOCIETE_DISABLE_CONTACT_CHILDS)) {
+			if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT)) {
 				$result = show_childs($conf, $langs, $db, $object, $childs);
 			}
 
