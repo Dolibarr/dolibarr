@@ -262,7 +262,7 @@ if ($action == 'edit') {
 			// Label
 			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : $object->multilangs[$key]['label']);
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$libelle.'"></td></tr>';
-			
+
 			// Desc
 			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : $object->multilangs[$key]['description']);
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
