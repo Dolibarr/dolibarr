@@ -1865,10 +1865,10 @@ class Adherent extends CommonObject
 				$outputlangs = $langs;
 				$newlang = '';
 				$lang_id = GETPOST('lang_id');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($lang_id)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $customer->default_lang;
 				}
 				if (!empty($newlang)) {
