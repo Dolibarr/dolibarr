@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
- * Copyright (C) 2021		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2022 	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,10 @@ $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_st
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
 $search_product_category = GETPOST('search_product_category', 'int');
 
-
+// Détail commande
+$search_refProduct = GETPOST('search_refProduct', 'alpha');
+$search_descProduct = GETPOST('search_descProduct', 'alpha');
+$check_orderdetail = GETPOST('check_orderdetail', 'alpha');
 
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -208,7 +211,12 @@ $arrayfields = array(
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 
-
+// Détail commande
+if (!empty($check_orderdetail)) {
+	$arrayfields['cdet.qty'] = array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1);
+	$arrayfields['pr.desc'] = array('label'=>'ProductDescription', 'checked'=>1, 'position'=>1);
+	$arrayfields['pr.ref'] = array('label'=>'ProductRef', 'checked'=>1, 'position'=>1);
+}
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -801,7 +809,11 @@ $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as u
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason, c.import_key';
 
-
+// Détail commande
+if (!empty($check_orderdetail)) {
+	$sql .= ', cdet.description, cdet.qty, ';
+	$sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
+}
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
@@ -824,9 +836,14 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 
-
-$sql .= ', '.MAIN_DB_PREFIX.'commande as c';
-
+// Détail commande
+if (!empty($check_orderdetail)) {
+	$sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande=c.rowid';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product';
+} else {
+	$sql .= ', '.MAIN_DB_PREFIX.'commande as c';
+}
 
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
@@ -1336,7 +1353,10 @@ if ($resql) {
 		print '<br>';
 	}
 
-
+	// Détail commande
+	if (!empty($conf->global->ORDER_ADD_OPTION_SHOW_DETAIL_LIST)) {
+		print '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_orderdetail" name="check_orderdetail" class="check_orderdetail"'.($check_orderdetail ? ' checked' : '').'><label for="check_orderdetail"> <span class="check_orderdetail_text">'.$langs->trans("OrderShowDetail").'</span></label> &nbsp; </div>';
+	}
 
 	if ($sall) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -1427,7 +1447,12 @@ if ($resql) {
 		print '</td>';
 	}
 
-
+	// Détail commande
+	if (!empty($arrayfields['pr.ref']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="6" type="text" name="search_refProduct" value="'.dol_escape_htmltag($search_refProduct).'">';
+		print '</td>';
+	}
 	// Product Description
 	if (!empty($arrayfields['pr.desc']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1706,7 +1731,10 @@ if ($resql) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
-
+	// Détail commande
+	if (!empty($arrayfields['pr.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['pr.desc']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.desc']['label'], $_SERVER["PHP_SELF"], 'pr.desc', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1885,7 +1913,8 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
-
+	// Détail commande
+	$totalqty = 0;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	$last_num = min($num, $limit);
@@ -1950,6 +1979,51 @@ if ($resql) {
 					$selected = 1;
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+		}
+
+		// Détail commande
+		// Product Ref
+		if (!empty($arrayfields['pr.ref']['checked'])) {
+			if (!empty($obj->product_rowid)) {
+				$generic_product->id = $obj->product_rowid;
+				$generic_product->ref = $obj->product_ref;
+				$generic_product->label = $obj->product_label;
+				$generic_product->status = $obj->product_status;
+				$generic_product->status_buy = $obj->product_status_buy;
+				$generic_product->status_batch = $obj->product_batch;
+				$generic_product->barcode = $obj->product_barcode;
+				print '<td class="nowrap tdoverflowmax200">'.$generic_product->getNomUrl(1).'</td>';
+			} else {
+				print '<td class="nowrap tdoverflowmax200">Ligne libre</td>';
+			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Product Description
+		if (!empty($arrayfields['pr.desc']['checked'])) {
+			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
+			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
+			print '<td class="nowrap tdoverflowmax200">'.dol_escape_htmltag($labelproduct).'</td>';
+
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Product QtyOrdered
+		if (!empty($arrayfields['cdet.qty']['checked'])) {
+			print '<td class="nowrap tdoverflowmax200">'.$obj->qty.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
+			}
+			if (isset($totalarray['val']['cdet.qty'])) {
+				$totalarray['val']['cdet.qty'] += $obj->qty;
+			} else {
+				$totalarray['val']['cdet.qty'] = $obj->qty;
 			}
 		}
 
