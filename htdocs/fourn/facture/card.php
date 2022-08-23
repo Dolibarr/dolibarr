@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->product->enabled)) {
+if (isModEnabled("product")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 }
@@ -2401,7 +2401,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
@@ -3095,7 +3095,7 @@ if ($action == 'create') {
 		}
 
 		// Bank Account
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('BankAccount');
@@ -3250,7 +3250,7 @@ if ($action == 'create') {
 		if (!empty($conf->project->enabled)) {
 			$nbrows++;
 		}
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$nbrows++; $nbcols++;
 		}
 		if (!empty($conf->incoterm->enabled)) {
@@ -3291,7 +3291,7 @@ if ($action == 'create') {
 			print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 			print '<td>'.$langs->trans('Date').'</td>';
 			print '<td>'.$langs->trans('Type').'</td>';
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<td class="right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="right">'.$langs->trans('Amount').'</td>';
@@ -3316,7 +3316,7 @@ if ($action == 'create') {
 					print '<td>';
 					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
 					print '</td>';
-					if (!empty($conf->banque->enabled)) {
+					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;

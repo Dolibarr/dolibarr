@@ -113,13 +113,13 @@ $userstatic = new User($db);
 // Ajout rubriques automatiques
 $rowspan = 0;
 $sectionauto = array();
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-	$langs->load("products"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'product', 'test'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
+if (isModEnabled("product") || !empty($conf->service->enabled)) {
+	$langs->load("products"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
 }
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'propal', 'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 }
 if (!empty($conf->contrat->enabled)) {
@@ -155,7 +155,7 @@ if (!empty($conf->expensereport->enabled)) {
 if (!empty($conf->holiday->enabled)) {
 	$langs->load("holiday"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 }
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	$langs->load("banks"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 }
 if (!empty($conf->mrp->enabled)) {

@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");

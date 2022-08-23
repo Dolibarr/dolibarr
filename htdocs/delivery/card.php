@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || !empty($conf->service->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 if (!empty($conf->expedition_bon->enabled)) {
@@ -312,7 +312,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
-			if ($typeobject == 'propal' && $expedition->origin_id > 0 && !empty($conf->propal->enabled)) {
+			if ($typeobject == 'propal' && $expedition->origin_id > 0 && isModEnabled("propal")) {
 				$objectsrc = new Propal($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -409,7 +409,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 				print "</td>\n";
 				print '</tr>';
 			}
-			if ($typeobject == 'propal' && $expedition->origin_id && !empty($conf->propal->enabled)) {
+			if ($typeobject == 'propal' && $expedition->origin_id && isModEnabled("propal")) {
 				$propal = new Propal($db);
 				$propal->fetch($expedition->origin_id);
 				print '<tr><td class="titlefield">'.$langs->trans("RefProposal").'</td>';

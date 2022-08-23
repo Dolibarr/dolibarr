@@ -171,7 +171,7 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
@@ -179,7 +179,7 @@ function product_prepare_head($object)
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-		if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
@@ -374,7 +374,7 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+	if (isModEnabled("propal") && $user->rights->propale->lire) {
 		$nblines++;
 		$ret = $product->load_stats_propale($socid);
 		if ($ret < 0) {
@@ -469,7 +469,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer template invoices
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled("facture") && $user->rights->facture->lire) {
 		$nblines++;
 		$ret = $product->load_stats_facturerec($socid);
 		if ($ret < 0) {

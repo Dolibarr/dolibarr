@@ -729,7 +729,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -755,7 +755,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -827,7 +827,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {

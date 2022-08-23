@@ -309,14 +309,14 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 $rowspan = 0;
 $sectionauto = array();
 if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
-	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || !empty($conf->service->enabled)) {
 		$langs->load("products");
-		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
+		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
 	}
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		$rowspan++; $sectionauto[] = array('position'=>20, 'level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
 	}
-	if (!empty($conf->propal->enabled)) {
+	if (isModEnabled("propal")) {
 		$rowspan++; $sectionauto[] = array('position'=>30, 'level'=>1, 'module'=>'propal', 'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
 	if (!empty($conf->contrat->enabled)) {
@@ -363,7 +363,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$langs->load("holiday");
 		$rowspan++; $sectionauto[] = array('position'=>170, 'level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		$langs->load("banks");
 		$rowspan++; $sectionauto[] = array('position'=>180, 'level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 		$rowspan++; $sectionauto[] = array('position'=>190, 'level'=>1, 'module'=>'chequereceipt', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));

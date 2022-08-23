@@ -1645,7 +1645,7 @@ if ($action == 'create') {
 				}
 
 				// Proposal
-				if ($conf->service->enabled && !empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if ($conf->service->enabled && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->propal->creer) {

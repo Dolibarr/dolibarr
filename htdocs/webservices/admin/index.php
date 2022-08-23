@@ -100,11 +100,11 @@ print '<br><br>';
 // Webservices list
 $webservices = array(
 		'user'				=> '',
-		'thirdparty'		=> '!empty($conf->societe->enabled)',
-		'contact'			=> '!empty($conf->societe->enabled)',
-		'productorservice'	=> '(!empty($conf->product->enabled) || !empty($conf->service->enabled))',
+		'thirdparty'		=> 'isModEnabled("societe")',
+		'contact'			=> 'isModEnabled("societe")',
+		'productorservice'	=> '(isModEnabled("product") || !empty($conf->service->enabled))',
 		'order'				=> '!empty($conf->commande->enabled)',
-		'invoice'			=> '!empty($conf->facture->enabled)',
+		'invoice'			=> 'isModEnabled("facture")',
 		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
 		'actioncomm'		=> '!empty($conf->agenda->enabled)',
 		'category'			=> '!empty($conf->categorie->enabled)',

@@ -343,7 +343,7 @@ if ($action == 'edit') {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 					print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 				} elseif ($val['type'] == 'product') {
-					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					if (isModEnabled("product") || !empty($conf->service->enabled)) {
 						$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 						$form->select_produits($selected, $constname, '', 0);
 					}

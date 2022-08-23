@@ -290,7 +290,7 @@ $coldisplay++;
 			?>
 		<td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
+			<?php if (isModEnabled("product") || !empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->

@@ -202,7 +202,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);

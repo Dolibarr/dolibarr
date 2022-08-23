@@ -154,7 +154,7 @@ print '</td></tr>';
 
 if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {

@@ -211,7 +211,7 @@ if (empty($reshook)) {
 
 		$error = 0;
 
-		if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
+		if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -402,7 +402,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Company
-	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		// Thirdparty
 		if ($soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
@@ -591,7 +591,7 @@ if (!empty($id) && $action == 'edit') {
 	print "</td>";
 	print "</tr>\n";
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		$company = new Societe($db);
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
@@ -756,7 +756,7 @@ if (!empty($id) && $action != 'edit') {
 	print yn($object->public);
 	print '</td></tr>';
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (isModEnabled("societe") && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		$company = new Societe($db);
 
 		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';

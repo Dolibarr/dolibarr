@@ -1104,7 +1104,7 @@ class Form
 		global $langs, $conf;
 
 		// If product & services are enabled or both disabled.
-		if ($forceall == 1 || (empty($forceall) && !empty($conf->product->enabled) && !empty($conf->service->enabled))
+		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && !empty($conf->service->enabled))
 			|| (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled))) {
 			if (empty($hidetext)) {
 				print $langs->trans("Type").': ';
@@ -1138,7 +1138,7 @@ class Form
 			print $langs->trans("Service");
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
-		if ((empty($forceall) && !empty($conf->product->enabled) && empty($conf->service->enabled)) || $forceall == 2) {
+		if ((empty($forceall) && isModEnabled("product") && empty($conf->service->enabled)) || $forceall == 2) {
 			print $langs->trans("Product");
 			print '<input type="hidden" name="'.$htmlname.'" value="0">';
 		}
@@ -2278,8 +2278,8 @@ class Form
 			$ajaxoptions = array();
 		}
 
-		if (strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
-			if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+		if (strval($filtertype) === '' && (isModEnabled("product") || !empty($conf->service->enabled))) {
+			if (isModEnabled("product") && empty($conf->service->enabled)) {
 				$filtertype = '0';
 			} elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 				$filtertype = '1';

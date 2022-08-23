@@ -1930,7 +1930,7 @@ if ($action == 'create') {
 			// List of payments already done
 			$nbcols = 3;
 			$nbrows = 0;
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				$nbrows++;
 				$nbcols++;
 			}
@@ -1941,7 +1941,7 @@ if ($action == 'create') {
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -1983,7 +1983,7 @@ if ($action == 'create') {
 					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					// Bank account
-					if (!empty($conf->banque->enabled)) {
+					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
@@ -2767,7 +2767,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is used
-	if ($user->rights->expensereport->to_paid && !empty($conf->banque->enabled) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->rights->expensereport->to_paid && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';

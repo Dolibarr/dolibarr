@@ -318,7 +318,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 	if ($modulepart == 'produit' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 		global $object;
 		if (!empty($object->id)) {
-			if (!empty($conf->product->enabled)) {
+			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
 				$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -2921,7 +2921,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$original_file = $conf->product->multidir_output[$entity].'/'.$original_file;
 		} elseif (!empty($conf->service->enabled)) {
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;

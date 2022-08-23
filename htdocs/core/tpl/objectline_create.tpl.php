@@ -193,7 +193,7 @@ if ($nolinesbefore) {
 			// Free line
 			echo '<span class="prod_entry_mode_free">';
 			// Show radio free line
-			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+			if ($forceall >= 0 && (isModEnabled("product") || !empty($conf->service->enabled))) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
@@ -219,7 +219,7 @@ if ($nolinesbefore) {
 			echo '</span>';
 		}
 		// Predefined product/service
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || !empty($conf->service->enabled)) {
 			if ($forceall >= 0 && $freelines) {
 				echo '<br><span class="prod_entry_mode_predef paddingtop">';
 			} else {
@@ -230,7 +230,7 @@ if ($nolinesbefore) {
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
 				if (empty($senderissupplier)) {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToSell');
 					} elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
 						$labelforradio = $langs->trans('PredefinedServicesToSell');
@@ -238,7 +238,7 @@ if ($nolinesbefore) {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
 					}
 				} else {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
 					} elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
@@ -336,7 +336,7 @@ if ($nolinesbefore) {
 				print $hookmanager->resPrint;
 			}
 		}
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || !empty($conf->service->enabled)) {
 			echo '<br>';
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
@@ -446,7 +446,7 @@ if ($nolinesbefore) {
 			?>
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
-				<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
+				<?php if (isModEnabled("product") || !empty($conf->service->enabled)) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
 				<?php } ?>
 				<!-- For free product -->

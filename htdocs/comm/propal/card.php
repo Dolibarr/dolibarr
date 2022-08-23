@@ -1750,7 +1750,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
 		print '<tr class="field_fk_account"><td class="titlefieldcreate">'.$langs->trans('BankAccount').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($soc->fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
@@ -1773,7 +1773,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Shipping Method
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
 			$shipping_method_id = $soc->shipping_method_id;
 		}
@@ -2434,7 +2434,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Shipping Method
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('SendingMethod');
@@ -2552,7 +2552,7 @@ if ($action == 'create') {
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
 		// Bank Account
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';

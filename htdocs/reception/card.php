@@ -44,10 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || !empty($conf->service->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
@@ -142,7 +142,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (!empty($conf->reception->enabled) || $origin == 'reception' || empty($origin)) {
+if (isModEnabled("reception") || $origin == 'reception' || empty($origin)) {
 	$result = restrictedArea($user, 'reception', $id);
 } else {
 	// We do not use the reception module, so we test permission on the supplier orders
@@ -153,7 +153,7 @@ if (!empty($conf->reception->enabled) || $origin == 'reception' || empty($origin
 	}
 }
 
-if (!empty($conf->reception->enabled)) {
+if (isModEnabled("reception")) {
 	$permissiontoread = $user->rights->reception->lire;
 	$permissiontoadd = $user->rights->reception->creer;
 	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
@@ -773,7 +773,7 @@ if ($action == 'create') {
 			if ($origin == 'supplierorder' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$objectsrc->ref;
 			}
-			if ($origin == 'propal' && !empty($conf->propal->enabled)) {
+			if ($origin == 'propal' && isModEnabled("propal")) {
 				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowProposal"), 'propal').' '.$objectsrc->ref;
 			}
 			print '</a></td>';
@@ -1362,7 +1362,7 @@ if ($action == 'create') {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 			$objectsrc = new Propal($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -1435,7 +1435,7 @@ if ($action == 'create') {
 			print "</td>\n";
 			print '</tr>';
 		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 			print '<tr><td>';
 			print $langs->trans("RefProposal").'</td>';
 			print '<td colspan="3">';
@@ -1443,7 +1443,7 @@ if ($action == 'create') {
 			print "</td>\n";
 			print '</tr>';
 		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && isModEnabled("propal")) {
 			print '<tr><td>';
 			print $langs->trans("SupplierOrder").'</td>';
 			print '<td colspan="3">';

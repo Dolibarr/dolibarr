@@ -2440,7 +2440,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
-				"activation" => !empty($conf->societe->enabled) && $user->hasRight("societe", "write"), // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "write"), // vs hooking
 				"position" => 10,
 			),
 			array(
@@ -2448,7 +2448,7 @@ function printDropdownQuickadd()
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
-				"activation" => !empty($conf->societe->enabled) && $user->hasRight("societe", "contact", "write"), // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "contact", "write"), // vs hooking
 				"position" => 20,
 			),
 			array(
@@ -2456,7 +2456,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => !empty($conf->propal->enabled) && $user->hasRight("propale", "write"), // vs hooking
+				"activation" => isModEnabled("propal") && $user->hasRight("propale", "write"), // vs hooking
 				"position" => 30,
 			),
 
@@ -2513,7 +2513,7 @@ function printDropdownQuickadd()
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
-				"activation" => !empty($conf->product->enabled) && $user->hasRight("produit", "write"), // vs hooking
+				"activation" => isModEnabled("product") && $user->hasRight("produit", "write"), // vs hooking
 				"position" => 100,
 			),
 			array(

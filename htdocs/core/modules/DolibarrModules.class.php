@@ -1368,7 +1368,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// For the moment, we manage this with hard coded exception
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
-					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					if (isModEnabled("product") || !empty($conf->service->enabled)) {
 						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
