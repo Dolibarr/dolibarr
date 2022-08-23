@@ -1618,13 +1618,10 @@ class Mo extends CommonObject
 			$totalPredictedCost = 0;
 
 			foreach ($this->lines as &$line) {
-
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				if ($result > 0){
-
+				if ($result > 0) {
 					// PRODUCT
 					if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-
 						$productunitCost = $this->getProductUnitCost($tmpproduct);
 
 						if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
@@ -1648,7 +1645,6 @@ class Mo extends CommonObject
 						}
 
 						if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
-
 							$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
 							$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
 							$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
@@ -1669,7 +1665,6 @@ class Mo extends CommonObject
 						// This part is to be considered in a later development.
 					}
 				}
-
 			}
 
 			foreach ($Tpredicted as $cost) {
@@ -1687,15 +1682,14 @@ class Mo extends CommonObject
 			// but we should first check the status and change it on the fly if necessary to restore it after the update.
 			// we prefer to go directly through a request to avoid this.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET predicted_cost = ".doubleval(price2num($totalPredictedCost,'MT')). " ,";
-			$sql .= " real_cost = ".doubleval(price2num($totalRealCost,'MT'));
+			$sql .= " SET predicted_cost = ".doubleval(price2num($totalPredictedCost, 'MT')). " ,";
+			$sql .= " real_cost = ".doubleval(price2num($totalRealCost, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
 				setEventMessage($langs->trans("errorCostUpdatingInDb"));
-
 			}
 		}
 	}
