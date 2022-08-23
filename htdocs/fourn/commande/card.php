@@ -670,7 +670,7 @@ if (empty($reshook)) {
 				$newlang = '';
 				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
-					if(GETPOST('lang_id', 'aZ09')) 
+					if (GETPOST('lang_id', 'aZ09'))
 						$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (!empty($newlang)) {
