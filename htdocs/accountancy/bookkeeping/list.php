@@ -214,7 +214,7 @@ if (empty($listofformat[$formatexportset])) {
 
 $error = 0;
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

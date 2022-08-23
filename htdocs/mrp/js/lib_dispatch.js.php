@@ -94,21 +94,43 @@ function addDispatchLine(index, type, mode)
 		console.log($("#qty_dispatched_"+index).val());
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
-			qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + 1;
-			if(mode != 'allmissingconsume' || mode != 'alltoproduce') mode = 'lessone';
+			qtyDispatched = parseFloat($("#qty_dispatched_" + index).val()) + 1;
+
 		}
 		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
-			qty = parseFloat($($row).data('max-qty'));
-			if(!(qty > 0)) qty = 1;
+				var qtymax = parseFloat($($row).data('max-qty'));
+				if(qtymax === 'undefined') qtymax = 1;
 		}
 	}
 	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
+
+
 	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
-		while((qtyDispatched+qty) < qtyOrdered) {
-			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
-			qtyDispatched += qty;
-			nbrTrs++;
-			$row = $("tr[name='"+type+'_'+index+"_1']").clone(true);
+		var count = 0;
+		var qtyalreadyused = 0;
+		var error = 0;
+
+		while (qtyalreadyused < qty) {
+			//If remaining qty needed is inferior to qty asked, qtymax = qty asked - qty already used
+			if ((qtyalreadyused + qtymax) > qty) qtymax = qty - qtyalreadyused;
+			//If first line, we replace value, not add line
+			if(count === 0){
+				$("#"+inputId+"-"+index+"-"+nbrTrs).val(qtymax);
+			} else {
+				var res = addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row);
+				if(res === -1){
+					error = 1;
+					break;
+				}
+				nbrTrs++;
+			}
+			qtyalreadyused = qtyalreadyused + qtymax;
+			count++;
+			$row = $("tr[name='" + type + '_' + index + "_1']").clone(true);
+		}
+
+		if(error === 0) {
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
 		}
 	}
 	else addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row)
@@ -133,8 +155,10 @@ function addDispatchLine(index, type, mode)
 function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 1) {
 		window.alert("Quantity can't be split");
+		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
 		window.alert("No remain qty to dispatch");
+		return -1;
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		var re1 = new RegExp('_'+index+'_1', 'g');
@@ -167,17 +191,19 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 			console.log(i+" = "+parseFloat($("#"+inputId+"-"+index+"-"+i).val()));
 			totalonallines = totalonallines + parseFloat($("#"+inputId+"-"+index+"-"+i).val());
 		}
-		console.log("totalonallines="+totalonallines);
-		if (totalonallines == qtyOrdered && qtyOrdered > 1) {
-			var prevouslineqty = $("#"+inputId+"-"+index+"-"+nbrTrs).val();
-			$("#"+inputId+"-"+index+"-"+(nbrTrs)).val(1);
-			$("#"+inputId+"-"+index+"-"+(nbrTrs+1)).val(prevouslineqty - 1);
+
+		if(mode != 'allmissingconsume' && mode != 'alltoproduce') {
+			if (totalonallines == qtyOrdered && qtyOrdered > 1) {
+				var prevouslineqty = $("#" + inputId + "-" + index + "-" + nbrTrs).val();
+				$("#" + inputId + "-" + index + "-" + (nbrTrs)).val(1);
+				$("#" + inputId + "-" + index + "-" + (nbrTrs + 1)).val(prevouslineqty - 1);
+			}
 		}
 		$("#qty_dispatched_"+index).val(qtyDispatched);
 
 		//hide all buttons then show only the last one
-		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
-		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
+		$("tr[name^='"+type+"_"+index+"_'] .splitbutton").hide();
+		$("tr[name^='"+type+"_"+index+"_']:last .splitbutton").show();
 
 		if (mode === 'lessone')
 		{
@@ -190,8 +216,7 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		$("#"+inputId+"-"+index+(nbrTrs)).data('index', index);
 		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
 			let currentQtyDispatched = qtyDispatched+qty;
-			if((currentQtyDispatched+qty) > qtyOrdered) $row.find("input[id^='"+inputId+"']").val(qtyOrdered - currentQtyDispatched);
-			 else  $row.find("input[id^='"+inputId+"']").val(qty);
+			$row.find("input[id^='"+inputId+"']").val(qty);
 		}
 	}
 }

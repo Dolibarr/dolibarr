@@ -88,7 +88,7 @@ $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $o
 if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') != 'member') {
 	accessforbidden('Partnership module is not activated for members');
 }
-if (empty($conf->partnership->enabled)) {
+if (!isModEnabled('partnership')) {
 	accessforbidden();
 }
 if (empty($permissiontoread)) {
