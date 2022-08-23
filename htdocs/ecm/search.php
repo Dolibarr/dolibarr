@@ -113,8 +113,8 @@ $userstatic = new User($db);
 // Ajout rubriques automatiques
 $rowspan = 0;
 $sectionauto = array();
-if (isModEnabled("product") || !empty($conf->service->enabled)) {
-	$langs->load("products"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
+if (isModEnabled("product") || isModEnabled("service")) {
+	$langs->load("products"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
 }
 if (isModEnabled("societe")) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));

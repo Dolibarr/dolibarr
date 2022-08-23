@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
-	} elseif (!empty($conf->service->enabled)) {
+	} elseif (isModEnabled("service")) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
@@ -2298,7 +2298,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (isModEnabled("product") && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');

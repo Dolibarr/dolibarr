@@ -195,7 +195,7 @@ if (!empty($conf->project->enabled)) {
 if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
 	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
 }
-if (isModEnabled("product") || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
 }
 if (isModEnabled("propal") || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {

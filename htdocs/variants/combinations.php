@@ -395,7 +395,7 @@ if (!empty($id) || !empty($ref)) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	if (isModEnabled("product") && !empty($conf->service->enabled)) {
+	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
 		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');

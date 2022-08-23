@@ -2814,7 +2814,7 @@ if ($action == 'create') {
 				}
 
 				// Create an intervention
-				if (!empty($conf->service->enabled) && !empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled("service") && !empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';

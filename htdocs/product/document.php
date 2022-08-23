@@ -81,7 +81,7 @@ if ($id > 0 || !empty($ref)) {
 
 	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
-	} elseif (!empty($conf->service->enabled)) {
+	} elseif (isModEnabled("service")) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
 	}
 

@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-if (isModEnabled("product") || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 if (isModEnabled("propal")) {

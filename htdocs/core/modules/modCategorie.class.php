@@ -127,7 +127,7 @@ class modCategorie extends DolibarrModules
 		$this->export_permission[$r] = array(array("categorie", "lire"));
 
 		$typeexample = "";
-		if (isModEnabled("product") || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			$typeexample .= ($typeexample ? " / " : "")."0=Product-Service";
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {

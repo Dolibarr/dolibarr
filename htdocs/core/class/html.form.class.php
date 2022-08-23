@@ -1104,7 +1104,7 @@ class Form
 		global $langs, $conf;
 
 		// If product & services are enabled or both disabled.
-		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && !empty($conf->service->enabled))
+		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && isModEnabled("service"))
 			|| (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled))) {
 			if (empty($hidetext)) {
 				print $langs->trans("Type").': ';
@@ -1134,7 +1134,7 @@ class Form
 			print ajax_combobox('select_'.$htmlname);
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
-		if ((empty($forceall) && empty($conf->product->enabled) && !empty($conf->service->enabled)) || $forceall == 3) {
+		if ((empty($forceall) && empty($conf->product->enabled) && isModEnabled("service")) || $forceall == 3) {
 			print $langs->trans("Service");
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
@@ -2278,10 +2278,10 @@ class Form
 			$ajaxoptions = array();
 		}
 
-		if (strval($filtertype) === '' && (isModEnabled("product") || !empty($conf->service->enabled))) {
+		if (strval($filtertype) === '' && (isModEnabled("product") || isModEnabled("service"))) {
 			if (isModEnabled("product") && empty($conf->service->enabled)) {
 				$filtertype = '0';
-			} elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			} elseif (empty($conf->product->enabled) && isModEnabled("service")) {
 				$filtertype = '1';
 			}
 		}

@@ -2521,7 +2521,7 @@ function printDropdownQuickadd()
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
-				"activation" => !empty($conf->service->enabled) && $user->hasRight("service", "write"), // vs hooking
+				"activation" => isModEnabled("service") && $user->hasRight("service", "write"), // vs hooking
 				"position" => 110,
 			),
 			array(

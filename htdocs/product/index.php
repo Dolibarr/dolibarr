@@ -90,7 +90,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((isModEnabled("product") || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -123,7 +123,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((isModEnabled("product") || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -190,7 +190,7 @@ if ((isModEnabled("product") || !empty($conf->service->enabled)) && ($user->righ
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnPurchase"), round($SommeB));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsNotOnSell"), round($SommeC));
 		}
-		if (!empty($conf->service->enabled)) {
+		if (isModEnabled("service")) {
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
@@ -281,7 +281,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((isModEnabled("product") || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -411,7 +411,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 	if (isModEnabled("product")) {
 		activitytrim(0);
 	}
-	if (!empty($conf->service->enabled)) {
+	if (isModEnabled("service")) {
 		activitytrim(1);
 	}
 }

@@ -111,7 +111,7 @@ if ($action == 'set_default') {
 	if (isModEnabled('facture')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (isModEnabled("product") || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		}
 	}
@@ -269,7 +269,7 @@ if (isModEnabled('facture')) {
 	}
 	print "</tr>\n";
 
-	if (isModEnabled("product") || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);

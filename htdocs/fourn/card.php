@@ -514,7 +514,7 @@ if ($object->id > 0) {
 	/*
 	 * List of products
 	 */
-	if (isModEnabled("product") || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		//Query from product/liste.php
 		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,';

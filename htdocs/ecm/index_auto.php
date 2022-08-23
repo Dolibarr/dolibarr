@@ -309,9 +309,9 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 $rowspan = 0;
 $sectionauto = array();
 if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
-	if (isModEnabled("product") || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
-		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || !empty($conf->service->enabled)), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
+		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
 		$rowspan++; $sectionauto[] = array('position'=>20, 'level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));

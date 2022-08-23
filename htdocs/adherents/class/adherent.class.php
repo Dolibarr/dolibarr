@@ -1773,7 +1773,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Add line to draft invoice
 				$idprodsubscription = 0;
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || !empty($conf->service->enabled))) {
+				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || isModEnabled("service"))) {
 					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
 				}
 

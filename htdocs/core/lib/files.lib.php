@@ -2923,7 +2923,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (isModEnabled("product")) {
 			$original_file = $conf->product->multidir_output[$entity].'/'.$original_file;
-		} elseif (!empty($conf->service->enabled)) {
+		} elseif (isModEnabled("service")) {
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {

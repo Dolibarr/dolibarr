@@ -43,7 +43,7 @@ if (!empty($conf->stock->enabled)) {
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled("product") || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
