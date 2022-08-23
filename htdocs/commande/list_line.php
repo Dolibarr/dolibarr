@@ -350,8 +350,9 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.pho
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
-$sql .= ' c.rowid, c.ref, c.ref_client, c.fk_user_author,';
+$sql .= ' c.rowid as c_rowid, c.ref, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
+$sql .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
@@ -601,12 +602,12 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('CustomersOrders').' - '.$soc->name;
+		$title = $langs->trans('ListOrderLigne').' - '.$soc->name;
 		if (empty($search_company)) {
 			$search_company = $soc->name;
 		}
 	} else {
-		$title = $langs->trans('CustomersOrders');
+		$title = $langs->trans('ListOrderLigne');
 	}
 	if (strval($search_status) == '0') {
 		$title .= ' - '.$langs->trans('StatusOrderDraftShort');
@@ -1419,7 +1420,7 @@ if ($resql) {
 			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
 		}
 
-		$generic_commande->id = $obj->rowid;
+		$generic_commande->id = $obj->c_rowid;
 		$generic_commande->ref = $obj->ref;
 		$generic_commande->statut = $obj->fk_statut;
 		$generic_commande->billed = $obj->billed;
@@ -1427,9 +1428,9 @@ if ($resql) {
 		$generic_commande->date_livraison = $db->jdate($obj->date_delivery); // deprecated
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;
-		$generic_commande->total_ht = $obj->total_ht;
-		$generic_commande->total_tva = $obj->total_tva;
-		$generic_commande->total_ttc = $obj->total_ttc;
+		$generic_commande->total_ht = $obj->c_total_ht;
+		$generic_commande->total_tva = $obj->c_total_tva;
+		$generic_commande->total_ttc = $obj->c_total_ttc;
 		$generic_commande->note_public = $obj->note_public;
 		$generic_commande->note_private = $obj->note_private;
 
