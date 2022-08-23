@@ -57,6 +57,8 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlist';
+$productonly = GETPOST('productonly', 'alpha');
+$disablelinefree = GETPOST('disablelinefree', 'alpha');
 
 $search_datecloture_start = GETPOST('search_datecloture_start', 'int');
 if (empty($search_datecloture_start)) {
@@ -361,7 +363,7 @@ $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shippin
 $sql .= ' c.fk_input_reason, c.import_key';
 
 // Détail commande
-$sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.total_ht, cdet.total_tva, cdet.total_ttc, ';
+$sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc, ';
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
@@ -418,6 +420,13 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
+
+if (!empty($productonly)) {
+	$sql .= " AND (cdet.product_type = 0 OR cdet.product_type = 1)";
+}
+if (!empty($disablelinefree)) {
+	$sql .= " AND cdet.fk_product IS NOT NULL";
+}
 if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
@@ -829,6 +838,9 @@ if ($resql) {
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'order', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+	print '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
+	print '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_send";
