@@ -217,7 +217,6 @@ if (empty($reshook) && $action == 'add') {
 			$partnership->fk_soc = 0;
 		}
 
-		// need to change this part
 		$partnership->status      = 0;
 		$partnership->note_private = GETPOST('note_private');
 		$partnership->date_creation = dol_now();
@@ -234,44 +233,56 @@ if (empty($reshook) && $action == 'add') {
 		//$partnership->state_id    = GETPOST('state_id', 'int');
 		//$partnership->typeid      = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 
-		// Fill array 'array_options' with data from add form
-		$extrafields->fetch_name_optionals_label($partnership->table_element);
-		$ret = $extrafields->setOptionalsFromPost(null, $partnership);
-		if ($ret < 0) {
-			$error++;
-		}
 		// test if societe already exist
 		$sql =	"SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
 		}
-		if ($num = 0) {
-			//create thirdparty
-			$company = new Societe($db);
-
-			$company->address     = GETPOST('address');
-			$company->zip         = GETPOST('zipcode');
-			$company->town        = GETPOST('town');
-			$company->email       = GETPOST('email');
-			$company->country_id  = GETPOST('country_id', 'int');
-			$company->state_id    = GETPOST('state_id', 'int');
-			$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
-
-			$resultat=$company->create($user);
-			if ($result < 0) {
-				$error++;
-				$errmsg .= join('<br>', $company->errors);
+		if ($num = 0) { // si il ya pas d'entree sur le nom  on teste l'email
+			$sql1 =	"SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE email='".$db->escape(GETPOST('email'))."'";
+			$result1 = $db->query($sql1);
+			if ($result1) {
+				$num1 = $db->num_rows($result1);
 			}
+			if ($num1 != 0) {
+				$error++;
+				$errmsg = "email already exists please rewrite your company name";
+			} else {
+				//create thirdparty
+				$company = new Societe($db);
 
-			$partnership->fk_soc = $company->id;
+				$company->address     = GETPOST('address');
+				$company->zip         = GETPOST('zipcode');
+				$company->town        = GETPOST('town');
+				$company->email       = GETPOST('email');
+				$company->country_id  = GETPOST('country_id', 'int');
+				$company->state_id    = GETPOST('state_id', 'int');
+				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+
+				$resultat=$company->create($user);
+				if ($resultat < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
+				}
+
+				$partnership->fk_soc = $company->id;
+			}
 		} elseif ($num > 1) {
 			$error++;
-			$errmsg = 'Message';
+			$errmsg = 'more than one entry exist for this company please contact us to complete your partnership request';
 		} else {
 			$company = $db->fetch_object($result);
 			$partnership->fk_soc = $company->rowid;
 		}
+
+		// Fill array 'array_options' with data from add form
+		$extrafields->fetch_name_optionals_label($partnership->table_element);
+		$ret = $extrafields->setOptionalsFromPost(null, $partnership);
+		if ($ret < 0) {
+			$error++;
+		}
+
 		if (!$error) {
 			$result = $partnership->create($user);
 			if ($result > 0) {
@@ -360,9 +371,6 @@ if (empty($reshook) && $action == 'add') {
 						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
 					}
 				}*/
-
-
-
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
