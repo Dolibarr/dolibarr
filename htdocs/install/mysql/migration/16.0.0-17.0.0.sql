@@ -97,3 +97,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-EASTER',      0, 2, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASCENSION',   0, 2, 'ascension', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   0, 2, 'pentecost', 0, 0, 0, 1);
+
+ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
+ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
