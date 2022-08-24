@@ -931,9 +931,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					// Lot
 					if (isModEnabled('productbatch')) {
-						if ($conf->productbatch->enabled) {
-							print '<td></td>';
-						}					}
+						print '<td></td>';
+					}
 					// Action delete line
 					if ($permissiontodelete) {
 						$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id);
@@ -1028,8 +1027,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if (!empty($conf->global->MRP_NEVER_CONSUME_MORE_THAN_EXPECTED) && ($line->qty - $alreadyconsumed) <= 0) {
 							$disable = 'disabled';
 						}
-
-						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
 
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
@@ -1274,7 +1271,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td>'; // Warehouse
 					print '</td>';
 					if (isModEnabled('productbatch')) {
-						print '<td></td>';
+						print '<td></td>'; // Lot
 					}
 
 					if ($permissiontodelete && $line->origin_type == 'free') {
@@ -1403,113 +1400,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div>';
 		print '</div>';
+	}
 
-		if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
-			print "</form>\n";
-		}
-
-		?>
-
-		<script  type="text/javascript" language="javascript">
-
-			$(document).ready(function() {
-				//Consumption : When a warehouse is selected, only the lot/serial numbers that are available in it are offered
-				updateselectbatchbywarehouse();
-				//Consumption : When a lot/serial number is selected and it is only available in one warehouse, the warehouse is automatically selected
-				updateselectwarehousebybatch();
-			});
-
-			function updateselectbatchbywarehouse() {
-				var element = $("select[name*='idwarehouse']");
-
-				element.change(function () {
-
-					var selectwarehouse = $(this);
-
-					var selectbatch_name = selectwarehouse.attr('name').replace('idwarehouse', 'batch');
-					var selectbatch = $("datalist[id*='" + selectbatch_name + "']");
-					var selectedbatch = selectbatch.val();
-
-					var product_element_name = selectwarehouse.attr('name').replace('idwarehouse', 'product');
-
-					$.ajax({
-						type: "POST",
-						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
-						data: {
-							action: "updateselectbatchbywarehouse",
-							permissiontoproduce: <?php echo $permissiontoproduce ?>,
-							warehouse_id: $(this).val(),
-							product_id: $("input[name='" + product_element_name + "']").val()
-						}
-					}).done(function (data) {
-
-						selectbatch.empty();
-
-						var data = JSON.parse(data);
-
-						selectbatch.append($('<option>', {
-							value: '',
-						}));
-
-						$.each(data, function (key, value) {
-
-							if(selectwarehouse.val() == -1) {
-								var label = " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
-							} else {
-								var label =  " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
-							}
-
-							if(key === selectedbatch) {
-								var option ='<option value="'+key+'" selected>'+ label +'</option>';
-							} else {
-								var option ='<option value="'+key+'">'+ label +'</option>';
-							}
-
-							selectbatch.append(option);
-						});
-					});
-				});
-			}
-
-			function updateselectwarehousebybatch() {
-
-				$(document).on('change', 'input[name*=batch]', function(){
-
-					var selectbatch = $(this);
-
-					var selectwarehouse_name = selectbatch.attr('name').replace('batch', 'idwarehouse');
-					var selectwarehouse = $("select[name*='" + selectwarehouse_name + "']");
-					var selectedwarehouse = selectwarehouse.val();
-
-					if(selectedwarehouse != -1){
-						return;
-					}
-
-					var product_element_name = selectbatch.attr('name').replace('batch', 'product');
-
-					$.ajax({
-						type: "POST",
-						url: "<?php echo DOL_URL_ROOT . '/mrp/ajax/interface.php'; ?>",
-						data: {
-							action: "updateselectwarehousebybatch",
-							permissiontoproduce: <?php echo $permissiontoproduce ?>,
-							batch: $(this).val(),
-							product_id: $("input[name='" + product_element_name + "']").val()
-						}
-					}).done(function (data) {
-
-						var data = JSON.parse(data);
-
-						if(data != 0){
-							selectwarehouse.val(data).change();
-						}
-					});
-				});
-			}
-
-		</script>
-
-		<?php
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
+		print "</form>\n";
 	}
 }
 

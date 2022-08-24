@@ -53,7 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -554,7 +553,6 @@ if (empty($reshook)) {
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
-			$object->fk_default_workstation	 = GETPOST('fk_default_workstation');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -720,7 +718,6 @@ if (empty($reshook)) {
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
-				$object->fk_default_workstation   = GETPOST('fk_default_workstation');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -1439,6 +1436,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
+
 		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 		$doleditor->Create();
 
@@ -1480,14 +1478,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 				print '<input name="desiredstock" type="hidden" value="0">';
 			}
-		}
-
-		if ($type == 1  && $conf->workstation->enabled) {
-				// Default workstation
-				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
-				print '</td></tr>';
 		}
 
 		// Duration
@@ -2029,15 +2019,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 				*/
 			}
-
-			if ($object->isService() && $conf->workstation->enabled) {
-				// Default workstation
-				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
-				print '</td></tr>';
-			}
-
 			/*
 			else
 			{
@@ -2516,15 +2497,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print (!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-				print '</td>';
-			}
-
-			if ($object->isService() && $conf->workstation->enabled) {
-				$workstation = new Workstation($db);
-				$res = $workstation->fetch($object->fk_default_workstation);
-
-				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
-				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 				print '</td>';
 			}
 

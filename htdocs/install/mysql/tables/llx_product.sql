@@ -108,5 +108,4 @@ create table llx_product
   mandatory_period              tinyint      DEFAULT 0,               -- is used to signal to the user that the start and end dates are mandatory for this type of product the fk_product_type == 1 (service) (non-blocking action)
 
   fk_default_bom                integer      DEFAULT NULL
-  fk_default_workstation        integer      DEFAULT NULL
 )ENGINE=innodb;

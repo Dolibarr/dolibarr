@@ -109,7 +109,7 @@ $tabrowid[1] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (isModEnabled('website'));
+$tabcond[1] = (!empty($conf->website->enabled));
 
 // List of help for fields
 $tabhelp = array();

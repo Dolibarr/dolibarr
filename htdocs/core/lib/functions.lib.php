@@ -1693,7 +1693,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Relative Url to open
+ *	@param  string	$url				Url to open
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1702,8 +1702,6 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
-	global $conf;
-
 	if (strpos($url, '?') > 0) {
 		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
@@ -1727,50 +1725,44 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
-	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
-	if (empty($conf->use_javascript_ajax)) {
-		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
-	}
-	$out .= '>'.$buttonstring.'</a>';
-	if (!empty($conf->use_javascript_ajax)) {
-		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
-		$out .= '<!-- Add js code to open dialog popup on dialog -->';
-		$out .= '<script type="text/javascript">
-					jQuery(document).ready(function () {
-						jQuery(".button_'.$name.'").click(function () {
-							console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
-							var $tmpdialog = $(\'#idfordialog'.$name.'\');
-							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
-							$tmpdialog.dialog({
-								autoOpen: false,
-							 	modal: true,
-							 	height: (window.innerHeight - 150),
-							 	width: \'80%\',
-							 	title: \''.dol_escape_js($label).'\',
-								open: function (event, ui) {
-									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
-	       						},
-								close: function (event, ui) {
-									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
-									if (returnedid != "" && returnedid != "div for returned id") {
-										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
-									}
-									if (returnedlabel != "" && returnedlabel != "div for returned label") {
-										jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
-									}
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
+	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+	$out .= '<!-- Add js code to open dialog popup on dialog -->';
+	$out .= '<script type="text/javascript">
+				jQuery(document).ready(function () {
+					jQuery(".button_'.$name.'").click(function () {
+						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+						var $tmpdialog = $(\'#idfordialog'.$name.'\');
+						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+						$tmpdialog.dialog({
+							autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: \''.dol_escape_js($label).'\',
+							open: function (event, ui) {
+								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+       						},
+							close: function (event, ui) {
+								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
+								if (returnedid != "" && returnedid != "div for returned id") {
+									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
 								}
-							});
-
-							$tmpdialog.dialog(\'open\');
+								if (returnedlabel != "" && returnedlabel != "div for returned label") {
+									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+								}
+							}
 						});
+
+						$tmpdialog.dialog(\'open\');
 					});
-				</script>';
-	}
+				});
+			</script>';
 	return $out;
 }
 
@@ -8532,11 +8524,10 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
- * 	    @param	string		$filters	Filter on other fields
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = array())
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0)
 {
 	global $cache_codes;
 
@@ -8557,9 +8548,6 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$sql .= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (".getEntity($tablename).")";
-	}
-	if ($filters) {
-		$sql .= $filters;
 	}
 
 	$resql = $db->query($sql);

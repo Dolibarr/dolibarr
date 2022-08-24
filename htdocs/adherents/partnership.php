@@ -151,7 +151,7 @@ if ($id > 0) {
 	$object = new Adherent($db);
 	$result = $object->fetch($id);
 
-	if (isModEnabled('notification')) {
+	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
 

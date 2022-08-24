@@ -102,7 +102,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-if (isModEnabled('propal')) {
+if (!empty($conf->propal->enabled)) {
 	print load_fiche_titre($langs->trans("Proposal"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
