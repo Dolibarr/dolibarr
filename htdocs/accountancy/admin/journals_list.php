@@ -123,7 +123,7 @@ $tabrowid[35] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[35] = !empty($conf->accounting->enabled);
+$tabcond[35] = isModEnabled('accounting')';
 
 // List of help for fields
 $tabhelp = array();
