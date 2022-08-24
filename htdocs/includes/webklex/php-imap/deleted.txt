@@ -11,4 +11,5 @@
 ./vendor/phpdocumentor
 ./vendor/nesbot/carbon/src/Carbon/Lang
 ./vendor/doctrine
+./vendor/bin
 ./tests

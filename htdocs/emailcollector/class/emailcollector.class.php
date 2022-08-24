@@ -1494,7 +1494,9 @@ class EmailCollector extends CommonObject
 						$plainmsg = $imapemail->getTextBody();
 					}
 					if ($imapemail->hasAttachments()) {
-						$attachments = $imapemail->getAttachments();
+						$attachments = $imapemail->getAttachments()->all();
+					} else {
+						$attachments = [];
 					}
 				} else {
 					$this->getmsg($connection, $imapemail);
@@ -2351,6 +2353,20 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->error = 'Failed to create project: '.$langs->trans($projecttocreate->error);
 										$this->errors = $projecttocreate->errors;
+									} else {
+										if ($attachments) {
+											$destdir = $conf->project->dir_output.'/'.$projecttocreate->ref;
+											if (!dol_is_dir($destdir)) {
+												dol_mkdir($destdir);
+											}
+											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+												foreach ($attachments as $attachment) {
+													$attachment->save($destdir.'/');
+												}
+											} else {
+												$this->getmsg($connection, $imapemail, $destdir);
+											}
+										}
 									}
 								}
 							}
@@ -2461,13 +2477,16 @@ class EmailCollector extends CommonObject
 										$this->errors = $tickettocreate->errors;
 									} else {
 										if ($attachments) {
+											$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
+											if (!dol_is_dir($destdir)) {
+												dol_mkdir($destdir);
+											}
 											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
-												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
-												if (!dol_is_dir($destdir)) {
-													return -1;
-													dol_mkdir($destdir);
-													$this->getmsg($connection, $imapemail, $destdir);
+												foreach ($attachments as $attachment) {
+													$attachment->save($destdir.'/');
 												}
+											} else {
+												$this->getmsg($connection, $imapemail, $destdir);
 											}
 										}
 									}
