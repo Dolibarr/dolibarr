@@ -83,7 +83,7 @@ if (!is_array($journal_data)) {
 }
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
