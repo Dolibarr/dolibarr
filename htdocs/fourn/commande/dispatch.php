@@ -1202,10 +1202,6 @@ if ($id > 0 || !empty($ref)) {
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
-				$tmpproduct->id = $objp->fk_product;
-				$tmpproduct->ref = $objp->ref;
-				$tmpproduct->label = $objp->label;
-
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
 					print '<form name="editdispatchedlines" id="editdispatchedlines" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#line_'.GETPOST('lineid', 'int').'" method="POST">
 					<input type="hidden" name="token" value="'.newToken().'">
