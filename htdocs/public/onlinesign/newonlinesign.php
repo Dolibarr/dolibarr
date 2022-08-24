@@ -139,7 +139,7 @@ if ($source == 'proposal') {
 	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
+if (!dol_verifyHash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $entity), $SECUREKEY, '0')) {
 	http_response_code(403);
 	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
 	exit(-1);
@@ -293,7 +293,6 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty($object->socid);
 
 	// Creditor
-
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Creditor");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -302,7 +301,6 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Debitor
-
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("ThirdParty");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
@@ -310,14 +308,12 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 
 	// Amount
-
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow2">';
 	print '<b>'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</b>';
 	print '</td></tr>'."\n";
 
 	// Object
-
 	$text = '<b>'.$langs->trans("SignatureProposalRef", $object->ref).'</b>';
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow2">'.$text;
