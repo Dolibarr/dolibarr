@@ -1022,74 +1022,91 @@ class EmailCollector extends CommonObject
 		$this->fetchFilters();
 		$this->fetchActions();
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
-			$keyforsupportedoauth2array = $this->oauth_service;
-			if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
-				$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
-			} else {
-				$keyforprovider = '';
-			}
-			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
-			$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
-
-			$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
-
-			require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-			$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-
-			$storage = new DoliStorage($db, $conf);
-
-			try {
-				$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-				$expire = true;
-				// Is token expired or will token expire in the next 30 seconds
-				// if (is_object($tokenobj)) {
-				// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-				// }
-				// Token expired so we refresh it
-				if (is_object($tokenobj) && $expire) {
-					$credentials = new Credentials(
-						getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
-						getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
-						getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-					);
-					$serviceFactory = new \OAuth\ServiceFactory();
-					$oauthname = explode('-', $OAUTH_SERVICENAME);
-					// ex service is Google-Emails we need only the first part Google
-					$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
-					// We have to save the token because Google give it only once
-					$refreshtoken = $tokenobj->getRefreshToken();
-					$tokenobj = $apiService->refreshAccessToken($tokenobj);
-					$tokenobj->setRefreshToken($refreshtoken);
-					$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
-				}
-				$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-				if (is_object($tokenobj)) {
-					$token = $tokenobj->getAccessToken();
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+			if ($this->acces_type == 1) {
+				// Mode OAUth2 with PHP-IMAP
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				$keyforsupportedoauth2array = $this->oauth_service;
+				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
 				} else {
-					$this->error = "Token not found";
+					$keyforprovider = '';
+				}
+				$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+				$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+				$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+				//dol_syslog($debugtext);
+
+				$storage = new DoliStorage($db, $conf);
+
+				try {
+					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+					$expire = true;
+					// Is token expired or will token expire in the next 30 seconds
+					// if (is_object($tokenobj)) {
+					// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+					// }
+					// Token expired so we refresh it
+					if (is_object($tokenobj) && $expire) {
+						$credentials = new Credentials(
+							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
+							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
+							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
+						);
+						$serviceFactory = new \OAuth\ServiceFactory();
+						$oauthname = explode('-', $OAUTH_SERVICENAME);
+						// ex service is Google-Emails we need only the first part Google
+						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						// We have to save the token because Google give it only once
+						$refreshtoken = $tokenobj->getRefreshToken();
+						$tokenobj = $apiService->refreshAccessToken($tokenobj);
+						$tokenobj->setRefreshToken($refreshtoken);
+						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+					}
+					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+					if (is_object($tokenobj)) {
+						$token = $tokenobj->getAccessToken();
+					} else {
+						$this->error = "Token not found";
+						return -1;
+					}
+				} catch (Exception $e) {
+					// Return an error if token not found
+					$this->error = $e->getMessage();
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return -1;
 				}
-			} catch (Exception $e) {
-				// Return an error if token not found
-				$this->error = $e->getMessage();
-				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
-				return -1;
+
+
+				$cm = new ClientManager();
+				$client = $cm->make([
+					'host'           => $this->host,
+					'port'           => $this->port,
+					'encryption'     => 'ssl',
+					'validate_cert'  => true,
+					'protocol'       => 'imap',
+					'username'       => $this->login,
+					'password'       => $token,
+					'authentication' => "oauth",
+				]);
+			} else {
+				// Mode login/pass with PHP-IMAP
+				$cm = new ClientManager();
+				$client = $cm->make([
+					'host'           => $this->host,
+					'port'           => $this->port,
+					'encryption'     => 'ssl',
+					'validate_cert'  => true,
+					'protocol'       => 'imap',
+					'username'       => $this->login,
+					'password'       => $this->password,
+					'authentication' => "login",
+				]);
 			}
-
-
-			$cm = new ClientManager();
-			$client = $cm->make([
-				'host'           => $this->host,
-				'port'           => 993,
-				'encryption'     => 'ssl',
-				'validate_cert'  => true,
-				'protocol'       => 'imap',
-				'username'       => $this->login,
-				'password'       => $token,
-				'authentication' => "oauth",
-			]);
 
 			try {
 				$client->connect();
@@ -1102,6 +1119,7 @@ class EmailCollector extends CommonObject
 
 			$host = dol_getprefix('email');
 		} else {
+			// Use native IMAP functions
 			if (!function_exists('imap_open')) {
 				$this->error = 'IMAP function not enabled on your PHP';
 				return -2;
@@ -1115,7 +1133,7 @@ class EmailCollector extends CommonObject
 
 			$connection = imap_open($connectstringsource, $this->login, $this->password);
 			if (!$connection) {
-				$this->error = 'Failed to open IMAP connection '.$connectstringsource;
+				$this->error = 'Failed to open IMAP connection '.$connectstringsource.' '.imap_last_error();
 				return -3;
 			}
 			imap_errors(); // Clear stack of errors.
@@ -1129,7 +1147,7 @@ class EmailCollector extends CommonObject
 			//$search='ALL';
 		}
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
 			$search = '';
 			$searchhead = '';
@@ -1341,7 +1359,7 @@ class EmailCollector extends CommonObject
 		$nbactiondone = 0;
 		$charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			try {
 				//$criteria = [['ALL']];
 				//$Query = $client->getFolders()[0]->messages()->where($criteria);
@@ -1412,11 +1430,12 @@ class EmailCollector extends CommonObject
 
 
 				// GET header and overview datas
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					$header = $imapemail->getHeader()->raw;
 					$overview = $imapemail->getAttributes();
 				} else {
-					$header = imap_headerinfo($connection, $imapemail);
+					//$header = imap_headerinfo($connection, $imapemail);
+					$header = imap_fetchheader($connection, $imapemail, 0);
 					$overview = imap_fetch_overview($connection, $imapemail, 0);
 				}
 
@@ -1444,7 +1463,6 @@ class EmailCollector extends CommonObject
 
 
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
-
 
 
 				// If there is a filter on trackid
@@ -1520,9 +1538,10 @@ class EmailCollector extends CommonObject
 				$this->db->begin();
 
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					dol_syslog("msgid=".$overview['message_id']." date=".dol_print_date($overview['date'], 'dayrfc', 'gmt')." from=".$overview['from']." to=".$overview['to']." subject=".$overview['subject']);
 
+					// Removed emojis
 					$overview['subject'] = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview['subject']);
 				} else {
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
@@ -1538,7 +1557,7 @@ class EmailCollector extends CommonObject
 
 				global $htmlmsg, $plainmsg, $charset, $attachments;
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -1614,7 +1633,7 @@ class EmailCollector extends CommonObject
 				//print $messagetext;
 				//exit;
 
-				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+				if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 					$fromstring = $overview['from'];
 
 					$sender = $overview['sender'];
@@ -2514,7 +2533,7 @@ class EmailCollector extends CommonObject
 										$this->errors = $tickettocreate->errors;
 									} else {
 										if ($attachments) {
-											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 												$destdir = $conf->ticket->dir_output.'/'.$tickettocreate->ref;
 												if (!dol_is_dir($destdir)) {
 													return -1;
@@ -2663,7 +2682,7 @@ class EmailCollector extends CommonObject
 
 				// Error for email or not ?
 				if (!$errorforactions) {
-					if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP) || $this->acces_type != 1) {
+					if (empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 						if ($targetdir) {
 							dol_syslog("EmailCollector::doCollectOneCollector move message ".$imapemail." to ".$connectstringtarget, LOG_DEBUG);
 							$res = imap_mail_move($connection, $imapemail, $targetdir, 0);
@@ -2675,6 +2694,7 @@ class EmailCollector extends CommonObject
 							}
 						} else {
 							dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
+							// TODO Make the move
 						}
 					}
 				} else {
@@ -2714,13 +2734,14 @@ class EmailCollector extends CommonObject
 			$output = $langs->trans('NoNewEmailToProcess');
 		}
 
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
 			imap_expunge($connection); // To validate any move
 
 			imap_close($connection);
 		}
+
 		$this->datelastresult = $now;
 		$this->lastresult = $output;
 		$this->debuginfo = 'IMAP search string used : '.$search;
