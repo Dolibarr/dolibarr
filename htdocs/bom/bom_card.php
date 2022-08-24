@@ -147,93 +147,93 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Add line
-	if ($action == 'addline' && $user->rights->bom->write) {
-		$langs->load('errors');
-		$error = 0;
+if ($action == 'addline' && $user->rights->bom->write) {
+	$langs->load('errors');
+	$error = 0;
 
-		// Set if we used free entry or predefined product
-		$bom_child_id = (int) GETPOST('bom_id', 'int');
-		if ($bom_child_id > 0) {
-			$bom_child = new BOM($db);
-			$res = $bom_child->fetch($bom_child_id);
-			if ($res) {
-				$idprod = $bom_child->fk_product;
-			}
-		} else {
-			$idprod = (!empty(GETPOST('idprodservice', 'int')) ? GETPOST('idprodservice', 'int') : (int) GETPOST('idprod', 'int'));
+	// Set if we used free entry or predefined product
+	$bom_child_id = (int) GETPOST('bom_id', 'int');
+	if ($bom_child_id > 0) {
+		$bom_child = new BOM($db);
+		$res = $bom_child->fetch($bom_child_id);
+		if ($res) {
+			$idprod = $bom_child->fk_product;
 		}
-
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
-		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
-		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
-		if ($qty == '') {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
-			$error++;
-		}
-		if (!($idprod > 0)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
-			$error++;
-		}
-
-		if ($object->fk_product == $idprod) {
-			setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
-			$error++;
-		}
-
-		if (!$error) {
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
-
-			if ($result <= 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
-			} else {
-				unset($_POST['idprod']);
-				unset($_POST['idprodservice']);
-				unset($_POST['qty']);
-				unset($_POST['qty_frozen']);
-				unset($_POST['disable_stock_change']);
-
-				$object->fetchLines();
-
-				$object->calculateCosts();
-			}
-		}
+	} else {
+		$idprod = (!empty(GETPOST('idprodservice', 'int')) ? GETPOST('idprodservice', 'int') : (int) GETPOST('idprod', 'int'));
 	}
 
-	// Update line
-	if ($action == 'updateline' && $user->rights->bom->write) {
-		$langs->load('errors');
-		$error = 0;
+	$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+	$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+	$disable_stock_change = GETPOST('disable_stock_change', 'int');
+	$efficiency = price2num(GETPOST('efficiency', 'alpha'));
+	$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+	if ($qty == '') {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+		$error++;
+	}
+	if (!($idprod > 0)) {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Product')), null, 'errors');
+		$error++;
+	}
 
-		// Set if we used free entry or predefined product
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
-		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
-		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+	if ($object->fk_product == $idprod) {
+		setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
+		$error++;
+	}
 
-		if ($qty == '') {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
-			$error++;
+	if (!$error) {
+		$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
+
+		if ($result <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		} else {
+			unset($_POST['idprod']);
+			unset($_POST['idprodservice']);
+			unset($_POST['qty']);
+			unset($_POST['qty_frozen']);
+			unset($_POST['disable_stock_change']);
+
+			$object->fetchLines();
+
+			$object->calculateCosts();
 		}
+	}
+}
 
-		if (!$error) {
-			$bomline = new BOMLine($db);
-			$bomline->fetch($lineid);
+	// Update line
+if ($action == 'updateline' && $user->rights->bom->write) {
+	$langs->load('errors');
+	$error = 0;
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key);
+	// Set if we used free entry or predefined product
+	$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+	$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
+	$disable_stock_change = GETPOST('disable_stock_change', 'int');
+	$efficiency = price2num(GETPOST('efficiency', 'alpha'));
+	$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
-			if ($result <= 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
-			} else {
-				unset($_POST['idprod']);
-				unset($_POST['idprodservice']);
-				unset($_POST['qty']);
-				unset($_POST['qty_frozen']);
-				unset($_POST['disable_stock_change']);
+	if ($qty == '') {
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		$bomline = new BOMLine($db);
+		$bomline->fetch($lineid);
+
+		$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key);
+
+		if ($result <= 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
+		} else {
+			unset($_POST['idprod']);
+			unset($_POST['idprodservice']);
+			unset($_POST['qty']);
+			unset($_POST['qty_frozen']);
+			unset($_POST['disable_stock_change']);
 
 			$object->fetchLines();
 
