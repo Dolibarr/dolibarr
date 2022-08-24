@@ -172,7 +172,7 @@ if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 
 if ($action == 'update') {
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled('module')) {
 			foreach ($delays as $delay) {
 				if (GETPOST($delay['code']) != '') {
 					dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
@@ -226,13 +226,13 @@ if ($action == 'edit') {
 	print '<td class="right">'.$langs->trans("LateWarningAfter").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled('module')) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
+				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
 				print '<tr class="oddeven">';
-				print '<td width="20px">'.img_object('', $delay['img']).'</td>';
-				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td class="nowraponall right">';
-				print '<input class="right maxwidth75" type="number" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
+				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
+				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td><td class="nowraponall right">';
+				print '<input class="right maxwidth75" type="number" name="' . $delay['code'] . '" value="' . $value . '"> ' . $langs->trans("days") . '</td></tr>';
 			}
 		}
 	}
@@ -260,13 +260,13 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
-		if (!empty($conf->$module->enabled)) {
+		if (isModEnabled('module')) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
+				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
 				print '<tr class="oddeven">';
-				print '<td width="20px">'.img_object('', $delay['img']).'</td>';
-				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td>';
-				print '<td class="right">'.$value.' '.$langs->trans("days").'</td></tr>';
+				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
+				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td>';
+				print '<td class="right">' . $value . ' ' . $langs->trans("days") . '</td></tr>';
 			}
 		}
 	}
