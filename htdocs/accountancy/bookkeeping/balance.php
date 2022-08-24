@@ -143,7 +143,7 @@ if (!empty($search_ledger_code)) {
 	}
 }
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
