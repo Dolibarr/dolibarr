@@ -124,8 +124,14 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 	if (!function_exists('openssl_encrypt')) {
 		return $chain;
 	} else {
-		$newchain = openssl_encrypt($chain, $ciphering, $key);
-		return 'dolcrypt:'.$ciphering.':'.$newchain;
+		$ivlen = openssl_cipher_iv_length($ciphering);
+		if ($ivlen < 0 || $ivlen > 32) {
+			$ivlen = 32;
+		}
+		$ivseed = mt_rand(0, pow(2, $ivlen) - 1);
+
+		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
 	}
 }
 
@@ -154,7 +160,12 @@ function dolDecrypt($chain, $key = '')
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
-			$newchain = openssl_decrypt($reg[2], $ciphering, $key);
+			$tmpexplode = explode(':', $reg[2]);
+			if (!empty($tmpexplode[1]) && is_numeric($tmpexplode[0])) {
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+			} else {
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+			}
 		} else {
 			$newchain = 'Error function openssl_decrypt() not available';
 		}
