@@ -177,7 +177,7 @@ print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_set
 print '<span class="opacitymedium">';
 print $langs->trans("NotificationsDesc").'<br>';
 print $langs->trans("NotificationsDescUser").'<br>';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print $langs->trans("NotificationsDescContact").'<br>';
 }
 print $langs->trans("NotificationsDescGlobal").'<br>';
@@ -361,7 +361,7 @@ print $form->buttonsSaveCancel("Save", '');
 
 	print '<div class="opacitymedium">';
 	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
 	}
 	print '</div>';
@@ -384,7 +384,7 @@ print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', 'email');
 print '<div class="info">';
 print $langs->trans("Note").':<br>';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
 }
 print '</div>';

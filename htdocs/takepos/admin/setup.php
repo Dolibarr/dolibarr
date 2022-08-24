@@ -263,7 +263,7 @@ print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (emp
 print "</td></tr>\n";
 
 // Services
-if (!empty($conf->service->enabled)) {
+if (isModEnabled("service")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';
