@@ -449,7 +449,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($object->status == Evaluation::STATUS_DRAFT) {
 			$result = $object->getLinesArray();
 
-			print '	<form name="form_save_rank" id="form_save_rank" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+			if ($action == 'editline') {
+				$anchor = '#line_'.GETPOST('lineid', 'int');
+			} else {
+				$anchor = '#addline';
+			}
+
+			print '	<form name="form_save_rank" id="form_save_rank" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.$anchor.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="saveSkill">
 		<input type="hidden" name="mode" value="">

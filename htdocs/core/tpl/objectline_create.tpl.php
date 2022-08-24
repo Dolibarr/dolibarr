@@ -166,7 +166,7 @@ if ($nolinesbefore) {
 	<?php
 }
 ?>
-<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'; ?>">
+<tr id="addline" class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'; ?>">
 	<?php
 	$coldisplay = 0;
 	// Adds a line numbering column

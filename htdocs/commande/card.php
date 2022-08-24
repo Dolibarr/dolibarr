@@ -2680,7 +2680,14 @@ if ($action == 'create' && $usercancreate) {
 		 */
 		$result = $object->getLinesArray();
 
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		// After submit jump to edited line or addline form
+		if ($action == 'editline') {
+			$anchor = '#line_'.GETPOST('lineid', 'int');
+		} else {
+			$anchor = '#addline';
+		}
+
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.$anchor.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">

@@ -1605,9 +1605,15 @@ if ($action == 'create') {
 
 		print '<div class="clearboth"></div><br>';
 
+		// After submit jump to edited line or addline form
+		if ($action == 'editline') {
+			$anchor = '#line_'.GETPOST('lineid', 'int');
+		} else {
+			$anchor = '#addline';
+		}
 
 		// Lines
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.$anchor.'" method="POST">';
 		print '<input type="hidden" name="token" value="' . newToken().'">';
 		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
