@@ -185,13 +185,13 @@ $message .= ajax_autoselect('webdavpublicurl');
 
 $message .= '<br>';
 if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
-	$urlEntity = (!empty($conf->multicompany->enabled) ? '?entity='.$conf->entity : '');
-	$url = '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank" rel="noopener noreferrer">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+	$urlEntity = (isModEnabled('multicompany') ? '?entity=' . $conf->entity : '');
+	$url = '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '</a>';
 
-	$message .= img_picto('', 'globe').' '.str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV public', ''));
-	$message .= '<div class="urllink"><input type="text" id="webdavurl" class="quatrevingtpercent" value="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'">';
-	$message .= '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank" rel="noopener noreferrer">';
-	$message .= ' '.img_picto('', 'globe');
+	$message .= img_picto('', 'globe') . ' ' . str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV public', ''));
+	$message .= '<div class="urllink"><input type="text" id="webdavurl" class="quatrevingtpercent" value="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '">';
+	$message .= '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">';
+	$message .= ' ' . img_picto('', 'globe');
 	$message .= '</a>';
 	$message .= '</div>';
 	$message .= ajax_autoselect('webdavurl');
