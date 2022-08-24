@@ -130,7 +130,7 @@ if ($object->id > 0) {
 
 	llxHeader("", $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = member_prepare_head($object);

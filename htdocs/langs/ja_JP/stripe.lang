@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へ�
 PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
+TERMINAL_LOCATION=端末の場所（住所）

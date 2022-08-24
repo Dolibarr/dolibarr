@@ -19,6 +19,7 @@
  * Copyright (C) 2019-2022  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
+ * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -668,7 +669,20 @@ if (empty($reshook)) {
 				if (count($object->errors)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					if ($object->error == 'ErrorProductAlreadyExists') {
+						// allow to hook on ErrorProductAlreadyExists in any module
+						$reshook = $hookmanager->executeHooks('onProductAlreadyExists', $parameters, $object, $action);
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+						if ($object->error) {
+							// check again to prevent translation issue,
+							// as error may have been cleared in hook function
+							setEventMessages($langs->trans($object->error), null, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans($object->error), null, 'errors');
+					}
 				}
 				$action = "create";
 			}
@@ -1217,7 +1231,7 @@ llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
-if (!empty($conf->barcode->enabled) && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
+if (isModEnabled('barcode') && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 	$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
 	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 	foreach ($dirbarcode as $dirroot) {

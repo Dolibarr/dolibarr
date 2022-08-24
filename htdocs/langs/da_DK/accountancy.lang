@@ -48,9 +48,8 @@ CountriesNotInEEC=Lande ikke i EU
 CountriesInEECExceptMe=Lande i EU undtagen %s
 CountriesExceptMe=Alle lande undtagen %s
 AccountantFiles=Eksporter kildedokumenter
-ExportAccountingSourceDocHelp=Med dette værktøj kan du søge og eksportere de kildebegivenheder, der bruges til at generere dit regnskab.<br>Den eksporterede ZIP-fil vil indeholde lister over ønskede elementer i CSV, såvel som deres vedhæftede filer i deres originale format (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildebegivenheder (liste i CSV og PDF'er), der bruges til at generere dit regnskab.
 ExportAccountingSourceDocHelp2=For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
-ExportAccountingProjectHelp=Angiv et projekt, hvis du kun har brug for en regnskabsrapport for et specifikt projekt. Udgiftsrapporter og lånebetalinger indgår ikke i projektrapporter.
 VueByAccountAccounting=Vis efter regnskabskonto
 VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
 
 Closure=Årlig lukning
-DescClosure=Se her antallet af bevægelser pr. måned, som endnu ikke er valideret og låst
+DescClosure=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
 OverviewOfMovementsNotValidated=Oversigt over bevægelser, der ikke er valideret og låst
 AllMovementsWereRecordedAsValidated=Alle bevægelser blev registreret som validerede og låste
 NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevægelser kunne registreres som validerede og låste
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overførsel i 
 
 ## Export
 NotifiedExportDate=Flag eksporterede linjer som eksporteret <span class="warning"> (for at ændre en linje skal du slette hele transaktionen og overføre den til regnskab igen) </span>
-NotifiedValidationDate=Valider og lås de eksporterede indgange <span class="warning"> (samme effekt som "%s"-funktionen, ændring og sletning af linjerne vil DEFINITIVT ikke være mulig) </span>
+NotifiedValidationDate=Valider og lås de eksporterede poster <span class="warning"> (samme effekt som "Closure"-funktionen, ændring og sletning af linjerne vil DEFINITIVT ikke være mulig) </span>
 DateValidationAndLock=Datovalidering og lås
 ConfirmExportFile=Bekræftelse af genereringen af den regnskabsmæssige eksportfil?
 ExportDraftJournal=Eksporter udkast til kladde

@@ -183,25 +183,10 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$bomline = new BOMLine($db);
-			$bomline->fk_bom = $id;
-			$bomline->fk_product = $idprod;
-			$bomline->fk_bom_child = $bom_child_id;
-			$bomline->qty = $qty;
-			$bomline->qty_frozen = (int) $qty_frozen;
-			$bomline->disable_stock_change = (int) $disable_stock_change;
-			$bomline->efficiency = $efficiency;
-			$bomline->fk_unit = $fk_unit;
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
 
-			// Rang to use
-			$rangmax = $object->line_max(0);
-			$ranktouse = $rangmax + 1;
-
-			$bomline->position = ($ranktouse + 1);
-
-			$result = $bomline->create($user);
 			if ($result <= 0) {
-				setEventMessages($bomline->error, $bomline->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			} else {
 				unset($_POST['idprod']);
@@ -217,7 +202,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Add line
+	// Update line
 	if ($action == 'updateline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
@@ -234,26 +219,21 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$bomline = new BOMLine($db);
-		$bomline->fetch($lineid);
-		$bomline->qty = $qty;
-		$bomline->qty_frozen = (int) $qty_frozen;
-		$bomline->disable_stock_change = (int) $disable_stock_change;
-		$bomline->efficiency = $efficiency;
+		if (!$error) {
+			$bomline = new BOMLine($db);
+			$bomline->fetch($lineid);
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-		$bomline->fk_unit = $fk_unit;
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key);
 
-		$result = $bomline->update($user);
-		if ($result <= 0) {
-			setEventMessages($bomline->error, $bomline->errors, 'errors');
-			$action = '';
-		} else {
-			unset($_POST['idprod']);
-			unset($_POST['idprodservice']);
-			unset($_POST['qty']);
-			unset($_POST['qty_frozen']);
-			unset($_POST['disable_stock_change']);
+			if ($result <= 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			} else {
+				unset($_POST['idprod']);
+				unset($_POST['idprodservice']);
+				unset($_POST['qty']);
+				unset($_POST['qty_frozen']);
+				unset($_POST['disable_stock_change']);
 
 			$object->fetchLines();
 
@@ -566,7 +546,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	';
 
 		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -581,7 +561,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Form to add new line
 		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
 			if ($action != 'editline') {
-				// Add products form
+				// Add products/services form
 
 
 				$parameters = array();

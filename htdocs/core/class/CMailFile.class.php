@@ -31,6 +31,7 @@
  */
 
 use OAuth\Common\Storage\DoliStorage;
+use OAuth\Common\Consumer\Credentials;
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -885,6 +886,30 @@ class CMailFile
 					$storage = new DoliStorage($db, $conf);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						$expire = false;
+						// Is token expired or will token expire in the next 30 seconds
+						if (is_object($tokenobj)) {
+							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+						}
+						// Token expired so we refresh it
+						if (is_object($tokenobj) && $expire) {
+							$credentials = new Credentials(
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_ID'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_SECRET'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_URLAUTHORIZE')
+							);
+							$serviceFactory = new \OAuth\ServiceFactory();
+							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// We have to save the token because Google give it only once
+							$refreshtoken = $tokenobj->getRefreshToken();
+							$tokenobj = $apiService->refreshAccessToken($tokenobj);
+							$tokenobj->setRefreshToken($refreshtoken);
+							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+						}
+
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
@@ -981,8 +1006,31 @@ class CMailFile
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
 					$storage = new DoliStorage($db, $conf);
+
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						$expire = false;
+						// Is token expired or will token expire in the next 30 seconds
+						if (is_object($tokenobj)) {
+							$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+						}
+						// Token expired so we refresh it
+						if (is_object($tokenobj) && $expire) {
+							$credentials = new Credentials(
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_ID'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_SECRET'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_URLAUTHORIZE')
+							);
+							$serviceFactory = new \OAuth\ServiceFactory();
+							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// We have to save the token because Google give it only once
+							$refreshtoken = $tokenobj->getRefreshToken();
+							$tokenobj = $apiService->refreshAccessToken($tokenobj);
+							$tokenobj->setRefreshToken($refreshtoken);
+							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+						}
 						if (is_object($tokenobj)) {
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());

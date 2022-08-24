@@ -91,9 +91,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = $user->rights->emailcollector->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->emailcollector->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->emailcollector->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->admin; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->admin; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $debuginfo = '';
 
@@ -192,7 +192,7 @@ if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
 
-	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'restricthtml');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
@@ -337,14 +337,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation of action process
 	if ($action == 'collect') {
-		$formquestion = array(
-			'text' => $langs->trans("EmailCollectorConfirmCollect"),
-		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EmailCollectorConfirmCollectTitle'), $text, 'confirm_collect', $formquestion, 0, 1, 220);
+		$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EmailCollectorConfirmCollectTitle'), $langs->trans('EmailCollectorConfirmCollect'), 'confirm_collect', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -620,12 +618,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
-			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
+			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print $ruleaction['actionparam'];
+			print dol_escape_htmltag($ruleaction['actionparam']);
 		}
 		print '</td>';
 		// Move up/down
@@ -679,7 +677,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a></div>';
 
 			// Clone
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
 
 			// Collect now
 			if (count($object->actions) > 0) {

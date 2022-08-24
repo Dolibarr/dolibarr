@@ -46,7 +46,6 @@ BoxMyLastBookmarks=Bookmark-uri : ultimile %s
 BoxOldestExpiredServices=Cele mai vechi servicii active expirate
 BoxLastExpiredServices=Cele mai vechi %s contacte cu servicii active expirate
 BoxTitleLastActionsToDo=Ultimele %s acţiuni de realizat
-BoxTitleOldestActionsToDo=Cele mai vechi %s evenimente care nu a fost finalizate
 BoxTitleLastContracts=Ultimele %s contracte modificate
 BoxTitleLastModifiedDonations=Utimele %s donaţii modificate
 BoxTitleLastModifiedExpenses=Ultimele %s rapoarte de cheltuieli modificate

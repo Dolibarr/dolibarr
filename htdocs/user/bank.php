@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 			{
 				$objectuser->fetch($id);
 
-				$objectuser->oldcopy = clone $objectuser;
+				$objectuser->oldcopy = dol_clone($objectuser);
 
 				$db->begin();
 

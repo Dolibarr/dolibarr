@@ -47,7 +47,7 @@ $type = 'reception';
  * Actions
  */
 
-if (!empty($conf->reception->enabled) && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
+if (isModEnabled('reception') && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_RECEPTION", "1", 'chaine', 0, '', $conf->entity);
 }

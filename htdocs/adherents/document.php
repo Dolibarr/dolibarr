@@ -128,7 +128,7 @@ if ($id > 0) {
 			$totalsize += $file['size'];
 		}
 
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			$langs->load("mails");
 		}
 

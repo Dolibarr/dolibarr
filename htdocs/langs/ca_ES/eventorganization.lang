@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Conferència o estand
 AmountPaid = Quantitat pagada
 DateOfRegistration = Data de registre
 ConferenceOrBoothAttendee = Assistent a conferències o estands
+ApplicantOrVisitor=Sol·licitant o visitant
+Speaker=Conferenciant
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=El vostre pagament pel registr
 OrganizationEventBulkMailToAttendees=Aquest és un recordatori de la vostra participació a l'esdeveniment com a assistent
 OrganizationEventBulkMailToSpeakers=Aquest és un recordatori de la vostra participació a l’esdeveniment com a ponent
 OrganizationEventLinkToThirdParty=Enllaç a tercers (client, proveïdor o soci)
+OrganizationEvenLabelName=Nom públic de la conferència o estand
 
 NewSuggestionOfBooth=Sol·licitud d'estand
 NewSuggestionOfConference=Sol·licitud per a una conferència
@@ -163,7 +166,7 @@ DeleteConferenceOrBoothAttendee=Elimina l'assistent
 RegistrationAndPaymentWereAlreadyRecorder=Ja es va registrar un registre i un pagament per al correu electrònic <b> %s </b>
 EmailAttendee=Correu electrònic de l'assistent
 EmailCompanyForInvoice=Correu electrònic de l'empresa (per a la factura, si és diferent del correu electrònic dels assistents)
-ErrorSeveralCompaniesWithEmailContactUs=S'han trobat diverses empreses amb aquest correu electrònic, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per obtenir una validació manual
-ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom per la qual cosa no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per obtenir una validació manual
+ErrorSeveralCompaniesWithEmailContactUs=S'han trobat diverses empreses amb aquest correu electrònic, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a una validació manual
+ErrorSeveralCompaniesWithNameContactUs=S'han trobat diverses empreses amb aquest nom, de manera que no podem validar automàticament el vostre registre. Si us plau, poseu-vos en contacte amb nosaltres a %s per a obtenir una validació manual
 NoPublicActionsAllowedForThisEvent=No hi ha cap acció pública oberta al públic per a aquest esdeveniment
-MaxNbOfAttendees=Max number of attendees
+MaxNbOfAttendees=Nombre màxim d'assistents

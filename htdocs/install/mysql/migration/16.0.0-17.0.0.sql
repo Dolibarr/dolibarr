@@ -34,6 +34,8 @@
 
 -- Missing in v16 or lower
 
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
+
 ALTER TABLE llx_c_action_trigger MODIFY elementtype VARCHAR(64);
 
 ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
@@ -42,10 +44,9 @@ ALTER TABLE llx_c_email_templates ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN email_tobcc varchar(255);
 ALTER TABLE llx_c_email_templates ADD COLUMN content_lines text;
+ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
-
-ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
 
 ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
@@ -54,12 +55,12 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
-ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
 
-ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
+ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
 
--- Allow users to make subscriptions of any amount during membership subscription
 ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
+
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
@@ -67,21 +68,47 @@ ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
+ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN acces_type integer DEFAULT 0;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN oauth_service varchar(128) DEFAULT NULL;
+
 
 ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_product (fk_product);
 
-ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
-ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
-
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
 
-ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
 
--- Make sell-by or eat-by date mandatory
+ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
+
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
+  -- Make sell-by or eat-by date mandatory
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
+
+ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_cronjob ADD COLUMN pid integer;
+
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-VICTORYDAY',  0, 2, '', 0,  5,  8, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-NATIONALDAY', 0, 2, '', 0,  7, 21, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASSOMPTION',  0, 2, '', 0,  8, 15, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-TOUSSAINT',   0, 2, '', 0, 11,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ARMISTICE',   0, 2, '', 0, 11, 11, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-EASTER',      0, 2, 'eastermonday', 0, 0, 0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASCENSION',   0, 2, 'ascension', 0, 0, 0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   0, 2, 'pentecost', 0, 0, 0, 1);
 
 ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
