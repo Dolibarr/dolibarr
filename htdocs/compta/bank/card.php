@@ -234,7 +234,7 @@ if (empty($reshook)) {
 		$object->number = trim(GETPOST("number"));
 		$object->cle_rib = trim(GETPOST("cle_rib"));
 		$object->bic = trim(GETPOST("bic"));
-		$object->iban = trim(GETPOST("iban"));('paymentbybankt
+		$object->iban = trim(GETPOST("iban"));
 		$object->domiciliation = trim(GETPOST("domiciliation", "alphanohtml"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
