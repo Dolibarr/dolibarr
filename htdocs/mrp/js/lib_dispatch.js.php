@@ -102,6 +102,7 @@ function addDispatchLine(index, type, mode)
 				if(qtymax === 'undefined') qtymax = 1;
 		}
 	}
+	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
 
 
 	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {

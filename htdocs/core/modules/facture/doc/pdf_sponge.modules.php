@@ -1271,6 +1271,16 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posxval, $posy);
 				$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+
+				//#21654: add account number used for the debit
+				if ($object->mode_reglement_code == "PRE") {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+					$bac = new CompanyBankAccount($this->db);
+					$bac->fetch(0, $object->thirdparty->id);
+					$iban= $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+					$lib_mode_reg .= $langs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
+				}
+
 				$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
 
 				$posy = $pdf->GetY();
@@ -1290,6 +1300,7 @@ class pdf_sponge extends ModelePDFFactures
 						$useonlinepayment++;
 					}
 				}
+
 
 				if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';

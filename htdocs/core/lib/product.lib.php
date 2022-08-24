@@ -118,6 +118,8 @@ function product_prepare_head($object)
 		}
 	}
 
+
+
 	// Tab to link resources
 	if (!empty($conf->resource->enabled)) {
 		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {

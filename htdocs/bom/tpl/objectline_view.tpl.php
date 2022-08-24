@@ -34,11 +34,16 @@
  * $type, $text, $description, $line
  */
 
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+global $filtertype;
+if (empty($filtertype))	$filtertype = 0;
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -60,7 +65,7 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-$domData  = ' data-element="'.$line->element.'"';
+$domData  = ' data-element="'.$line->element.'service"';
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
@@ -100,29 +105,54 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-	print '<td class="linecoluseunit nowrap left">';
-	$label = $tmpproduct->getLabelOfUnit('long');
-	if ($label !== '') {
-		print $langs->trans($label);
+if ($filtertype != 1) {
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		print '<td class="linecoluseunit nowrap left">';
+		$label = $tmpproduct->getLabelOfUnit('long');
+		if ($label !== '') {
+			print $langs->trans($label);
+		}
+		print '</td>';
 	}
+
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 	print '</td>';
+	print '<td class="linecoldisablestockchange nowrap right">';
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print '</td>';
+
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+} else {
+	//Unité
+	print '<td class="linecolunit nowrap right">';
+	$coldisplay++;
+
+	if (!empty($line->fk_unit)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$unit = new CUnits($this->db);
+		$unit->fetch($line->fk_unit);
+		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+	}
+
+	print '</td>';
+
+	//Poste de travail
+	if ($conf->workstation->enabled) {
+		$workstation = new Workstation($object->db);
+		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+
+		print '<td class="linecolunit nowrap right">';
+		$coldisplay++;
+		if ($res > 0) echo $workstation->getNomUrl();
+		print '</td>';
+	}
 }
-
-print '<td class="linecolqtyfrozen nowrap right">';
-$coldisplay++;
-echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-print '</td>';
-print '<td class="linecoldisablestockchange nowrap right">';
-$coldisplay++;
-echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
-print '</td>';
-
-print '<td class="linecolefficiency nowrap right">';
-$coldisplay++;
-echo $line->efficiency;
-print '</td>';
-
 $total_cost = 0;
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;

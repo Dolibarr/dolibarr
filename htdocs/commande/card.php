@@ -241,6 +241,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classin' && $usercancreate) {
+
 		// Link to a project
 		$object->setProject(GETPOST('projectid', 'int'));
 	} elseif ($action == 'add' && $usercancreate) {

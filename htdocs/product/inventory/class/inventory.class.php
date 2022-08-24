@@ -295,7 +295,7 @@ class Inventory extends CommonObject
 				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
+				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
 			if (!empty($this->categories_product)) {
 				$sql .= " AND EXISTS (";

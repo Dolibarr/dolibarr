@@ -23,6 +23,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -398,6 +400,58 @@ class BOM extends CommonObject
 		$result = $this->fetchLinesCommon();
 		return $result;
 	}
+
+	/**
+	 * Load object lines in memory from the database by type of product
+	 *
+	 * 	@param int    $typeproduct   0 type product, 1 type service
+
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLinesbytypeproduct($typeproduct = 0)
+	{
+		$this->lines = array();
+
+		$objectlineclassname = get_class($this).'Line';
+		if (!class_exists($objectlineclassname)) {
+			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
+			return -1;
+		}
+
+		$objectline = new $objectlineclassname($this->db);
+
+		$sql = "SELECT ".$objectline->getFieldList('l');
+		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
+		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
+		if (isset($objectline->fields['position'])) {
+			$sql .= $this->db->order('position', 'ASC');
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num_rows = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_rows) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[] = $newline;
+				}
+				$i++;
+			}
+
+			return $num_rows;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -1260,6 +1314,8 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
+		global $conf;
+
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
@@ -1272,38 +1328,62 @@ class BOM extends CommonObject
 			foreach ($this->lines as &$line) {
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
+				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
-				if (empty($line->fk_bom_child)) {
-					$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-					if ($result < 0) {
-						$this->error = $tmpproduct->error;
-						return -1;
-					}
-					$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-					if (empty($line->unit_cost)) {
-						if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-							$line->unit_cost = $productFournisseur->fourn_unitprice;
+				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+					if (empty($line->fk_bom_child)) {
+						if ($result < 0) {
+							$this->error = $tmpproduct->error;
+							return -1;
+						}
+						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($line->unit_cost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+								$line->unit_cost = $productFournisseur->fourn_unitprice;
+							}
+						}
+
+						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+						$this->total_cost += $line->total_cost;
+					} else {
+						$bom_child = new BOM($this->db);
+						$res = $bom_child->fetch($line->fk_bom_child);
+						if ($res > 0) {
+							$bom_child->calculateCosts();
+							$line->childBom[] = $bom_child;
+							$this->total_cost += $bom_child->total_cost * $line->qty;
+						} else {
+							$this->error = $bom_child->error;
+							return -2;
 						}
 					}
+				} else {
+					//Convert qty to hour
+					$unit = measuringUnitString($line->fk_unit, '', '', 1);
+					$qty = convertDurationtoHour($line->qty, $unit);
 
-					$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+					if ($conf->workstation->enabled) {
+						if ($tmpproduct->fk_default_workstation) {
+							$workstation = new Workstation($this->db);
+							$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+
+							if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+							else {
+								$this->error = $workstation->error;
+								return -3;
+							}
+						}
+					} else {
+						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
+					}
 
 					$this->total_cost += $line->total_cost;
-				} else {
-					$bom_child= new BOM($this->db);
-					$res = $bom_child->fetch($line->fk_bom_child);
-					if ($res>0) {
-						$bom_child->calculateCosts();
-						$line->childBom[] = $bom_child;
-						$this->total_cost += $bom_child->total_cost  * $line->qty;
-					} else {
-						$this->error = $bom_child->error;
-						return -2;
-					}
 				}
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
+
 			if ($this->qty > 0) {
 				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
 			} elseif ($this->qty < 0) {
@@ -1446,6 +1526,7 @@ class BOMLine extends CommonObjectLine
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
