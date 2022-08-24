@@ -145,7 +145,7 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
+		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
 		$this->const[$r][3] = "Mot de passe Admin des liste mailman";

@@ -255,6 +255,8 @@ class Conf
 		);
 
 		if (!is_null($db) && is_object($db)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
@@ -278,8 +280,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
-						$this->global->$key = $value;
+						$this->global->$key = dolDecrypt($value);
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();

@@ -55,6 +55,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
+
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
 
 ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
