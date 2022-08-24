@@ -158,24 +158,24 @@ if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && empty($conf->global->LDAP_USER
 print '</td></tr>';
 
 // Synchro contact active
-if (!empty($conf->societe->enabled)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
+if (isModEnabled('societe')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnContactActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_CONTACT_ACTIVE'), 'activecontact', array(Ldap::SYNCHRO_LDAP_TO_DOLIBARR));
-	print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnContactActiveExample").'</span></td></tr>';
+	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnContactActiveExample") . '</span></td></tr>';
 }
 
 // Synchro member active
-if (!empty($conf->adherent->enabled)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberActive").'</td><td>';
+if (isModEnabled('adherent')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_ACTIVE'), 'activemembers', array(), 2);
-	print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnMemberActiveExample").'</span></td></tr>';
+	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberActiveExample") . '</span></td></tr>';
 }
 
 // Synchro member type active
-if (!empty($conf->adherent->enabled)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnMemberTypeActive").'</td><td>';
+if (isModEnabled('adherent')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnMemberTypeActive") . '</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE'), 'activememberstypes', array(), 2);
-	print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnMemberTypeActiveExample").'</span></td></tr>';
+	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnMemberTypeActiveExample") . '</span></td></tr>';
 }
 
 // Fields from hook
