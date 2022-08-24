@@ -48,11 +48,17 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
-			$TRes[$obj->batch] += $obj->qty;
+			if(empty($TRes[$obj->batch])){
+				$TRes[$obj->batch]  = $obj->qty;
+			} else {
+				$TRes[$obj->batch] += $obj->qty;
+			}
 		}
 	}
 
-	print json_encode($TRes);
+	echo json_encode($TRes);
+	exit();
+
 } elseif ($action == 'updateselectwarehousebybatch' && $permissiontoproduce) {
 	$res = 0;
 
@@ -73,5 +79,7 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontoproduce) {
 		}
 	}
 
-	print json_encode($res);
+	echo json_encode($res);
+	exit();
+
 }
