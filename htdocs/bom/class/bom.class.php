@@ -569,7 +569,7 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null)
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit='')
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -637,6 +637,7 @@ class BOM extends CommonObject
 			$this->line->fk_bom_child = $fk_bom_child;
 			$this->line->import_key = $import_key;
 			$this->line->position = $rankToUse;
+			$this->line->fk_unit = $fk_unit;
 
 			$result = $this->line->create($user);
 
@@ -668,7 +669,7 @@ class BOM extends CommonObject
 	 * @param	string	$import_key				Import Key
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -738,6 +739,7 @@ class BOM extends CommonObject
 			$this->line->efficiency = $efficiency;
 			$this->line->import_key = $import_key;
 			$this->line->position = $rankToUse;
+			$this->line->fk_unit = $fk_unit;
 
 			$result = $this->line->update($user);
 
