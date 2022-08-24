@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-BillsCustomersUnpaid=Offene Kundenrechnungen
 BillsCustomersUnpaidForCompany=Unbezahlte Rechnungen von %s
 BillsSuppliersUnpaid=Unbezahlte Lieferantenrechnungen
 BillsSuppliersUnpaidForCompany=Unbezahlte Rechnungen für %s
@@ -118,7 +117,6 @@ DiscountFromExcessReceived=Überschuss zum Rechnungsbetrag %s
 DiscountFromExcessPaid=Überschuss zum Rechnungsbetrag %s
 AbsoluteDiscountUse=Diese Art von Krediten verwendet werden kann auf der Rechnung vor der Validierung
 NewGlobalDiscount=Neue Rabattregel
-NewRelativeDiscount=Neuer relativer Rabatt
 DiscountType=Rabattart
 DiscountStillRemaining=Verfügbare Rabatte und Gutschriften
 DiscountAlreadyCounted=Aufgebrauchte Rabatte und Gutschriften

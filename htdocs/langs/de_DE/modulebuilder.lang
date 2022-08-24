@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - loan
-IdModule= Modul-ID
 ModuleBuilderDesc=Dieses Tool ist für erfahrene Nutzer und Entwickler gedacht. Es stellt Werkzeuge zum Erstellen und bearbeiten von eigenen Modulen zur Verfügung. Eine Dokumentation für eine alternative <a href="%s" target="_blank" rel="noopener noreferrer">manuelle Entwicklung (von Modulen) findet sich hier</a>.
 EnterNameOfModuleDesc=Geben Sie den Namen des zu erstellenden Moduls / der Anwendung ohne Leerzeichen ein. Verwenden Sie Großbuchstaben, um Wörter zu trennen (Beispiel: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Geben Sie den Namen des zu erstellenden Objekts ohne Leerzeichen ein. Verwenden Sie Großbuchstaben, um Wörter zu trennen (z. B.: MyObject, Student, Teacher...). Die CRUD-Klassendatei, aber auch die API-Datei, Seiten zum Auflisten/Hinzufügen/Bearbeiten/Löschen von Objekten und SQL-Dateien werden generiert.
@@ -10,7 +9,6 @@ ModuleBuilderDesc4=Ein Modul wird als 'editierbar' erkannt, wenn die Datei <stro
 NewModule=Neues Modul
 NewObjectInModulebuilder=Neues Objekt
 NewDictionary=Neues Wörterbuch (dictionary)
-ModuleName=Modulname
 ModuleKey=Modul Schlüssel
 ObjectKey=Objekt Schlüssel
 DicKey=Wörterbuchschlüssel (dictionary key)
@@ -79,7 +77,7 @@ SqlFileKey=SQL Datei für Schlüsselwerte
 SqlFileKeyExtraFields=SQL-Datei für die Schlüssel der Extrafields
 AnObjectAlreadyExistWithThisNameAndDiffCase=Es existiert bereits ein Objekt mit diesem Namen und einer anderen Groß-/Kleinschreibung
 UseAsciiDocFormat=Sie können das Markdown-Format verwenden, empfohlen wird jedoch, das Asciidoc-Format zu verwenden (Vergleich zwischen .md und .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
-IsAMeasure=Ist eine Maßnahme
+IsAMeasure=Ist ein Maß (addierbar)
 DirScanned=Verzeichnis gescannt
 NoTrigger=Kein Trigger
 NoWidget=Kein Widget 

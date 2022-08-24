@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
- * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -594,6 +595,7 @@ print '</form>'."\n";
 
 print dol_get_fiche_end();
 
+$param = '';
 if (!empty($date_start) && !empty($date_stop)) {
 	$param .= '&date_startday='.GETPOST('date_startday', 'int');
 	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int');

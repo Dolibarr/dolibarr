@@ -77,7 +77,7 @@ if ($action == 'setconst' && $user->admin) {
 		$constnote = dol_escape_htmltag($setupconst['note']);
 
 		$result = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			$error++;
 		}
 	}
@@ -96,7 +96,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 
@@ -217,7 +217,6 @@ if ($mode == 'setup' && $user->admin) {
 		// Show value of token
 		$tokenobj = null;
 		// Token
-		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 		// Dolibarr storage
 		$storage = new DoliStorage($db, $conf);

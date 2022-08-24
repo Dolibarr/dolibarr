@@ -63,7 +63,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
 	$sub = "DATAPOLICIESREFUSE_".$l;
 	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		$error++;
 	}
 	if (!$error) {

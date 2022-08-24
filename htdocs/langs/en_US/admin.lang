@@ -1977,6 +1977,7 @@ MailToSendSupplierOrder=Purchase orders
 MailToSendSupplierInvoice=Vendor invoices
 MailToSendContract=Contracts
 MailToSendReception=Receptions
+MailToExpenseReport=Expense reports
 MailToThirdparty=Third parties
 MailToMember=Members
 MailToUser=Users

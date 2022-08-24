@@ -120,7 +120,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
-			if (!$result > 0) {
+			if (!($result > 0)) {
 				$error++;
 			}
 		}

@@ -85,7 +85,7 @@ if (!$sortfield) {
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}

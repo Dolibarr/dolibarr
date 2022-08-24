@@ -24,7 +24,7 @@ FinancialCommitment=நிதி அர்ப்பணிப்பு
 InterestAmount=ஆர்வம்
 CapitalRemain=மூலதனம் உள்ளது
 TermPaidAllreadyPaid = இந்த காலம் ஏற்கனவே செலுத்தப்பட்டது
-CantUseScheduleWithLoanStartedToPaid = பணம் செலுத்தத் தொடங்கியவுடன் கடனுக்காக திட்டமிடலைப் பயன்படுத்த முடியாது
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = நீங்கள் அட்டவணையைப் பயன்படுத்தினால் ஆர்வத்தை மாற்ற முடியாது
 # Admin
 ConfigLoan=தொகுதி கடன் கட்டமைப்பு

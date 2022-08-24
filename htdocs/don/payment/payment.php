@@ -111,7 +111,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!$result > 0) {
+				if (!($result > 0)) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
 					$error++;

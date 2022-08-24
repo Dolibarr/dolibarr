@@ -24,7 +24,7 @@ FinancialCommitment=Finanšu saistības
 InterestAmount=Interese
 CapitalRemain=Kapitāls paliek
 TermPaidAllreadyPaid = Šis termiņš jau ir samaksāts
-CantUseScheduleWithLoanStartedToPaid = Nevar izmantot plānotāju aizdevumam ar sāktu maksājumu
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Jūs nevarat mainīt interesi, ja izmantojat grafiku
 # Admin
 ConfigLoan=Configuration of the module loan

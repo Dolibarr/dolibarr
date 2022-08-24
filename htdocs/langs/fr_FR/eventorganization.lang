@@ -32,12 +32,13 @@ PaymentEvent=Paiement de l'événement
 # Admin page
 #
 NewRegistration=Inscription
-EventOrganizationSetup=Configuration de l’organisation de l’événement
+EventOrganizationSetup=Configuration de l’Organisation d’événements
 EventOrganization=Organisation d'événements
 Settings=Paramètres
-EventOrganizationSetupPage = Page de configuration de l’organisation de l’événement
+EventOrganizationSetupPage = Page de configuration de l’Organisation d’événements
 EVENTORGANIZATION_TASK_LABEL = Libellé des tâches à créer automatiquement lors de la validation du projet
-EVENTORGANIZATION_TASK_LABELTooltip = Lorsque vous validez un événement organisé, certaines tâches peuvent être automatiquement créées dans le projet<br><br>Par exemple : <br>Envoyer un appel de conférence<br>Envoyer un appel pour le stand<br>Recevoir un appel de conférences<br>Recevoir un appel de stand<br>Ouvrir les inscriptions aux événements pour les participants<br>Envoyer un rappel de l’événement aux conférenciers<br>Envoyer un rappel de l’événement à l’animateur du stand<br>Envoyer un rappel de l’événement aux participants
+EVENTORGANIZATION_TASK_LABELTooltip = Lorsque vous validez un événement à organiser, certaines tâches peuvent être créées automatiquement dans le projet <br><br> Par exemple: <br> Envoyer Appel à conférences <br> Envoyer Appel à Kiosques <br> Valider les suggestions des conférences <br> Valider les demandes de stand <br> Ouvrir les inscriptions aux participants <br> Envoyer un rappel de l'événement aux conférenciers <br> Envoyer un rappel de l'événement aux hôtes de stands<br> Envoyer un rappel de l'événement aux participants
+EVENTORGANIZATION_TASK_LABELTooltip2=Laissez vide si vous n'avez pas besoin de créer des tâches automatiquement.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Catégorie à ajouter à des tiers automatiquement créée lorsque quelqu’un suggère une conférence
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Catégorie à ajouter à des tiers automatiquement créée lorsque quelqu’un suggère un stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modèle de courriel à envoyer après avoir reçu une suggestion de conférence.
@@ -59,6 +60,8 @@ ConferenceOrBoothTab = Conférence ou stand
 AmountPaid = Montant payé
 DateOfRegistration = Date d'inscription
 ConferenceOrBoothAttendee = Participant à la conférence ou au stand
+ApplicantOrVisitor=Demandeur ou visiteur
+Speaker=Conférencier
 
 #
 # Template Mail
@@ -138,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Le règlement de votre partici
 OrganizationEventBulkMailToAttendees=Ceci est une rappel de votre participation à l'événement en tant que participant
 OrganizationEventBulkMailToSpeakers=Ceci est un rappel de votre participation à l'événement en tant que conférencier
 OrganizationEventLinkToThirdParty=Lier à un tiers (client, fournisseur ou partenaire)
+OrganizationEvenLabelName=Nom public de la conférence ou du stand
 
 NewSuggestionOfBooth=Proposition de stand
 NewSuggestionOfConference=Candidature à une conférence
@@ -165,3 +169,4 @@ EmailCompanyForInvoice=E-mail de la société pour la facturation (si différent
 ErrorSeveralCompaniesWithEmailContactUs=Plusieurs entreprises avec cet email ont été trouvées donc nous ne pouvons pas valider automatiquement votre inscription. Veuillez nous contacter à %s pour une validation manuelle
 ErrorSeveralCompaniesWithNameContactUs=Plusieurs sociétés portant ce nom ont été trouvées, nous ne pouvons donc pas valider automatiquement votre inscription. Veuillez nous contacter à %s pour une validation manuelle
 NoPublicActionsAllowedForThisEvent=Aucune action publique n'est ouverte au public pour cet événement
+MaxNbOfAttendees=Nombre maximum de participants

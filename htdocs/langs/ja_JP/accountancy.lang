@@ -48,9 +48,8 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除く全国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=このツールを使用すると、アカウンティを生成するために使用されるソースイベントを検索およびエクスポートできる。 <br>エクスポートされたZIPファイルには、CSVで要求されたアイテムのリストと、元の形式（PDF、ODT、DOCX ...）の添付ファイルが含まれる。
+ExportAccountingSourceDocHelp=このツールで、会計処理を生成するために使用されるソースイベント（CSVおよびPDFのリスト）をエクスポートできる。
 ExportAccountingSourceDocHelp2=仕訳日記帳をエクスポートするには、メニューエントリ%s --%sを使用。
-ExportAccountingProjectHelp=特定のプロジェクトについてのみアカウンティングレポートが必要な場合は、プロジェクトを指定する。経費報告書とローン支払いはプロジェクト報告書に含まれていない。
 VueByAccountAccounting=勘定科目順に表示
 VueBySubAccountAccounting=会計補助勘定科目で表示
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=経費報告行の種別で勘定科目を設定す�
 DescVentilDoneExpenseReport=経費報告書sの行とその手数料勘定科目のリストをここで参照すること
 
 Closure=年次閉鎖
-DescClosure=まだ検証およびロックされていない月ごとの動きの数をここで参照すること
+DescClosure=まだ検証されておらずロックされていない月ごとの動きの数はこちらを参照すること
 OverviewOfMovementsNotValidated=検証およびロックされていない動きの概要
 AllMovementsWereRecordedAsValidated=全動きは検証され、ロックされたものとして記録された
 NotAllMovementsCouldBeRecordedAsValidated=全動きを検証済みおよびロック済みとして記録できるわけではない
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書sの会計におけ�
 
 ## Export
 NotifiedExportDate=エクスポートされた行にエクスポート済みのフラグを付ける<span class="warning">（行を変更するには、トランザクション全体を削除して、会計に再転送する必要がある）</span>
-NotifiedValidationDate=エクスポートされたエントリ<span class="warning">を検証してロックする（「%s」機能と同じ効果、行の変更と削除は絶対に不可）</span>
+NotifiedValidationDate=エクスポートされたエントリの検証とロック<span class="warning">（「閉鎖」機能と同じ効果、行の変更と削除は完全に不可能 ）</span>
 DateValidationAndLock=日付の検証とロック
 ConfirmExportFile=会計エクスポートファイルの生成を確定するか？
 ExportDraftJournal=下書き仕訳帳のエクスポート
