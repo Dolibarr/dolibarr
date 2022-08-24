@@ -311,7 +311,12 @@ class EmailCollector extends CommonObject
 			return -1;
 		}
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$this->password = dolEncrypt($this->password);
+
 		$id = $this->createCommon($user, $notrigger);
+
+		$this->password = dolDecrypt($this->password);
 
 		if (is_array($this->filters) && count($this->filters)) {
 			$emailcollectorfilter = new EmailCollectorFilter($this->db);
@@ -371,6 +376,7 @@ class EmailCollector extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+		unset($object->password);
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
@@ -422,6 +428,10 @@ class EmailCollector extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$this->password = dolDecrypt($this->password);
+
 		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
@@ -517,7 +527,14 @@ class EmailCollector extends CommonObject
 			return -1;
 		}
 
-		return $this->updateCommon($user, $notrigger);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$this->password = dolEncrypt($this->password);
+
+		$result = $this->updateCommon($user, $notrigger);
+
+		$this->password = dolDecrypt($this->password);
+
+		return $result;
 	}
 
 	/**
