@@ -625,9 +625,9 @@ if ($step == 3 && $datatoimport) {
 	print '<div class="marginbottomonly">';
 	$maxfilesizearray = getMaxFileSizeArray();
 	$maxmin = $maxfilesizearray['maxmin'];
-	//if ($maxmin > 0) {
-	//	$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-	//}
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
 	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
