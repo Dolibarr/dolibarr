@@ -101,3 +101,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
+
+ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
+ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
+ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
