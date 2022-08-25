@@ -2305,4 +2305,4 @@ MAIN_MAIL_SMTPS_AUTH_TYPE=Authentification method
 UsePassword=Use a password
 UseOauth=Use a OAUTH token
 Images=Images
-MaxNumberOfImagesInGetPost=Max number of images allowed in GETPOST check
+MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
