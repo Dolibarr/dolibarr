@@ -55,6 +55,14 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
+
+ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
+ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
+
+UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
+
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
 
 ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
@@ -109,3 +117,11 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-EASTER',      0, 2, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASCENSION',   0, 2, 'ascension', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   0, 2, 'pentecost', 0, 0, 0, 1);
+
+ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
+ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
+ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
+
+ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
+ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
+ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;

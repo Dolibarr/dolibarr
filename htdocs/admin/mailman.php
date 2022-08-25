@@ -158,7 +158,7 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
 	$link .= '</a>';
 	// Edition des varibales globales
 	$constantes = array(
-		'ADHERENT_MAILMAN_ADMINPW',
+		'ADHERENT_MAILMAN_ADMIN_PASSWORD',
 		'ADHERENT_MAILMAN_URL',
 		'ADHERENT_MAILMAN_UNSUB_URL',
 		'ADHERENT_MAILMAN_LISTS'

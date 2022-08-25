@@ -185,7 +185,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
+		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("banque")) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}

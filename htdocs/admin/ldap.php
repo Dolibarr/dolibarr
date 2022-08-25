@@ -159,7 +159,7 @@ print '</td></tr>';
 
 // Synchro contact active
 if (isModEnabled('societe')) {
-	print '<tr class="oddeven"><td>' . $langs->trans("LDAPDnContactActive") . '</td><td>';
+	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_CONTACT_ACTIVE'), 'activecontact', array(Ldap::SYNCHRO_LDAP_TO_DOLIBARR));
 	print '</td><td><span class="opacitymedium">' . $langs->trans("LDAPDnContactActiveExample") . '</span></td></tr>';
 }

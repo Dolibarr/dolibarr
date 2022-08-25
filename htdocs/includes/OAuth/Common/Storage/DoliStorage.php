@@ -104,7 +104,9 @@ class DoliStorage implements TokenStorageInterface
 		//var_dump($token);
 		dol_syslog("storeAccessToken service=".$service);
 
-		$serializedToken = serialize($token);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$serializedToken = dolEncrypt(serialize($token));
+
 		$this->tokens[$service] = $token;
 
 		if (!is_array($this->tokens)) {
@@ -155,7 +157,8 @@ class DoliStorage implements TokenStorageInterface
 		}
 		$result = $this->db->fetch_array($resql);
 		if ($result) {
-			$token = unserialize($result['token']);
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$token = unserialize(dolDecrypt($result['token']));
 			$this->date_creation = $this->db->jdate($result['datec']);
 			$this->date_modification = $this->db->jdate($result['tms']);
 			$this->state = $result['state'];

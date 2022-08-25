@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -255,16 +256,18 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
+		$value = dolDecrypt($obj->value);
+
 		print "\n";
 
-		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($value).'">';
 		print '</td>';
 
 		// Note
@@ -280,12 +283,12 @@ if ($result) {
 		// Entity limit to superadmin
 		if (isModEnabled('multicompany') && !$user->entity) {
 			print '<td>';
-			print '<input type="text" class="flat" size="1" name="const[' . $i . '][entity]" value="' . $obj->entity . '">';
+			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
 			print '<td class="center">';
 		} else {
 			print '<td class="center">';
-			print '<input type="hidden" name="const[' . $i . '][entity]" value="' . $obj->entity . '">';
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
 		if ($conf->use_javascript_ajax) {

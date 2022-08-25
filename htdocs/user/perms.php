@@ -353,7 +353,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;
@@ -420,7 +420,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;
