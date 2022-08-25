@@ -75,11 +75,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-
 $form = new Form($db);
-
-llxHeader("", "ClickToDial");
-
 
 if ($id > 0) {
 	$object = new User($db);
@@ -87,6 +83,10 @@ if ($id > 0) {
 	$object->getrights();
 	$object->fetch_clicktodial();
 
+	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+	$title = $person_name." - ".$langs->trans('ClickToDial');
+	$help_url = '';
+	llxHeader('', $title, $help_url);
 
 	$head = user_prepare_head($object);
 

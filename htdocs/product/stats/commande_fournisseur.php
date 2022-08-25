@@ -150,7 +150,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
-			$sql .= " AND c.entity = ".$conf->entity;
+			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {

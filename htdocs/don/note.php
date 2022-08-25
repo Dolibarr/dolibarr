@@ -35,7 +35,7 @@ if (!empty($conf->project->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "donations"));
+$langs->loadLangs(array('companies', 'bills', 'donations'));
 
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
@@ -60,6 +60,7 @@ $permissionnote = $user->rights->don->creer; // Used by the include of actions_s
 /*
  * Actions
  */
+
 $reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -72,6 +73,7 @@ if ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
+
 
 /*
  * View

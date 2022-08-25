@@ -47,6 +47,13 @@ if (GETPOSTISSET('status')) {
 	die(strtoupper($_SESSION['SMP_CURRENT_PAYMENT']));
 }
 
+
+/*
+ * View
+ */
+
+top_httphead('text/html', 1);
+
 if (GETPOST('smp-status')) {
 	print '<html lang="en">';
 	print '<head>';

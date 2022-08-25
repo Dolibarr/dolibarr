@@ -185,13 +185,13 @@ if (!empty($conf->adherent->enabled) && !empty($user->rights->adherent->lire)) {
 if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
-if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
+if (isModEnabled("societe") && !empty($user->rights->societe->lire)) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
 if (!empty($conf->project->enabled)) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
-if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {
+if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
 if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
@@ -200,10 +200,10 @@ if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
 if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
-if (!empty($conf->reception->enabled)) {
+if (isModEnabled("reception")) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
 if (!empty($conf->ficheinter->enabled)) {
@@ -212,10 +212,10 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	$elementList['supplier_proposal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierRequestForQuotation'));
 }
-if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->commande->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire))) {
+if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->commande->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire))) {
 	$elementList['order_supplier_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierOrder'));
 }
-if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
+if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
 if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {

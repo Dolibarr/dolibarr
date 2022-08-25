@@ -311,10 +311,10 @@ ExternalSiteURL=External Site URL of HTML iframe content
 ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
 ExampleMyMenuEntry=My menu entry
 
-# FTP
+# ftp
 FTPClientSetup=FTP or SFTP Client module setup
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
+NewFTPClient=New FTP/SFTP connection setup
+FTPArea=FTP/SFTP Area
 FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
 SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
 FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
@@ -325,3 +325,9 @@ FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and
 FTPPassiveMode=Passive mode
 ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
 FailedToGetFile=Failed to get files %s
+ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
+FileWasUpload=File <b>%s</b> was uploaded
+FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
+AddFolder=Create folder
+FileWasCreateFolder=Folder <b>%s</b> has been created
+FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.

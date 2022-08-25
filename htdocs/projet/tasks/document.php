@@ -119,10 +119,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
-
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Task'));
+$title = $object->ref . ' - ' . $langs->trans("Documents");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$projectstatic->fetch_thirdparty();

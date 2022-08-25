@@ -60,9 +60,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 $userstatic = new User($db);
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 

@@ -120,7 +120,7 @@ if ($this->control->tpl['fournisseur']) {
 	}
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>

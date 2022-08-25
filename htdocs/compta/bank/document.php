@@ -93,8 +93,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
-
+$title = $object->ref.' - '.$langs->trans("Documents");
 $help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
 
 llxHeader("", $title, $help_url);

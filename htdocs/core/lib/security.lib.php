@@ -92,7 +92,109 @@ function dol_decode($chain, $key = '1')
 }
 
 /**
- * 	Returns a hash of a string.
+ * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ *
+ * @param 	int			$length		Length of random string
+ * @return	string					Random string
+ */
+function dolGetRandomBytes($length)
+{
+	if (function_exists('random_bytes')) {	// Available with PHP 7 only.
+		return bin2hex(random_bytes((int) floor($length / 2)));	// the bin2hex will double the number of bytes so we take length / 2
+	}
+
+	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
+}
+
+/**
+ *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
+ *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *
+ *	@param   string		$chain		string to encode
+ *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *  @param	 string		$ciphering	Default ciphering algorithm
+ *	@return  string					encoded string
+ *  @see dolDecrypt(), dol_hash()
+ */
+function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
+{
+	global $dolibarr_main_instance_unique_id;
+
+	if ($chain === '') {
+		return '';
+	}
+
+	$reg = array();
+	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		// The $chain is already a crypted string
+		return $chain;
+	}
+
+	if (empty($key)) {
+		$key = $dolibarr_main_instance_unique_id;
+	}
+
+	$newchain = $chain;
+
+	if (function_exists('openssl_encrypt')) {
+		$ivlen = 16;
+		if (function_exists('openssl_cipher_iv_length')) {
+			$ivlen = openssl_cipher_iv_length($ciphering);
+		}
+		if ($ivlen === false || $ivlen < 1 || $ivlen > 32) {
+			$ivlen = 16;
+		}
+		$ivseed = dolGetRandomBytes($ivlen);
+
+		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
+	} else {
+		return $chain;
+	}
+}
+
+/**
+ *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
+ *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
+ *
+ *	@param   string		$chain		string to encode
+ *	@param   string		$key		If '', we use $dolibarr_main_instance_unique_id
+ *	@return  string					encoded string
+ *  @see dolEncrypt(), dol_hash()
+ */
+function dolDecrypt($chain, $key = '')
+{
+	global $dolibarr_main_instance_unique_id;
+
+	if ($chain === '') {
+		return '';
+	}
+
+	if (empty($key)) {
+		$key = $dolibarr_main_instance_unique_id;
+	}
+
+	$reg = array();
+	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		$ciphering = $reg[1];
+		if (function_exists('openssl_decrypt')) {
+			$tmpexplode = explode(':', $reg[2]);
+			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+			} else {
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+			}
+		} else {
+			$newchain = 'Error function openssl_decrypt() not available';
+		}
+		return $newchain;
+	} else {
+		return $chain;
+	}
+}
+
+/**
+ * 	Returns a hash (non reversible encryption) of a string.
  *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
@@ -729,7 +831,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -755,7 +857,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -827,7 +929,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {

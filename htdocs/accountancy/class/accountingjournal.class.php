@@ -429,7 +429,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf, $langs;
 
-		if (empty($conf->asset->enabled)) {
+		if (!isModEnabled('asset')) {
 			return array();
 		}
 
@@ -867,7 +867,7 @@ class AccountingJournal extends CommonObject
 								}
 							}
 							//
-							//                          if (!$error_for_line && !empty($conf->asset->enabled) && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
+							//                          if (!$error_for_line && isModEnabled('asset') && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
 							//                              // Set last cumulative depreciation
 							//                              require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 							//                              $asset = new Asset($this->db);

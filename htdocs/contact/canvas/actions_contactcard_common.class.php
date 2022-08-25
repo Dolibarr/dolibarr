@@ -196,7 +196,7 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
 			}
-			if (!empty($conf->propal->enabled)) {
+			if (isModEnabled("propal")) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;

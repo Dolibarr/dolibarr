@@ -799,6 +799,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'MEMBER_EXCLUDE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "members"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
+			}
+			$object->actionmsg = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
+			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROJECT_CREATE') {
 			// Projects
 			// Load translation files required by the page

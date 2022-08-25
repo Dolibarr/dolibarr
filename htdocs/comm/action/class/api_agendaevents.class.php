@@ -129,19 +129,19 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		$sql = "SELECT t.id as rowid";
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 				$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 			}
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('agenda').')';
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
 				$sql .= " AND t.fk_soc = sc.fk_soc";
 			}

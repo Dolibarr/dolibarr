@@ -226,7 +226,7 @@ print '<br><span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->n
 print '</td></tr>';
 
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);

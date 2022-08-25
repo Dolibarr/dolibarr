@@ -41,10 +41,10 @@ if ($action == 'presend') {
 
 	$object->fetch_projet();
 
-	if (!in_array($object->element, array('societe', 'user', 'member'))) {
+	$ref = dol_sanitizeFileName($object->ref);
+	if (!in_array($object->element, array('user', 'member'))) {
 		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
 
-		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// Special case
 		if ($object->element == 'invoice_supplier') {
@@ -82,10 +82,13 @@ if ($action == 'presend') {
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) {
+	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -144,7 +147,8 @@ if ($action == 'presend') {
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid = $trackid;
+	$formmail->trackid = empty($trackid) ? '' : $trackid;
+	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
 
 	// Fill list of recipient with email inside <>.
@@ -194,7 +198,7 @@ if ($action == 'presend') {
 	}
 
 	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
+	$formmail->withtofree = (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1');
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;

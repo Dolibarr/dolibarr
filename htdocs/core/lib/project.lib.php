@@ -124,8 +124,8 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
+	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
+		|| isModEnabled("propal") || !empty($conf->commande->enabled)
 		|| isModEnabled('facture') || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
 		$nbElements = 0;
@@ -138,7 +138,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->stock->enabled)) {
 				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
 			}
-			if (!empty($conf->propal->enabled)) {
+			if (isModEnabled("propal")) {
 				$nbElements += $project->getElementCount('propal', 'propal');
 			}
 			if (!empty($conf->commande->enabled)) {
@@ -153,10 +153,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->supplier_proposal->enabled)) {
 				$nbElements += $project->getElementCount('proposal_supplier', 'supplier_proposal');
 			}
-			if (!empty($conf->supplier_order->enabled)) {
+			if (isModEnabled("supplier_order")) {
 				$nbElements += $project->getElementCount('order_supplier', 'commande_fournisseur');
 			}
-			if (!empty($conf->supplier_invoice->enabled)) {
+			if (isModEnabled("supplier_invoice")) {
 				$nbElements += $project->getElementCount('invoice_supplier', 'facture_fourn');
 			}
 			if (!empty($conf->contrat->enabled)) {
@@ -165,7 +165,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->ficheinter->enabled)) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
-			if (!empty($conf->expedition->enabled)) {
+			if (isModEnabled("expedition")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
 			if (!empty($conf->mrp->enabled)) {
@@ -195,7 +195,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->salaries->enabled)) {
 				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				$nbElements += $project->getElementCount('variouspayment', 'payment_various');
 			}
 			dol_setcache($cachekey, $nbElements, 120);	// If setting cache fails, this is not a problem, so we do not test result.

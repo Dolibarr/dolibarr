@@ -17,6 +17,7 @@
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2022		ButterflyOfFire         <butterflyoffire+dolibarr@protonmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +232,7 @@ class Societe extends CommonObject
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'Fk incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>425),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'Location incoterms', 'enabled'=>1, 'visible'=>-1, 'position'=>430),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>435),
+		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>270),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>440),
 		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>445),
 		'fk_account' =>array('type'=>'integer', 'label'=>'AccountingAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>450),
@@ -1269,7 +1271,6 @@ class Societe extends CommonObject
 		$this->address		= $this->address ?trim($this->address) : trim($this->address);
 		$this->zip = $this->zip ?trim($this->zip) : trim($this->zip);
 		$this->town = $this->town ?trim($this->town) : trim($this->town);
-		$this->setUpperOrLowerCase();
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim($this->phone);
@@ -1278,7 +1279,7 @@ class Societe extends CommonObject
 		$this->fax			= trim($this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
-		$this->email = trim($this->email);
+		$this->email		= trim($this->email);
 		$this->url			= $this->url ?clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -1411,7 +1412,7 @@ class Societe extends CommonObject
 				}
 			}
 		}
-
+		$this->setUpperOrLowerCase();
 		if ($result >= 0) {
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
@@ -1580,6 +1581,7 @@ class Societe extends CommonObject
 							$lmember->phone = $this->phone;
 							$lmember->state_id = $this->state_id;
 							$lmember->country_id = $this->country_id;
+							$lmember->default_lang = $this->default_lang;
 
 							$result = $lmember->update($user, 0, 1, 1, 1); // Use nosync to 1 to avoid cyclic updates
 							if ($result < 0) {
@@ -2806,7 +2808,7 @@ class Societe extends CommonObject
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
-			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $this->fournisseur) {
+			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
 				$s .= '<'.$tag.' class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
 			}
 		}
@@ -3790,6 +3792,20 @@ class Societe extends CommonObject
 			}
 		}
 
+		//Verify NIF if country is DZ
+		//Returns: 1 if NIF ok, -1 if NIF bad, 0 if unexpected bad
+		if ($idprof == 1 && $soc->country_code == 'DZ') {
+			$string = trim($this->idprof1);
+			$string = preg_replace('/(\s)/', '', $string);
+
+			//Check NIF
+			if (preg_match('/(^[0-9]{15}$)/', $string)) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+
 		return $ok;
 	}
 
@@ -3831,6 +3847,9 @@ class Societe extends CommonObject
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
 				$url = 'http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+			}
+			if ($idprof == 1 && $thirdparty->country_code == 'DZ') {
+				$url = 'http://nif.mfdgi.gov.dz/nif.asp?Nif='.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
 				$url = 'http://www.nif.pt/'.$strippedIdProf1;
@@ -4006,12 +4025,25 @@ class Societe extends CommonObject
 		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+		$fullname = $member->getFullName($langs);
 
-		$name = $socname ? $socname : $member->societe;
-		if (empty($name)) {
-			$name = $member->getFullName($langs);
+		if ($member->morphy == 'mor') {
+			if (empty($socname)) {
+				$socname = $member->company? $member->company : $member->societe;
+			}
+			if (!empty($fullname) && empty($socalias)) {
+				$socalias = $fullname;
+			}
+		} elseif (empty($socname) && $member->morphy == 'phy') {
+			if (empty($socname)) {
+				$socname = $fullname;
+			}
+			if (!empty($member->company) && empty($socalias)) {
+				$socalias = $member->company;
+			}
 		}
 
+		$name = $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parametres
