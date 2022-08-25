@@ -39,12 +39,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), "%Y");
+	$month_current = dol_print_date(dol_now(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), "%m");
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -56,7 +56,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOSTISSET("month") ? GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
 		if (!GETPOST('month')) {
 			if (!GETPOST("year") && $month_start > $month_current) {
 				$year_start--;
@@ -65,6 +65,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$month_end = $month_start - 1;
 			if ($month_end < 1) {
 				$month_end = 12;
+			} else {
+				$year_end++;
 			}
 		} else {
 			$month_end = $month_start;
