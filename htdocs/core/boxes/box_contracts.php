@@ -59,7 +59,7 @@ class box_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->contrat->lire);
+		$this->hidden = !($user->hasRight('contrat', 'lire'));
 	}
 
 	/**

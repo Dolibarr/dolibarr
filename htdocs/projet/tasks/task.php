@@ -129,6 +129,28 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 	}
 }
 
+if ($action == 'confirm_clone' && $confirm == 'yes') {
+	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
+	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
+	$clone_time = GETPOST('clone_time') ? 1 : 0;
+	$clone_affectation = GETPOST('clone_affectation') ? 1 : 0;
+	$clone_change_dt = GETPOST('clone_change_dt') ? 1 : 0;
+	$clone_notes = GETPOST('clone_notes') ? 1 : 0;
+	$clone_file = GETPOST('clone_file') ? 1 : 0;
+	$result = $object->createFromClone($user, $object->id, $object->fk_project, $object->fk_task_parent, $clone_change_dt, $clone_affectation, $clone_time, $clone_file, $clone_notes, $clone_prog);
+	if ($result <= 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} else {
+		// Load new object
+		$newobject = new Task($db);
+		$newobject->fetch($result);
+		$newobject->fetch_optionals();
+		$newobject->fetch_thirdparty(); // Load new object
+		$object = $newobject;
+		$action = '';
+	}
+}
+
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer) {
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
@@ -193,12 +215,19 @@ if ($action == 'remove_file' && $user->rights->projet->creer) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref;
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
+
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
@@ -206,7 +235,7 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetchComments();
 	}
 
-	$result = $projectstatic->fetch($object->fk_project);
+
 	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
@@ -379,6 +408,22 @@ if ($id > 0 || !empty($ref)) {
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 	//$arrayofuseridoftask=$object->getListContactId('internal');
+
+	if ($action == 'clone') {
+		$formquestion = array(
+			'text' => $langs->trans("ConfirmClone"),
+			//array('type' => 'checkbox', 'name' => 'clone_contacts', 'label' => $langs->trans("CloneContacts"), 'value' => true),
+			array('type' => 'checkbox', 'name' => 'clone_change_dt', 'label' => $langs->trans("CloneChanges"), 'value' => true),
+			array('type' => 'checkbox', 'name' => 'clone_affectation', 'label' => $langs->trans("CloneAffectation"), 'value' => true),
+			array('type' => 'checkbox', 'name' => 'clone_prog', 'label' => $langs->trans("CloneProgression"), 'value' => true),
+			array('type' => 'checkbox', 'name' => 'clone_time', 'label' => $langs->trans("CloneTimes"), 'value' => true),
+			array('type' => 'checkbox', 'name' => 'clone_file', 'label' => $langs->trans("CloneFile"), 'value' => true),
+
+		);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $langs->trans("ConfirmCloneTask"), "confirm_clone", $formquestion, '', 1, 300, 590);
+	}
+
 
 	$head = task_prepare_head($object);
 
@@ -623,6 +668,7 @@ if ($id > 0 || !empty($ref)) {
 			// Modify
 			if ($user->rights->projet->creer) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Clone').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 			}

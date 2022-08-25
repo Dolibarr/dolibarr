@@ -197,7 +197,7 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string			$var		Variable name
+ * @param		string|array	$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean|null				true if there is no injection. Stop code if injection found.
  */
@@ -536,7 +536,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	}
 
 	// Check a token is provided for all cases that need a mandatory token
-	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	// (all POST actions + all sensitive GET actions + all mass actions + all login/actions/logout on pages with CSRFCHECK_WITH_TOKEN set)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
 		$sensitiveget ||
@@ -1349,7 +1349,7 @@ if (!function_exists("llxHeader")) {
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
@@ -1368,6 +1368,12 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+
+		$parameters = array('help_url' => $help_url);
+		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
+		if ($reshook > 0) {
+			$help_url = $hookmanager->resPrint;
+		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -1406,21 +1412,27 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	}
 
 	// Security options
+
+	// X-Content-Type-Options
 	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+
+	// X-Frame-Options
 	if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
 		header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 	} else {
 		header("X-Frame-Options: ALLOWALL");
 	}
+
+	// X-XSS-Protection
 	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
-	if (!defined('FORCECSP')) {
-		//if (! isset($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
-		//{
-		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
+
+	// Content-Security-Policy
+	if (!defined('MAIN_SECURITY_FORCECSP')) {
+		// If CSP not forced from the page
+
+		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
-		//}
-		//else
-		$contentsecuritypolicy = empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY) ? '' : $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
 			$hookmanager = new HookManager($db);
@@ -1442,16 +1454,29 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			// default-src https://cdn.example.net; object-src 'none'
 			// For example, to restrict everything to itself except img that can be on other servers:
 			// default-src 'self'; img-src *;
-			// Pre-existing site that uses too much inline code to fix but wants to ensure resources are loaded only over https and disable plugins:
-			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
+			// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
+			// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
-	} elseif (constant('FORCECSP')) {
-		header("Content-Security-Policy: ".constant('FORCECSP'));
+	} else {
+		header("Content-Security-Policy: ".constant('MAIN_SECURITY_FORCECSP'));
 	}
+
+	// Referrer-Policy
+	// Say if we must provide the referrer when we jump onto another web page.
+	// Default browser are 'strict-origin-when-cross-origin', we want more so we use 'same-origin' so we don't send any referrer when going into another web site
+	if (!defined('MAIN_SECURITY_FORCERP')) {
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
+
+		header("Referrer-Policy: ".$referrerpolicy);
+	}
+
 	if ($forcenocache) {
 		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 	}
+
+	// No need to add this token in header, we use instead the one into the forms.
+	//header("anti-csrf-token: ".newToken());
 }
 
 /**
@@ -2407,7 +2432,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"activation" => !empty($conf->adherent->enabled) && $user->hasRight("adherent", "write"), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2415,7 +2440,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "write"), // vs hooking
 				"position" => 10,
 			),
 			array(
@@ -2423,7 +2448,7 @@ function printDropdownQuickadd()
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "contact", "write"), // vs hooking
 				"position" => 20,
 			),
 			array(
@@ -2431,7 +2456,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"activation" => isModEnabled("propal") && $user->hasRight("propale", "write"), // vs hooking
 				"position" => 30,
 			),
 
@@ -2440,7 +2465,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"activation" => !empty($conf->commande->enabled) && $user->hasRight("commande", "write"), // vs hooking
 				"position" => 40,
 			),
 			array(
@@ -2448,7 +2473,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->hasRight("facture", "write"), // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2456,7 +2481,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"activation" => !empty($conf->contrat->enabled) && $user->hasRight("contrat", "write"), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2464,7 +2489,7 @@ function printDropdownQuickadd()
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "supplier_proposal",
-				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->hasRight("supplier_invoice", "write"), // vs hooking
 				"position" => 70,
 			),
 			array(
@@ -2472,7 +2497,7 @@ function printDropdownQuickadd()
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "supplier_order",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"activation" => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "commande", "write")) || (isModEnabled("supplier_order") && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 80,
 			),
 			array(
@@ -2480,7 +2505,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "supplier_invoice",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"activation" => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "write")) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 90,
 			),
 			array(
@@ -2488,7 +2513,7 @@ function printDropdownQuickadd()
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
-				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"activation" => isModEnabled("product") && $user->hasRight("produit", "write"), // vs hooking
 				"position" => 100,
 			),
 			array(
@@ -2496,7 +2521,7 @@ function printDropdownQuickadd()
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
-				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"activation" => isModEnabled("service") && $user->hasRight("service", "write"), // vs hooking
 				"position" => 110,
 			),
 			array(
@@ -2504,7 +2529,7 @@ function printDropdownQuickadd()
 				"title" => "AddUser@users",
 				"name" => "User@users",
 				"picto" => "user",
-				"activation" => $user->rights->user->user->creer, // vs hooking
+				"activation" => $user->hasRight("user", "user", "write"), // vs hooking
 				"position" => 500,
 			),
 		),

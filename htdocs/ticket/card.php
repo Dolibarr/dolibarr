@@ -173,7 +173,19 @@ if (empty($reshook)) {
 	if (GETPOST('save', 'alpha') && !empty($user->rights->ticket->write)) {
 		$error = 0;
 
-		if (!GETPOST("subject", 'alphanohtml')) {
+		if (!GETPOST("type_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTypeRequest")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("category_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketCategory")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("severity_code", 'alpha')) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketSeverity")), null, 'errors');
+			$action = 'create';
+		} elseif (!GETPOST("subject", 'alphanohtml')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			$action = 'create';
@@ -940,7 +952,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Thirdparty
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' ';
 			if ($action != 'editcustomer' && $object->status < 8 && !$user->socid && $user->rights->ticket->write) {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> : ';
@@ -1461,9 +1473,9 @@ if ($action == 'create' || $action == 'presend') {
 
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			} elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {

@@ -112,8 +112,9 @@ if ($action == 'addcontact' && $user->rights->propale->creer) {
 /*
  * View
  */
-$title = $langs->trans('Proposal')." - ".$langs->trans('ContactsAddresses');
+$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $help_url = "EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos";
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);

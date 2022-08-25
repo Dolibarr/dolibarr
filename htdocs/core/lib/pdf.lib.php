@@ -61,7 +61,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (!empty($conf->propal->enabled)) {
+	if (isModEnabled("propal")) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Other");
 		$head[$h][2] = 'other';
@@ -453,7 +453,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (empty($reshook)) {
 		if ($mode == 'source') {
 			$withCountry = 0;
-			if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+			if (isset($targetcompany->country_code) && !empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 				$withCountry = 1;
 			}
 

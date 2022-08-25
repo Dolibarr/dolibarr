@@ -524,6 +524,8 @@ class Fichinter extends CommonObject
 
 		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 
+		$this->oldcopy = dol_clone($this);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
@@ -532,10 +534,6 @@ class Fichinter extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
 			if (!$error) {
 				// Call trigger
 				$result = $this->call_trigger('FICHINTER_UNVALIDATE', $user);
@@ -1411,6 +1409,8 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
+			$this->oldcopy = dol_clone($this);
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1422,7 +1422,6 @@ class Fichinter extends CommonObject
 			}
 
 			if (!$error) {
-				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
 			}
 

@@ -505,10 +505,11 @@ $formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
+$title = $object->ref." - ".$langs->trans('OrderDispatch');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 $morejs = array('/fourn/js/lib_dispatch.js.php');
 
-llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, $morejs);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs);
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
@@ -1190,7 +1191,7 @@ if ($id > 0 || !empty($ref)) {
 			// Status
 			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
-			} elseif (!empty($conf->reception->enabled)) {
+			} elseif (isModEnabled("reception")) {
 				print '<td class="center"></td>';
 			}
 
@@ -1217,7 +1218,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven" id="line_'.$objp->dispatchlineid.'" >';
 
 				// Reception ref
-				if (!empty($conf->reception->enabled)) {
+				if (isModEnabled("reception")) {
 					print '<td>';
 					if (!empty($objp->fk_reception)) {
 						$reception = new Reception($db);
@@ -1334,7 +1335,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 					}
 					print '</td>';
-				} elseif (!empty($conf->reception->enabled)) {
+				} elseif (isModEnabled("reception")) {
 					print '<td class="right">';
 					if (!empty($reception->id)) {
 						print $reception->getLibStatut(5);

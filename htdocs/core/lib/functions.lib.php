@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -955,6 +955,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
 			} while ($oldstringtoclean != $out);
+
+			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+			$reg = array();
+			preg_match_all('/(<img|url\()/i', $out, $reg);
+			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+				return 'TooManyLinksIntoHTMLString';
+			}
+
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -1685,7 +1693,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Url to open
+ *	@param  string	$url				Relative Url to open
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1694,6 +1702,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
+	global $conf;
+
 	if (strpos($url, '?') > 0) {
 		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
@@ -1717,44 +1727,50 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
-	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
-	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
-	$out .= '<!-- Add js code to open dialog popup on dialog -->';
-	$out .= '<script type="text/javascript">
-				jQuery(document).ready(function () {
-					jQuery(".button_'.$name.'").click(function () {
-						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
-						var $tmpdialog = $(\'#idfordialog'.$name.'\');
-						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
-						$tmpdialog.dialog({
-							autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: \''.dol_escape_js($label).'\',
-							open: function (event, ui) {
-								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
-       						},
-							close: function (event, ui) {
-								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
-								if (returnedid != "" && returnedid != "div for returned id") {
-									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	if (empty($conf->use_javascript_ajax)) {
+		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
+	}
+	$out .= '>'.$buttonstring.'</a>';
+	if (!empty($conf->use_javascript_ajax)) {
+		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+		$out .= '<!-- Add js code to open dialog popup on dialog -->';
+		$out .= '<script type="text/javascript">
+					jQuery(document).ready(function () {
+						jQuery(".button_'.$name.'").click(function () {
+							console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+							var $tmpdialog = $(\'#idfordialog'.$name.'\');
+							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+							$tmpdialog.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: \''.dol_escape_js($label).'\',
+								open: function (event, ui) {
+									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+	       						},
+								close: function (event, ui) {
+									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
+									if (returnedid != "" && returnedid != "div for returned id") {
+										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+									}
+									if (returnedlabel != "" && returnedlabel != "div for returned label") {
+										jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+									}
 								}
-								if (returnedlabel != "" && returnedlabel != "div for returned label") {
-									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
-								}
-							}
-						});
+							});
 
-						$tmpdialog.dialog(\'open\');
+							$tmpdialog.dialog(\'open\');
+						});
 					});
-				});
-			</script>';
+				</script>';
+	}
 	return $out;
 }
 
@@ -3343,6 +3359,17 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			//ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
+	} elseif (strtoupper($countrycode) == "LU") {
+		// Luxembourg
+		if (dol_strlen($phone) == 10) {// fixe 6 chiffres +352_AA_BB_CC
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2);
+		} elseif (dol_strlen($phone) == 11) {// fixe 7 chiffres +352_AA_BB_CC_D
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 1);
+		} elseif (dol_strlen($phone) == 12) {// fixe 8 chiffres +352_AA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
+		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
@@ -3876,15 +3903,18 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
 			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fontawesome_', '', $pictowithouttext);
 			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+
 			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
 			if (!empty($pictowithouttextarray[1])) {
-				$fakey      = 'fa-'.$pictowithouttextarray[1];
-				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
-				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
-				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+				// Syntax is 'fontawesome_fakey_faprefix_facolor_fasize' or 'fa-fakey_faprefix_facolor_fasize'
+				$fakey      = 'fa-'.$pictowithouttextarray[0];
+				$fa         = empty($pictowithouttextarray[1]) ? 'fa' : $pictowithouttextarray[1];
+				$facolor    = empty($pictowithouttextarray[2]) ? '' : $pictowithouttextarray[2];
+				$fasize     = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
 			} else {
 				$fakey      = 'fa-'.$pictowithouttext;
 				$fa         = 'fa';
@@ -6802,10 +6832,11 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
 					if (! empty($attrs->item($ii)->name)) {
-						// Delete attribute if not into allowed_attributes
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							// If attribute is 'style'
 							$valuetoclean = $attrs->item($ii)->value;
 
 							if (isset($valuetoclean)) {
@@ -6814,10 +6845,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
 									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
 									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
 									}
+
+									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
 								} while ($oldvaluetoclean != $valuetoclean);
 							}
 
@@ -7305,13 +7340,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
 			$substitutionarray['__NEWREF__'] = '__NEWREF__';
+			$substitutionarray['__LABEL__'] = '__LABEL__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
 			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			if (!empty($conf->societe->enabled)) {	// Most objects are concerned
+			if (isModEnabled("societe")) {	// Most objects are concerned
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
@@ -7373,6 +7409,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 			}
+			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
+				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -7387,11 +7426,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
-			if (!empty($conf->reception->enabled) && (!is_object($object) || $object->element == 'reception')) {
+			if (isModEnabled("reception") && (!is_object($object) || $object->element == 'reception')) {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
@@ -7399,6 +7438,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__NEWREF__'] = $object->newref;
+			$substitutionarray['__LABEL__'] = (isset($object->label) ? $object->label : (isset($object->title) ? $object->title : null));
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
@@ -7835,7 +7875,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				if (! $msgishtml) {
 					$valueishtml = dol_textishtml($value, 1);
-					var_dump("valueishtml=".$valueishtml);
+					//var_dump("valueishtml=".$valueishtml);
 
 					if ($valueishtml) {
 						$text = dol_htmlentitiesbr($text);
@@ -8597,7 +8637,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -9006,7 +9046,6 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					if ($values[0] != $type) {
 						continue;
 					}
-					//var_dump(verifCond($values[4]));
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
@@ -9126,6 +9165,7 @@ function printCommonFooter($zone = 'private')
 
 		print "\n";
 		if (!empty($conf->use_javascript_ajax)) {
+			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and madatory fields, tuning info, ... -->\n";
 			print '<script>'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 
@@ -9340,16 +9380,16 @@ function dol_set_focus($selector)
 /**
  * Return getmypid() or random PID when function is disabled
  * Some web hosts disable this php function for security reasons
- * and sometimes we can't redeclare function
+ * and sometimes we can't redeclare function.
  *
  * @return	int
  */
 function dol_getmypid()
 {
 	if (!function_exists('getmypid')) {
-		return mt_rand(1, 32768);
+		return mt_rand(99900000, 99965535);
 	} else {
-		return getmypid();
+		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
 
@@ -10396,6 +10436,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
  *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
  *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
+ * 						    'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
  *                          ],
  *                          ]
  * // phpcs:enable
@@ -10405,12 +10446,16 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 {
 	global $hookmanager, $action, $object, $langs;
 
-	$class = 'butAction';
-	if ($actionType == 'danger' || $actionType == 'delete') {
-		$class = 'butActionDelete';
-		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+	//var_dump($params);
+	if (!empty($params['isDropdown']))
+		$class = "dropdown-item";
+	else {
+		$class = 'butAction';
+		if ($actionType == 'danger' || $actionType == 'delete') {
+			$class = 'butActionDelete';
+			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		}
 	}
-
 	$attr = array(
 		'class' => $class,
 		'href' => empty($url) ? '' : $url,

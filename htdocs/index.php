@@ -235,7 +235,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -255,19 +255,19 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	// Number of cheque to send
 	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
 		}
-		if (!empty($conf->paymentbybanktransfer->enabled)) {
+		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
 		}
 	}
 

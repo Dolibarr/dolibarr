@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -136,7 +136,7 @@ if ($source == 'proposal') {
 // Check securitykey
 $securekeyseed = '';
 if ($source == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
 if (!dol_verifyHash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $entity), $SECUREKEY, '0')) {

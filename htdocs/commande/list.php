@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -70,6 +70,7 @@ $search_dateorder_start = dol_mktime(0, 0, 0, GETPOST('search_dateorder_start_mo
 $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_end_month', 'int'), GETPOST('search_dateorder_end_day', 'int'), GETPOST('search_dateorder_end_year', 'int'));
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_start_month', 'int'), GETPOST('search_datedelivery_start_day', 'int'), GETPOST('search_datedelivery_start_year', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
+
 $search_product_category = GETPOST('search_product_category', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -77,22 +78,25 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = GETPOST("search_state", 'alpha');
-$search_country = GETPOST("search_country", 'int');
-$search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_state = GETPOST('search_state', 'alpha');
+$search_country = GETPOST('search_country', 'int');
+$search_type_thirdparty = GETPOST('search_type_thirdparty', 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
+
 $search_total_ht = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'int');
+
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
-$search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
+$search_multicurrency_montant_ht  = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
+
 $search_login = GETPOST('search_login', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -103,10 +107,11 @@ $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_shippable = GETPOST('search_shippable', 'aZ09');
-$search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
-$search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
-$search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
-$search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
+
+$search_fk_cond_reglement = GETPOST('search_fk_cond_reglement', 'int');
+$search_fk_shipping_method = GETPOST('search_fk_shipping_method', 'int');
+$search_fk_mode_reglement = GETPOST('search_fk_mode_reglement', 'int');
+$search_fk_input_reason = GETPOST('search_fk_input_reason', 'int');
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -176,7 +181,7 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
 	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
-	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>!empty($conf->expedition->enabled)),
+	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled("expedition")),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
 	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>-1, 'position'=>69),
@@ -199,7 +204,7 @@ $arrayfields = array(
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
 	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
-	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>990),
+	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled("expedition")), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -1217,7 +1222,7 @@ if ($resql) {
 	if ($permissiontocancel) {
 		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
 	}
-	if ($user->rights->facture->creer) {
+	if (!empty($conf->invoice->enabled) && $user->rights->facture->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
 	}
 	if ($permissiontoclose) {
@@ -1377,7 +1382,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	if (GETPOST('autoselectall', 'int')) {
@@ -1394,6 +1399,14 @@ if ($resql) {
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre" align="middle">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1646,15 +1659,20 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="middle">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
-
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre" align="middle">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	// Fields title
 	print '<tr class="liste_titre">';
+
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1797,7 +1815,9 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	}
 	print '</tr>'."\n";
 
 	$total = 0;
@@ -1877,6 +1897,18 @@ if ($resql) {
 		}
 
 		print '<tr class="oddeven">';
+
+		// Action column
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+		}
 
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
@@ -2367,7 +2399,7 @@ if ($resql) {
 										}
 										$stock_order = $generic_product->stats_commande['qty'];
 									}
-									if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+									if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
 											$generic_product->load_stats_commande_fournisseur(0, '3');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
@@ -2388,7 +2420,7 @@ if ($resql) {
 								} else {
 									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
-								if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+								if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
 								}
 								$text_info .= ($reliquat != $generic_commande->lines[$lig]->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($generic_commande->lines[$lig]->qty - $reliquat).')</span>' : '');
@@ -2441,13 +2473,15 @@ if ($resql) {
 		}
 
 		// Action column
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {

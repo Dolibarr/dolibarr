@@ -524,7 +524,7 @@ class MyObject extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @param bool $notrigger  false=launch triggers, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)

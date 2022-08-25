@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (!empty($conf->project->enabled)) {
@@ -577,10 +577,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && !empty($conf->global->CONTRACT_ADDON_PDF)) {    // No generation if default type not defined
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -754,10 +754,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -784,8 +784,10 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer) {
-		// Close all lines
-		$result = $object->activateAll($user);
+		$date_start = dol_mktime(12, 0, 0, GETPOST('d_startmonth'), GETPOST('d_startday'), GETPOST('d_startyear'));
+		$date_end   = dol_mktime(12, 0, 0, GETPOST('d_endmonth'), GETPOST('d_endday'), GETPOST('d_endyear'));
+		$comment      = GETPOST('comment', 'alpha');
+		$result = $object->activateAll($user, $date_start, 0, $comment, $date_end);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1260,7 +1262,12 @@ if ($action == 'create') {
 			// Confirmation de la fermeture
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CloseAContract"), $langs->trans("ConfirmCloseContract"), "confirm_close", '', 0, 1);
 		} elseif ($action == 'activate') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", '', 0, 1);
+			$formquestion = array(
+				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => dol_now()),
+				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ '', ''),
+				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', '', '', 'class' => 'minwidth300', 'moreattr'=>'autofocus')
+			);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ActivateAllOnContract"), $langs->trans("ConfirmActivateAllOnContract"), "confirm_activate", $formquestion, 'yes', 1, 280);
 		} elseif ($action == 'clone') {
 			// Clone confirmation
 			$formquestion = array(array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
@@ -2013,12 +2020,15 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
 
 		/*
 		 * Buttons
 		 */
-
-		if ($user->socid == 0) {
+		if ($user->socid == 0 && $action != 'presend' && $action != 'editline') {
 			print '<div class="tabsAction">';
 
 			$parameters = array();
@@ -2128,11 +2138,6 @@ if ($action == 'create') {
 			}
 
 			print "</div>";
-		}
-
-		// Select mail models is same action as presend
-		if (GETPOST('modelselected')) {
-			$action = 'presend';
 		}
 
 		if ($action != 'presend') {

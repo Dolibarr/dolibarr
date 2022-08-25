@@ -598,10 +598,10 @@ class Facture extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
 			if (!empty($newlang)) {
@@ -3839,6 +3839,7 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		} else {
+			$this->errors[]='status of invoice must be Draft to allow use of ->addline()';
 			dol_syslog(get_class($this)."::addline status of invoice must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
@@ -5601,6 +5602,9 @@ class Facture extends CommonInvoice
 								//$actioncomm->email_tobcc = $sendtobcc;
 								//$actioncomm->email_subject = $subject;
 								$actioncomm->errors_to = $errors_to;
+
+								$actioncomm->elementtype = 'invoice';
+								$actioncomm->fk_element = $tmpinvoice->id;
 
 								//$actioncomm->extraparams = $extraparams;
 

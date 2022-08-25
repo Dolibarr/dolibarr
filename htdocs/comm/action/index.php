@@ -212,7 +212,7 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
  $event->fetch($actionid);
  $event->fetch_optionals();
  $event->fetch_userassigned();
- $event->oldcopy = clone $event;
+ $event->oldcopy = dol_clone($event);
 
  $result = $event->delete();
  }
@@ -757,9 +757,10 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1' || $status == 'na') {
+if ($status == 'na') {
 	// Not applicable
 	$sql .= " AND a.percent = -1";
 }

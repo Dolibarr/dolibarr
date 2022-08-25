@@ -363,17 +363,35 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		// Add a protection/error to refuse the request if number of differentr values for the group by is higher than $MAXUNIQUEVALFORGROUP
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
-			if (strpos($fieldtocount, 'te.') === 0) {
+			if (strpos($fieldtocount, 'te.') === 0) {			// This is an extrafield
 				//if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
 				//      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
 				//}
 				$keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
-			} else {
-				$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+				$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			} elseif (strpos($fieldtocount, 't__') === 0) {		// This is a field of a foreign key
+				$reg = array();
+				if (preg_match('/^(.*)\.(.*)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\..*$/', '', $gvalwithoutprefix);
+					$gvalwithoutprefix = preg_replace('/t__/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
+			} else {											// This is a common field
+				$reg = array();
+				if (preg_match('/^(.*)\-(year|month|day)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
 			}
-			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
-			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix.' '.$fieldtocount.' '.$keyforlabeloffield);
+			//var_dump($object->fields);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
@@ -450,7 +468,7 @@ $simplearrayofmesures = array();
 foreach ($arrayofmesures as $key => $val) {
 	$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
 }
-print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth400', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
+print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300', 1, 0, '', '', $langs->trans("Measures"));	// Fill the array $arrayofmeasures with possible fields
 print '</div>';
 
 // XAxis
@@ -458,7 +476,7 @@ $count = 0;
 print '<div class="divadvancedsearchfield">';
 print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
 //var_dump($arrayofxaxis);
-print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"));	// Fill the array $arrayofxaxis with possible fields
+print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400');	// Fill the array $arrayofxaxis with possible fields
 print '</div>';
 
 // Group by

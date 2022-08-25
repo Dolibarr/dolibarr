@@ -1,7 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
+IdModule= Module id
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, the pages to list/add/edit/delete the object and the SQL files will be generated.
 EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
@@ -9,6 +10,7 @@ ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</
 NewModule=New module
 NewObjectInModulebuilder=New object
 NewDictionary=New dictionary
+ModuleName=Module name
 ModuleKey=Module key
 ObjectKey=Object key
 DicKey=Dictionary key

@@ -30,7 +30,7 @@ if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("donations");
+$langs->load('donations');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -45,17 +45,22 @@ $result = restrictedArea($user, 'don', $id, '');
 
 $object = new Don($db);
 $object->fetch($id);
+
+
 /*
  * Actions
  */
+
 if ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
+
 /*
  * View
  */
+
 $title = $langs->trans('Donation')." - ".$langs->trans('Info');
 
 $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';

@@ -41,7 +41,7 @@ $result = restrictedArea($user, 'export');
 $form = new Form($db);
 
 
-$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones';
+$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones|DE:Modul_DatenExporte';
 
 llxHeader('', $langs->trans("ExportsArea"), $help_url);
 
