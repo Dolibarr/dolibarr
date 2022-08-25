@@ -132,8 +132,8 @@ class Mo extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
 		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
-		'predicted_cost' => array('type'=>'real', 'label'=>'predictedCost', 'enabled'=>1, 'visible'=>1, 'position'=>1041, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
-		'real_cost' => array('type'=>'real', 'label'=>'realCost', 'enabled'=>1, 'visible'=>1, 'position'=>1042, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
+		'predicted_cost' => array('type'=>'real', 'label'=>'predictedCost', 'enabled'=>1, 'visible'=>5, 'position'=>1041, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
+		'real_cost' => array('type'=>'real', 'label'=>'realCost', 'enabled'=>1, 'visible'=>5, 'position'=>1042, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
 	);
 	public $rowid;
 	public $entity;
