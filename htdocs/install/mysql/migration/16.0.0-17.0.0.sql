@@ -59,6 +59,7 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
 
 ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
+ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
 
 UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
 
