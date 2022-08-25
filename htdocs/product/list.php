@@ -1359,7 +1359,7 @@ if ($resql) {
 			}
 		}
 
-		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('produit', 'lire');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
 		if ($product_static->isService()) {
 			$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
 		}
