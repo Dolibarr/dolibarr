@@ -588,8 +588,8 @@ abstract class CommonObject
 	public $alreadypaid;
 
 
-	private $labelStatus;
-	private $labelStatusShort;
+	protected $labelStatus;
+	protected $labelStatusShort;
 
 
 	/**

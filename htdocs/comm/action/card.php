@@ -538,7 +538,7 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 			}
 			// End date
-			$repeateventlimitdate = dol_mktime('23', '59', '59', GETPOSTISSET("limitmonth") ? GETPOST("limitmonth", 'int') :  01, GETPOSTISSET("limitday", 'int') ? GETPOST("limitday", 'int') : 01, GETPOSTISSET("limityear", 'int') && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuser');
+			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOST("limitmonth", 'int') : 1, GETPOSTISSET("limitday") ? GETPOST("limitday", 'int') : 1, GETPOSTISSET("limityear") && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuser');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
@@ -1378,7 +1378,7 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 		if (GETPOST('socid', 'int') > 0) {
@@ -1891,7 +1891,7 @@ if ($id > 0) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			// Related company
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
@@ -2300,7 +2300,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			// Related company
 			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {

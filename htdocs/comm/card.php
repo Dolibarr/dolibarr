@@ -44,13 +44,13 @@ if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -72,7 +72,7 @@ if (!empty($conf->contrat->enabled)) {
 if (!empty($conf->commande->enabled)) {
 	$langs->load("orders");
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	$langs->load("sendings");
 }
 if (isModEnabled('facture')) {
@@ -438,7 +438,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Compte bancaire par défaut
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -697,7 +697,7 @@ if ($object->id > 0) {
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		// Box proposals
 		$tmp = $object->getOutstandingProposals();
 		$outstandingOpened = $tmp['opened'];
@@ -818,7 +818,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest proposals
 	 */
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
@@ -1024,7 +1024,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest shipments
 	 */
-	if (!empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
+	if (isModEnabled("expedition") && $user->rights->expedition->lire) {
 		$sql = 'SELECT e.rowid as id';
 		$sql .= ', e.ref, e.entity';
 		$sql .= ', e.date_creation';
@@ -1548,7 +1548,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("ThirdPartyIsClosed").'</a></div>';
 		}
 
-		if (!empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status == 1) {
+		if (isModEnabled("propal") && $user->rights->propal->creer && $object->status == 1) {
 			$langs->load("propal");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 		}

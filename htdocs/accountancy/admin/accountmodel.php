@@ -44,7 +44,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "compta", "accountancy", "hrm"));
+$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');

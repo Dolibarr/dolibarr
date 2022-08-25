@@ -758,7 +758,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}
 	} else {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('AlreadyOneBankAccount'), 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');

@@ -82,5 +82,6 @@ create table llx_adherent
   fk_user_mod      integer,
   fk_user_valid    integer,
   canvas           varchar(32),                   -- type of canvas if used (null by default)
+  ip               varchar(250),                  -- ip used to create record (for public membership submission page)
   import_key       varchar(14)                    -- Import key
 )ENGINE=innodb;

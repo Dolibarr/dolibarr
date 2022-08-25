@@ -1259,7 +1259,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1306,7 +1306,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
