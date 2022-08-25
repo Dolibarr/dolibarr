@@ -38,8 +38,11 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
 	}
 
 	$h = 0;
@@ -50,7 +53,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status)) {
+	if (!empty($object->status) && $usercancreadprice) {
 		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SellingPrices");
 		$head[$h][2] = 'price';
@@ -61,10 +64,12 @@ function product_prepare_head($object)
 		if ((((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->lire)
 		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
 		) {
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-			$head[$h][1] = $langs->trans("BuyingPrices");
-			$head[$h][2] = 'suppliers';
-			$h++;
+			if ($usercancreadprice) {
+				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+				$head[$h][1] = $langs->trans("BuyingPrices");
+				$head[$h][2] = 'suppliers';
+				$h++;
+			}
 		}
 	}
 

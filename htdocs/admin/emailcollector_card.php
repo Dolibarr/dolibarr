@@ -37,7 +37,7 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 if (!$user->admin) {
 	accessforbidden();
 }
-if (empty($conf->emailcollector->enabled)) {
+if (!isModEnabled('emailcollector')) {
 	accessforbidden();
 }
 
@@ -547,20 +547,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</tr>';
 
 	$arrayoftypes = array(
-		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
-		'recordevent'=>'RecordEvent');
+		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
+		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
+		'recordevent' => 'RecordEvent'
+	);
 	$arrayoftypesnocondition = $arrayoftypes;
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
 	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
-	if (!empty($conf->ticket->enabled)) {
+	if (isModEnabled('ticket')) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
 	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
-	if (!empty($conf->recruitment->enabled)) {
+	if (isModEnabled('recruitment')) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
 	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';

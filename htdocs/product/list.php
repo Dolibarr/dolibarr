@@ -291,7 +291,6 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-
 /*
  * Actions
  */
@@ -1360,6 +1359,11 @@ if ($resql) {
 			}
 		}
 
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+		if ($product_static->isService()) {
+			$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+		}
+
 		print '<tr class="oddeven">';
 
 		// Action column
@@ -1622,7 +1626,7 @@ if ($resql) {
 		// Sell price
 		if (!empty($arrayfields['p.sellprice']['checked'])) {
 			print '<td class="right nowraponall">';
-			if ($obj->tosell) {
+			if ($obj->tosell && $usercancreadprice) {
 				if ($obj->price_base_type == 'TTC') {
 					print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 				} else {
@@ -1645,7 +1649,7 @@ if ($resql) {
 				$productpricescache[$obj->rowid] = array();
 			}
 
-			if ($obj->tosell) {
+			if ($obj->tosell && $usercancreadprice) {
 				// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 				// then reuse the cache array if we need prices for other price levels
 				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
@@ -1695,7 +1699,7 @@ if ($resql) {
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 			print  '<td class="right nowraponall">';
-			if ($obj->tobuy && $obj->minsellprice != '') {
+			if ($obj->tobuy && $obj->minsellprice != '' && $usercancreadprice) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
@@ -1717,7 +1721,7 @@ if ($resql) {
 		// Number of buy prices
 		if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 			print  '<td class="right">';
-			if ($obj->tobuy) {
+			if ($obj->tobuy && $usercancreadprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 					print $form->textwithpicto(count($productFournList), $htmltext);
@@ -1739,14 +1743,18 @@ if ($resql) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
+			if ($usercancreadprice) {
+				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
+			}
 			print '</td>';
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
+			if ($usercancreadprice) {
+				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
+			}
 			print '</td>';
 		}
 
@@ -1779,7 +1787,9 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price(price2num($product_static->stock_reel, 'MS'));
+				if ($usercancreadprice) {
+					print price(price2num($product_static->stock_reel, 'MS'));
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1793,7 +1803,9 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price(price2num($product_static->stock_theorique, 'MS'));
+				if ($usercancreadprice) {
+					print price(price2num($product_static->stock_theorique, 'MS'));
+				}
 			}
 			print '</td>';
 			if (!$i) {
