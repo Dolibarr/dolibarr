@@ -55,6 +55,9 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+-- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
+
 UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
 
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;

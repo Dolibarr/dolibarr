@@ -28,7 +28,7 @@ CREATE TABLE llx_partnership(
 	entity integer DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
 	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer NULL,			-- can be null if created from public page 
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_modif integer, 
 	note_private text, 
