@@ -78,9 +78,10 @@ if ($action == 'updateMask') {
 	$maskconststocktransfer = GETPOST('maskconststocktransfer', 'alpha');
 	$maskstocktransfer = GETPOST('maskStockTransfer', 'alpha');
 
-	if ($maskconststocktransfer) $res = dolibarr_set_const($db, $maskconststocktransfer, $maskstocktransfer, 'chaine', 0, '', $conf->entity);
-
-	if (!$res > 0) $error++;
+	if ($maskconststocktransfer) {
+		$res = dolibarr_set_const($db, $maskconststocktransfer, $maskstocktransfer, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');

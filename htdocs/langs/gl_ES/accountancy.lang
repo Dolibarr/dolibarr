@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Desactivar transaccións directas en conta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Activar a listaxe combinada para a conta subsidiaria (pode ser lento se ten moitos terceiros, rompe coa capacidade de buscar unha parte do valor) 
 ACCOUNTING_DATE_START_BINDING=Define unha data para comezar a ligar e transferir na contabilidade. Por debaixo desta data, as transaccións non se transferirán á contabilidade.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, selecciona amosar o período por defecto
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na transferencia de contabilidade, cal é o período seleccionado por defecto
 
 ACCOUNTING_SELL_JOURNAL=Diario de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Conta contable de rexistro de doacións/subvencións
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta contable de rexistro subscricións
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta contable por defecto para rexistrar os ingresos realizados polo cliente
-UseAuxiliaryAccountOnCustomerDeposit=Use subcontas nas liñas de depósito de clientes
+UseAuxiliaryAccountOnCustomerDeposit=Almacenar a conta do cliente como unha conta individual para as liñas de anicipo no Libro Maior subsidiario (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contable predeterminada para os produtos comprados (usada se non está definida na folla de produtos)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Conta contable predeterminada para os produtos comprados na CEE (usada se non está definida na folla de produto)
@@ -279,7 +279,7 @@ DescVentilExpenseReportMore=Se configura as contas contables dos tipos de inform
 DescVentilDoneExpenseReport=Consulte aquí as liñas de informes de gastos e as súas contas contables
 
 Closure=Peche anual
-DescClosure=Consulte aquí o número de movementos por mes que aínda non están validados e bloqueados
+DescClosure=Consulte aquí o número de movementos por mes aínda non validados e bloqueados
 OverviewOfMovementsNotValidated=Visión xeral dos movementos non validados e bloqueados
 AllMovementsWereRecordedAsValidated=Todos os movementos rexistráronse como validados e bloqueados
 NotAllMovementsCouldBeRecordedAsValidated=Non se puideron rexistrar todos os movementos como validados e bloqueados
@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sent
 AccountancyErrorMismatchLetterCode=Erro no código de conciliación
 AccountancyErrorMismatchBalanceAmount=O saldo (%s) non é igual a 0
 AccountancyErrorLetteringBookkeeping=Producíronse erros nas transaccións: %s
+ErrorAccountNumberAlreadyExists=O número contable %s xa existe
 
 ## Import
 ImportAccountingEntries=Entradas contables

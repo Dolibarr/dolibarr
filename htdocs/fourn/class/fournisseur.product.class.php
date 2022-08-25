@@ -620,7 +620,7 @@ class ProductFournisseur extends Product
 				$this->fourn_multicurrency_tx          = $obj->multicurrency_tx;
 				$this->fourn_multicurrency_id          = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code        = $obj->multicurrency_code;
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$this->fourn_barcode = $obj->barcode; // deprecated
 					$this->fourn_fk_barcode_type = $obj->fk_barcode_type; // deprecated
 					$this->supplier_barcode = $obj->barcode;
@@ -730,7 +730,7 @@ class ProductFournisseur extends Product
 
 				$prodfourn->packaging = $record["packaging"];
 
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$prodfourn->supplier_barcode = $record["barcode"];
 					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
@@ -808,7 +808,7 @@ class ProductFournisseur extends Product
 		$sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-		$sql .= " AND pfp.entity = ".$conf->entity; // only current entity
+		$sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_product = ".((int) $prodid);
 		$sql .= " AND pfp.fk_soc = s.rowid";
 		$sql .= " AND s.status = 1"; // only enabled society
@@ -960,7 +960,7 @@ class ProductFournisseur extends Product
 	public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		$out = '';
 		$langs->load("suppliers");
@@ -978,7 +978,7 @@ class ProductFournisseur extends Product
 			}
 			$out .= '</table>';
 		} else {
-			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
+			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
 			$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
 			$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
 		}
@@ -1121,12 +1121,15 @@ class ProductFournisseur extends Product
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
+	 *  @param	int		$maxlength					Maxlength of ref
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int		$notooltip					No tooltip
+	 *  @param  string  $morecss            		''=Add more css on link
+	 *  @param	int		$add_label					0=Default, 1=Add label into string, >1=Add first chars into string
+	 *  @param	string	$sep						' - '=Separator between ref and label if option 'add_label' is set
 	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlength = 0, $save_lastsearch_value = -1, $notooltip = 0, $morecss = '', $add_label = 0, $sep = ' - ')
 	{
 		global $db, $conf, $langs, $hookmanager;
 
@@ -1136,6 +1139,11 @@ class ProductFournisseur extends Product
 
 		$result = '';
 		$label = '';
+
+		$newref = $this->ref;
+		if ($maxlength) {
+			$newref = dol_trunc($newref, $maxlength, 'middle');
+		}
 
 		if (!empty($this->entity)) {
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
@@ -1170,7 +1178,7 @@ class ProductFournisseur extends Product
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
 		}
 
@@ -1258,10 +1266,12 @@ class ProductFournisseur extends Product
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
+			$result .= $newref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
 		}
 		$result .= $linkend;
-		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+		if ($withpicto != 2) {
+			$result .= (($add_label && $this->label) ? $sep.dol_trunc($this->label, ($add_label > 1 ? $add_label : 0)) : '');
+		}
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));

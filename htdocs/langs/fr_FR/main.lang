@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -621,7 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Fichiers et documents joints
 JoinMainDoc=Joindre le document principal
-JoinMainDocOrLastGenerated=Send the main document or the last generated one if not found
+JoinMainDocOrLastGenerated=Envoyer le document principal ou le dernier généré s'il n'est pas trouvé
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -712,6 +718,7 @@ FeatureDisabled=Fonction désactivée
 MoveBox=Déplacer le widget
 Offered=Offert
 NotEnoughPermissions=Vous n'avez pas les permissions pour cette action
+UserNotInHierachy=Cette action est réservée aux superviseurs de cet utilisateur
 SessionName=Nom session
 Method=Méthode
 Receive=Réceptionner
@@ -801,6 +808,7 @@ URLPhoto=URL de la photo/logo
 SetLinkToAnotherThirdParty=Lier vers un autre tiers
 LinkTo=Lier à
 LinkToProposal=Lier à une proposition commerciale
+LinkToExpedition=Lier à une expédition
 LinkToOrder=Lier à une commande
 LinkToInvoice=Lier à une facture
 LinkToTemplateInvoice=Lien vers le modèle de facture
@@ -1176,4 +1184,7 @@ CommercialsAffected=Commercial affecté au tiers
 CommercialAffected=Commercial affecté au tiers
 YourMessage=Votre message
 YourMessageHasBeenReceived=Votre message a été reçu. Nous vous répondrons ou vous contacterons dans les plus brefs délais.
-UrlToCheck=Url to check
+UrlToCheck=URL à vérifier
+Automation=Automatisation
+CreatedByEmailCollector=Créé par Collecteur d'e-mails
+CreatedByPublicPortal=Créé à partir du portail public

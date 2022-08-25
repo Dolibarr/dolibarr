@@ -41,6 +41,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -80,7 +81,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->knowledgemanagement->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = (!empty($conf->knowledgemanagement->multidir_output[$object->entity]) ? $conf->knowledgemanagement->multidir_output[$object->entity] : $conf->knowledgemanagement->dir_output)."/".$object->id;
 }
 
 // Security check - Protection if external user

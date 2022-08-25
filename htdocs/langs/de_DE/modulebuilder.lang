@@ -28,13 +28,13 @@ EnterNameOfModuleToDeleteDesc=Sie können Ihr Modul löschen. WARNUNG: Alle Code
 EnterNameOfObjectToDeleteDesc=Sie können ein Objekt löschen. WARNUNG: Alle Codedateien (generiert oder manuell erstellt), die sich auf das Objekt beziehen, werden gelöscht!
 DangerZone=Gefahrenzone
 BuildPackage=Paket erstellen
-BuildPackageDesc=Sie können ein Zip-Paket Ihrer Anwendung erstellen, um es auf Dolibarr-Installationen verteilen können. Sie können es auch auf einem Marktplatz wie <a href="https://www.dolistore.com"> DoliStore.com </a> verteilen oder verkaufen.
+BuildPackageDesc=Sie können ein Zip-Paket Ihrer Anwendung erstellen, um es auf jede Dolibarr-Installation verteilen zu können. Sie können es auch über einem Marktplatz wie <a href="https://www.dolistore.com">DoliStore.com</a> kostenlos verbreiten oder verkaufen.
 BuildDocumentation=Dokumentation erstellen
 ModuleIsNotActive=Dieses Modul ist noch nicht aktiviert. Gehe zu %s zum aktivieren oder klicke hier
 ModuleIsLive=Dieses Modul wurde aktiviert. Jede Änderung kann aktuelle Live-Funktionen beeinträchtigen.
 DescriptionLong=Lange Beschreibung
 EditorName=Name des Erstellers
-EditorUrl=URL des Editors
+EditorUrl=URL des Erstellers
 DescriptorFile=Deskriptordatei des Moduls
 ClassFile=Datei für die PHP DAO CRUD-Klasse
 ApiClassFile=File for PHP API class
@@ -77,7 +77,7 @@ SqlFileKey=SQL Datei für Schlüsselwerte
 SqlFileKeyExtraFields=SQL-Datei für die Schlüssel der Extrafields
 AnObjectAlreadyExistWithThisNameAndDiffCase=Es existiert bereits ein Objekt mit diesem Namen und einer anderen Groß-/Kleinschreibung
 UseAsciiDocFormat=Sie können das Markdown-Format verwenden, empfohlen wird jedoch, das Asciidoc-Format zu verwenden (Vergleich zwischen .md und .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
-IsAMeasure=Ist eine Maßnahme
+IsAMeasure=Ist ein Maß (addierbar)
 DirScanned=Verzeichnis gescannt
 NoTrigger=Kein Trigger
 NoWidget=Kein Widget 
@@ -88,7 +88,7 @@ ListOfPermissionsDefined=Liste der definierten Berechtigungen
 SeeExamples=Siehe Beispiele
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Ist das Feld sichtbar? (Beispiele: 0 = Nie sichtbar, 1 = Auf Liste sichtbar und Formulare erstellen / aktualisieren / anzeigen, 2 = Nur auf Liste sichtbar, 3 = Nur auf Formular erstellen / aktualisieren / anzeigen (nicht Liste), 4 = Auf Liste sichtbar und nur sichtbar bei Formular aktualisieren / anzeigen (nicht erstellen), 5 = Nur im Formular für die Listenendansicht sichtbar (nicht erstellen, nicht aktualisieren). <br> <br> Wenn ein negativer Wert verwendet wird, wird das Feld standardmäßig nicht in der Liste angezeigt, kann jedoch zur Anzeige ausgewählt werden.) <br> <br> Es kann sich um einen Ausdruck handeln, z. B.:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Zeigt dieses Feld in kompatiblen PDF-Dokumenten an. Sie können die Anzeigeposition über das Feld "Position" beeinflussen. <br> Derzeit bekannte kompatible PDF-Modelle sind: eratosthene (Bestellung), espadon (Lieferung), sponge (Rechnung), cyan (Angebot), cornas (Lieferantenauftrag) <br><br><strong>Für Dokument:</strong><br> 0 = nicht anzeigen<br>1 = anzeigen <br>  2 = anzeigen, wenn nicht leer <br><br><strong>Für Belegzeilen:</strong><br> 0 = nicht anzeigen <br> 1 = in Spalte anzeigen <br> 3 = in Beschreibungszeile nach der Beschreibung anzeigen <br> 4 = nur falls nicht leer: in Beschreibungszeile nach der Beschreibung anzeigen 
+DisplayOnPdfDesc=Zeigt dieses Feld in kompatiblen PDF-Dokumenten an. Sie können die Anzeigeposition über das Feld "Position" beeinflussen. <br> Derzeit bekannte kompatible PDF-Modelle sind: eratosthene (Bestellung), espadon (Lieferung), sponge (Rechnung), cyan (Angebot), cornas (Lieferantenauftrag) <br><br><strong>Für Dokument:</strong><br> 0 = nicht anzeigen<br>1 = anzeigen <br>  2 = anzeigen, wenn nicht leer <br><br><strong>Für Einzelpositionen:</strong><br> 0 = nicht anzeigen <br> 1 = in Spalte anzeigen <br> 3 = in Beschreibungszeile nach der Beschreibung anzeigen <br> 4 = nur falls nicht leer: in Beschreibungszeile nach der Beschreibung anzeigen 
 DisplayOnPdf=Anzeige im PDF
 IsAMeasureDesc=Kann der Wert des Feldes kumuliert werden, um eine Summe in die Liste aufzunehmen? (Beispiele: 1 oder 0)
 SearchAllDesc=Wird das Feld verwendet, um eine Suche über das Schnellsuchwerkzeug durchzuführen? (Beispiele: 1 oder 0)
@@ -153,3 +153,4 @@ LinkToParentMenu=Übergeordnetes Menü (fk_xxxxmenu)
 ListOfTabsEntries=Liste der Registerkarteneinträge/Tab-Einträge
 TabsDefDesc=Definieren Sie hier die von Ihrem Modul bereitgestellten Registerkarten/Tabs
 TabsDefDescTooltip=Die von Ihrem Modul/Ihrer Anwendung bereitgestellten Registerkarten/Tabs sind im Array <strong>$this->tabs</strong> in der Moduldeskriptordatei definiert. Sie können diese Datei manuell bearbeiten oder den eingebetteten Editor verwenden.
+BadValueForType=Ungültiger Wert für Typ %s

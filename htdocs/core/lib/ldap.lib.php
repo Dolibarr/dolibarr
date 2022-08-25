@@ -57,7 +57,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+	if (isModEnabled("societe") && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
 		$head[$h][2] = 'contacts';

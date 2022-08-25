@@ -162,7 +162,7 @@ if ($object->client) {
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
@@ -199,10 +199,10 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 	if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
@@ -361,7 +361,8 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
+		// We test both case description is correctly saved of was save after dol_escape_htmltag().
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_escape_htmltag($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}

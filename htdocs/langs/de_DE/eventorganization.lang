@@ -26,7 +26,7 @@ EventOrganizationDescriptionLong= Verwalten Sie die Organisation einer Veranstal
 EventOrganizationMenuLeft = Veranstaltungen
 EventOrganizationConferenceOrBoothMenuLeft = Konferenzbeitrag oder Stand
 
-PaymentEvent=Zahlung einer Veranstaltung
+PaymentEvent=Zahlung für eine Veranstaltung
 
 #
 # Admin page
@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Konferenzbeitrag oder Stand
 AmountPaid = Bezahlter Betrag
 DateOfRegistration = Datum der Anmeldung
 ConferenceOrBoothAttendee = Referent eines Konferenzbeitrags oder Standinhaber
+ApplicantOrVisitor=Bewerber oder Besucher
+Speaker=Referent
 
 #
 # Template Mail
@@ -71,8 +73,8 @@ EventOrganizationEmailAskBooth = Anfrage für Stand
 EventOrganizationEmailBoothPayment = Bezahlung Ihres Standes
 EventOrganizationEmailRegistrationPayment = Anmeldung zu einer Veranstaltung
 EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
-EventOrganizationMassEmailSpeakers = Kommunikation mit den Sprechern
-ToSpeakers=An Redner
+EventOrganizationMassEmailSpeakers = Kommunikation mit den Referenten
+ToSpeakers=An Referenten
 
 #
 # Event
@@ -81,7 +83,7 @@ AllowUnknownPeopleSuggestConf=Personen erlauben, Konferenzbeiträge vorzuschlage
 AllowUnknownPeopleSuggestConfHelp=Unbekannten Personen erlauben, einen Konferenzbeitrag vorzuschlagen, den sie halten möchten
 AllowUnknownPeopleSuggestBooth=Personen erlauben, sich für einen Stand zu bewerben
 AllowUnknownPeopleSuggestBoothHelp=Unbekannten Personen erlauben, sich für einen Stand zu bewerben
-PriceOfRegistration=Buchungskosten für die Teilnahme
+PriceOfRegistration=Kosten für die Teilnahme
 PriceOfRegistrationHelp=Preis für die Anmeldung/Teilnahme an der Veranstaltung
 PriceOfBooth=Buchungskosten für einen Stand
 PriceOfBoothHelp=Buchungskosten für einen Stand
@@ -90,7 +92,7 @@ ConferenceOrBoothInformation=Informationen zu Konferenzbeitrag oder Stand
 Attendees=Teilnehmer
 ListOfAttendeesOfEvent=Teilnehmerliste des Veranstaltungsprojekts
 DownloadICSLink = ICS-Link herunterladen
-EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Vortrags dient
+EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Konferenzbeitrags dient
 SERVICE_BOOTH_LOCATION = Leistung, die für die Rechnungsposition über einen Stand verwendet wird
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Leistung, die für die Rechnungsposition über eine Teilnahmebuchung einer Veranstaltung verwendet wird
 NbVotes=Anzahl der Stimmen
@@ -120,7 +122,7 @@ ViewAndVote = Vorgeschlagene Veranstaltungen ansehen und abstimmen
 PublicAttendeeSubscriptionGlobalPage = Öffentlicher Link für die Anmeldung zur Veranstaltung
 PublicAttendeeSubscriptionPage = Öffentlicher Link für die Anmeldung nur zu dieser Veranstaltung
 MissingOrBadSecureKey = Der Sicherheitsschlüssel ist ungültig oder fehlt
-EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer für die Veranstaltung anmelden: <b> %s </b>
+EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer für die Veranstaltung anmelden: <b>%s</b>
 EvntOrgDuration = Diese Konferenz beginnt am %s und endet am %s.
 ConferenceAttendeeFee = Konferenzteilnehmergebühr für die Veranstaltung: '%s' vom %s bis %s.
 BoothLocationFee = Stand für die Veranstaltung: '%s' vom %s bis %s
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Ihre Zahlung für Ihre Veranst
 OrganizationEventBulkMailToAttendees=Dies ist eine Erinnerung, dass Sie Teilnehmer der Veranstaltung sind
 OrganizationEventBulkMailToSpeakers=Dies ist eine Erinnerung, dass Sie an der Veranstaltung als Referent teilnehmen
 OrganizationEventLinkToThirdParty=Verknüpfung mit Geschäftspartner (Kunde, Lieferant oder Partner)
+OrganizationEvenLabelName=Öffentlicher Name des Konferenzbeitrags oder des Standes
 
 NewSuggestionOfBooth=Bewerbung für einen Stand
 NewSuggestionOfConference=Bewerbung für einen Konferenzbeitrag
@@ -160,10 +163,10 @@ Attendee = Teilnehmer
 PaymentConferenceAttendee = Zahlung für Konferenzteilnehmer
 PaymentBoothLocation = Zahlung für einen Stand
 DeleteConferenceOrBoothAttendee=Teilnehmer entfernen
-RegistrationAndPaymentWereAlreadyRecorder=Für die E-Mail-Adresse <b> %s </b> wurden bereits eine Anmeldung und eine Zahlung erfasst
+RegistrationAndPaymentWereAlreadyRecorder=Für die E-Mail-Adresse <b>%s</b> wurden bereits eine Anmeldung und eine Zahlung erfasst
 EmailAttendee=Teilnehmer-E-Mail
 EmailCompanyForInvoice=Firmen-E-Mail (für Rechnung, falls abweichend von der Teilnehmer-E-Mail)
 ErrorSeveralCompaniesWithEmailContactUs=Es wurden mehrere Unternehmen mit dieser E-Mail-Adresse gefunden, sodass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
-ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, sodass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
+ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, so dass wir Ihre Registrierung nicht automatisch freigeben können. Bitte kontaktieren Sie uns unter %s für eine manuelle Freigabe
 NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen für die Öffentlichkeit zugänglich
 MaxNbOfAttendees=Maximale Teilnehmerzahl

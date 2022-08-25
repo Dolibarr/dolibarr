@@ -152,18 +152,18 @@ $planned_workload = $planned_workloadhour * 3600 + $planned_workloadmin * 60;
 
 // Definition of fields for list
 $arrayfields = array(
-	't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>1),
-	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>2),
-	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>3),
-	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>4),
-	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>5),
-	't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>6),
-	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>7),
-	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>8),
-	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>9),
-	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>11),
-	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>12),
+	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>1),
+	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>2),
+	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>3),
+	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>4),
+	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>5),
+	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>6),
+	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>7),
+	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>8),
+	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>9),
+	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>10),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>11),
+	'c.assigned'=>array('label'=>"TaskRessourceLinks", 'checked'=>1, 'position'=>12),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
@@ -402,9 +402,12 @@ $projectstatic = new Project($db);
 $taskstatic = new Task($db);
 $userstatic = new User($db);
 
-$title = $langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
+}
+if ($action == 'create') {
+	$title = $langs->trans("NewTask");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
@@ -1059,6 +1062,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
+	$nboftaskshown = 0;
 	if (count($tasksarray) > 0) {
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j = 0; $level = 0;

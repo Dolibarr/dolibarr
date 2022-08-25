@@ -66,7 +66,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -111,7 +111,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!$result > 0) {
+				if (!($result > 0)) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
 					$error++;

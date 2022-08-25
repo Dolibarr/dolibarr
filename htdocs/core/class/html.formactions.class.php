@@ -327,11 +327,11 @@ class FormActions
 					$cursorevent++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			if ($max && $num > $max) {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("More").'...</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("More").'...</span></td></tr>';
 			}
 
 			print '</table>';

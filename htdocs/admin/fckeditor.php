@@ -62,11 +62,11 @@ $conditions = array(
 	'NOTE_PUBLIC' => 1,
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
-	'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
-	'DETAILS' => (isModEnabled('facture') || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
+	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
 	'MAILING' => !empty($conf->mailing->enabled),
-	'MAIL' => (isModEnabled('facture') || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
+	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || !empty($conf->commande->enabled)),
 	'TICKET' => !empty($conf->ticket->enabled),
 );
 // Picto

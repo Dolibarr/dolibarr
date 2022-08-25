@@ -24,7 +24,7 @@ FinancialCommitment=Фінансові зобов'язання
 InterestAmount=Інтерес
 CapitalRemain=Залишається капітал
 TermPaidAllreadyPaid = Цей термін уже оплачений
-CantUseScheduleWithLoanStartedToPaid = Не можна використовувати планувальник для позики з розпочатим платежем
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Ви не можете змінити відсотки, якщо використовуєте розклад
 # Admin
 ConfigLoan=Конфігурація модульної позики

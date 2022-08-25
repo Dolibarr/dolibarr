@@ -40,7 +40,7 @@ if (!empty($conf->project->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "other", "donations"));
+$langs->loadLangs(array('companies', 'other', 'donations'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');

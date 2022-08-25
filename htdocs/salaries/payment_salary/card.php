@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (isModEnabled("banque")) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
@@ -111,7 +111,7 @@ if ($action == 'delete') {
 /*
 if ($action == 'valide')
 {
-	$facid = $_GET['facid'];
+	$facid = GETPOST('facid', 'int');
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
@@ -152,7 +152,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);

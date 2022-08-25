@@ -283,12 +283,8 @@ if (is_array($filter) && count($filter) > 0) {
 		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
 	}
 }
-$sqlwhere = array();
 if (!empty($search_module_name)) {
-	$sqlwhere[] = "(t.module_name = '".$db->escape($search_module_name)."')";
-}
-if (count($sqlwhere) > 0) {
-	$sql .= " WHERE ".implode(' AND ', $sqlwhere);
+	$sql .= natural_search("t.module_name", $search_module_name);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -435,6 +431,7 @@ print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre"><input type="text" class="width50" name="search_module_name" value="'.$search_module_name.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 //print '<td class="liste_titre">&nbsp;</td>';
@@ -457,6 +454,7 @@ print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -491,15 +489,21 @@ if ($num > 0) {
 			}
 		}
 
+		$reg = array();
+		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
+			$langs->load($reg[1]);
+		}
+
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
-		$object->label = $obj->label;
+		$object->label = preg_replace('/:.*$/', '', $obj->label);
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
 		$object->lastresult = $obj->lastresult;
 		$object->datestart = $db->jdate($obj->datestart);
 		$object->dateend = $db->jdate($obj->dateend);
+		$object->module_name = $obj->module_name;
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
@@ -513,9 +517,9 @@ if ($num > 0) {
 
 		// Label
 		print '<td class="tdoverflowmax300">';
-		if (!empty($obj->label)) {
-			$object->ref = $langs->trans($obj->label);
-			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
+		if (!empty($object->label)) {
+			$object->ref = $langs->trans($object->label);
+			print '<span title="'.dol_escape_htmltag($langs->trans($object->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
 		} else {
 			//print $langs->trans('CronNone');
@@ -524,9 +528,15 @@ if ($num > 0) {
 
 		// Priority
 		print '<td class="right">';
-		print $object->priority;
+		print dol_escape_htmltag($object->priority);
 		print '</td>';
 
+		// Module
+		print '<td>';
+		print dol_escape_htmltag($object->module_name);
+		print '</td>';
+
+		// Class/Method
 		print '<td class="nowraponall">';
 		if ($obj->jobtype == 'method') {
 			$text = $langs->trans("CronClass");
@@ -576,12 +586,12 @@ if ($num > 0) {
 
 		print '<td class="right">';
 		if (!empty($obj->nbrun)) {
-			print $obj->nbrun;
+			print dol_escape_htmltag($obj->nbrun);
 		} else {
 			print '0';
 		}
 		if (!empty($obj->maxrun)) {
-			print ' <span class="'.$langs->trans("Max").'">/ '.$obj->maxrun.'</span>';
+			print ' <span class="'.$langs->trans("Max").'">/ '.dol_escape_htmltag($obj->maxrun).'</span>';
 		}
 		print '</td>';
 
@@ -606,9 +616,9 @@ if ($num > 0) {
 		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
-				print $obj->lastresult;
+				print $obj->lastresult;		// Print '0'
 			} else {
-				print '<span class="error">'.dol_trunc($obj->lastresult).'</div>';
+				print '<span class="error">'.dol_escape_htmltag(dol_trunc($obj->lastresult)).'</div>';
 			}
 		}
 		print '</td>';

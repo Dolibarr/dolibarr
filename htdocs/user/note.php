@@ -39,7 +39,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 	accessforbidden();
 }
 
@@ -48,7 +48,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -67,7 +67,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !GETPOST("cancel")) {
+	if ($action == 'update' && $user->hasRight("user", "user", "write") && !GETPOST("cancel")) {
 		$db->begin();
 
 		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5));
@@ -84,10 +84,12 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
-
 $form = new Form($db);
+
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('Notes');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 if ($id) {
 	$head = user_prepare_head($object);
@@ -97,11 +99,15 @@ if ($id) {
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight("user", "user", "read") || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -132,7 +138,7 @@ if ($id) {
 	}
 	print '</tr>';
 
-	$editenabled = (($action == 'edit') && !empty($user->rights->user->user->creer));
+	$editenabled = (($action == 'edit') && $user->hasRight("user", "user", "write"));
 
 	// Note
 	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
@@ -165,7 +171,7 @@ if ($id) {
 
 	print '<div class="tabsAction">';
 
-	if ($user->rights->user->user->creer && $action != 'edit') {
+	if ($user->hasRight("user", "user", "write") && $action != 'edit') {
 		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
 	}
 

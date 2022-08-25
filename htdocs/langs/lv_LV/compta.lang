@@ -300,3 +300,4 @@ InvoiceToPay15Days=Lai samaksātu (15 līdz 30 dienas)
 InvoiceToPay30Days=Lai samaksātu (> 30 dienas)
 ConfirmPreselectAccount=Iepriekš atlasiet grāmatvedības kodu
 ConfirmPreselectAccountQuestion=Vai tiešām vēlaties iepriekš atlasīt %s atlasītās rindas ar šo grāmatvedības kodu?
+AmountPaidMustMatchAmountOfDownPayment=Samaksātajai summai ir jāatbilst pirmās iemaksas summai

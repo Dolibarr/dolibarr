@@ -69,6 +69,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$month_end = $month_start - 1;
 			if ($month_end < 1) {
 				$month_end = 12;
+			} else {
+				$year_end++;
 			}
 		} else {
 			$month_end = $month_start;

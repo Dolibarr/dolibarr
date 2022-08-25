@@ -525,7 +525,7 @@ print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if (empty($conf->facture->enabled)) {
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -693,7 +693,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMAR
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('PROPALE_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

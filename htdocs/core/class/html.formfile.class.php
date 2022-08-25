@@ -1291,6 +1291,7 @@ class FormFile
 					$nboflines++;
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
+
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
 					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
@@ -1436,7 +1437,7 @@ class FormFile
 								if ($permtoeditline) {
 									// Link to resize
 									$moreparaminurl = '';
-									if ($object->id > 0) {
+									if (!empty($object->id) && $object->id > 0) {
 										$moreparaminurl = '&id='.$object->id;
 									} elseif (GETPOST('website', 'alpha')) {
 										$moreparaminurl = '&website='.GETPOST('website', 'alpha');
@@ -1805,7 +1806,7 @@ class FormFile
 					}
 				}
 
-				if (!$found > 0 || !is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
+				if ($found <= 0 || !is_object($this->cache_objects[$modulepart.'_'.$id.'_'.$ref])) {
 					continue; // We do not show orphelins files
 				}
 

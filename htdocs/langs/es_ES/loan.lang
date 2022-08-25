@@ -24,7 +24,7 @@ FinancialCommitment=Prestamo
 InterestAmount=Interés
 CapitalRemain=Capital restante
 TermPaidAllreadyPaid = Este plazo ya está pagado
-CantUseScheduleWithLoanStartedToPaid = No se puede usar el programador para un préstamo con el pago iniciado
+CantUseScheduleWithLoanStartedToPaid = No se puede generar una línea de tiempo para un préstamo con un pago iniciado
 CantModifyInterestIfScheduleIsUsed = No puede modificar el interés si usa el programador
 # Admin
 ConfigLoan=Configuración del módulo préstamos

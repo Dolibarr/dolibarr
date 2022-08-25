@@ -106,6 +106,14 @@ if (!$base) {
 		print '<td class="right">Collation</td>';
 		print "</tr>\n";
 
+		$arrayoffilesrich = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, '\.sql$');
+		$arrayoffiles = array();
+		foreach ($arrayoffilesrich as $value) {
+			//print $shortsqlfilename.' ';
+			$shortsqlfilename = preg_replace('/\-[a-z]+\./', '.', $value['name']);
+			$arrayoffiles[] = $shortsqlfilename;
+		}
+
 		$sql = "SHOW TABLE STATUS";
 
 		$resql = $db->query($sql);
@@ -119,7 +127,8 @@ if (!$base) {
 				print '<td>'.($i+1).'</td>';
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
-				if (dol_is_file(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql')) {
+
+				if (in_array($tablename.'.sql', $arrayoffiles)) {
 					$img = "info";
 					//print img_picto($langs->trans("ExternalModule"), $img);
 				} else {
