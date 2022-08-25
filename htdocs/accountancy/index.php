@@ -212,7 +212,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 	print $s;
 	print "<br>\n";
 
-	if (isModEnabled('expensereport')|| isModEnabled('deplacement')) {
+	if (isModEnabled('expensereport') || isModEnabled('deplacement')) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);

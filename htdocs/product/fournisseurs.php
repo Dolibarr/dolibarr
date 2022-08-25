@@ -549,7 +549,7 @@ if ($id > 0 || $ref) {
 				print '</td></tr>';
 
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					// Packaging
+					// Packaging/Conditionnement
 					print '<tr>';
 
 					print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("PackagingForThisProduct"), $langs->trans("PackagingForThisProductDesc")).'</td>';

@@ -596,9 +596,10 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
+// Use conditionnement in buying
 if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
