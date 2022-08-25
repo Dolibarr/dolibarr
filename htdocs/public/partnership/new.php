@@ -221,8 +221,14 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->note_private = GETPOST('note_private');
 		$partnership->date_creation = dol_now();
 		$partnership->date_partnership_start = dol_now();
-		$partnership->fk_type = $partnershipt->fetch(0, 'default');
 		$partnership->fk_user_creat=$user->id;
+
+		$partnershipt->fetch(0, 'default');
+		if ($partnershipt->id > 0) {
+			$partnership->fk_type = $partnershipt->id;
+		}
+
+
 		//$partnership->firstname   = GETPOST('firstname');
 		//$partnership->lastname    = GETPOST('lastname');
 		//$partnership->address     = GETPOST('address');
