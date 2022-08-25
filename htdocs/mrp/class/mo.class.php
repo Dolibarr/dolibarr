@@ -694,6 +694,20 @@ class Mo extends CommonObject
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
 							$moline->origin_type = 'bomline';
+
+							//-- convert to second related to c_unit table
+							$tmpproduct = new Product($this->db);
+							$res = $tmpproduct->fetch($line->fk_product);
+							if ($res && $tmpproduct->isService()){
+								$sql = "SELECT scale FROM ".$this->db->prefix()."c_units WHERE rowid =". (int) $line->fk_unit;
+								$resql = $this->db->query($sql);
+								if ($resql){
+									$objTmp = $this->db->fetch_object($resql);
+									$line->qty = $line->qty * $objTmp->scale;
+								}
+							}
+
+
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
