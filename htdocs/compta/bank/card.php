@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1079,7 +1079,7 @@ if ($action == 'create') {
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alphanohtml') : $object->ics).'"></td></tr>';
 			}
 
-			if (!empty(isModEnabled('paymentbybanktransfer'))) {
+			if (isModEnabled('paymentbybanktransfer')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 
