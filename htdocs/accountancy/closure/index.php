@@ -57,7 +57,7 @@ $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

@@ -79,7 +79,7 @@ if (!empty($update)) {
 $object = new BookKeeping($db);
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
