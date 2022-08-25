@@ -161,7 +161,7 @@ print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminalto
 print '</td></tr>';
 
 $atleastonefound = 0;
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -453,7 +453,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if ($atleastonefound == 0 && !empty($conf->banque->enabled)) {
+if ($atleastonefound == 0 && isModEnabled("banque")) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
 

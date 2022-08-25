@@ -158,7 +158,7 @@ if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && empty($conf->global->LDAP_USER
 print '</td></tr>';
 
 // Synchro contact active
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print '<tr class="oddeven"><td>'.$langs->trans("LDAPDnContactActive").'</td><td>';
 	print $formldap->selectLdapDnSynchroActive(getDolGlobalInt('LDAP_CONTACT_ACTIVE'), 'activecontact', array(Ldap::SYNCHRO_LDAP_TO_DOLIBARR));
 	print '</td><td><span class="opacitymedium">'.$langs->trans("LDAPDnContactActiveExample").'</span></td></tr>';

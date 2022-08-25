@@ -67,7 +67,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
  * View
  */
 
-$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
+$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías|DE:Modul_Kategorien';
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 llxHeader('', $langs->trans("Categories"), $help_url);

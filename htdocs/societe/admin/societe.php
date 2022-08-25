@@ -853,7 +853,7 @@ if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 print '</a></td>';
 print '</tr>';
 
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';

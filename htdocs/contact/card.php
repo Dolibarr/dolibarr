@@ -1228,7 +1228,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->propal->enabled)) {
+			if (isModEnabled("propal")) {
 				print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
 				print $object->ref_propal ? $object->ref_propal : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'</span>');
 				print '</td></tr>';
@@ -1326,7 +1326,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				//array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
 			);
 			$text = $langs->trans("ConfirmCreateContact").'<br>';
-			if (!empty($conf->societe->enabled)) {
+			if (isModEnabled("societe")) {
 				if ($object->socid > 0) {
 					$text .= $langs->trans("UserWillBeExternalUser");
 				} else {
@@ -1489,22 +1489,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$object->load_ref_elements();
 
-		if (!empty($conf->propal->enabled)) {
+		if (isModEnabled("propal")) {
 			print '<tr><td class="titlefield">'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
 			print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->commande->enabled) || !empty($conf->expedition->enabled)) {
+		if (!empty($conf->commande->enabled) || isModEnabled("expedition")) {
 			print '<tr><td>';
-			if (!empty($conf->expedition->enabled)) {
+			if (isModEnabled("expedition")) {
 				print $langs->trans("ContactForOrdersOrShipments");
 			} else {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td colspan="3">';
 			$none = $langs->trans("NoContactForAnyOrder");
-			if (!empty($conf->expedition->enabled)) {
+			if (isModEnabled("expedition")) {
 				$none = $langs->trans("NoContactForAnyOrderOrShipments");
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
