@@ -252,11 +252,7 @@ if (empty($reshook)) {
 										setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 										$error++;
 									}
-									if ($tmpproduct->status_batch && (!GETPOST('batch-'.$line->id.'-'.$i))) {
-										$langs->load("errors");
-										setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-										$error++;
-									}
+
 								}
 								// STOCK  MOUVEMENT !
 								$idstockmove = 0;
