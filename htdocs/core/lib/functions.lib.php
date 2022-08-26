@@ -432,8 +432,8 @@ function GETPOSTISSET($paramname)
  * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
  *
  * @param 	string	$paramname		Name or parameter to test
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ * @param	int		$method			Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISARRAY($paramname, $method = 0)
 {
