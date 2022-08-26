@@ -6,7 +6,7 @@
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
  *
  */
- 
+
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,12 +85,10 @@ if ($action == 'addcontact' && $user->rights->resource->write) {
 		setEventMessages($mesg, null, 'errors');
 	}
 } elseif ($action == 'swapstatut' && $user->rights->resource->write) {
-
-// Toggle the status of a contact
+	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->resource->write) {
-	
-// Erase a contact
+	// Erase a contact
 	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
 	if ($result >= 0) {
