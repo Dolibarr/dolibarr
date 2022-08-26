@@ -34,7 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-
 class ZapierApi extends DolibarrApi
 {
 	/**
