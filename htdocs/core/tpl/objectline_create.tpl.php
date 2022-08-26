@@ -193,7 +193,7 @@ if ($nolinesbefore) {
 			// Free line
 			echo '<span class="prod_entry_mode_free">';
 			// Show radio free line
-			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
@@ -219,7 +219,7 @@ if ($nolinesbefore) {
 			echo '</span>';
 		}
 		// Predefined product/service
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			if ($forceall >= 0 && $freelines) {
 				echo '<br><span class="prod_entry_mode_predef paddingtop">';
 			} else {
@@ -230,17 +230,17 @@ if ($nolinesbefore) {
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
 				if (empty($senderissupplier)) {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
+					} elseif ((empty($conf->product->enabled) && isModEnabled("service")) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
 						$labelforradio = $langs->trans('PredefinedServicesToSell');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
 					}
 				} else {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+					} elseif (empty($conf->product->enabled) && isModEnabled("service")) {
 						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
@@ -336,7 +336,7 @@ if ($nolinesbefore) {
 				print $hookmanager->resPrint;
 			}
 		}
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			echo '<br>';
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
@@ -356,7 +356,7 @@ if ($nolinesbefore) {
 		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
-		if (!empty($conf->service->enabled) && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
+		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
 			if (!empty($conf->global->INVOICE_REC_DATE_TO_YES)) {
@@ -446,7 +446,7 @@ if ($nolinesbefore) {
 			?>
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
-				<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
+				<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
 				<?php } ?>
 				<!-- For free product -->
@@ -471,7 +471,7 @@ if ($nolinesbefore) {
 </tr>
 
 <?php
-if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0') {	// We show date field if required
+if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0') {	// We show date field if required
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 		print '<td></td>';

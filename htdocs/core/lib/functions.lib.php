@@ -3207,6 +3207,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -7347,7 +7349,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			if (!empty($conf->societe->enabled)) {	// Most objects are concerned
+			if (isModEnabled("societe")) {	// Most objects are concerned
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
@@ -7409,7 +7411,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 			}
-			if (!empty($conf->propal->enabled) && (!is_object($object) || $object->element == 'propal')) {
+			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
@@ -7426,11 +7428,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
-			if (!empty($conf->reception->enabled) && (!is_object($object) || $object->element == 'reception')) {
+			if (isModEnabled("reception") && (!is_object($object) || $object->element == 'reception')) {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}

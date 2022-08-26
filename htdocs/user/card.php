@@ -1674,7 +1674,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Company / Contact
-			if (!empty($conf->societe->enabled)) {
+			if (isModEnabled("societe")) {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				$s = '';
@@ -2606,7 +2606,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// Company / Contact
-			if (!empty($conf->societe->enabled)) {
+			if (isModEnabled("societe")) {
 				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
 				print '<td>';
 				if ($object->socid > 0) {

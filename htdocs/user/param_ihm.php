@@ -186,7 +186,7 @@ llxHeader('', $title, $help_url);
 
 // List of possible landing pages
 $tmparray = array('index.php'=>'Dashboard');
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
 }
 if (!empty($conf->project->enabled)) {
@@ -195,10 +195,10 @@ if (!empty($conf->project->enabled)) {
 if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
 	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
 }
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
 }
-if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
+if (isModEnabled("propal") || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
 if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {

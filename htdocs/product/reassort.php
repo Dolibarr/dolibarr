@@ -369,7 +369,7 @@ if ($resql) {
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
 	// Duration
-	if (!empty($conf->service->enabled) && $type == 1) {
+	if (isModEnabled("service") && $type == 1) {
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
@@ -400,7 +400,7 @@ if ($resql) {
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", '', $param, "", $sortfield, $sortorder);
-	if (!empty($conf->service->enabled) && $type == 1) {
+	if (isModEnabled("service") && $type == 1) {
 		print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", '', $param, "", $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("StockLimit", $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", '', $param, "", $sortfield, $sortorder, 'right ');
@@ -445,7 +445,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>'.$product->label.'</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1) {
+		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				print $regs[1].' '.$langs->trans("DurationYear");

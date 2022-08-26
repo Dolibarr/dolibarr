@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
- * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2006  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,12 +135,12 @@ $error = 0;
 
 $listofchoices = array(
 	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled("supplier_invoice"), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
 	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
 	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled), 'perms' => !empty($user->rights->tax->charges->lire)),
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled), 'perms' => !empty($user->rights->banque->lire)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled("banque"), 'perms' => !empty($user->rights->banque->lire)),
 	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled), 'perms' => !empty($user->rights->loan->read)),
 );
 
@@ -626,6 +627,7 @@ print '</form>'."\n";
 
 print dol_get_fiche_end();
 
+$param = '';
 if (!empty($date_start) && !empty($date_stop)) {
 	$param .= '&date_startday='.GETPOST('date_startday', 'int');
 	$param .= '&date_startmonth='.GETPOST('date_startmonth', 'int');

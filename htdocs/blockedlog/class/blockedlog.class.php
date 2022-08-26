@@ -151,7 +151,7 @@ class BlockedLog
 		}
 
 		/* Supplier
-		if (!empty($conf->fournisseur->enabled)) {
+		if (isModEnabled("fournisseur")) {
 			 $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
 			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
 			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
@@ -184,7 +184,7 @@ class BlockedLog
 			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
 			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
 		}
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';

@@ -197,9 +197,10 @@ $typewecanchangeinto = array(
 	'text'=>array('text', 'html'),
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'mail'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'url'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'phone'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'ip'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
 	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'date'=>array('date', 'datetime')
 );

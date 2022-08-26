@@ -206,23 +206,23 @@ $arrayfields = array(
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
-	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
+	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service")), 'position'=>11),
 	'p.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(isModEnabled('barcode')), 'position'=>12),
-	'p.duration'=>array('label'=>"Duration", 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1'), 'position'=>13),
-	'p.finished'=>array('label'=>"Nature", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>19),
-	'p.weight'=>array('label'=>'Weight', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
-	'p.weight_units'=>array('label'=>'WeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>21),
-	'p.length'=>array('label'=>'Length', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>22),
-	'p.length_units'=>array('label'=>'LengthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>23),
-	'p.width'=>array('label'=>'Width', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>24),
-	'p.width_units'=>array('label'=>'WidthUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>25),
-	'p.height'=>array('label'=>'Height', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>26),
-	'p.height_units'=>array('label'=>'HeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>27),
-	'p.surface'=>array('label'=>'Surface', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>28),
-	'p.surface_units'=>array('label'=>'SurfaceUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>29),
-	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
-	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
-	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
+	'p.duration'=>array('label'=>"Duration", 'checked'=>($contextpage != 'productlist'), 'enabled'=>(isModEnabled("service") && (string) $type == '1'), 'position'=>13),
+	'p.finished'=>array('label'=>"Nature", 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>19),
+	'p.weight'=>array('label'=>'Weight', 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>20),
+	'p.weight_units'=>array('label'=>'WeightUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && $type != '1'), 'position'=>21),
+	'p.length'=>array('label'=>'Length', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>22),
+	'p.length_units'=>array('label'=>'LengthUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>23),
+	'p.width'=>array('label'=>'Width', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>24),
+	'p.width_units'=>array('label'=>'WidthUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>25),
+	'p.height'=>array('label'=>'Height', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>26),
+	'p.height_units'=>array('label'=>'HeightUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>27),
+	'p.surface'=>array('label'=>'Surface', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>28),
+	'p.surface_units'=>array('label'=>'SurfaceUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_SURFACE) && $type != '1'), 'position'=>29),
+	'p.volume'=>array('label'=>'Volume', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>30),
+	'p.volume_units'=>array('label'=>'VolumeUnits', 'checked'=>0, 'enabled'=>(isModEnabled("product") && empty($conf->global->PRODUCT_DISABLE_VOLUME) && $type != '1'), 'position'=>31),
+	'cu.label'=>array('label'=>"DefaultUnitToShow", 'checked'=>0, 'enabled'=>(isModEnabled("product") && !empty($conf->global->PRODUCT_USE_UNITS)), 'position'=>32),
 	'p.sellprice'=>array('label'=>"SellingPrice", 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>40),
 	'p.tva_tx'=>array('label'=>"VATRate", 'checked'=>0, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES), 'position'=>41),
 	'p.minbuyprice'=>array('label'=>"BuyingPriceMinShort", 'checked'=>1, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
@@ -290,7 +290,6 @@ if ($search_type == '0') {
 } else {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
-
 
 /*
  * Actions
@@ -1360,6 +1359,11 @@ if ($resql) {
 			}
 		}
 
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+		if ($product_static->isService()) {
+			$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+		}
+
 		print '<tr class="oddeven">';
 
 		// Action column
@@ -1622,7 +1626,7 @@ if ($resql) {
 		// Sell price
 		if (!empty($arrayfields['p.sellprice']['checked'])) {
 			print '<td class="right nowraponall">';
-			if ($obj->tosell) {
+			if ($obj->tosell && $usercancreadprice) {
 				if ($obj->price_base_type == 'TTC') {
 					print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 				} else {
@@ -1645,7 +1649,7 @@ if ($resql) {
 				$productpricescache[$obj->rowid] = array();
 			}
 
-			if ($obj->tosell) {
+			if ($obj->tosell && $usercancreadprice) {
 				// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 				// then reuse the cache array if we need prices for other price levels
 				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
@@ -1695,11 +1699,11 @@ if ($resql) {
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 			print  '<td class="right nowraponall">';
-			if ($obj->tobuy && $obj->minsellprice != '') {
+			if ($obj->tobuy && $obj->minsellprice != '' && $usercancreadprice) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
-						if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
+						if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
@@ -1717,7 +1721,7 @@ if ($resql) {
 		// Number of buy prices
 		if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 			print  '<td class="right">';
-			if ($obj->tobuy) {
+			if ($obj->tobuy && $usercancreadprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 					print $form->textwithpicto(count($productFournList), $htmltext);
@@ -1739,14 +1743,18 @@ if ($resql) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
+			if ($usercancreadprice) {
+				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
+			}
 			print '</td>';
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
+			if ($usercancreadprice) {
+				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
+			}
 			print '</td>';
 		}
 
@@ -1779,7 +1787,9 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price(price2num($product_static->stock_reel, 'MS'));
+				if ($usercancreadprice) {
+					print price(price2num($product_static->stock_reel, 'MS'));
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1793,7 +1803,9 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price(price2num($product_static->stock_theorique, 'MS'));
+				if ($usercancreadprice) {
+					print price(price2num($product_static->stock_theorique, 'MS'));
+				}
 			}
 			print '</td>';
 			if (!$i) {
