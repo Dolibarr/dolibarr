@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,9 +17,9 @@
  */
 
 /**
- * \file    htdocs/modulebuilder/template/lib/mymodule_myobject.lib.php
- * \ingroup mymodule
- * \brief   Library files with common functions for MyObject
+ * \file    htdocs/zapier/lib/zapier_hook.lib.php
+ * \ingroup zapier
+ * \brief   Library files with common functions for Zapier
  */
 
 /**
@@ -27,6 +28,7 @@
  * @param	MyObject	$object		MyObject
  * @return 	array					Array of tabs
  */
+
 function myobjectPrepareHead($object)
 {
 	global $db, $langs, $conf;
