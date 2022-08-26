@@ -261,9 +261,9 @@ if ($action == 'edit') {
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
-			                jQuery("#smtp_port_mess").hide();
+			                			jQuery("#smtp_port_mess").hide();
                             jQuery(".smtp_method").show();
-							jQuery(".dkim").hide();
+														jQuery(".dkim").hide();
                             jQuery(".smtp_auth_method").show();
 						}
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
@@ -290,9 +290,9 @@ if ($action == 'edit') {
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();
-							jQuery(".smtp_method").show();
+														jQuery(".smtp_method").show();
                             jQuery(".dkim").show();
-							jQuery(".smtp_auth_method").show();
+														jQuery(".smtp_auth_method").show();
                         }
                     }
 					function change_smtp_auth_method() {
