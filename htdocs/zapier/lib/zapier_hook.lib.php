@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
