@@ -272,6 +272,10 @@ class Adherent extends CommonObject
 
 	public $first_subscription_date;
 
+	public $first_subscription_date_start;
+	
+	public $first_subscription_date_end;
+
 	public $first_subscription_amount;
 
 	public $last_subscription_date;
