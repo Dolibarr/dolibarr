@@ -2008,22 +2008,39 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc =(GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
-		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
-		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 
-		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
+		$price_ht = '';
+		$price_ht_devise = '';
+		$price_ttc = '';
+		$price_ttc_devise = '';
+
+		if (GETPOST('price_ht') !== '') {
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ht') !== '') {
+			$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		}
+		if (GETPOST('price_ttc') !== '') {
+			$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ttc') !== '') {
+			$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'MS', 2);
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -2050,7 +2067,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error++;
 		}
-		if (($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && $price_ht_devise == '') && $object->type != Facture::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && (($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht == '') && (($price_ht_devise < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) || $price_ht_devise == '') && $price_ttc === '' && $price_ttc_devise === '' && $object->type != Facture::TYPE_CREDIT_NOTE) { 	// Unit price can be 0 but not ''
 			if ($price_ht < 0 && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES)) {
 				$langs->load("errors");
 				if ($object->type == $object::TYPE_DEPOSIT) {
@@ -2131,19 +2148,22 @@ if (empty($reshook)) {
 				$price_min = $datapriceofproduct['price_min'];
 				$price_min_ttc = $datapriceofproduct['price_min_ttc'];
 				$price_base_type = $datapriceofproduct['price_base_type'];
+
 				$tva_tx = $datapriceofproduct['tva_tx'];
 				$tva_npr = $datapriceofproduct['tva_npr'];
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
-				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
+				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ttc) || $price_ttc === '0') {
+					$pu_ttc = price2num($price_ttc, 'MU');
+					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+					// Is this still used ?
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -2231,7 +2251,7 @@ if (empty($reshook)) {
 				$fk_unit = $prod->fk_unit;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				$pu_ttc = price2num($price_ttc, 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				if (empty($tva_tx)) {
@@ -2243,6 +2263,10 @@ if (empty($reshook)) {
 				$fk_unit = GETPOST('units', 'alpha');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
+
+				if ($pu_ttc && !$pu_ht) {
+					$price_base_type = 'TTC';
+				}
 			}
 
 			// Margin
