@@ -42,7 +42,7 @@ function recruitmentjobpositionPrepareHead($object)
 	$h++;
 
 	$head[$h][0] = dol_buildpath("/recruitment/recruitmentcandidature_list.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Candidatures");
+	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
 	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {

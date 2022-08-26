@@ -49,7 +49,7 @@ if (!empty($conf->project->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
+$langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
 
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
@@ -89,10 +89,10 @@ $error = 0;
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);       // Note that $action and $object may have been modified by some hooks
 // Delete Link
 $permissiondellink = $user->rights->expedition->delivery->supprimer; // Used by the include of actions_dellink.inc.php
-include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';     // Must be include, not include_once
 
 if ($action == 'add') {
 	$db->begin();
@@ -101,7 +101,7 @@ if ($action == 'add') {
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
 	$object->commande_id   = GETPOST("commande_id", 'int');
-	$object->fk_incoterms = GETPOST('incoterm_id', 'int');
+	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
 	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
 		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
