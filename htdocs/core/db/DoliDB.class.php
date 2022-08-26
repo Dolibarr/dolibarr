@@ -264,7 +264,7 @@ abstract class DoliDB implements Database
 	 * @param   bool 		$isnumeric 		Sort order must be interpreted as a numeric value (integer)
 	 * @return	string						String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null, $isnumeric=false)
+	public function order($sortfield = null, $sortorder = null, $isnumeric = false)
 	{
 		if (!empty($sortfield)) {
 			$oldsortorder = '';
@@ -279,9 +279,9 @@ abstract class DoliDB implements Database
 					$return .= ', ';
 				}
 
-				if($isnumeric) $return .= 'CAST(';
+				if ($isnumeric) $return .= 'CAST(';
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
-				if($isnumeric) $return .= ' AS UNSIGNED)';
+				if ($isnumeric) $return .= ' AS UNSIGNED)';
 
 				$tmpsortorder = (empty($orders[$i]) ? '' : trim($orders[$i]));
 

@@ -144,7 +144,7 @@ interface Database
 
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null, $isnumeric=false);
+	public function order($sortfield = null, $sortorder = null, $isnumeric = false);
 
 	/**
 	 * Decrypt sensitive data in database
