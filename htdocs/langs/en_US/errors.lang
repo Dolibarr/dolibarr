@@ -7,6 +7,7 @@ ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=Email %s is incorrect
 ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
+ErrorBadValueForDate=Bad value for the date
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorTitleAlreadyExists=Title <b>%s</b> already exists.

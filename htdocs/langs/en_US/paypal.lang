@@ -30,6 +30,7 @@ OnlinePaymentSystem=Online payment system
 PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
 PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
+WarningPostActionErrorAfterPayment=One or several post actions after payments did not run successfully.
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
 ValidationOfPaymentFailed=Validation of payment has failed
 CardOwner=Card holder
