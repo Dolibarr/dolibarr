@@ -698,7 +698,7 @@ class Mo extends CommonObject
 							//-- convert to second related to c_unit table
 							$tmpproduct = new Product($this->db);
 							$res = $tmpproduct->fetch($line->fk_product);
-							if ($res && $tmpproduct->isService()){
+							if ($res && $tmpproduct->isService() && isModEnabled('stock') && !getDolGlobalInt('STOCK_SUPPORTS_SERVICES')){
 								$sql = "SELECT scale FROM ".$this->db->prefix()."c_units WHERE rowid =". (int) $line->fk_unit;
 								$resql = $this->db->query($sql);
 								if ($resql){
