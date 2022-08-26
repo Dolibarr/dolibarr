@@ -1058,12 +1058,14 @@ if (empty($reshook)) {
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
+
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
-		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		//$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty'), 'MS');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1158,7 +1160,15 @@ if (empty($reshook)) {
 					}
 				}
 			}
-			$result = $object->updateline(GETPOST('lineid', 'int'), $description, $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
+
+			$price_base_type = 'HT';
+			$pu = $pu_ht;
+			if (empty($pu) && ! empty($pu_ttc)) {
+				$pu = $pu_ttc;
+				$price_base_type = 'TTC';
+			}
+
+			$result = $object->updateline(GETPOST('lineid', 'int'), $description, $pu, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2701,9 +2711,16 @@ if ($action == 'create' && $usercancreate) {
 		/*
 		 * Lines
 		 */
+
+		// Get object lines
 		$result = $object->getLinesArray();
 
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		// Add products/services form
+		//$forceall = 1;
+		global $inputalsopricewithtax;
+		$inputalsopricewithtax = 1;
+
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
