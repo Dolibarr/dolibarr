@@ -250,25 +250,25 @@ if (empty($reshook)) {
 											$error++;
 										}
 									}
-								}
-
-								// STOCK  MOUVEMENT !
-								$idstockmove = 0;
-								if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int') > 0) {
-									// Record stock movement
-									$id_product_batch = 0;
-									$stockmove->setOrigin($object->element, $object->id);
-									if ($qtytoprocess >= 0) {
-										$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int'), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i, 'int'), $id_product_batch, $codemovement);
-									} else {
-										$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int'), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i, 'int'), $id_product_batch, $codemovement);
+									// STOCK  MOUVEMENT !
+									$idstockmove = 0;
+									if (!$error && GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int') > 0) {
+										// Record stock movement
+										$id_product_batch = 0;
+										$stockmove->setOrigin($object->element, $object->id);
+										if ($qtytoprocess >= 0) {
+											$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int'), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i, 'int'), $id_product_batch, $codemovement);
+										} else {
+											$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-' . $line->id . '-' . $i, 'int'), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-' . $line->id . '-' . $i, 'int'), $id_product_batch, $codemovement);
+										}
+										if ($idstockmove < 0) {
+											$error++;
+											setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+										}
 									}
-									if ($idstockmove < 0) {
-										$error++;
-										setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-									}
+								} else {
+									$qtytoprocess = convertTime2Seconds($hourToProcess, $minToProcess);
 								}
-								$qtytoprocess = convertTime2Seconds($hourToProcess, $minToProcess);
 							}
 							$checkTypeProduct = $tmpproduct->type == Product::TYPE_PRODUCT;
 						if (!$error) {
