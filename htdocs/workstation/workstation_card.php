@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +17,7 @@
  */
 
 /**
- *   	\file       workstation_card.php
+ *   	\file       htdocs/workstation/workstation_card.php
  *		\ingroup    workstation
  *		\brief      Page to create/edit/view workstation
  */
@@ -24,32 +25,33 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("workstation", "other"));
+$langs->loadLangs(array('workstation', 'other'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'workstationcard'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
+$id          = GETPOST('id', 'int');
+$ref         = GETPOST('ref', 'alpha');
+$action      = GETPOST('action', 'aZ09');
+$confirm     = GETPOST('confirm', 'alpha');
+$cancel      = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'workstationcard';   // To manage different context of search
+$backtopage  = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$groups	= GETPOST('groups', 'array:int');
+$groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Workstation($db);
+
 //$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('workstationcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -139,7 +141,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 
