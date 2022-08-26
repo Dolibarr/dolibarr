@@ -205,7 +205,6 @@ if (empty($reshook)) {
 					while (GETPOSTISSET('qty-'.$line->id.'-'.$i)
 						|| (GETPOSTISSET('timespent_duration-'.$line->id.'-'.$i.'-hour') &&  !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int')) )
 						|| (GETPOSTISSET('timespent_duration-'.$line->id.'-'.$i.'-min') && !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int')) )) {
-
 					$qtytoprocess = price2num(GETPOST('qty-'.$line->id.'-'.$i));
 						$hourToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-hour', 'int') : 0;
 						$minToProcess = !empty(GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int')) ? GETPOST('timespent_duration-'.$line->id.'-'.$i.'-min', 'int') : 0;
@@ -857,7 +856,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			$nblinetoproducecursor = 0;
-			if (is_array($object->lines) && !empty($object->lines)){
+			if (is_array($object->lines) && !empty($object->lines)) {
 				foreach ($object->lines as $line) {
 					if ($line->role == 'toproduce') {
 						$i = 1;
@@ -869,7 +868,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
 						$alreadyproduced = 0;
-						if (is_array($arrayoflines) && !empty($arrayoflines)){
+						if (is_array($arrayoflines) && !empty($arrayoflines)) {
 							foreach ($arrayoflines as $line2) {
 								$alreadyproduced += $line2['qty'];
 							}
