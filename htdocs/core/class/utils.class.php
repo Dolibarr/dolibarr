@@ -1366,7 +1366,7 @@ class Utils
 		}
 
 		$cron_job = new Cronjob($db);
-		$cron_job->fetchAll('DESC', 't.rowid', 0, 0, 1, '', 1);
+		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, '', 1);	// Fetch jobs that are currently running
 
 		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
 		foreach ($cron_job->lines as $job_line) {
@@ -1391,7 +1391,7 @@ class Utils
 
 				// Set last result as an error and add the reason on the last output
 				$job->lastresult = -1;
-				$job->lastoutput = 'Job cleaned';
+				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
 
 				if ($job->update($user) < 0) {
 					dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be updated: ".implode(', ', $job->errors), LOG_ERR);
