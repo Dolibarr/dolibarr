@@ -218,7 +218,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
-	// SHow counter of validated members publicly 
+	// SHow counter of validated members publicly
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
