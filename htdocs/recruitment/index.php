@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       recruitment/recruitmentindex.php
+ *	\file       recruitment/index.php
  *	\ingroup    recruitment
  *	\brief      Home page of recruitment top menu
  */
