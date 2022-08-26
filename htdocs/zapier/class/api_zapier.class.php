@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -16,15 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Luracast\Restler\RestException;
-
-require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
-
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
  * \brief   File for API management of hook.
  */
+
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
+
 
 /**
  * API class for zapier hook
@@ -32,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
+
 class ZapierApi extends DolibarrApi
 {
 	/**
