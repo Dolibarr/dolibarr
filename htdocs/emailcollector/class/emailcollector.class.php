@@ -2448,7 +2448,7 @@ class EmailCollector extends CommonObject
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
 											}
-											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 												foreach ($attachments as $attachment) {
 													$attachment->save($destdir.'/');
 												}
@@ -2570,7 +2570,7 @@ class EmailCollector extends CommonObject
 											if (!dol_is_dir($destdir)) {
 												dol_mkdir($destdir);
 											}
-											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP) && $this->acces_type == 1) {
+											if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 												foreach ($attachments as $attachment) {
 													$attachment->save($destdir.'/');
 												}
