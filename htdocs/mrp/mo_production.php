@@ -1459,7 +1459,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							print '</tr>';
 						}
-				} //traitement
+					} //traitement
 				}
 			}
 		}
@@ -1565,8 +1565,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$alreadyconsumed = 0;
 							if (is_array($arrayoflines) && !empty($arrayoflines)){
 								foreach ($arrayoflines as $line2) {
-								$alreadyconsumed += $line2['qty'];
-							}
+									$alreadyconsumed += $line2['qty'];
+								}
 							}
 							$suffix = '_' . $line->id;
 							print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
@@ -1713,13 +1713,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>';
 	}
 
-		if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
-			print "</form>\n";
-		}
+	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
+		print "</form>\n";
+	}
 
-		?>
+	?>
 
-		<script  type="text/javascript" language="javascript">
+	<script  type="text/javascript" language="javascript">
 
 			$(document).ready(function() {
 				//Consumption : When a warehouse is selected, only the lot/serial numbers that are available in it are offered
@@ -1818,10 +1818,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		</script>
 
-		<?php
+	<?php
 
 }
-
 // End of page
 llxFooter();
 $db->close();
