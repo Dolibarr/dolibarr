@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/terminal.php
+ *	\file       htdocs/takepos/admin/receipt.php
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */
@@ -69,7 +69,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 } elseif (GETPOST('action', 'alpha') == 'setmethod') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// TakePOS connector require ReceiptPrinter module
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !isModEnabled('receiptprinter')) {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && isModEnabled('receiptprinter')) {
 		activateModule("modReceiptPrinter");
 	}
 }
