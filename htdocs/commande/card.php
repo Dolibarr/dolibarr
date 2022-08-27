@@ -50,16 +50,16 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-	}
+}
 
 if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	}
+}
 
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-	}
+}
 
 
 // Load translation files required by the page
@@ -67,13 +67,13 @@ $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'd
 
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
-	}
+}
 if (!empty($conf->margin->enabled)) {
 	$langs->load('margins');
-	}
+}
 if (!empty($conf->productbatch->enabled)) {
 	$langs->load('productbatch');
-	}
+}
 
 
 $id        = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('orderid', 'int'));
