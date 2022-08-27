@@ -1785,6 +1785,10 @@ class Thirdparties extends DolibarrApi
 		unset($object->particulier);
 		unset($object->prefix_comm);
 
+		unset($object->siren);
+		unset($object->siret);
+		unset($object->ape);
+
 		unset($object->commercial_id); // This property is used in create/update only. It does not exists in read mode because there is several sales representatives.
 
 		unset($object->total_ht);
@@ -1857,7 +1861,7 @@ class Thirdparties extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
-			throw new RestException(401);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login.'. No read permission on thirdparties.');
 		}
 
 		if ($rowid === 0) {
@@ -1870,7 +1874,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login.' on this thirdparty');
 		}
 
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

@@ -792,8 +792,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
 		}
 
-		// Check permission for object on entity only
-		if (in_array($feature, $check)) {
+		// Check permission for objectid on entity only
+		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && !empty($conf->multicompany->enabled)) {	// Special for multicompany
@@ -825,7 +825,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checksoc)) {	// We check feature = checksoc
+		if (in_array($feature, $checksoc) && $objectid > 0) {	// We check feature = checksoc. For $objectid = 0, no check
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if ($user->socid != $objectid) {
@@ -850,7 +850,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checkother)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
+		if (in_array($feature, $checkother) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -875,7 +875,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checkproject)) {
+		if (in_array($feature, $checkproject) && $objectid > 0) {
 			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
@@ -896,7 +896,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checktask)) {
+		if (in_array($feature, $checktask) && $objectid > 0) {
 			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
@@ -919,7 +919,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (!$checkonentitydone && !in_array($feature, $nocheck)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
+		if (!$checkonentitydone && !in_array($feature, $nocheck) && $objectid > 0) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
@@ -962,7 +962,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		//print $sql;
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda') {
+		if ($feature === 'agenda' && $objectid > 0) {
 			// Also check owner or attendee for users without allactions->read
 			if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -976,7 +976,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 		// For some object, we also have to check it is in the user hierarchy
 		// Param $object must be the full object and not a simple id to have this test possible.
-		if (in_array($feature, $checkhierarchy) && is_object($object)) {
+		if (in_array($feature, $checkhierarchy) && is_object($object) && $objectid > 0) {
 			$childids = $user->getAllChildIds(1);
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {
