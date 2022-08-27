@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,7 @@ function takepos_admin_prepare_head()
 	$head[$h][2] = 'bar';
 	$h++;
 
-	$numterminals = !empty($conf->global->TAKEPOS_NUM_TERMINALS) ? $conf->global->TAKEPOS_NUM_TERMINALS : 1;
-	$numterminals = max(1, $numterminals);
+	$numterminals = max(1, getDolGlobalInt('TAKEPOS_NUM_TERMINALS', 1));
 	for ($i = 1; $i <= $numterminals; $i++) {
 		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/terminal.php?terminal='.$i;
 		$head[$h][1] = $langs->trans("Terminal")." ".$i;
