@@ -37,7 +37,7 @@
  * \brief 	Page to create/see an invoice
  */
 
-// require & require_once
+// Libraries
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
