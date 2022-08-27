@@ -118,14 +118,14 @@ print $langs->trans('DolibarrReceiptPrinter');
 print '<td>';
 print $langs->trans('ReceiptPrinterMethodDescription');
 if ($conf->receiptprinter->enabled) {
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 		print '<br>';
 		print img_picto('', 'printer', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
 	}
 }
 print '</td><td class="right">';
 if ($conf->receiptprinter->enabled) {
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 	} else {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -146,7 +146,7 @@ print $langs->trans('TakeposConnectorMethodDescription');
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 	print '<br>';
 	print $langs->trans("URL")." / ".$langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank" rel="noopener noreferrer external">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-	print ' <input type="text" class="minwidth200" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
+	print ' <input type="text" class="minwidth200" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.getDolGlobalString('TAKEPOS_PRINT_SERVER').'">';
 }
 
 print '</td><td class="right">';
@@ -245,7 +245,7 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('WeighingScale');
 	print '<td colspan="2">';
@@ -253,7 +253,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($con
 	print "</td></tr>\n";
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('CustomerDisplay');
 	print '<td colspan="2">';
