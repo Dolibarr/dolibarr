@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
@@ -16,6 +17,8 @@
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 
+
+// Load Dolibarr Environment
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
@@ -24,9 +27,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_partnership extends MailingTargets
 {
-	public $name = 'PartnershipThirdartiesOrMembers';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	public $name = 'PartnershipThirdpartiesOrMembers';
 	public $desc = "Thirdparties or members included into a partnership program";
+	
 	public $require_admin = 0;
 
 	public $require_module = array(); // This module allows to select by categories must be also enabled if category module is not activated
@@ -49,10 +53,11 @@ class mailing_partnership extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
+	
 	public function __construct($db)
 	{
 		global $conf, $langs;
-		$langs->load("companies");
+		$langs->load('companies');
 
 		$this->db = $db;
 	}
@@ -65,6 +70,7 @@ class mailing_partnership extends MailingTargets
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
+	
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
@@ -151,6 +157,7 @@ class mailing_partnership extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
+	
 	public function getSqlArrayForStats()
 	{
 		// CHANGE THIS: Optionnal
@@ -169,6 +176,7 @@ class mailing_partnership extends MailingTargets
 	 *  @param      string			$sql        Requete sql de comptage
 	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
+	
 	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
@@ -218,7 +226,7 @@ class mailing_partnership extends MailingTargets
 			$num = $this->db->num_rows($resql);
 
 			if (empty($conf->partnership->enabled)) {
-				$num = 0; // Force empty list if category module is not enabled
+				$num = 0;   // Force empty list if category module is not enabled
 			}
 
 			if ($num) {
@@ -253,7 +261,7 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function url($id, $sourcetype = 'thirdparty')
 	{
-		if ($sourcetype == 'thirparty') {
+		if ($sourcetype == 'thirdparty') {
 			return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.img_object('', "societe").'</a>';
 		}
 		if ($sourcetype == 'member') {
