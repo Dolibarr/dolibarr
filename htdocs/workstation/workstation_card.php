@@ -77,11 +77,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = $user->rights->workstation->workstation->read;
-$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->workstation->workstation->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->workstation->workstation->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->workstation->workstation->write; // Used by the include of actions_dellink.inc.php
+// Permissions
+$permissiontoread   =  $user->rights->workstation->workstation->read;
+$permissiontoadd    =  $user->rights->workstation->workstation->write;      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete =  $user->rights->workstation->workstation->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote     =  $user->rights->workstation->workstation->write;      // Used by the include of actions_setnotes.inc.php
+$permissiondellink  =  $user->rights->workstation->workstation->write;      // Used by the include of actions_dellink.inc.php
+
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -94,7 +96,7 @@ restrictedArea($user, $object->element, $object->id, $object->table_element, 'wo
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);   // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -114,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'WORKSTATION_WORKSTATION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'WORKSTATION_WORKSTATION_MODIFY';    // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
