@@ -98,7 +98,6 @@ if ($action == 'edit') {
 
 	print '</form>';
 	print '<br>';
-	
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
