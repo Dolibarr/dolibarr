@@ -515,7 +515,7 @@ class Thirdparties extends DolibarrApi
 	 * @param int $id   Thirdparty ID
 	 * @return integer
 	 */
-	
+
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->rights->societe->supprimer) {
