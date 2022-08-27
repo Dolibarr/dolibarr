@@ -79,7 +79,7 @@ if ($action == 'set') {
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
+	if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -459,7 +459,7 @@ print '</div>';
 
 
 // Sumup options
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
