@@ -396,7 +396,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'SHIPPING_DELETE':
 		}
 		if ($logtriggeraction) {
-			dol_syslog("Trigger '".$this->name."' for action '.$action.' launched by ".__FILE__." id=".$object->id);
+			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__." id=".$object->id);
 		}
 		return 0;
 	}
