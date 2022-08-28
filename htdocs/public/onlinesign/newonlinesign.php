@@ -193,7 +193,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 if ($action == 'refusepropal') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).($conf->multicompany->enabled?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
@@ -429,7 +429,7 @@ if ($action == "dosign" && empty($cancel)) {
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).($conf->multicompany->enabled?'&entity='.$entity:'').'");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:'').'");
 						}else{
 							console.error(response);
 						}
