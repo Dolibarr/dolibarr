@@ -296,7 +296,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
-<?php if (!empty($conf->multicompany->enabled)) { ?>
+<?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->
 	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
