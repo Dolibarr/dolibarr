@@ -53,7 +53,6 @@ class mailing_partnership extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-
 	public function __construct($db)
 	{
 		global $conf, $langs;
@@ -70,7 +69,6 @@ class mailing_partnership extends MailingTargets
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
@@ -157,7 +155,6 @@ class mailing_partnership extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-
 	public function getSqlArrayForStats()
 	{
 		// CHANGE THIS: Optionnal
@@ -176,7 +173,6 @@ class mailing_partnership extends MailingTargets
 	 *  @param      string			$sql        Requete sql de comptage
 	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
-
 	public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
