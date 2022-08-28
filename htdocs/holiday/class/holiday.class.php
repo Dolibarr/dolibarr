@@ -85,17 +85,17 @@ class Holiday extends CommonObject
 	public $statut = ''; // 1=draft, 2=validated, 3=approved
 
 	/**
-	 * @var int 	ID of user that must approve. TODO: there is no date for validation (date_valid is used for approval), add one.
+	 * @var int 	ID of user that must approve. Real user for approval is fk_user_valid (old version) or fk_user_approve (new versions)
 	 */
 	public $fk_validator;
 
 	/**
-	 * @var int 	Date of approval. TODO: Add a field for approval date and use date_valid instead for validation.
+	 * @var int 	Date of validation or approval. TODO: Use date_valid instead for validation.
 	 */
 	public $date_valid = '';
 
 	/**
-	 * @var int 	ID of user that has approved (empty if not approved)
+	 * @var int 	ID of user that has validated or approved (empty if not approved)
 	 */
 	public $fk_user_valid;
 
