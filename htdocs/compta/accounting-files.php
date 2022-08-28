@@ -117,7 +117,7 @@ if ($user->socid > 0) {
 
 // Define $arrayofentities if multientity is set.
 $arrayofentities = array();
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	$arrayofentities = $mc->getEntitiesList();
 }
 
@@ -696,14 +696,14 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '<td class="center">'.$langs->trans("Code").'</td>';
 	print '<td class="center">'.$langs->trans("Country").'</td>';
 	print '<td class="center">'.$langs->trans("VATIntra").'</td>';
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<td class="center">'.$langs->trans("Currency").'</td>';
 	}
 	print '</tr>';
 
 	if (empty($TData)) {
 		print '<tr class="oddeven"><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print '</tr>';
@@ -833,7 +833,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$totalVAT_debit -= $data['amount_vat'];
 			}
 
-			if (!empty($conf->multicurrency->enabled)) {
+			if (isModEnabled('multicompany')) {
 				print '<td class="center">'.$data['currency']."</td>\n";
 			}
 
@@ -847,7 +847,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -858,7 +858,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -869,7 +869,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
