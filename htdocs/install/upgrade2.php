@@ -420,7 +420,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '5.0.9');
 			$beforeversionarray = explode('.', '6.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				if (!empty($conf->multicompany->enabled)) {
+				if (isModEnabled('multicompany')) {
 					global $multicompany_transverse_mode;
 
 					// Only if the transverse mode is not used
