@@ -178,7 +178,7 @@ if ($action == 'create') {
 
 	// Entity
 	/*
-	if (! empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -282,7 +282,7 @@ if (($id || $ref) && $action == 'edit') {
 
 			// Entity
 			/*
-			if (! empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print $object->entity > 0 ? $object->entity : $conf->entity;
