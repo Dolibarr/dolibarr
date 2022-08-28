@@ -60,12 +60,6 @@ class Holiday extends CommonObject
 	public $picto = 'holiday';
 
 	/**
-	 * @deprecated
-	 * @see $id
-	 */
-	public $rowid;
-
-	/**
 	 * @var int User ID
 	 */
 	public $fk_user;
@@ -525,6 +519,7 @@ class Holiday extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;
+				$tab_result[$i]['id'] = $obj->rowid;
 				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
 
 				$tab_result[$i]['fk_user'] = $obj->fk_user;
@@ -649,7 +644,9 @@ class Holiday extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;
+				$tab_result[$i]['id'] = $obj->rowid;
 				$tab_result[$i]['ref'] = ($obj->ref ? $obj->ref : $obj->rowid);
+
 				$tab_result[$i]['fk_user'] = $obj->fk_user;
 				$tab_result[$i]['fk_type'] = $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
@@ -1855,6 +1852,7 @@ class Holiday extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
+						$tab_result[$i]['id'] = $obj->rowid; // id of user
 						$tab_result[$i]['name'] = $obj->lastname; // deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
@@ -1897,6 +1895,7 @@ class Holiday extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						$tab_result[$i]['rowid'] = $obj->rowid; // rowid of user
+						$tab_result[$i]['id'] = $obj->rowid; // id of user
 						$tab_result[$i]['name'] = $obj->lastname; // deprecated
 						$tab_result[$i]['lastname'] = $obj->lastname;
 						$tab_result[$i]['firstname'] = $obj->firstname;
@@ -2131,6 +2130,7 @@ class Holiday extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;
+				$tab_result[$i]['id'] = $obj->rowid;
 				$tab_result[$i]['date_action'] = $obj->date_action;
 				$tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
 				$tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
@@ -2179,7 +2179,7 @@ class Holiday extends CommonObject
 			$num = $this->db->num_rows($result);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
+					$types[$obj->rowid] = array('id'=> $obj->rowid, 'rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
 				}
 
 				return $types;
