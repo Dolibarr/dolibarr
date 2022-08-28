@@ -37,11 +37,13 @@
  * \brief 	Page to create/see an invoice
  */
 
+// Libraries
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -51,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
@@ -69,16 +72,19 @@ if (!empty($conf->accounting->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
+
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
+
 if (!empty($conf->margin->enabled)) {
 	$langs->load('margins');
 }
 
+// General $Variables
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));    // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -102,7 +108,7 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-// Nombre de ligne pour choix de produit/service predefinis
+// Number of lines for predefined product/service choices
 $NBLINES = 4;
 
 $usehm = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : 0);
@@ -128,11 +134,14 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('invoicecard', 'globalcard'));
 
+// Permissions
 $usercanread = $user->hasRight("facture", "lire");
 $usercancreate = $user->hasRight("facture", "creer");
 $usercanissuepayment = $user->hasRight("facture", "paiement");
 $usercandelete = $user->hasRight("facture", "supprimer");
 $usercancreatecontract = $user->hasRight("contrat", "creer");
+
+// Advanced Permissions
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->send)));
 $usercanreopen = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->facture->invoice_advance->reopen)));
