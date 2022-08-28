@@ -117,12 +117,12 @@ if ($user->socid > 0) {
 
 // Define $arrayofentities if multientity is set.
 $arrayofentities = array();
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	$arrayofentities = $mc->getEntitiesList();
 }
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		$entity = '0,'.join(',', array_keys($arrayofentities));
 	}
@@ -456,7 +456,7 @@ if ($result && $action == "dl" && !$error) {
 	dol_mkdir($dirfortmpfile);
 
 	$log = $langs->transnoentitiesnoconv("Type");
-	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+	if (isModEnabled('multicompany') && is_object($mc)) {
 		$log .= ','.$langs->transnoentitiesnoconv("Entity");
 	}
 	$log .= ','.$langs->transnoentitiesnoconv("Date");
@@ -498,7 +498,7 @@ if ($result && $action == "dl" && !$error) {
 			}
 
 			$log .= '"'.$langs->trans($file['item']).'"';
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 			}
 			$log .= ','.dol_print_date($file['date'], 'dayrfc');
@@ -583,7 +583,7 @@ print "\n";
 
 // Export is for current company only
 $socid = 0;
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	$mc->getInfo($conf->entity);
 	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
@@ -696,14 +696,14 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '<td class="center">'.$langs->trans("Code").'</td>';
 	print '<td class="center">'.$langs->trans("Country").'</td>';
 	print '<td class="center">'.$langs->trans("VATIntra").'</td>';
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<td class="center">'.$langs->trans("Currency").'</td>';
 	}
 	print '</tr>';
 
 	if (empty($TData)) {
 		print '<tr class="oddeven"><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print '</tr>';
@@ -833,7 +833,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$totalVAT_debit -= $data['amount_vat'];
 			}
 
-			if (!empty($conf->multicurrency->enabled)) {
+			if (isModEnabled('multicompany')) {
 				print '<td class="center">'.$data['currency']."</td>\n";
 			}
 
@@ -847,7 +847,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -858,7 +858,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -869,7 +869,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";

@@ -612,7 +612,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {

@@ -371,7 +371,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret) {
@@ -425,7 +425,7 @@ class Conf
 			$rootfordata = DOL_DATA_ROOT;
 			$rootforuser = DOL_DATA_ROOT;
 			// If multicompany module is enabled, we redefine the root of data
-			if (!empty($this->multicompany->enabled) && !empty($this->entity) && $this->entity > 1) {
+			if (isModEnabled('multicompany') && !empty($this->entity) && $this->entity > 1) {
 				$rootfordata .= '/'.$this->entity;
 			}
 			// Set standard temporary folder name or global override
@@ -987,7 +987,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				if (is_object($mc)) {
 					$mc->setValues($this);
 				}

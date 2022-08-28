@@ -166,7 +166,7 @@ if ($resql) {
 		$lastcreatedbox .= '<tr class="oddeven">';
 		$lastcreatedbox .= '<td class="nowraponall tdoverflowmax150">';
 		$lastcreatedbox .= $fuserstatic->getNomUrl(-1);
-		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
+		if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
 			$lastcreatedbox .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		} elseif ($obj->admin) {
 			$lastcreatedbox .= img_picto($langs->trans("Administrator"), 'star');
@@ -185,7 +185,7 @@ if ($resql) {
 		$entity = $obj->entity;
 		$entitystring = '';
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -223,7 +223,7 @@ if ($canreadperms) {
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+	if (isModEnabled('multicompany') && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
 		$sql .= " WHERE g.entity IS NOT NULL";
 	} else {
 		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -234,7 +234,7 @@ if ($canreadperms) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$colspan = 1;
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			$colspan++;
 		}
 		$num = $db->num_rows($resql);
@@ -262,7 +262,7 @@ if ($canreadperms) {
 				$lastgroupbox .= img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
 			$lastgroupbox .= "</td>";
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				$mc->getInfo($obj->entity);
 				$lastgroupbox .= '<td>';
 				$lastgroupbox .= $mc->label;
