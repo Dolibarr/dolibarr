@@ -122,7 +122,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 }
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
 		$entity = '0,'.join(',', array_keys($arrayofentities));
 	}
@@ -456,7 +456,7 @@ if ($result && $action == "dl" && !$error) {
 	dol_mkdir($dirfortmpfile);
 
 	$log = $langs->transnoentitiesnoconv("Type");
-	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+	if (isModEnabled('multicompany') && is_object($mc)) {
 		$log .= ','.$langs->transnoentitiesnoconv("Entity");
 	}
 	$log .= ','.$langs->transnoentitiesnoconv("Date");
@@ -498,7 +498,7 @@ if ($result && $action == "dl" && !$error) {
 			}
 
 			$log .= '"'.$langs->trans($file['item']).'"';
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 			}
 			$log .= ','.dol_print_date($file['date'], 'dayrfc');
@@ -583,7 +583,7 @@ print "\n";
 
 // Export is for current company only
 $socid = 0;
-if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && is_object($mc)) {
 	$mc->getInfo($conf->entity);
 	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
 	print "<td>";
