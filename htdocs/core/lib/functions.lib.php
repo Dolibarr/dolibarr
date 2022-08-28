@@ -7029,7 +7029,7 @@ function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
 	if ($keepsomeentities) {
 		$newstring = strtr($newstring, array('&amp;'=>'__andamp__', '&lt;'=>'__andlt__', '&gt;'=>'__andgt__', '"'=>'__dquot__'));
 	}
-	$newstring = html_entity_decode($newstring, $b, $c);
+	$newstring = html_entity_decode((string) $newstring, (int) $b, (string) $c);
 	if ($keepsomeentities) {
 		$newstring = strtr($newstring, array('__andamp__'=>'&amp;', '__andlt__'=>'&lt;', '__andgt__'=>'&gt;', '__dquot__'=>'"'));
 	}

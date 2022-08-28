@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CASH".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CHEQUE".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_CB".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-	if (!empty($conf->global->TAKEPOS_ENABLE_SUMUP)) {
+	if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 		$res = dolibarr_set_const($db, "CASHDESK_ID_BANKACCOUNT_SUMUP".$terminaltouse, (GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	}
 	foreach ($paiements as $modep) {
@@ -145,7 +146,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td>';
-print $form->select_company($conf->global->{'CASHDESK_ID_THIRDPARTY'.$terminaltouse}, 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
+print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', '(s.client IN (1, 3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
 
 $atleastonefound = 0;
@@ -153,33 +154,33 @@ if (isModEnabled('banque')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse})) {
+	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
+	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse)) {
 		$atleastonefound++;
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse})) {
+	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
+	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse)) {
 		$atleastonefound++;
 	}
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
-	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) {
+	$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
+	if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse)) {
 		$atleastonefound++;
 	}
 	print '</td></tr>';
-	if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1);
-		if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse})) {
+		$form->select_comptes(getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse), 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1);
+		if (getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse)) {
 			$atleastonefound++;
 		}
 		print '</td></tr>';
@@ -197,7 +198,7 @@ if (isModEnabled('banque')) {
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
+		$form->select_comptes(getDolGlobalInt($name), $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
 	}
 }
@@ -205,10 +206,10 @@ if (isModEnabled('banque')) {
 if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	if (!isModEnabled('productbatch') || !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
-		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
+	if (!isModEnabled('productbatch') || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
+		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
 	} else {
-		if (!$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
+		if (getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
 			$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
 		}
 		print $langs->trans("Yes").'<br>';
@@ -286,11 +287,11 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TA
 
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
 print '<td>';
-print '<input type="text" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
+print '<input type="text" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.getDolGlobalString('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse).'" />';
 print '</td></tr>';
 
 // Numbering module
-if ($conf->global->TAKEPOS_ADDON == "terminal") {
+if (getDolGlobalString('TAKEPOS_ADDON') == "terminal") {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BillsNumberingModule");
 	print '<td colspan="2">';
@@ -379,7 +380,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td></tr>';
@@ -395,7 +396,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td></tr>';

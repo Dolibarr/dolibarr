@@ -1918,10 +1918,11 @@ class Form
 	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
 	 *  @param  int				$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
+	 *  @param  int				$forcecombo     Force the component to be a simple combo box without ajax
 	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2124,7 +2125,7 @@ class Form
 			}
 			$out .= '</select>';
 
-			if ($num) {
+			if ($num && !$forcecombo) {
 				// Enhance with select2
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlname);
@@ -6451,8 +6452,8 @@ class Form
 				} elseif ($usecalendar == 'jquery') {
 					if (!$disabled) {
 						// Output javascript for datepicker
-						$minYear = $conf->global->MIN_YEAR_SELECT_DATE ? $conf->global->MIN_YEAR_SELECT_DATE : (date('Y') - 100);
-						$maxYear = $conf->global->MAX_YEAR_SELECT_DATE ? $conf->global->MAX_YEAR_SELECT_DATE : (date('Y') + 100);
+						$minYear = getDolGlobalString('MIN_YEAR_SELECT_DATE', date('Y') - 100);
+						$maxYear = getDolGlobalString('MAX_YEAR_SELECT_DATE', date('Y') + 100);
 
 						$retstring .= "<script type='text/javascript'>";
 						$retstring .= "$(function(){ $('#".$prefix."').datepicker({
