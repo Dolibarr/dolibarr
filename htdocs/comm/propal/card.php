@@ -47,7 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->project->enabled)) {
@@ -2875,7 +2874,7 @@ if ($action == 'create') {
 
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 
