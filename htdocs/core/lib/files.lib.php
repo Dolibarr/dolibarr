@@ -2421,7 +2421,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		return 'ErrorBadParameter';
 	}
 	if (empty($entity)) {
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
