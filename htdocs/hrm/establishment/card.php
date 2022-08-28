@@ -371,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Entity
 	/*
-	if ($conf->multicompany->enabled) {
+	if (!isModEnabled('multicompany') {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("Entity").'</td>';
 		print '<td>'.$object->entity.'</td>';
