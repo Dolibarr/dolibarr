@@ -143,7 +143,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	}*/
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 
