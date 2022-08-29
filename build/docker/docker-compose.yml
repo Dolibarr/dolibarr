@@ -11,7 +11,7 @@ services:
         image: mariadb:latest
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: dolibarr
+            MYSQL_DATABASE: aflicssdb
         ports:
             - "3306:3306"
         networks:
