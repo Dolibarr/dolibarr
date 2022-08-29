@@ -232,7 +232,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$object->type_code = GETPOST("type_code", 'aZ09');
 		$object->category_code = GETPOST("category_code", 'aZ09');
 		$object->severity_code = GETPOST("severity_code", 'aZ09');
-		$object->ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
+		$object->ip = getUserRemoteIP();
 
 		$sql = "SELECT COUNT(ref) as nb_tickets";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
