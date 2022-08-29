@@ -332,7 +332,9 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+$title = $langs->trans("CreateMvts");
+
+llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -341,7 +343,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+	print load_fiche_titre($title);
 
 	$object = new BookKeeping($db);
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
