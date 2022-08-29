@@ -1117,9 +1117,9 @@ if ($action == 'create') {
 
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled('service')) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled('product')) {
 			$title = $langs->trans("Services");
 		}
 
@@ -1310,7 +1310,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			// Multicurrency code
 			print '<tr>';
 			print '<td>';
@@ -1573,7 +1573,7 @@ if ($action == 'create') {
 		if ($object->frequency > 0) {
 			print '<br>';
 
-			if (empty($conf->cron->enabled)) {
+			if (!isModEnabled('cron')) {
 				print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));
 			}
 
