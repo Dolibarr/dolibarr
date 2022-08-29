@@ -9,7 +9,7 @@ English Dolibarr ChangeLog
 For users:
 ---------------
 
-NEW: PHP 8.1 compatibility. 
+NEW: PHP 8.1 compatibility:
      Warning: Application works correctly with PHP8 and 8.1 but you may experience a lot of PHP warning into the PHP server log files (depending 
      on the PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
@@ -121,6 +121,7 @@ NEW: Ticket triggers: allow to automatically send messages on new tickets
 NEW: Accountancy - Add hidden feature for accounting reconciliation
 NEW: Can store the session into database (instead of beeing managed by PHP)
 NEW: Added MMK currency (Myanmar Kyat)
+NEW: On a form to send an email, we show all emails of contacts of object
 
  Modules
 NEW: Module Partnership Management
