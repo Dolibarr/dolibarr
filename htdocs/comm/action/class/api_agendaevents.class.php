@@ -124,7 +124,7 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
-		if (empty($conf->societe->enabled)) {
+		if (!isModEnabled('societe')) {
 			$search_sale = 0; // If module thirdparty not enabled, sale representative is something that does not exists
 		}
 

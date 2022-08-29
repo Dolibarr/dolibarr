@@ -460,7 +460,7 @@ if ($action == 'create') {
 	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
-	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (!isModEnabled('societe') || empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';

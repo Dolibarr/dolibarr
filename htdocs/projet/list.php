@@ -199,7 +199,7 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
-$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));
+$arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'checked'=>0, 'position'=>22);
 $arrayfields['commercial'] = array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>0, 'position'=>23);
 $arrayfields['c.assigned'] = array('label'=>$langs->trans("AssignedTo"), 'checked'=>-1, 'position'=>120);
