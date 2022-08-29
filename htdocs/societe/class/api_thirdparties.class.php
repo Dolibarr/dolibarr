@@ -550,7 +550,7 @@ class Thirdparties extends DolibarrApi
 	{
 		global $conf;
 
-		if (empty($conf->societe->enabled)) {
+		if (!isModEnabled('societe')) {
 			throw new RestException(501, 'Module "Thirdparties" needed for this request');
 		}
 
