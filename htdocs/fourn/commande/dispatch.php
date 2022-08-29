@@ -373,19 +373,6 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 		}
 	}
 
-	if (!$error) {
-		global $conf, $langs, $user;
-		// Call trigger
-
-		$result = $object->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
-		// End call triggers
-
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$error++;
-		}
-	}
-
 	if ($result >= 0 && !$error) {
 		$db->commit();
 
