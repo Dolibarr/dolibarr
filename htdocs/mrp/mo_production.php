@@ -1563,7 +1563,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
 							$alreadyconsumed = 0;
-							if (is_array($arrayoflines) && !empty($arrayoflines)){
+							if (is_array($arrayoflines) && !empty($arrayoflines)) {
 								foreach ($arrayoflines as $line2) {
 									$alreadyconsumed += $line2['qty'];
 								}
@@ -1819,7 +1819,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		</script>
 
 	<?php
-
 }
 // End of page
 llxFooter();
