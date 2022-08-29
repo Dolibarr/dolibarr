@@ -28,6 +28,8 @@
  *  \brief      Homepage products and services
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -47,6 +49,7 @@ $langs->loadLangs(array('products', 'stocks'));
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
+// Initialize objects
 $product_static = new Product($db);
 
 // Security check
