@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled('project')) {
@@ -60,7 +60,7 @@ if (isModEnabled('project')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 if (isModEnabled('accounting')) {
@@ -69,10 +69,10 @@ if (isModEnabled('accounting')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 
@@ -540,7 +540,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {		// Set incoterm
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -2076,7 +2076,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
@@ -2994,7 +2994,7 @@ if ($action == 'create') {
 				$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 				$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					if (!empty($objectsrc->multicurrency_code)) {
 						$currency_code = $objectsrc->multicurrency_code;
 					}
@@ -3016,7 +3016,7 @@ if ($action == 'create') {
 		$remise_absolue 	= 0;
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) {
+		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
 	}
@@ -3667,7 +3667,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
@@ -3715,7 +3715,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
@@ -3836,7 +3836,7 @@ if ($action == 'create') {
 		}
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
@@ -3912,7 +3912,7 @@ if ($action == 'create') {
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		$multicurrency_totalpaid = $object->getSommePaiement(1);
 		$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
@@ -4504,7 +4504,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		// Multicurrency code
 		print '<tr>';
 		print '<td>';
@@ -4570,7 +4570,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
@@ -4708,7 +4708,7 @@ if ($action == 'create') {
 		$sign = -1; // We invert sign for output
 	}
 
-	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 		print '<td class="nowrap right amountcard">'.price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -4819,10 +4819,10 @@ if ($action == 'create') {
 	if ($selleruserevenustamp) {
 		$nbrows++;
 	}
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		$nbrows += 5;
 	}
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		$nbrows += 1;
 	}
 
@@ -4917,7 +4917,7 @@ if ($action == 'create') {
 			 print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
 			 print '<td></td>';
 			 print '<td></td>';
-			 if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
+			 if (isModEnabled('banque')) print '<td class="right"></td>';
 			 print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
 			 print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
 			 print '<td width="18">&nbsp;</td>';
@@ -5259,7 +5259,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Margin Infos
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		$formmargin->displayMarginInfos($object);
 	}
 
@@ -5477,7 +5477,7 @@ if ($action == 'create') {
 			}
 
 			// POS Ticket
-			if (!empty($conf->takepos->enabled) && $object->module_source == 'takepos') {
+			if (isModEnabled('takepos') && $object->module_source == 'takepos') {
 				$langs->load("cashdesk");
 				$receipt_url = DOL_URL_ROOT."/takepos/receipt.php";
 				print '<a target="_blank" rel="noopener noreferrer" class="butAction" href="'.$receipt_url.'?facid='.((int) $object->id).'">'.$langs->trans('POSTicket').'</a>';
