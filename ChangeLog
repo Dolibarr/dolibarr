@@ -20,6 +20,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
+* Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 
 
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
