@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/terminal.php
+ *	\file       htdocs/takepos/admin/receipt.php
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */
@@ -67,7 +67,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 } elseif (GETPOST('action', 'alpha') == 'setmethod') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// TakePOS connector require ReceiptPrinter module
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !$conf->receiptprinter->enabled) {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !isModEnabled('receiptprinter')) {
 		activateModule("modReceiptPrinter");
 	}
 }
@@ -117,14 +117,14 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('DolibarrReceiptPrinter');
 print '<td>';
 print $langs->trans('ReceiptPrinterMethodDescription');
-if ($conf->receiptprinter->enabled) {
+if (isModEnabled('receiptprinter')) {
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 		print '<br>';
 		print img_picto('', 'printer', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
 	}
 }
 print '</td><td class="right">';
-if ($conf->receiptprinter->enabled) {
+if (isModEnabled('receiptprinter')) {
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 	} else {

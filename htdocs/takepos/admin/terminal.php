@@ -150,7 +150,7 @@ print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminalto
 print '</td></tr>';
 
 $atleastonefound = 0;
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
@@ -203,10 +203,10 @@ if (!empty($conf->banque->enabled)) {
 	}
 }
 
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	if (empty($conf->productbatch->enabled) || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
+	if (!isModEnabled('productbatch') || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
 		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
 	} else {
 		if (getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
@@ -231,7 +231,7 @@ if (!empty($conf->stock->enabled)) {
 	}
 	print '</td></tr>';
 
-	if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK) && !$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
+	if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK) && !$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
 		print '<tr class="oddeven"><td>'.$langs->trans('CashDeskForceDecreaseStockLabel').'</td>';
 		print '<td>';
 		print '<span class="opacitymedium">'.$langs->trans('CashDeskForceDecreaseStockDesc').'</span>';
@@ -404,7 +404,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-if ($atleastonefound == 0 && !empty($conf->banque->enabled)) {
+if ($atleastonefound == 0 && isModEnabled('banque')) {
 	print info_admin($langs->trans("AtLeastOneDefaultBankAccountMandatory"), 0, 0, 'error');
 }
 
