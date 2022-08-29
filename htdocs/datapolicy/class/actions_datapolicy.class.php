@@ -94,7 +94,7 @@ class ActionsDatapolicy
 		$langs->load('datapolicy@datapolicy');
 		$error = 0; // Error counter
 
-		if (GETPOST('socid') && $parameters['currentcontext'] == 'thirdpartycard') {
+		if (GETPOST('socid') && $parameters['currentcontext'] == 'thirdpartycard' && !empty($object)) {
 			$object->fetch(GETPOST('socid'));
 		}
 

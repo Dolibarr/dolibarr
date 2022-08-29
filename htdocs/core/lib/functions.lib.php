@@ -10418,8 +10418,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
- * @param string    $html       optional : content with html
+ * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
@@ -10444,7 +10444,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * // phpcs:enable
  * @return string               html button
  */
-function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
 	global $hookmanager, $action, $object, $langs;
 
@@ -10464,8 +10464,8 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		'title' => $label
 	);
 
-	if (empty($html)) {
-		$html = $label;
+	if (empty($text)) {
+		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
@@ -10544,7 +10544,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,
-		'html' => $html,
+		'html' => $text,
 		'actionType' => $actionType,
 		'url' => $url,
 		'id' => $id,
@@ -10556,7 +10556,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	if (empty($reshook)) {
-		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+		if (dol_textishtml($text)) {	// If content already HTML encoded
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . $text . '</' . $tag . '>';
+		} else {
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . dol_escape_htmltag($text) . '</' . $tag . '>';
+		}
 	} else {
 		return $hookmanager->resPrint;
 	}
