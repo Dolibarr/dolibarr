@@ -590,10 +590,10 @@ if (count($amount)) {
 		if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order')) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice')) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';
