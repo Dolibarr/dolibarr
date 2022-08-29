@@ -125,7 +125,7 @@ if (!empty($cat_id)) {
 	$arraykeyvalue = array();
 	foreach ($accountingcategory->lines_cptbk as $key => $val) {
 		$doc_ref = !empty($val->doc_ref) ? $val->doc_ref : '';
-		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' - ' . $val->label_compte . $doc_ref;
+		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' - ' . $val->label_compte . ($doc_ref ? ' '.$doc_ref : '');
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
