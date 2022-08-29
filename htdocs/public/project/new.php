@@ -423,7 +423,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("FormForNewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 

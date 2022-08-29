@@ -475,7 +475,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewSubscriptionDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 
@@ -568,7 +568,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	// Firstname
 	print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 	// EMail
-	print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+	print '<tr><td>'.$langs->trans("Email").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? ' <span style="color:red;">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
 	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 	// Login
@@ -623,7 +623,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	}
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
-	print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
+	print $form->selectDate(!empty($birthday) ? $birthday : "", 'birth', 0, 0, 1, "newmember", 1, 0);
 	print '</td></tr>'."\n";
 	// Photo
 	print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
@@ -786,7 +786,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
-			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));
+			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
