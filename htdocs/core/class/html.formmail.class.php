@@ -1072,6 +1072,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 
@@ -1080,6 +1081,7 @@ class FormMail extends Form
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 					$withtoselected = array_keys($tmparray);
 				}
+
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 			}
 		}
@@ -1107,6 +1109,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
@@ -1510,7 +1513,7 @@ class FormMail extends Form
 
 
 	/**
-	 * Set substit array from object. This is call when suggesting the email template into forms before sending email.
+	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
 	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
