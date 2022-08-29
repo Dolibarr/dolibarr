@@ -1667,7 +1667,9 @@ class BookKeeping extends CommonObject
 			$this->doc_type = $obj->doc_type;
 			$this->date_creation = $this->db->jdate($obj->date_creation);
 			$this->date_modification = $this->db->jdate($obj->date_modification);
-			$this->date_export = $this->db->jdate($obj->date_export);
+			if ($mode != "_tmp") {
+				$this->date_export = $this->db->jdate($obj->date_export);
+			}
 			$this->date_validation = $this->db->jdate($obj->date_validation);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -1764,7 +1766,9 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $obj->date_creation;
 				$line->date_modification = $obj->date_modification;
-				$line->date_export = $obj->date_export;
+				if ($mode != "_tmp") {
+					$line->date_export = $obj->date_export;
+				}
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;

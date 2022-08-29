@@ -540,21 +540,24 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document export
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
-		print '<td>';
-		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+		// Don't show in tmp mode, inevitably empty
+		if ($mode != "_tmp") {
+			// Date document export
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
+			print '<td>';
+			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
 
-		// Date document validation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
-		print '<td>';
-		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+			// Date document validation
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
+			print '<td>';
+			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Validate
 		/*
