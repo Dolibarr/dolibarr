@@ -33,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (!empty($conf->holiday->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
@@ -122,6 +124,10 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
+	$account->currency_code = trim(GETPOST("account_currency_code"));
+	$account->state_id = GETPOST("account_state_id", 'int');
+	$account->country_id = GETPOST("account_country_id", 'int');
+
 	$result = $account->create($user);
 
 	if (!$result) {
@@ -191,6 +197,10 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
+
+	$account->currency_code = trim(GETPOST("account_currency_code"));
+	$account->state_id = GETPOST("account_state_id", 'int');
+	$account->country_id = GETPOST("account_country_id", 'int');
 
 	$result = $account->update($user);
 
@@ -274,6 +284,7 @@ if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
  */
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $childids = $user->getAllChildIds(1);
 
@@ -285,14 +296,42 @@ llxHeader('', $title, $help_url);
 $head = user_prepare_head($object);
 
 if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	if ($conf->use_javascript_ajax) {
+		print "\n<script>";
+		print 'jQuery(document).ready(function () {
+					jQuery("#type").change(function() {
+						document.formbank.action.value="edit";
+						document.formbank.submit();
+					});
+					jQuery("#selectaccount_country_id").change(function() {
+						document.formbank.action.value="edit";
+						document.formbank.submit();
+					});
+				})';
+		print "</script>\n";
+	}
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 if ($id && $action == 'create' && $user->rights->user->user->creer) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	if ($conf->use_javascript_ajax) {
+		print "\n<script>";
+		print 'jQuery(document).ready(function () {
+					jQuery("#type").change(function() {
+						document.formbank.action.value="create";
+						document.formbank.submit();
+					});
+					jQuery("#selectaccount_country_id").change(function() {
+						document.formbank.action.value="create";
+						document.formbank.submit();
+					});
+				})';
+		print "</script>\n";
+	}
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
@@ -772,6 +811,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print_liste_field_titre("RIB");
 	print_liste_field_titre("IBAN");
 	print_liste_field_titre("BIC");
+	print_liste_field_titre("Currency");
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -806,7 +846,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $string;
 		print '</td>';
 		// IBAN
-		print '<td>'.$account->iban;
+		print '<td>'.getIbanHumanReadable($account);
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
 				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
@@ -821,6 +861,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			}
 		}
 		print '</td>';
+
+		// Currency
+		print '<td>'.$account->currency_code.'</td>';
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
@@ -863,6 +906,47 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
 	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+
+	// Currency
+	print '<tr><td class="fieldrequired">'.$langs->trans("Currency");
+	print '<input type="hidden" value="'.$account->currency_code.'">';
+	print '</td>';
+	print '<td class="maxwidth200onsmartphone">';
+	$selectedcode = $account->currency_code;
+	if (!$selectedcode) {
+		$selectedcode = $conf->currency;
+	}
+	print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
+	print '</td></tr>';
+
+	// Country
+	$account->country_id = $account->country_id ? $account->country_id : $mysoc->country_id;
+	$selectedcode = $account->country_code;
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id");
+	} elseif (empty($selectedcode)) {
+		$selectedcode = $mysoc->country_code;
+	}
+	$account->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
+	print '<td class="maxwidth200onsmartphone">';
+	print img_picto('', 'country', 'class="pictofixedwidth"').$form->select_country($selectedcode, 'account_country_id');
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// State
+	print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
+	if ($selectedcode) {
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $account->state_id, $selectedcode, 'account_state_id');
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
