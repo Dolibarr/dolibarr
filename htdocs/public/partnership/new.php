@@ -67,7 +67,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "partnership", "companies", "install", "other"));
 
 // Security check
 if (empty($conf->partnership->enabled)) {
@@ -178,10 +178,10 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	/*if (GETPOST('typeid') <= 0) {
+	if (GETPOST('partnershiptype', 'int') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
-	}*/
+	}
 	if (!GETPOST('societe')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("societe"))."<br>\n";
@@ -208,7 +208,6 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$partnership = new Partnership($db);
-		$partnershipt = new PartnershipType($db);
 
 		// We try to find the thirdparty or the member
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
@@ -217,29 +216,51 @@ if (empty($reshook) && $action == 'add') {
 			$partnership->fk_soc = 0;
 		}
 
-		$partnership->status      = 0;
-		$partnership->note_private = GETPOST('note_private');
-		$partnership->date_creation = dol_now();
+		$partnership->status                 = 0;
+		$partnership->note_private           = GETPOST('note_private');
+		$partnership->date_creation 		 = dol_now();
 		$partnership->date_partnership_start = dol_now();
-		$partnership->fk_user_creat = 0;
-
-		/*$partnershipt->fetch(0, 'default');
-		if ($partnershipt->id > 0) {
-			$partnership->fk_type = $partnershipt->id;
-		}*/
-		$partnership->fk_type = GETPOST('partnershiptype', 'int');
-
-		//$partnership->firstname   = GETPOST('firstname');
-		//$partnership->lastname    = GETPOST('lastname');
-		//$partnership->address     = GETPOST('address');
-		//$partnership->zip         = GETPOST('zipcode');
-		//$partnership->town        = GETPOST('town');
-		//$partnership->email       = GETPOST('email');
-		//$partnership->country_id  = GETPOST('country_id', 'int');
-		//$partnership->state_id    = GETPOST('state_id', 'int');
-		//$partnership->typeid      = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$partnership->fk_user_creat          = 0;
+		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 
 		// test if societe already exist
+		$company = new Societe($db);
+		$result = $company->fetch(0, GETPOST('societe'));
+		if ($result == 0) { // si il ya pas d'entree sur le nom  on teste l'email
+			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
+			if ($result1 > 0) {
+				$error++;
+				$errmsg = $langs->trans("already exists please rewrite your company name");
+			} else {
+				//create thirdparty
+				$company = new Societe($db);
+
+				$company->name        = GETPOST('societe');
+				$company->address     = GETPOST('address');
+				$company->zip         = GETPOST('zipcode');
+				$company->town        = GETPOST('town');
+				$company->email       = GETPOST('email');
+				$company->country_id  = GETPOST('country_id', 'int');
+				$company->state_id    = GETPOST('state_id', 'int');
+				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+
+				$resultat=$company->create($user);
+				if ($resultat < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
+				}
+
+				$partnership->fk_soc = $company->id;
+			}
+		} elseif ($result == -2) {
+			$error++;
+			$errmsg = $langs->trans('more than one entry exist for this company please contact us to complete your partnership request');
+		} else {
+			$partnership->fk_soc = $company->id;
+		}
+
+		/*
 		$sql =	"SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE nom='".$db->escape(GETPOST('societe'))."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -280,7 +301,7 @@ if (empty($reshook) && $action == 'add') {
 		} else {
 			$company = $db->fetch_object($result);
 			$partnership->fk_soc = $company->rowid;
-		}
+		}*/
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($partnership->table_element);
