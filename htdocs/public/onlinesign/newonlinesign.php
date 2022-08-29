@@ -168,6 +168,15 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
+		if (method_exists($object, 'call_trigger')) {
+			//customer is not a user !?! so could we use same user as validation ?
+			$user = new User($db);
+			$user->fetch($object->user_valid_id);
+			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
 	} else {
 		$db->rollback();
 	}
@@ -459,6 +468,7 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<br>';
 			if ($message == 'refused') {
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
+
 			} else {
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
