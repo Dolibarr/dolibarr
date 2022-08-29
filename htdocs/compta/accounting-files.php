@@ -134,7 +134,7 @@ $listofchoices = array(
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
 	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled), 'perms' => !empty($user->rights->tax->charges->lire)),
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled), 'perms' => !empty($user->rights->banque->lire)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
 	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled), 'perms' => !empty($user->rights->loan->read)),
 );
 
@@ -549,7 +549,7 @@ print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
 }
 print '</span><br>';
