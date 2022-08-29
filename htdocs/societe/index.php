@@ -27,16 +27,21 @@
  *  \brief      Home page for third parties area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$hookmanager = new HookManager($db);
+
+// Load translation files required by the page
+$langs->load("companies");
+
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
-$langs->load("companies");
+
 
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
@@ -51,6 +56,7 @@ $thirdparty_static = new Societe($db);
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
+
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
