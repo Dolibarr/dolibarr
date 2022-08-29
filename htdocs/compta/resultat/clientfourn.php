@@ -537,7 +537,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Donations
 	 */
 
-	if (!empty($conf->don->enabled)) {
+	if (isModEnabled('don')) {
 		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
@@ -932,7 +932,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Salaries
 	 */
 
-	if (!empty($conf->salaries->enabled)) {
+	if (isModEnabled('salaries')) {
 		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
@@ -1035,7 +1035,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Expense report
 	 */
 
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			$langs->load('trips');
 			if ($modecompta == 'CREANCES-DETTES') {
@@ -1206,7 +1206,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Payment Loan
 	 */
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
