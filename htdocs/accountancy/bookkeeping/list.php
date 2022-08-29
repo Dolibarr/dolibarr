@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -1133,6 +1133,13 @@ $line = new BookKeepingLine();
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['val'] = array ();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+$totalarray['val']['totaldebit'] = 0;
+$totalarray['val']['totalcredit'] = 0;
+
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
