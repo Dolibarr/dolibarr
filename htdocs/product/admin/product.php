@@ -338,7 +338,7 @@ foreach ($dirproduct as $dirroot) {
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
@@ -556,7 +556,7 @@ print '</tr>';
 // Rule for price
 
 print '<tr class="oddeven">';
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	print '<td>'.$langs->trans("PricingRule").'</td>';
 } else {
 	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
