@@ -137,7 +137,7 @@ if ($cat_id == 0) {
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
 if (GETPOST("modecompta")) {
@@ -151,10 +151,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -193,7 +193,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("AnnualByAccountDueDebtMode");
 	$calcmode = $langs->trans("CalcModeDebt");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -210,7 +210,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=CREANCES-DETTES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -238,7 +238,7 @@ if ($modecompta == "CREANCES-DETTES") {
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 

@@ -132,7 +132,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
 if (GETPOST("modecompta", 'alpha')) {
@@ -146,10 +146,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -174,7 +174,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
 	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
 		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
 	}
@@ -193,7 +193,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
 	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
 		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?date_startyear='.$tmps['year'].'&date_startmonth='.$tmps['mon'].'&date_startday='.$tmps['mday'].'&date_endyear='.$tmpe['year'].'&date_endmonth='.$tmpe['mon'].'&date_endday='.$tmpe['mday'].'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
 	}
@@ -223,7 +223,7 @@ $hselected = 'report';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'showaccountdetail'=>$showaccountdetail), $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -537,7 +537,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Donations
 	 */
 
-	if (!empty($conf->don->enabled)) {
+	if (isModEnabled('don')) {
 		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Donations").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
@@ -932,7 +932,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Salaries
 	 */
 
-	if (!empty($conf->salaries->enabled)) {
+	if (isModEnabled('salaries')) {
 		print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
@@ -1035,7 +1035,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Expense report
 	 */
 
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			$langs->load('trips');
 			if ($modecompta == 'CREANCES-DETTES') {
@@ -1127,7 +1127,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 */
 	//$conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY = 1;
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && !empty($conf->banque->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && isModEnabled('banque') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
@@ -1206,7 +1206,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Payment Loan
 	 */
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 

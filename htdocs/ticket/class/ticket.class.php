@@ -1816,7 +1816,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				if (isModEnabled('ficheinter') && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {

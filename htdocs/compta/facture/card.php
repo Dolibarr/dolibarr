@@ -51,28 +51,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 
@@ -540,7 +540,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {		// Set incoterm
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -2076,7 +2076,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
@@ -2874,7 +2874,7 @@ $formmargin = new FormMargin($db);
 $soc = new Societe($db);
 $paymentstatic = new Paiement($db);
 $bankaccountstatic = new Account($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -2994,7 +2994,7 @@ if ($action == 'create') {
 				$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 				$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					if (!empty($objectsrc->multicurrency_code)) {
 						$currency_code = $objectsrc->multicurrency_code;
 					}
@@ -3016,7 +3016,7 @@ if ($action == 'create') {
 		$remise_absolue 	= 0;
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) {
+		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
 	}
@@ -3650,7 +3650,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
@@ -3658,7 +3658,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
@@ -3667,7 +3667,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
@@ -3715,7 +3715,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
@@ -3836,7 +3836,7 @@ if ($action == 'create') {
 		}
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td colspan="2">'.price($objectsrc->total_ttc)."</td></tr>";
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td colspan="2">'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
@@ -3912,7 +3912,7 @@ if ($action == 'create') {
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		$multicurrency_totalpaid = $object->getSommePaiement(1);
 		$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
@@ -4284,7 +4284,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
@@ -4504,7 +4504,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		// Multicurrency code
 		print '<tr>';
 		print '<td>';
@@ -4550,7 +4550,7 @@ if ($action == 'create') {
 	}
 
 	// Bank Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		print '<tr><td class="nowrap">';
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
@@ -4570,7 +4570,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
@@ -4708,7 +4708,7 @@ if ($action == 'create') {
 		$sign = -1; // We invert sign for output
 	}
 
-	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 		print '<td class="nowrap right amountcard">'.price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -4803,10 +4803,10 @@ if ($action == 'create') {
 
 	$nbrows = 8;
 	$nbcols = 3;
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$nbrows++;
 	}
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		$nbrows++;
 		$nbcols++;
 	}
@@ -4819,10 +4819,10 @@ if ($action == 'create') {
 	if ($selleruserevenustamp) {
 		$nbrows++;
 	}
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled('multicurrency')) {
 		$nbrows += 5;
 	}
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		$nbrows += 1;
 	}
 
@@ -4835,7 +4835,7 @@ if ($action == 'create') {
 		print '<td>'.$langs->trans('ListOfSituationInvoices').'</td>';
 		print '<td></td>';
 		print '<td class="center">'.$langs->trans('Situation').'</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled('banque')) {
 			print '<td class="right"></td>';
 		}
 		print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -4859,7 +4859,7 @@ if ($action == 'create') {
 				print '<td>'.$prev_invoice->getNomUrl(1).'</td>';
 				print '<td></td>';
 				print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$prev_invoice->situation_counter.'</td>';
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					print '<td class="right"></td>';
 				}
 				print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
@@ -4879,7 +4879,7 @@ if ($action == 'create') {
 		print '<td>'.$object->getNomUrl(1).'</td>';
 		print '<td></td>';
 		print '<td class="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$object->situation_counter.'</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled('banque')) {
 			print '<td class="right"></td>';
 		}
 		print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
@@ -4902,7 +4902,7 @@ if ($action == 'create') {
 			$i++;
 		}
 		print '</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled('banque')) {
 			print '<td></td>';
 		}
 		print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
@@ -4917,7 +4917,7 @@ if ($action == 'create') {
 			 print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
 			 print '<td></td>';
 			 print '<td></td>';
-			 if (! empty($conf->banque->enabled)) print '<td class="right"></td>';
+			 if (isModEnabled('banque')) print '<td class="right"></td>';
 			 print '<td class="right">' . $langs->trans('AmountHT') . '</td>';
 			 print '<td class="right">' . $langs->trans('AmountTTC') . '</td>';
 			 print '<td width="18">&nbsp;</td>';
@@ -4934,7 +4934,7 @@ if ($action == 'create') {
 				print '<td>'.$next_invoice->getNomUrl(1).'</td>';
 				print '<td></td>';
 				print '<td class="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE) ? $langs->trans('situationInvoiceShortcode_AS') : $langs->trans('situationInvoiceShortcode_S')).$next_invoice->situation_counter.'</td>';
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					print '<td class="right"></td>';
 				}
 				print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
@@ -4948,7 +4948,7 @@ if ($action == 'create') {
 
 			print '<tr class="oddeven">';
 			print '<td colspan="3" class="right"></td>';
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled('banque')) {
 				print '<td class="right"></td>';
 			}
 			print '<td class="right"><b>'.price($total_global_ht).'</b></td>';
@@ -4975,7 +4975,7 @@ if ($action == 'create') {
 	print '<td class="liste_titre">'.($object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 	print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Date').'</span></td>';
 	print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('Type').'</span></td>';
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		print '<td class="liste_titre"><span class="hideonsmartphone">'.$langs->trans('BankAccount').'</span></td>';
 	}
 	print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -5024,14 +5024,14 @@ if ($action == 'create') {
 				print '</td>';
 				$label = ($langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code)) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_label;
 				print '<td>'.$label.' '.$objp->num_payment.'</td>';
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
 					$bankaccountstatic->number = $objp->banumber;
 					$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						$bankaccountstatic->account_number = $objp->account_number;
 
 						$accountingjournal = new AccountingJournal($db);
@@ -5259,7 +5259,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Margin Infos
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		$formmargin->displayMarginInfos($object);
 	}
 
@@ -5477,7 +5477,7 @@ if ($action == 'create') {
 			}
 
 			// POS Ticket
-			if (!empty($conf->takepos->enabled) && $object->module_source == 'takepos') {
+			if (isModEnabled('takepos') && $object->module_source == 'takepos') {
 				$langs->load("cashdesk");
 				$receipt_url = DOL_URL_ROOT."/takepos/receipt.php";
 				print '<a target="_blank" rel="noopener noreferrer" class="butAction" href="'.$receipt_url.'?facid='.((int) $object->id).'">'.$langs->trans('POSTicket').'</a>';

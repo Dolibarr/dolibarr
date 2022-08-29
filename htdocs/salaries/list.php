@@ -27,7 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -438,7 +438,7 @@ $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16
 print '</td>';
 
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
@@ -476,7 +476,7 @@ print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -577,7 +577,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		print '<td>';
 		if ($obj->fk_account > 0) {
 			//$accountstatic->fetch($obj->fk_bank);
@@ -591,7 +591,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$accountstatic->account_number = $obj->account_number;
 			$accountstatic->clos = $obj->clos;
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountstatic->account_number = $obj->account_number;
 
 				$accountingjournal = new AccountingJournal($db);
@@ -663,7 +663,7 @@ if ($num == 0) {
 		}
 	}*/
 	$colspan = 9;
-	if (!empty($conf->banque->enabled)) { $colspan++; }
+	if (isModEnabled('banque')) { $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

@@ -36,16 +36,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -326,7 +326,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -437,7 +437,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Tags-Categories
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 
@@ -573,7 +573,7 @@ if ($action == 'create') {
 		$fieldrequired = 'fieldrequired ';
 	}
 
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
@@ -584,7 +584,7 @@ if ($action == 'create') {
 	}
 
 	// Accountancy journal
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -677,7 +677,7 @@ if ($action == 'create') {
 		// Accountancy code
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->account_number, 1);
 
@@ -688,7 +688,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
@@ -714,7 +714,7 @@ if ($action == 'create') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
@@ -967,7 +967,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1015,7 +1015,7 @@ if ($action == 'create') {
 
 		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		} else {
 			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $object->account_number).'">';
@@ -1023,7 +1023,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);

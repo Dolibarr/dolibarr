@@ -68,10 +68,10 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -256,7 +256,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -673,10 +673,10 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (!empty($conf->propal->enabled) && $key > 0) {
+		if (isModEnabled('propal') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (!empty($conf->commande->enabled) && $key > 0) {
+		if (isModEnabled('commande') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('facture') && $key > 0) {

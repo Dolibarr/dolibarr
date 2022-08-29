@@ -133,7 +133,7 @@ if ($year) {
 print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
 print "<br>";
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	// Social contributions only
 	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
@@ -146,7 +146,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('banque')) {
 		print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -220,7 +220,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			}
 			print $obj->num_payment.'</td>';
 			// Account
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled('banque')) {
 				print '<td>';
 				if ($obj->fk_bank > 0) {
 					//$accountstatic->fetch($obj->fk_bank);
@@ -254,7 +254,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled('banque')) {
 			print '<td></td>';
 		}
 		print '<td class="liste_total right">'.price($totalpaid)."</td>";
@@ -266,7 +266,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 }
 
 // VAT
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print "<br>";
 
 	$tva = new Tva($db);
@@ -304,7 +304,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled('banque')) {
 			print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 		}
 		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -341,7 +341,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			print $obj->num_payment.'</td>';
 
 			// Account
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled('banque')) {
 				print '<td>';
 				if ($obj->fk_bank > 0) {
 					//$accountstatic->fetch($obj->fk_bank);

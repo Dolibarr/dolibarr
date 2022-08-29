@@ -70,10 +70,10 @@ if ($contextpage == 'takepos') {
 $arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
 
 $arrayofposavailable = array();
-if (!empty($conf->cashdesk->enabled)) {
+if (isModEnabled('cashdesk')) {
 	$arrayofposavailable['cashdesk'] = $langs->trans('CashDesk').' (cashdesk)';
 }
-if (!empty($conf->takepos->enabled)) {
+if (isModEnabled('takepos')) {
 	$arrayofposavailable['takepos'] = $langs->trans('TakePOS').' (takepos)';
 }
 // TODO Add hook here to allow other POS to add themself

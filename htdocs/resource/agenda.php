@@ -135,7 +135,7 @@ if ($object->id > 0) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$type = $langs->trans('ResourceSingular');
