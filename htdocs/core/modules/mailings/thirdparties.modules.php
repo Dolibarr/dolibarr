@@ -81,7 +81,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			if (GETPOST('default_lang', 'alpha')) {
-				//$sql .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
+				$sql .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
 			}
 		} else {
 			$addFilter = "";
