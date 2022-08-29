@@ -38,7 +38,7 @@ if (isModEnabled('accounting')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -58,7 +58,7 @@ $search_number = GETPOST('search_number', 'alpha');
 $search_status = GETPOST('search_status') ?GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 }
 
@@ -197,7 +197,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_ACCOUNT, "b.rowid");
 }
 
@@ -209,7 +209,7 @@ if ($search_status == 'closed') {
 	$sql .= " AND clos = 1";
 }
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_ACCOUNT, "b.rowid", $search_category_list);
 }
 
@@ -344,7 +344,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
 }
 
