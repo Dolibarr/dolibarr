@@ -81,7 +81,7 @@ class mailing_thirdparties extends MailingTargets
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 			if (GETPOST('default_lang', 'alpha')) {
-				$sql .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
+				//$sql .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
 			}
 		} else {
 			$addFilter = "";
@@ -226,7 +226,7 @@ class mailing_thirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-
+		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = s.email) = 0";
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
@@ -316,11 +316,13 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_status_thirdparties");
 
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
 		// Choose language
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 		$formadmin = new FormAdmin($this->db);
 		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
 		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 
 		return $s;
 	}

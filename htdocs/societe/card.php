@@ -253,6 +253,7 @@ if (empty($reshook)) {
 
 				// Update
 				$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -465,6 +466,7 @@ if (empty($reshook)) {
 			$object->phone					= GETPOST('phone', 'alpha');
 			$object->fax					= GETPOST('fax', 'alpha');
 			$object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+			$object->no_email 				= GETPOST("no_email", "int");
 			$object->url					= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->idprof1				= trim(GETPOST('idprof1', 'alphanohtml'));
 			$object->idprof2				= trim(GETPOST('idprof2', 'alphanohtml'));
@@ -599,6 +601,16 @@ if (empty($reshook)) {
 				}
 
 				$result = $object->create($user);
+
+				if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email)) {
+					// Add mass emailing flag into table mailing_unsubscribe
+					$result = $object->setNoEmail($object->no_email);
+					if ($result < 0) {
+						$error++;
+						$errors = array_merge($errors, ($object->error ? array($object->error) : $object->errors));
+						$action = 'create';
+					}
+				}
 
 				if ($result >= 0) {
 					if ($object->particulier) {
@@ -756,6 +768,24 @@ if (empty($reshook)) {
 				//var_dump($object);exit;
 
 				$result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
+
+				if ($result > 0) {
+
+					// Update mass emailing flag into table mailing_unsubscribe
+					if (GETPOSTISSET('no_email') && $object->email) {
+						$no_email = GETPOST('no_email', 'int');
+						$result = $object->setNoEmail($no_email);
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+							$action = 'edit';
+						}
+					}
+
+					$action = 'view';
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'edit';
+				}
 
 				if ($result <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1590,6 +1620,35 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
+			// Unsubscribe
+			if (!empty($conf->mailing->enabled)) {
+				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+					print "\n".'<script type="text/javascript">'."\n";
+					print '$(document).ready(function () {
+							$("#email").keyup(function() {
+								if ($(this).val()!="") {
+									$(".noemail").addClass("fieldrequired");
+								} else {
+									$(".noemail").removeClass("fieldrequired");
+								}
+							});
+						})'."\n";
+					print '</script>'."\n";
+				}
+				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
+					$result = $object->getNoEmail();
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+				print '<tr>';
+				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+				print '<td>';
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				print '</td>';
+				print '</tr>';
+			}
+
 		// Social networks
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
@@ -1931,6 +1990,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->phone					= GETPOST('phone', 'alpha');
 				$object->fax					= GETPOST('fax', 'alpha');
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
+				$object->no_email				= GETPOST("no_email", "int");
 				$object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
 				$object->capital				= GETPOST('capital', 'alphanohtml');
 				$object->idprof1				= GETPOST('idprof1', 'alphanohtml');
@@ -2272,10 +2332,58 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail / Web
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-			print '<td colspan="3">'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="email" id="email" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL) : $object->email).'"></td></tr>';
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td>';
+
+			// EMail
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+			print '<td>';
+			print img_picto('', 'object_email');
+			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+			if (!empty($conf->mailing->enabled)) {
+				$langs->load("mails");
+				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
+				print '<td>'.$object->getNbOfEMailings().'</td>';
+			} else {
+				print '<td colspan="2"></td>';
+			}
+			print '</tr>';
+
+			// Unsubscribe
+			if (!empty($conf->mailing->enabled)) {
+				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+					print "\n".'<script type="text/javascript">'."\n";
+
+					print '
+					jQuery(document).ready(function () {
+						function init_check_no_email(input) {
+							if (input.val()!="") {
+								$(".noemail").addClass("fieldrequired");
+							} else {
+								$(".noemail").removeClass("fieldrequired");
+							}
+						}
+						$("#email").keyup(function() {
+							init_check_no_email($(this));
+						});
+						init_check_no_email($("#email"));
+					})'."\n";
+					print '</script>'."\n";
+				}
+				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
+					$result = $object->getNoEmail();
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+				print '<tr>';
+				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+				print '<td>';
+				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty);
+				print '</td>';
+				print '</tr>';
+			}
 
 			// Social network
 			if (!empty($conf->socialnetworks->enabled)) {
@@ -2930,6 +3038,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '&nbsp;';
 		}
 		print '</td></tr>';
+
+		// Email
+		if (!empty($conf->mailing->enabled)) {
+			$langs->load("mails");
+			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
+		}
+
+		// Unsubscribe opt-out
+		if (!empty($conf->mailing->enabled)) {
+			$result = $object->getNoEmail();
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			print '<tr><td>'.$langs->trans("No_Email").'</td><td>';
+			if ($object->email) {
+				print yn($object->no_email);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
+			}
+			print '</td></tr>';
+		}
 
 		// Default language
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
