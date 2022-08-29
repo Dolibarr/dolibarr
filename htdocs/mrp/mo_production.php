@@ -434,6 +434,8 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 
+			// Load object
+			include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 			// Redirect to avoid to action done a second time if we make a back from browser
 			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
