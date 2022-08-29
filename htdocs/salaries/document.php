@@ -132,7 +132,7 @@ if ($action == 'setlabel' && $user->rights->salaries->write) {
  */
 
 $form = new Form($db);
-if (isModEnabled('projet')) $formproject = new FormProjets($db);
+if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Documents');
 $help_url = "";
@@ -176,7 +176,7 @@ if ($object->id) {
 	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 
 	// Project
-	if (isModEnabled('projet')) {
+	if (isModEnabled('project')) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
