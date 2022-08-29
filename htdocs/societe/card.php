@@ -770,7 +770,6 @@ if (empty($reshook)) {
 				$result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
 
 				if ($result > 0) {
-
 					// Update mass emailing flag into table mailing_unsubscribe
 					if (GETPOSTISSET('no_email') && $object->email) {
 						$no_email = GETPOST('no_email', 'int');
@@ -1621,10 +1620,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 			// Unsubscribe
-			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
-					print "\n".'<script type="text/javascript">'."\n";
-					print '$(document).ready(function () {
+		if (!empty($conf->mailing->enabled)) {
+			if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
+				print "\n".'<script type="text/javascript">'."\n";
+				print '$(document).ready(function () {
 							$("#email").keyup(function() {
 								if ($(this).val()!="") {
 									$(".noemail").addClass("fieldrequired");
@@ -1633,21 +1632,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								}
 							});
 						})'."\n";
-					print '</script>'."\n";
-				}
-				if (!GETPOSTISSET("no_email") && !empty($object->email)) {
-					$result = $object->getNoEmail();
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
-				print '<tr>';
-				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>';
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
-				print '</td>';
-				print '</tr>';
+				print '</script>'."\n";
 			}
+			if (!GETPOSTISSET("no_email") && !empty($object->email)) {
+				$result = $object->getNoEmail();
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+			print '<tr>';
+			print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+			print '<td>';
+			print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2));
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Social networks
 		if (!empty($conf->socialnetworks->enabled)) {
