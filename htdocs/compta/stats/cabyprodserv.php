@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +187,9 @@ if (!empty($year)) {
 if (!empty($month)) {
 	$headerparams['month'] = $month;
 }
-$headerparams['q'] = $q;
+if (!empty($q)) {
+	$headerparams['q'] = $q;
+}
 
 $tableparams = array();
 if (!empty($selected_cat)) {
@@ -205,6 +208,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -226,6 +230,9 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
+
+$exportlink="";
+$namelink="";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {

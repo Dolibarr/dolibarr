@@ -44,6 +44,7 @@ $res = $tmpbom->fetch($line->fk_bom_child);
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
 print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
+// Ref or label
 print '<td>';
 if ($res) {
 	print $tmpproduct->getNomUrl(1);
@@ -58,7 +59,7 @@ if ($res) {
 	print $this->tpl['label'];
 }
 print '</td>';
-//print '<td>'.$this->tpl['label'].'</td>';
+// Qty
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
 if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
@@ -78,17 +79,18 @@ $selected = 1;
 if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
 	$selected = 0;
 }
-print '<td class="center">';
-//print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
-print '</td>';
 
-if ($tmpbom->id) {
+if ($tmpbom->id > 0) {
 	print '<td class="center">';
 	print '<input type="checkbox" name="bomlineid[]" value="' . $line->id . '">';
 	print '</td>';
 } else {
-	print '<td class="center">&nbsp;</td>';
+	print '<td class="center"></td>';
 }
+
+//print '<td class="center">';
+//print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
+//print '</td>';
 
 print '</tr>'."\n";
 

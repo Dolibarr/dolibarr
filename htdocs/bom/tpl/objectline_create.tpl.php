@@ -87,7 +87,7 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	if (!empty($conf->global->BOM_SUB_BOM)) {
 		print $langs->trans("Product");
 	}

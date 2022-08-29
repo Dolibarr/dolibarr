@@ -80,9 +80,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = '';
-llxHeader('', $langs->trans('RecruitmentCandidature'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

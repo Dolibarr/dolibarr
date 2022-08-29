@@ -121,7 +121,7 @@ $isInEEC = isInEEC($mysoc);
 $arrayfields = array(
 	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->produit->enabled) && !empty($conf->service->enabled))),
+	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->produit->enabled) && isModEnabled("service"))),
 );
 /*
 // Extra fields
