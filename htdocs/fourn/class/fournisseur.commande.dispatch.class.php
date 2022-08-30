@@ -79,6 +79,9 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	 */
 	public $fk_commandefourndet;
 
+	public $fk_reception;
+
+
 	public $qty;
 	public $qty_asked;
 

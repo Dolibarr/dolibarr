@@ -604,11 +604,11 @@ print '</td>';
 if (isModEnabled('productbatch')) {
 	print '<td>';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50" value="'.dol_escape_htmltag($batch).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
+print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -641,14 +641,14 @@ foreach ($listofdata as $key => $val) {
 		print $warehousestatict->getNomUrl(1);
 		print '</td>';
 		print '<td>';
-		print $productstatic->getNomUrl(1).' - '.$productstatic->label;
+		print $productstatic->getNomUrl(1).' - '.dol_escape_htmltag($productstatic->label);
 		print '</td>';
 		if (isModEnabled('productbatch')) {
 			print '<td>';
-			print $val['batch'];
+			print dol_escape_htmltag($val['batch']);
 			print '</td>';
 		}
-		print '<td class="center">'.$val['qty'].'</td>';
+		print '<td class="center">'.price2num((float) $val['qty'], 'MS').'</td>';
 		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}

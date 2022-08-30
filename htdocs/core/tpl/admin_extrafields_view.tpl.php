@@ -38,7 +38,7 @@ $langs->load("modulebuilder");
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
 print '<br>';
 
 // Load $extrafields->attributes
@@ -65,7 +65,7 @@ print '<td class="center">'.$langs->trans("AlwaysEditable").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
-if (!empty($conf->multicompany->enabled)) {
+if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
 print '<td width="80">&nbsp;</td>';
@@ -113,7 +113,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key]).'">'.dol_escape_htmltag($extrafields->attributes[$elementtype]['printable'][$key])."</td>\n";
 		// Summable
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			print '<td class="center">';
 			if (empty($extrafields->attributes[$elementtype]['entityid'][$key])) {
 				print $langs->trans("All");
@@ -139,7 +139,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 	}
 } else {
 	$colspan = 14;
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$colspan++;
 	}
 

@@ -24,7 +24,7 @@ FinancialCommitment=Finansiellt engagemang
 InterestAmount=Ränta
 CapitalRemain=Kapital kvarstår
 TermPaidAllreadyPaid = Denna period är redan betald
-CantUseScheduleWithLoanStartedToPaid = Kan inte använda schemaläggaren för ett lån när betalningen har startat
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Du kan inte ändra intresse om du använder schema
 # Admin
 ConfigLoan=Modullånets konfiguration

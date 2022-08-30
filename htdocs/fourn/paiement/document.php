@@ -124,7 +124,7 @@ if ($object->id > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);

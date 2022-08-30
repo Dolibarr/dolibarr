@@ -254,7 +254,7 @@ class FormMargin
 			}
 			print '</tr>';
 
-			if (!empty($conf->product->enabled)) {
+			if (isModEnabled("product")) {
 				//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
 				print '<tr class="oddeven">';
 				print '<td>' . $langs->trans('MarginOnProducts') . '</td>';
@@ -270,7 +270,7 @@ class FormMargin
 				print '</tr>';
 			}
 
-			if (!empty($conf->service->enabled)) {
+			if (isModEnabled("service")) {
 				print '<tr class="oddeven">';
 				print '<td>' . $langs->trans('MarginOnServices') . '</td>';
 				print '<td class="right">' . price($marginInfo['pv_services']) . '</td>';
@@ -285,7 +285,7 @@ class FormMargin
 				print '</tr>';
 			}
 
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				print '<tr class="liste_total">';
 				print '<td>' . $langs->trans('TotalMargin') . '</td>';
 				print '<td class="right">' . price($marginInfo['pv_total']) . '</td>';

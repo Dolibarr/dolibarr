@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -60,8 +60,8 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if ((isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)) {
+	if ((isModEnabled('expedition_bon') && $user->hasRight('expedition', 'lire'))
+	|| ($conf->delivery_note->enabled && $user->hasRight('expedition', 'delivery', 'lire'))) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;

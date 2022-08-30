@@ -347,8 +347,8 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Update record
 	 *
-	 * @param User $user Use making update
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User $user 		User making update
+	 * @return int             	<0 if KO (-2 = duplicate), >0 if OK
 	 */
 	public function update($user)
 	{
@@ -378,6 +378,12 @@ class AccountingAccount extends CommonObject
 			$this->db->commit();
 			return 1;
 		} else {
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -2;
+			}
+
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -592,16 +598,9 @@ class AccountingAccount extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -733,7 +732,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
 	 * @param 	array 								$accountingAccount 	Array of Account account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array       											Accounting accounts suggested
+	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
 	 */
 	public function getAccountingCodeToBind(Societe $buyer, Societe $seller, Product $product, $facture, $factureDet, $accountingAccount = array(), $type = '')
 	{
@@ -864,14 +863,18 @@ class AccountingAccount extends CommonObject
 				if (!empty($buyer->code_compta_product)) {
 					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
-					$suggestedaccountingaccountfor = 'thridparty';
+					$suggestedaccountingaccountfor = 'thirdparty';
 				}
 			}
 
 			// Manage Deposit
 			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
-				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				if ($type=='customer') {
+					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				} elseif ($type=='supplier') {
+					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+				}
 				if ($result < 0) {
 					return -1;
 				}

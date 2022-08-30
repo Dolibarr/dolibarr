@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -625,7 +626,7 @@ if ($step == 3 && $datatoimport) {
 	$maxfilesizearray = getMaxFileSizeArray();
 	$maxmin = $maxfilesizearray['maxmin'];
 	if ($maxmin > 0) {
-		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
@@ -635,29 +636,29 @@ if ($step == 3 && $datatoimport) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
-			$maxphp = $maxphp * 1;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024 * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024 * 1024;
 		}
 		$maxphp2 = @ini_get('post_max_size'); // In unknown
 		if (preg_match('/k$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024 * 1024;
 		}
 		// Now $max and $maxphp and $maxphp2 are in Kb
 		$maxmin = $max;
@@ -876,9 +877,9 @@ if ($step == 4 && $datatoimport) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
 			$newlabel = substr($label, 0, -1);
-			$fieldstarget_tmp[$key] = array("label"=>$newlabel,"required"=>true);
+			$fieldstarget_tmp[$key] = array("label"=>$newlabel, "required"=>true);
 		} else {
-			$fieldstarget_tmp[$key] = array("label"=>$label,"required"=>false);
+			$fieldstarget_tmp[$key] = array("label"=>$label, "required"=>false);
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
@@ -1089,9 +1090,14 @@ if ($step == 4 && $datatoimport) {
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
 		//var_dump($line);
-		$labeltoshow = $langs->transnoentities($line["label"]);
-		$optionsall[$code] = array('labelkey'=>$line['label'], 'label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
-		// TODO Get type from an new array into module descriptor.
+
+		$tmparray = explode('|', $line["label"]);	// If label of field is several translation keys separated with |
+		$labeltoshow = '';
+		foreach ($tmparray as $tmpkey => $tmpval) {
+			$labeltoshow .= ($labeltoshow ? ' '.$langs->trans('or').' ' : '').$langs->transnoentities($tmpval);
+		}
+		$optionsall[$code] = array('labelkey'=>$line['label'], 'labelkeyarray'=>$tmparray, 'label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
+		// TODO Get type from a new array into module descriptor.
 		//$picto = 'email';
 		$picto = '';
 		if ($picto) {
@@ -1129,9 +1135,6 @@ if ($step == 4 && $datatoimport) {
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
-		$tablealias = preg_replace('/(\..*)$/i', '', $code);
-		$tablename = !empty($objimport->array_import_tables[0][$tablealias]) ? $objimport->array_import_tables[0][$tablealias] : "";
-
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
@@ -1161,6 +1164,48 @@ if ($step == 4 && $datatoimport) {
 			$label .= $tmpval['label'];
 			$label .= $tmpval['required'] ? '*</strong>' : '';
 
+			$tablealias = preg_replace('/(\..*)$/i', '', $tmpcode);
+			$tablename = !empty($objimport->array_import_tables[0][$tablealias]) ? $objimport->array_import_tables[0][$tablealias] : "";
+
+			$htmltext = '';
+
+			$filecolumn = ($i + 1);
+			// Source field info
+			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
+				$filecolumntoshow = num2Alpha($i);
+			} else {
+				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
+					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $filecolumn, $langs->transnoentitiesnoconv($entitylang)).'<br>';
+				}
+				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $filecolumn, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).'<br>';
+				}
+			}
+			// Source required
+			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode])?$objimport->array_import_examplevalues[0][$tmpcode]:"";
+			// Example
+			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
+				if ($example) {
+					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
+				}
+			} else {
+				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
+					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
+				} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
+					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
+				} elseif ($example) {
+					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
+				}
+			}
+			// Format control rule
+			if (!empty($objimport->array_import_regex[0][$tmpcode])) {
+				$htmltext .= $langs->trans("FormatControlRule").': <b>'.str_replace('"', '', $objimport->array_import_regex[0][$tmpcode]).'</b><br>';
+			}
+
+			$htmltext .= $langs->trans("Table")."->".$langs->trans("Field").': &nbsp; <b>'.$tablename."->".preg_replace('/^.*\./', '', $tmpcode)."</b>";
+
+			$labelhtml = $label.' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 1);
+
 			$selectforline .= '<option value="'.$tmpcode.'"';
 			if ($modetoautofillmapping == 'orderoftargets') {
 				// The mode where we fill the preselected value of combo one by one in order of available targets fields in the declaration in descriptor file.
@@ -1169,8 +1214,9 @@ if ($step == 4 && $datatoimport) {
 				}
 			} elseif ($modetoautofillmapping == 'guess') {
 				// The mode where we try to guess which value to preselect from the name in first column of source file.
+				// $line['example1'] is the label of the column found on first line
 				$regs = array();
-				if (preg_match('/^(.+)\((.+)\)$/', $line['example1'], $regs)) {
+				if (preg_match('/^(.+)\((.+\..+)\)$/', $line['example1'], $regs)) {	// If text is "Label (x.abc)"
 					$tmpstring1 = $regs[1];
 					$tmpstring2 = $regs[2];
 				} else {
@@ -1181,18 +1227,23 @@ if ($step == 4 && $datatoimport) {
 				$tmpstring2 = strtolower(str_replace('*', '', trim($tmpstring2)));
 
 				// $tmpstring1 and $tmpstring2 are string from input file.
-				//var_dump($tmpstring1.' '.$tmpstring2.' '.$tmpval['label'].' '.$tmpval['labelkey']);
-				if ($tmpstring1 && ($tmpstring1 == $tmpcode || $tmpstring1 == strtolower($tmpval['label'])
-					|| $tmpstring1 == strtolower(dol_string_unaccent($tmpval['label'])) || $tmpstring1 == strtolower($tmpval['labelkey']))) {
-					if (empty($codeselectedarray[$code])) {
-						$selectforline .= ' selected';
-						$codeselectedarray[$code] = 1;
-					}
-				} elseif ($tmpstring2 && ($tmpstring2 == $tmpcode || $tmpstring2 == strtolower($tmpval['label'])
-					|| $tmpstring2 == strtolower(dol_string_unaccent($tmpval['label'])) || $tmpstring2 == strtolower($tmpval['labelkey']))) {
-					if (empty($codeselectedarray[$code])) {
-						$selectforline .= ' selected';
-						$codeselectedarray[$code] = 1;
+				foreach ($tmpval['labelkeyarray'] as $tmpval2) {
+					$labeltarget = $langs->transnoentities($tmpval2);
+					//var_dump($tmpstring1.' - '.$tmpstring2.' - '.$tmpval['labelkey'].' - '.$tmpval['label'].' - '.$tmpval2.' - '.$labeltarget);
+					if ($tmpstring1 && ($tmpstring1 == $tmpcode || $tmpstring1 == strtolower($labeltarget)
+						|| $tmpstring1 == strtolower(dol_string_unaccent($labeltarget)) || $tmpstring1 == strtolower($tmpval2))) {
+						if (empty($codeselectedarray[$code])) {
+							$selectforline .= ' selected';
+							$codeselectedarray[$code] = 1;
+							break;
+						}
+					} elseif ($tmpstring2 && ($tmpstring2 == $tmpcode || $tmpstring2 == strtolower($labeltarget)
+						|| $tmpstring2 == strtolower(dol_string_unaccent($labeltarget)) || $tmpstring2 == strtolower($tmpval2))) {
+						if (empty($codeselectedarray[$code])) {
+							$selectforline .= ' selected';
+							$codeselectedarray[$code] = 1;
+							break;
+						}
 					}
 				}
 			} elseif ($modetoautofillmapping == 'session' && !empty($_SESSION['dol_array_match_file_to_database_select'])) {
@@ -1203,7 +1254,7 @@ if ($step == 4 && $datatoimport) {
 				}
 				$selectforline .= ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i+1)]) ? $tmpselectioninsession[($i+1)] : "").'"';
 			}
-			$selectforline .= ' data-html="'.dol_escape_htmltag($label).'"';
+			$selectforline .= ' data-html="'.dol_escape_htmltag($labelhtml).'"';
 			$selectforline .= '>';
 			$selectforline .= $label;
 			$selectforline .= '</options>';
@@ -1216,62 +1267,17 @@ if ($step == 4 && $datatoimport) {
 
 		print '</td>';
 
+		// Tooltip at end of line
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
-		$filecolumn = ($i + 1);
+
 		// Source field info
 		$htmltext = '<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
-		if ($filecolumn > count($fieldssource)) {
-			$htmltext .= $langs->trans("DataComeFromNoWhere").'<br>';
-		} else {
-			if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
-				$filecolumntoshow = num2Alpha($i);
-				$htmltext .= $langs->trans("DataComeFromFileFieldNb", $filecolumntoshow).'<br>';
-			} else {
-				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref') {
-					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $filecolumn, $langs->transnoentitiesnoconv($entitylang)).'<br>';
-				}
-				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') {
-					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $filecolumn, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).'<br>';
-				}
-			}
-		}
-		// Source required
-		$example = !empty($objimport->array_import_examplevalues[0][$code])?$objimport->array_import_examplevalues[0][$code]:"";
-		// Example
-		if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
-			if ($example) {
-				$htmltext .= $langs->trans("SourceExample").': <b>'.$example.'</b><br>';
-			}
-		} else {
-			if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref') {
-				$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
-			} elseif ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') {
-				$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
-			} elseif ($example) {
-				$htmltext .= $langs->trans("SourceExample").': <b>'.$example.'</b><br>';
-			}
-		}
-		// Format control rule
-		if (!empty($objimport->array_import_regex[0][$code])) {
-			$htmltext .= $langs->trans("FormatControlRule").': <b>'.$objimport->array_import_regex[0][$code].'</b><br>';
-		}
-		$htmltext .= '<br>';
-		// Target field info
-		$htmltext .= '<b><u>'.$langs->trans("FieldTarget").'</u></b><br>';
-		//$htmltext .= $langs->trans("SourceRequired").': <b>'.yn($line["label"]).'</b><br>';
-		if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
-			$htmltext .= $langs->trans("DataIsInsertedInto").'<br>';
-		} else {
-			if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref') {
-				$htmltext .= $langs->trans("DataIDSourceIsInsertedInto").'<br>';
-			}
-			if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') {
-				$htmltext .= $langs->trans("DataCodeIDSourceIsInsertedInto").'<br>';
-			}
-		}
-		$htmltext .= $langs->trans("FieldTitle").": <b>".$langs->trans($fieldstarget[$arraykeysfieldtarget[$code-1]]["label"])."</b><br>";
-		$htmltext .= $langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./', '', $code)."</b><br>";
-		print $form->textwithpicto($more, $htmltext);
+		$filecolumntoshow = num2Alpha($i);
+		$htmltext .= $langs->trans("DataComeFromFileFieldNb", $filecolumntoshow).'<br>';
+
+		print $form->textwithpicto('', $htmltext);
+
+		print '</td>';
 		print '</tr>';
 		$i++;
 	}
@@ -1813,7 +1819,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
@@ -1926,9 +1932,9 @@ if ($step == 5 && $datatoimport) {
 					print $langs->trans("TooMuchErrors", (count($arrayoferrors) - $nboferrors))."<br>";
 					break;
 				}
-				print '* '.$langs->trans("Line").' '.$key.'<br>';
+				print '* '.$langs->trans("Line").' '.dol_escape_htmltag($key).'<br>';
 				foreach ($val as $i => $err) {
-					print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
+					print ' &nbsp; &nbsp; > '.dol_escape_htmltag($err['lib']).'<br>';
 				}
 			}
 			print '</td></tr></table>';
@@ -1946,9 +1952,9 @@ if ($step == 5 && $datatoimport) {
 					print $langs->trans("TooMuchWarnings", (count($arrayofwarnings) - $nbofwarnings))."<br>";
 					break;
 				}
-				print ' * '.$langs->trans("Line").' '.$key.'<br>';
+				print ' * '.$langs->trans("Line").' '.dol_escape_htmltag($key).'<br>';
 				foreach ($val as $i => $err) {
-					print ' &nbsp; &nbsp; > '.$err['lib'].'<br>';
+					print ' &nbsp; &nbsp; > '.dol_escape_htmltag($err['lib']).'<br>';
 				}
 			}
 			print '</td></tr></table>';
@@ -1969,7 +1975,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			if (empty($nboferrors)) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
 			} else {

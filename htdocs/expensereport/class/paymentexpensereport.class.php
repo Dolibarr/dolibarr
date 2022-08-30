@@ -137,14 +137,17 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->note_public)) {
 			$this->note_public = trim($this->note_public);
 		}
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
+		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = trim($this->fk_bank);
+			$this->fk_bank = ((int) $this->fk_bank);
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = trim($this->fk_user_creat);
+			$this->fk_user_creat = ((int) $this->fk_user_creat);
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = trim($this->fk_user_modif);
+			$this->fk_user_modif = ((int) $this->fk_user_modif);
 		}
 
 		$totalamount = 0;
@@ -170,7 +173,7 @@ class PaymentExpenseReport extends CommonObject
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
-			$sql .= " 0)";
+			$sql .= " 0)";	// fk_bank is ID of transaction into ll_bank
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -513,7 +516,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$error = 0;
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -540,7 +543,7 @@ class PaymentExpenseReport extends CommonObject
 			);
 
 			// Update fk_bank in llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// So we wil know the payment that have generated the bank transaction
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -585,6 +588,7 @@ class PaymentExpenseReport extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
+				$this->errors = $acc->errors;
 				$error++;
 			}
 		}

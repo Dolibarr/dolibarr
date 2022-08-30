@@ -178,14 +178,14 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td class="right">'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
 	// Force Type
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
 	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
@@ -197,7 +197,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
@@ -205,31 +205,31 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
-	print '</td><td class="right">';
-	print '<input type="text" class="right width75" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '</td><td>';
+	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
+	print '</td><td>';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) {
+	if (isModEnabled('paybox')) {
 		$listofval['paybox'] = 'Paybox';
 	}
-	if (!empty($conf->paypal->enabled)) {
+	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}
-	if (!empty($conf->stripe->enabled)) {
+	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
@@ -253,7 +253,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';

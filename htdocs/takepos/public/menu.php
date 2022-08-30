@@ -97,7 +97,7 @@ foreach ($maincategories as $cat) {
 			<div class="item">
                 <h4>'.$pro->label.'</h4>
                 <span class="dots"></span>
-                <span class="price">'.price($pro->price_ttc, 1).'</span>
+                <span class="price">'.price($pro->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</span>
             </div>
         </div>';
 	}

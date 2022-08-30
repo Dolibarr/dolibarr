@@ -270,7 +270,7 @@ update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
 
--- Sequence to removed duplicated values of llx_links. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_links. Run several times if you still have duplicate.
 drop table tmp_links_double;
 --select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2;
 create table tmp_links_double as (select objectid, label, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by objectid, label having count(rowid) >= 2);
@@ -279,7 +279,7 @@ delete from llx_links where (rowid, label) in (select max_rowid, label from tmp_
 drop table tmp_links_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_product. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_product. Run several times if you still have duplicate.
 drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
@@ -288,7 +288,7 @@ update llx_product set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_product_double;
 
 
--- Sequence to removed duplicated values of barcode in llx_societe. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of barcode in llx_societe. Run several times if you still have duplicate.
 drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
@@ -297,7 +297,7 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
--- Sequence to removed duplicated values of llx_accounting_account. Use several times if you still have duplicate.
+-- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
 drop table tmp_accounting_account_double;
 --select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
 create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
@@ -413,6 +413,11 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);
+
+
+UPDATE llx_facturedet SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_facture_fourn_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
+UPDATE llx_expensereport_det SET fk_code_ventilation = 0 WHERE fk_code_ventilation > 0 AND fk_code_ventilation NOT IN (select rowid FROM llx_accounting_account);
 
 
 -- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);

@@ -60,7 +60,7 @@ class box_shipments extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->expedition->lire);
+		$this->hidden = empty($user->rights->expedition->lire);
 	}
 
 	/**

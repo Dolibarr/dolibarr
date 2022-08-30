@@ -197,7 +197,7 @@ $arrayfields = array(
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -214,7 +214,7 @@ if (empty($listofformat[$formatexportset])) {
 
 $error = 0;
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -769,16 +769,18 @@ if ($action == 'export_file') {
 
 	$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
 
-	// If 0 or not set, we NOT check by default.
-	$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
-	$form_question['notifiedvalidationdate'] = array(
-		'name' => 'notifiedvalidationdate',
-		'type' => 'checkbox',
-		'label' => $langs->trans('NotifiedValidationDate'),
-		'value' => $checked,
-	);
+	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+		// If 0 or not set, we NOT check by default.
+		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
+		$form_question['notifiedvalidationdate'] = array(
+			'name' => 'notifiedvalidationdate',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
+			'value' => $checked,
+		);
 
-	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
+		$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
+	}
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
@@ -1131,6 +1133,10 @@ $line = new BookKeepingLine();
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {

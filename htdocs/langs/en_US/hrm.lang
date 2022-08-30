@@ -12,7 +12,7 @@ OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
 # Dictionary
 DictionaryPublicHolidays=Leave - Public holidays
-DictionaryDepartment=HRM - Department list
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Employees
@@ -88,3 +88,5 @@ DeleteSkill = Skill removed
 SkillsExtraFields=Attributs supplémentaires (Compétences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
+NeedBusinessTravels=Need business travels
+NoDescription=No description

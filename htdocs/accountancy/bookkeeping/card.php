@@ -79,7 +79,7 @@ if (!empty($update)) {
 $object = new BookKeeping($db);
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -641,7 +641,7 @@ if ($action == 'create') {
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
-					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
 					print_liste_field_titre("");
 				}
@@ -708,9 +708,7 @@ if ($action == 'create') {
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td>';
-							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
-							print '</td>';
+							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 						}
 					} else {
 						print '<!-- td columns in display mode -->';

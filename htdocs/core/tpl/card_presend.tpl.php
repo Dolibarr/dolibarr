@@ -41,10 +41,10 @@ if ($action == 'presend') {
 
 	$object->fetch_projet();
 
-	if (!in_array($object->element, array('societe', 'user', 'member'))) {
+	$ref = dol_sanitizeFileName($object->ref);
+	if (!in_array($object->element, array('user', 'member'))) {
 		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
 
-		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// Special case
 		if ($object->element == 'invoice_supplier') {
@@ -82,10 +82,13 @@ if ($action == 'presend') {
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) {
+	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -143,11 +146,17 @@ if ($action == 'presend') {
 		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'recruitmentcandidature' ) {
+		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->fromtype = 'special';
+	}
 
-	$formmail->trackid = $trackid;
+	$formmail->trackid = empty($trackid) ? '' : $trackid;
+	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
 
-	// Fill list of recipient with email inside <>.
+	// Define $liste, a list of recipients with email inside <>.
 	$liste = array();
 	if ($object->element == 'expensereport') {
 		$fuser = new User($db);
@@ -193,16 +202,6 @@ if ($action == 'presend') {
 		}
 	}
 
-	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
-	$formmail->withtocc = $liste;
-	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
-	$formmail->withtopic = $topicmail;
-	$formmail->withfile = 2;
-	$formmail->withbody = 1;
-	$formmail->withdeliveryreceipt = 1;
-	$formmail->withcancel = 1;
-
 	//$arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
 	if (!isset($arrayoffamiliestoexclude)) {
 		$arrayoffamiliestoexclude = null;
@@ -210,6 +209,7 @@ if ($action == 'presend') {
 
 	// Make substitution in email content
 	if ($object) {
+		// First we set ->substit (useless, it will be erased later) and ->substit_lines
 		$formmail->setSubstitFromObject($object, $langs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
@@ -228,7 +228,7 @@ if ($action == 'presend') {
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
 
-	// Find the good contact address
+	// Find all external contact addresses
 	$tmpobject = $object;
 	if (($object->element == 'shipping' || $object->element == 'reception')) {
 		$origin = $object->origin;
@@ -280,16 +280,45 @@ if ($action == 'presend') {
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactstatic = new Contact($db);
+		$tmpcompany = new Societe($db);
 
 		foreach ($contactarr as $contact) {
 			$contactstatic->fetch($contact['id']);
+			// Complete substitution array
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
 			$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
 			$substitutionarray['__CONTACT_TITLE_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
+
+			// Complete $liste with the $contact
+			if (empty($liste[$contact['id']])) {	// If this contact id not already into the $liste
+				$contacttoshow = '';
+				if (isset($object->thirdparty) && is_object($object->thirdparty)) {
+					if ($contactstatic->fk_soc != $object->thirdparty->id) {
+						$tmpcompany->fetch($contactstatic->fk_soc);
+						if ($tmpcompany->id > 0) {
+							$contacttoshow .= $tmpcompany->name.': ';
+						}
+					}
+				}
+				$contacttoshow .= $contactstatic->getFullName($outputlangs, 1);
+				$contacttoshow .= " <".($contactstatic->email ? $contactstatic->email : $langs->transnoentitiesnoconv("NoEMail")) .">";
+				$liste[$contact['id']] = $contacttoshow;
+			}
 		}
 	}
+
+	$formmail->withto = $liste;
+	$formmail->withtofree = (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1');
+	$formmail->withtocc = $liste;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
+	$formmail->withtopic = $topicmail;
+	$formmail->withfile = 2;
+	$formmail->withbody = 1;
+	$formmail->withdeliveryreceipt = 1;
+	$formmail->withcancel = 1;
 
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;

@@ -306,7 +306,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 	print_liste_field_titre($textvalue, $_SERVER["PHP_SELF"], 'value', '', $param, '', $sortfield, $sortorder);
 }
 // Entity
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,page', '', $param, '', $sortfield, $sortorder);
 } else {
 	print_liste_field_titre("", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
@@ -335,13 +335,13 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 	print '</td>';
 }
 // Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" disabled name="entity" value="'.$conf->entity.'">'; // We see environment, but to change it we must switch on other entity
+	print '<input type="text" class="flat" size="1" disabled name="entity" value="' . $conf->entity . '">'; // We see environment, but to change it we must switch on other entity
 	print '</td>';
 } else {
 	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 	print '</td>';
 }
 print '<td class="center">';

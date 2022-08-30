@@ -127,7 +127,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 
 		$mask = getDolGlobalString('EXPEDITION_RIBERA_MASK');
 
-		if (!$mask) {
+		if (empty($mask)) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

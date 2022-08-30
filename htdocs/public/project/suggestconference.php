@@ -102,7 +102,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
+$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
@@ -463,8 +463,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
-
-dol_htmloutput_errors($errmsg);
+dol_htmloutput_errors($errmsg, $errors);
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -547,8 +546,8 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '</td></tr>';
 }
 // Type of event
-print '<tr><td>'.$langs->trans("EventType").'<span style="color: red">*</span></td>'."\n";
-print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
+print '<tr><td>'.$langs->trans("Format").'<span style="color: red">*</span></td>'."\n";
+print '<td>'.Form::selectarray('eventtype', $arrayofconfboothtype, $eventtype, 1).'</td>';
 // Label
 print '<tr><td>'.$langs->trans("LabelOfconference").'<span style="color: red">*</span></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";

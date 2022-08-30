@@ -149,7 +149,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 			{
 				$objectuser->fetch($id);
 
-				$objectuser->oldcopy = clone $objectuser;
+				$objectuser->oldcopy = dol_clone($objectuser);
 
 				$db->begin();
 
@@ -277,7 +277,10 @@ $form = new Form($db);
 
 $childids = $user->getAllChildIds(1);
 
-llxHeader(null, $langs->trans("BankAccounts"));
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('BankAccounts');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
@@ -307,7 +310,11 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -324,7 +331,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
@@ -580,6 +587,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -607,12 +615,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				print '<td class="nowraponall">';
 				print $salary->getNomUrl(1);
 				print '</td>';
-
-				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
-				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" class="nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
-				print '<td class="right" class="nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
-
+				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '<td class="right nowraponall">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($objp->amount).'</span></td>';
+				print '<td class="right nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -622,15 +628,14 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
+			print "</div>";
 		} else {
 			dol_print_error($db);
 		}
 	}
 
 	// Latest leave requests
-	if (!empty($conf->holiday->enabled) &&
-		($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))
-		) {
+	if (!empty($conf->holiday->enabled) && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -643,6 +648,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -664,11 +670,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $holiday->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->status, 5).'</td></tr>';
+				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right nowraponall">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
+				print '<td class="right nowraponall">'.$holiday->LibStatut($objp->status, 5).'</td>';
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -677,6 +684,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
+			print "</div>";
 		} else {
 			dol_print_error($db);
 		}
@@ -698,6 +706,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($resql) {
 			$num = $db->num_rows($resql);
 
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -714,11 +723,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$exp->status = $objp->status;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $exp->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px"><span class="amount">'.price($objp->total_ttc).'</span></td>';
-				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->status, 5).'</td></tr>';
+				print '</td><td class="right nowraponall">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($objp->total_ttc).'</span></td>';
+				print '<td class="right nowraponall">'.$exp->LibStatut($objp->status, 5).'</td>';
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
@@ -727,6 +737,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
+			print "</div>";
 		} else {
 			dol_print_error($db);
 		}
@@ -744,10 +755,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		if ($permissiontoaddbankaccount) {
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
 		} else {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'NotEnoughPermission', 'fa fa-plus-circle', '', '', -2);
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}
 	} else {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('AlreadyOneBankAccount'), 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -826,7 +837,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	if ($account->id == 0) {
 		$colspan = 6;
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
 
 	print '</table>';
@@ -887,7 +898,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
-	print $account->domiciliation;
+	print dol_escape_htmltag($account->domiciliation);
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -896,7 +907,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
 	print '<textarea name="owner_address" rows="4" class="quatrevingtpercent">';
-	print $account->owner_address;
+	print dol_escape_htmltag($account->owner_address);
 	print "</textarea></td></tr>";
 
 	print '</table>';

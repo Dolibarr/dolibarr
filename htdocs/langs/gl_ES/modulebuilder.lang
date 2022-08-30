@@ -153,3 +153,4 @@ LinkToParentMenu=Menú principal (fk_xxxxmenu)
 ListOfTabsEntries=Lista de entradas de pestanas
 TabsDefDesc=Defina aquí as pestanas que proporciona o seu módulo
 TabsDefDescTooltip=As pestanas proporcionadas polo seu módulo/aplicación defínense na matriz <strong> $this->tabs </strong> no ficheiro descritor do módulo. Pode editar este ficheiro manualmente ou usar o editor incorporado.
+BadValueForType=Valor incorrecto para o tipo %s

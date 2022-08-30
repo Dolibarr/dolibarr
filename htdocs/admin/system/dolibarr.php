@@ -360,6 +360,7 @@ $configfileparameters = array(
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_strict_mode' => 'Strict mode is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
@@ -381,7 +382,7 @@ foreach ($configfileparameters as $key => $value) {
 		$newkey = preg_replace('/^\?/', '', $key);
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
-			if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled)) {
+			if ($newkey != 'multicompany_transverse_mode' || !isModEnabled('multicompany')) {
 				continue; // We discard parameters starting with ?
 			}
 		}
@@ -482,7 +483,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) {
+if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
 print "</tr>\n";
@@ -495,7 +496,7 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
@@ -525,7 +526,7 @@ if ($resql) {
 			print dol_escape_htmltag($obj->value);
 		}
 		print '</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) {
+		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}
 		print "</tr>\n";

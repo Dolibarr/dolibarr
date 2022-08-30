@@ -372,12 +372,12 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		/* if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
+		/* if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0))
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0))
 		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
@@ -597,7 +597,7 @@ class Salary extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT ps.rowid, ps.datec, ps.tms, ps.fk_user_author, ps.fk_user_modif';
+		$sql = 'SELECT ps.rowid, ps.datec, ps.tms as datem, ps.fk_user_author, ps.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
 		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
@@ -608,19 +608,11 @@ class Salary extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {

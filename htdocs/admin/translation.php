@@ -346,7 +346,7 @@ if ($mode == 'overwrite') {
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("NewTranslationStringToShow", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
-	//if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
+	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
 	print '<td align="center"></td>';
 	print "</tr>\n";
 
@@ -504,7 +504,7 @@ if ($mode == 'searchkey') {
 	print '</td><td>';
 	print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($transvalue).'">';
 	// Limit to superadmin
-	/*if (! empty($conf->multicompany->enabled) && !$user->entity)
+	/*if (isModEnabled('multicompany') && !$user->entity)
 	{
 		print '</td><td>';
 		print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
@@ -525,7 +525,7 @@ if ($mode == 'searchkey') {
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
-	//if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
+	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
 	print '<td align="center"></td>';
 	print "</tr>\n";
 
@@ -554,7 +554,7 @@ if ($mode == 'searchkey') {
 			break;
 		}
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
-		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.($langsenfileonly->tab_translate[$key] ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.(!empty($langsenfileonly->tab_translate[$key]) ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 		print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
 		print dol_escape_htmltag($val);
 		print '</span>';
@@ -609,7 +609,7 @@ if ($mode == 'searchkey') {
 			$htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
 			print $form->textwithpicto('', $htmltext, 1, 'warning');
 		}
-		/*if (! empty($conf->multicompany->enabled) && !$user->entity)
+		/*if (isModEnabled('multicompany') && !$user->entity)
 		{
 			print '<td>'.$val.'</td>';
 		}*/
