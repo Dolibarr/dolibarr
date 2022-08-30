@@ -716,9 +716,9 @@ if (!empty($conf->project->enabled)) {
 
 $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
-$page_title = $actionobject->getTitle($action);
+$title = $actionobject->getTitle($action);
 
-llxHeader('', $page_title, $help_url);
+llxHeader('', $title, $help_url);
 
 if ($action == 'create' || $action == 'presend') {
 	$formticket = new FormTicket($db);

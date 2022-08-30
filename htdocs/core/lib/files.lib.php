@@ -1261,7 +1261,6 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters = array(
-			'GET' => $_GET,
 			'file' => $file,
 			'disableglob'=> $disableglob,
 			'nophperrors' => $nophperrors

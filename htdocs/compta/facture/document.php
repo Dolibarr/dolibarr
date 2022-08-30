@@ -92,20 +92,24 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-if (empty($object->id)) {
-	llxHeader();
-	$langs->load('errors');
-	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
-	llxFooter();
-	exit;
-}
+$form = new Form($db);
 
-$title = $object->ref." - ".$langs->trans('Documents');
+if (empty($object->id)) {
+	$title = $langs->trans('Documents');
+} else {
+	$title = $object->ref." - ".$langs->trans('Documents');
+}
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);
 
-$form = new Form($db);
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+
+	llxFooter();
+	exit;
+}
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {

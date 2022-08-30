@@ -265,6 +265,10 @@ $initialbalanceforterminal = array();
 $theoricalamountforterminal = array();
 $theoricalnbofinvoiceforterminal = array();
 
+
+llxHeader('', $langs->trans("CashControl"));
+
+
 if ($action == "create" || $action == "start" || $action == 'close') {
 	if ($action == 'close') {
 		$posmodule = $object->posmodule;
@@ -376,8 +380,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
 	if ($action != 'close') {
-		llxHeader('', $langs->trans("NewCashFence"));
-
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -596,8 +598,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 if (empty($action) || $action == "view" || $action == "close") {
 	$result = $object->fetch($id);
-
-	llxHeader('', $langs->trans("CashControl"));
 
 	if ($result <= 0) {
 		print $langs->trans("ErrorRecordNotFound");

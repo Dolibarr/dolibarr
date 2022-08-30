@@ -1585,7 +1585,7 @@ if ($step == 5 && $datatoimport) {
 		$param .= '&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 5);
 
@@ -2051,7 +2051,7 @@ if ($step == 6 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 6);
 

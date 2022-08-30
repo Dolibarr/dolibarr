@@ -77,19 +77,24 @@ if (empty($reshook)) {
  * View
  */
 
+$form = new Form($db);
+
 if (empty($object->id)) {
-	llxHeader();
+	$title = $object->ref." - ".$langs->trans('Notes');
+} else {
+	$title = $langs->trans('Notes');
+}
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $helpurl);
+
+if (empty($object->id)) {
 	$langs->load('errors');
 	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	llxFooter();
 	exit;
 }
 
-$title = $object->ref." - ".$langs->trans('Notes');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Facture($db);

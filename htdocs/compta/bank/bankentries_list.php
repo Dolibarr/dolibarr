@@ -517,9 +517,15 @@ $morehtmlref = '';
 
 if ($id > 0 || !empty($ref)) {
 	$title = $object->ref.' - '.$langs->trans("Transactions");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
+} else {
+	$title = $langs->trans("BankTransactions");
+}
+$help_url = '';
 
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $param);
+
+
+if ($id > 0 || !empty($ref)) {
 	// Load bank groups
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 	$bankcateg = new BankCateg($db);
@@ -574,10 +580,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
-} else {
-	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
-
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
