@@ -291,7 +291,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON e.rowid=ed.fk_expedition';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
 
-	if ($search_product_category > 0) {
+if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
@@ -417,8 +417,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-if(! empty($search_montant_ht)) {
-	if(! empty($hookmanager->resPrint)) $sql .= natural_search('MontantHT', $search_montant_ht, 1);
+if (! empty($search_montant_ht)) {
+	if (! empty($hookmanager->resPrint)) $sql .= natural_search('MontantHT', $search_montant_ht, 1);
 	else {
 		$sql .= ' HAVING 1 = 1 ';
 		$sql .= natural_search('MontantHT', $search_montant_ht, 1);
@@ -818,7 +818,7 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if(! empty($arrayfields['MontantHT']['checked'])) {
+if (! empty($arrayfields['MontantHT']['checked'])) {
 	print_liste_field_titre($arrayfields['MontantHT']['label'], $_SERVER['PHP_SELF'], 'MontantHT', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['l.ref']['checked'])) {
