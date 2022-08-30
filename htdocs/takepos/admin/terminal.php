@@ -239,11 +239,11 @@ if (isModEnabled('stock')) {
 	}
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	// Select printer to use with terminal
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 		$printer->listprinters();
 		$printers = array();
 		foreach ($printer->listprinters as $key => $value) {
@@ -251,20 +251,20 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TA
 		}
 		print '<tr class="oddeven"><td>'.$langs->trans("MainPrinterToUse").'</td>';
 		print '<td>';
-		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$terminal), 1);
 		print '</td></tr>';
-		if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+		if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
 			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
 			print '<td>';
-			print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}), 1);
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal), 1);
 			print '</td></tr>';
 			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
 			print '<td>';
-			print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}), 1);
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal), 1);
 			print '</td></tr>';
 			print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 3</td>';
 			print '<td>';
-			print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal}), 1);
+			print $form->selectarray('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal, $printers, getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$terminal), 1);
 			print '</td></tr>';
 		}
 	}
@@ -275,12 +275,12 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter" || $conf->global->TA
 	}
 	print '<tr class="oddeven"><td>'.$langs->trans("MainTemplateToUse").' (<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php?mode=template">'.$langs->trans("SetupReceiptTemplate").'</a>)</td>';
 	print '<td>';
-	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
+	print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal), 1);
 	print '</td></tr>';
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+	if (getDolGlobalInt('TAKEPOS_ORDER_PRINTERS')) {
 		print '<tr class="oddeven"><td>'.$langs->trans("OrderTemplateToUse").'</td>';
 		print '<td>';
-		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal), 1);
 		print '</td></tr>';
 	}
 }
@@ -376,7 +376,7 @@ print $form->textwithpicto($langs->trans('Header'), $htmltext, 1, 'help', '', 0,
 print '</td>';
 print '<td>';
 $variablename = 'TAKEPOS_HEADER'.$terminaltouse;
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalInt('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -392,7 +392,7 @@ print $form->textwithpicto($langs->trans('Footer'), $htmltext, 1, 'help', '', 0,
 print '</td>';
 print '<td>';
 $variablename = 'TAKEPOS_FOOTER'.$terminaltouse;
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalInt('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->{$variablename}.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
