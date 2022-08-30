@@ -226,7 +226,7 @@ class mailing_thirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
+		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
