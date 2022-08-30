@@ -528,4 +528,22 @@ class ProjectStats extends Stats
 		// var_dump($res);print '<br>';
 		return $res;
 	}
+
+	/**
+	 * Return average of entity by month
+	 * @param	int     $year           year number
+	 * @return 	int						value
+	 */
+	protected function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		$sql .= $this->join;
+		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
+	}
 }
