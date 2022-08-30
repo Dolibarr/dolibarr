@@ -369,10 +369,10 @@ if ($resql) {
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", '', $sortfield, $sortorder, 'center ');
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-		print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pl.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pl.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// TODO Add info of running suppliers/customers orders
