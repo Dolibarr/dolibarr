@@ -30,6 +30,7 @@ if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -45,8 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
+// Security check
 if (!$user->rights->website->read) {
 	accessforbidden();
 }

@@ -26,11 +26,17 @@
  *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
+// Load Dolibarr environment
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
+
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
@@ -46,11 +52,11 @@ if ($socid > 0) {
 }
 
 // Sort & Order fields
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 	= GETPOST('sortfield', 'aZ09comma');
+$sortorder 	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -78,12 +84,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$year = '';
 	$month = '';
 }
+
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id", 'az09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
-// Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));

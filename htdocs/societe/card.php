@@ -34,6 +34,8 @@
  *  \brief      Third party card page
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -62,7 +64,10 @@ if (! empty($conf->eventorganization->enabled)) {
 }
 
 
+// Load translation files required by the page
+
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
+
 if (!empty($conf->adherent->enabled)) {
 	$langs->load("members");
 }
@@ -81,13 +86,15 @@ if (!empty($conf->accounting->enabled)) {
 
 $error = 0; $errors = array();
 
+
+// Get parameters
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
-$confirm	= GETPOST('confirm', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
 if ($user->socid) {
@@ -96,6 +103,7 @@ if ($user->socid) {
 if (empty($socid) && $action == 'view') {
 	$action = 'create';
 }
+
 $id = $socid;
 
 $object = new Societe($db);
@@ -128,12 +136,13 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
-$permissiontoread = $user->rights->societe->lire;
-$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+// Permissions
+$permissiontoread 	= $user->rights->societe->lire;
+$permissiontoadd 	= $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
+$permissionnote 	= $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink 	= $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
+$upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);

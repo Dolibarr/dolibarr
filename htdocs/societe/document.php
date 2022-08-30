@@ -26,30 +26,36 @@
  *  \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "other"));
 
-$action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-$ref = GETPOST('ref', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$action 	= GETPOST('action', 'aZ09');
+$confirm 	= GETPOST('confirm');
+$id 		= (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$ref 		= GETPOST('ref', 'alpha');
+
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 	= GETPOST('sortfield', 'aZ09comma');
+$sortorder 	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
+$offset 	= $limit * $page;
+$pageprev 	= $page - 1;
+$pagenext 	= $page + 1;
 
 if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
 	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
@@ -65,6 +71,7 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+// Initialize objects
 $object = new Societe($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);

@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websiteaccountcard'));   //  Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -68,9 +68,10 @@ if (empty($action) && empty($id) && empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
 
-$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+// Permissions
+$permissionnote    = $user->rights->websiteaccount->write;   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->websiteaccount->write;   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $user->rights->websiteaccount->write;   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
