@@ -96,6 +96,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_status = GETPOST('search_status', 'intcomma');
+$search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -139,6 +140,7 @@ $arrayfields = array(
 	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'position'=>12),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'MontantHT' => array('label' => $langs->trans('MontantHT'), 'checked' => 0, 'position' => 600),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
 	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
@@ -195,6 +197,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datedelivery_end = '';
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
+	$search_montant_ht = '';
 	$search_status = '';
 	$toselect = array();
 	$search_array_options = array();
@@ -260,7 +263,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, SUM(pd.subprice*ed.qty) as MontantHT, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
 $sql .= " l.date_delivery as date_reception,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
@@ -284,11 +287,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 }
-if ($sall || $search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON e.rowid=ed.fk_expedition';
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
-}
-if ($search_product_category > 0) {
+
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expeditiondet as ed ON e.rowid=ed.fk_expedition';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON pd.rowid=ed.fk_origin_line';
+
+	if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
@@ -408,10 +411,19 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sql .= ' GROUP BY e.rowid';
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+
+if(! empty($search_montant_ht)) {
+	if(! empty($hookmanager->resPrint)) $sql .= natural_search('MontantHT', $search_montant_ht, 1);
+	else {
+		$sql .= ' HAVING 1 = 1 ';
+		$sql .= natural_search('MontantHT', $search_montant_ht, 1);
+	}
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -500,6 +512,9 @@ if ($search_product_category != '') {
 }
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+}
+if ($search_montant_ht) {
+	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
 }
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -702,6 +717,12 @@ if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print '<input class="flat" size="6" type="text" name="search_tracking" value="'.dol_escape_htmltag($search_tracking).'">';
 	print '</td>';
 }
+// Montant HT
+if (!empty($arrayfields['MontantHT']['checked'])) {
+	print '<td class="liste_titre" align="center">';
+	print '<input class="flat" size="4" type="text" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
 	print '<td class="liste_titre">';
@@ -796,6 +817,9 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 }
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+if(! empty($arrayfields['MontantHT']['checked'])) {
+	print_liste_field_titre($arrayfields['MontantHT']['label'], $_SERVER['PHP_SELF'], 'MontantHT', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['l.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
@@ -1013,6 +1037,15 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['e.tms']['checked'])) {
 		print '<td class="center nowrap">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	// Montant HT
+	if (!empty($arrayfields['MontantHT']['checked'])) {
+		print '<td class="nocellnopadd center" >';
+		print price($obj->MontantHT);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
