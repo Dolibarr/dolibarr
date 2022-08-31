@@ -398,7 +398,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier proposals
-	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
+	if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
 		$nblines++;
 		$ret = $product->load_stats_proposal_supplier($socid);
 		if ($ret < 0) {
@@ -513,7 +513,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {

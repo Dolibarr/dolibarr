@@ -123,7 +123,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(!empty($conf->supplier_proposal->enabled) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled'=>(isModEnabled('supplier_proposal') && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),

@@ -93,7 +93,7 @@ $companystatic = new Societe($db);
 if (isModEnabled("propal")) {
 	$propalstatic = new Propal($db);
 }
-if (!empty($conf->supplier_proposal->enabled)) {
+if (isModEnabled('supplier_proposal')) {
 	$supplierproposalstatic = new SupplierProposal($db);
 }
 if (isModEnabled('commande')) {
@@ -226,7 +226,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 
-if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -810,7 +810,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Latest contracts
  */
-if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

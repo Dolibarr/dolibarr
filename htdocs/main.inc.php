@@ -2481,7 +2481,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->hasRight("contrat", "write"), // vs hooking
+				"activation" => isModEnabled('contrat') && $user->hasRight("contrat", "write"), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2489,7 +2489,7 @@ function printDropdownQuickadd()
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "supplier_proposal",
-				"activation" => !empty($conf->supplier_proposal->enabled) && $user->hasRight("supplier_invoice", "write"), // vs hooking
+				"activation" => isModEnabled('supplier_proposal') && $user->hasRight("supplier_invoice", "write"), // vs hooking
 				"position" => 70,
 			),
 			array(

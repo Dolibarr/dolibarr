@@ -50,7 +50,7 @@ if (isModEnabled('adherent')) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
 if (!empty($conf->incoterm->enabled)) {

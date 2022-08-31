@@ -215,7 +215,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 }
 
 
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';

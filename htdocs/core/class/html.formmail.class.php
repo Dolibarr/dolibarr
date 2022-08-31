@@ -1642,7 +1642,7 @@ class FormMail extends Form
 					if (isModEnabled('commande')) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
@@ -1659,7 +1659,7 @@ class FormMail extends Form
 					if (isModEnabled('commande')) {
 						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}

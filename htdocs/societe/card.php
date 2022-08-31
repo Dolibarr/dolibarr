@@ -71,7 +71,7 @@ $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (isModEnabled('adherent')) {
 	$langs->load("members");
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
 if (!empty($conf->incoterm->enabled)) {
@@ -1477,7 +1477,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))
-			|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
+			|| (isModEnabled('supplier_proposal') && !empty($user->rights->supplier_proposal->lire))) {
 			// Supplier
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -1762,7 +1762,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Customer
@@ -2177,7 +2177,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Supplier
 			if (((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire)))
-				|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
+				|| (isModEnabled('supplier_proposal') && !empty($user->rights->supplier_proposal->lire))) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
@@ -2463,7 +2463,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -2888,7 +2888,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';

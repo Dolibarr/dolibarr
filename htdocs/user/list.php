@@ -27,7 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -658,7 +658,7 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
 	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);

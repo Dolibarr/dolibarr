@@ -714,7 +714,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	$doleditor->Create();
 	print '</td></tr>';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
@@ -1356,7 +1356,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
+				if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->creer) {
 					$langs->load("supplier_proposal");
 					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1372,7 +1372,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
+				if (isModEnabled('contrat') && $user->rights->contrat->creer) {
 					$langs->load("contracts");
 					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

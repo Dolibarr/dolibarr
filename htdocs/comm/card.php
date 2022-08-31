@@ -53,7 +53,7 @@ if (isModEnabled('commande')) {
 if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 if (isModEnabled('adherent')) {
@@ -66,7 +66,7 @@ if (!empty($conf->ficheinter->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
 
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$langs->load("contracts");
 }
 if (isModEnabled('commande')) {
@@ -605,7 +605,7 @@ if ($object->id > 0) {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';
@@ -1122,7 +1122,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest contracts
 	 */
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";

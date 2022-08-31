@@ -222,7 +222,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// Secondly, we set to linked Proposal to "Billed" if WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL is set.
-			if (!empty($conf->supplier_proposal->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
+			if (isModEnabled('supplier_proposal') && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
 				$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;

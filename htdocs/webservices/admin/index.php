@@ -107,7 +107,7 @@ $webservices = array(
 		'invoice'			=> 'isModEnabled("facture")',
 		'supplier_invoice'	=> 'isModEnabled("fournisseur")',
 		'actioncomm'		=> 'isModEnabled('agenda')',
-		'category'			=> '!empty($conf->categorie->enabled)',
+		'category'			=> 'isModEnabled('categorie')',
 		'project'			=> '!empty($conf->project->enabled)',
 		'other'				=> ''
 );

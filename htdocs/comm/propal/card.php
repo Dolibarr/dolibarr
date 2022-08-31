@@ -2850,7 +2850,7 @@ if ($action == 'create') {
 				}
 
 				// Create contract
-				if (!empty($conf->contrat->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('contrat') && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
