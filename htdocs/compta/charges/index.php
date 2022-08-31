@@ -133,7 +133,7 @@ if ($year) {
 print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
 print "<br>";
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	// Social contributions only
 	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
@@ -266,7 +266,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 }
 
 // VAT
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print "<br>";
 
 	$tva = new Tva($db);

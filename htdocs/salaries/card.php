@@ -35,14 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 }
 
@@ -441,7 +441,7 @@ if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->project->enabled)) $formproject = new FormProjets($db);
+if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Card');
 $help_url = "";
@@ -559,7 +559,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
@@ -794,7 +794,7 @@ if ($id) {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
@@ -979,7 +979,7 @@ if ($id) {
 					$bankaccountstatic->number = $objp->banumber;
 					$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						$bankaccountstatic->account_number = $objp->account_number;
 
 						$accountingjournal = new AccountingJournal($db);
@@ -992,7 +992,7 @@ if ($id) {
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
 					print '</td>';
 				}
-				print '<td class="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
 				print "</tr>";
 				$totalpaid += $objp->amount;
 				$i++;
@@ -1003,14 +1003,14 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right nowrap amountcard\">".price($totalpaid)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right nowrap amountcard\">".price($object->amount)."</td></tr>\n";
 
 		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-		print '<td class="right'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
+		print '<td class="right nowrap'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 		print "</table>";
 		print '</div>';

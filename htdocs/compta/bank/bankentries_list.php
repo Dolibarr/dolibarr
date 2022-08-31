@@ -365,7 +365,7 @@ if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}
-	/*if (! empty($conf->accounting->enabled) && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
+	/*if (isModEnabled('accounting') && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
 		$error++;
@@ -882,7 +882,7 @@ if ($resql) {
 		print '<td class=right>'.$langs->trans("BankAccount").'</td>';
 		print '<td class=right>'.$langs->trans("Debit").'</td>';
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $langs->trans("AccountAccounting");
@@ -917,7 +917,7 @@ if ($resql) {
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
@@ -1026,9 +1026,9 @@ if ($resql) {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Bank line

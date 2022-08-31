@@ -34,12 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
@@ -710,7 +710,7 @@ if (empty($reshook)) {
 $userstat = new User($db);
 $form = new Form($db);
 $formticket = new FormTicket($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -965,7 +965,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->ticket->write) {
@@ -1119,7 +1119,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '</tr>';
 
 		// Timing (Duration sum of linked fichinter)
-		if (!empty($conf->ficheinter->enabled)) {
+		if (isModEnabled('ficheinter')) {
 			$object->fetchObjectLinked();
 			$num = count($object->linkedObjects);
 			$timing = 0;

@@ -663,6 +663,10 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 		$nbrowsaffected = 0;
 		$error = 0;
 

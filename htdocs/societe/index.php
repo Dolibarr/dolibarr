@@ -156,7 +156,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
 		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
 	}
-	if ((($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
 		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
 	}
 	if (isModEnabled('societe')) {

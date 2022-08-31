@@ -58,11 +58,11 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 */
 	public function info()
 	{
-		global $conf, $langs;
+		global $db, $langs;
 
 		$langs->load('cashdesk@cashdesk');
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -80,9 +80,9 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		// Setting up the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->TAKEPOS_REF_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -122,12 +122,12 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We define search criteria counter
-		$mask = $conf->global->TAKEPOS_REF_UNIVERSAL_MASK;
+		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -137,9 +137,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		// Get entities
 		$entity = getEntity('invoicenumber', 1, $invoice);
 
+		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 		$mask = str_replace('{TN}', $pos_source, $mask);
-		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $invoice->date, $mode, false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);
 
 		return $numFinal;
 	}
