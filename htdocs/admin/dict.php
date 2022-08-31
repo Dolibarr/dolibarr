@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -496,7 +496,7 @@ $tabcond[10] = true;
 $tabcond[11] = (isModEnabled("societe"));
 $tabcond[12] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
 $tabcond[13] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[14] = (isModEnabled("product") && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
+$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
 $tabcond[16] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
 $tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
