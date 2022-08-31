@@ -378,7 +378,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"ThirdPartyType"
 		);
 		// Add multicompany field
-		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {

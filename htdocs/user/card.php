@@ -343,7 +343,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = "create"; // Go back to create page
 				} else {
-					if (! empty($conf->categorie->enabled)) {
+					if (!empty($conf->categorie->enabled)) {
 						// Categories association
 						$usercats = GETPOST('usercats', 'array');
 						$object->setCategories($usercats);

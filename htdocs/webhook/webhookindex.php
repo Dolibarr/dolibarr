@@ -100,7 +100,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->webhook->enabled) && $user->rights->webhook->read)
+if (!empty($conf->webhook->enabled) && $user->rights->webhook->read)
 {
 	$langs->load("orders");
 
@@ -181,7 +181,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->webhook->enabled) && $user->rights->webhook->read)
+if (!empty($conf->webhook->enabled) && $user->rights->webhook->read)
 {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
 	$sql.= " FROM ".MAIN_DB_PREFIX."webhook_myobject as s";

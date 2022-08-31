@@ -494,7 +494,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->project->enabled))
+	if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -516,7 +516,7 @@ if ($object->id > 0) {
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();
@@ -1058,9 +1058,9 @@ if ($object->id > 0) {
 					$hasinput = true;
 				}
 
-				if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1082,7 +1082,7 @@ if ($object->id > 0) {
 					print '<td class="right">';
 
 
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $qty_view;
 					print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
@@ -1111,7 +1111,7 @@ if ($object->id > 0) {
 			} else {
 				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1127,7 +1127,7 @@ if ($object->id > 0) {
 
 					//PMP Real
 					print '<td class="right">';
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $obj->qty_view;
 					print price($pmp_real);
@@ -1190,7 +1190,7 @@ if ($object->id > 0) {
 	print '</form>';
 
 
-	if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 		?>
 		<script type="text/javascript">
 			$('.realqty').on('change', function () {

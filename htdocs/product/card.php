@@ -1604,7 +1604,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Note (private, no output on invoices, propales...)
-		//if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
+		//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
 		//{
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 

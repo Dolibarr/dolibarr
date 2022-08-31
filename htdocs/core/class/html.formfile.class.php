@@ -1889,7 +1889,7 @@ class FormFile
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
-				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				//if (!empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';

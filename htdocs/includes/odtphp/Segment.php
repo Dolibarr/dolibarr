@@ -101,7 +101,7 @@ class Segment implements IteratorAggregate, Countable
 		preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
 		//var_dump($tmpvars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
-			if (! empty($match[1]) && ! isset($tmpvars[$match[1]])) {
+			if (!empty($match[1]) && ! isset($tmpvars[$match[1]])) {
 				$tmpvars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
 			}
 		}

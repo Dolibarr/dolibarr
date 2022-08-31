@@ -532,7 +532,7 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == 'update_extras' && ! empty($user->rights->societe->contact->creer)) {
+	if ($action == 'update_extras' && !empty($user->rights->societe->contact->creer)) {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form

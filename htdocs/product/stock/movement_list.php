@@ -1098,7 +1098,7 @@ if (!empty($arrayfields['m.rowid']['checked'])) {
 	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['m.datem']['checked'])) {
+if (!empty($arrayfields['m.datem']['checked'])) {
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';

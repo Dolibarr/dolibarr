@@ -129,7 +129,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 {
 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
 			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
@@ -206,7 +206,7 @@ $title = $langs->trans('IntracommReportList'.$type);
 $sql = 'SELECT DISTINCT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
 /*
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 }
 */
@@ -255,7 +255,7 @@ $sql .= " GROUP BY i.rowid, i.type_declaration, i.type_export, i.periods, i.mode
 
 /*
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 }
 */

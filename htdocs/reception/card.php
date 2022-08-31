@@ -465,7 +465,7 @@ if (empty($reshook)) {
 		}
 
 		// TODO add alternative status
-		/*} elseif ($action == 'reopen' && (! empty($user->rights->reception->creer) || ! empty($user->rights->reception->reception_advance->validate))) {
+		/*} elseif ($action == 'reopen' && (!empty($user->rights->reception->creer) || !empty($user->rights->reception->reception_advance->validate))) {
 			$result = $object->setStatut(0);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2103,7 +2103,7 @@ if ($action == 'create') {
 			// Create bill
 			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
 				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
-					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
+					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
 					// If we do that, we must also make this option official.
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}

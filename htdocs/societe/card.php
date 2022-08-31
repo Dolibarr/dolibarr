@@ -59,7 +59,7 @@ if (!empty($conf->accounting->enabled)) {
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (! empty($conf->eventorganization->enabled)) {
+if (!empty($conf->eventorganization->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 }
 
@@ -1834,7 +1834,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<table class="border" width="100%">';
 
-			if (! empty($conf->accounting->enabled)) {
+			if (!empty($conf->accounting->enabled)) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
@@ -2562,7 +2562,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<br>';
 				print '<table class="border centpercent">';
 
-				if (! empty($conf->accounting->enabled)) {
+				if (!empty($conf->accounting->enabled)) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2984,8 +2984,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancySellCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				if (! empty($object->accountancy_code_sell)) {
+			if (!empty($conf->accounting->enabled)) {
+				if (!empty($object->accountancy_code_sell)) {
 					$accountingaccount = new AccountingAccount($db);
 					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
 
@@ -3000,8 +3000,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				if (! empty($object->accountancy_code_buy)) {
+			if (!empty($conf->accounting->enabled)) {
+				if (!empty($object->accountancy_code_buy)) {
 					$accountingaccount2 = new AccountingAccount($db);
 					$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
 

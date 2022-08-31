@@ -1347,7 +1347,7 @@ class AccountancyExport
 			}
 			print $nature_piece.$separator;
 			// RACI
-			//			if (! empty($line->subledger_account)) {
+			//			if (!empty($line->subledger_account)) {
 			//              if ($line->doc_type == 'supplier_invoice') {
 			//                  $racine_subledger_account = '40';
 			//              } elseif ($line->doc_type == 'customer_invoice') {
@@ -1610,7 +1610,7 @@ class AccountancyExport
 			}
 			print $nature_piece.$separator;
 			// RACI
-			//			if (! empty($line->subledger_account)) {
+			//			if (!empty($line->subledger_account)) {
 			//				if ($line->doc_type == 'supplier_invoice') {
 			//					$racine_subledger_account = '40';
 			//				} elseif ($line->doc_type == 'customer_invoice') {

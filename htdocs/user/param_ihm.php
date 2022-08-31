@@ -415,7 +415,7 @@ if ($action == 'edit') {
 			print $object->conf->MAIN_LANDING_PAGE;
 		}
 	}
-	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
+	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (!empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
 
 	// Landing page for Agenda - AGENDA_DEFAULT_VIEW

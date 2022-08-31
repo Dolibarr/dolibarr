@@ -242,7 +242,7 @@ print '<br>';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
 {
 	$langs->load("orders");
 

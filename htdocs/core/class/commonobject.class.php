@@ -1085,8 +1085,8 @@ abstract class CommonObject
 		$forcedownload = 0;
 
 		$paramlink = '';
-		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
-		//if (! empty($ecmfile->entity)) $paramlink.='&entity='.$ecmfile->entity; 					// For sharing with hash (so public files), entity is not required.
+		//if (!empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
+		//if (!empty($ecmfile->entity)) $paramlink.='&entity='.$ecmfile->entity; 					// For sharing with hash (so public files), entity is not required.
 		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
 		if (!empty($ecmfile->share)) {
 			$paramlink .= ($paramlink ? '&' : '').'hashp='.$ecmfile->share; // Hash for public share
@@ -4917,7 +4917,7 @@ abstract class CommonObject
 			//Line extrafield
 			$line->fetch_optionals();
 
-			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
 			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
 				if (empty($line->fk_parent_line)) {
 					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
@@ -6159,7 +6159,7 @@ abstract class CommonObject
 
 				// If we clone, we have to clean unique extrafields to prevent duplicates.
 				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
-				if (! empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && ! empty($attributeUnique)) {
+				if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
 					$new_array_options[$key] = null;
 				}
 
@@ -8582,7 +8582,7 @@ abstract class CommonObject
 
 		$filearray = dol_dir_list($dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 
-		/*if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+		/*if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 		 {
 		 $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		 $filearray=array_merge($filearray, $filearrayold);

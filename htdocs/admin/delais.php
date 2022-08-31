@@ -317,8 +317,8 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 	$offset = 0;
 	$cursor = 10; // By default
-	//if (! empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
-	//if (! empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
+	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
+	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset; if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
 		$level0 = $conf->global->MAIN_METEO_LEVEL0;
 	}

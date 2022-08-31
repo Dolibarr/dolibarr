@@ -293,7 +293,7 @@ if ($id > 0 || !empty($ref)) {
 		$prods_arbo = $object->get_arbo_each_prod();
 
 		$tmpid = $id;
-		if (! empty($conf->use_javascript_ajax)) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$nboflines = $prods_arbo;
 			$table_element_line='product_association';
 

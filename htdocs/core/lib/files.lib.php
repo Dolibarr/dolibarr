@@ -2310,7 +2310,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 			 return 1;
 			 }
 			 else*/
-			//if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+			//if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
 			if (class_exists('ZipArchive')) {
 				$foundhandler = 1;
 

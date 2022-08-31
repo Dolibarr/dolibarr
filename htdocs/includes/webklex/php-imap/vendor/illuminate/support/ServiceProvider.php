@@ -363,7 +363,7 @@ abstract class ServiceProvider
      */
     protected static function pathsForProviderAndGroup($provider, $group)
     {
-        if (! empty(static::$publishes[$provider]) && ! empty(static::$publishGroups[$group])) {
+        if (!empty(static::$publishes[$provider]) && !empty(static::$publishGroups[$group])) {
             return array_intersect_key(static::$publishes[$provider], static::$publishGroups[$group]);
         }
 

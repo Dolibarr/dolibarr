@@ -963,7 +963,7 @@ if ($resql) {
 				FactureFournisseur::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 		);
 		/*
-		if (! empty($conf->global->INVOICE_USE_SITUATION))
+		if (!empty($conf->global->INVOICE_USE_SITUATION))
 		{
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 		}

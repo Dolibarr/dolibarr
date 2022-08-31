@@ -831,7 +831,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (! empty($conf->global->MAIN_UMASK))
+						if (!empty($conf->global->MAIN_UMASK))
 							@chmod($file, octdec($conf->global->MAIN_UMASK));
 					}
 					*/
@@ -900,7 +900,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (! empty($conf->global->MAIN_UMASK))
+						//if (!empty($conf->global->MAIN_UMASK))
 						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -4735,7 +4735,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (! empty($conf->global->MAIN_UMASK))
+		if (!empty($conf->global->MAIN_UMASK))
 			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
 
 		// Output file on browser

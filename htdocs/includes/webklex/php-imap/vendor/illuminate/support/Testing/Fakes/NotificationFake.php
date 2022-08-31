@@ -227,7 +227,7 @@ class NotificationFake implements NotificationDispatcher, NotificationFactory
      */
     public function hasSent($notifiable, $notification)
     {
-        return ! empty($this->notificationsFor($notifiable, $notification));
+        return !empty($this->notificationsFor($notifiable, $notification));
     }
 
     /**

@@ -574,7 +574,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					print '</td></tr>';
 				}
 			} else {
-				//if (! empty($conf->modules))
+				//if (!empty($conf->modules))
 				if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 					print '<tr class="trforrunsql"><td colspan="4">';
 					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterDB");
@@ -646,7 +646,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '</td></tr>';
 			}
 		} else {
-			//if (! empty($conf->modules))
+			//if (!empty($conf->modules))
 			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterFiles");

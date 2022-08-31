@@ -698,7 +698,7 @@ llxHeader('', $title, $help_url);
 $head = societe_prepare_head($object);
 
 // Show sandbox warning
-/*if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
+/*if (!empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }*/

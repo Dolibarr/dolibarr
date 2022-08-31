@@ -1108,7 +1108,7 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {

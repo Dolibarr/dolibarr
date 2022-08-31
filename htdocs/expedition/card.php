@@ -466,7 +466,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		// TODO add alternative status
-		//} elseif ($action == 'reopen' && (! empty($user->rights->expedition->creer) || ! empty($user->rights->expedition->shipping_advance->validate)))
+		//} elseif ($action == 'reopen' && (!empty($user->rights->expedition->creer) || !empty($user->rights->expedition->shipping_advance->validate)))
 		//{
 		//	$result = $object->setStatut(0);
 		//	if ($result < 0)
@@ -1218,7 +1218,7 @@ if ($action == 'create') {
 								print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 								print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" class="qtyl center" type="text" size="4" value="'.$deliverableQty.'">';
 							} else {
-								if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+								if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 									print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 									print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
 								}
@@ -1402,7 +1402,7 @@ if ($action == 'create') {
 										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
-										if (! empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
+										if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
 											print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="hidden" value="0">';
 										}
 
@@ -2515,7 +2515,7 @@ if ($action == 'create') {
 			// Create bill
 			if (isModEnabled('facture') && ($object->statut == Expedition::STATUS_VALIDATED || $object->statut == Expedition::STATUS_CLOSED)) {
 				if ($user->rights->facture->creer) {
-					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
+					// TODO show button only   if (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					// If we do that, we must also make this option official.
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
 				}

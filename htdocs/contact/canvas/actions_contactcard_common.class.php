@@ -66,7 +66,7 @@ abstract class ActionsContactCardCommon
 
 		if (is_object($this->object) && method_exists($this->object,'fetch'))
 		{
-			if (! empty($id)) $this->object->fetch($id);
+			if (!empty($id)) $this->object->fetch($id);
 		}
 		else
 		{*/

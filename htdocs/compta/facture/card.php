@@ -1787,7 +1787,7 @@ if (empty($reshook)) {
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						if (!empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
 							$originforcontact = $object->origin;
 							$originidforcontact = $object->origin_id;
@@ -2559,7 +2559,7 @@ if (empty($reshook)) {
 
 			$price_base_type = 'HT';
 			$pu = $pu_ht;
-			if (empty($pu) && ! empty($pu_ttc)) {
+			if (empty($pu) && !empty($pu_ttc)) {
 				$pu = $pu_ttc;
 				$price_base_type = 'TTC';
 			}
@@ -3367,13 +3367,13 @@ if ($action == 'create') {
 				);
 				$typedeposit = GETPOST('typedeposit', 'aZ09');
 				$valuedeposit = GETPOST('valuedeposit', 'int');
-				if (empty($typedeposit) && ! empty($objectsrc->deposit_percent)) {
+				if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {
 					$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
-					if (! empty($origin_payment_conditions_deposit_percent)) {
+					if (!empty($origin_payment_conditions_deposit_percent)) {
 						$typedeposit = 'variable';
 					}
 				}
-				if (empty($valuedeposit) && $typedeposit == 'variable' && ! empty($objectsrc->deposit_percent)) {
+				if (empty($valuedeposit) && $typedeposit == 'variable' && !empty($objectsrc->deposit_percent)) {
 					$valuedeposit = $objectsrc->deposit_percent;
 				}
 				print $form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1);

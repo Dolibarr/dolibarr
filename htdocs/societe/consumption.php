@@ -650,9 +650,9 @@ if ($sql_select) {
 		// Show range
 		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
 		// Add description in form
-		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
 		{
-			$prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+			$prodreftxt .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 		}
 		*/
 		print '</td>';

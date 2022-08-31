@@ -126,8 +126,8 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
 	//var_dump($user->rights);
 	/*
-	if (! empty($user->rights->$newelement->creer) || ! empty($user->rights->$newelement->create) || ! empty($user->rights->$newelement->write)
-		|| (isset($subelement) && (! empty($user->rights->$newelement->$subelement->creer) || ! empty($user->rights->$newelement->$subelement->write)))
+	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
+		|| (isset($subelement) && (!empty($user->rights->$newelement->$subelement->creer) || !empty($user->rights->$newelement->$subelement->write)))
 		|| ($element == 'payment' && $user->rights->facture->paiement)
 		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	*/

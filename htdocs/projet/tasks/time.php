@@ -771,7 +771,7 @@ if ($action == 'confirm_generateinter') {
 		$tmpinter->socid = $projectstatic->thirdparty->id;
 		$tmpinter->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$tmpinter->fk_project = $projectstatic->id;
-		$tmpinter->description = $projectstatic->title . ( ! empty($projectstatic->description) ? '-' . $projectstatic->label : '' );
+		$tmpinter->description = $projectstatic->title . ( !empty($projectstatic->description) ? '-' . $projectstatic->label : '' );
 
 		if ($interToUse) {
 			$tmpinter->fetch($interToUse);
@@ -804,7 +804,7 @@ if ($action == 'confirm_generateinter') {
 				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
 				// Add lines
-				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . ( ! empty($value['note']) ? ' - ' . $value['note'] : '' ), $value['date'], $value['timespent']);
+				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . ( !empty($value['note']) ? ' - ' . $value['note'] : '' ), $value['date'], $value['timespent']);
 			}
 		}
 
@@ -1059,7 +1059,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
-		if ( ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+		if ( !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
 			$langs->load("interventions");
 			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
 		}

@@ -1275,7 +1275,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if (empty($reshook)) {
 		if ($action != "edit" && $action != 'presend') {
 			// Create event
-			/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
+			/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 				// "workflow" action so should appears somewhere else on
 				// page.
 			{

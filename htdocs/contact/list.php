@@ -831,14 +831,14 @@ if (!empty($arrayfields['p.town']['checked'])) {
 	print '</td>';
 }
 // State
-/*if (! empty($arrayfields['state.nom']['checked']))
+/*if (!empty($arrayfields['state.nom']['checked']))
  {
  print '<td class="liste_titre">';
  print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
  print '</td>';
  }
  // Region
- if (! empty($arrayfields['region.nom']['checked']))
+ if (!empty($arrayfields['region.nom']['checked']))
  {
  print '<td class="liste_titre">';
  print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
@@ -981,8 +981,8 @@ if (!empty($arrayfields['p.zip']['checked'])) {
 if (!empty($arrayfields['p.town']['checked'])) {
 	print_liste_field_titre($arrayfields['p.town']['label'], $_SERVER["PHP_SELF"], "p.town", $begin, $param, '', $sortfield, $sortorder);
 }
-//if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-//if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
+//if (!empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+//if (!empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 }
@@ -1150,13 +1150,13 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	// State
-	/*if (! empty($arrayfields['state.nom']['checked']))
+	/*if (!empty($arrayfields['state.nom']['checked']))
 	{
 		print "<td>".$obj->state_name."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Region
-	if (! empty($arrayfields['region.nom']['checked']))
+	if (!empty($arrayfields['region.nom']['checked']))
 	{
 		print "<td>".$obj->region_name."</td>\n";
 		if (! $i) $totalarray['nbfield']++;

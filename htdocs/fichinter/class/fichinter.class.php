@@ -1187,8 +1187,8 @@ class Fichinter extends CommonObject
 
 			if ($objsoc->fetch($socid) > 0) {
 				$this->socid = $objsoc->id;
-				//$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-				//$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				//$this->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				//$this->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$this->fk_project = '';
 				$this->fk_delivery_address = '';
 			}

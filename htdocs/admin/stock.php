@@ -186,7 +186,7 @@ if (isModEnabled('productbatch')) {
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
-//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
@@ -239,7 +239,7 @@ if (isModEnabled('commande')) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (! empty($conf->expedition->enabled))
+//if (!empty($conf->expedition->enabled))
 //{
 
 print '<tr class="oddeven">';

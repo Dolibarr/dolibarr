@@ -823,7 +823,7 @@ if ($action == 'add') {
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="'.(isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1').'">';
 		} else {
-			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
+			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(!empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 			$okforextended = true;
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
@@ -1074,7 +1074,7 @@ if ($num) {
 							$okforextended = true;
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
 								$okforextended = false;
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';

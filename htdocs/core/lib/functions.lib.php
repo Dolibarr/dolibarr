@@ -3418,7 +3418,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -6833,7 +6833,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
-					if (! empty($attrs->item($ii)->name)) {
+					if (!empty($attrs->item($ii)->name)) {
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
 							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);

@@ -1376,7 +1376,7 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Status
-			/*if (! empty($arrayfields['p.fk_statut']['checked']))
+			/*if (!empty($arrayfields['p.fk_statut']['checked']))
 			{
 				$projectstatic->statut = $obj->fk_statut;
 				print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';

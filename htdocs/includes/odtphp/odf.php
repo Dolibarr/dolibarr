@@ -530,7 +530,7 @@ IMG;
 
 		//var_dump($this->vars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
-			if (! empty($match[1]) && ! isset($this->vars[$match[1]])) {
+			if (!empty($match[1]) && ! isset($this->vars[$match[1]])) {
 				$this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
 			}
 		}
@@ -877,7 +877,7 @@ IMG;
 				pclose($handlein);
 				fclose($handle);
 			}
-			if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			if (!empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 		}
 
 		if ($retval == 0) {

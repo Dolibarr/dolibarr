@@ -3421,20 +3421,20 @@ class soap_transport_http extends nusoap_base {
 					continue;
 				}
 	    		$this->debug("check cookie for validity: ".$cookie['name'].'='.$cookie['value']);
-				if ((isset($cookie['expires'])) && (! empty($cookie['expires']))) {
+				if ((isset($cookie['expires'])) && (!empty($cookie['expires']))) {
 					if (strtotime($cookie['expires']) <= time()) {
 						$this->debug('cookie has expired');
 						continue;
 					}
 				}
-				if ((isset($cookie['domain'])) && (! empty($cookie['domain']))) {
+				if ((isset($cookie['domain'])) && (!empty($cookie['domain']))) {
 					$domain = preg_quote($cookie['domain']);
 					if (! preg_match("'.*$domain$'i", $this->host)) {
 						$this->debug('cookie has different domain');
 						continue;
 					}
 				}
-				if ((isset($cookie['path'])) && (! empty($cookie['path']))) {
+				if ((isset($cookie['path'])) && (!empty($cookie['path']))) {
 					$path = preg_quote($cookie['path']);
 					if (! preg_match("'^$path.*'i", $this->path)) {
 						$this->debug('cookie is for a different path');
@@ -8057,7 +8057,7 @@ class nusoap_client extends nusoap_base  {
 				$this->debug('Remove cookie that is not an array');
 				continue;
 			}
-			if ((isset($cookie['expires'])) && (! empty($cookie['expires']))) {
+			if ((isset($cookie['expires'])) && (!empty($cookie['expires']))) {
 				if (strtotime($cookie['expires']) > time()) {
 					$this->cookies[] = $cookie;
 				} else {
