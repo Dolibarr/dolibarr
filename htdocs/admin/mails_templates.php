@@ -188,7 +188,7 @@ if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->re
 if (isModEnabled("societe") && !empty($user->rights->societe->lire)) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
 if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
