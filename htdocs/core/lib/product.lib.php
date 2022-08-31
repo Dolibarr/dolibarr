@@ -124,7 +124,7 @@ function product_prepare_head($object)
 	}
 
 	// Tab to link resources
-	if (!empty($conf->resource->enabled)) {
+	if (isModEnabled('resource')) {
 		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
 			$head[$h][1] = $langs->trans("Resources");

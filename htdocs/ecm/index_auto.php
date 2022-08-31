@@ -359,7 +359,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$langs->load("trips");
 		$rowspan++; $sectionauto[] = array('position'=>160, 'level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 	}
-	if (!empty($conf->holiday->enabled)) {
+	if (isModEnabled('holiday')) {
 		$langs->load("holiday");
 		$rowspan++; $sectionauto[] = array('position'=>170, 'level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}

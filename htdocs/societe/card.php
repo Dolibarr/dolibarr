@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			$object->state_id				= GETPOST('state_id', 'int');
 
 			$object->socialnetworks = array();
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -1083,7 +1083,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->state_id = GETPOST('state_id', 'int');
 
 		$object->socialnetworks = array();
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -1600,7 +1600,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 		// Social networks
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
 					print '<tr>';
@@ -1929,7 +1929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->state_id = GETPOST('state_id', 'int');
 
 				$object->socialnetworks = array();
-				if (!empty($conf->socialnetworks->enabled)) {
+				if (isModEnabled('socialnetworks')) {
 					foreach ($socialnetworks as $key => $value) {
 						if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 							$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -2287,7 +2287,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
 			// Social network
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';

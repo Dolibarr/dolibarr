@@ -152,7 +152,7 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->expensereport->enabled)) {
 	$langs->load("trips"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 }
-if (!empty($conf->holiday->enabled)) {
+if (isModEnabled('holiday')) {
 	$langs->load("holiday"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 }
 if (isModEnabled("banque")) {

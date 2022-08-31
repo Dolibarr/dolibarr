@@ -262,7 +262,7 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				$object->socialnetworks = array();
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOST($key, 'alphanohtml')) {
@@ -432,7 +432,7 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-				if (!empty($conf->socialnetworks->enabled)) {
+				if (isModEnabled('socialnetworks')) {
 					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
 						if (GETPOST($key, 'alphanohtml')) {
@@ -962,7 +962,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Holiday request validator
-	if (!empty($conf->holiday->enabled)) {
+	if (isModEnabled('holiday')) {
 		print '<tr><td class="titlefieldcreate">';
 		$text = $langs->trans("ForceUserHolidayValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1128,7 +1128,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	// Social networks
-	if (!empty($conf->socialnetworks->enabled)) {
+	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active']) {
 				print '<tr><td>'.$langs->trans($value['label']).'</td>';
@@ -1242,7 +1242,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($id, $childids))
 		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 		$langs->load("salaries");
 
 		// THM
@@ -1514,7 +1514,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Holiday request validator
-			if (!empty($conf->holiday->enabled)) {
+			if (isModEnabled('holiday')) {
 				print '<tr><td>';
 				$text = $langs->trans("ForceUserHolidayValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1544,7 +1544,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 				$langs->load("salaries");
 
 				// Salary
@@ -2258,7 +2258,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Holiday request validator
-			if (!empty($conf->holiday->enabled)) {
+			if (isModEnabled('holiday')) {
 				print '<tr><td class="titlefield">';
 				$text = $langs->trans("ForceUserHolidayValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -2507,7 +2507,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr><td>'.$langs->trans($value['label']).'</td>';
@@ -2721,7 +2721,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 					$langs->load("salaries");
 
 				// Salary

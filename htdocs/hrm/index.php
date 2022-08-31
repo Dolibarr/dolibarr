@@ -47,7 +47,7 @@ if (!empty($conf->recruitment->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 }
-if (!empty($conf->holiday->enabled)) {
+if (isModEnabled('holiday')) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
@@ -79,7 +79,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
  */
 
 // Update sold
-if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
+if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 	$holidaystatic = new Holiday($db);
 	$result = $holidaystatic->updateBalance();
 }
@@ -112,7 +112,7 @@ if (!empty($setupcompanynotcomplete)) {
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+	if (isModEnabled('holiday') && $user->rights->holiday->read) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
 	}
@@ -150,7 +150,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 }
 
 
-if (!empty($conf->holiday->enabled)) {
+if (isModEnabled('holiday')) {
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
@@ -187,7 +187,7 @@ print '</div><div class="fichetwothirdright">';
 
 
 // Latest leave requests
-if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+if (isModEnabled('holiday') && $user->rights->holiday->read) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";

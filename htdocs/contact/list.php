@@ -83,7 +83,7 @@ if (!empty($conf->mailing->enabled)) {
 } else {
 	$search_no_email = -1;
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			$search_[$key] = GETPOST("search_".$key, 'alpha');
@@ -221,7 +221,7 @@ $arrayfields['unsubscribed'] = array(
 		'enabled'=>(!empty($conf->mailing->enabled)),
 		'position'=>111);
 
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			$arrayfields['p.'.$key] = array(
@@ -289,7 +289,7 @@ if (empty($reshook)) {
 		$search_fax = "";
 		$search_email = "";
 		$search_no_email = -1;
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
 					$search_[$key] = "";
@@ -499,7 +499,7 @@ if (strlen($search_phone_mobile)) {
 if (strlen($search_fax)) {
 	$sql .= natural_search('p.fax', $search_fax);
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$sql .= " AND p.socialnetworks LIKE '%\"".$key."\":\"".$search_[$key]."%'";
@@ -880,7 +880,7 @@ if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
 	print '</td>';
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			if (!empty($arrayfields['p.'.$key]['checked'])) {
@@ -1004,7 +1004,7 @@ if (!empty($arrayfields['p.email']['checked'])) {
 if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print_liste_field_titre($arrayfields['unsubscribed']['label'], $_SERVER["PHP_SELF"], "unsubscribed", $begin, $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
 			print_liste_field_titre($arrayfields['p.'.$key]['label'], $_SERVER["PHP_SELF"], "p.".$key, $begin, $param, '', $sortfield, $sortorder);
@@ -1219,7 +1219,7 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
-	if (!empty($conf->socialnetworks->enabled)) {
+	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
 				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';

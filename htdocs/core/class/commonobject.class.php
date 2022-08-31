@@ -968,7 +968,7 @@ abstract class CommonObject
 			$outdone++;
 		}
 
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$outsocialnetwork = '';
 
 			if (!empty($this->socialnetworks) && is_array($this->socialnetworks) && count($this->socialnetworks) > 0) {

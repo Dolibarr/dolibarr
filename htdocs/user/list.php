@@ -941,7 +941,7 @@ while ($i < $imaxinloop) {
 	$canreadhrmdata = 0;
 	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
 		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;

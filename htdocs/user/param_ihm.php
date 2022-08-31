@@ -192,7 +192,7 @@ if (isModEnabled("societe")) {
 if (!empty($conf->project->enabled)) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
 }
-if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
+if (isModEnabled('holiday') || !empty($conf->expensereport->enabled)) {
 	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
 }
 if (isModEnabled("product") || isModEnabled("service")) {

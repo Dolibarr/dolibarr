@@ -215,7 +215,7 @@ if (empty($reshook)) {
 		//$object->facebook		= GETPOST("facebook", 'alpha');
 		//$object->linkedin		= GETPOST("linkedin", 'alpha');
 		$object->socialnetworks = array();
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
@@ -427,7 +427,7 @@ if (empty($reshook)) {
 			//$object->facebook		= GETPOST("facebook", 'alpha');
 			//$object->linkedin		= GETPOST("linkedin", 'alpha');
 			$object->socialnetworks = array();
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 						$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
@@ -859,7 +859,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';
@@ -1146,7 +1146,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';

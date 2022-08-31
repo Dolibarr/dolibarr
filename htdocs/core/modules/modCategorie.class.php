@@ -160,7 +160,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled('agenda')) {
 			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
 		}
-		if (!empty($conf->website->enabled)) {
+		if (isModEnabled('website')) {
 			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
 		}
 
