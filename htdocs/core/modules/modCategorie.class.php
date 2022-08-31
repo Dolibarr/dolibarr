@@ -145,7 +145,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->bank->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
 		}
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$typeexample .= ($typeexample ? " / " : "")."6=Project";
 		}
 		if (!empty($conf->user->enabled)) {
@@ -179,7 +179,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
 		$this->export_label[$r] = 'CatProdList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = 'isModEnabled("product") || !empty($conf->service->abled)';
+		$this->export_enabled[$r] = 'isModEnabled("product") || !empty($conf->service->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProductId', 'p.ref'=>'Ref', 'p.label'=>'Label');
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 'p.label'=>'Text');
@@ -379,7 +379,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 		$this->export_label[$r] = 'CatProjectsList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->project->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled('project')';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>"Text");
@@ -568,7 +568,7 @@ class modCategorie extends DolibarrModules
 		// 5 Bank accounts, TODO ?
 
 		// 6 Projects
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 			$this->import_label[$r] = "CatProjectsLinks"; // Translation key
