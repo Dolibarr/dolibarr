@@ -521,7 +521,7 @@ if ($id > 0 || $ref) {
 				print '</tr>';
 
 				// Availability
-				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) {
+				if (getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY')) {
 					$langs->load("propal");
 					print '<tr><td>'.$langs->trans("Availability").'</td><td>';
 					$form->selectAvailabilityDelay($object->fk_availability, "oselDispo", 1);
@@ -907,16 +907,16 @@ END;
 				$arrayfields = array(
 					'pfp.datec'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'checked'=>1, 'position'=>1),
 					's.nom'=>array('label'=>$langs->trans("Suppliers"), 'checked'=>1, 'position'=>2),
-					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => !empty($conf->global->FOURN_PRODUCT_AVAILABILITY), 'checked'=>0, 'position'=>4),
+					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked'=>0, 'position'=>4),
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
-					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => (!empty($conf->multicurrency->enabled)), 'checked'=>0, 'position'=>10),
+					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
 					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
 					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
-					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>15),
-					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => $conf->barcode->enabled, 'checked'=>0, 'position'=>16),
-					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => !empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING), 'checked'=>0, 'position'=>17),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => $conf->barcode->enabled, 'checked'=>1, 'position'=>18),
+					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
+					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
+					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
+					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>18),
 				);
 
 				// fetch optionals attributes and labels

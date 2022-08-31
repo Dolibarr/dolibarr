@@ -992,7 +992,7 @@ if ($id) {
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
 					print '</td>';
 				}
-				print '<td class="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
 				print "</tr>";
 				$totalpaid += $objp->amount;
 				$i++;
@@ -1003,14 +1003,14 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right nowrap amountcard\">".price($totalpaid)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right nowrap amountcard\">".price($object->amount)."</td></tr>\n";
 
 		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-		print '<td class="right'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
+		print '<td class="right nowrap'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 		print "</table>";
 		print '</div>';
