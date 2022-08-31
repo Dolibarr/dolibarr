@@ -49,7 +49,7 @@ class ApiPrintConnector implements PrintConnector
      */
     public function __destruct()
     {
-        if (!empty($this->stream)) {
+        if (! empty($this->stream)) {
             trigger_error("Print connector was not finalized. Did you forget to close the printer?", E_USER_NOTICE);
         }
     }

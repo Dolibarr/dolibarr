@@ -482,7 +482,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 
         $result = new static($results);
 
-        if (!empty($nextGroups)) {
+        if (! empty($nextGroups)) {
             return $result->map->groupBy($nextGroups, $preserveKeys);
         }
 

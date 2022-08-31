@@ -189,7 +189,7 @@ class EventFake implements Dispatcher
      */
     public function hasDispatched($event)
     {
-        return isset($this->events[$event]) && !empty($this->events[$event]);
+        return isset($this->events[$event]) && ! empty($this->events[$event]);
     }
 
     /**

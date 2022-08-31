@@ -900,7 +900,7 @@ class nusoap_client extends nusoap_base  {
 				$this->debug('Remove cookie that is not an array');
 				continue;
 			}
-			if ((isset($cookie['expires'])) && (!empty($cookie['expires']))) {
+			if ((isset($cookie['expires'])) && (! empty($cookie['expires']))) {
 				if (strtotime($cookie['expires']) > time()) {
 					$this->cookies[] = $cookie;
 				} else {
