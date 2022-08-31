@@ -71,8 +71,8 @@ ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER a
 
 ALTER TABLE llx_holiday CHANGE COLUMN date_approve date_approval datetime;
 
-UPDATE llx_holiday SET date_approval = date_valid WHEN statut = 3 AND date_approval IS NULL;
-UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHEN statut = 3 AND fk_user_approve IS NULL;
+UPDATE llx_holiday SET date_approval = date_valid WHERE statut = 3 AND date_approval IS NULL;
+UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_user_approve IS NULL;
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
