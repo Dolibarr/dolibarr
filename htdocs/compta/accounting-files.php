@@ -130,7 +130,7 @@ $error = 0;
 $listofchoices = array(
 	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
 	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
 	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
 	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
 	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
