@@ -22,9 +22,11 @@
 /**
  *	\file       htdocs/contact/consumption.php
  *  \ingroup    societe
- *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
+ *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
+
+// Load Dolibarr environment
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
