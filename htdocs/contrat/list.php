@@ -363,9 +363,7 @@ if (empty($reshook)) {
 		}
 	}
 	$sql .= " AND ( 1 = 0 ";
-}
-else
-	$sql .= " HAVING (1=0 ";
+} else $sql .= " HAVING (1=0 ";
 
 if ( in_array("1", $search_status))
 	$sql .= " OR SUM(".$db->ifsql("cd.statut=0", 1, 0).') > 0';
