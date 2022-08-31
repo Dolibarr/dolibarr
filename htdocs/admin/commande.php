@@ -644,7 +644,7 @@ if ($conf->banque->enabled) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
 	} else {
 		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
@@ -664,7 +664,7 @@ if ($conf->banque->enabled) {
 if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
 	} else {
 		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
