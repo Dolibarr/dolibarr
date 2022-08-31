@@ -248,7 +248,7 @@ llxHeader('', $langs->trans("RepeatableSupplierInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
