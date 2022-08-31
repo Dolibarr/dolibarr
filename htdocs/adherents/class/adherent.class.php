@@ -658,8 +658,6 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 		$nbrowsaffected = 0;
 		$error = 0;
 
