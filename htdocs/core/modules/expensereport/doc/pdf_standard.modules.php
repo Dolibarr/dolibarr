@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2021  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
@@ -152,7 +152,7 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxqty = 150;
 		$this->postotalht = 160;
 		$this->postotalttc = 180;
-		// if (empty($conf->project->enabled)) {
+		// if (!isModEnabled('project')) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
 		//     $this->posxqty-=20;
@@ -584,7 +584,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
 			$nextColumnPosX = $this->posxtva;
 		}
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$nextColumnPosX = $this->posxprojet;
 		}
 
@@ -600,7 +600,7 @@ class pdf_standard extends ModeleExpenseReport
 		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
 		// Project
-		//if (! empty($conf->project->enabled))
+		//if (isModEnabled('project'))
 		//{
 		//    $pdf->SetFont('','', $default_font_size - 1);
 		//    $pdf->SetXY($this->posxprojet, $curY);
@@ -958,7 +958,7 @@ class pdf_standard extends ModeleExpenseReport
 		//	$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		//}
 
-		//if (!empty($conf->project->enabled))
+		//if (isModEnabled('project'))
 		//{
 		//    // Project
 		//    $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
