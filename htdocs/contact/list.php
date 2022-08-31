@@ -33,6 +33,8 @@
  *		\brief      Page to list all contacts
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -44,6 +46,7 @@ $langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $socialnetworks = getArrayOfSocialNetworks();
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');

@@ -125,7 +125,7 @@ $permissiontoadd = $user->rights->asset->write;
 $permissiontodelete = $user->rights->asset->delete;
 
 // Security check
-if (empty($conf->asset->enabled)) {
+if (!isModEnabled('asset')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -134,7 +134,7 @@ if ($user->socid > 0) accessforbidden();
 $socid = 0; if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 

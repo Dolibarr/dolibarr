@@ -71,7 +71,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 	$colspan++;
 }
 
