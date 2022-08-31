@@ -995,7 +995,15 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
-
+	// Montant HT
+	if (!empty($arrayfields['MontantHT']['checked'])) {
+		print '<td class="nocellnopadd center" >';
+		print price($obj->MontantHT);
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 	if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
 		$shipment->fetchObjectLinked($shipment->id, $shipment->element);
 		$receiving = '';
@@ -1037,15 +1045,6 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['e.tms']['checked'])) {
 		print '<td class="center nowrap">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Montant HT
-	if (!empty($arrayfields['MontantHT']['checked'])) {
-		print '<td class="nocellnopadd center" >';
-		print price($obj->MontantHT);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
