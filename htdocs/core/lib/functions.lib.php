@@ -7393,7 +7393,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
+			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';

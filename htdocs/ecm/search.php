@@ -161,7 +161,7 @@ if (isModEnabled("banque")) {
 if (!empty($conf->mrp->enabled)) {
 	$langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 }
-if (!empty($conf->recruitment->enabled)) {
+if (isModEnabled('recruitment')) {
 	$langs->load("recruitment"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>$conf->recruitment->enabled, 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 }
 

@@ -43,7 +43,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (!empty($conf->recruitment->enabled)) {
+if (isModEnabled('recruitment')) {
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 }
@@ -342,7 +342,7 @@ if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
 
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
 	$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 	$staticrecruitmentjobposition = new RecruitmentJobPosition($db);
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status,";

@@ -182,7 +182,7 @@ $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_esca
 if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
-if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
+if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
 if (isModEnabled("societe") && !empty($user->rights->societe->lire)) {

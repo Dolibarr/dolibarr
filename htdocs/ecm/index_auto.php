@@ -372,7 +372,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$langs->load("mrp");
 		$rowspan++; $sectionauto[] = array('position'=>200, 'level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 	}
-	if (!empty($conf->recruitment->enabled)) {
+	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
 		$rowspan++; $sectionauto[] = array('position'=>210, 'level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>$conf->recruitment->enabled, 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
