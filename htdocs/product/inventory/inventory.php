@@ -161,7 +161,7 @@ if (empty($reshook)) {
 
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
-				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
 				}
 

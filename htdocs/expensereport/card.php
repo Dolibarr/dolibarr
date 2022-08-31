@@ -117,7 +117,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = $conf->project->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
