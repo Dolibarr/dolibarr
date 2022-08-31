@@ -160,7 +160,7 @@ if ($outputalsopricetotalwithtax) {
 	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
 }
 
-if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 	print '<td class="linecolasset"></td>';
 }
 
