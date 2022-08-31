@@ -96,7 +96,7 @@ if (isModEnabled("propal")) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	$supplierproposalstatic = new SupplierProposal($db);
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$orderstatic = new Commande($db);
 }
 if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
@@ -323,7 +323,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
  * Draft customer orders
  */
 
-if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -1007,7 +1007,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 /*
  * Opened (validated) order
  */
-if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";

@@ -2976,7 +2976,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
-		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+		if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_EMAIL';
 			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
@@ -3082,7 +3082,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+			if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
@@ -7371,7 +7371,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (!empty($conf->adherent->enabled) && (!is_object($object) || $object->element == 'adherent')) {
+			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent')) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';

@@ -2024,7 +2024,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {

@@ -189,7 +189,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->rights->commande->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 

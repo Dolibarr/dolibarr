@@ -62,13 +62,13 @@ $workflowcodes = array(
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array(
 		'family'=>'create',
 		'position'=>10,
-		'enabled'=>(isModEnabled("propal") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array(
 		'family'=>'create',
 		'position'=>20,
-		'enabled'=>(!empty($conf->commande->enabled) && isModEnabled('facture')),
+		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
@@ -84,7 +84,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
 		'family'=>'classify_proposal',
 		'position'=>30,
-		'enabled'=>(isModEnabled("propal") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
 		'picto'=>'propal',
 		'warning'=>''
 	),
@@ -100,19 +100,19 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
-		'enabled'=>(isModEnabled("expedition") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
-		'enabled'=>(isModEnabled("expedition") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
 		'family'=>'classify_order',
 		'position'=>42,
-		'enabled'=>(isModEnabled('facture') && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled('facture') && isModEnabled('commande')),
 		'picto'=>'order',
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.

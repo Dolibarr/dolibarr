@@ -143,7 +143,7 @@ function user_prepare_head(User $object)
 
 	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))
-		|| (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
+		|| (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall))
 		|| (isModEnabled('holiday') && !empty($user->rights->holiday->read) && ($user->id == $object->id || $user->rights->holiday->readall))
 		) {
 		// Bank

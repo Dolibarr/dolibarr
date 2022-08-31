@@ -417,7 +417,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer orders
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
 		if ($ret < 0) {

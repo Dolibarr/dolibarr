@@ -180,7 +180,7 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
@@ -226,7 +226,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -763,7 +763,7 @@ print "</td>\n";
 print "</tr>\n";
 
 /* Disabled. Would be better to be managed with a user cookie
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
 	print '<td class="right">';

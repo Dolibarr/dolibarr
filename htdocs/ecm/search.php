@@ -125,7 +125,7 @@ if (isModEnabled("propal")) {
 if (!empty($conf->contrat->enabled)) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'contract', 'test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'order', 'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 }
 if (isModEnabled('facture')) {
@@ -140,7 +140,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'invoice_supplier', 'test'=>((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 }
-if (!empty($conf->tax->enabled)) {
+if (isModEnabled('tax')) {
 	$langs->load("compta"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 }
 if (!empty($conf->project->enabled)) {
@@ -149,7 +149,7 @@ if (!empty($conf->project->enabled)) {
 if (!empty($conf->ficheinter->enabled)) {
 	$langs->load("interventions"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	$langs->load("trips"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 }
 if (isModEnabled('holiday')) {

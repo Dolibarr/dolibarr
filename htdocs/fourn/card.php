@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 if (!empty($conf->categorie->enabled)) {
@@ -353,7 +353,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Module Adherent
-	if (!empty($conf->adherent->enabled)) {
+	if (isModEnabled('adherent')) {
 		$langs->load("members");
 		$langs->load("users");
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';

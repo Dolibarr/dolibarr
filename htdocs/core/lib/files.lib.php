@@ -2933,7 +2933,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			$original_file = $conf->productbatch->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'movement' || $modulepart == 'mouvement') {

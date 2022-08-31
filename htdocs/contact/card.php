@@ -1225,7 +1225,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$object->load_ref_elements();
 
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
 				print $object->ref_commande ? $object->ref_commande : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>');
 				print '</td></tr>';
@@ -1498,7 +1498,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->commande->enabled) || isModEnabled("expedition")) {
+		if (isModEnabled('commande') || isModEnabled("expedition")) {
 			print '<tr><td>';
 			if (isModEnabled("expedition")) {
 				print $langs->trans("ContactForOrdersOrShipments");

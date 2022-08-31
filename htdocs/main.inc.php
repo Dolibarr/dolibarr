@@ -2432,7 +2432,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => !empty($conf->adherent->enabled) && $user->hasRight("adherent", "write"), // vs hooking
+				"activation" => isModEnabled('adherent') && $user->hasRight("adherent", "write"), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2465,7 +2465,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => !empty($conf->commande->enabled) && $user->hasRight("commande", "write"), // vs hooking
+				"activation" => isModEnabled('commande') && $user->hasRight("commande", "write"), // vs hooking
 				"position" => 40,
 			),
 			array(

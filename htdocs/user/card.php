@@ -51,7 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (!empty($conf->ldap->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 if (!empty($conf->categorie->enabled)) {
@@ -950,7 +950,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</tr>\n";
 
 	// Expense report validator
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		print '<tr><td class="titlefieldcreate">';
 		$text = $langs->trans("ForceUserExpenseValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1498,7 +1498,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Expense report validator
-			if (!empty($conf->expensereport->enabled)) {
+			if (isModEnabled('expensereport')) {
 				print '<tr><td>';
 				$text = $langs->trans("ForceUserExpenseValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1707,7 +1707,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
@@ -2239,7 +2239,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Expense report validator
-			if (!empty($conf->expensereport->enabled)) {
+			if (isModEnabled('expensereport')) {
 				print '<tr><td class="titlefield">';
 				$text = $langs->trans("ForceUserExpenseValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -2629,7 +2629,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';

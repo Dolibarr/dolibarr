@@ -125,9 +125,9 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
-		|| isModEnabled("propal") || !empty($conf->commande->enabled)
+		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || !empty($conf->contrat->enabled)
-		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
+		|| !empty($conf->ficheinter->enabled) || isModEnabled('agenda') || isModEnabled('deplacement') || !empty($conf->stock->enabled)) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -141,7 +141,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("propal")) {
 				$nbElements += $project->getElementCount('propal', 'propal');
 			}
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				$nbElements += $project->getElementCount('order', 'commande');
 			}
 			if (isModEnabled('facture')) {
@@ -171,10 +171,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->mrp->enabled)) {
 				$nbElements += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
 			}
-			if (!empty($conf->deplacement->enabled)) {
+			if (isModEnabled('deplacement')) {
 				$nbElements += $project->getElementCount('trip', 'deplacement');
 			}
-			if (!empty($conf->expensereport->enabled)) {
+			if (isModEnabled('expensereport')) {
 				$nbElements += $project->getElementCount('expensereport', 'expensereport');
 			}
 			if (!empty($conf->don->enabled)) {
@@ -183,7 +183,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->loan->enabled)) {
 				$nbElements += $project->getElementCount('loan', 'loan');
 			}
-			if (!empty($conf->tax->enabled)) {
+			if (isModEnabled('tax')) {
 				$nbElements += $project->getElementCount('chargesociales', 'chargesociales');
 			}
 			if (!empty($conf->project->enabled)) {

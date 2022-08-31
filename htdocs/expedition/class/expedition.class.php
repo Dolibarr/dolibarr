@@ -965,7 +965,7 @@ class Expedition extends CommonObject
 		}
 
 		// If product need a batch number, we should not have called this function but addline_batch instead.
-		if (!empty($conf->productbatch->enabled) && !empty($orderline->fk_product) && !empty($orderline->product_tobatch)) {
+		if (isModEnabled('productbatch') && !empty($orderline->fk_product) && !empty($orderline->product_tobatch)) {
 			$this->error = 'ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
 			return -4;
 		}
@@ -1716,7 +1716,7 @@ class Expedition extends CommonObject
 				}
 
 				// Detail of batch
-				if (!empty($conf->productbatch->enabled) && $obj->line_id > 0 && $obj->product_tobatch > 0) {
+				if (isModEnabled('productbatch') && $obj->line_id > 0 && $obj->product_tobatch > 0) {
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {

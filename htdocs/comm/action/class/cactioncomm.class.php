@@ -201,7 +201,7 @@ class CActionComm
 						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && !empty($conf->commande->enabled) && empty($user->rights->commande->lire)) {
+						if ($obj->module == 'order' && isModEnabled('commande') && empty($user->rights->commande->lire)) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propale->lire)) {

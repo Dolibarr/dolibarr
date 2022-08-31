@@ -46,7 +46,7 @@ if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (!empty($conf->supplier_proposal->enabled)) {
@@ -67,10 +67,10 @@ if (!empty($conf->ficheinter->enabled)) {
 if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->deplacement->enabled)) {
+if (isModEnabled('deplacement')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (isModEnabled('agenda')) {
@@ -86,7 +86,7 @@ if (!empty($conf->loan->enabled)) {
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
-if (!empty($conf->tax->enabled)) {
+if (isModEnabled('tax')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
 if (isModEnabled("banque")) {
@@ -107,7 +107,7 @@ $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
 if (isModEnabled("propal")) {
@@ -116,10 +116,10 @@ if (isModEnabled("propal")) {
 if (!empty($conf->ficheinter->enabled)) {
 	$langs->load("interventions");
 }
-if (!empty($conf->deplacement->enabled)) {
+if (isModEnabled('deplacement')) {
 	$langs->load("trips");
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	$langs->load("trips");
 }
 if (!empty($conf->don->enabled)) {

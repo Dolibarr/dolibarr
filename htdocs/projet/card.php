@@ -1348,7 +1348,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("propal");
 					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
+				if (isModEnabled('commande') && $user->rights->commande->creer) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1376,7 +1376,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("contracts");
 					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
+				if (isModEnabled('expensereport') && $user->rights->expensereport->creer) {
 					$langs->load("trips");
 					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

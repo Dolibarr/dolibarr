@@ -1630,7 +1630,7 @@ class FormMail extends Form
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1639,7 +1639,7 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
 					if (!empty($conf->contrat->enabled)) {
@@ -1647,7 +1647,7 @@ class FormMail extends Form
 					}
 
 					//Online payement link
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1656,7 +1656,7 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 					}
 					if (!empty($conf->contrat->enabled)) {

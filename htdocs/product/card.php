@@ -62,7 +62,7 @@ if (isModEnabled("propal")) {
 if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (!empty($conf->accounting->enabled)) {
@@ -82,7 +82,7 @@ if (!empty($conf->stock->enabled)) {
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -1353,7 +1353,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Batch number management
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
@@ -2368,7 +2368,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Batch number management (to batch)
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
@@ -2823,7 +2823,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Commande
-	if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
+	if (isModEnabled('commande') && $user->rights->commande->creer) {
 		$commande = new Commande($db);
 
 		$langs->load("orders");

@@ -2321,7 +2321,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Add batchinfo if the detail_batch array is defined
-				if (!empty($conf->productbatch->enabled) && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
+				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
 					$langs->load('productbatch');
 					foreach ($lines[$i]->detail_batch as $batchline) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';

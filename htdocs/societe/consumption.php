@@ -170,7 +170,7 @@ if ($object->client) {
 	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
 	if (isModEnabled('facture') && $user->rights->facture->lire) {

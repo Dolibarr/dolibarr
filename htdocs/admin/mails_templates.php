@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langsArray=array("errors", "admin", "mails", "languages");
 
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langsArray[]='members';
 }
 if (!empty($conf->eventorganization->enabled)) {
@@ -179,7 +179,7 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToUser'));
-if (!empty($conf->adherent->enabled) && !empty($user->rights->adherent->lire)) {
+if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
 if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
@@ -194,7 +194,7 @@ if (!empty($conf->project->enabled)) {
 if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
-if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
+if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
 if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
@@ -224,7 +224,7 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+if (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire)) {
 	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
 }
 if (isModEnabled('agenda')) {

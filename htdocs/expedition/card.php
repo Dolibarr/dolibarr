@@ -53,7 +53,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
 if (!empty($conf->project->enabled)) {
@@ -67,7 +67,7 @@ $langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders'
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
@@ -258,7 +258,7 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			if (!empty($conf->productbatch->enabled) && $objectsrc->lines[$i]->product_tobatch) {      // If product need a batch number
+			if (isModEnabled('productbatch') && $objectsrc->lines[$i]->product_tobatch) {      // If product need a batch number
 				if (GETPOSTISSET($batch)) {
 					//shipment line with batch-enable product
 					$qty .= '_'.$j;
@@ -875,7 +875,7 @@ if ($action == 'create') {
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">';
-			if ($origin == 'commande' && !empty($conf->commande->enabled)) {
+			if ($origin == 'commande' && isModEnabled('commande')) {
 				print $langs->trans("RefOrder");
 			}
 			if ($origin == 'propal' && isModEnabled("propal")) {
@@ -1033,7 +1033,7 @@ if ($action == 'create') {
 			$i = 0;
 			while ($i < $numAsked) {
 				print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-				if (!empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print 'jQuery("#qtyl'.$i.'_'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
 				}
 				$i++;
@@ -1552,7 +1552,7 @@ if ($action == 'create') {
 
 							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 								$disabled = '';
-								if (!empty($conf->productbatch->enabled) && $product->hasbatch()) {
+								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
 								}
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
@@ -1714,7 +1714,7 @@ if ($action == 'create') {
 		$totalVolume = $tmparray['volume'];
 
 
-		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
+		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -1779,7 +1779,7 @@ if ($action == 'create') {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Linked documents
-		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
+		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 			print '<tr><td>';
 			print $langs->trans("RefOrder").'</td>';
 			print '<td colspan="3">';
@@ -2048,7 +2048,7 @@ if ($action == 'create') {
 			if (!empty($conf->stock->enabled)) {
 				print $langs->trans("WarehouseSource").' - ';
 			}
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print $langs->trans("Batch");
 			}
 			print '</td>';
@@ -2062,7 +2062,7 @@ if ($action == 'create') {
 				print '<td class="left linecolwarehousesource">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td class="left linecolbatch">'.$langs->trans("Batch").'</td>';
 			}
 		}
@@ -2358,7 +2358,7 @@ if ($action == 'create') {
 					}
 
 					// Batch number managment
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						if (isset($lines[$i]->detail_batch)) {
 							print '<!-- Detail of lot -->';
 							print '<td class="linecolbatch">';
@@ -2437,7 +2437,7 @@ if ($action == 'create') {
 					if ($origin && $origin_id > 0) {
 						$colspan++;
 					}
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						$colspan++;
 					}
 					if (!empty($conf->stock->enabled)) {

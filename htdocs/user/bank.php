@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 if (isModEnabled('holiday')) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
@@ -361,7 +361,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print "</tr>\n";
 
 	// Expense report validator
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		print '<tr><td>';
 		$text = $langs->trans("ForceUserExpenseValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -691,7 +691,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest expense report
-	if (!empty($conf->expensereport->enabled) &&
+	if (isModEnabled('expensereport') &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
 		) {
 		$exp = new ExpenseReport($db);

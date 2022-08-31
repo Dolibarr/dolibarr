@@ -54,7 +54,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
 if (!empty($conf->project->enabled)) {
@@ -67,7 +67,7 @@ $langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'order
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
@@ -626,7 +626,7 @@ if (empty($reshook)) {
 					$line->qty = GETPOST($qty, 'int');
 					$line->comment = GETPOST($comment, 'alpha');
 
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
 						$dluo = "dluo".$line_id;
@@ -1041,7 +1041,7 @@ if ($action == 'create') {
 				if (!empty($conf->stock->enabled)) {
 					print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 				}
-				if (!empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
 					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
@@ -1216,7 +1216,7 @@ if ($action == 'create') {
 						print '</td>';
 					}
 
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						if (!empty($product->status_batch)) {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
@@ -1358,7 +1358,7 @@ if ($action == 'create') {
 		$totalVolume = $tmparray['volume'];
 
 
-		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
+		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -1427,7 +1427,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent tableforfield">';
 
 		// Linked documents
-		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
+		if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 			print '<tr><td>';
 			print $langs->trans("RefOrder").'</td>';
 			print '<td colspan="3">';
@@ -1700,7 +1700,7 @@ if ($action == 'create') {
 			if (!empty($conf->stock->enabled)) {
 				print $langs->trans("WarehouseSource").' - ';
 			}
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print $langs->trans("Batch");
 			}
 			print '</td>';
@@ -1721,7 +1721,7 @@ if ($action == 'create') {
 				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td class="left">'.$langs->trans("Batch").'</td>';
 			}
 		}
@@ -1957,7 +1957,7 @@ if ($action == 'create') {
 				}
 
 				// Batch number managment
-				if (!empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
 						print '<td class="linecolbatch">';

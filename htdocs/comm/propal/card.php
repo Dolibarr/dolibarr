@@ -1792,7 +1792,7 @@ if ($action == 'create') {
 
 	// Delivery delay
 	print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print ' ('.$langs->trans('AfterOrder').')';
 	}
 	print '</td><td class="valuefieldcreate">';
@@ -2441,7 +2441,7 @@ if ($action == 'create') {
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 	} else {
 		print $langs->trans('AvailabilityPeriod');
@@ -2826,7 +2826,7 @@ if ($action == 'create') {
 				}
 
 				// Create a sale order
-				if (!empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('commande') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}

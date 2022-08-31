@@ -30,7 +30,7 @@ print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><b
 print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':</span><br>';
 print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
 
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	print '<div id="order"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
@@ -96,7 +96,7 @@ if (!empty($conf->contrat->enabled)) {
 	}
 	print '<br>';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	print '<div id="membersubscription"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";

@@ -191,7 +191,7 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;

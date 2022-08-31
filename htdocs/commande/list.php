@@ -2389,7 +2389,7 @@ if ($resql) {
 								$stock_order = 0;
 								$stock_order_supplier = 0;
 								if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {    // What about other options ?
-									if (!empty($conf->commande->enabled)) {
+									if (isModEnabled('commande')) {
 										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'])) {
 											$generic_product->load_stats_commande(0, '1,2');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];

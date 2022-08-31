@@ -348,7 +348,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 		}
-		if (!$error && !empty($conf->productbatch->enabled)) {
+		if (!$error && isModEnabled('productbatch')) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -608,7 +608,7 @@ if ($object->id > 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			if ($permissiontoadd) {
 				// Link to launch scan tool
-				if (isModEnabled('barcode') || !empty($conf->productbatch->enabled)) {
+				if (isModEnabled('barcode') || isModEnabled('productbatch')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 				}
 
@@ -906,7 +906,7 @@ if ($object->id > 0) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Warehouse").'</td>';
 	print '<td>'.$langs->trans("Product").'</td>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<td>';
 		print $langs->trans("Batch");
 		print '</td>';
@@ -944,7 +944,7 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 		print '</td>';
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print '<input type="text" name="batch" class="maxwidth100" value="'.(GETPOSTISSET('batch') ? GETPOST('batch') : '').'">';
 			print '</td>';
@@ -1022,7 +1022,7 @@ if ($object->id > 0) {
 			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
 				$batch_static = new Productlot($db);
 				$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
@@ -1039,7 +1039,7 @@ if ($object->id > 0) {
 			$valuetoshow = $obj->qty_stock;
 			// For inventory not yet close, we overwrite with the real value in stock now
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;

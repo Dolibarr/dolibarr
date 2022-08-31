@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 if (!empty($conf->accounting->enabled)) {
@@ -68,7 +68,7 @@ if (! empty($conf->eventorganization->enabled)) {
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langs->load("members");
 }
 if (!empty($conf->categorie->enabled)) {
@@ -3035,7 +3035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 		// Module Adherent
-		if (!empty($conf->adherent->enabled)) {
+		if (isModEnabled('adherent')) {
 			$langs->load("members");
 			print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 			print '<td>';
@@ -3108,7 +3108,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
-				if (!empty($conf->adherent->enabled)) {
+				if (isModEnabled('adherent')) {
 					$adh = new Adherent($db);
 					$result = $adh->fetch('', '', $object->id);
 					if ($result == 0 && ($object->client == 1 || $object->client == 3) && !empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS)) {

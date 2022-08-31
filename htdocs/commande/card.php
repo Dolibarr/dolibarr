@@ -71,7 +71,7 @@ if (!empty($conf->incoterm->enabled)) {
 if (!empty($conf->margin->enabled)) {
 	$langs->load('margins');
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 

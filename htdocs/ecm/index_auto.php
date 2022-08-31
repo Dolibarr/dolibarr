@@ -322,7 +322,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	if (!empty($conf->contrat->enabled)) {
 		$rowspan++; $sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		$rowspan++; $sectionauto[] = array('position'=>50, 'level'=>1, 'module'=>'order', 'test'=>$conf->commande->enabled, 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 	}
 	if (isModEnabled('facture')) {
@@ -338,7 +338,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	if (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_invoice")) {
 		$rowspan++; $sectionauto[] = array('position'=>90, 'level'=>1, 'module'=>'invoice_supplier', 'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_invoice")), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
-	if (!empty($conf->tax->enabled)) {
+	if (isModEnabled('tax')) {
 		$langs->load("compta");
 		$rowspan++; $sectionauto[] = array('position'=>100, 'level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 		$rowspan++; $sectionauto[] = array('position'=>110, 'level'=>1, 'module'=>'tax-vat', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("VAT"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
@@ -355,7 +355,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$langs->load("interventions");
 		$rowspan++; $sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		$langs->load("trips");
 		$rowspan++; $sectionauto[] = array('position'=>160, 'level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 	}
