@@ -415,7 +415,7 @@ $sql .= ' GROUP BY e.rowid, e.ref, e.ref_customer, e.date_expedition, e.weight, 
 $sql .= 'e.date_delivery , e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method, ';
 $sql .= 'l.date_delivery, s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= 'typent.code, state.code_departement, state.nom, e.date_creation, e.tms, u.login';
-if(($search_categ_cus > 0) || ($search_categ_cus == -2)) {
+if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ', cc.fk_categorie, cc.fk_soc';
 }
 // Add HAVING from hooks
