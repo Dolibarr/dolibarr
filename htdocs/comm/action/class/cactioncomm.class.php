@@ -218,7 +218,7 @@ class CActionComm
 						}
 						// For case module = 'myobject@eventorganization'
 						$tmparray = preg_split("/@/", $obj->module, -1);
-						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && !empty($conf->eventorganization->enabled)) {
+						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && isModEnabled('eventorganization')) {
 							$qualified = 1;
 						}
 						// For the generic case with type = 'module...' and module = 'myobject@mymodule'

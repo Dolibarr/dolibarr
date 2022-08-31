@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 
 // Load translation files required by the page
 $langsLoad=array('projects', 'bills', 'orders', 'companies');
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langsLoad[]='eventorganization';
 }
 

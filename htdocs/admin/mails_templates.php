@@ -48,7 +48,7 @@ $langsArray=array("errors", "admin", "mails", "languages");
 if (isModEnabled('adherent')) {
 	$langsArray[]='members';
 }
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langsArray[]='eventorganization';
 }
 
@@ -230,7 +230,7 @@ if (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire))
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
-if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
+if (isModEnabled('eventorganization') && !empty($user->rights->eventorganization->read)) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {

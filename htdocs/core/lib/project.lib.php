@@ -209,7 +209,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	if (!empty($conf->eventorganization->enabled) && !empty($project->usage_organize_event)) {
+	if (isModEnabled('eventorganization') && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("EventOrganization");

@@ -394,7 +394,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if (!empty($conf->invoice->enabled)) {
+if (isModEnabled('facture')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -408,7 +408,7 @@ if (!empty($conf->invoice->enabled)) {
 	print "</tr>\n";
 }
 
-if (!empty($conf->order->enabled)) {
+if (isModEnabled('commande')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';

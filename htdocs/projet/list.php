@@ -42,7 +42,7 @@ if (isModEnabled('categorie')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
-if (!empty($conf->eventorganization->enabled) && $conf->eventorganization->enabled) {
+if (isModEnabled('eventorganization') && $conf->eventorganization->enabled) {
 	$langs->loadLangs(array('eventorganization'));
 }
 
