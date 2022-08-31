@@ -186,7 +186,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->tax->enabled)) {
 				$nbElements += $project->getElementCount('chargesociales', 'chargesociales');
 			}
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
 			if (!empty($conf->stock->enabled)) {
