@@ -190,7 +190,7 @@ class FormTicket
 		// TITLE
 		$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
 		if ($this->withemail) {
-			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
+			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Email").'</span></label></td><td>';
 			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
 			print '</td></tr>';
 
