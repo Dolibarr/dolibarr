@@ -41,6 +41,7 @@ $langs->load("members");
 $rowid  = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $sall = GETPOST("sall", "alpha");
@@ -170,12 +171,14 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = clone $object;
+	$object->oldcopy = dol_clone($object);
+
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -201,7 +204,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
+if ($action == 'confirm_delete' && !empty($user->rights->adherent->configurer)) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
@@ -447,7 +450,7 @@ if ($rowid > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
 		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
@@ -681,20 +684,23 @@ if ($rowid > 0) {
 			print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			print "</tr>\n";
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			$adh = new Adherent($db);
+
+			$imaxinloop = ($limit ? min($num, $limit) : $num);
+			while ($i < $imaxinloop) {
 				$objp = $db->fetch_object($resql);
 
 				$datefin = $db->jdate($objp->datefin);
 
-				$adh = new Adherent($db);
 				$adh->lastname = $objp->lastname;
 				$adh->firstname = $objp->firstname;
 				$adh->datefin = $datefin;
 				$adh->need_subscription = $objp->subscription;
 				$adh->statut = $objp->status;
 
-				// Lastname
 				print '<tr class="oddeven">';
+
+				// Lastname
 				if ($objp->company != '') {
 					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
 				} else {
@@ -702,7 +708,7 @@ if ($rowid > 0) {
 				}
 
 				// Login
-				print "<td>".$objp->login."</td>\n";
+				print "<td>".dol_escape_htmltag($objp->login)."</td>\n";
 
 				// Type
 				/*print '<td class="nowrap">';
@@ -759,11 +765,15 @@ if ($rowid > 0) {
 				$i++;
 			}
 
+			if ($i == 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			}
+
 			print "</table>\n";
 			print '</div>';
 			print '</form>';
 
-			if ($num > $conf->liste_limit) {
+			if ($num > $limit) {
 				print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 			}
 		} else {
@@ -817,6 +827,10 @@ if ($rowid > 0) {
 		print '<input name="amount" size="5" value="';
 		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

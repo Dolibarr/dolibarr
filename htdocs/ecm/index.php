@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
+$langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
 
 // Get parameters
 $socid = GETPOST('socid', 'int');
@@ -64,7 +64,7 @@ if (!$sortfield) {
 $ecmdir = new EcmDirectory($db);
 if ($section > 0) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}

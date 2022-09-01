@@ -31,7 +31,7 @@
 /**
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
- *  \brief      Fichier des classes de commandes
+ *  \brief      class for orders
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
@@ -93,12 +93,12 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int Thirparty ID
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
 	/**
-	 * @var string Thirparty ref of order
+	 * @var string Thirdparty ref of order
 	 */
 	public $ref_client;
 
@@ -3710,7 +3710,7 @@ class Commande extends CommonOrder
 
 		$result = '';
 
-		if (!empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) {
+		if (isModEnabled("expedition") && ($option == '1' || $option == '2')) {
 			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
 		} else {
 			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;

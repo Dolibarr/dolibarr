@@ -302,7 +302,7 @@ if ($result) {
 
 	$center = '';
 	if ($num) {
-		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+		$center = '<a class="butActionDelete small" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -418,7 +418,7 @@ if ($result) {
 			$userstatic->status = $obj->status;
 
 			print $userstatic->getLoginUrl(1);
-			if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
+			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
 				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($userstatic->admin) {
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -459,7 +459,7 @@ if ($result) {
 		// More informations
 		print '<td class="right">';
 		$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
-		$htmltext .= '<br><b>'.$langs->trans("PrefixSession").'</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
+		$htmltext .= '<br><b>'.$langs->trans("SuffixSessionName").' (DOLSESSID_...)</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
 		print $form->textwithpicto('', $htmltext);
 		print '</td>';
 

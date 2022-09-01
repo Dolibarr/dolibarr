@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Link a Stripe WebHook beállításához az IPN hívá
 PaymentWillBeRecordedForNextPeriod=A fizetés a következő időszakra kerül rögzítésre.
 ClickHereToTryAgain=<a href="%s">Kattintson ide az újrapróbálkozáshoz...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Az erős ügyfél-hitelesítési szabályok miatt a kártyát a Stripe backoffice-ból kell létrehozni. Ide kattintva bekapcsolhatja a Stripe ügyfélrekordot: %s
+TERMINAL_LOCATION=A terminálok helye (címe).

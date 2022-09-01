@@ -145,7 +145,7 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
+		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
 		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
@@ -345,7 +345,7 @@ class modAdherent extends DolibarrModules
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
@@ -380,7 +380,7 @@ class modAdherent extends DolibarrModules
 				'dict' => 'DictionaryCountry'
 			)
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
 		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -394,7 +394,7 @@ class modAdherent extends DolibarrModules
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
 		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');

@@ -27,7 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -137,7 +137,7 @@ if ($action == 'update') {
 llxHeader('', $langs->trans("TaxSetup"));
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -282,7 +282,7 @@ echo '</table>';
 echo '</div>';
 
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$langs->load("accountancy");
 	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
 }

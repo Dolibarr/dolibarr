@@ -35,8 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_confere
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "projects", "companies", "other", "mails"));
+$langs->loadLangs(array('companies', 'eventorganization', 'mails', 'others', 'projects'));
 
+// Variables GET
 $id = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -51,12 +52,14 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $withproject = GETPOST('withproject', 'int');
 
+
 // Initialize technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothcontact', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -69,6 +72,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 if ($user->socid > 0) {
 	accessforbidden();
 }
+
 $isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 

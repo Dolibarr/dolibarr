@@ -270,12 +270,12 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_from, 'account_from', 0, '', 1, '', empty($conf->multicurrency->enabled) ? 0 : 1);
+$form->select_comptes($account_from, 'account_from', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
 print "</td>";
 
 print "<td>\n";
 print img_picto('', 'bank_account', 'class="paddingright"');
-$form->select_comptes($account_to, 'account_to', 0, '', 1, '', empty($conf->multicurrency->enabled) ? 0 : 1);
+$form->select_comptes($account_to, 'account_to', 0, '', 1, '', !isModEnabled('multicurrency') ? 0 : 1);
 print "</td>\n";
 
 print "<td>";

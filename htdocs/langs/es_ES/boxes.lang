@@ -46,7 +46,6 @@ BoxMyLastBookmarks=Marcadores: últimos %s
 BoxOldestExpiredServices=Servicios antiguos expirados
 BoxLastExpiredServices=Últimos %s contratos más antiguos con servicios expirados
 BoxTitleLastActionsToDo=Últimas %s acciones a realizar
-BoxTitleOldestActionsToDo=Los %s eventos más antiguo que no se completaron
 BoxTitleLastContracts=Últimos %s contratos modificados
 BoxTitleLastModifiedDonations=Últimas %s donaciones modificadas
 BoxTitleLastModifiedExpenses=Últimos %s informes de gastos modificados

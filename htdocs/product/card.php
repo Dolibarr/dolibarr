@@ -19,6 +19,7 @@
  * Copyright (C) 2019-2022  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
+ * Copyright (C) 2022  		Vincent de Grandpré  <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,8 @@
  *  \brief      Page to show product
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -53,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
 
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (isModEnabled('facture')) {
@@ -87,6 +90,7 @@ $mesg = ''; $error = 0; $errors = array();
 
 $refalreadyexists = 0;
 
+// Get parameters
 $id = GETPOST('id', 'int');
 $ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
@@ -106,6 +110,7 @@ $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
+
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
 $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 
@@ -135,14 +140,14 @@ if ($id > 0 || !empty($ref)) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
-	if (!empty($conf->product->enabled)) {
+	if (isModEnabled("product")) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
-	} elseif (!empty($conf->service->enabled)) {
+	} elseif (isModEnabled("service")) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {    // For backward compatiblity, we scan also old dirs
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
 			$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -667,7 +672,20 @@ if (empty($reshook)) {
 				if (count($object->errors)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					if ($object->error == 'ErrorProductAlreadyExists') {
+						// allow to hook on ErrorProductAlreadyExists in any module
+						$reshook = $hookmanager->executeHooks('onProductAlreadyExists', $parameters, $object, $action);
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
+						if ($object->error) {
+							// check again to prevent translation issue,
+							// as error may have been cleared in hook function
+							setEventMessages($langs->trans($object->error), null, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans($object->error), null, 'errors');
+					}
 				}
 				$action = "create";
 			}
@@ -1219,7 +1237,7 @@ llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
-if (!empty($conf->barcode->enabled) && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
+if (isModEnabled('barcode') && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 	$module = strtolower($conf->global->BARCODE_PRODUCT_ADDON_NUM);
 	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 	foreach ($dirbarcode as $dirroot) {
@@ -2308,7 +2326,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -2812,7 +2830,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Propals
-	if (!empty($conf->propal->enabled) && $user->rights->propale->creer) {
+	if (isModEnabled("propal") && $user->rights->propale->creer) {
 		$propal = new Propal($db);
 
 		$langs->load("propal");

@@ -58,7 +58,7 @@ $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if (empty($_SESSION["takeposterminal"])) {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -97,11 +97,11 @@ $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforth
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 /*
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-$soc = new Societe($db);
-if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-else $soc->fetch($conf->global->$constforcompanyid);
-*/
+ $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+ $soc = new Societe($db);
+ if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+ else $soc->fetch($conf->global->$constforcompanyid);
+ */
 
 // Security check
 $result = restrictedArea($user, 'takepos', 0, '');
@@ -116,8 +116,13 @@ $form = new Form($db);
 
 $disablejs = 0;
 $disablehead = 0;
-$arrayofjs = array();
-$arrayofcss = array();
+$arrayofjs = array('/takepos/js/jquery.colorbox-min.js'); // TODO It seems we don't need this
+$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/colorbox.css');
+
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$arrayofcss[] =  '/takepos/css/colorful.css';
+}
+
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -130,17 +135,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-?>
-<link rel="stylesheet" href="css/pos.css.php">
-<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
-<?php
-if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script type="text/javascript">
-<?php
+
 $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
 
 
@@ -172,6 +167,9 @@ $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
+<body class="bodytakepos" style="overflow: hidden;">
+
+<script>
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 
@@ -374,7 +372,11 @@ function LoadProducts(position, issubcat) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
 				}
+				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
+				console.log($("#prodiv"+ishow));
+
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				console.log($('#prodiv4').data('rowid'));
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
@@ -464,7 +466,7 @@ function MoreProducts(moreorless) {
 }
 
 function ClickProduct(position, qty = 1) {
-	console.log("ClickProduct");
+	console.log("ClickProduct at position"+position);
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -472,6 +474,7 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
+		console.log($('#prodiv4').data('rowid'));
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty);
 		if (idproduct=="") return;
@@ -939,7 +942,6 @@ $( document ).ready(function() {
 });
 </script>
 
-<body class="bodytakepos" style="overflow: hidden;">
 <?php
 $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
 ?>
@@ -962,7 +964,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				?>
 				</a>
 				<?php
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
 					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
 					print '</a>';
@@ -976,7 +978,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<!-- More info about customer -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
 				<?php
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					?>
 				<!-- More info about warehouse -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
@@ -1026,7 +1028,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-<?php if (!empty($conf->multicurrency->enabled)) { ?>
+<?php if (isModEnabled('multicurrency')) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1132,7 +1134,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 		}
 	}
 
-	if (empty($paiementsModes) && !empty($conf->banque->enabled)) {
+	if (empty($paiementsModes) && isModEnabled("banque")) {
 		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');

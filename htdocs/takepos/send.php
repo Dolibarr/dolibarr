@@ -61,6 +61,11 @@ $invoice->fetch($facid);
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
+
+/*
+ * Actions
+ */
+
 if ($action == "send") {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -86,11 +91,17 @@ if ($action == "send") {
 	}
 	exit;
 }
+
+
+/*
+ * View
+ */
+
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
+
 ?>
-</head>
 <body class="center">
 
 <script>

@@ -377,19 +377,6 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 		}
 	}
 
-	if (!$error) {
-		global $conf, $langs, $user;
-		// Call trigger
-
-		$result = $object->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
-		// End call triggers
-
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$error++;
-		}
-	}
-
 	if ($result >= 0 && !$error) {
 		$db->commit();
 
@@ -1195,7 +1182,7 @@ if ($id > 0 || !empty($ref)) {
 			// Status
 			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
-			} elseif (!empty($conf->reception->enabled)) {
+			} elseif (isModEnabled("reception")) {
 				print '<td class="center"></td>';
 			}
 
@@ -1206,10 +1193,6 @@ if ($id > 0 || !empty($ref)) {
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
-
-				$tmpproduct->id = $objp->fk_product;
-				$tmpproduct->ref = $objp->ref;
-				$tmpproduct->label = $objp->label;
 
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
 					print '<form name="editdispatchedlines" id="editdispatchedlines" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#line_'.GETPOST('lineid', 'int').'" method="POST">
@@ -1222,7 +1205,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="oddeven" id="line_'.$objp->dispatchlineid.'" >';
 
 				// Reception ref
-				if (!empty($conf->reception->enabled)) {
+				if (isModEnabled("reception")) {
 					print '<td>';
 					if (!empty($objp->fk_reception)) {
 						$reception = new Reception($db);
@@ -1339,7 +1322,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 					}
 					print '</td>';
-				} elseif (!empty($conf->reception->enabled)) {
+				} elseif (isModEnabled("reception")) {
 					print '<td class="right">';
 					if (!empty($reception->id)) {
 						print $reception->getLibStatut(5);

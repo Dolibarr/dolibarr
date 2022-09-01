@@ -92,7 +92,7 @@ print '<div>';
 //print '<br>';
 
 
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
 	$bookmarkList .= '<br><br>';

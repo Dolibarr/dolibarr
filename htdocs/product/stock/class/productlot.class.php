@@ -519,10 +519,9 @@ class Productlot extends CommonObject
 			$error++;
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		if (!$error) {

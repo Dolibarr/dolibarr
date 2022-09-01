@@ -34,4 +34,3 @@ ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions.
 ValidationOfPaymentFailed=Validation of payment has failed
 CardOwner=Card holder
 PayPalBalance=Paypal credit
-OnlineSubscriptionPaymentLine=Abbonamento online registrato su %s <br> Pagato tramite %s <br> Indirizzo IP di origine: %s <br> ID transazione: %s
