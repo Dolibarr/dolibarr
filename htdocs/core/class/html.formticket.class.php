@@ -190,7 +190,7 @@ class FormTicket
 		// TITLE
 		$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
 		if ($this->withemail) {
-			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("Email").'</span></label></td><td>';
+			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
 			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
 			print '</td></tr>';
 
@@ -328,7 +328,7 @@ class FormTicket
 		print '</td></tr>';
 
 		// Severity
-		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
@@ -643,7 +643,7 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
 		print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
