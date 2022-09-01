@@ -22,10 +22,6 @@
  *       \brief      Public file to show one ticket
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-// Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -61,9 +57,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
-$track_id = GETPOST('track_id', 'alpha');
-$cancel   = GETPOST('cancel', 'alpha');
 $action   = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+
+$track_id = GETPOST('track_id', 'alpha');
 $email    = GETPOST('email', 'email');
 
 if (GETPOST('btn_view_ticket')) {
@@ -85,6 +82,8 @@ if (empty($conf->ticket->enabled)) {
  */
 
 if ($cancel) {
+	$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+
 	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
@@ -406,6 +405,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
 	print '<input type="submit" class="button" name="btn_view_ticket" value="'.$langs->trans('ViewTicket').'" />';
+	print ' &nbsp; ';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print "</p>\n";
 
 	print "</form>\n";

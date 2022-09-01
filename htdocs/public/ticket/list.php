@@ -21,10 +21,6 @@
  *       \brief      Public file to list tickets
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-// Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -60,8 +56,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 $langs->loadLangs(array("companies", "other", "ticket"));
 
 // Get parameters
-$track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+
+$track_id = GETPOST('track_id', 'alpha');
 $email = strtolower(GETPOST('email', 'alpha'));
 
 if (GETPOST('btn_view_ticket_list')) {
@@ -89,6 +87,13 @@ if (empty($conf->ticket->enabled)) {
 /*
  * Actions
  */
+
+if ($cancel) {
+	$backtopage = DOL_URL_ROOT.'/public/ticket/index.php';
+
+	header("Location: ".$backtopage);
+	exit;
+}
 
 if ($action == "view_ticketlist") {
 	$error = 0;
@@ -185,9 +190,10 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarealist">';
 
 if ($action == "view_ticketlist") {
+	print '<div class="ticketpublicarealist">';
+
 	print '<br>';
 	if ($display_ticket_list) {
 		// Filters
@@ -708,8 +714,12 @@ if ($action == "view_ticketlist") {
 	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
+
+	print '</div>';
 } else {
-	print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
+	print '<div class="ticketpublicarea">';
+
+	print '<p class="center opacitymedium">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
@@ -728,13 +738,15 @@ if ($action == "view_ticketlist") {
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
 	print '<input type="submit" class="button" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
+	print ' &nbsp; ';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print "</p>\n";
 
 	print "</form>\n";
 	print "</div>\n";
-}
 
-print "</div>";
+	print "</div>";
+}
 
 // End of page
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);

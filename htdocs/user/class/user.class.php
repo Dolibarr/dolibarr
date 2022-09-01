@@ -316,7 +316,9 @@ class User extends CommonObject
 	 * @var stdClass To store personal config
 	 */
 	public $conf;
-	public $default_values; // To store default values for user
+
+	public $default_values; // To store default values for user. Loaded by loadDefaultValues().
+
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
 
