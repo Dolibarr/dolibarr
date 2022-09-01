@@ -476,9 +476,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$f = $client->getFolders(false, $object->source_directory);
 				$nbemail = $f[0]->examine()["exists"];
-				print "mails:".$nbemail;
 				$morehtml .= $nbemail;
-				print "helo";
 			} else {
 				try {
 					if ($sourcedir) {
