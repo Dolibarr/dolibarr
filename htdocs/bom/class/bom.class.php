@@ -1147,6 +1147,34 @@ class BOM extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 * Recursively retrieves all parent bom in the tree that leads to the $bom_id bom
+	 *
+	 * @param 	array	$TParentBom		We put all found parent bom in $TParentBom
+	 * @param 	int		$bom_id			ID of bom from which we want to get parent bom ids
+	 * @return 	void
+	 */
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id) {
+
+		$sql = 'SELECT l.fk_bom, b.label
+				FROM '.MAIN_DB_PREFIX.'bom_bomline l
+				INNER JOIN '.MAIN_DB_PREFIX.$this->table_element.' b ON b.rowid = l.fk_bom
+				WHERE fk_bom_child = '.$bom_id;
+
+		$resql = $this->db->query($sql);
+		if(!empty($resql)) {
+
+			while($res = $this->db->fetch_object($resql)) {
+
+				$TParentBom[$res->fk_bom] = $res->fk_bom;
+				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom);
+
+			}
+
+		}
+
+	}
 }
 
 
