@@ -146,7 +146,7 @@ $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Commande($db);
-$hookmanager->initHooks(array('orderlist'));
+$hookmanager->initHooks(array('orderlistdetail'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
