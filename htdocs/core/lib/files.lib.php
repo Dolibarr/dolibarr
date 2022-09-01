@@ -2193,7 +2193,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen(realpath($inputdir)) + 1);
 
 						if (empty($excludefiles) || !preg_match($excludefiles, $filePath)) {
 							// Add current file to archive

@@ -642,6 +642,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 	$db->begin();
 
+	$nbOrders = is_array($orders) ? count($orders) : 1;
+
 	foreach ($orders as $id_order) {
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0) {
@@ -774,6 +776,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 						$objecttmp->context['createfromclone'];
 
+						$rankedLine = ($nbOrders > 1) ? -1 : $lines[$i]->rang;
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -791,7 +795,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							'HT',
 							0,
 							$product_type,
-							$lines[$i]->rang,
+							$rankedLine,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,
