@@ -155,9 +155,11 @@ class ElementProperties
 		$sql .= " FROM ".$this->db->prefix().$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 
-		if (!empty($id)) {
+		if (!empty($element)) {
 			$sql .= " AND t.element = '".$this->db->escape($element)."'";
-		} elseif (!empty($element_type)) {
+		}
+
+		if (!empty($module_name)) {
 			$sql .= " AND t.module_name = '".$this->db->escape($module_name)."'";
 		}
 
