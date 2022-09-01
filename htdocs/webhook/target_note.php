@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2022      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,19 @@
  *  \brief      Tab for notes on Target
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("webhook@webhook", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
@@ -69,8 +70,9 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('webhook') || !$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

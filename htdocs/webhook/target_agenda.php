@@ -21,12 +21,13 @@
  *  \brief      Tab of events on Target
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 
 // Load translation files required by the page
@@ -54,8 +55,9 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
+	// If $page is not defined, or '' or -1
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -96,8 +98,9 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('webhook') || !$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

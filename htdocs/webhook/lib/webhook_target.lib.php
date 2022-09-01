@@ -30,7 +30,7 @@ function targetPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("webhook@webhook");
+	$langs->load("webhook");
 
 	$h = 0;
 	$head = array();

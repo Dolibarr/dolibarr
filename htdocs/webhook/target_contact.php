@@ -21,19 +21,20 @@
  *  \brief      Tab for contacts linked to Target
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("webhook@webhook", "companies", "other", "mails"));
 
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
-$ref    = GETPOST('ref', 'alpha');
+$id = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
-$socid  = GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical objects
@@ -63,8 +64,9 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('webhook') || !$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
