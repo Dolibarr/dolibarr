@@ -89,7 +89,8 @@ class ElementProperties
 
 
 	/**
-	 * Load object in memory from the database
+	 * Load object in memory from the database using either the ID, element type or a custom filter
+	 * (parameters are mutually exclusive)
 	 *
 	 * @param	int    $id           Id object
 	 * @param	string $element_type element_type
