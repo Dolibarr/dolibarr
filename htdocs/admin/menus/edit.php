@@ -219,29 +219,6 @@ if ($action == 'add') {
 	}
 }
 
-// delete
-if ($action == 'confirm_delete' && $confirm == 'yes') {
-	$db->begin();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
-	$result = $db->query($sql);
-
-	if ($result == 0) {
-		$db->commit();
-
-		llxHeader();
-		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
-		llxFooter();
-		exit;
-	} else {
-		$db->rollback();
-
-		$reload = 0;
-		$_GET["action"] = '';
-		$action = '';
-	}
-}
-
 
 
 /*

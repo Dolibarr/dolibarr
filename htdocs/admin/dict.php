@@ -526,7 +526,7 @@ $tabcond[40] = (isModEnabled("societe") && !empty($conf->global->THIRDPARTY_ENAB
 $tabcond[41] = !empty($conf->intracommreport->enabled);
 $tabcond[42] = isModEnabled("product");
 $tabcond[43] = isModEnabled("product") && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
-$tabcond[44] = !empty($conf->asset->enabled);
+$tabcond[44] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();

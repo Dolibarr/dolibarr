@@ -41,6 +41,8 @@
  *  \brief      Page to show product
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -88,6 +90,7 @@ $mesg = ''; $error = 0; $errors = array();
 
 $refalreadyexists = 0;
 
+// Get parameters
 $id = GETPOST('id', 'int');
 $ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
@@ -107,6 +110,7 @@ $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
+
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
 $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 

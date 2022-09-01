@@ -108,7 +108,7 @@ $arrayfields = array(
 );
 
 // Security check
-if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled)) {
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -135,13 +135,13 @@ $error = 0;
 
 $listofchoices = array(
 	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => isModEnabled('facture'), 'perms' => !empty($user->rights->facture->lire)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled("supplier_invoice"), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled), 'perms' => !empty($user->rights->tax->charges->lire)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled), 'perms' => !empty($user->rights->salaries->read)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled("banque"), 'perms' => !empty($user->rights->banque->lire)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled), 'perms' => !empty($user->rights->loan->read)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => isModEnabled('supplier_invoice'), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => isModEnabled('expensereport'), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->don->lire)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => isModEnabled('tax'), 'perms' => !empty($user->rights->tax->charges->lire)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => isModEnabled('salaries'), 'perms' => !empty($user->rights->salaries->read)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => isModEnabled('banque'), 'perms' => !empty($user->rights->banque->lire)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => isModEnabled('don'), 'perms' => !empty($user->rights->loan->read)),
 );
 
 
@@ -569,7 +569,7 @@ print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
 }
 print '</span><br>';
@@ -689,21 +689,21 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
 	print '<td>'.$langs->trans("Document").'</td>';
 	print '<td>'.$langs->trans("Paid").'</td>';
-	print '<td align="right">'.$langs->trans("TotalHT").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
-	print '<td align="right">'.$langs->trans("TotalTTC").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
-	print '<td align="right">'.$langs->trans("TotalVAT").($conf->multicurrency->enabled ? ' ('.$conf->currency.')' : '').'</td>';
+	print '<td align="right">'.$langs->trans("TotalHT").(isModEnabled('multicurrency') ? ' ('.$conf->currency.')' : '').'</td>';
+	print '<td align="right">'.$langs->trans("TotalTTC").(isModEnabled('multicurrency') ? ' ('.$conf->currency.')' : '').'</td>';
+	print '<td align="right">'.$langs->trans("TotalVAT").(isModEnabled('multicurrency') ? ' ('.$conf->currency.')' : '').'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td class="center">'.$langs->trans("Code").'</td>';
 	print '<td class="center">'.$langs->trans("Country").'</td>';
 	print '<td class="center">'.$langs->trans("VATIntra").'</td>';
-	if (isModEnabled('multicompany')) {
+	if (isModEnabled('multicurrency')) {
 		print '<td class="center">'.$langs->trans("Currency").'</td>';
 	}
 	print '</tr>';
 
 	if (empty($TData)) {
 		print '<tr class="oddeven"><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
-		if (isModEnabled('multicompany')) {
+		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
 		print '</tr>';
@@ -833,7 +833,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				$totalVAT_debit -= $data['amount_vat'];
 			}
 
-			if (isModEnabled('multicompany')) {
+			if (isModEnabled('multicurrency')) {
 				print '<td class="center">'.$data['currency']."</td>\n";
 			}
 
@@ -847,7 +847,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (isModEnabled('multicompany')) {
+		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -858,7 +858,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (isModEnabled('multicompany')) {
+		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";
@@ -869,7 +869,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
 		print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
-		if (isModEnabled('multicompany')) {
+		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
 		print "</tr>\n";

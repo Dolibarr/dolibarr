@@ -404,8 +404,6 @@ $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 
-// llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
-
 $sql = "SELECT";
 if ($search_all || $search_product_category > 0) {
 	$sql = 'SELECT DISTINCT';

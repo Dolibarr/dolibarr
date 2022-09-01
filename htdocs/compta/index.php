@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
 

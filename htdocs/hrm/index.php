@@ -26,6 +26,8 @@
  *		\brief      Home page for HRM area.
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -34,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
@@ -48,12 +51,15 @@ if (!empty($conf->holiday->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
+// Get Parameters
 $socid = GETPOST("socid", "int");
 
 // Protection if external user

@@ -397,7 +397,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		}
 	}
 
-	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
 		if (!empty($product_static->accountancy_code_buy) ||
