@@ -374,7 +374,6 @@ abstract class DoliDB implements Database
 	 *
 	 * @param 	string 		$sql 		The sql query string
 	 * @return 	bool|array				Result
-	 * @deprecated
 	 */
 	public function getRows($sql)
 	{
@@ -386,6 +385,8 @@ abstract class DoliDB implements Database
 					$results[] = $obj;
 				}
 			}
+
+			$this->free($res);
 			return $results;
 		}
 
