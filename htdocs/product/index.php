@@ -341,6 +341,11 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+				if ($product_static->isService()) {
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+				}
+
 				// Multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$sql = "SELECT label";
@@ -378,10 +383,12 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 						}
 					}
 					print '<td class="nowraponall amount right">';
-					if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
-						print price($objp->price_ttc).' '.$langs->trans("TTC");
-					} else {
-						print price($objp->price).' '.$langs->trans("HT");
+					if ($usercancreadprice) {
+						if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
+							print price($objp->price_ttc).' '.$langs->trans("TTC");
+						} else {
+							print price($objp->price).' '.$langs->trans("HT");
+						}
 					}
 					print '</td>';
 				}
@@ -410,7 +417,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
+if ( isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
 		activitytrim(0);
 	}
