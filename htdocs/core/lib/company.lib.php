@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -179,7 +179,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -777,7 +777,7 @@ function isInEEC($object)
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
-	global $user;
+	global $user, $action, $hookmanager;
 
 	$i = -1;
 
@@ -791,8 +791,9 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 		print "\n";
 		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
-		print '<div class="div-table-responsive">';
-		print "\n".'<table class="noborder" width=100%>';
+
+		print '<div class="div-table-responsive">'."\n";
+		print '<table class="noborder centpercent">';
 
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
@@ -835,12 +836,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td>';
+						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1);
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end
@@ -877,6 +878,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		} else {
 			dol_print_error($db);
 		}
+
+		$parameters = array('sql'=>$sql, 'function'=>'show_projects');
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print "</table>";
 		print '</div>';
 
@@ -890,14 +896,15 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 /**
  * 		Show html area for list of contacts
  *
- *		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Database handler
- * 		@param	Societe		$object		Third party object
- *      @param  string		$backtopage	Url to go once contact is created
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Societe		$object			Third party object
+ *      @param  string		$backtopage		Url to go once contact is created
+ *      @param	int			$showuserlogin 	1=Show also user login if it exists
  *      @return	int
  */
-function show_contacts($conf, $langs, $db, $object, $backtopage = '')
+function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserlogin = 0)
 {
 	global $user, $conf, $extrafields, $hookmanager;
 	global $contextpage;
@@ -1131,12 +1138,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			if (in_array($key, array('statut'))) {
 				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
 			} elseif (in_array($key, array('role'))) {
-				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
+				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles, 'minwidth200 maxwidth300');
 			} else {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
+	}
+	if ($showuserlogin) {
+		print '<td></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1176,6 +1186,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		if (!empty($arrayfields['sc.'.$key]['checked'])) {
 			print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
 		}
+	}
+	if ($showuserlogin) {
+		print '<td>'.$langs->trans("DolibarrLogin").'</td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1273,6 +1286,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			// Status
 			if (!empty($arrayfields['t.statut']['checked'])) {
 				print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
+			}
+
+			if ($showuserlogin) {
+				print '<td>';
+				$tmpuser= new User($db);
+				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
+				if ($resfetch > 0) {
+					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+				}
+				print '</td>';
 			}
 
 			// Extra fields

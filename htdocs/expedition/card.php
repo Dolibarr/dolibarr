@@ -47,10 +47,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (!empty($conf->productbatch->enabled)) {
@@ -866,10 +866,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -907,9 +907,13 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("Shipment");
+if ($action == 'create2') {
+	$title = $langs->trans("CreateShipment");
+}
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
+llxHeader('', $title, 'Expedition', $help_url);
 
 if (empty($action)) {
 	$action = 'view';
@@ -977,7 +981,7 @@ if ($action == 'create') {
 			if ($origin == 'commande' && !empty($conf->commande->enabled)) {
 				print $langs->trans("RefOrder");
 			}
-			if ($origin == 'propal' && !empty($conf->propal->enabled)) {
+			if ($origin == 'propal' && isModEnabled("propal")) {
 				print $langs->trans("RefProposal");
 			}
 			print '</td><td colspan="3">';
@@ -1432,10 +1436,10 @@ if ($action == 'create') {
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
 										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -1876,6 +1880,12 @@ if ($action == 'create') {
 										} else {
 											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
 										}
+										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+										}
 										print ' ('.$dbatch->qty.')';
 										$quantityToBeDelivered -= $deliverableQty;
 										if ($quantityToBeDelivered < 0) {
@@ -2076,7 +2086,7 @@ if ($action == 'create') {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 			$objectsrc = new Propal($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -2145,7 +2155,7 @@ if ($action == 'create') {
 			print "</td>\n";
 			print '</tr>';
 		}
-		if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+		if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 			print '<tr><td>';
 			print $langs->trans("RefProposal").'</td>';
 			print '<td colspan="3">';
@@ -2953,8 +2963,8 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright">';

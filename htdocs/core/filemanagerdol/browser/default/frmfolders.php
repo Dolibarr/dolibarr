@@ -23,6 +23,8 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
 
+top_httphead();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--

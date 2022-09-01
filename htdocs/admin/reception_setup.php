@@ -47,7 +47,7 @@ $type = 'reception';
  * Actions
  */
 
-if (!empty($conf->reception->enabled) && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
+if (isModEnabled('reception') && empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 	// This option should always be set to on when module is on.
 	dolibarr_set_const($db, "MAIN_SUBMODULE_RECEPTION", "1", 'chaine', 0, '', $conf->entity);
 }
@@ -467,7 +467,7 @@ print "</td></tr>\n";
 
 print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext).'<br>';
-print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.$conf->global->RECEPTION_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="RECEPTION_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('RECEPTION_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
 */
 print '</table>';

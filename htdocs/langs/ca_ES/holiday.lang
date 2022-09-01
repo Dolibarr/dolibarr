@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - holiday
-HRM=RRHH
+HRM=RH
 Holidays=Dies lliures
 CPTitreMenu=Dies lliures
 MenuReportMonth=Estat mensual
 MenuAddCP=Sol·licitud nova de permís
-NotActiveModCP=Ha d'activar el mòdul Dies lliures retribuïts per veure aquesta pàgina
+NotActiveModCP=Heu d'habilitar el mòdul Dies lliures per a veure aquesta pàgina.
 AddCP=Realitzar una petició de dies lliures
 DateDebCP=Data inici
 DateFinCP=Data fi

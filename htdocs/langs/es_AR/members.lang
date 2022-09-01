@@ -16,7 +16,6 @@ MembersListQualified=Lista de miembros calificados
 MenuMembersToValidate=Miembros en Borrador
 MenuMembersValidated=Miembros válidos
 MenuMembersResiliated=Miembros terminados
-MemberId=ID Miembro
 MemberTypeId=ID Tipo de Miembro
 MemberTypeLabel=Etiqueta Tipo de miembro
 MemberStatusDraft=Borrador (necesita ser validado)

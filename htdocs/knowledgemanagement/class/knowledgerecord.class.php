@@ -187,7 +187,7 @@ class KnowledgeRecord extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -468,6 +468,24 @@ class KnowledgeRecord extends CommonObject
 			$this->error .= $this->db->lasterror();
 			$errorflag = -1;
 		}
+
+		// Delete all child tables
+		if (!$error) {
+			$elements = array('categorie_knowledgemanagement');
+			foreach ($elements as $table) {
+				if (!$error) {
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+					$sql .= " WHERE fk_knowledgemanagement = ".(int) $this->id;
+
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					}
+				}
+			}
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}

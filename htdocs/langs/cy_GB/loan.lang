@@ -24,7 +24,7 @@ FinancialCommitment=Ymrwymiad ariannol
 InterestAmount=Llog
 CapitalRemain=Cyfalaf yn aros
 TermPaidAllreadyPaid = Mae'r tymor hwn eisoes wedi'i dalu
-CantUseScheduleWithLoanStartedToPaid = Methu â defnyddio'r trefnydd ar gyfer benthyciad gyda'r taliad wedi dechrau
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Ni allwch addasu llog os ydych yn defnyddio amserlen
 # Admin
 ConfigLoan=Ffurfwedd y benthyciad modiwl

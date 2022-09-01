@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/admin/setup.php
+ *	\file       htdocs/takepos/admin/other.php
  *	\ingroup    takepos
  *	\brief      Setup page for TakePos module
  */

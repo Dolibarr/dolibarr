@@ -155,10 +155,11 @@ if ($action == 'add' && $permissiontoadd) {
  * View
  */
 
+$title = $langs->trans("IntracommReportTitle");
+llxHeader("", $title);
+
 // Creation mode
 if ($action == 'create') {
-	$title = $langs->trans("IntracommReportTitle");
-	llxHeader("", $title);
 	print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -294,8 +295,6 @@ if ($id > 0 && $action != 'edit') {
 	{
 		global $langs, $formother, $year, $month, $type_declaration;
 
-		$title = $langs->trans("IntracommReportDESTitle");
-		llxHeader("", $title);
 		print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
 
 		print dol_get_fiche_head();

@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Javascript no debe estar desactivado para que esta 
 ErrorPasswordsMustMatch=Las 2 contraseñas indicadas deben corresponderse
 ErrorContactEMail=Se ha producido un error técnico. Contacte con el administrador al e-mail <b>%s</b>, indicando el código de error <b>%s</b> en su mensaje, o puede también adjuntar una copia de pantalla de esta página.
 ErrorWrongValueForField=Valor incorrecto para el campo número <b>%s</b>:  '<b>%s</b>' no cumple con la regla <b>%s</b>
+ErrorHtmlInjectionForField=Campo <b> %s </b>: El valor '<b> %s </b>' contiene datos maliciosos no permitidos
 ErrorFieldValueNotIn=Valor incorrecto del campo número <b>%s</b>: '<b>%s</b>' no es un valor disponible en el campo <b>%s</b> de la tabla <b>%s</b>
 ErrorFieldRefNotIn=Valor incorrecto para el campo número <b>%s</b>: '<b>%s</b>' no es una referencia existente en <b>%s</b>
 ErrorsOnXLines=%s errores encontrados
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Primero debe configurar su plan de cuen
 ErrorFailedToFindEmailTemplate=No se pudo encontrar la plantilla con el nombre de código %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración no definida en el servicio. No hay forma de calcular el precio por hora.
 ErrorActionCommPropertyUserowneridNotDefined=Se requiere el propietario del usuario
-ErrorActionCommBadType=El tipo de evento seleccionado (id: %n, código: %s) no existe en el diccionario de tipo de evento
+ErrorActionCommBadType=El tipo de evento seleccionado (id: %s, código: %s) no existe en el diccionario de tipo de evento
 CheckVersionFail=Error de verificación de versión
 ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de pago, modifíquelo.
@@ -281,17 +282,20 @@ ErrorRequestTooLarge=Error, solicitud demasiado grande
 ErrorNotApproverForHoliday=Usted no es el aprobador del día libre %s
 ErrorAttributeIsUsedIntoProduct=Este atributo se utiliza en una o más variantes de producto
 ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo se utiliza en una o más variantes de producto
-ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
-ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
-ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
-ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
-ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
-ErrorAjaxRequestFailed=Request failed
+ErrorPaymentInBothCurrency=Error, todos los montos deben ingresarse en la misma columna
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Intenta pagar facturas en la moneda %s desde una cuenta con la moneda %s
+ErrorInvoiceLoadThirdParty=No se puede cargar el objeto de terceros para la factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Clave de terceros "%s" no configurada para la factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Eliminar línea no está permitido por el estado actual del objeto
+ErrorAjaxRequestFailed=Solicitud fallida
+ErrorThirpdartyOrMemberidIsMandatory=Tercero o Miembro de la sociedad es obligatorio
+ErrorFailedToWriteInTempDirectory=Error al escribir en el directorio temporal
+ErrorQuantityIsLimitedTo=La cantidad está limitada a %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
-WarningMandatorySetupNotComplete=Haga clic aquí para configurar los parámetros obligatorios
+WarningMandatorySetupNotComplete=Haga clic aquí para configurar los parámetros principales
 WarningEnableYourModulesApplications=Haga clic aquí para activar sus módulos y aplicaciones
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Ya existe un marcador con este título o esta URL.
@@ -321,12 +325,8 @@ WarningCreateSubAccounts=Advertencia, no puede crear directamente una subcuenta,
 WarningAvailableOnlyForHTTPSServers=Disponible solo si usa una conexión segura HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=El módulo %s no se ha habilitado. Así que puede perderse muchos eventos aquí.
 WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las funciones de pago en línea no funcionen correctamente. Utilice 'Lax' en su lugar.
+WarningThemeForcedTo=Advertencia, el tema ha sido forzado a <b> %s </b> por la constante oculta MAIN_FORCETHEME
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor no válido
 RequireAtLeastXString = Requiere al menos %s carácter(es)
@@ -347,12 +347,3 @@ BadSetupOfField = Error de configuración incorrecta del campo
 BadSetupOfFieldClassNotFoundForValidation = Error de configuración incorrecta del campo: clase no encontrada para validación
 BadSetupOfFieldFileNotFound = Error de configuración incorrecta del campo: no se encontró el archivo para su inclusión
 BadSetupOfFieldFetchNotCallable = Error de configuración incorrecta del campo: la recuperación no se puede llamar en la clase
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

@@ -221,9 +221,9 @@ class modMyModule extends DolibarrModules
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid'=>array("rowid", "rowid", "rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled)
-			// Help tooltip for each fields of the dictionary
-			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp')))
+			'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled),
+			// Tooltip for every fields of dictionaries: DO NOT PUT AN EMPTY ARRAY
+			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), array('code'=>$langs->trans('CodeTooltipHelp'), 'field2' => 'field2tooltip'), ...),
 		);
 		*/
 

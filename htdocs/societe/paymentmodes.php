@@ -29,6 +29,8 @@
  *		\brief      Tab of payment modes for the customer
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -40,7 +42,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
+
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -49,12 +54,15 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', '', '');
 
+
+// Get parameters
 $id = GETPOST("id", "int");
 $source = GETPOST("source", "alpha"); // source can be a source or a paymentmode
 $ribid = GETPOST("ribid", "int");
 $action = GETPOST("action", 'alpha', 3);
 $cancel = GETPOST('cancel', 'alpha');
 
+// Initialize objects
 $object = new Societe($db);
 $object->fetch($socid);
 
@@ -70,6 +78,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
+// Permissions
 $permissiontoread = $user->rights->societe->lire;
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
@@ -682,8 +691,9 @@ $title = $langs->trans("ThirdParty");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$langs->trans('PaymentInformation');
 }
+$help_url = '';
 
-llxHeader();
+llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);
 
@@ -778,7 +788,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$obj = $db->fetch_object($resql);
 		$nbFactsClient = $obj->nb;
 		$thirdTypeArray['customer'] = $langs->trans("customer");
-		if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+		if (isModEnabled("propal") && $user->rights->propal->lire) {
 			$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 		}
 		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
@@ -814,7 +824,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
-				print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print img_picto($langs->trans("CreateCustomerOnStripe"), 'stripe');
+				print '<input type="submit" class="buttonreset nomargintop nomarginbottom noborderbottom nopaddingtopimp nopaddingbottomimp" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
 			}
 			print '</td></tr>';
@@ -1288,6 +1299,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
 	}
 
+
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
 	$rib_list = $object->get_all_rib();
@@ -1453,6 +1465,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
+				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=createbanonstripe">';
+				print img_picto($langs->trans("CreateBAN"), 'stripe');
+				print '</a>';
+
 				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';
@@ -1715,10 +1731,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.GETPOST('label').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth200" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
@@ -1811,7 +1827,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 
 	print dol_get_fiche_end();
 
-	dol_set_focus('#label');
+	dol_set_focus('#bank');
 
 	print $form->buttonsSaveCancel("Add");
 }

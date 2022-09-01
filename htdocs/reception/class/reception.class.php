@@ -35,7 +35,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -846,6 +846,21 @@ class Reception extends CommonObject
 			}
 		}
 
+		// Check batch is set
+		$product = new Product($this->db);
+		$product->fetch($fk_product);
+		if (!empty($conf->productbatch->enabled)) {
+			$langs->load("errors");
+			if (!empty($product->status_batch) && empty($batch)) {
+				$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+				return -1;
+			} elseif (empty($product->status_batch) && !empty($batch)) {
+				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
+				return -1;
+			}
+		}
+		unset($product);
+
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
@@ -864,6 +879,7 @@ class Reception extends CommonObject
 		$line->status = 1;
 		$line->cost_price = $cost_price;
 		$line->fk_reception = $this->id;
+
 		$this->lines[$num] = $line;
 
 		return $num;

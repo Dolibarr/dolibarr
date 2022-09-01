@@ -42,7 +42,7 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

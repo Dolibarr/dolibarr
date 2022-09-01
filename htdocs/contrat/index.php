@@ -70,7 +70,10 @@ $productstatic = new Product($db);
 
 $now = dol_now();
 
-llxHeader();
+$title = $langs->trans("ContractsArea");
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 

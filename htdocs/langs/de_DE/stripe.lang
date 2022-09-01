@@ -38,7 +38,7 @@ STRIPE_TEST_WEBHOOK_KEY=Webhook Testschlüssel
 STRIPE_LIVE_SECRET_KEY=Geheimer Produktivschlüssel
 STRIPE_LIVE_PUBLISHABLE_KEY=Öffentlicher Produktivschlüssel
 STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
-ONLINE_PAYMENT_WAREHOUSE=Lager verwenden um den Bestand bei Onlinezahlungen vermindern<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
+ONLINE_PAYMENT_WAREHOUSE=Warenlager für die Bestandsminderung bei Onlinezahlung<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
 StripeImportPayment=Stripe Zahlungen importieren
 ExampleOfTestCreditCard=Beispiel für eine zu testende Kreditkarte: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von
 PaymentWillBeRecordedForNextPeriod=Die Zahlung wird für den folgenden Zeitraum erfasst.
 ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um zum Stripe-Kundendatensatz zu wechseln: %s
+TERMINAL_LOCATION=Standort (Adresse) für Terminals

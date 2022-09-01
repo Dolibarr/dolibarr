@@ -61,7 +61,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (!empty($conf->propal->enabled)) {
+	if (isModEnabled("propal")) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Other");
 		$head[$h][2] = 'other';
@@ -453,7 +453,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (empty($reshook)) {
 		if ($mode == 'source') {
 			$withCountry = 0;
-			if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+			if (isset($targetcompany->country_code) && !empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 				$withCountry = 1;
 			}
 
@@ -1181,6 +1181,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
@@ -1190,6 +1191,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				}
 				$posy -= $freetextheight;
 			}
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$pdf->SetY(-$posy);
 
@@ -1199,16 +1201,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
-				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
-				$posy -= getDolGlobalInt('PDF_FOOTER_TOP_MARGIN');
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
 			} else {
 				$posy--;
 			}
 
-			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
+			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
-			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
+			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
 		} else {
@@ -1224,6 +1225,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
@@ -1233,6 +1235,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				}
 				$posy -= $freetextheight;
 			}
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$pdf->SetY(-$posy);
 
@@ -1242,9 +1245,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
-				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
-				$posy -= getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
 			} else {
 				$posy--;
 			}

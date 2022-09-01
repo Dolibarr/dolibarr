@@ -209,7 +209,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	}
 
 	// Check Captcha code if is enabled
-	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) || !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 		if (!$ok) {
@@ -425,7 +425,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 			$messagetoshow = str_replace(array('{s1}', '{s2}'), array('<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), $messagetoshow);
 			setEventMessages($messagetoshow, null, 'warnings');
 			setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
-			header("Location: index.php".(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:''));
+			header("Location: index.php".(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
 			exit;
 		}
 	} else {

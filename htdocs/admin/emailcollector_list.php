@@ -142,7 +142,7 @@ $permissiontodelete = $user->admin;
 if (!$user->admin) {
 	accessforbidden();
 }
-if (empty($conf->emailcollector->enabled)) {
+if (!isModEnabled('emailcollector')) {
 	accessforbidden('Module not enabled');
 }
 

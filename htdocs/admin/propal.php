@@ -515,7 +515,7 @@ print '<td>';
 print '<input type="hidden" name="action" value="setribchq">';
 print $langs->trans("PaymentMode").'</td>';
 print '<td align="right">';
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 }
 print '</td>';
@@ -524,8 +524,8 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
-	if (!empty($conf->banque->enabled)) {
+if (!isModEnabled('facture')) {
+	if (isModEnabled("banque")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -563,7 +563,7 @@ print "</td></tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
-if (empty($conf->facture->enabled)) {
+if (!isModEnabled('facture')) {
 	print '<select class="flat" name="chq" id="chq">';
 	print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
 	print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER ? ' selected' : '').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->name ? $mysoc->name : $langs->trans("NotDefined")).')</option>';
@@ -693,14 +693,14 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMAR
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('PROPALE_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
 
 /* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
-if ($conf->banque->enabled)
+if (isModEnabled('facture'))
 {
 
 	print '<tr class="oddeven"><td>';
