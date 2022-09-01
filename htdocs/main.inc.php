@@ -1153,6 +1153,11 @@ if (!defined('NOLOGIN')) {
 		$conf->theme = $user->conf->MAIN_THEME;
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
+} else {
+	// We may have NOLOGIN set, but NOREQUIREUSER not
+	if (!empty($user) && method_exists($user, 'loadDefaultValues')) {
+		$user->loadDefaultValues();		// Load default values for everybody (works even if $user->id = 0
+	}
 }
 
 
