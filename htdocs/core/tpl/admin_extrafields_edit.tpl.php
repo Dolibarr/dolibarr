@@ -197,9 +197,10 @@ $typewecanchangeinto = array(
 	'text'=>array('text', 'html'),
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'mail'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'url'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'phone'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
+	'ip'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
 	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
 	'date'=>array('date', 'datetime')
 );
@@ -295,7 +296,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
-<?php if (!empty($conf->multicompany->enabled)) { ?>
+<?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->
 	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>

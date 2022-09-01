@@ -318,7 +318,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 	if ($modulepart == 'produit' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 		global $object;
 		if (!empty($object->id)) {
-			if (!empty($conf->product->enabled)) {
+			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
 				$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -1261,7 +1261,6 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters = array(
-			'GET' => $_GET,
 			'file' => $file,
 			'disableglob'=> $disableglob,
 			'nophperrors' => $nophperrors
@@ -2421,7 +2420,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		return 'ErrorBadParameter';
 	}
 	if (empty($entity)) {
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
@@ -2921,9 +2920,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$original_file = $conf->product->multidir_output[$entity].'/'.$original_file;
-		} elseif (!empty($conf->service->enabled)) {
+		} elseif (isModEnabled("service")) {
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {

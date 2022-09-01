@@ -33,7 +33,7 @@ $sortfield = GETPOST('sortfield', 'alphanohtml');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
 // Security check
-if (empty($conf->adherent->enabled)) {
+if (!isModEnabled('adherent')) {
 	accessforbidden();
 }
 if (empty($user->rights->adherent->export)) {

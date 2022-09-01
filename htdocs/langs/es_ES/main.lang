@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -712,7 +718,7 @@ FeatureDisabled=Función desactivada
 MoveBox=Mover panel
 Offered=Oferta
 NotEnoughPermissions=No tiene permisos para esta acción
-UserNotInHierachy=This action is reserved to the supervisors of this user
+UserNotInHierachy=Esta acción está reservada a los supervisores de este usuario.
 SessionName=Nombre sesión
 Method=Método
 Receive=Recepción
@@ -802,7 +808,6 @@ URLPhoto=Url de la foto/logo
 SetLinkToAnotherThirdParty=Vincular a otro tercero
 LinkTo=Enlazar a
 LinkToProposal=Enlazar a presupuesto
-LinkToExpedition= Enlace a la expedición
 LinkToOrder=Enlazar a pedido
 LinkToInvoice=Enlazar a factura
 LinkToTemplateInvoice=Enlazar a plantilla de factura
@@ -1180,3 +1185,5 @@ YourMessage=Tu mensaje
 YourMessageHasBeenReceived=Tu mensaje ha sido recibido. Le responderemos o contactaremos con usted lo antes posible.
 UrlToCheck=URL para comprobar
 Automation=Automatización
+CreatedByEmailCollector=Creado por el recopilador de correo electrónico
+CreatedByPublicPortal=Creado desde el portal público

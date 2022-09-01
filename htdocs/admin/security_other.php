@@ -200,9 +200,9 @@ print '</tr>';
 
 print '</table>';
 
-print dol_get_fiche_end();
-
 print $form->buttonsSaveCancel("Modify", '');
+
+print dol_get_fiche_end();
 
 print '</form>';
 

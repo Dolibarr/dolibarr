@@ -79,7 +79,7 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 </tr>
 <?php } ?>
 
-<?php if (!empty($conf->barcode->enabled)) { ?>
+<?php if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>

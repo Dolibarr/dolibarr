@@ -59,7 +59,7 @@ print load_fiche_titre($langs->trans("ProspectionArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$var = false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -118,7 +118,7 @@ if ($resql) {
 /*
  * Liste des propal brouillons
  */
-if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->rights->propale->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -176,7 +176,7 @@ if (isModEnabled('agenda')) {
 /*
  * Dernieres propales ouvertes
  */
-if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->rights->propale->lire) {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
 	$sql .= " p.rowid as propalid, p.total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

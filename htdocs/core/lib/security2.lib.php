@@ -374,13 +374,16 @@ function encodedecode_dbpassconf($level = 0)
 
 			$lineofpass = 0;
 
+			$reg = array();
 			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save crypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (!empty($val)) {
 					$passwd_crypted = $val;
+					// method dol_encode/dol_decode
 					$val = dol_decode($val);
+					//$val = dolEncrypt($val);
 					$passwd = $val;
 					$lineofpass = 1;
 				}
@@ -389,9 +392,16 @@ function encodedecode_dbpassconf($level = 0)
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
 				if (preg_match('/crypted:/i', $buffer)) {
+					// method dol_encode/dol_decode
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
+					$passwd = $val;
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+					// method dolEncrypt/dolDecrypt
+					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
+					$passwd_crypted = $val;
+					$val = dolDecrypt($buffer);
 					$passwd = $val;
 				} else {
 					$passwd = $val;

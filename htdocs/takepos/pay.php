@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ if (!defined('NOREQUIREHTML')) {
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -49,9 +50,35 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place 
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
+$hookmanager->initHooks(array('takepospay'));
+
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
+
+
+/*
+ * View
+ */
+
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs = array();
+
+$head = '';
+$title = '';
+$disablejs = 0;
+$disablehead = 0;
+
+$head='<link rel="stylesheet" href="css/pos.css.php">';
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$head .= '<link rel="stylesheet" href="css/colorful.css">';
+}
+
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+?>
+<body>
+<?php
 
 if (!empty($conf->stripe->enabled)) {
 	$service = 'StripeTest';
@@ -99,10 +126,6 @@ function fetchConnectionToken() {
 </script>
 <?php }
 
-/*
- * View
- */
-
 if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
 }
@@ -130,7 +153,7 @@ if ($invoiceid > 0) {
 	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
 		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>}
   terminal.discoverReaders(config).then(function(discoverResult) {
 	if (discoverResult.error) {
 	  console.log('Failed to discover: ', discoverResult.error);
@@ -141,7 +164,7 @@ if ($invoiceid > 0) {
 	  // cashier here and let them select which to connect to (see below).
 	  selectedReader = discoverResult.discoveredReaders[0];
 	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
-	  
+
 	  terminal.connectReader(selectedReader).then(function(connectResult) {
 		if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
@@ -160,7 +183,7 @@ if ($invoiceid > 0) {
 		<?php } else { ?>
 	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 		if (connectResult.error) {
-		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
 		} else {
 		document.getElementById("card-present-alert").innerHTML = '';
@@ -174,16 +197,6 @@ if ($invoiceid > 0) {
 		<?php } } ?>
 </script>
 <?php
-
-$arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs = array();
-
-$head = '';
-$title = '';
-$disablejs = 0;
-$disablehead = 0;
-
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
@@ -213,20 +226,12 @@ if ($resql) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (empty($conf->banque->enabled)) {
+		if (!isModEnabled('banque')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
 		}
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
-<body>
 
 <script>
 <?php
@@ -388,7 +393,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
 	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
 			<?php } ?>
-		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';	
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
 	  if (result.error) {
 		// Placeholder for handling result.error
@@ -398,7 +403,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
 		  terminal.processPayment(result.paymentIntent).then(function(result) {
 		  if (result.error) {
-			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';  
+			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 			console.log(result.error)
 		} else if (result.paymentIntent) {
 			  paymentIntentId = result.paymentIntent.id;
@@ -409,7 +414,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
 				console.log("error when capturing paymentIntent", result.error);
 			  } else {
-				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>'; 
+				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
 				console.log("Capture paymentIntent successfull "+paymentIntentId);
 				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
@@ -423,7 +428,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		});
 
 			}
-			});	
+			});
 		  }
 		});
 	  }
@@ -645,8 +650,8 @@ if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty
 	}
 }
 
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
@@ -654,6 +659,10 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 		print '<button type="button" class="calcbutton2 disabled" title="'.$langs->trans("SetupNotComplete").'">Sumup</button>';
 	}
 }
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $object may have been modified by hook
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $class = ($i == 3) ? "calcbutton3" : "calcbutton2";
 foreach ($action_buttons as $button) {
@@ -665,6 +674,14 @@ if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
 	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\');">'.$langs->trans("Reported").'</button>';
 }
 ?>
+
+<?php
+// Add code from hooks
+$parameters=array();
+$hookmanager->executeHooks('completePayment', $parameters, $invoice);
+print $hookmanager->resPrint;
+?>
+
 </div>
 
 </body>

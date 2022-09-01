@@ -12,7 +12,7 @@ OpenEtablishment=Nyitott létesítmény
 CloseEtablishment=Létesítmény bezárása
 # Dictionary
 DictionaryPublicHolidays=Szabadság - Munkaszüneti napok
-DictionaryDepartment=HRM - Organizational Unit
+DictionaryDepartment=HRM - Szervezeti egység
 DictionaryFunction=HRM – Munkaköri pozíciók
 # Module
 Employees=Alkalmazottak
@@ -89,3 +89,4 @@ SkillsExtraFields=További tulajdonságok (készségek)
 JobsExtraFields=További tulajdonságok (munkahelyek)
 EvaluationsExtraFields=További tulajdonságok (értékelések)
 NeedBusinessTravels=Üzleti utakra van szükség
+NoDescription=Nincs leírás

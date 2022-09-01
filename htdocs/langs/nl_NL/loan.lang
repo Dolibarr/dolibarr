@@ -24,7 +24,7 @@ FinancialCommitment=Financiële verplichting
 InterestAmount=Rente
 CapitalRemain=Saldo kapitaal
 TermPaidAllreadyPaid = Deze termijn is al betaald
-CantUseScheduleWithLoanStartedToPaid = Kan planner niet gebruiken voor een lening waarvan de betaling is gestart
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = U kunt de rente niet wijzigen indien u een schema gebruikt
 # Admin
 ConfigLoan=Configuratie van de module lening

@@ -149,7 +149,7 @@ class ActionCommReminder extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}

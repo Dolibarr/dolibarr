@@ -489,9 +489,14 @@ if ($num > 0) {
 			}
 		}
 
+		$reg = array();
+		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
+			$langs->load($reg[1]);
+		}
+
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
-		$object->label = $obj->label;
+		$object->label = preg_replace('/:.*$/', '', $obj->label);
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
@@ -512,9 +517,9 @@ if ($num > 0) {
 
 		// Label
 		print '<td class="tdoverflowmax300">';
-		if (!empty($obj->label)) {
-			$object->ref = $langs->trans($obj->label);
-			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
+		if (!empty($object->label)) {
+			$object->ref = $langs->trans($object->label);
+			print '<span title="'.dol_escape_htmltag($langs->trans($object->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
 		} else {
 			//print $langs->trans('CronNone');

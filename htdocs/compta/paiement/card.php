@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -285,7 +285,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', 
 
 $disable_delete = 0;
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	$bankline = new AccountLine($db);
 
 	if ($object->fk_account > 0) {
@@ -327,7 +327,7 @@ print '</td></tr>';
 */
 
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -425,7 +425,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -462,7 +462,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;

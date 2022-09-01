@@ -37,8 +37,8 @@ OtherInfo=معلومات اخرى
 DeleteCptCategory=إزالة حساب المحاسبة من المجموعة
 ConfirmDeleteCptCategory=هل أنت متأكد أنك تريد إزالة هذا الحساب المحاسبي من مجموعة حسابات المحاسبة؟
 JournalizationInLedgerStatus=حالة اليوميات
-AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
+AlreadyInGeneralLedger=تم نقلها بالفعل إلى دفاتر اليومية المحاسبية ودفتر الأستاذ
+NotYetInGeneralLedger=لم يتم نقلها بعد إلى المجلات ودفتر الأستاذ
 GroupIsEmptyCheckSetup=المجموعة فارغة ، تحقق من إعداد مجموعة المحاسبة المخصصة
 DetailByAccount=إظهار التفاصيل حسب الحساب
 AccountWithNonZeroValues=الحسابات ذات القيم غير الصفرية
@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=حساب المحاسبة الرئي
 AccountancyArea=منطقة المحاسبة
 AccountancyAreaDescIntro=استخدام وحدة المحاسبة تم في عدة خطوات:
 AccountancyAreaDescActionOnce=عادة ما يتم تنفيذ الإجراءات التالية مرة واحدة فقط ، أو مرة واحدة في السنة.
-AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
+AccountancyAreaDescActionOnceBis=يجب القيام بالخطوات التالية لتوفير الوقت في المستقبل من خلال اقتراح حساب المحاسبة الافتراضي الصحيح تلقائيًا عند نقل البيانات في المحاسبة
 AccountancyAreaDescActionFreq=يتم تنفيذ الإجراءات التالية عادةً كل شهر أو أسبوع أو كل يوم للشركات الكبيرة جدًا .
 
-AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
+AccountancyAreaDescJournalSetup=الخطوة %s: تحقق من محتوى قائمة مجلاتك من القائمة %s
 AccountancyAreaDescChartModel=الخطوة %s: تحقق من وجود نموذج لمخطط الحساب أو قم بإنشاء نموذج من القائمة %s
 AccountancyAreaDescChart=الخطوة %s : حدد و / أو أكمل مخطط حسابك من القائمة %s
 
 AccountancyAreaDescVat=الخطوة %s: تحديد حسابات المحاسبة لكل معدلات ضريبة القيمة المضافة. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescDefault=الخطوة %s: تحديد حسابات المحاسبة الافتراضية. لهذا ، استخدم إدخال القائمة %s.
-AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
+AccountancyAreaDescExpenseReport=الخطوة %s: تحديد حسابات المحاسبة الافتراضية لكل نوع من أنواع تقرير المصاريف. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescSal=الخطوة %s: تحديد حسابات المحاسبة الافتراضية لدفع الرواتب. لهذا ، استخدم إدخال القائمة %s.
-AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
+AccountancyAreaDescContrib=الخطوة %s: تحديد حسابات المحاسبة الافتراضية للضرائب (نفقات خاصة). لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescDonation=الخطوة %s: تحديد حسابات المحاسبة الافتراضية للتبرع. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescSubscription=الخطوة %s: تحديد حسابات المحاسبة الافتراضية لاشتراك الأعضاء. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescMisc=الخطوة %s: تحديد الحساب الافتراضي الإلزامي وحسابات المحاسبة الافتراضية للمعاملات المتنوعة. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescLoan=الخطوة %s: تحديد حسابات المحاسبة الافتراضية للقروض. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescBank=الخطوة %s: تحديد الحسابات المحاسبية ورمز دفتر اليومية لكل حساب بنكي والحسابات المالية. لهذا ، استخدم إدخال القائمة %s.
-AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
+AccountancyAreaDescProd=الخطوة %s: تحديد حسابات المحاسبة لمنتجاتك / خدماتك. لهذا ، استخدم إدخال القائمة %s.
 
 AccountancyAreaDescBind=الخطوة %s: تحقق من الربط بين سطور %s الحالية وحساب المحاسبة ، لتمكين التطبيق من تسجيل المعاملات في دفتر الأستاذ بنقرة واحدة. إكمال الارتباطات المفقودة. لهذا ، استخدم إدخال القائمة %s.
 AccountancyAreaDescWriteRecords=الخطوة %s: اكتب المعاملات في دفتر الأستاذ. لهذا ، انتقل إلى القائمة <strong> %s </strong> ، وانقر فوق الزر <strong> %s </strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=اغلاق
 MenuAccountancyValidationMovements=اعتماد الحركات
 ProductsBinding=حسابات المنتجات
 TransferInAccounting=التحويل في المحاسبة
-RegistrationInAccounting=Recording in accounting
+RegistrationInAccounting=التسجيل في المحاسبة
 Binding=ربط للحسابات
 CustomersVentilation=ربط فاتورة العميل
 SuppliersVentilation=ربط فاتورة المورد
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=ربط تقرير المصاريف
 CreateMvts=إنشاء معاملة جديدة
 UpdateMvts=تعديل معاملة
 ValidTransaction=اعتماد المعاملة
-WriteBookKeeping=Record transactions in accounting
+WriteBookKeeping=تسجيل المعاملات في المحاسبة
 Bookkeeping=دفتر حسابات
 BookkeepingSubAccount=حساب استاذ فرعي
 AccountBalance=رصيد الحساب
@@ -132,7 +132,7 @@ InvoiceLinesDone=بنود الفواتير المقيدة
 ExpenseReportLines=بنود تقارير المصاريف المراد ربطها
 ExpenseReportLinesDone=البنود المقيدة لتقارير المصروفات
 IntoAccount=ربط البند مع حساب المحاسبة
-TotalForAccount=Total accounting account
+TotalForAccount=حساب المحاسبة الإجمالي
 
 
 Ventilate=ربط
@@ -156,12 +156,12 @@ ACCOUNTING_LENGTH_DESCRIPTION=اقتطاع وصف المنتج والخدمات 
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=اقتطاع نموذج وصف حساب المنتجات والخدمات في القوائم بعد حرف x (الأفضل = 50)
 ACCOUNTING_LENGTH_GACCOUNT=طول حسابات المحاسبة العامة (إذا قمت بتعيين القيمة إلى 6 هنا ، فسيظهر الحساب "706" مثل "706000" على الشاشة)
 ACCOUNTING_LENGTH_AACCOUNT=طول حسابات الطرف الثالث المحاسبية (إذا قمت بتعيين القيمة إلى 6 هنا ، فسيظهر الحساب "401" مثل "401000" على الشاشة)
-ACCOUNTING_MANAGE_ZERO=السماح بإدارة عدد مختلف من الأصفار في نهاية الحساب المحاسبي. تحتاجه بعض الدول (مثل سويسرا). إذا تم الضبط على إيقاف (افتراضي) ، يمكنك تعيين المعاملين التاليتين لتطلب من التطبيق إضافة أصفار افتراضية.
+ACCOUNTING_MANAGE_ZERO=السماح بإدارة عدد مختلف من الأصفار في نهاية الحساب المحاسبي. تحتاجه بعض الدول (مثل سويسرا). إذا تم الضبط على إيقاف (افتراضي) ، يمكنك برمجة اﻹعدادين التاليين لتطلب من التطبيق إضافة أصفار افتراضية.
 BANK_DISABLE_DIRECT_INPUT=تعطيل التسجيل المباشر للمعاملة في الحساب المصرفي
-ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=تفعيل تصدير المسودة الى دفتر اليومية
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=إتاحة تصدير المسودة الى الدفتر اليومي\n
+ACCOUNTANCY_COMBO_FOR_AUX=تمكين قائمة التحرير والسرد للحساب الفرعي (قد يكون بطيئًا إذا كان لديك الكثير من الأطراف الثالثة ، أو كسر القدرة على البحث عن جزء من القيمة)
 ACCOUNTING_DATE_START_BINDING=تحديد موعد لبدء الربط والتحويل في المحاسبة. بعد هذا التاريخ ، لن يتم تحويل المعاملات إلى المحاسبة.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=في نقل المحاسبة ، حدد فترة العرض بشكل افتراضي
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=في تحويل المحاسبة ، ما هي الفترة المحددة افتراضيا
 
 ACCOUNTING_SELL_JOURNAL=دفتر البيع اليومي
 ACCOUNTING_PURCHASE_JOURNAL=دفتر الشراء اليومي
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=حساب تسجيل التبرعات
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=حساب تسجيل الاشتراكات
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=حساب افتراضي لتسجيل إيداع العميل
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=تخزين حساب العميل كحساب فردي في دفتر الأستاذ الفرعي لخطوط الدفعات المقدمة (إذا تم تعطيله ، فسيظل الحساب الفردي لبنود الدَفعة المقدمة فارغًا)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=حساب افتراضي للمنتجات المشتراة (يستخدم إذا لم يتم تحديده في ورقة المنتج)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=حساب افتراضي للمنتجات المشتراة في الاتحاد الاوروبي (يستخدم إذا لم يتم تحديده في ورقة المنتج)
@@ -193,7 +193,7 @@ ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=حساب افتراضي للمنتجات 
 
 ACCOUNTING_SERVICE_BUY_ACCOUNT=حساب افتراضي للخدمات المشتراة (يُستخدم إذا لم يتم تحديده في ورقة الخدمة)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=حساب افتراضي للخدمات المشتراة في الاتحاد الاوروبي (يستخدم إذا لم يتم تحديده في ورقة الخدمة)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=حساب افتراضي للخدمات المشتراة والمستوردة من الاتحاد الاوروبي (تُستخدم إذا لم يتم تحديدها في ورقة الخدمة)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=حساب افتراضي للخدمات المشتراة والمستوردة من المجموعة اﻹقتصادية اﻷوروبية(تُستخدم إذا لم يتم تحديدها في ورقة الخدمة)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=حساب افتراضي للخدمات المباعة (يُستخدم إذا لم يتم تحديده في ورقة الخدمة)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=حساب افتراضي للخدمات المباعة في الاتحاد الاوروبي (يُستخدم إذا لم يتم تحديده في ورقة الخدمة)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=حساب افتراضي للخدمات المباعة والمصدرة من الاتحاد الاوروبي (تُستخدم إذا لم يتم تحديدها في ورقة الخدمة)
@@ -203,29 +203,29 @@ Docdate=التاريخ
 Docref=مرجع
 LabelAccount=Label account
 LabelOperation=Label operation
-Sens=الاتجاه
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
+Sens=الادارة
+AccountingDirectionHelp=بالنسبة لحساب محاسبي لعميل ، استخدم الائتمان لتسجيل دفعة تلقيتها <br> بالنسبة لحساب محاسبي لمورد ، استخدم الخصم لتسجيل دفعة قمت بها
 LetteringCode=Lettering code
 Lettering=Lettering
 Codejournal=دفتر اليومية
 JournalLabel=اسم دفتر اليومية
-NumPiece=Piece number
+NumPiece=رقم القطعة
 TransactionNumShort=رقم. العملية
-AccountingCategory=Custom group
+AccountingCategory=مجموعة مخصصة
 GroupByAccountAccounting=تجميع حسب حساب دفتر الأستاذ العام
 GroupBySubAccountAccounting=تجميع حسب حساب دفتر الأستاذ الفرعي
 AccountingAccountGroupsDesc=يمكنك هنا تحديد بعض مجموعات الحساب. سيتم استخدامها لتقارير المحاسبة الشخصية.
 ByAccounts=حسب الحسابات
 ByPredefinedAccountGroups=من خلال مجموعات محددة مسبقًا
 ByPersonalizedAccountGroups=بواسطة مجموعات شخصية
-ByYear=بحلول العام
+ByYear=سنويا
 NotMatch=Not Set
-DeleteMvt=Delete some lines from accounting
+DeleteMvt=حذف بعض البنود من المحاسبة
 DelMonth=شهر للحذف
 DelYear=السنة للحذف
 DelJournal=دفتر يومية للحذف
-ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=سيؤدي هذا إلى حذف جميع سطور المحاسبة للسنة / الشهر و / أو لمجلة معينة (مطلوب معيار واحد على الأقل). سيتعين عليك إعادة استخدام الميزة "%s" لإعادة السجل المحذوف إلى دفتر الأستاذ.
+ConfirmDeleteMvtPartial=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع الأسطر المتعلقة بنفس المعاملة)
 FinanceJournal=دفتر المالية اليومي
 ExpenseReportsJournal=دفتر تقارير المصاريف
 DescFinanceJournal=دفتر المالية اليومي المتضمن لجميع الدفعات عن طريق الحساب المصرفي
@@ -247,9 +247,9 @@ DescThirdPartyReport=راجع هنا قائمة العملاء والموردي�
 ListAccounts=قائمة الحسابات المحاسبية
 UnknownAccountForThirdparty=حساب طرف ثالث غير معروف. سوف نستخدم %s
 UnknownAccountForThirdpartyBlocking=حساب طرف ثالث غير معروف. خطأ في المنع
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=حساب دفتر الأستاذ الفرعي غير محدد أو الطرف الثالث أو المستخدم غير معروف. سوف نستخدم %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=طرف ثالث غير معروف ودفتر الأستاذ الفرعي غير محدد في الدفعة. سنبقي قيمة حساب دفتر الأستاذ الفرعي فارغة.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب دفتر الأستاذ الفرعي غير محدد أو الطرف الثالث أو المستخدم غير معروف. خطأ في المنع.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب طرف ثالث وحساب قيد الانتظار غير معرّفين. خطأ في المنع
 PaymentsNotLinkedToProduct=الدفع غير مرتبط بأي منتج / خدمة
 OpeningBalance=الرصيد الافتتاحي
@@ -279,31 +279,31 @@ DescVentilExpenseReportMore=إذا قمت بإعداد حساب على نوع ب
 DescVentilDoneExpenseReport=راجع هنا قائمة بنود تقارير المصروفات وحساب رسومها
 
 Closure=الإغلاق السنوي
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock record...
+DescClosure=Consult here the number of movements by month not yet validated & locked
+OverviewOfMovementsNotValidated=نظرة عامة على الحركات التي لم يتم التحقق من صحتها وإغلاقها
+AllMovementsWereRecordedAsValidated=تم تسجيل جميع الحركات على أنها محققة ومغلقة
+NotAllMovementsCouldBeRecordedAsValidated=لا يمكن تسجيل جميع الحركات على أنها تم التحقق من صحتها وقفلها
+ValidateMovements=التحقق من صحة السجل وقفله ...
 DescValidateMovements=سيتم حظر أي تعديل أو حذف للكتابة والحروف. يجب اعتماد جميع الإدخالات الخاصة بالتمرين وإلا فلن يكون الإغلاق ممكنًا
 
 ValidateHistory=ربط تلقائي
-AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+AutomaticBindingDone=تم إجراء عمليات ربط تلقائية (%s) - الربط التلقائي غير ممكن لبعض السجلات (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=خطأ، لا يمكنك حذف هذا الحساب المحاسبي لأنه مستخدم
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
+MvtNotCorrectlyBalanced=الحركة غير متوازنة بشكل صحيح. الخصم = %s والائتمان = %s
 Balancing=موازنة
 FicheVentilation=بطاقة مرتبطة
 GeneralLedgerIsWritten=المعاملات مكتوبة في دفتر الأستاذ
 GeneralLedgerSomeRecordWasNotRecorded=لا يمكن تسجيل بعض المعاملات. إذا لم تكن هناك رسالة خطأ أخرى ، فربما يكون ذلك بسبب تسجيلها في دفتر اليومية بالفعل.
-NoNewRecordSaved=No more record to transfer
+NoNewRecordSaved=لا يوجد المزيد من السجلات لنقلها
 ListOfProductsWithoutAccountingAccount=قائمة المنتجات غير مرتبطة بأي حساب
 ChangeBinding=تغيير الربط
 Accounted=حسب في دفتر الأستاذ
-NotYetAccounted=Not yet transferred to accounting
+NotYetAccounted=لم يتم تحويلها بعد إلى المحاسبة
 ShowTutorial=عرض البرنامج التعليمي
 NotReconciled=لم يتم تسويتة
-WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
-AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
+WarningRecordWithoutSubledgerAreExcluded=تحذير ، كل الأسطر التي لم يتم تحديد حساب دفتر الأستاذ الفرعي تتم تصفيتها واستبعادها من طريقة العرض هذه
+AccountRemovedFromCurrentChartOfAccount=حساب محاسبي غير موجود في مخطط الحسابات الحالي
 
 ## Admin
 BindingOptions=خيارات الربط
@@ -320,7 +320,7 @@ AccountingJournalType2=مبيعات
 AccountingJournalType3=مشتريات
 AccountingJournalType4=بنك
 AccountingJournalType5=تقرير مصروفات
-AccountingJournalType8=المخزون
+AccountingJournalType8=الجرد
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=هذه الدفتر مستخدم بالفعل
 AccountingAccountForSalesTaxAreDefinedInto=ملاحظة: تم تعريف حساب ضريبة المبيعات في القائمة <b> %s </b> - <b> %s </b>
@@ -331,10 +331,10 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=تعطيل الربط والتحويل �
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحويل في المحاسبة على تقارير المصروفات (لن يتم أخذ تقارير المصروفات في الاعتبار في المحاسبة)
 
 ## Export
-NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedExportDate=ضع علامة على الخطوط المصدرة كـ <span class="warning"> (لتعديل سطر ، ستحتاج إلى حذف المعاملة بالكامل وإعادة تحويلها إلى المحاسبة) </span>
 NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
-DateValidationAndLock=Date validation and lock
-ConfirmExportFile=Confirmation of the generation of the accounting export file ?
+DateValidationAndLock=التحقق من صحة التاريخ والقفل
+ConfirmExportFile=تأكيد إنشاء ملف محاسبي تصدير؟
 ExportDraftJournal=تصدير مسودة دفتر اليومية
 Modelcsv=نموذج التصدير
 Selectmodelcsv=تحديد نموذج للتصدير
@@ -342,11 +342,11 @@ Modelcsv_normal=تصدير كلاسيكي
 Modelcsv_CEGID=Export for CEGID Expert Comptabilité
 Modelcsv_COALA=Export for Sage Coala
 Modelcsv_bob50=Export for Sage BOB 50
-Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
+Modelcsv_ciel=تصدير لـ Sage50 أو Ciel Compta أو Compta Evo. (تنسيق XIMPORT)
 Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
-Modelcsv_agiris=Export for Agiris Isacompta
+Modelcsv_agiris=تصدير إلى Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
@@ -354,10 +354,10 @@ Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
-Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=تصدير لـ Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5=Export for Gestinum (v5)
-Modelcsv_charlemagne=Export for Aplim Charlemagne
+Modelcsv_Gestinumv5=تصدير لـ Gestinum (v5)
+Modelcsv_charlemagne=تصدير لأبليم شارلمان
 ChartofaccountsId=معرف دليل الحسابات
 
 ## Tools - Init accounting account on product / service
@@ -390,27 +390,27 @@ SaleExport=بيع تصدير
 SaleEEC=بيع في الاتحاد الاوروبي
 SaleEECWithVAT=البيع في EEC مع ضريبة القيمة المضافة ليست فارغة ، لذلك نفترض أن هذا ليس بيعًا داخل الاتحاد والحساب المقترح هو حساب المنتج القياسي.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
-ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
+ForbiddenTransactionAlreadyExported=ممنوع: تم التحقق من صحة المعاملة و / أو تصديرها.
+ForbiddenTransactionAlreadyValidated=ممنوع: تم التحقق من صحة المعاملة.
 ## Dictionary
 Range=نطاق الحساب
 Calculated=تم حسابه
 Formula=معادلة
 
 ## Reconcile
-Unlettering=Unreconcile
-AccountancyNoLetteringModified=No reconcile modified
-AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
-AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
-AccountancyNoUnletteringModified=No unreconcile modified
-AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
-AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+Unlettering=غير قابل للتوفيق
+AccountancyNoLetteringModified=لم يتم تعديل تسوية
+AccountancyOneLetteringModifiedSuccessfully=تم تعديل أحد التوفيق بنجاح
+AccountancyLetteringModifiedSuccessfully=تعديل %s بنجاح
+AccountancyNoUnletteringModified=لم يتم تعديل عدم التوفيق بينها
+AccountancyOneUnletteringModifiedSuccessfully=تم تعديل أحد ملفات التوفيق بنجاح
+AccountancyUnletteringModifiedSuccessfully=تم تعديل %s بنجاح
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnlettering=تأكيد مجمّع غير قابل للتسوية
+ConfirmMassUnletteringQuestion=هل أنت متأكد من أنك تريد إلغاء التوفيق بين التسجيلة (السجلات) المحددة %s؟
 ConfirmMassDeleteBookkeepingWriting=تأكيد الحذف الضخم
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=سيؤدي هذا إلى حذف المعاملة من المحاسبة (سيتم حذف جميع الأسطر المتعلقة بنفس المعاملة) هل أنت متأكد من أنك تريد حذف السجل (السجلات) المحددة %s؟
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=لم يتم تنفيذ بعض خطوات الإعداد الإلزامية ، يرجى إكمالها
@@ -423,32 +423,33 @@ NoJournalDefined=لم يتم تحديد دفتر
 Binded=البنود مرتبطة
 ToBind=بنود للربط
 UseMenuToSetBindindManualy=البنود غير مرتبطة بعد ، استخدم القائمة <a href="%s"> %s </a> لإجراء الربط يدويًا
-SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
-AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
-AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=عذرًا ، هذه الوحدة غير متوافقة مع الميزة التجريبية لفواتير الحالة
+AccountancyErrorMismatchLetterCode=عدم تطابق في التوفيق بين الكود
+AccountancyErrorMismatchBalanceAmount=الرصيد (%s) لا يساوي 0
+AccountancyErrorLetteringBookkeeping=حدثت أخطاء بخصوص المعاملات: %s
+ErrorAccountNumberAlreadyExists=رقم المحاسبة %s موجود بالفعل
 
 ## Import
 ImportAccountingEntries=مداخيل حسابية
-ImportAccountingEntriesFECFormat=Accounting entries - FEC format
-FECFormatJournalCode=Code journal (JournalCode)
-FECFormatJournalLabel=Label journal (JournalLib)
-FECFormatEntryNum=Piece number (EcritureNum)
-FECFormatEntryDate=Piece date (EcritureDate)
-FECFormatGeneralAccountNumber=General account number (CompteNum)
-FECFormatGeneralAccountLabel=General account label (CompteLib)
-FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
-FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
-FECFormatPieceRef=Piece ref (PieceRef)
-FECFormatPieceDate=Piece date creation (PieceDate)
-FECFormatLabelOperation=Label operation (EcritureLib)
+ImportAccountingEntriesFECFormat=قيود المحاسبة - شكل FEC
+FECFormatJournalCode=مجلة الكود (JournalCode)
+FECFormatJournalLabel=مجلة التسمية (JournalLib)
+FECFormatEntryNum=رقم القطعة (EcritureNum)
+FECFormatEntryDate=تاريخ القطعة (EcritureDate)
+FECFormatGeneralAccountNumber=رقم الحساب العام (CompteNum)
+FECFormatGeneralAccountLabel=تصنيف الحساب العام (CompteLib)
+FECFormatSubledgerAccountNumber=رقم حساب دفتر الأستاذ الفرعي (CompAuxNum)
+FECFormatSubledgerAccountLabel=رقم حساب دفتر الأستاذ الفرعي (CompAuxLib)
+FECFormatPieceRef=مرجع القطعة (PieceRef)
+FECFormatPieceDate=إنشاء تاريخ القطعة (تاريخ القطعة)
+FECFormatLabelOperation=عملية التسمية (EcritureLib)
 FECFormatDebit=مدين (مدين)
 FECFormatCredit=دائن (دائن)
-FECFormatReconcilableCode=Reconcilable code (EcritureLet)
-FECFormatReconcilableDate=Reconcilable date (DateLet)
-FECFormatValidateDate=Piece date validated (ValidDate)
-FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
-FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+FECFormatReconcilableCode=كود قابل للتوفيق (EcritureLet)
+FECFormatReconcilableDate=تاريخ قابل للتسوية (DateLet)
+FECFormatValidateDate=تم التحقق من تاريخ القطعة (ValidDate)
+FECFormatMulticurrencyAmount=مبلغ متعدد العملات (Montantdevise)
+FECFormatMulticurrencyCode=كود متعدد العملات (ايديفيز)
 
 DateExport=تاريخ التصدير
 WarningReportNotReliable=تحذير ، هذا التقرير لا يستند إلى دفتر الأستاذ ، لذلك لا يحتوي على معاملة تم تعديلها يدويًا في دفتر الأستاذ. إذا كان تسجيل دفتر اليومية الخاص بك محدثًا ، فسيكون عرض مسك الدفاتر أكثر دقة.

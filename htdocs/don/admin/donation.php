@@ -310,7 +310,7 @@ print '<td width="60" class="center">'.$langs->trans("Value")."</td>\n";
 print '<td></td>';
 print "</tr>\n";
 
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
 	print $langs->trans("DonationUseThirdparties");

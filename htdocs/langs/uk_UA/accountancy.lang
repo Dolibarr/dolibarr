@@ -48,9 +48,8 @@ CountriesNotInEEC=Країни, які не входять до ЄЕС
 CountriesInEECExceptMe=Країни ЄЕС, крім %s
 CountriesExceptMe=Усі країни, крім %s
 AccountantFiles=Експортувати вихідні документи
-ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Щоб експортувати свої журнали, використовуйте пункт меню %s - %s.
-ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Переглянути за обліковим записом
 VueBySubAccountAccounting=Перегляд за бухгалтерським субрахунком
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Якщо ви налаштуєте рахунок б
 DescVentilDoneExpenseReport=Ознайомтеся з переліком рядків звітів про витрати та їх обліковим рахунком
 
 Closure=Щорічне закриття
-DescClosure=Перегляньте тут кількість переміщень за місяць, які ще не підтверджені та заблоковані
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Огляд переміщень не підтверджених і заблокованих
 AllMovementsWereRecordedAsValidated=Усі рухи були зафіксовані як підтверджені та заблоковані
 NotAllMovementsCouldBeRecordedAsValidated=Не всі переміщення можна записати як підтверджені та заблоковані
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Вимкнути прив'язку 
 
 ## Export
 NotifiedExportDate=Позначте експортовані рядки як експортовані <span class="warning"> (щоб змінити рядок, вам потрібно буде видалити всю транзакцію та повторно перенести її в облік) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Перевірка дати та блокування
 ConfirmExportFile=Підтвердження створення файлу експорту бухгалтерського обліку?
 ExportDraftJournal=Експортувати чернетку журналу

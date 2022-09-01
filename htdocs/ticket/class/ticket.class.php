@@ -212,6 +212,11 @@ class Ticket extends CommonObject
 	 */
 	public $email_date;
 
+	/**
+	 * @var Ticket $oldcopy  State of this ticket as it was stored before an update operation (for triggers)
+	 */
+	public $oldcopy;
+
 
 	public $lines;
 
@@ -865,6 +870,11 @@ class Ticket extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$error = 0;
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		//if (empty($this->oldcopy)) {
+		//	$this->oldcopy = dol_clone($this);
+		//}
+
 		// Clean parameters
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
@@ -1454,10 +1464,12 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		if ($this->statut != self::STATUS_CANCELED) { // no closed
+			$this->oldcopy = dol_clone($this);
+
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1506,9 +1518,10 @@ class Ticket extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$this->db->begin();
 
 		$this->oldcopy = dol_clone($this);
+
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
@@ -1584,28 +1597,28 @@ class Ticket extends CommonObject
 		// foreach contact send email with notification message
 		if (count($contacts) > 0) {
 			foreach ($contacts as $key => $info_sendto) {
-				$message = '';
+				$tmpmessage = '';
 				$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNotificationEmailSubject', $this->track_id);
-				$message .= $langs->transnoentities('TicketNotificationEmailBody', $this->track_id)."\n\n";
-				$message .= $langs->transnoentities('Title').' : '.$this->subject."\n";
+				$tmpmessage .= $langs->transnoentities('TicketNotificationEmailBody', $this->track_id)."\n\n";
+				$tmpmessage .= $langs->transnoentities('Title').' : '.$this->subject."\n";
 
 				$recipient_name = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1');
 				$recipient = (!empty($recipient_name) ? $recipient_name : $info_sendto['email']).' ('.strtolower($info_sendto['libelle']).')';
-				$message .= $langs->transnoentities('TicketNotificationRecipient').' : '.$recipient."\n";
-				$message .= "\n";
-				$message .= '* '.$langs->transnoentities('TicketNotificationLogMessage').' *'."\n";
-				$message .= dol_html_entity_decode($log_message, ENT_QUOTES | ENT_HTML5)."\n";
+				$tmpmessage .= $langs->transnoentities('TicketNotificationRecipient').' : '.$recipient."\n";
+				$tmpmessage .= "\n";
+				$tmpmessage .= '* '.$langs->transnoentities('TicketNotificationLogMessage').' *'."\n";
+				$tmpmessage .= dol_html_entity_decode($message, ENT_QUOTES | ENT_HTML5)."\n";
 
 				if ($info_sendto['source'] == 'internal') {
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
+					$tmpmessage .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
 				} else {
 					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
+					$tmpmessage .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
 				}
 
-				$message .= "\n";
-				$message .= $langs->transnoentities('TicketEmailPleaseDoNotReplyToThisEmail')."\n";
+				$tmpmessage .= "\n";
+				$tmpmessage .= $langs->transnoentities('TicketEmailPleaseDoNotReplyToThisEmail')."\n";
 
 				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 				$replyto = $from;
@@ -1615,7 +1628,7 @@ class Ticket extends CommonObject
 				$filename = array();
 				$mimetype = array();
 
-				$message = dol_nl2br($message);
+				$tmpmessage = dol_nl2br($tmpmessage);
 
 				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 					$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
@@ -1624,7 +1637,7 @@ class Ticket extends CommonObject
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$sendtocc = '';
 				$deliveryreceipt = 0;
-				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
+				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $tmpmessage, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
 				if ($mailfile->error || $mailfile->errors) {
 					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				} else {
@@ -1828,7 +1841,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				if (isModEnabled('ficheinter') && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -2131,12 +2144,13 @@ class Ticket extends CommonObject
 	{
 		$array_contact = array();
 
-		$array_contact = $this->getIdTicketInternalContact($exclude_self);
+		$array_contact = $this->getIdTicketInternalContact();
 
-		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerContact($exclude_self));
+		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerContact());
 
-		$array_contact = array_merge($array_contact, $this->getIdTicketInternalInvolvedContact($exclude_self));
-		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerInvolvedContact($exclude_self));
+		$array_contact = array_merge($array_contact, $this->getIdTicketInternalInvolvedContact());
+
+		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerInvolvedContact());
 
 		return $array_contact;
 	}
@@ -2150,8 +2164,9 @@ class Ticket extends CommonObject
 	{
 		$array_contact = array();
 
-		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerContact($exclude_self));
-		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerInvolvedContact($exclude_self));
+		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerContact());
+
+		$array_contact = array_merge($array_contact, $this->getIdTicketCustomerInvolvedContact());
 
 		return $array_contact;
 	}
@@ -2825,11 +2840,14 @@ class Ticket extends CommonObject
 				$filename = $mimefilename_list;
 				$mimetype = $mimetype_list;
 
-				// Envoi du mail
+				// Send email
+
+				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
+
 				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-					$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
+
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$trackid = "tic".$this->id;
 				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, '', 'ticket');
@@ -2850,6 +2868,7 @@ class Ticket extends CommonObject
 						}
 					}
 				}
+
 				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 				}

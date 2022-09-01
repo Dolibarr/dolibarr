@@ -440,6 +440,7 @@ class AdherentType extends CommonObject
 
 	/**
 	 *	Function to delete the member's status
+	 *  TODO Add param "User $user"
 	 *
 	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
 	 */

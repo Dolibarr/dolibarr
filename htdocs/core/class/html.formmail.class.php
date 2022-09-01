@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022	   Charlene Benke       <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -401,7 +401,7 @@ class FormMail extends Form
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($this->param['langsmodels'])) {
 				$newlang = $this->param['langsmodels'];
 			}
 			if (!empty($newlang)) {
@@ -428,7 +428,7 @@ class FormMail extends Form
 			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
 			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
-				if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+				if (!empty($arraydefaultmessage->joinfiles) && !empty($this->param['fileinit']) && is_array($this->param['fileinit'])) {
 					foreach ($this->param['fileinit'] as $file) {
 						$this->add_attached_files($file, basename($file), dol_mimetype($file));
 					}
@@ -604,7 +604,7 @@ class FormMail extends Form
 
 						// Also add robot email
 						if (!empty($this->fromalsorobot)) {
-							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM != $conf->global->MAIN_INFO_SOCIETE_MAIL) {
+							if (!empty($conf->global->MAIN_MAIL_EMAIL_FROM) && getDolGlobalString('MAIN_MAIL_EMAIL_FROM') != getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
 								$liste['robot'] = $conf->global->MAIN_MAIL_EMAIL_FROM;
 								if ($this->frommail) {
 									$liste['robot'] .= ' &lt;'.$conf->global->MAIN_MAIL_EMAIL_FROM.'&gt;';
@@ -1072,6 +1072,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 
@@ -1080,6 +1081,7 @@ class FormMail extends Form
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 					$withtoselected = array_keys($tmparray);
 				}
+
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 			}
 		}
@@ -1107,6 +1109,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
@@ -1182,7 +1185,7 @@ class FormMail extends Form
 	{
 		global $conf, $langs;
 		//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
-		$errorstomail = (!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : $this->errorstomail);
+		$errorstomail = getDolGlobalString('MAIN_MAIL_ERRORS_TO', (!empty($this->errorstomail) ? $this->errorstomail : ''));
 		if ($this->witherrorstoreadonly) {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
 			$out .= '<input type="hidden" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
@@ -1510,7 +1513,7 @@ class FormMail extends Form
 
 
 	/**
-	 * Set substit array from object. This is call when suggesting the email template into forms before sending email.
+	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
 	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang

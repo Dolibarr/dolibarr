@@ -196,7 +196,7 @@ if ($action == 'delete_action' && $user->rights->agenda->delete) {
 	$event->fetch($actionid);
 	$event->fetch_optionals();
 	$event->fetch_userassigned();
-	$event->oldcopy = clone $event;
+	$event->oldcopy = dol_clone($event);
 
 	$result = $event->delete();
 }
@@ -901,7 +901,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		/* Use this list to have for all users */
 		$sql = "SELECT DISTINCT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid ";

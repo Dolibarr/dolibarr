@@ -42,7 +42,7 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks για έλεγχο
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Αριθμός ημερών πριν από την κατάσταση ακύρωσης μιας συνεργασίας όταν έχει λήξει μια συνδρομή
 ReferingWebsiteCheck=Έλεγχος αναφοράς ιστότοπου
 ReferingWebsiteCheckDesc=Μπορείτε να ενεργοποιήσετε μια δυνατότητα για να ελέγχετε ότι οι συνεργάτες σας έχουν προσθέσει έναν σύνδεσμο backlink του ιστότοπου σας στον δικό τους ιστότοπο.
-PublicFormRegistrationPartnerDesc=Το Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL/ιστότοπο για να επιτρέπετε σε εξωτερικούς επισκέπτες η αίτηση συμμετοχής στο πρόγραμμα συνεργασίας.
+PublicFormRegistrationPartnerDesc=Το Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL/ιστότοπο για να επιτρέπεται σε εξωτερικούς επισκέπτες η αίτηση συμμετοχής στο πρόγραμμα συνεργασίας.
 
 #
 # Object
@@ -55,7 +55,7 @@ DatePartnershipEnd=Ημερομηνία λήξης
 ReasonDecline=Λόγος απόρριψης
 ReasonDeclineOrCancel=Λόγος απόρριψης
 PartnershipAlreadyExist=Υπάρχει ήδη Συνεργασία 
-ManagePartnership=Διαχειριστείτε τη συνεργασία
+ManagePartnership=Διαχείριση της συνεργασίας
 BacklinkNotFoundOnPartnerWebsite=Ο σύνδεσμος Backlink δεν βρέθηκε στον ιστότοπο του συνεργάτη
 ConfirmClosePartnershipAsk=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτήν τη συνεργασία;
 PartnershipType=Τύπος συνεργασίας
