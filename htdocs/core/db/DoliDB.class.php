@@ -358,6 +358,7 @@ abstract class DoliDB implements Database
 		if ($res) {
 			$obj = $this->fetch_object($res);
 			if ($obj) {
+				$this->free($res);
 				return $obj;
 			} else {
 				return 0;
