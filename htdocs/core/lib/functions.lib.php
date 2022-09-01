@@ -10838,6 +10838,8 @@ function getElementProperties($element_type)
 	if (!class_exists('ElementProperties')) { require_once DOL_DOCUMENT_ROOT . '/core/class/elementproperties.class.php'; }
 	$elementProperties = new ElementProperties($db);
 	if ($elementProperties->fetch(null, $element_type)>0) {
+		// TODO : manage cache or fetch all once in main instead of always fetch  ?
+
 		$element_properties = array(
 			'module' => $elementProperties->module_name,
 			'classpath' => $elementProperties->class_dir,
