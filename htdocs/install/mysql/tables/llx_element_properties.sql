@@ -14,8 +14,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ============================================================================
--- Table used for relations between elements of different types:
--- invoice-propal, propal-order, etc...
+-- Table used for describe an object properties who extends CommonObject
 -- ============================================================================
 
 CREATE TABLE llx_element_properties
