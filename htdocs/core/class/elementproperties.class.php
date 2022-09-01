@@ -220,7 +220,6 @@ class ElementProperties
 		$sql .= "'".$this->db->idate($this->datec)."',";
 		$sql .= "'".$this->db->idate($this->tms)."'";
 		$sql .= ")";
-		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -229,6 +228,10 @@ class ElementProperties
 			if (!$res) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
+			}
+
+			if (!$error) {
+				$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 			}
 		}
 
