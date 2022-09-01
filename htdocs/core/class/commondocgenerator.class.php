@@ -171,7 +171,7 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_mysoc($mysoc, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $object;
 
 		if (empty($mysoc->forme_juridique) && !empty($mysoc->forme_juridique_code)) {
 			$mysoc->forme_juridique = getFormeJuridiqueLabel($mysoc->forme_juridique_code);
@@ -183,7 +183,8 @@ abstract class CommonDocGenerator
 			$mysoc->state = getState($mysoc->state_code, 0);
 		}
 
-		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
+		$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
+		$logotouse = $conf->mycompany->multidir_output[$entity].'/logos/thumbs/'.$mysoc->logo_small;
 
 		return array(
 			'mycompany_logo'=>$logotouse,
