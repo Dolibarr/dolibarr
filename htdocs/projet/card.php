@@ -564,7 +564,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td>';
 		print '<td>';
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
 			print '<script>';
@@ -578,24 +578,28 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							jQuery(".classuseopportunity").hide();
 						}
 					});
-				});';
+					';
+			if (GETPOSTISSET('usage_opportunity') && !GETPOST('usage_opportunity')) {
+				print 'jQuery(".classuseopportunity").hide();';
+			}
+			print '});';
 			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
+			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
 			print '<br>';
 		}
 		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') :'').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 		}
@@ -735,7 +739,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print '</form>';
 
-	// Change probability from status
+	// Change probability from status or role of project
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -745,7 +749,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
                 /*if (jQuery("#opp_percent_not_set").val() == "") */
                 jQuery("#opp_percent").val(defaultpercent);
         	}
-        	/*init_myfunc();*/
+
+			/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
         		change_percent();
         	});
@@ -874,6 +879,8 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							jQuery(".classuseopportunity").hide();
 						}
 					});
+				';
+				print '
 				});';
 				print '</script>';
 				print '<br>';
@@ -1337,7 +1344,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print'<a style="margin-right: auto;"class="dropdown-toggle butAction" data-toggle="dropdown">'.$langs->trans("Create").'</a>';
 				print '<div class="dropdown-menu">';
 				print '<div class="dropdown-global-search-button-list" >';
-				if (!empty($conf->propal->enabled) && $user->rights->propal->creer) {
+				if (isModEnabled("propal") && $user->rights->propal->creer) {
 					$langs->load("propal");
 					print dolGetButtonAction('', $langs->trans('AddProp'), 'default', DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1353,11 +1360,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("supplier_proposal");
 					print dolGetButtonAction('', $langs->trans('AddSupplierProposal'), 'default', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->supplier_order->enabled) && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
+				if (isModEnabled("supplier_order") && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierOrder'), 'default', DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->supplier_invoice->enabled) && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
+				if (isModEnabled("supplier_invoice") && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

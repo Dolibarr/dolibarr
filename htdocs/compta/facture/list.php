@@ -39,7 +39,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -237,13 +237,13 @@ $arrayfields = array(
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>166),
-	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>280),
-	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>285),
-	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>290),
-	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>291),
-	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
-	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
-	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
+	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>280),
+	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>285),
+	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>290),
+	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>291),
+	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>292),
+	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>295),
+	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled('multicurrency') ? 0 : 1), 'position'=>296), // Not enabled by default because slow
 	'total_pa' => array('label' => ((isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) ? 0 : 1)),
 	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || empty($user->rights->margins->liretous) || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
@@ -363,11 +363,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
 	$search_fac_rec_source_title = '';
-	$option = '';
-	$filter = '';
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
+	$option = '';
+	$socid = 0;
 }
 
 if (empty($reshook)) {
@@ -545,7 +545,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = null;
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
 $bankaccountstatic = new Account($db);
@@ -919,7 +919,7 @@ if ($resql) {
 
 	llxHeader('', $langs->trans('CustomersInvoices'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
-	if ($socid) {
+	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		if (empty($search_company)) {
@@ -1151,8 +1151,9 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "facture_send";
@@ -1199,7 +1200,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// Filter on product tags
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1207,7 +1208,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth250', 1);
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -1329,7 +1330,7 @@ if ($resql) {
 	}
 	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company" value="'.$search_company.'"'.($socid > 0 ? " disabled" : "").'></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1532,7 +1533,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td>';
 	}
@@ -1720,7 +1721,7 @@ if ($resql) {
 		$totalarray['val']['f.total_ttc'] = 0;
 
 		$with_margin_info = false;
-		if (!empty($conf->margin->enabled) && (
+		if (isModEnabled('margin') && (
 				!empty($arrayfields['total_pa']['checked'])
 				|| !empty($arrayfields['total_margin']['checked'])
 				|| !empty($arrayfields['total_margin_rate']['checked'])
@@ -1770,6 +1771,7 @@ if ($resql) {
 				$facturestatic->situation_cycle_ref = $obj->situation_cycle_ref;
 				$facturestatic->situation_counter = $obj->situation_counter;
 			}
+
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->name_alias = $obj->alias;
@@ -2083,7 +2085,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2417,7 +2419,7 @@ if ($resql) {
 			// Status
 			if (!empty($arrayfields['f.fk_statut']['checked'])) {
 				print '<td class="nowrap right">';
-				print $facturestatic->LibStatut($obj->paye, $obj->fk_statut, 5, $paiement, $obj->type);
+				print $facturestatic->getLibStatut(5, $paiement);
 				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;

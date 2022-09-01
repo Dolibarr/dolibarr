@@ -271,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Sie müssen zuerst Ihren Kontenplan ein
 ErrorFailedToFindEmailTemplate=Vorlage mit Codename %s konnte nicht gefunden werden
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Die Dauer für die Leistung ist nicht definiert. Es besteht keine Möglichkeit, den Stundenpreis zu berechnen.
 ErrorActionCommPropertyUserowneridNotDefined=Der Besitzer des Benutzers ist erforderlich
-ErrorActionCommBadType=Der ausgewählte Ereignistyp (ID: %n, Code: %s) ist im Wörterbuch für den Ereignistyp nicht vorhanden
+ErrorActionCommBadType=Der ausgewählte Ereignistyp (ID: %s, Code: %s) existiert nicht im Verzeichnis für Ereignistypen
 CheckVersionFail=Versionsprüfung fehlgeschlagen
 ErrorWrongFileName=Der Dateiname darf nicht __SOMETHING__ enthalten
 ErrorNotInDictionaryPaymentConditions=Nicht im Dictionary der Zahlungsbedingungen, bitte ändern.
@@ -289,11 +289,13 @@ ErrorInvoiceLoadThirdPartyKey=Geschäftspartner-Schlüssel "%s" ist für Rechnun
 ErrorDeleteLineNotAllowedByObjectStatus=Das Löschen von Einzelpositionen ist aufgrund des aktuellen Objektstatus nicht zulässig
 ErrorAjaxRequestFailed=Anfrage fehlgeschlagen
 ErrorThirpdartyOrMemberidIsMandatory=Geschäftspartner oder Mitglied ist für die Partnerschaft verpflichtend
+ErrorFailedToWriteInTempDirectory=Fehler beim Schreiben in das temporäre Verzeichnis
+ErrorQuantityIsLimitedTo=Die Menge ist auf %s begrenzt
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Ihr PHP Parameter upload_max_filesize (%s) ist größer als Parameter post_max_size (%s). Dies ist eine inkonsistente Einstellung.
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
-WarningMandatorySetupNotComplete=Hier klicken, um obligatorische Einstellungen vorzunehmen
+WarningMandatorySetupNotComplete=Hier klicken, um die Hauptparameter einzurichten
 WarningEnableYourModulesApplications=Hier klicken, um Module/Applikationen freizuschalten
 WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
 WarningBookmarkAlreadyExists=Ein Favorit mit diesem Titel oder dieser Adresse (URL) existiert bereits.

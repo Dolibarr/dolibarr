@@ -58,7 +58,7 @@ $year_current = $year_start;
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {

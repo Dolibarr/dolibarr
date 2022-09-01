@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -172,7 +172,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -295,7 +295,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
 			}
 		}
@@ -379,7 +379,7 @@ class modSociete extends DolibarrModules
 		);
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
-			if (!empty($conf->multicompany->enabled)) {
+			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
 					$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -413,7 +413,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"company",
 			's.entity'=>'company',
 		); // We define here only fields that use another picto
-		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}

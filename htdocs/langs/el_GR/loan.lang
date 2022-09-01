@@ -24,7 +24,7 @@ FinancialCommitment=Χρηματοδοτική δέσμευση
 InterestAmount=Επιτόκιο
 CapitalRemain=Κεφάλαιο που απομένει
 TermPaidAllreadyPaid = Αυτή η περίοδος είναι ήδη πληρωμένη
-CantUseScheduleWithLoanStartedToPaid = Δεν είναι δυνατή η χρήση του χρονοδιαγράμματος μετά την έναρξη των πληρωμών ενός δανείου
+CantUseScheduleWithLoanStartedToPaid = Δεν είναι δυνατή η δημιουργία χρονοδιαγράμματος δάνειου για το οποίο έχουν ξεκινήσει η πληρωμές
 CantModifyInterestIfScheduleIsUsed = Δεν μπορείτε να τροποποιήσετε το επιτόκιο εάν χρησιμοποιείτε χρονοδιάγραμμα
 # Admin
 ConfigLoan=Διαμόρφωση της ενότητας δανείου

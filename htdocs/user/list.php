@@ -121,7 +121,7 @@ $arrayfields = array(
 	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
 	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
 	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
-	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
 	'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
 	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
@@ -131,7 +131,7 @@ $arrayfields = array(
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -174,26 +174,26 @@ if ($mode == 'employee' && !GETPOSTISSET('search_employee')) {
 }
 
 // Define value to know what current user can do on users
-$permissiontoadd = (!empty($user->admin) || $user->rights->user->user->creer);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire);
-$canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
-$candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$canreaduser = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
+$canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
+$candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
+	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
 
 $error = 0;
 
 // Permission to list
 if ($mode == 'employee') {
-	if (empty($user->rights->salaries->read)) {
+	if (!$user->hasRight("salaries", "read")) {
 		accessforbidden();
 	}
 } else {
-	if (empty($user->rights->user->user->lire) && empty($user->admin)) {
+	if (!$user->hasRight("user", "user", "read") && empty($user->admin)) {
 		accessforbidden();
 	}
 }
@@ -441,7 +441,7 @@ if ($search_categ == -2) {
 if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
-if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
+if ($mode == 'employee' && !$user->hasRight("salaries", "readall")) {
 	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
@@ -658,7 +658,7 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
 	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
@@ -939,9 +939,9 @@ while ($i < $imaxinloop) {
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	$canreadhrmdata = 0;
-	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
-		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
@@ -981,7 +981,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
-			if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
+			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
 				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($obj->admin) {
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1054,7 +1054,7 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
-				if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2) {
+				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 				} elseif ($obj->admin2) {
 					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1123,7 +1123,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				print '<td>';
 				if (!$obj->entity) {

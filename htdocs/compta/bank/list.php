@@ -32,13 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -58,7 +58,7 @@ $search_number = GETPOST('search_number', 'alpha');
 $search_status = GETPOST('search_status') ?GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 }
 
@@ -116,8 +116,8 @@ $arrayfields = array(
 	'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>12),
 	'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1, 'position'=>14),
 	'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1, 'position'=>16),
-	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>18),
-	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>20),
+	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(isModEnabled('accounting')), 'position'=>18),
+	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(isModEnabled('accounting')), 'position'=>20),
 	'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1, 'position'=>50),
 	'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0, 'position'=>22),
 	'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -197,7 +197,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_ACCOUNT, "b.rowid");
 }
 
@@ -209,7 +209,7 @@ if ($search_status == 'closed') {
 	$sql .= " AND clos = 1";
 }
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_ACCOUNT, "b.rowid", $search_category_list);
 }
 
@@ -344,7 +344,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
 }
 
@@ -569,7 +569,7 @@ foreach ($accounts as $key => $type) {
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
 		print '<td class="tdoverflowmax250">';
-		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
+		if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);
 			print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
@@ -587,7 +587,7 @@ foreach ($accounts as $key => $type) {
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
 		print '<td class="tdoverflowmax125">';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			if (empty($objecttmp->fk_accountancy_journal)) {
 				print img_warning($langs->trans("Mandatory"));
 			} else {

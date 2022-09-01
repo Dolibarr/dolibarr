@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,7 +17,7 @@
  */
 
 /**
- *   	\file       workstation_card.php
+ *   	\file       htdocs/workstation/workstation_card.php
  *		\ingroup    workstation
  *		\brief      Page to create/edit/view workstation
  */
@@ -24,32 +25,33 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("workstation", "other"));
+$langs->loadLangs(array('workstation', 'other'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'workstationcard'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
+$id          = GETPOST('id', 'int');
+$ref         = GETPOST('ref', 'alpha');
+$action      = GETPOST('action', 'aZ09');
+$confirm     = GETPOST('confirm', 'alpha');
+$cancel      = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'workstationcard';   // To manage different context of search
+$backtopage  = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$groups	= GETPOST('groups', 'array:int');
+$groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
 //$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Workstation($db);
+
 //$extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('workstationcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -75,11 +77,13 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = $user->rights->workstation->workstation->read;
-$permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->workstation->workstation->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->workstation->workstation->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->workstation->workstation->write; // Used by the include of actions_dellink.inc.php
+// Permissions
+$permissiontoread   =  $user->rights->workstation->workstation->read;
+$permissiontoadd    =  $user->rights->workstation->workstation->write;      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete =  $user->rights->workstation->workstation->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote     =  $user->rights->workstation->workstation->write;      // Used by the include of actions_setnotes.inc.php
+$permissiondellink  =  $user->rights->workstation->workstation->write;      // Used by the include of actions_dellink.inc.php
+
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -92,7 +96,7 @@ restrictedArea($user, $object->element, $object->id, $object->table_element, 'wo
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);   // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -112,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'WORKSTATION_WORKSTATION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'WORKSTATION_WORKSTATION_MODIFY';    // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -139,7 +143,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 

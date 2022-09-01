@@ -48,7 +48,7 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("pa
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
-$offset = $liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) {
@@ -97,9 +97,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title = $langs->trans("RecruitmentJobPosition").' - '.$langs->trans("Files");
+$title = $object->ref." - ".$langs->trans('Files');
 $help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 if ($object->id) {

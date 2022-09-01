@@ -332,6 +332,7 @@ class Categorie extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) {
+			$this->error = "No category to search for";
 			return -1;
 		}
 		if (!is_null($type) && !is_numeric($type)) {
@@ -389,6 +390,7 @@ class Categorie extends CommonObject
 
 				return 1;
 			} else {
+				$this->error = "No category found";
 				return 0;
 			}
 		} else {
@@ -701,13 +703,14 @@ class Categorie extends CommonObject
 			$type = $obj->element;
 		}
 
+		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " (fk_categorie, fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]).")";
 		$sql .= " VALUES (".((int) $this->id).", ".((int) $obj->id).")";
 
-		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';

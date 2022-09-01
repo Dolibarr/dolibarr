@@ -141,7 +141,7 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	if (!($res1 > 0) || !($res2 > 0)) {
 		$error++;
 	}
 

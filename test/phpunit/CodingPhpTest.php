@@ -464,7 +464,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				//var_dump($val);
 				if (!in_array($val[1], array(
 						"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'",
-						"'search_status'", '"mysqldump"', '"postgresqldump"', "'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'", '"MAIN_MAIL_SMTPS_PW"'))) {
+						'"mysqldump"', '"postgresqldump"',
+						"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'",
+						'"MAIN_MAIL_SMTPS_PW"', '"MAIN_MAIL_SMTPS_PW_EMAILING"', '"MAIN_MAIL_SMTPS_PW_TICKET"'))) {
 					$ok=false;
 					break;
 				}
@@ -513,7 +515,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$this->assertTrue($ok, 'Found a forbidden string sequence into '.$file['relativename'].' : name="token" value="\'.$_SESSION[..., you must use a newToken() instead of $_SESSION[\'newtoken\'].');
 
 
-			// Test we don't have @var array(
+			// Test we don't have preg_grep with a param without preg_quote
 			$ok=true;
 			$matches=array();
 			preg_match_all('/preg_grep\(.*\$/', $filecontent, $matches, PREG_SET_ORDER);
@@ -524,6 +526,17 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			}
 			$this->assertTrue($ok, 'Found a preg_grep with a param that is a $var but without preg_quote in file '.$file['relativename'].'.');
+
+
+			// Test we don't have empty($user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
 
 			// Test we don't have @var array(

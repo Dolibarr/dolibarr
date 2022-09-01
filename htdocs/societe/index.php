@@ -27,16 +27,21 @@
  *  \brief      Home page for third parties area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$hookmanager = new HookManager($db);
+
+// Load translation files required by the page
+$langs->load("companies");
+
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
-$langs->load("companies");
+
 
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
@@ -51,6 +56,7 @@ $thirdparty_static = new Societe($db);
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
+
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
@@ -150,7 +156,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
 		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
 	}
-	if ((($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
 		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
 	}
 	if (isModEnabled('societe')) {

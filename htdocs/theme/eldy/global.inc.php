@@ -423,8 +423,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.onholidayallday:not(.weekend) input {
+	background-color: #f8f7f0;
+}
 td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
 }
 /*
 td.leftborder, td.hide0 {
@@ -543,6 +549,7 @@ fieldset {
 	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
+	min-inline-size: auto;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -865,6 +872,13 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.nomarginleft {
+	margin-<?php print $left; ?>: unset;
+}
+.nomarginright {
+	margin-<?php print $right; ?>: unset;
+}
+
 .cursordefault {
 	cursor: default;
 }

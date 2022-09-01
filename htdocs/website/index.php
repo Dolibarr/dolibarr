@@ -30,6 +30,7 @@ if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -45,8 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
+// Security check
 if (!$user->rights->website->read) {
 	accessforbidden();
 }
@@ -2741,8 +2744,12 @@ if (!GETPOST('hide_websitemenu')) {
 
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
-			//print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
-			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
+			// Delete website
+			if ($website->status == $website::STATUS_VALIDATED) {
+				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("WebsiteMustBeDisabled")).'">';
+			} else {
+				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
+			}
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
@@ -3417,7 +3424,7 @@ if ($action == 'editcss') {
 	$maxfilesizearray = getMaxFileSizeArray();
 	$maxmin = $maxfilesizearray['maxmin'];
 	if ($maxmin > 0) {
-		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
 	print '</tr></td>';

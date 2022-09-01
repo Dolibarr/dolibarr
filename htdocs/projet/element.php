@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (isModEnabled('facture')) {
@@ -52,10 +52,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -64,7 +64,7 @@ if (!empty($conf->contrat->enabled)) {
 if (!empty($conf->ficheinter->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (!empty($conf->deplacement->enabled)) {
@@ -89,7 +89,7 @@ if (!empty($conf->stock->enabled)) {
 if (!empty($conf->tax->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
@@ -110,7 +110,7 @@ if (isModEnabled('facture')) {
 if (!empty($conf->commande->enabled)) {
 	$langs->load("orders");
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
 if (!empty($conf->ficheinter->enabled)) {

@@ -1353,7 +1353,7 @@ if ($source == 'contractline') {
 
 	// Object
 	$text = '<b>'.$langs->trans("PaymentRenewContractId", $contract->ref, $contractline->ref).'</b>';
-	if ($contractline->fk_product) {
+	if ($contractline->fk_product > 0) {
 		$contractline->fetch_product();
 		$text .= '<br>'.$contractline->product->ref.($contractline->product->label ? ' - '.$contractline->product->label : '');
 	}
@@ -1364,8 +1364,8 @@ if ($source == 'contractline') {
 	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
 	//	$text.=dol_print_date($contractline->date_fin_validite);
 	//}
-	if ($contractline->date_fin_validite) {
-		$text .= '<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
+	if ($contractline->date_end) {
+		$text .= '<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_end);
 	}
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';

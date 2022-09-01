@@ -154,7 +154,11 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
 
@@ -171,7 +175,7 @@ if ($result > 0) {
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');

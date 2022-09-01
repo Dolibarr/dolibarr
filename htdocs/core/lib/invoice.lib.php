@@ -254,7 +254,9 @@ function supplier_invoice_rec_prepare_head($object)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+	if (($mode == 'customers' && isModEnabled('facture') && !empty($user->rights->facture->lire))
+		|| ($mode = 'suppliers') && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && !empty($user->rights->facture->lire)
+		) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -1070,7 +1072,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 	$result = '';
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$facstatic = new FactureFournisseur($db);
 
 		$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut as status, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";

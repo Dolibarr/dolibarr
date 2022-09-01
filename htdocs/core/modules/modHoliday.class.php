@@ -140,7 +140,7 @@ class modHoliday extends DolibarrModules
 		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(
-				'label' => 'HolidayBalanceMonthlyUpdate',
+				'label' => 'HolidayBalanceMonthlyUpdate:holiday',
 				'jobtype' => 'method',
 				'class' => 'holiday/class/holiday.class.php',
 				'objectname' => 'Holiday',

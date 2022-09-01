@@ -185,7 +185,9 @@ if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
 	$withProjectUrl = "&withproject=1";
+
 	$head = project_prepare_head($projectstatic);
+
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
 	$param = ($mode == 'mine' ? '&mode=mine' : '');
@@ -468,6 +470,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = conferenceorboothPrepareHead($object, $withproject);
+
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
 	$formconfirm = '';

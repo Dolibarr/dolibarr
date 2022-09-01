@@ -369,6 +369,7 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->facture)) {
 		$user->rights->facture = new stdClass();
+		$user->rights->facture->invoice_advance = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
@@ -376,6 +377,7 @@ if ($ispaymentok) {
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
+	$user->rights->facture->invoice_advance->validate = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
 	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0) {
@@ -537,11 +539,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -850,7 +852,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -967,7 +969,7 @@ if ($ispaymentok) {
 							}
 						}
 
-						if (!$error && !empty($conf->banque->enabled)) {
+						if (!$error && isModEnabled("banque")) {
 							$bankaccountid = 0;
 							if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 							elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1087,7 +1089,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1203,7 +1205,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1412,7 +1414,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;

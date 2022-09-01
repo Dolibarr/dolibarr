@@ -404,8 +404,6 @@ $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 
-// llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
-
 $sql = "SELECT";
 if ($search_all || $search_product_category > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -635,7 +633,7 @@ if (!$search_all) {
 	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
 	$sql .= " f.note_public, f.note_private,";
 	$sql .= " f.fk_user_author,";
-	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
+	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
@@ -1012,7 +1010,7 @@ if ($resql) {
 	}
 	// Thirpdarty
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
+		print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.($socid > 0 ? " disabled" : "").'></td>';
 	}
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
@@ -1464,8 +1462,8 @@ if ($resql) {
 			}
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
-				print '<td class="nocellnopadd center">';
-				print $obj->zip;
+				print '<td class="nocellnopadd center tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">';
+				print dol_escape_htmltag($obj->zip);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

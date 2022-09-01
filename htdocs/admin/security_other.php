@@ -61,14 +61,17 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		dol_print_error($db);
 	}
 } elseif ($action == 'updateform') {
-	$res1 = 1; $res2 = 1;
+	$res1 = 1; $res2 = 1; $res3 = 1;
 	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
 		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($res1 && $res2) {
+	if (GETPOSTISSET('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT')) {
+		$res3 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", GETPOST("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 'alphanohtml'), 'int', 0, '', $conf->entity);
+	}
+	if ($res1 && $res2 && $res3) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
@@ -174,6 +177,14 @@ print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text"
 print '</td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MaxNumberOfImagesInGetPost").'</td><td class="right">';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat right width50" name="MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT" type="text" value="'.dol_escape_htmltag($conf->global->MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT).'"> '.strtolower($langs->trans("Images"));
+print '</td>';
+print '</tr>';
+
 /*
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$conf->global->MAIN_APPLICATION_TITLE = "";
@@ -189,9 +200,9 @@ print '</tr>';
 
 print '</table>';
 
-print dol_get_fiche_end();
-
 print $form->buttonsSaveCancel("Modify", '');
+
+print dol_get_fiche_end();
 
 print '</form>';
 

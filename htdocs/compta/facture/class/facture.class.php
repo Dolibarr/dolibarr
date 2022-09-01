@@ -47,10 +47,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -598,10 +598,10 @@ class Facture extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
 			if (!empty($newlang)) {

@@ -172,7 +172,7 @@ if ($resql) {
  * Draft orders
  */
 
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -219,12 +219,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
  */
 
 $sql = "SELECT";
-if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= " DISTINCT";
 }
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";

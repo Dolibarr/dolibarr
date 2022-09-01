@@ -37,16 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langs->load("members");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	$langs->load("loan");
 }
-if (!empty($conf->salaries->enabled)) {
+if (isModEnabled('salaries')) {
 	$langs->load("salaries");
 }
 
@@ -580,7 +580,7 @@ if ($result) {
 		print "</tr>";
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Bank line

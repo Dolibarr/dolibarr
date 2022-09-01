@@ -33,6 +33,8 @@
  *		\brief      Page to list all contacts
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -44,6 +46,7 @@ $langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $socialnetworks = getArrayOfSocialNetworks();
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -207,16 +210,16 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields to fields for list
-$arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>22, 'checked'=>0);
+$arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>66, 'checked'=>0);
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
-	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>25, 'checked'=>1);
+	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>113, 'checked'=> 1);
 }
 
 $arrayfields['unsubscribed'] = array(
 		'label'=>'No_Email',
 		'checked'=>0,
 		'enabled'=>(!empty($conf->mailing->enabled)),
-		'position'=>41);
+		'position'=>111);
 
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
@@ -373,6 +376,7 @@ $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
+$sql .= " p.import_key,";
 $sql .= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectcontactlevel,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
@@ -752,7 +756,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		$moreforfilter .= '</div>';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && (empty($type) || $type == 'f')) {
+	if (isModEnabled("fournisseur") && (empty($type) || $type == 'f')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('SuppliersCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -1074,6 +1078,7 @@ while ($i < min($num, $limit)) {
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
 	$contactstatic->photo = $obj->photo;
+	$contactstatic->import_key = $obj->import_key;
 
 	$contactstatic->fk_prospectlevel = $obj->fk_prospectcontactlevel;
 
@@ -1309,9 +1314,10 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
+	// Import key
 	if (!empty($arrayfields['p.import_key']['checked'])) {
 		print '<td class="tdoverflowmax100">';
-		print $obj->import_key;
+		print dol_escape_htmltag($obj->import_key);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
