@@ -1075,7 +1075,7 @@ if ($resql) {
 		exit;
 	}
 
-    llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url);
 
 	$param = '';
 
@@ -1361,7 +1361,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
-	// If Categories are enabled & user has rights to see 
+	// If Categories are enabled & user has rights to see
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1533,9 +1533,8 @@ if ($resql) {
 		print '<input class="flat" type="text" size="4" name="search_total_vat" value="'.dol_escape_htmltag($search_total_vat).'">';
 		print '</td>';
 	}
-	// Total Amount (TTC / gross)   
+	// Total Amount (TTC / gross)
 	if (!empty($arrayfields['c.total_ttc']['checked'])) {
-		
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
@@ -1554,7 +1553,6 @@ if ($resql) {
 	}
 	// Amount HT/net in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
-		
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
 		print '</td>';
@@ -1597,15 +1595,15 @@ if ($resql) {
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
-	
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-	
+
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	// Date creation
 	if (!empty($arrayfields['c.datec']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1793,10 +1791,10 @@ if ($resql) {
 		),
 		'pos' => array(),
 	);
-	
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-	
+
 	// Hook fields
 	$parameters = array(
 		'arrayfields' => $arrayfields,
@@ -1996,7 +1994,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -2006,7 +2004,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -2016,7 +2014,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -2026,7 +2024,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>".$obj->state_name."</td>\n";
@@ -2034,7 +2032,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
@@ -2045,7 +2043,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
@@ -2072,7 +2070,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
 			print '<td class="center">';
@@ -2082,7 +2080,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Shipping Method
 		if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 			print '<td>';
@@ -2092,7 +2090,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Payment terms
 		if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 			print '<td>';
@@ -2102,7 +2100,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Payment mode
 		if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 			print '<td>';
@@ -2112,7 +2110,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
@@ -2122,7 +2120,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Amount HT/net
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
 			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
@@ -2138,7 +2136,7 @@ if ($resql) {
 				$totalarray['val']['c.total_ht'] = $obj->total_ht;
 			}
 		}
-		
+
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {
 			print '<td class="nowrap right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
@@ -2150,7 +2148,7 @@ if ($resql) {
 			}
 			$totalarray['val']['c.total_tva'] += $obj->total_tva;
 		}
-		
+
 		// Amount TTC / gross
 		if (!empty($arrayfields['c.total_ttc']['checked'])) {
 			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
@@ -2180,7 +2178,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Amount HT/net in foreign currency
 		if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
 			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
@@ -2285,7 +2283,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Total margin
 		if (!empty($arrayfields['total_margin']['checked'])) {
 			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
@@ -2297,7 +2295,7 @@ if ($resql) {
 			}
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
-		
+
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
 			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
@@ -2305,7 +2303,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Total mark rate
 		if (!empty($arrayfields['total_mark_rate']['checked'])) {
 			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
@@ -2494,7 +2492,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Import key
 		if (!empty($arrayfields['c.import_key']['checked'])) {
 			print '<td class="nowrap center">'.$obj->import_key.'</td>';
@@ -2502,7 +2500,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		
+
 		// Status
 		if (!empty($arrayfields['c.fk_statut']['checked'])) {
 			print '<td class="nowrap center">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';
