@@ -405,6 +405,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Set $cpts with array of accounts in the category/group
 				$cpts = $AccCat->getCptsCat($cat['rowid']);
+				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
+				if (empty($cpts)) $cpts[] = array();
+
 
 				$arrayofaccountforfilter = array();
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
@@ -477,7 +480,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Label of group
 				print '<td>';
 				print dol_escape_htmltag($cat['label']);
-				if (count($cpts) > 0) {    // Show example of 5 first accounting accounts
+				if (count($cpts) > 0 && !empty($cpts[0])) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
 						if ($i > 5) {
