@@ -274,6 +274,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 } elseif ($modecompta == "BOOKKEEPING") {
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats(); // WARNING: Computed groups must be after group they include
+	$unactive_cats = $AccCat->getCats(-1, 0);
 
 	/*
 	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
@@ -324,6 +325,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print '</td>';
 
 				$vars = array();
+
+				// Unactive categories have a total of 0 to be used in the formula.
+				foreach($unactive_cats as $un_cat) {
+					$vars[$un_cat['code']] = 0;
+				}
 
 				// Previous Fiscal year (N-1)
 				foreach ($sommes as $code => $det) {
