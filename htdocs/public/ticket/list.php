@@ -354,25 +354,25 @@ if ($action == "view_ticketlist") {
 			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid=t.fk_user_create";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid=t.fk_user_assign";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id=t.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON ec.fk_socpeople=sp.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code = t.type_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code = t.category_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code = t.severity_code";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as uc ON uc.rowid = t.fk_user_create";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = t.fk_user_assign";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec ON ec.element_id = t.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON ec.fk_socpeople = sp.rowid";
 		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
 		$sql .= " AND tc.element='".$db->escape($object->element)."'";
-		$sql .= " AND tc.active=1)";
-		$sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
-		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
-		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."'))";
+		$sql .= " AND tc.active=1";
+		$sql .= " AND sp.email='".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
+		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
+		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
@@ -710,6 +710,8 @@ if ($action == "view_ticketlist") {
                     }
                 </script>';
 			}
+		} else {
+			dol_print_error($db);
 		}
 	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
