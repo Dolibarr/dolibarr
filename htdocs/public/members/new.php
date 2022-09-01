@@ -563,47 +563,47 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<input type="text" name="societe" class="minwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
-	
+
 	// Title
 	print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
 	print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
-	
+
 	// Lastname
 	print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
-	
+
 	// Firstname
 	print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
-	
+
 	// EMail
 	print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
 	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-	
+
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 		print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
 		print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass1", "none", 2)).'"></td></tr>'."\n";
 		print '<tr><td>'.$langs->trans("PasswordRetype").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
 	}
-	
+
 	// Gender  // TODO:  add diverse gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
 	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
 	print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
 	print '</td></tr>';
-	
+
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
-	
+
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 1, '', 'width75');
 	print ' / ';
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
-	
+
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
@@ -633,22 +633,22 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		}
 		print '</td></tr>';
 	}
-	
+
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
 	print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
 	print '</td></tr>'."\n";
-	
+
 	// Photo
 	print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
-	
+
 	// Public
 	print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
-	
+
 	// Other attributes
 	$tpl_context = 'public'; // define template context to public
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-	
+
 	// Comments
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
@@ -763,7 +763,6 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	print "<br>";
 	print '</div></div>';
 } else {  // Show the table of membership types
-	
 	// Get units
 	$measuringUnits = new CUnits($db);
 	$result = $measuringUnits->fetchAll('',	'',	0,	0, array('t.active' => 1));
