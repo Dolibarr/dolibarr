@@ -18,7 +18,7 @@
 -- invoice-propal, propal-order, etc...
 -- ============================================================================
 
-create table llx_element_properties
+CREATE TABLE llx_element_properties
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   element_type      varchar(64) NOT NULL,
