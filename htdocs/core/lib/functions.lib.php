@@ -10711,6 +10711,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
+	global $db;
 	$regs = array();
 
 	$classfile = $classname = $classpath = '';
@@ -10832,8 +10833,20 @@ function getElementProperties($element_type)
 		'classname' => $classname
 	);
 
-	// TODO : Add hook here but need to add cache for results if there is a hook (hook could add performance loss)
-	//  OR **store special elements in database in table like element_type and fetch it Once**
+
+
+	if (!class_exists('ElementProperties')) { require_once DOL_DOCUMENT_ROOT . '/core/class/elementproperties.class.php'; }
+	$elementProperties = new ElementProperties($db);
+	if ($elementProperties->fetch(null, $element_type)>0) {
+		$element_properties = array(
+			'module' => $elementProperties->module_name,
+			'classpath' => $elementProperties->class_dir,
+			'element' => $elementProperties->element,
+			'subelement' => $elementProperties->class_name,
+			'classfile' => $elementProperties->class_file,
+			'classname' => $elementProperties->class_name
+		);
+	}
 
 
 	return $element_properties;

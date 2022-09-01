@@ -1,6 +1,4 @@
 -- ============================================================================
--- Copyright (C) 2008-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2011		Regis Houssin		<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,14 +18,16 @@
 -- invoice-propal, propal-order, etc...
 -- ============================================================================
 
-create table llx_element_type
+create table llx_element_properties
 (
-  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
-  fk_element		integer NOT NULL,
-  element_type		varchar(64) NOT NULL,
-  element		    varchar(32) NOT NULL,
-  module_name		varchar(31) NOT NULL,
-  class_dir		text NOT NULL,
-  class_file		varchar(128) NOT NULL,
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  element_type      varchar(64) NOT NULL,
+  element           varchar(32) NOT NULL,
+  module_name       varchar(31) NOT NULL,
+  class_dir         text NOT NULL,
+  class_file        varchar(128) NOT NULL,
+  class_name        varchar(128) NOT NULL,
+  datec             datetime,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
