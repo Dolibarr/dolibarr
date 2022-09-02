@@ -16,11 +16,13 @@
  */
 
 /**
- *   	\file       target_card.php
- *		\ingroup    webhook
- *		\brief      Page to create/edit/view target
+ *    \file       target_card.php
+ *    \ingroup    webhook
+ *    \brief      Page to create/edit/view target
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -29,7 +31,7 @@ dol_include_once('/webhook/class/target.class.php');
 dol_include_once('/webhook/lib/webhook_target.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "other"));
+$langs->loadLangs(array('webhook', 'other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -69,6 +71,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
