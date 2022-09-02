@@ -29,7 +29,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 	public $require_module = array('contrat');
 
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
