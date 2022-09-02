@@ -932,9 +932,6 @@ class Propal extends CommonObject
 			$this->line->date_start = $date_start;
 			$this->line->date_end = $date_end;
 
-			// TODO deprecated
-			$this->line->price = $price;
-
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
 				foreach ($array_options as $key => $value) {
@@ -1135,7 +1132,7 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
-		$sql .= ", ".(! empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : 'NULL');
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
@@ -1741,7 +1738,7 @@ class Propal extends CommonObject
 		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";

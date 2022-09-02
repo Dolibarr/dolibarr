@@ -151,7 +151,7 @@ if ($invoice->socid > 0) {
 }
 
 // Change the currency of invoice if it was modified
-if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"])) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"])) {
 	if ($invoice->multicurrency_code != $_SESSION["takeposcustomercurrency"]) {
 		$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
 	}
@@ -185,7 +185,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
+		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("banque")) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -241,14 +241,14 @@ if (empty($reshook)) {
 			$error++;
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-		} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		} elseif (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 			$batch_rule = 0;
-			if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
@@ -437,13 +437,13 @@ if (empty($reshook)) {
 		$creditnote->update_price(1);
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-		if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		if (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 			$batch_rule = 0;
-			if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
@@ -546,10 +546,10 @@ if (empty($reshook)) {
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {
-				if ($conf->global->MARGIN_TYPE == 'pmp' && ! empty($prod->pmp)) {
+				if ($conf->global->MARGIN_TYPE == 'pmp' && !empty($prod->pmp)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->pmp;
-				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && ! empty($prod->cost_price)) {
+				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && !empty($prod->cost_price)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->cost_price;
 				} else {
@@ -1195,7 +1195,7 @@ $( document ).ready(function() {
 
 	$idwarehouse = 0;
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-	if (!empty($conf->stock->enabled)) {
+	if (isModEnabled('stock')) {
 		if (getDolGlobalString("$constantforkey") != "1") {
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			$idwarehouse = getDolGlobalString($constantforkey);
@@ -1231,7 +1231,7 @@ $( document ).ready(function() {
 
 	// Module Adherent
 	$s = '';
-	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid) {
+	if (isModEnabled('adherent') && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid) {
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$langs->load("members");
@@ -1352,7 +1352,7 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 		// In phone version only show when it is invoice page
 		if (empty($mobilepage) || $mobilepage == "invoice") {
 			print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">' . price($invoice->total_ht, 1, '', 1, -1, -1, $conf->currency) . '</span>';
-			if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+			if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 				//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 				include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 				$multicurrency = new MultiCurrency($db);
@@ -1368,7 +1368,7 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 	// In phone version only show when it is invoice page
 	if (empty($mobilepage) || $mobilepage == "invoice") {
 		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
-		if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+		if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 			//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 			include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 			$multicurrency = new MultiCurrency($db);
@@ -1600,7 +1600,7 @@ if ($placeid > 0) {
 
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (!empty($conf->stock->enabled) && !empty($user->rights->stock->mouvement->lire)) {
+				if (isModEnabled('stock') && !empty($user->rights->stock->mouvement->lire)) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (!empty($conf->global->$constantforkey) && $line->fk_product > 0 && empty($conf->global->TAKEPOS_HIDE_STOCK_ON_LINE)) {
 						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
@@ -1637,7 +1637,7 @@ if ($placeid > 0) {
 				if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
 					$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 					$htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
-					if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+					if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 						//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 						include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 						$multicurrency = new MultiCurrency($db);
@@ -1648,7 +1648,7 @@ if ($placeid > 0) {
 				}
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-				if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+				if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 					$multicurrency = new MultiCurrency($db);

@@ -316,7 +316,9 @@ class User extends CommonObject
 	 * @var stdClass To store personal config
 	 */
 	public $conf;
-	public $default_values; // To store default values for user
+
+	public $default_values; // To store default values for user. Loaded by loadDefaultValues().
+
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
 
@@ -466,14 +468,14 @@ class User extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
 
 		if ($entity < 0) {
-			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
+			if ((!isModEnabled('multicompany') || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
 				$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
 		} else {
 			// The fetch was forced on an entity
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
 				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
@@ -588,7 +590,7 @@ class User extends CommonObject
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
-				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) {
+				if (!isModEnabled('multicompany') && $this->admin && $this->entity == 1) {
 					$this->entity = 0;
 				}
 
@@ -739,7 +741,7 @@ class User extends CommonObject
 
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
-		if (! empty($tmp[1])) {
+		if (!empty($tmp[1])) {
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];
@@ -1130,7 +1132,7 @@ class User extends CommonObject
 		$sql .= " WHERE r.id = ur.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			// on old version, we use entity defined into table r only
-			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
+			$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
 			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
 			// So we must include the filter on entity on both table r. and ur.
@@ -1188,7 +1190,7 @@ class User extends CommonObject
 		$sql .= " ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = gr.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 			} else {
 				$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -2825,7 +2827,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -3661,7 +3663,7 @@ class User extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid";

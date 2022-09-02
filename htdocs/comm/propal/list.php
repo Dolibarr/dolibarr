@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	$langs->loadLangs(array('sendings'));
 }
 
@@ -218,7 +218,7 @@ $arrayfields = array(
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'p.date_signature'=>array('label'=>"DateSigning", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
-	'p.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'enabled'=>!empty($conf->expedition->enabled)),
+	'p.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'enabled'=>isModEnabled("expedition")),
 	'p.fk_input_reason'=>array('label'=>"Origin", 'checked'=>0, 'enabled'=>1),
 	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0),
 	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
@@ -1057,7 +1057,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1065,7 +1065,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'), 1);
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');

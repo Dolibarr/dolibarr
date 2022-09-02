@@ -26,6 +26,8 @@
  * \brief   Page to show product prices by customer
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -38,13 +40,17 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("products", "companies", "bills"));
 
-$action = GETPOST('action', 'aZ09');
-$search_prod = GETPOST('search_prod', 'alpha');
-$cancel = GETPOST('cancel', 'alpha');
-$search_label = GETPOST('search_label', 'alpha');
-$search_price = GETPOST('search_price');
+
+// Get parameters
+$action 		= GETPOST('action', 'aZ09');
+$search_prod 	= GETPOST('search_prod', 'alpha');
+$cancel 		= GETPOST('cancel', 'alpha');
+$search_label 	= GETPOST('search_label', 'alpha');
+$search_price 	= GETPOST('search_price');
 $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
@@ -54,6 +60,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+// Initialize objects
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

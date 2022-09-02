@@ -974,6 +974,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->trackid = 'tas'.$object->id;
 			} elseif (preg_match('/^TICKET_/', $action)) {
 				$object->trackid = 'tic'.$object->id;
+			} elseif (preg_match('/^USER_/', $action)) {
+				$object->trackid = 'use'.$object->id;
 			} else {
 				$object->trackid = '';
 			}
@@ -987,7 +989,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		*/
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		// Add entry in event table
 		$now = dol_now();

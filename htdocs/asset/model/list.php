@@ -126,7 +126,7 @@ $permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rig
 $permissiontodelete = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->asset->delete) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->asset->model_advance->delete)));
 
 // Security check
-if (empty($conf->asset->enabled)) {
+if (!isModEnabled('asset')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -140,7 +140,7 @@ if ($user->socid > 0) {
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!$permissiontoread) accessforbidden();
 
 /*

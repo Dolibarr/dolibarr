@@ -882,7 +882,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		}
 		*/
 		/* TODO
-		else if (! empty($object->availability_code))
+		else if (!empty($object->availability_code))
 		{
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->SetTextColor(200,0,0);

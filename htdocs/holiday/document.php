@@ -239,7 +239,7 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">'."\n";
 	print '<tbody>';
 
-	if (! empty($object->fk_user_create)) {
+	if (!empty($object->fk_user_create)) {
 		$userCreate=new User($db);
 		$userCreate->fetch($object->fk_user_create);
 		print '<tr>';

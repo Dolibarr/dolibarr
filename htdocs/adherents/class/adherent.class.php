@@ -663,6 +663,10 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 		$nbrowsaffected = 0;
 		$error = 0;
 
@@ -1104,7 +1108,7 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1773,7 +1777,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Add line to draft invoice
 				$idprodsubscription = 0;
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || isModEnabled("service"))) {
 					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
 				}
 
@@ -1865,10 +1869,10 @@ class Adherent extends CommonObject
 				$outputlangs = $langs;
 				$newlang = '';
 				$lang_id = GETPOST('lang_id');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($lang_id)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $customer->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2057,7 +2061,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && !empty($conf->mailmanspip->enabled)) {
+		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_mailman($this);
 
 			if ($result < 0) {
@@ -2077,7 +2081,7 @@ class Adherent extends CommonObject
 		}
 
 		// spip
-		if (!empty($conf->global->ADHERENT_USE_SPIP) && !empty($conf->mailmanspip->enabled)) {
+		if (!empty($conf->global->ADHERENT_USE_SPIP) && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2128,7 +2132,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		if ($conf->global->ADHERENT_USE_SPIP && !empty($conf->mailmanspip->enabled)) {
+		if ($conf->global->ADHERENT_USE_SPIP && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->del_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;

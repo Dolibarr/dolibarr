@@ -33,6 +33,8 @@
  *		\brief      Page to list all contacts
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -44,6 +46,7 @@ $langs->loadLangs(array("companies", "suppliers", "categories"));
 
 $socialnetworks = getArrayOfSocialNetworks();
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -80,7 +83,7 @@ if (!empty($conf->mailing->enabled)) {
 } else {
 	$search_no_email = -1;
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			$search_[$key] = GETPOST("search_".$key, 'alpha');
@@ -218,7 +221,7 @@ $arrayfields['unsubscribed'] = array(
 		'enabled'=>(!empty($conf->mailing->enabled)),
 		'position'=>111);
 
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			$arrayfields['p.'.$key] = array(
@@ -286,7 +289,7 @@ if (empty($reshook)) {
 		$search_fax = "";
 		$search_email = "";
 		$search_no_email = -1;
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
 					$search_[$key] = "";
@@ -496,7 +499,7 @@ if (strlen($search_phone_mobile)) {
 if (strlen($search_fax)) {
 	$sql .= natural_search('p.fax', $search_fax);
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
 			$sql .= " AND p.socialnetworks LIKE '%\"".$key."\":\"".$search_[$key]."%'";
@@ -731,7 +734,7 @@ if ($search_firstlast_only) {
 }
 
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ContactCategoriesShort');
@@ -753,7 +756,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		$moreforfilter .= '</div>';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && (empty($type) || $type == 'f')) {
+	if (isModEnabled("fournisseur") && (empty($type) || $type == 'f')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('SuppliersCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -828,14 +831,14 @@ if (!empty($arrayfields['p.town']['checked'])) {
 	print '</td>';
 }
 // State
-/*if (! empty($arrayfields['state.nom']['checked']))
+/*if (!empty($arrayfields['state.nom']['checked']))
  {
  print '<td class="liste_titre">';
  print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
  print '</td>';
  }
  // Region
- if (! empty($arrayfields['region.nom']['checked']))
+ if (!empty($arrayfields['region.nom']['checked']))
  {
  print '<td class="liste_titre">';
  print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
@@ -877,7 +880,7 @@ if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
 	print '</td>';
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
 			if (!empty($arrayfields['p.'.$key]['checked'])) {
@@ -978,8 +981,8 @@ if (!empty($arrayfields['p.zip']['checked'])) {
 if (!empty($arrayfields['p.town']['checked'])) {
 	print_liste_field_titre($arrayfields['p.town']['label'], $_SERVER["PHP_SELF"], "p.town", $begin, $param, '', $sortfield, $sortorder);
 }
-//if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-//if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
+//if (!empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+//if (!empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "co.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 }
@@ -1001,7 +1004,7 @@ if (!empty($arrayfields['p.email']['checked'])) {
 if (!empty($arrayfields['unsubscribed']['checked'])) {
 	print_liste_field_titre($arrayfields['unsubscribed']['label'], $_SERVER["PHP_SELF"], "unsubscribed", $begin, $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($conf->socialnetworks->enabled)) {
+if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
 			print_liste_field_titre($arrayfields['p.'.$key]['label'], $_SERVER["PHP_SELF"], "p.".$key, $begin, $param, '', $sortfield, $sortorder);
@@ -1147,13 +1150,13 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	// State
-	/*if (! empty($arrayfields['state.nom']['checked']))
+	/*if (!empty($arrayfields['state.nom']['checked']))
 	{
 		print "<td>".$obj->state_name."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Region
-	if (! empty($arrayfields['region.nom']['checked']))
+	if (!empty($arrayfields['region.nom']['checked']))
 	{
 		print "<td>".$obj->region_name."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
@@ -1216,7 +1219,7 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
-	if (!empty($conf->socialnetworks->enabled)) {
+	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
 				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';

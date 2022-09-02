@@ -30,6 +30,7 @@ if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -45,8 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
+// Security check
 if (!$user->rights->website->read) {
 	accessforbidden();
 }
@@ -748,7 +751,6 @@ if ($action == 'addcontainer' && $usercanedit) {
 				$objectpage->content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $objectpage->content);
 				$objectpage->content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $objectpage->content);
 
-				$absoluteurlinaction = $urltograbdirwithoutslash;
 				// TODO Replace 'action="$urltograbdirwithoutslash' into action="/"
 				// TODO Replace 'action="$urltograbdirwithoutslash..."' into   action="..."
 				// TODO Replace 'a href="$urltograbdirwithoutslash' into a href="/"
@@ -828,7 +830,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						$fp = fopen($filetosave, "w");
 						fputs($fp, $tmpgeturl['content']);
 						fclose($fp);
-						if (! empty($conf->global->MAIN_UMASK))
+						if (!empty($conf->global->MAIN_UMASK))
 							@chmod($file, octdec($conf->global->MAIN_UMASK));
 					}
 					*/
@@ -897,7 +899,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						//$fp = fopen($filetosave, "w");
 						//fputs($fp, $tmpgeturl['content']);
 						//fclose($fp);
-						//if (! empty($conf->global->MAIN_UMASK))
+						//if (!empty($conf->global->MAIN_UMASK))
 						//	@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 						//	$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -905,7 +907,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
-						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflicit with CSS of Dolibarr.
+						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflict with CSS of Dolibarr.
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 						$lesscobj = new Lessc();
 						try {
@@ -2764,7 +2766,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled);
 
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
 				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.urlencode($website->ref), $disabled);
 			}
@@ -3945,7 +3947,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td></tr>';
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 		$langs->load('categories');
 
 		if (!GETPOSTISSET('categories')) {
@@ -4267,7 +4269,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '</div>';
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 		print '<div class="tagtr">';
 		print '<div class="tagtd paddingrightonly marginrightonly opacitymedium tdoverflowmax100onsmartphone" style="padding-right: 10px !important">';
 		print $langs->trans("Category");
@@ -4401,7 +4403,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 					// Categories - Tags
 					print '<td>';
-					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+					if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 						// Get current categories
 						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
 						if (is_array($existing)) {
@@ -4732,7 +4734,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-		if (! empty($conf->global->MAIN_UMASK))
+		if (!empty($conf->global->MAIN_UMASK))
 			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
 
 		// Output file on browser

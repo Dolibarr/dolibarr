@@ -337,7 +337,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print "<td><input type=\"text\" size=\"30\" name=\"label\" value=\"".$object->label."\" /> ";
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -353,7 +353,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -362,7 +362,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.$object->classesname.'" /> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -371,7 +371,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -380,7 +380,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.$object->methodename.'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -545,8 +545,15 @@ if (($action == "create") || ($action == "edit")) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$reg = array();
+	if (preg_match('/:(.*)$/', $object->label, $reg)) {
+		$langs->load($reg[1]);
+	}
+
+	$labeltoshow =  preg_replace('/:.*$/', '', $object->label);
+
 	$morehtmlref = '<div class="refidno">';
-	$morehtmlref .= $langs->trans($object->label);
+	$morehtmlref .= $langs->trans($labeltoshow);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
@@ -605,7 +612,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {

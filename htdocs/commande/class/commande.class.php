@@ -31,7 +31,7 @@
 /**
  *  \file       htdocs/commande/class/commande.class.php
  *  \ingroup    commande
- *  \brief      Fichier des classes de commandes
+ *  \brief      class for orders
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
@@ -93,12 +93,12 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int Thirparty ID
+	 * @var int Thirdparty ID
 	 */
 	public $socid;
 
 	/**
-	 * @var string Thirparty ref of order
+	 * @var string Thirdparty ref of order
 	 */
 	public $ref_client;
 
@@ -967,7 +967,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
-		$sql .= ", ".(! empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
+		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", ".($this->availability_id > 0 ? ((int) $this->availability_id) : "null");
@@ -1782,7 +1782,7 @@ class Commande extends CommonOrder
 			$this->lines[] = $line;
 
 			/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-			 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
+			 if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
 			 {
 			 $prod = new Product($this->db);
 			 $prod->fetch($idproduct);
@@ -3355,7 +3355,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_user_valid=".((isset($this->user_valid) && $this->user_valid > 0) ? $this->user_valid : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(! empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
+		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? strval($this->deposit_percent) : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
 		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
@@ -3710,7 +3710,7 @@ class Commande extends CommonOrder
 
 		$result = '';
 
-		if (!empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) {
+		if (isModEnabled("expedition") && ($option == '1' || $option == '2')) {
 			$url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
 		} else {
 			$url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;

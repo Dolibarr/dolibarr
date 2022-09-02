@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -47,9 +47,6 @@ $allow_disable_encryption = true;
 if ($action == 'setgeneraterule') {
 	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
-	} else {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	}
 }
 
@@ -94,8 +91,6 @@ if ($action == 'activate_encrypt') {
 	//exit;
 	if (!$error) {
 		$db->commit();
-		header("Location: security.php");
-		exit;
 	} else {
 		$db->rollback();
 		dol_print_error($db, '');
@@ -106,8 +101,6 @@ if ($action == 'activate_encrypt') {
 	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
 	}
-	header("Location: security.php");
-	exit;
 }
 
 if ($action == 'activate_encryptdbpassconf') {
@@ -138,12 +131,8 @@ if ($action == 'activate_encryptdbpassconf') {
 
 if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK') {
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1', 'chaine', 0, '', $conf->entity);
-	header("Location: security.php");
-	exit;
 } elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK') {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", $conf->entity);
-	header("Location: security.php");
-	exit;
 }
 
 if ($action == 'updatepattern') {
@@ -387,9 +376,9 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 // Cryptage mot de passe
 print '<br>';
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
+print '<input type="hidden" name="action" value="encrypt">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -408,7 +397,7 @@ if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 print '</td>';
 if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td align="center" width="100">';
-	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
+	print '<a class="reposition" href="security.php?action=activate_encrypt&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 
@@ -418,7 +407,7 @@ if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {
 		print '-';
 	}
@@ -444,10 +433,10 @@ if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 	print img_warning($langs->trans("WarningPassIsEmpty"));
 } else {
 	if (empty($dolibarr_main_db_encrypted_pass)) {
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Activate").'</a>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=activate_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	}
 	if (!empty($dolibarr_main_db_encrypted_pass)) {
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Disable").'</a>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	}
 }
 print "</td>";
@@ -467,12 +456,12 @@ if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 print '</td>';
 if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Activate").'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }
 print "</td>";

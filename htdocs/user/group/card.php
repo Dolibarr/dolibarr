@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('groupcard', 'globalcard'));
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
 	accessforbidden();
 }
 
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$object->entity = 0;
 				} else {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
@@ -215,7 +215,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
 				$object->entity = GETPOST("entity", "int");
@@ -274,7 +274,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Multicompany
-	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+	if (isModEnabled('multicompany') && is_object($mc)) {
 		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
@@ -348,7 +348,7 @@ if ($action == 'create') {
 			}
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+			if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -520,7 +520,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfieldedit">'."\n";
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);

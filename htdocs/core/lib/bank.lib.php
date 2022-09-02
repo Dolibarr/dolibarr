@@ -157,6 +157,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][1] = $langs->trans("BanklineExtraFields");
+	$head[$h][2] = 'bankline_extrafields';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 

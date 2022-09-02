@@ -363,17 +363,35 @@ if (is_array($search_groupby) && count($search_groupby)) {
 		// Add a protection/error to refuse the request if number of differentr values for the group by is higher than $MAXUNIQUEVALFORGROUP
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
-			if (strpos($fieldtocount, 'te.') === 0) {
+			if (strpos($fieldtocount, 'te.') === 0) {			// This is an extrafield
 				//if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
 				//      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
 				//}
 				$keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
-			} else {
-				$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+				$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			} elseif (strpos($fieldtocount, 't__') === 0) {		// This is a field of a foreign key
+				$reg = array();
+				if (preg_match('/^(.*)\.(.*)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\..*$/', '', $gvalwithoutprefix);
+					$gvalwithoutprefix = preg_replace('/t__/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
+			} else {											// This is a common field
+				$reg = array();
+				if (preg_match('/^(.*)\-(year|month|day)/', $gvalwithoutprefix, $reg)) {
+					$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield).'-'.$reg[2];
+				} else {
+					$keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+					$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+				}
 			}
-			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
-			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
+			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix.' '.$fieldtocount.' '.$keyforlabeloffield);
+			//var_dump($object->fields);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
@@ -1247,7 +1265,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if (! empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;

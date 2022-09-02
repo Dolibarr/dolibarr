@@ -47,10 +47,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -598,10 +598,10 @@ class Facture extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
 			if (!empty($newlang)) {
@@ -1587,7 +1587,7 @@ class Facture extends CommonInvoice
 		$amountdeposit = array();
 		$descriptions = array();
 
-		if (! empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
+		if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
 
 			$TTotalByTva = array();
@@ -1596,8 +1596,8 @@ class Facture extends CommonInvoice
 					continue;
 				}
 				$TTotalByTva[$line->tva_tx] += $line->total_ttc;
-				$descriptions[$line->tva_tx] .= '<li>' . (! empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
-				$descriptions[$line->tva_tx] .= (! empty($line->product_label) ? $line->product_label . ' - ' : '');
+				$descriptions[$line->tva_tx] .= '<li>' . (!empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
+				$descriptions[$line->tva_tx] .= (!empty($line->product_label) ? $line->product_label . ' - ' : '');
 				$descriptions[$line->tva_tx] .= $langs->trans('Qty') . ' : ' . $line->qty;
 				$descriptions[$line->tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($line->total_ht) . '</li>';
 			}
@@ -1623,8 +1623,8 @@ class Facture extends CommonInvoice
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 				$tva_tx = $lines[$i]->tva_tx;
 				$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $origin->deposit_percent) / 100;
-				$descriptions[$tva_tx] .= '<li>' . (! empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
-				$descriptions[$tva_tx] .= (! empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_tx] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
+				$descriptions[$tva_tx] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
 				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
 				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
@@ -1644,7 +1644,7 @@ class Facture extends CommonInvoice
 			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
 
 			// Hidden conf
-			if (! empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
+			if (!empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && !empty($descriptions[$tva])) {
 				$descline .= '<ul>' . $descriptions[$tva] . '</ul>';
 			}
 
@@ -1739,7 +1739,7 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
-		if (! empty($autoValidateDeposit)) {
+		if (!empty($autoValidateDeposit)) {
 			$validateReturn = $deposit->validate($user, '', 0, $notrigger);
 
 			if ($validateReturn < 0) {

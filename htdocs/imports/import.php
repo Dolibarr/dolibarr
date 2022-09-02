@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +394,7 @@ if ($step == 1 || !$datatoimport) {
 			print $objimport->array_import_label[$key];
 			print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key]) {
-				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
 			} else {
 				print $langs->trans("NotEnoughPermissions");
 			}
@@ -498,7 +499,7 @@ if ($step == 2 && $datatoimport) {
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
-		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15x"').'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15"').'</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -625,7 +626,7 @@ if ($step == 3 && $datatoimport) {
 	$maxfilesizearray = getMaxFileSizeArray();
 	$maxmin = $maxfilesizearray['maxmin'];
 	if ($maxmin > 0) {
-		$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
@@ -635,29 +636,29 @@ if ($step == 3 && $datatoimport) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
-			$maxphp = $maxphp * 1;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp)) {
-			$maxphp = $maxphp * 1024 * 1024 * 1024;
+			$maxphp = (int) substr($maxphp, 0, -1) * 1024 * 1024 * 1024;
 		}
 		$maxphp2 = @ini_get('post_max_size'); // In unknown
 		if (preg_match('/k$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1;
 		}
 		if (preg_match('/m$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024;
 		}
 		if (preg_match('/g$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024;
 		}
 		if (preg_match('/t$/i', $maxphp2)) {
-			$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+			$maxphp2 = (int) substr($maxphp2, 0, -1) * 1024 * 1024 * 1024;
 		}
 		// Now $max and $maxphp and $maxphp2 are in Kb
 		$maxmin = $max;
@@ -726,7 +727,7 @@ if ($step == 3 && $datatoimport) {
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td style="text-align:right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15"').'</a>';
 			print '</td>';
 			print '</tr>';
 		}
@@ -1584,7 +1585,7 @@ if ($step == 5 && $datatoimport) {
 		$param .= '&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 5);
 
@@ -2050,7 +2051,7 @@ if ($step == 6 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 6);
 

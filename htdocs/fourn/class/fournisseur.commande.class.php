@@ -36,7 +36,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
@@ -1959,7 +1959,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc = $total_ttc;
 			$this->line->product_type = $type;
-			$this->line->special_code = $special_code;
+			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
@@ -2831,7 +2831,7 @@ class CommandeFournisseur extends CommonOrder
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (! empty($this->line->packaging) && ($qty % $this->line->packaging) > 0) {
+					if (!empty($this->line->packaging) && ($qty % $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
@@ -2858,7 +2858,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc      = $total_ttc;
 			$this->line->product_type   = $type;
-			$this->line->special_code   = $this->special_code;
+			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
 			$this->line->origin         = $this->origin;
 			$this->line->fk_unit        = $fk_unit;
 
@@ -3367,7 +3367,7 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 			$qtydelivered = array();

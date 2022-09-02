@@ -131,7 +131,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->posxtva = 90;
 		$this->posxtotalttc = 180;
 
-		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxreffacturefourn -= 20;
 			$this->posxreffacture -= 20;
@@ -676,10 +676,10 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			}
 		}
 
-		if (! empty($conf->global->PDF_SHOW_PROJECT))
+		if (!empty($conf->global->PDF_SHOW_PROJECT))
 		{
 			$object->fetch_projet();
-			if (! empty($object->project->ref))
+			if (!empty($object->project->ref))
 			{
 				$outputlangs->load("projects");
 				$posy+=4;

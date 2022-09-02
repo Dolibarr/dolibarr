@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +250,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
 		print '<div class="backimagepublicticket">';
-		print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->TICKET_IMAGE_PUBLIC_INTERFACE.'">';
 		print '</div>';
 	}
 
@@ -560,7 +560,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	// Set $out to sow events
 	$out = '';
 
-	if (empty($conf->agenda->enabled)) {
+	if (!isModEnabled('agenda')) {
 		$langs->loadLangs(array("admin", "errors"));
 		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
@@ -697,8 +697,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			//	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
 			//}
 
-			if ($user->rights->agenda->allactions->create ||
-				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
+			if (!empty($user->rights->agenda->allactions->create) ||
+				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
 				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 

@@ -682,9 +682,6 @@ class Categories extends DolibarrApi
 		unset($object->total_ttc);
 		unset($object->total_tva);
 		unset($object->lines);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
 		unset($object->civility_id);
 		unset($object->name);
 		unset($object->lastname);

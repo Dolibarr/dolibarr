@@ -47,7 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->project->enabled)) {
@@ -324,8 +323,8 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -624,10 +623,10 @@ if (empty($reshook)) {
 						if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
 							}
 							if (!empty($newlang)) {
@@ -694,7 +693,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& ! empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -875,7 +874,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
-		// Define vat_rate
+		// Define a vat_rate for all lines
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
@@ -884,7 +883,7 @@ if (empty($reshook)) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
-		// Define vat_rate
+		// Define a discount for all lines
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
@@ -894,22 +893,36 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
-		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
-		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 
-		$prod_entry_mode = GETPOST('prod_entry_mode');
+		$price_ht = '';
+		$price_ht_devise = '';
+		$price_ttc = '';
+		$price_ttc_devise = '';
+
+		if (GETPOST('price_ht') !== '') {
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ht') !== '') {
+			$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		}
+		if (GETPOST('price_ttc') !== '') {
+			$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		}
+		if (GETPOST('multicurrency_price_ttc') !== '') {
+			$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		}
+
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx'))) : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), '', 2);
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
 		if (empty($remise_percent)) {
 			$remise_percent = 0;
 		}
@@ -930,7 +943,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && $price_ht === '' && $price_ht_devise === '' && $price_ttc === '' && $price_ttc_devise === '') { 	// Unit price can be 0 but not ''. Also price can be negative for proposal.
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
@@ -1077,13 +1090,15 @@ if (empty($reshook)) {
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
 
-				// if price ht is forced (ie: calculated by margin rate and cost price). TODO Why this ?
+				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				} elseif (!empty($price_ttc) || $price_ttc === '0') {
+					$pu_ttc = price2num($price_ttc, 'MU');
+					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
-					// On reevalue prix selon taux tva car taux tva transaction peut etre different
-					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+					// Is this still used ?
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
@@ -1170,16 +1185,22 @@ if (empty($reshook)) {
 				$fk_unit = $prod->fk_unit;
 			} else {
 				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				$pu_ttc = price2num($price_ttc, 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
+				if (empty($tva_tx)) {
+					$tva_npr = 0;
+				}
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $product_desc;
 				$type = GETPOST('type');
-
 				$fk_unit = GETPOST('units', 'alpha');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
+
+				if ($pu_ttc && !$pu_ht) {
+					$price_base_type = 'TTC';
+				}
 			}
 
 			// Margin
@@ -1298,7 +1319,7 @@ if (empty($reshook)) {
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		//$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
@@ -1382,7 +1403,14 @@ if (empty($reshook)) {
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
+			$pu = $pu_ht;
+			$price_base_type = 'HT';
+			if (empty($pu) && !empty($pu_ttc)) {
+				$pu = $pu_ttc;
+				$price_base_type = 'TTC';
+			}
+
+			$result = $object->updateline(GETPOST('lineid', 'int'), $pu, $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1750,7 +1778,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
 		print '<tr class="field_fk_account"><td class="titlefieldcreate">'.$langs->trans('BankAccount').'</td><td class="valuefieldcreate">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($soc->fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
@@ -1764,7 +1792,7 @@ if ($action == 'create') {
 
 	// Delivery delay
 	print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print ' ('.$langs->trans('AfterOrder').')';
 	}
 	print '</td><td class="valuefieldcreate">';
@@ -1773,7 +1801,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Shipping Method
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($soc->shipping_method_id)) {
 			$shipping_method_id = $soc->shipping_method_id;
 		}
@@ -2029,7 +2057,7 @@ if ($action == 'create') {
 
 		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && ! empty($user->rights->facture->creer)) {
+		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
 			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 			$object->fetchObjectLinked();
@@ -2078,7 +2106,7 @@ if ($action == 'create') {
 					'datenow' => true
 				);
 
-				if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+				if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 					$formquestion[] = array(
 						'type' => 'date',
 						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
@@ -2413,7 +2441,7 @@ if ($action == 'create') {
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 	} else {
 		print $langs->trans('AvailabilityPeriod');
@@ -2434,7 +2462,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Shipping Method
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('SendingMethod');
@@ -2552,7 +2580,7 @@ if ($action == 'create') {
 		print '</tr>';
 	}
 
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && !empty($conf->banque->enabled)) {
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && isModEnabled("banque")) {
 		// Bank Account
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -2696,7 +2724,7 @@ if ($action == 'create') {
 	 * Lines
 	 */
 
-	// Show object lines
+	// Get object lines
 	$result = $object->getLinesArray();
 
 	// Add products/services form
@@ -2704,7 +2732,7 @@ if ($action == 'create') {
 	global $inputalsopricewithtax;
 	$inputalsopricewithtax = 1;
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -2771,7 +2799,7 @@ if ($action == 'create') {
 					}
 				}
 				// Create event
-				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/
@@ -2781,7 +2809,7 @@ if ($action == 'create') {
 				}
 
 				// ReOpen
-				if ( (( ! empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
+				if ( (( !empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
@@ -2798,7 +2826,7 @@ if ($action == 'create') {
 				}
 
 				// Create a sale order
-				if (!empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('commande') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
@@ -2806,7 +2834,7 @@ if ($action == 'create') {
 
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL)) {
-					if ($object->statut == Propal::STATUS_SIGNED && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
+					if ($object->statut == Propal::STATUS_SIGNED && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order"))) {
 						if ($usercancreatepurchaseorder) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}
@@ -2814,7 +2842,7 @@ if ($action == 'create') {
 				}
 
 				// Create an intervention
-				if (!empty($conf->service->enabled) && !empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled("service") && !empty($conf->ficheinter->enabled) && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateintervention) {
 						$langs->load("interventions");
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
@@ -2822,7 +2850,7 @@ if ($action == 'create') {
 				}
 
 				// Create contract
-				if (!empty($conf->contrat->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('contrat') && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
@@ -2906,7 +2934,7 @@ if ($action == 'create') {
 
 		if ($object->statut != Propal::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 

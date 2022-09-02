@@ -275,7 +275,7 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 	print '<td>';
 	$addadmin = '';
 	if (property_exists($object, 'admin')) {
-		if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 		} elseif (!empty($object->admin)) {
 			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
@@ -295,7 +295,7 @@ if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
 // If edited user is an extern user, we show warning for external users
-if (! empty($object->socid)) {
+if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
@@ -353,7 +353,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;
@@ -420,7 +420,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;

@@ -815,15 +815,15 @@ class pdf_azur extends ModelePDFPropales
 								foreach ($filetomerge->lines as $linefile) {
 									if (!empty($linefile->id) && !empty($linefile->file_name)) {
 										if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
@@ -1129,7 +1129,7 @@ class pdf_azur extends ModelePDFPropales
 				// Nothing to do
 			} else {
 				//Local tax 1 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1159,7 +1159,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 				//}
 				//Local tax 2 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1221,7 +1221,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 
 				//Local tax 1 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
@@ -1251,7 +1251,7 @@ class pdf_azur extends ModelePDFPropales
 				}
 				//}
 				//Local tax 2 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
@@ -1299,7 +1299,7 @@ class pdf_azur extends ModelePDFPropales
 
 		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if (! empty($object->paye)) $resteapayer=0;
+		if (!empty($object->paye)) $resteapayer=0;
 		*/
 
 		if ($deja_regle > 0) {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -332,7 +332,9 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+$title = $langs->trans("CreateMvts");
+
+llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -341,7 +343,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+	print load_fiche_titre($title);
 
 	$object = new BookKeeping($db);
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
@@ -540,21 +542,24 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document export
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
-		print '<td>';
-		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+		// Don't show in tmp mode, inevitably empty
+		if ($mode != "_tmp") {
+			// Date document export
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
+			print '<td>';
+			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
 
-		// Date document validation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
-		print '<td>';
-		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
+			// Date document validation
+			print '<tr>';
+			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
+			print '<td>';
+			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+			print '</td>';
+			print '</tr>';
+		}
 
 		// Validate
 		/*
