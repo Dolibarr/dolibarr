@@ -97,6 +97,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 
 $accounting = new AccountingAccount($db);
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('accountancyadminaccount'));
+
 
 /*
  * Actions
@@ -109,8 +112,8 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been monowraponalldified by some hooks
+$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $accounting, $action); // Note that $action and $object may have been monowraponalldified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -398,6 +401,11 @@ if ($resql) {
 	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
 	print '<br>';
+
+	$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $accounting, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;

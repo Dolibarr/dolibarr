@@ -214,7 +214,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
-		if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
+		if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb) {
 				$langs->load("orders");
@@ -369,7 +369,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
 				$stringtoshow .= '&nbsp;';
 			}
-			if (!empty($conf->commande->enabled) || !empty($user->rights->commande->lire)) {
+			if (isModEnabled('commande') || !empty($user->rights->commande->lire)) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb ? ' checked' : '').'> '.$langs->trans("ForCustomersOrders");
 			}
 			if (isModEnabled('facture') || !empty($user->rights->facture->lire)) {

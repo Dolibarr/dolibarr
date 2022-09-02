@@ -180,13 +180,13 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
-//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
@@ -226,7 +226,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -239,7 +239,7 @@ if (!empty($conf->commande->enabled)) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (! empty($conf->expedition->enabled))
+//if (!empty($conf->expedition->enabled))
 //{
 
 print '<tr class="oddeven">';
@@ -394,7 +394,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if (!empty($conf->invoice->enabled)) {
+if (isModEnabled('facture')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -408,7 +408,7 @@ if (!empty($conf->invoice->enabled)) {
 	print "</tr>\n";
 }
 
-if (!empty($conf->order->enabled)) {
+if (isModEnabled('commande')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';
@@ -763,7 +763,7 @@ print "</td>\n";
 print "</tr>\n";
 
 /* Disabled. Would be better to be managed with a user cookie
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
 	print '<td class="right">';

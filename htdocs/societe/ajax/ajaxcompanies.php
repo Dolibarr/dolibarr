@@ -125,7 +125,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int
 	if ($resql) {
 		while ($row = $db->fetch_array($resql)) {
 			$label = '';
-			if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
+			if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST)) {
 				if (($row['client']) && (!empty($row['code_client']))) {
 					$label = $row['code_client'].' - ';
 				}

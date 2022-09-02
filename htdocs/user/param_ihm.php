@@ -192,19 +192,19 @@ if (isModEnabled("societe")) {
 if (!empty($conf->project->enabled)) {
 	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
 }
-if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
+if (isModEnabled('holiday') || isModEnabled('expensereport')) {
 	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
 }
 if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
 }
-if (isModEnabled("propal") || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
+if (isModEnabled("propal") || isModEnabled('commande') || !empty($conf->ficheinter->enabled) || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
 if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
 	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
 }
 if (isModEnabled('agenda')) {
@@ -415,7 +415,7 @@ if ($action == 'edit') {
 			print $object->conf->MAIN_LANDING_PAGE;
 		}
 	}
-	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
+	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (!empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
 
 	// Landing page for Agenda - AGENDA_DEFAULT_VIEW

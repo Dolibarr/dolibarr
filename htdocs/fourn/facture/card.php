@@ -277,7 +277,7 @@ if (empty($reshook)) {
 				$newlang = GETPOST('lang_id','aZ09');
 			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
 				$newlang = $object->thirdparty->default_lang;
-			if (! empty($newlang)) {
+			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
@@ -2465,7 +2465,7 @@ if ($action == 'create') {
 	}
 
 	// Intracomm report
-	if (!empty($conf->intracommreport->enabled)) {
+	if (isModEnabled('intracommreport')) {
 		$langs->loadLangs(array("intracommreport"));
 		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
 		$form->selectTransportMode(GETPOSTISSET('transport_mode_id') ? GETPOST('transport_mode_id') : $transport_mode_id, 'transport_mode_id');
@@ -2692,7 +2692,7 @@ if ($action == 'create') {
 				$action = '';
 			} else {
 				$text = $langs->trans('ConfirmValidateBill', $numref);
-				/*if (! empty($conf->notification->enabled))
+				/*if (!empty($conf->notification->enabled))
 				 {
 				 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 				 $notify=new Notify($db);
@@ -3137,7 +3137,7 @@ if ($action == 'create') {
 		}
 
 		// Intracomm report
-		if (!empty($conf->intracommreport->enabled)) {
+		if (isModEnabled('intracommreport')) {
 			$langs->loadLangs(array("intracommreport"));
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
@@ -3588,7 +3588,7 @@ if ($action == 'create') {
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-		//if (! empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
+		//if (!empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
 		if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
 			$senderissupplier = 1;
 		}
@@ -3741,7 +3741,7 @@ if ($action == 'create') {
 				}
 
 				// Create event
-				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/

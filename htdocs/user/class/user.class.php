@@ -741,7 +741,7 @@ class User extends CommonObject
 
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
-		if (! empty($tmp[1])) {
+		if (!empty($tmp[1])) {
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];

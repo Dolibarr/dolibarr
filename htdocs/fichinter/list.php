@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
@@ -46,7 +46,7 @@ $langs->loadLangs(array('companies', 'bills', 'interventions'));
 if (!empty($conf->project->enabled)) {
 	$langs->load("projects");
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$langs->load("contracts");
 }
 
@@ -205,7 +205,7 @@ $companystatic = new Societe($db);
 if (!empty($conf->project->enabled)) {
 	$projetstatic = new Project($db);
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$contratstatic = new Contrat($db);
 }
 
@@ -237,7 +237,7 @@ $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.s
 if (!empty($conf->project->enabled)) {
 	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_customer, c.ref_supplier as contrat_ref_supplier";
 }
 // Add fields from extrafields
@@ -254,7 +254,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 if (!empty($conf->project->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {

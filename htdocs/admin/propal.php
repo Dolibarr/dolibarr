@@ -705,7 +705,7 @@ if (isModEnabled('facture'))
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');
 	}

@@ -174,7 +174,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (!empty($conf->adherent->enabled)) { ?>
+<?php if (isModEnabled('adherent')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>

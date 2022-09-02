@@ -546,10 +546,10 @@ if (empty($reshook)) {
 
 			/* setup of margin calculation */
 			if (isset($conf->global->MARGIN_TYPE)) {
-				if ($conf->global->MARGIN_TYPE == 'pmp' && ! empty($prod->pmp)) {
+				if ($conf->global->MARGIN_TYPE == 'pmp' && !empty($prod->pmp)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->pmp;
-				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && ! empty($prod->cost_price)) {
+				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && !empty($prod->cost_price)) {
 					$line['fk_fournprice'] = null;
 					$line['pa_ht'] = $prod->cost_price;
 				} else {

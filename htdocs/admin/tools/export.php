@@ -153,7 +153,7 @@ if ($what == 'postgresql') {
 	$cmddump = dol_sanitizePathName($cmddump);
 
 	/* Not required, the command is output on screen but not ran for pgsql
-	if (! empty($dolibarr_main_restrict_os_commands))
+	if (!empty($dolibarr_main_restrict_os_commands))
 	{
 		$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
