@@ -647,7 +647,7 @@ if (!function_exists('ftp_connect')) {
 
 		// Actions
 		/*
-		if ($user->rights->ftp->write && ! empty($section))
+		if ($user->rights->ftp->write && !empty($section))
 		{
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
 		}

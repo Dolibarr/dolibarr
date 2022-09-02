@@ -28,6 +28,8 @@
  *       \brief      Page des documents joints sur les produits
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -38,9 +40,12 @@ if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 }
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products'));
 
+
+// Get parameters
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -74,7 +79,7 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
-
+// Initialize objects
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -93,6 +98,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 	}
 }
+
 $modulepart = 'produit';
 
 

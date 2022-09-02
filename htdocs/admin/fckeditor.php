@@ -63,10 +63,10 @@ $conditions = array(
 	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
 	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
-	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
+	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
 	'MAILING' => !empty($conf->mailing->enabled),
-	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || !empty($conf->commande->enabled)),
+	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
 	'TICKET' => !empty($conf->ticket->enabled),
 );
 // Picto

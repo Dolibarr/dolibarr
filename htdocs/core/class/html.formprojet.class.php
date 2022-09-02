@@ -381,9 +381,9 @@ class FormProjets
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
 				if (!is_numeric($show_empty)) {
-					//if (! empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">aaa';
+					//if (!empty($conf->use_javascript_ajax)) $out .= '<span class="opacitymedium">aaa';
 					$out .= $show_empty;
-					//if (! empty($conf->use_javascript_ajax)) $out .= '</span>';
+					//if (!empty($conf->use_javascript_ajax)) $out .= '</span>';
 				} else {
 					$out .= '&nbsp;';
 				}

@@ -1072,6 +1072,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withto;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 
@@ -1080,6 +1081,7 @@ class FormMail extends Form
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 					$withtoselected = array_keys($tmparray);
 				}
+
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 			}
 		}
@@ -1107,6 +1109,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
 				$tmparray = $this->withtocc;
 				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = str_replace(array('<', '>'), array('(', ')'), $tmparray[$key]);
 					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
 				}
 				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
@@ -1510,7 +1513,7 @@ class FormMail extends Form
 
 
 	/**
-	 * Set substit array from object. This is call when suggesting the email template into forms before sending email.
+	 * Set ->substit (and ->substit_line) array from object. This is call when suggesting the email template into forms before sending email.
 	 *
 	 * @param	CommonObject	$object		   Object to use
 	 * @param   Translate  		$outputlangs   Object lang
@@ -1627,7 +1630,7 @@ class FormMail extends Form
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1636,15 +1639,15 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
 					//Online payement link
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1653,10 +1656,10 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}

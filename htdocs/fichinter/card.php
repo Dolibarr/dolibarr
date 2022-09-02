@@ -784,7 +784,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$formcontract = new FormContract($db);
 }
 if (!empty($conf->project->enabled)) {
@@ -1233,7 +1233,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Contract
-	if (!empty($conf->contrat->enabled)) {
+	if (isModEnabled('contrat')) {
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
