@@ -1229,7 +1229,6 @@ class Product extends CommonObject
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
-
 						$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 						while ($obj = $this->db->fetch_object($resql)) {
