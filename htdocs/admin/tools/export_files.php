@@ -127,7 +127,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($export_type == 'externalmodule' && ! empty($what)) {
+if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;

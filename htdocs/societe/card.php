@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 if (!empty($conf->accounting->enabled)) {
@@ -59,7 +59,7 @@ if (!empty($conf->accounting->enabled)) {
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (! empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 }
 
@@ -68,10 +68,10 @@ if (! empty($conf->eventorganization->enabled)) {
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langs->load("members");
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
 if (!empty($conf->incoterm->enabled)) {
@@ -463,7 +463,7 @@ if (empty($reshook)) {
 			$object->state_id				= GETPOST('state_id', 'int');
 
 			$object->socialnetworks = array();
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -1083,7 +1083,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->state_id = GETPOST('state_id', 'int');
 
 		$object->socialnetworks = array();
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -1477,7 +1477,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))
-			|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
+			|| (isModEnabled('supplier_proposal') && !empty($user->rights->supplier_proposal->lire))) {
 			// Supplier
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -1600,7 +1600,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
 		// Social networks
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
 					print '<tr>';
@@ -1762,7 +1762,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Customer
@@ -1834,7 +1834,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<table class="border" width="100%">';
 
-			if (! empty($conf->accounting->enabled)) {
+			if (!empty($conf->accounting->enabled)) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
@@ -1929,7 +1929,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->state_id = GETPOST('state_id', 'int');
 
 				$object->socialnetworks = array();
-				if (!empty($conf->socialnetworks->enabled)) {
+				if (isModEnabled('socialnetworks')) {
 					foreach ($socialnetworks as $key => $value) {
 						if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 							$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
@@ -2177,7 +2177,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Supplier
 			if (((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire)))
-				|| (!empty($conf->supplier_proposal->enabled) && !empty($user->rights->supplier_proposal->lire))) {
+				|| (isModEnabled('supplier_proposal') && !empty($user->rights->supplier_proposal->lire))) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
@@ -2287,7 +2287,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
 			// Social network
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';
@@ -2463,7 +2463,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 				// Customer
 				print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -2562,7 +2562,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<br>';
 				print '<table class="border centpercent">';
 
-				if (! empty($conf->accounting->enabled)) {
+				if (!empty($conf->accounting->enabled)) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2888,7 +2888,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Tags / categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			// Customer
 			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
@@ -2984,8 +2984,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancySellCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				if (! empty($object->accountancy_code_sell)) {
+			if (!empty($conf->accounting->enabled)) {
+				if (!empty($object->accountancy_code_sell)) {
 					$accountingaccount = new AccountingAccount($db);
 					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
 
@@ -3000,8 +3000,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
-				if (! empty($object->accountancy_code_buy)) {
+			if (!empty($conf->accounting->enabled)) {
+				if (!empty($object->accountancy_code_buy)) {
 					$accountingaccount2 = new AccountingAccount($db);
 					$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);
 
@@ -3035,7 +3035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 		// Module Adherent
-		if (!empty($conf->adherent->enabled)) {
+		if (isModEnabled('adherent')) {
 			$langs->load("members");
 			print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 			print '<td>';
@@ -3108,7 +3108,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
-				if (!empty($conf->adherent->enabled)) {
+				if (isModEnabled('adherent')) {
 					$adh = new Adherent($db);
 					$result = $adh->fetch('', '', $object->id);
 					if ($result == 0 && ($object->client == 1 || $object->client == 3) && !empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS)) {

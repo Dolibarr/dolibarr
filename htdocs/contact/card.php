@@ -215,7 +215,7 @@ if (empty($reshook)) {
 		//$object->facebook		= GETPOST("facebook", 'alpha');
 		//$object->linkedin		= GETPOST("linkedin", 'alpha');
 		$object->socialnetworks = array();
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
@@ -427,7 +427,7 @@ if (empty($reshook)) {
 			//$object->facebook		= GETPOST("facebook", 'alpha');
 			//$object->linkedin		= GETPOST("linkedin", 'alpha');
 			$object->socialnetworks = array();
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 						$object->socialnetworks[$key] = (string) GETPOST($key, 'alphanohtml');
@@ -532,7 +532,7 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == 'update_extras' && ! empty($user->rights->societe->contact->creer)) {
+	if ($action == 'update_extras' && !empty($user->rights->societe->contact->creer)) {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -859,7 +859,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';
@@ -892,7 +892,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
 				print img_picto('', 'category').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
@@ -1146,7 +1146,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr>';
 			}
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr>';
@@ -1197,7 +1197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 				$arrayselected = array();
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td>';
 				print '<td colspan="3">';
@@ -1225,7 +1225,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$object->load_ref_elements();
 
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
 				print $object->ref_commande ? $object->ref_commande : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>');
 				print '</td></tr>';
@@ -1237,7 +1237,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
 				print $object->ref_contrat ? $object->ref_contrat : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>');
 				print '</td></tr>';
@@ -1471,7 +1471,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 			print '<td colspan="3">';
 			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
@@ -1498,7 +1498,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->commande->enabled) || isModEnabled("expedition")) {
+		if (isModEnabled('commande') || isModEnabled("expedition")) {
 			print '<tr><td>';
 			if (isModEnabled("expedition")) {
 				print $langs->trans("ContactForOrdersOrShipments");
@@ -1514,7 +1514,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->contrat->enabled)) {
+		if (isModEnabled('contrat')) {
 			print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
 			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
 			print '</td></tr>';

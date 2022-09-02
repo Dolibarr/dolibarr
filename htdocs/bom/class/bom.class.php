@@ -821,8 +821,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
-			|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->create))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		{
 			$this->error='NotEnoughPermissions';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -933,8 +933,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -957,8 +957,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -981,8 +981,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1338,9 +1338,9 @@ class BOM extends CommonObject
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
 	{
-		if (! empty($this->lines)) {
+		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (! empty($line->childBom)) {
+				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
@@ -1362,9 +1362,9 @@ class BOM extends CommonObject
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
 	{
-		if (! empty($this->lines)) {
+		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (! empty($line->childBom)) {
+				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
@@ -1572,7 +1572,7 @@ class BOMLine extends CommonObjectLine
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 

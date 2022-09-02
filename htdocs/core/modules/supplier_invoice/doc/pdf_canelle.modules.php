@@ -167,7 +167,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$this->posxqty = 130;
 			$this->posxunit = 147;
 		}
-		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
@@ -740,7 +740,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2, 0, $outputlangs), 0, 'R', 1);
 			}
 		} else {
-			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
 			//Local tax 1
 			foreach ($this->localtax1 as $tvakey => $tvaval) {
@@ -765,7 +765,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 			//}
 
-			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
 			//Local tax 2
 			foreach ($this->localtax2 as $tvakey => $tvaval) {

@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
-if (!empty($conf->holiday->enabled)) {
+if (isModEnabled('holiday')) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
@@ -361,7 +361,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print "</tr>\n";
 
 	// Expense report validator
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		print '<tr><td>';
 		$text = $langs->trans("ForceUserExpenseValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -377,7 +377,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Holiday request validator
-	if (!empty($conf->holiday->enabled)) {
+	if (isModEnabled('holiday')) {
 		print '<tr><td>';
 		$text = $langs->trans("ForceUserHolidayValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -407,7 +407,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
 		// Salary
@@ -635,7 +635,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest leave requests
-	if (!empty($conf->holiday->enabled) && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
+	if (isModEnabled('holiday') && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -691,7 +691,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest expense report
-	if (!empty($conf->expensereport->enabled) &&
+	if (isModEnabled('expensereport') &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
 		) {
 		$exp = new ExpenseReport($db);

@@ -498,7 +498,7 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");
