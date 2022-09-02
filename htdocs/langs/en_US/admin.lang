@@ -1238,6 +1238,7 @@ BrowserName=Browser name
 BrowserOS=Browser OS
 ListOfSecurityEvents=List of Dolibarr security events
 SecurityEventsPurged=Security events purged
+TrackableSecurityEvents=Trackable security events
 LogEventDesc=Enable logging for specific security events. Administrators the log via menu <b>%s - %s</b>. Warning, this feature can generate a large amount of data in the database.
 AreaForAdminOnly=Setup parameters can be set by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.
