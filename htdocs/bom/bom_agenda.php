@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       htdocs/modulebuilder/template/myobject_agenda.php
- *  \ingroup    bom
- *  \brief      Page of MyObject events
+ *    \file       htdocs/bom/bom_agenda.php
+ *    \ingroup    bom
+ *    \brief      Page of BOM events
  */
 
 // Load Dolibarr environment
