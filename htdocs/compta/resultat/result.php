@@ -327,7 +327,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$vars = array();
 
 				// Unactive categories have a total of 0 to be used in the formula.
-				foreach($unactive_cats as $un_cat) {
+				foreach ($unactive_cats as $un_cat) {
 					$vars[$un_cat['code']] = 0;
 				}
 
