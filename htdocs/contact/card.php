@@ -1316,7 +1316,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$login = dol_buildlogin($object->lastname, $object->firstname);
 
 			$generated_password = '';
-			if (!$ldap_sid) { // TODO ldap_sid ?
+			if (empty($ldap_sid)) { // TODO ldap_sid ?
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 				$generated_password = getRandomPassword(false);
 			}

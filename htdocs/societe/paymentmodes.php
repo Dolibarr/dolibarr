@@ -516,6 +516,40 @@ if (empty($reshook)) {
 				}
 			}
 		}
+		if ($action == 'syncsepatostripe') {
+			$companybankaccount->fetch(GETPOST('bankid'));
+			// print "stripe account = " . json_encode($stripe->getStripeAccount($service));
+			// print json_encode($companybankaccount);
+			// print "fetch id = " . json_encode($socid);
+
+			$companypaymentmode = new CompanyPaymentMode($db);
+			$companypaymentmode->fetch(null, null, $socid);
+			// print json_encode($companypaymentmode);
+
+			if ($companypaymentmode->type != 'ban') {
+				$error++;
+				setEventMessages('ThisPaymentModeIsNotSepa', null, 'errors');
+			} else {
+				// Get the Stripe customer
+				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				// print json_encode($cu);
+				if (!$cu) {
+					$error++;
+					setEventMessages($stripe->error, $stripe->errors, 'errors');
+				}
+
+				if (!$error) {
+					// Creation of Stripe SEPA + update of societe_account
+					$card = $stripe->sepaStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
+					if (!$card) {
+						$error++;
+						setEventMessages($stripe->error, $stripe->errors, 'errors');
+					} else {
+						setEventMessages("", array("SEPA on Stripe", "SEPA IBAN is now linked to customer account !"));
+					}
+				}
+			}
+		}
 
 		if ($action == 'setkey_account') {
 			$error = 0;
@@ -632,7 +666,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'setassourcedefault') {	// Set as default when payment mode defined remotely only
 			try {
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-				if (preg_match('/pm_/', $source)) {
+				if (preg_match('/pm_|src_/', $source)) {
 					$cu->invoice_settings->default_payment_method = (string) $source; // New
 				} else {
 					$cu->default_source = (string) $source; // Old
@@ -660,6 +694,10 @@ if (empty($reshook)) {
 						// $card->detach();  Does not work with card_, only with src_
 						if (method_exists($card, 'detach')) {
 							$card->detach();
+							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
+							$sql .= " SET stripe_card_ref = null";
+							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+							$resql = $db->query($sql);
 						} else {
 							$card->delete();
 						}
@@ -1465,7 +1503,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
-				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=createbanonstripe">';
+				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
 				print img_picto($langs->trans("CreateBAN"), 'stripe');
 				print '</a>';
 

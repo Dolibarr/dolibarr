@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file       target_contact.php
- *  \ingroup    webhook
- *  \brief      Tab for contacts linked to Target
+ *    \file       htdocs/webhook/target_contact.php
+ *    \ingroup    webhook
+ *    \brief      Tab for contacts linked to Target
  */
 
 // Load Dolibarr environment
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "companies", "other", "mails"));
+$langs->loadLangs(array('companies', 'other', 'mails'));
 
 $id = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
@@ -42,12 +42,14 @@ $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('targetcontact', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;

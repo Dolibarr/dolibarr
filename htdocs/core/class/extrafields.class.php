@@ -43,30 +43,6 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array Array with type of the extra field
-	 * @deprecated
-	 */
-	public $attribute_type;
-
-	/**
-	 * @var array Array with label of extra field
-	 * @deprecated
-	 */
-	public $attribute_label;
-
-	/**
-	 * @var array Array with list of possible values for some types of extra fields
-	 * @deprecated
-	 */
-	public $attribute_choice;
-
-	/**
-	 * @var array array to store extrafields definition
-	 * @deprecated
-	 */
-	public $attribute_list;
-
-	/**
 	 * @var array New array to store extrafields definition
 	 */
 	public $attributes;
@@ -128,10 +104,6 @@ class ExtraFields
 		$this->error = '';
 		$this->errors = array();
 		$this->attributes = array();
-
-		// For old usage
-		$this->attribute_type = array();
-		$this->attribute_label = array();
 	}
 
 	/**
@@ -838,7 +810,7 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes (and some old this->attribute_xxx like attribute_label, attribute_type, ...
+	 * 	Load array this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -892,11 +864,6 @@ class ExtraFields
 						$array_name_label[$tab->name] = $tab->label;
 					}
 
-					// Old usage
-					$this->attribute_type[$tab->name] = $tab->type;
-					$this->attribute_label[$tab->name] = $tab->label;
-
-					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
 					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
 					$this->attributes[$tab->elementtype]['size'][$tab->name] = $tab->size;
@@ -946,7 +913,7 @@ class ExtraFields
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (for example $object->table_element)
 	 * @param  string        $mode                  1=Used for search filters
 	 * @return string
 	 */
@@ -965,28 +932,25 @@ class ExtraFields
 			$keyprefix = $keyprefix.'options_';
 		}
 
-		if (!empty($extrafieldsobjectkey)) {
-			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
-			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
-			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
-			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
-			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
-			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
-			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
-			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
-			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
-			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
-			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else {
-			// Old usage
-			$label = $this->attribute_label[$key];
-			$type = $this->attribute_type[$key];
-			$list = $this->attribute_list[$key];
-			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		if (empty($extrafieldsobjectkey)) {
+			dol_syslog(get_class($this).'::showInputField extrafieldsobjectkey required', LOG_ERR);
+			return 'BadValueForParamExtraFieldsObjectKey';
 		}
+
+		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
+		$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
+		$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
+		$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
+		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
+		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
+		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
+		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) {
@@ -1591,25 +1555,24 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if (!empty($extrafieldsobjectkey)) {
-			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
-			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
-			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
-			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
-			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
-			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
-			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
-			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
-			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
-			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else {
-			// Old usage not allowed anymore
-			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_WARNING);
-			return '';
+		if (empty($extrafieldsobjectkey)) {
+			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
+			return 'BadValueForParamExtraFieldsObjectKey';
 		}
+
+		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
+		$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
+		$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
+		$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
+		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
+		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
+		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
 			return ''; // This is a protection. If field is hidden, we should just not call this method.

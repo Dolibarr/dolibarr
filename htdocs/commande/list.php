@@ -33,6 +33,8 @@
  *	\brief      Page to list orders
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -51,6 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -58,6 +61,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlist';
 
+// Search Parameters
 $search_datecloture_start = GETPOST('search_datecloture_start', 'int');
 if (empty($search_datecloture_start)) {
 	$search_datecloture_start = dol_mktime(0, 0, 0, GETPOST('search_datecloture_startmonth', 'int'), GETPOST('search_datecloture_startday', 'int'), GETPOST('search_datecloture_startyear', 'int'));
@@ -86,7 +90,7 @@ $socid = GETPOST('socid', 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 
-$search_total_ht = GETPOST('search_total_ht', 'alpha');
+$search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'int');
@@ -209,6 +213,7 @@ $arrayfields = array(
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -724,6 +729,7 @@ if ($action == 'shipped' && $permissiontoadd) {
 		}
 	}
 }
+
 // Closed records
 if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
 	$db->begin();
@@ -760,9 +766,11 @@ if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
 	}
 }
 
+
 /*
  * View
  */
+
 
 $now = dol_now();
 
@@ -799,12 +807,14 @@ $sql .= ' c.fk_input_reason, c.import_key';
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
+
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -1327,7 +1337,7 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	// If the user can view prospects other than his'
+	// If the user can view prospects? sales other than his own
 	if ($user->rights->user->user->lire) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1342,7 +1352,8 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	// If the user can view prospects other than his'
+
+	// If the user can view other products/services than his own
 	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1351,6 +1362,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
+	// If Categories are enabled & user has rights to see
 	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1358,6 +1370,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
+	// If Stock is enabled
 	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
@@ -1509,60 +1522,61 @@ if ($resql) {
 		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
 		print '</td>';
 	}
+	// Amount HT / net
 	if (!empty($arrayfields['c.total_ht']['checked'])) {
-		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_total_ht" value="'.dol_escape_htmltag($search_total_ht).'">';
 		print '</td>';
 	}
+	// Amount of VAT
 	if (!empty($arrayfields['c.total_vat']['checked'])) {
-		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_total_vat" value="'.dol_escape_htmltag($search_total_vat).'">';
 		print '</td>';
 	}
+	// Total Amount (TTC / gross)
 	if (!empty($arrayfields['c.total_ttc']['checked'])) {
-		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
+	// Currency
 	if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
-		// Currency
 		print '<td class="liste_titre">';
 		print $form->selectMultiCurrency($search_multicurrency_code, 'search_multicurrency_code', 1);
 		print '</td>';
 	}
+	// Currency rate
 	if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
-		// Currency rate
 		print '<td class="liste_titre">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_tx" value="'.dol_escape_htmltag($search_multicurrency_tx).'">';
 		print '</td>';
 	}
+	// Amount HT/net in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
-		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
 		print '</td>';
 	}
+	// VAT in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_vat']['checked'])) {
-		// Amount VAT
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_vat" value="'.dol_escape_htmltag($search_multicurrency_montant_vat).'">';
 		print '</td>';
 	}
+	// Amount/Total (TTC / gross) in foreign currency
 	if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
-		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
 		print '</td>';
 	}
+	// Author
 	if (!empty($arrayfields['u.login']['checked'])) {
-		// Author
 		print '<td class="liste_titre" align="center">';
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
+	// Sales Representative
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
@@ -1582,12 +1596,15 @@ if ($resql) {
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+
 	// Date creation
 	if (!empty($arrayfields['c.datec']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1775,8 +1792,10 @@ if ($resql) {
 		),
 		'pos' => array(),
 	);
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
 	// Hook fields
 	$parameters = array(
 		'arrayfields' => $arrayfields,
@@ -1976,6 +1995,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -1985,6 +2005,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -1994,6 +2015,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
@@ -2003,6 +2025,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>".$obj->state_name."</td>\n";
@@ -2010,6 +2033,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
@@ -2020,6 +2044,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
@@ -2046,6 +2071,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Plannned date of delivery
 		if (!empty($arrayfields['c.date_delivery']['checked'])) {
 			print '<td class="center">';
@@ -2055,6 +2081,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Shipping Method
 		if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 			print '<td>';
@@ -2064,6 +2091,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Payment terms
 		if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 			print '<td>';
@@ -2073,6 +2101,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Payment mode
 		if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 			print '<td>';
@@ -2082,6 +2111,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Channel
 		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 			print '<td>';
@@ -2091,7 +2121,8 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Amount HT
+
+		// Amount HT/net
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
 			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
@@ -2106,6 +2137,7 @@ if ($resql) {
 				$totalarray['val']['c.total_ht'] = $obj->total_ht;
 			}
 		}
+
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {
 			print '<td class="nowrap right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
@@ -2117,7 +2149,8 @@ if ($resql) {
 			}
 			$totalarray['val']['c.total_tva'] += $obj->total_tva;
 		}
-		// Amount TTC
+
+		// Amount TTC / gross
 		if (!empty($arrayfields['c.total_ttc']['checked'])) {
 			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
@@ -2146,21 +2179,22 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Amount HT
+
+		// Amount HT/net in foreign currency
 		if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
 			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Amount VAT
+		// Amount VAT in foreign currency
 		if (!empty($arrayfields['c.multicurrency_total_vat']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Amount TTC
+		// Amount TTC / gross in foreign currency
 		if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
@@ -2196,8 +2230,8 @@ if ($resql) {
 			}
 		}
 
+		// Sales representatives
 		if (!empty($arrayfields['sale_representative']['checked'])) {
-			// Sales representatives
 			print '<td>';
 			if ($obj->socid > 0) {
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
@@ -2250,6 +2284,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Total margin
 		if (!empty($arrayfields['total_margin']['checked'])) {
 			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
@@ -2261,6 +2296,7 @@ if ($resql) {
 			}
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
+
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
 			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
@@ -2268,6 +2304,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Total mark rate
 		if (!empty($arrayfields['total_mark_rate']['checked'])) {
 			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
@@ -2456,6 +2493,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Import key
 		if (!empty($arrayfields['c.import_key']['checked'])) {
 			print '<td class="nowrap center">'.$obj->import_key.'</td>';
@@ -2463,6 +2501,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Status
 		if (!empty($arrayfields['c.fk_statut']['checked'])) {
 			print '<td class="nowrap center">'.$generic_commande->LibStatut($obj->fk_statut, $obj->billed, 5, 1).'</td>';

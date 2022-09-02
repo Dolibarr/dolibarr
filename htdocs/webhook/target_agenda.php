@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file       target_agenda.php
- *  \ingroup    webhook
- *  \brief      Tab of events on Target
+ *    \file       htdocs/webhook/target_agenda.php
+ *    \ingroup    webhook
+ *    \brief      Tab of events on Target
  */
 
 // Load Dolibarr environment
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "other"));
+$langs->loadLangs(array('other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -48,6 +48,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,6 +74,7 @@ $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('targetagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 

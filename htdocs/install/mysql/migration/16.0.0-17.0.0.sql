@@ -61,6 +61,9 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
 ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
+ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;
+
 UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
 
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
