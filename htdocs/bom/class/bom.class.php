@@ -1161,7 +1161,7 @@ class BOM extends CommonObject
 
 		// Protection against infinite loop
 		if ($level > 1000) {
-			return 0;
+			return;
 		}
 
 		if(empty($bom_id)) $bom_id=$this->id;
