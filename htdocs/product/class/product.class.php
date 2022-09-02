@@ -1229,6 +1229,9 @@ class Product extends CommonObject
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
+
+						$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
 						while ($obj = $this->db->fetch_object($resql)) {
 							$value = $obj->qty;
 							$fk_entrepot = $obj->fk_entrepot;
@@ -1236,7 +1239,6 @@ class Product extends CommonObject
 							$dlc = '';
 							$dluo = '';
 							$batch = $obj->batch;
-							$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 							//To know how to revert stockMouvement (add or remove)
 							$addOremove = $value > 0 ? 1 : 0; // 1 if remove, 0 if add
