@@ -1895,7 +1895,7 @@ class User extends CommonObject
 		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
 		$this->birth						= empty($this->birth) ? '' : $this->birth;
 		$this->fk_warehouse					= (int) $this->fk_warehouse;
-    $this->mail_autocopy = (int) $this->mail_autocopy;
+		$this->mail_autocopy = (int) $this->mail_autocopy;
 
 		$this->setUpperOrLowerCase();
 
