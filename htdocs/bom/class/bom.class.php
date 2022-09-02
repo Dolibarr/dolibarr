@@ -1160,7 +1160,7 @@ class BOM extends CommonObject
 		$sql = 'SELECT l.fk_bom, b.label
 				FROM '.MAIN_DB_PREFIX.'bom_bomline l
 				INNER JOIN '.MAIN_DB_PREFIX.$this->table_element.' b ON b.rowid = l.fk_bom
-				WHERE fk_bom_child = '.$bom_id;
+				WHERE fk_bom_child = '.((int) $bom_id);
 
 		$resql = $this->db->query($sql);
 		if(!empty($resql)) {
