@@ -453,9 +453,9 @@ class pdf_crabe extends ModelePDFFactures
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
 				$extra_under_address_shift = 0;
 				$qrcodestring = '';
-				if (! empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
+				if (!empty($conf->global->INVOICE_ADD_ZATCA_QR_CODE)) {
 					$qrcodestring = $object->buildZATCAQRString();
-				} elseif (! empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
+				} elseif (!empty($conf->global->INVOICE_ADD_SWISS_QR_CODE)) {
 					$qrcodestring = $object->buildSwitzerlandQRString();
 				}
 				if ($qrcodestring) {
@@ -1341,7 +1341,7 @@ class pdf_crabe extends ModelePDFFactures
 				// FIXME amount of vat not supported with multicurrency
 
 				//Local tax 1 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1373,7 +1373,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 				//}
 				//Local tax 2 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1435,7 +1435,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				//Local tax 1 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
@@ -1465,7 +1465,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 				//}
 				//Local tax 2 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {

@@ -1825,7 +1825,7 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	/*if (! empty($conf->margin->enabled)) {
+	/*if (!empty($conf->margin->enabled)) {
 	   $formmargin->displayMarginInfos($object);
 	}*/
 

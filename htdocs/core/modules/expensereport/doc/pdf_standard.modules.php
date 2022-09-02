@@ -600,7 +600,7 @@ class pdf_standard extends ModeleExpenseReport
 		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
 		// Project
-		//if (! empty($conf->project->enabled))
+		//if (!empty($conf->project->enabled))
 		//{
 		//    $pdf->SetFont('','', $default_font_size - 1);
 		//    $pdf->SetXY($this->posxprojet, $curY);

@@ -137,7 +137,7 @@ foreach ($modulesdir as $dir) {
 								}
 
 								// We discard modules according to property disabled
-								//if (! empty($objMod->hidden)) $modulequalified=0;
+								//if (!empty($objMod->hidden)) $modulequalified=0;
 
 								if ($modulequalified > 0) {
 									$publisher = dol_escape_htmltag($objMod->getPublisher());

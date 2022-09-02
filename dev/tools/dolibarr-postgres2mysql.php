@@ -487,7 +487,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$pkey = $line;
 
 			$linenumber ++;
-			if (! empty($lines[$linenumber])) {
+			if (!empty($lines[$linenumber])) {
 				$line = $lines[$linenumber];
 			} else {
 				$line = '';
@@ -517,7 +517,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		if (substr($line, 0, 12) == "CREATE INDEX") {
 			$matches = array();
 			preg_match('/CREATE INDEX "?([a-zA-Z0-9_]*)"? ON "?([a-zA-Z0-9_\.]*)"? USING btree \((.*)\);/', $line, $matches);
-			if (! empty($matches[3])) {
+			if (!empty($matches[3])) {
 				$indexname = $matches[1];
 				$tablename = str_replace('public.', '', $matches[2]);
 				$columns = $matches[3];
@@ -529,7 +529,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		if (substr($line, 0, 19) == "CREATE UNIQUE INDEX") {
 			$matches = array();
 			preg_match('/CREATE UNIQUE INDEX "?([a-zA-Z0-9_]*)"? ON "?([a-zA-Z0-9_\.]*)"? USING btree \((.*)\);/', $line, $matches);
-			if (! empty($matches[3])) {
+			if (!empty($matches[3])) {
 				$indexname = $matches[1];
 				$tablename = str_replace('public.', '', $matches[2]);
 				$columns = str_replace('"', '', $matches[3]);

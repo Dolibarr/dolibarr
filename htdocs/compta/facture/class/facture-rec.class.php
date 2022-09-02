@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
  *	\ingroup    facture
- *	\brief      Fichier de la classe des factures recurentes
+ *	\brief      File of class to manage recurring invoices
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -462,7 +462,7 @@ class FactureRec extends CommonInvoice
 
 
 	/**
-	 * 	Update a line to invoice_rec.
+	 * 	Update a line invoice_rec.
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
@@ -470,8 +470,6 @@ class FactureRec extends CommonInvoice
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
@@ -480,8 +478,8 @@ class FactureRec extends CommonInvoice
 		$sql .= " suspended = ".((int) $this->suspended).",";
 		$sql .= " fk_soc = ".((int) $this->socid).",";
 		$sql .= " total_tva = ".((float) $this->total_tva).",";
-		$sql .= " localtax1 = ".((float) $this->localtax1).",";
-		$sql .= " localtax2 = ".((float) $this->localtax2).",";
+		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " remise_percent = ".((float) $this->remise_percent);

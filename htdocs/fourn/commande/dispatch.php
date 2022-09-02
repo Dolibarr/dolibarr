@@ -46,7 +46,7 @@ if (!empty($conf->project->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
 
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
@@ -721,7 +721,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
-				if (!empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 						print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
@@ -820,7 +820,7 @@ if ($id > 0 || !empty($ref)) {
 						$linktoprod = $tmpproduct->getNomUrl(1);
 						$linktoprod .= ' - '.$objp->label."\n";
 
-						if (!empty($conf->productbatch->enabled)) {
+						if (isModEnabled('productbatch')) {
 							if ($objp->tobatch) {
 								// Product
 								print '<td>';
@@ -869,7 +869,7 @@ if ($id > 0 || !empty($ref)) {
 						// Already dispatched
 						print '<td class="right">'.$products_dispatched[$objp->rowid].'</td>';
 
-						if (!empty($conf->productbatch->enabled) && $objp->tobatch > 0) {
+						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
@@ -981,7 +981,7 @@ if ($id > 0 || !empty($ref)) {
 						print '</td>';
 
 						print '<td>';
-						if (!empty($conf->productbatch->enabled) && $objp->tobatch > 0) {
+						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						} else {
@@ -1162,7 +1162,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>'.$langs->trans("Product").'</td>';
 			print '<td>'.$langs->trans("DateCreation").'</td>';
 			print '<td>'.$langs->trans("DateDeliveryPlanned").'</td>';
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 				if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
@@ -1227,7 +1227,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td>'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
-				if (!empty($conf->productbatch->enabled)) {
+				if (isModEnabled('productbatch')) {
 					if ($objp->batch) {
 						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 						$lot = new Productlot($db);

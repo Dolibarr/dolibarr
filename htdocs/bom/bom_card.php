@@ -335,7 +335,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		$text = $langs->trans('ConfirmValidateBom', $numref);
-		/*if (! empty($conf->notification->enabled))
+		/*if (!empty($conf->notification->enabled))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -363,7 +363,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of closing
 	if ($action == 'close') {
 		$text = $langs->trans('ConfirmCloseBom', $object->ref);
-		/*if (! empty($conf->notification->enabled))
+		/*if (!empty($conf->notification->enabled))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -391,7 +391,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of reopen
 	if ($action == 'reopen') {
 		$text = $langs->trans('ConfirmReopenBom', $object->ref);
-		/*if (! empty($conf->notification->enabled))
+		/*if (!empty($conf->notification->enabled))
 		 {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);
@@ -457,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->project->enabled))
+	if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -477,7 +477,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();

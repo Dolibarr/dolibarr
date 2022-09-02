@@ -62,12 +62,12 @@ if ($id) {
 	}
 	$socid = $object->thirdparty->id;
 	$title = $langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (! empty($conf->notification->enabled)) {
+	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
 	$head = contact_prepare_head($object);

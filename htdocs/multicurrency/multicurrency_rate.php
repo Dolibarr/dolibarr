@@ -506,7 +506,7 @@ if ($resql) {
 			}
 
 			// code
-			if (! empty($arrayfields['m.code']['checked'])) {
+			if (!empty($arrayfields['m.code']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->code;
 				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
@@ -516,7 +516,7 @@ if ($resql) {
 			}
 
 			// rate
-			if (! empty($arrayfields['cr.rate']['checked'])) {
+			if (!empty($arrayfields['cr.rate']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->rate;
 				print "</td>\n";

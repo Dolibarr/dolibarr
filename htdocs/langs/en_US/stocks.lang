@@ -24,6 +24,7 @@ StockAtDateInFuture=Date in the future
 StocksByLotSerial=Stocks by lot/serial
 LotSerial=Lots/Serials
 LotSerialList=List of lot/serials
+SubjectToLotSerialOnly=Products subject to lot/serial only
 Movements=Movements
 ErrorWarehouseRefRequired=Warehouse reference name is required
 ListOfWarehouses=List of warehouses

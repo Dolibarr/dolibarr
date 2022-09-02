@@ -308,7 +308,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -400,7 +400,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);

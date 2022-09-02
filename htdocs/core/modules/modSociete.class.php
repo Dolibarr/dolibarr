@@ -378,7 +378,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"ThirdPartyType"
 		);
 		// Add multicompany field
-		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
@@ -520,7 +520,7 @@ class modSociete extends DolibarrModules
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -693,7 +693,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -757,7 +757,7 @@ class modSociete extends DolibarrModules
 			's.note_public' => "NotePublic"
 		);
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -835,7 +835,7 @@ class modSociete extends DolibarrModules
 			's.rowid' => 'Id',
 			's.lastname' => "Lastname",
 		);
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {

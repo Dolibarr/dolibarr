@@ -68,7 +68,7 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
-if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+if (!empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
 	if (empty($date_start)) {
 		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
 	}
@@ -117,7 +117,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = $conf->project->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && !empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
@@ -1624,7 +1624,7 @@ if ($action == 'create') {
 
 			print '</form>';
 		} else {
-			$taxlessUnitPriceDisabled = ! empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+			$taxlessUnitPriceDisabled = !empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
@@ -1697,7 +1697,7 @@ if ($action == 'create') {
 			 // Thirdparty
 			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 			 // Project
-			 if (! empty($conf->project->enabled))
+			 if (!empty($conf->project->enabled))
 			 {
 			 $langs->load("projects");
 			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -1717,7 +1717,7 @@ if ($action == 'create') {
 			 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			 }
 			 } else {
-			 if (! empty($object->fk_project)) {
+			 if (!empty($object->fk_project)) {
 			 $proj = new Project($db);
 			 $proj->fetch($object->fk_project);
 			 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';

@@ -71,7 +71,7 @@ if (!empty($conf->incoterm->enabled)) {
 if (!empty($conf->margin->enabled)) {
 	$langs->load('margins');
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
 
@@ -445,7 +445,7 @@ if (empty($reshook)) {
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						if (!empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
 							$originforcontact = $object->origin;
 							$originidforcontact = $object->origin_id;
@@ -1170,7 +1170,7 @@ if (empty($reshook)) {
 
 			$price_base_type = 'HT';
 			$pu = $pu_ht;
-			if (empty($pu) && ! empty($pu_ttc)) {
+			if (empty($pu) && !empty($pu_ttc)) {
 				$pu = $pu_ttc;
 				$price_base_type = 'TTC';
 			}
@@ -1260,8 +1260,8 @@ if (empty($reshook)) {
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
-					GETPOST('generate_deposit', 'alpha') == 'on' && ! empty($deposit_percent_from_payment_terms)
-					&& ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)
+					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
+					&& !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -2108,7 +2108,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
+			if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 				$object->fetchObjectLinked();
@@ -2157,7 +2157,7 @@ if ($action == 'create' && $usercancreate) {
 						'datenow' => true
 					);
 
-					if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 						$formquestion[] = array(
 							'type' => 'date',
 							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
@@ -2805,7 +2805,7 @@ if ($action == 'create' && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 				// Create event
-				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
+				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
 				{
 					// Add hidden condition because this is not a
 					// "workflow" action so should appears somewhere else on
@@ -2836,7 +2836,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create contract
-				if (!empty($conf->contrat->enabled) && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
+				if (isModEnabled('contrat') && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
 					if ($user->hasRight('contrat', 'creer')) {

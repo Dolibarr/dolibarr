@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 HRM=GRH
 Holidays=Congés
+Holiday=Congé
 CPTitreMenu=Demande de congés
 MenuReportMonth=État mensuel
 MenuAddCP=Créer demande de congés

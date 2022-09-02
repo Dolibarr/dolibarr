@@ -28,7 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -53,7 +53,7 @@ $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("sear
 $search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
 
@@ -226,7 +226,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "t.rowid");
 }
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -242,7 +242,7 @@ if ($separatedPMP) {
 
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, "t.rowid", $search_category_list);
 }
 foreach ($search as $key => $val) {
@@ -419,7 +419,7 @@ if ($search_all) {
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
