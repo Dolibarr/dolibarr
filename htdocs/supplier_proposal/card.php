@@ -552,7 +552,7 @@ if (empty($reshook)) {
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
-		foreach($object->lines as $line) {
+		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
