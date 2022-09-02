@@ -517,7 +517,7 @@ if (empty($reshook)) {
 			}
 		}
 		if ($action == 'syncsepatostripe') {
-			$companybankaccount->fetch(GETPOST('bankid'));
+			$companybankaccount->fetch(GETPOST('bankid', 'int'));
 			// print "stripe account = " . json_encode($stripe->getStripeAccount($service));
 			// print json_encode($companybankaccount);
 			// print "fetch id = " . json_encode($socid);
@@ -545,7 +545,7 @@ if (empty($reshook)) {
 						$error++;
 						setEventMessages($stripe->error, $stripe->errors, 'errors');
 					} else {
-						setEventMessages("", array("SEPA on Stripe", "SEPA IBAN is now linked to customer account !"));
+						setEventMessages("", array("SEPA on Stripe", "SEPA IBAN is now linked to the Stripe customer account !"));
 					}
 				}
 			}
