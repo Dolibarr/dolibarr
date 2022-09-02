@@ -30,7 +30,7 @@ dol_include_once('/webhook/class/target.class.php');
 dol_include_once('/webhook/lib/webhook_target.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array('webhook', 'companies', 'other', 'mails'));
+$langs->loadLangs(array('companies', 'other', 'mails'));
 
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');

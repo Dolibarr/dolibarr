@@ -36,7 +36,7 @@ require_once __DIR__.'/class/target.class.php';
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array('webhook', 'other'));
+$langs->loadLangs(array('other'));
 
 // Get Parameters
 $id          = GETPOST('id', 'int');

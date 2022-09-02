@@ -31,7 +31,7 @@ dol_include_once('/webhook/class/target.class.php');
 dol_include_once('/webhook/lib/webhook_target.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array('webhook', 'other'));
+$langs->loadLangs(array('other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');

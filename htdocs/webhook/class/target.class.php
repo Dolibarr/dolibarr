@@ -833,7 +833,7 @@ class Target extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("webhook@webhook");
+
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
@@ -928,7 +928,6 @@ class Target extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("webhook@webhook");
 
 		if (empty($conf->global->WEBHOOK_TARGET_ADDON)) {
 			$conf->global->WEBHOOK_TARGET_ADDON = 'mod_target_standard';
@@ -992,8 +991,6 @@ class Target extends CommonObject
 
 		$result = 0;
 		$includedocgeneration = 0;
-
-		$langs->load("webhook@webhook");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_target';
