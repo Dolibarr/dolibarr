@@ -153,3 +153,4 @@ LinkToParentMenu=Forældremenu (fk_xxxxmenu)
 ListOfTabsEntries=Liste over faneposter
 TabsDefDesc=Definer her de faner, som dit modul giver
 TabsDefDescTooltip=Fanerne, der leveres af dit modul/applikation, er defineret i arrayet <strong> $this->tabs </strong> i modulbeskrivelsesfilen. Du kan redigere denne fil manuelt eller bruge den indlejrede editor.
+BadValueForType=Forkert værdi for type %s

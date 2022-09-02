@@ -863,14 +863,18 @@ class AccountingAccount extends CommonObject
 				if (!empty($buyer->code_compta_product)) {
 					$code_t = $buyer->code_compta_product;
 					$suggestedid = $accountingAccount['thirdparty'];
-					$suggestedaccountingaccountfor = 'thridparty';
+					$suggestedaccountingaccountfor = 'thirdparty';
 				}
 			}
 
 			// Manage Deposit
 			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
-				$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				if ($type=='customer') {
+					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+				} elseif ($type=='supplier') {
+					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+				}
 				if ($result < 0) {
 					return -1;
 				}

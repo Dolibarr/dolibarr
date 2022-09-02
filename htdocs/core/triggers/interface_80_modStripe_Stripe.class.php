@@ -141,7 +141,7 @@ class InterfaceStripe extends DolibarrTriggers
 					}
 
 					if ($changerequested) {
-						/*if (! empty($object->email)) $customer->email = $object->email;
+						/*if (!empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
 						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
 						else $customer->tax_info = $taxinfo; */

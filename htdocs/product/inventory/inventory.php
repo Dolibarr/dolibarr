@@ -105,6 +105,7 @@ if ($cancel) {
 	$action = '';
 }
 
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -160,7 +161,7 @@ if (empty($reshook)) {
 
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
-				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
 				}
 
@@ -347,7 +348,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 		}
-		if (!$error && !empty($conf->productbatch->enabled)) {
+		if (!$error && isModEnabled('productbatch')) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -493,7 +494,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->project->enabled))
+	if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -515,7 +516,7 @@ if ($object->id > 0) {
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();
@@ -607,7 +608,7 @@ if ($object->id > 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			if ($permissiontoadd) {
 				// Link to launch scan tool
-				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+				if (isModEnabled('barcode') || isModEnabled('productbatch')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 				}
 
@@ -905,7 +906,7 @@ if ($object->id > 0) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Warehouse").'</td>';
 	print '<td>'.$langs->trans("Product").'</td>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<td>';
 		print $langs->trans("Batch");
 		print '</td>';
@@ -943,7 +944,7 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 		print '</td>';
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print '<input type="text" name="batch" class="maxwidth100" value="'.(GETPOSTISSET('batch') ? GETPOST('batch') : '').'">';
 			print '</td>';
@@ -1021,7 +1022,7 @@ if ($object->id > 0) {
 			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
 				$batch_static = new Productlot($db);
 				$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
@@ -1038,7 +1039,7 @@ if ($object->id > 0) {
 			$valuetoshow = $obj->qty_stock;
 			// For inventory not yet close, we overwrite with the real value in stock now
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
@@ -1057,9 +1058,9 @@ if ($object->id > 0) {
 					$hasinput = true;
 				}
 
-				if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1081,7 +1082,7 @@ if ($object->id > 0) {
 					print '<td class="right">';
 
 
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $qty_view;
 					print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
@@ -1110,7 +1111,7 @@ if ($object->id > 0) {
 			} else {
 				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1126,7 +1127,7 @@ if ($object->id > 0) {
 
 					//PMP Real
 					print '<td class="right">';
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $obj->qty_view;
 					print price($pmp_real);
@@ -1189,7 +1190,7 @@ if ($object->id > 0) {
 	print '</form>';
 
 
-	if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 		?>
 		<script type="text/javascript">
 			$('.realqty').on('change', function () {

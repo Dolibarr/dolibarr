@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,30 +43,6 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array Array with type of the extra field
-	 * @deprecated
-	 */
-	public $attribute_type;
-
-	/**
-	 * @var array Array with label of extra field
-	 * @deprecated
-	 */
-	public $attribute_label;
-
-	/**
-	 * @var array Array with list of possible values for some types of extra fields
-	 * @deprecated
-	 */
-	public $attribute_choice;
-
-	/**
-	 * @var array array to store extrafields definition
-	 * @deprecated
-	 */
-	public $attribute_list;
-
-	/**
 	 * @var array New array to store extrafields definition
 	 */
 	public $attributes;
@@ -91,7 +67,9 @@ class ExtraFields
 	 */
 	public $errno;
 
-
+	/**
+	 * @var array array of type to label
+	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
 		'text'=>'TextLongNLines',
@@ -105,6 +83,7 @@ class ExtraFields
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
+		'ip'=>'ExtrafieldIP',
 		'password' => 'ExtrafieldPassword',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
@@ -127,10 +106,6 @@ class ExtraFields
 		$this->error = '';
 		$this->errors = array();
 		$this->attributes = array();
-
-		// For old usage
-		$this->attribute_type = array();
-		$this->attribute_label = array();
 	}
 
 	/**
@@ -156,9 +131,10 @@ class ExtraFields
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
 	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int             $printable          Is extrafield displayed on PDF
+	 *  @param	array			$moreparams			More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -182,12 +158,12 @@ class ExtraFields
 
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
-			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help);
+			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help, $moreparams);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -217,9 +193,10 @@ class ExtraFields
 	 *	@param	string	$list				Into list view by default
 	 *  @param  string  $computed           Computed value
 	 *  @param	string	$help				Help on tooltip
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
+	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '', $moreparams = array())
 	{
 		if ($elementtype == 'thirdparty') {
 			$elementtype = 'societe';
@@ -243,7 +220,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'mail' || $type == 'ip') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -315,11 +292,12 @@ class ExtraFields
 	 *  @param	string			$langfile		Language file
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
 	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
-	 *  @param  int             $printable        Is extrafield displayed on PDF
+	 *  @param  int             $printable      Is extrafield displayed on PDF
+	 *  @param	array			$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return	int								<=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -354,6 +332,19 @@ class ExtraFields
 			$totalizable = 0;
 		}
 
+		$css = '';
+		if (!empty($moreparams) && !empty($moreparams['css'])) {
+			$css = $moreparams['css'];
+		}
+		$csslist = '';
+		if (!empty($moreparams) && !empty($moreparams['csslist'])) {
+			$csslist = $moreparams['csslist'];
+		}
+		$cssview = '';
+		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
+			$cssview = $moreparams['cssview'];
+		}
+
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
 			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
@@ -386,7 +377,10 @@ class ExtraFields
 			$sql .= " datec,";
 			$sql .= " enabled,";
 			$sql .= " help,";
-			$sql .= " totalizable";
+			$sql .= " totalizable,";
+			$sql .= " css,";
+			$sql .= " csslist,";
+			$sql .= " cssview";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -410,7 +404,10 @@ class ExtraFields
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
-			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE');
+			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
+			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
+			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -542,11 +539,12 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
-	 *  @param  int     $printable        Is extrafield displayed on PDF
+	 *  @param  int     $printable        	Is extrafield displayed on PDF
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		global $hookmanager;
 
@@ -572,7 +570,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail') {
+			} elseif ($type == 'mail' || $type == 'ip') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -611,7 +609,7 @@ class ExtraFields
 			}
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -663,11 +661,12 @@ class ExtraFields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
 	 *  @param  int     $totalizable        Is extrafield totalizable on list
-	 *  @param  int     $printable        Is extrafield displayed on PDF
+	 *  @param  int     $printable        	Is extrafield displayed on PDF
+	 *  @param	array	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @return	int							<=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -698,6 +697,19 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+
+		$css = '';
+		if (!empty($moreparams) && !empty($moreparams['css'])) {
+			$css = $moreparams['css'];
+		}
+		$csslist = '';
+		if (!empty($moreparams) && !empty($moreparams['csslist'])) {
+			$csslist = $moreparams['csslist'];
+		}
+		$cssview = '';
+		if (!empty($moreparams) && !empty($moreparams['cssview'])) {
+			$cssview = $moreparams['cssview'];
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
@@ -749,7 +761,10 @@ class ExtraFields
 			$sql .= " fk_user_modif,";
 			$sql .= " datec,";
 			$sql .= " enabled,";
-			$sql .= " help";
+			$sql .= " help,";
+			$sql .= " css,";
+			$sql .= " csslist,";
+			$sql .= " cssview";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
@@ -773,7 +788,10 @@ class ExtraFields
 			$sql .= " ".$user->id.",";
 			$sql .= "'".$this->db->idate(dol_now())."',";
 			$sql .= "'".$this->db->escape($enabled)."',";
-			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null");
+			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
+			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
+			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
+			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null");
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
@@ -794,7 +812,7 @@ class ExtraFields
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load array this->attributes (and some old this->attribute_xxx like attribute_label, attribute_type, ...
+	 * 	Load array this->attributes
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
@@ -848,11 +866,6 @@ class ExtraFields
 						$array_name_label[$tab->name] = $tab->label;
 					}
 
-					// Old usage
-					$this->attribute_type[$tab->name] = $tab->type;
-					$this->attribute_label[$tab->name] = $tab->label;
-
-					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name] = $tab->type;
 					$this->attributes[$tab->elementtype]['label'][$tab->name] = $tab->label;
 					$this->attributes[$tab->elementtype]['size'][$tab->name] = $tab->size;
@@ -864,7 +877,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name] = (strlen($tab->perms) == 0 ? 1 : $tab->perms);
+					$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
@@ -902,7 +915,7 @@ class ExtraFields
 	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
-	 * @param  string        $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string        $extrafieldsobjectkey	The key to use to store retreived data (for example $object->table_element)
 	 * @param  string        $mode                  1=Used for search filters
 	 * @return string
 	 */
@@ -921,28 +934,25 @@ class ExtraFields
 			$keyprefix = $keyprefix.'options_';
 		}
 
-		if (!empty($extrafieldsobjectkey)) {
-			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
-			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
-			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
-			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
-			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
-			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
-			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
-			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
-			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
-			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
-			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else {
-			// Old usage
-			$label = $this->attribute_label[$key];
-			$type = $this->attribute_type[$key];
-			$list = $this->attribute_list[$key];
-			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		if (empty($extrafieldsobjectkey)) {
+			dol_syslog(get_class($this).'::showInputField extrafieldsobjectkey required', LOG_ERR);
+			return 'BadValueForParamExtraFieldsObjectKey';
 		}
+
+		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
+		$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
+		$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
+		$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
+		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
+		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
+		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
+		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) {
@@ -952,7 +962,10 @@ class ExtraFields
 			}
 		}
 
+		//
+		// 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
 		if (empty($morecss)) {
+			// Add automatic css
 			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
 			} elseif ($type == 'datetime' || $type == 'link') {
@@ -975,6 +988,10 @@ class ExtraFields
 				} else {
 					$morecss = 'minwidth400';
 				}
+			}
+			// If css forced in attribute, we use this one
+			if (!empty($this->attributes[$extrafieldsobjectkey]['css'][$key])) {
+				$morecss = $this->attributes[$extrafieldsobjectkey]['css'][$key];
 			}
 		}
 
@@ -1034,7 +1051,7 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
+		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
@@ -1047,7 +1064,7 @@ class ExtraFields
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
+				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
@@ -1520,7 +1537,7 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
-		/*if (! empty($help) && $keyprefix != 'search_options_') {
+		/*if (!empty($help) && $keyprefix != 'search_options_') {
 			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
 		}*/
 		return $out;
@@ -1540,25 +1557,24 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if (!empty($extrafieldsobjectkey)) {
-			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
-			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
-			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
-			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
-			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
-			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
-			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
-			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
-			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
-			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		} else {
-			// Old usage not allowed anymore
-			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_WARNING);
-			return '';
+		if (empty($extrafieldsobjectkey)) {
+			dol_syslog(get_class($this).'::showOutputField extrafieldsobjectkey required', LOG_ERR);
+			return 'BadValueForParamExtraFieldsObjectKey';
 		}
+
+		$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
+		$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];			// Can be '255', '24,8'...
+		$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
+		$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
+		$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
+		$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
+		$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
+		$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
+		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+		$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
+		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
 			return ''; // This is a protection. If field is hidden, we should just not call this method.
@@ -1583,7 +1599,7 @@ class ExtraFields
 			if (!empty($value)) {
 				//$value=price($value);
 				$sizeparts = explode(",", $size);
-				$number_decimals = $sizeparts[1];
+				$number_decimals = array_key_exists(1, $sizeparts) ? $sizeparts[1] : 0;
 				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
 		} elseif ($type == 'boolean') {
@@ -1594,6 +1610,8 @@ class ExtraFields
 			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
 		} elseif ($type == 'mail') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
+		} elseif ($type == 'ip') {
+			$value = dol_print_ip($value, 0);
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
@@ -1807,7 +1825,7 @@ class ExtraFields
 						}
 					}
 				}
-				$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
+				if (!empty($toprint)) $value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 			} else {
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
@@ -2018,6 +2036,7 @@ class ExtraFields
 				}
 
 				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst')))) {
+					//when unticking boolean field, it's not set in POST
 					continue;
 				}
 

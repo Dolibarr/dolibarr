@@ -281,8 +281,13 @@ if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans("WarehouseCard");
+if ($action == 'create') {
+	$title = $langs->trans("NewWarehouse");
+}
+
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+llxHeader("", $title, $help_url);
 
 
 if ($action == 'create') {
@@ -373,7 +378,7 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
@@ -715,7 +720,9 @@ if ($action == 'create') {
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
-					$productstatic->fk_unit = $objp->fk_unit;
+					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+						$productstatic->fk_unit = $objp->fk_unit;
+					}
 					$productstatic->status = $objp->tosell;
 					$productstatic->status_buy = $objp->tobuy;
 					$productstatic->barcode = $objp->barcode;

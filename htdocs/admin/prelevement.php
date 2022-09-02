@@ -392,7 +392,7 @@ print '<br>';
  */
 
 /* Disable this, there is no trigger with elementtype 'withdraw'
-if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
+if (!empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
 	$langs->load("mails");
 	print load_fiche_titre($langs->trans("Notifications"));

@@ -82,7 +82,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (! empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
 			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
 		}
 

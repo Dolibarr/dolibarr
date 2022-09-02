@@ -316,7 +316,7 @@ if ($forgetpasslink || $helpcenterlink) {
 if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
 	$langs->load("users");
 
-	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
+	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 4px;">';
 

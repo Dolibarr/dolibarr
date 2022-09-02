@@ -19,7 +19,6 @@ ErrorGoBackAndCorrectParameters=Regresa y revisa / corrige los parámetros.
 ErrorWrongValueForParameter=Puede haber escrito un valor incorrecto para el parámetro '%s'.
 ErrorFailedToConnectToDatabase=Error al conectarse a la base de datos '%s'.
 ErrorDatabaseVersionTooLow=La versión de la base de datos (%s) es demasiado antigua. Se requiere la versión %s o superior.
-ErrorPHPVersionTooLow=La versión de PHP es muy antigua. La versión %s es obligatoria.
 ErrorConnectedButDatabaseNotFound=La conexión al servidor se realizó correctamente, pero no se encontró la base de datos &#39;%s&#39;.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base de datos no existe, regrese y marque la opción &quot;Crear base de datos&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Si la base de datos ya existe, retroceda y desmarque la opción "Crear base de datos".

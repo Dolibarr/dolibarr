@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Warenlagerkarte
+StocksArea=Warenlager - Übersicht
 NumberOfProducts=Anzahl der Produkte
 CorrectStock=Lagerbestand anpassen
 TransferStock=Lagerumbuchung
@@ -14,7 +15,10 @@ StockLimitShort=Alarmschwelle
 StockLimit=Sicherungsbestand für autom. Benachrichtigung
 RealStock=Realer Lagerbestand
 VirtualStock=Theoretisches Warenlager
+EstimatedStockValueShort=Eingangsmenge
+EstimatedStockValue=Einkaufspreis
 DesiredStockDesc=Dieser Bestand wird für die Nachbestellfunktion verwendet.
+StockToBuy=zu bestellen
 UseVirtualStock=theoretisches Warenlager verwenden
 UsePhysicalStock=Physisches Warenlager verwenden
 CurentlyUsingVirtualStock=Theoretisches Warenlager
@@ -26,6 +30,8 @@ InventoryCodeShort=Inv. / Mov. Kode
 NoPendingReceptionOnSupplierOrder=Keine ausstehenden Lieferungen auf dieser Lieferantenbestellung
 ThisSerialAlreadyExistWithDifferentDate=Diese Charge- / Seriennummer (<strong>%s</strong>) ist bereits vorhanden, jedoch mit unterschiedlichen Haltbarkeits- oder Verfallsdatum. \n(Gefunden: <strong>%s</strong> Erfasst: <strong>%s</strong>)
 UseDispatchStatus=Auslieferungs - Status (frei gegeben / zurückgewiesen) für Lieferantenbestellungen führen.
+inventoryTitle=Inventar
+inventoryValidate=Bestätigt
 inventoryDraft=Läuft
 inventoryOnDate=Inventar
 ReOpen=entwerfen

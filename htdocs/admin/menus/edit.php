@@ -172,12 +172,12 @@ if ($action == 'add') {
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
+	if (!$error && GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
+	if (!$error && !GETPOST('menuId', 'alphanohtml', 3) && GETPOST('type') == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -216,29 +216,6 @@ if ($action == 'add') {
 			$action = 'create';
 			setEventMessages($menu->error, $menu->errors, 'errors');
 		}
-	}
-}
-
-// delete
-if ($action == 'confirm_delete' && $confirm == 'yes') {
-	$db->begin();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
-	$result = $db->query($sql);
-
-	if ($result == 0) {
-		$db->commit();
-
-		llxHeader();
-		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
-		llxFooter();
-		exit;
-	} else {
-		$db->rollback();
-
-		$reload = 0;
-		$_GET["action"] = '';
-		$action = '';
 	}
 }
 

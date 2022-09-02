@@ -168,11 +168,12 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
+print '<tr class="oddeven nohover"><td style="class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
+
 print '<tr>';
-print '<td class="tdtop">';
+print '<td class="tdtop nopaddingleftimp">';
 
 print '<div id="div_container_exportoptions">';
 print '<fieldset id="exportoptions"><legend>'.$langs->trans("ExportMethod").'</legend>';
@@ -195,10 +196,31 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
-print '<td class="tdtop">';
+print '</tr>';
 
+print '<tr>';
+print '<td class="tdtop nopaddingleftimp">';
 
-print '<div id="div_container_sub_exportoptions">';
+print '<div class="centpercent center"><a id="lnk" href="javascript:hideoptions()"> '.$langs->trans("ShowAdvancedOptions").'...</a></div>';
+
+print '<script type="text/javascript">
+
+function hideoptions(){
+	const lnk = document.getElementById("lnk");
+	const div = document.getElementById("div_container_sub_exportoptions");
+
+  	if (div.style.display === "none") {
+    	div.style.display = "block";
+		lnk.innerText="'.$langs->trans("HideAdvancedoptions").'";
+  	} else {
+    	div.style.display = "none";
+		lnk.innerText="'.$langs->trans("ShowAdvancedOptions").'...";
+	}
+}
+</script>';
+
+print '<div id="div_container_sub_exportoptions" style="display: none;">';
+print '<br>';
 if (in_array($type, array('mysql', 'mysqli'))) {
 	print "<!--  Fieldset mysqldump -->\n";
 	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';

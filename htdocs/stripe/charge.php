@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ if (!$rowid) {
 		}
 
 		// Why this ?
-		/*if (! empty($charge->payment_intent)) {
+		/*if (!empty($charge->payment_intent)) {
 		 if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 		 $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
 		 } else {
@@ -251,16 +251,15 @@ if (!$rowid) {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}
 		} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
-			print $charge->metadata->dol_type.' '.$charge->metadata->dol_id.' - ';
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}

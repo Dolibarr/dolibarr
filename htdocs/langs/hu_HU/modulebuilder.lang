@@ -153,3 +153,4 @@ LinkToParentMenu=Szülőmenü (fk_xxxxmenu)
 ListOfTabsEntries=A lapbejegyzések listája
 TabsDefDesc=Itt határozhatja meg a modulja által biztosított füleket
 TabsDefDescTooltip=A modul/alkalmazás által biztosított lapok az <strong> $this->tabs </strong> tömbben vannak meghatározva a modulleíró fájlban. Ezt a fájlt manuálisan szerkesztheti, vagy használhatja a beágyazott szerkesztőt.
+BadValueForType=Rossz érték az %s típushoz

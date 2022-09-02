@@ -18,10 +18,6 @@
 	color: var(--colortextbackhmenu);
 }
 
-.fa-15x {
-	font-size: 1.5em;
-}
-
 div.mainmenu.menu {
 	background-image: none;
 }

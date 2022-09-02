@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -483,50 +483,50 @@ $tabrowid[44] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (!empty($conf->societe->enabled));
+$tabcond[1] = (isModEnabled("societe"));
 $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
-$tabcond[5] = (!empty($conf->societe->enabled) || !empty($conf->adherent->enabled));
+$tabcond[5] = (isModEnabled("societe") || isModEnabled('adherent'));
 $tabcond[6] = isModEnabled('agenda');
-$tabcond[7] = !empty($conf->tax->enabled);
-$tabcond[8] = !empty($conf->societe->enabled);
+$tabcond[7] = isModEnabled('tax');
+$tabcond[8] = isModEnabled("societe");
 $tabcond[9] = true;
 $tabcond[10] = true;
-$tabcond[11] = (!empty($conf->societe->enabled));
-$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
-$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
-$tabcond[14] = (!empty($conf->product->enabled) && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
+$tabcond[11] = (isModEnabled("societe"));
+$tabcond[12] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[13] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
-$tabcond[16] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[17] = (!empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled));
-$tabcond[18] = !empty($conf->expedition->enabled) || !empty($conf->reception->enabled);
-$tabcond[19] = !empty($conf->societe->enabled);
-$tabcond[20] = (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled);
-$tabcond[21] = !empty($conf->propal->enabled);
-$tabcond[22] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled));
+$tabcond[16] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
+$tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
+$tabcond[18] = isModEnabled("expedition") || isModEnabled("reception");
+$tabcond[19] = isModEnabled("societe");
+$tabcond[20] = (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order");
+$tabcond[21] = isModEnabled("propal");
+$tabcond[22] = (isModEnabled('commande') || isModEnabled("propal"));
 $tabcond[23] = true;
-$tabcond[24] = !empty($conf->resource->enabled);
-$tabcond[25] = !empty($conf->website->enabled);
-//$tabcond[26]= !empty($conf->product->enabled);
-$tabcond[27] = !empty($conf->societe->enabled);
-$tabcond[28] = !empty($conf->holiday->enabled);
+$tabcond[24] = isModEnabled('resource');
+$tabcond[25] = isModEnabled('website');
+//$tabcond[26]= isModEnabled("product");
+$tabcond[27] = isModEnabled("societe");
+$tabcond[28] = isModEnabled('holiday');
 $tabcond[29] = !empty($conf->project->enabled);
-$tabcond[30] = !empty($conf->label->enabled);
+$tabcond[30] = isModEnabled('label');
 //$tabcond[31]= !empty($conf->accounting->enabled);
-$tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
-$tabcond[33] = !empty($conf->hrm->enabled);
-$tabcond[34] = !empty($conf->hrm->enabled);
-$tabcond[35] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[36] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[37] = !empty($conf->product->enabled);
-$tabcond[38] = !empty($conf->socialnetworks->enabled);
-$tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[41] = !empty($conf->intracommreport->enabled);
-$tabcond[42] = !empty($conf->product->enabled);
-$tabcond[43] = !empty($conf->product->enabled) && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
-$tabcond[44] = !empty($conf->asset->enabled);
+$tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
+$tabcond[33] = isModEnabled('hrm');
+$tabcond[34] = isModEnabled('hrm');
+$tabcond[35] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[36] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[37] = isModEnabled("product");
+$tabcond[38] = isModEnabled('socialnetworks');
+$tabcond[39] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[40] = (isModEnabled("societe") && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[41] = isModEnabled('intracommreport');
+$tabcond[42] = isModEnabled("product");
+$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && $conf->global->MAIN_FEATURES_LEVEL >= 2;
+$tabcond[44] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
@@ -622,34 +622,33 @@ $sourceList = array();
 if ($id == 11) {
 	$elementList = array(
 		'' => '',
-		'societe' => $langs->trans('ThirdParty'),
+		'agenda' => img_picto('', 'action', 'class="pictofixedwidth"').$langs->trans('Agenda'),
+		'dolresource' => img_picto('', 'resource', 'class="pictofixedwidth"').$langs->trans('Resource'),
+		'societe' => img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans('ThirdParty'),
 		// 'proposal' => $langs->trans('Proposal'),
 		// 'order' => $langs->trans('Order'),
 		// 'invoice' => $langs->trans('Bill'),
-		'supplier_proposal' => $langs->trans('SupplierProposal'),
-		'order_supplier' => $langs->trans('SupplierOrder'),
-		'invoice_supplier' => $langs->trans('SupplierBill'),
 		// 'intervention' => $langs->trans('InterventionCard'),
 		// 'contract' => $langs->trans('Contract'),
-		'project' => $langs->trans('Project'),
-		'project_task' => $langs->trans('Task'),
-		'ticket' => $langs->trans('Ticket'),
-		'agenda' => $langs->trans('Agenda'),
-		'dolresource' => $langs->trans('Resource'),
-		// old deprecated
-		'propal' => $langs->trans('Proposal'),
-		'commande' => $langs->trans('Order'),
-		'facture' => $langs->trans('Bill'),
-		'fichinter' => $langs->trans('InterventionCard'),
-		'contrat' => $langs->trans('Contract'),
+		'project' => img_picto('', 'project', 'class="pictofixedwidth"').$langs->trans('Project'),
+		'project_task' => img_picto('', 'projecttask', 'class="pictofixedwidth"').$langs->trans('Task'),
+		'propal' => img_picto('', 'propal', 'class="pictofixedwidth"').$langs->trans('Proposal'),
+		'commande' => img_picto('', 'order', 'class="pictofixedwidth"').$langs->trans('Order'),
+		'facture' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans('Bill'),
+		'fichinter' => img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans('InterventionCard'),
+		'contrat' => img_picto('', 'contract', 'class="pictofixedwidth"').$langs->trans('Contract'),
+		'ticket' => img_picto('', 'ticket', 'class="pictofixedwidth"').$langs->trans('Ticket'),
+		'supplier_proposal' => img_picto('', 'supplier_proposal', 'class="pictofixedwidth"').$langs->trans('SupplierProposal'),
+		'order_supplier' => img_picto('', 'supplier_order', 'class="pictofixedwidth"').$langs->trans('SupplierOrder'),
+		'invoice_supplier' => img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans('SupplierBill'),
 	);
-	if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
-		$elementList["societe"] = $langs->trans('ThirdParty');
+	if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$elementList['conferenceorbooth'] = img_picto('', 'eventorganization', 'class="pictofixedwidth"').$langs->trans('ConferenceOrBooth');
 	}
 
 	complete_elementList_with_modules($elementList);
 
-	asort($elementList);
+	//asort($elementList);
 	$sourceList = array(
 		'internal' => $langs->trans('Internal'),
 		'external' => $langs->trans('External')
@@ -1202,7 +1201,6 @@ if (GETPOST('from')) {
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 
 /*
@@ -1222,14 +1220,16 @@ if ($id > 0) {
 		$sql .= natural_search("code_iso", $search_code);
 	} elseif ($search_code != '' && $id == 28) {
 		$sql .= natural_search("h.code", $search_code);
-	} elseif ($search_code != '' && $id == 32) {
+	} elseif ($search_code != '' && ($id == 7 || $id == 32)) {
 		$sql .= natural_search("a.code", $search_code);
 	} elseif ($search_code != '' && $id == 3) {
 		$sql .= natural_search("r.code_region", $search_code);
-	} elseif ($search_code != '' && $id == 7) {
-		$sql .= natural_search("a.code", $search_code);
-	} elseif ($search_code != '' && $id == 10) {
+	} elseif ($search_code != '' && ($id == 8 || $id == 10)) {
 		$sql .= natural_search("t.code", $search_code);
+	} elseif ($search_code != '' && $id == 1) {
+		$sql .= natural_search("f.code", $search_code);
+	} elseif ($search_code != '' && $id == 2) {
+		$sql .= natural_search("d.code_departement", $search_code);
 	} elseif ($search_code != '' && $id != 9) {
 		$sql .= natural_search("code", $search_code);
 	}
@@ -1960,7 +1960,7 @@ if ($id > 0) {
 								$valuetoshow = price($valuetoshow);
 							}
 							if ($value == 'private') {
-								$valuetoshow = yn($elementList[$valuetoshow]);
+								$valuetoshow = yn($valuetoshow);
 							} elseif ($value == 'libelle_facture') {
 								$langs->load("bills");
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
@@ -2090,6 +2090,8 @@ if ($id > 0) {
 								$valuetoshow = $langs->trans($obj->{$value});
 							} elseif ($value == 'block_if_negative') {
 								$valuetoshow = yn($obj->{$value});
+							} elseif ($value == 'icon') {
+								$valuetoshow = $obj->{$value}." ".img_picto("",  $obj->{$value});
 							} elseif ($value == 'type_duration') {
 								$TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 								$valuetoshow =$TDurationTypes[$obj->{$value}];
@@ -2373,9 +2375,15 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
-		} elseif (in_array($value, array('element', 'source'))) {	//Example: the type and source of the element (for contact types)
+		} elseif (in_array($value, array('element', 'source'))) {	// Example: the type and source of the element (for contact types)
+			$tmparray = array();
+			if ($value == 'element') {
+				$tmparray = $elementList;
+			} else {
+				$tmparray = $sourceList;
+			}
 			print '<td>';
-			print $form->selectarray($value, $elementList, (!empty($obj->{$value}) ? $obj->{$value}:''));
+			print $form->selectarray($value, $tmparray, (!empty($obj->{$value}) ? $obj->{$value}:''), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth250');
 			print '</td>';
 		} elseif (in_array($value, array('public', 'use_default'))) {
 			// Fields 0/1 with a combo select Yes/No

@@ -63,8 +63,8 @@ class box_activity extends ModeleBoxes
 		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
 
 		$this->hidden = !((isModEnabled('facture') && $user->rights->facture->lire)
-			|| (!empty($conf->commande->enabled) && $user->rights->commande->lire)
-			|| (!empty($conf->propal->enabled) && $user->rights->propale->lire)
+			|| (isModEnabled('commande') && $user->rights->commande->lire)
+			|| (isModEnabled('propal') && $user->rights->propale->lire)
 			);
 	}
 
@@ -102,7 +102,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the propals
-		if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+		if (isModEnabled("propal") && $user->rights->propale->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propalstatic = new Propal($this->db);
 
@@ -189,7 +189,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->rights->commande->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 

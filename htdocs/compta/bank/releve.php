@@ -197,11 +197,6 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
@@ -227,6 +222,17 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
+
+if (empty($numref)) {
+	$title = $object->ref.' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+} else {
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+}
+
+
+llxHeader('', $title, $helpurl);
 
 
 if (empty($numref)) {

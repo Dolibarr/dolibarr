@@ -48,8 +48,9 @@ CountriesNotInEEC=وہ ممالک جو EEC میں نہیں ہیں۔
 CountriesInEECExceptMe=ای ای سی میں شامل ممالک سوائے %s کے
 CountriesExceptMe=%s کے علاوہ تمام ممالک
 AccountantFiles=ماخذ کی دستاویزات برآمد کریں۔
-ExportAccountingSourceDocHelp=اس ٹول کے ساتھ، آپ ان سورس ایونٹس کو ایکسپورٹ کر سکتے ہیں (CSV اور PDFs میں فہرست) جو آپ کی اکاؤنٹنسی بنانے کے لیے استعمال ہوتے ہیں۔
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=اپنے جریدے برآمد کرنے کے لیے، مینو اندراج %s - %s استعمال کریں۔
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=حساب کتاب کے حساب سے دیکھیں
 VueBySubAccountAccounting=اکاؤنٹنگ ذیلی اکاؤنٹ کے ذریعہ دیکھیں
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=بینک اکاؤنٹ میں لین دین کی برا
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=جرنل پر ڈرافٹ ایکسپورٹ کو فعال کریں۔
 ACCOUNTANCY_COMBO_FOR_AUX=ذیلی اکاؤنٹ کے لیے کومبو لسٹ کو فعال کریں (اگر آپ کے پاس بہت سارے فریق ثالث ہیں تو سست ہو سکتے ہیں، قدر کے کسی حصے پر تلاش کرنے کی صلاحیت کو توڑ دیں)
 ACCOUNTING_DATE_START_BINDING=اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر شروع کرنے کے لیے تاریخ کی وضاحت کریں۔ اس تاریخ کے نیچے، لین دین کو اکاؤنٹنگ میں منتقل نہیں کیا جائے گا۔
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=اکاؤنٹنسی ٹرانسفر پر، ڈیفالٹ کے مطابق مدت شو کو منتخب کریں۔
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=جریدہ فروخت کریں۔
 ACCOUNTING_PURCHASE_JOURNAL=جریدہ خریدیں۔
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=عطیات کو رجسٹر کرنے کے لیے اک�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=سبسکرپشنز کو رجسٹر کرنے کے لیے اکاؤنٹنگ اکاؤنٹ
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=کسٹمر ڈپازٹ کو رجسٹر کرنے کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=خریدی گئی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC میں خریدی گئی مصنوعات کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر پروڈکٹ شیٹ میں وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=اخراجات کی رپورٹوں 
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=اکاؤنٹنگ برآمد فائل کی نسل کی تصدیق؟
 ExportDraftJournal=ڈرافٹ جرنل برآمد کریں۔
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=مع
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=اکاؤنٹنگ اندراجات

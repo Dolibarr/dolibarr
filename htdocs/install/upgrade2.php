@@ -420,7 +420,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '5.0.9');
 			$beforeversionarray = explode('.', '6.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				if (!empty($conf->multicompany->enabled)) {
+				if (isModEnabled('multicompany')) {
 					global $multicompany_transverse_mode;
 
 					// Only if the transverse mode is not used
@@ -574,7 +574,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					print '</td></tr>';
 				}
 			} else {
-				//if (! empty($conf->modules))
+				//if (!empty($conf->modules))
 				if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 					print '<tr class="trforrunsql"><td colspan="4">';
 					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterDB");
@@ -646,7 +646,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '</td></tr>';
 			}
 		} else {
-			//if (! empty($conf->modules))
+			//if (!empty($conf->modules))
 			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterFiles");
@@ -2024,7 +2024,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -2037,7 +2037,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePDFExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -4116,6 +4116,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
+		'/asterisk/cidlookup.php',
 		'/categories/class/api_category.class.php',
 		'/categories/class/api_deprecated_category.class.php',
 		'/compta/facture/class/api_invoice.class.php',

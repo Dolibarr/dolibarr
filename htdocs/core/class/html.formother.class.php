@@ -1513,9 +1513,10 @@ class FormOther
 	 * @param	array	$search_xaxis		Array of preselected fields
 	 * @param	array	$arrayofxaxis		Array of groupby to fill
 	 * @param	string  $showempty          '1' or 'text'
+	 * @param	string	$morecss			More css
 	 * @return 	string						HTML string component
 	 */
-	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1')
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis, $showempty = '1', $morecss = 'minwidth250 maxwidth500')
 	{
 		global $form;
 
@@ -1523,7 +1524,7 @@ class FormOther
 		foreach ($arrayofxaxis as $key => $val) {
 			$arrayofxaxislabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth250 maxwidth500', 1);
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

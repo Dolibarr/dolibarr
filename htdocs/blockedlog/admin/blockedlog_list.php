@@ -18,11 +18,13 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/blockedlog_list.php
- *  \ingroup    blockedlog
- *  \brief      Page setup for blockedlog module
+ *    \file       htdocs/blockedlog/admin/blockedlog_list.php
+ *    \ingroup    blockedlog
+ *    \brief      Page setup for blockedlog module
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -31,16 +33,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
+$langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
+// Access Control
 if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action      = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) {
@@ -95,7 +99,7 @@ $block_static->loadTrackedEvents();
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
-
+// Execution Time
 $max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {

@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på ban
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
 ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Definer en dato for å starte binding og overføring i regnskap. Etter denne datoen vil ikke transaksjonene bli overført til regnskap.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Velg regnskapsvisning som standard ved overføring av regnskap
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnementer
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Regnskapskonto som standard for å registrere kundeinnskudd
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskapskonto som standard for de kjøpte varene (brukt hvis ikke definert i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskapskonto som standard for kjøpte produkter i EU (brukt hvis ikke definert i produktarket)
@@ -279,7 +279,7 @@ DescVentilExpenseReportMore=Hvis du setter opp regnskapskonto med type utgiftsra
 DescVentilDoneExpenseReport=Liste over utgiftsrapport-linjer og tilhørende gebyr-regnskapskonto
 
 Closure=Årsavslutning
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorr
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=Saldoen (%s) er ikke lik 0
 AccountancyErrorLetteringBookkeeping=Det har oppstått feil angående transaksjonene: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Regnskapsposter

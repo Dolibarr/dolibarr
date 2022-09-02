@@ -66,7 +66,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		$form = new Form($db);
 
 		// We get cursor rule
-		$mask = isset($conf->global->LOT_ADVANCED_MASK) ? $conf->global->LOT_ADVANCED_MASK : '';
+		$mask = getDolGlobalString('LOT_ADVANCED_MASK');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -142,7 +142,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = isset($conf->global->LOT_ADVANCED_MASK) ? $conf->global->LOT_ADVANCED_MASK : '';
+		$mask = getDolGlobalString('LOT_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
