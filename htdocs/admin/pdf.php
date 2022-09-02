@@ -471,7 +471,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width=
 // Use 2 languages into PDF
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (! empty($conf->global->MAIN_MULTILANGS))
+//if (!empty($conf->global->MAIN_MULTILANGS))
 	//{
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
 print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);

@@ -432,7 +432,7 @@ class EmailCollector extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		$this->password = dolDecrypt($this->password);
 
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 

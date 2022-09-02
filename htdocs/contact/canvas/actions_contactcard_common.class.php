@@ -66,7 +66,7 @@ abstract class ActionsContactCardCommon
 
 		if (is_object($this->object) && method_exists($this->object,'fetch'))
 		{
-			if (! empty($id)) $this->object->fetch($id);
+			if (!empty($id)) $this->object->fetch($id);
 		}
 		else
 		{*/
@@ -191,7 +191,7 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
@@ -201,7 +201,7 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;
 			}
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;

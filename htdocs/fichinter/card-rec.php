@@ -41,7 +41,7 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
@@ -241,7 +241,7 @@ llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$contratstatic = new Contrat($db);
 }
 if (isModEnabled('project')) {
@@ -275,7 +275,7 @@ if ($action == 'create') {
 		if (isModEnabled('project') && $object->fk_project > 0) {
 			$rowspan++;
 		}
-		if (!empty($conf->contrat->enabled) && $object->fk_contrat > 0) {
+		if (isModEnabled('contrat') && $object->fk_contrat > 0) {
 			$rowspan++;
 		}
 
@@ -328,7 +328,7 @@ if ($action == 'create') {
 		}
 
 		// Contrat
-		if (!empty($conf->contrat->enabled)) {
+		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
 			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
@@ -539,7 +539,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -800,7 +800,7 @@ if ($action == 'create') {
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
 			if (isModEnabled('project')) {
@@ -834,7 +834,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);

@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -487,45 +487,45 @@ $tabcond[1] = (isModEnabled("societe"));
 $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
-$tabcond[5] = (isModEnabled("societe") || !empty($conf->adherent->enabled));
+$tabcond[5] = (isModEnabled("societe") || isModEnabled('adherent'));
 $tabcond[6] = isModEnabled('agenda');
-$tabcond[7] = !empty($conf->tax->enabled);
+$tabcond[7] = isModEnabled('tax');
 $tabcond[8] = isModEnabled("societe");
 $tabcond[9] = true;
 $tabcond[10] = true;
 $tabcond[11] = (isModEnabled("societe"));
-$tabcond[12] = (!empty($conf->commande->enabled) || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[13] = (!empty($conf->commande->enabled) || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[14] = (isModEnabled("product") && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
+$tabcond[12] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[13] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
 $tabcond[16] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[17] = (!empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled));
+$tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
 $tabcond[18] = isModEnabled("expedition") || isModEnabled("reception");
 $tabcond[19] = isModEnabled("societe");
 $tabcond[20] = (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order");
 $tabcond[21] = isModEnabled("propal");
-$tabcond[22] = (!empty($conf->commande->enabled) || isModEnabled("propal"));
+$tabcond[22] = (isModEnabled('commande') || isModEnabled("propal"));
 $tabcond[23] = true;
-$tabcond[24] = !empty($conf->resource->enabled);
-$tabcond[25] = !empty($conf->website->enabled);
+$tabcond[24] = isModEnabled('resource');
+$tabcond[25] = isModEnabled('website');
 //$tabcond[26]= isModEnabled("product");
 $tabcond[27] = isModEnabled("societe");
-$tabcond[28] = !empty($conf->holiday->enabled);
+$tabcond[28] = isModEnabled('holiday');
 $tabcond[29] = isModEnabled('project');
-$tabcond[30] = !empty($conf->label->enabled);
+$tabcond[30] = isModEnabled('label');
 //$tabcond[31]= !empty($conf->accounting->enabled);
-$tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
-$tabcond[33] = !empty($conf->hrm->enabled);
-$tabcond[34] = !empty($conf->hrm->enabled);
-$tabcond[35] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[36] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
+$tabcond[33] = isModEnabled('hrm');
+$tabcond[34] = isModEnabled('hrm');
+$tabcond[35] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[36] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
 $tabcond[37] = isModEnabled("product");
-$tabcond[38] = !empty($conf->socialnetworks->enabled);
+$tabcond[38] = isModEnabled('socialnetworks');
 $tabcond[39] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[40] = (isModEnabled("societe") && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[41] = !empty($conf->intracommreport->enabled);
+$tabcond[41] = isModEnabled('intracommreport');
 $tabcond[42] = isModEnabled("product");
-$tabcond[43] = isModEnabled("product") && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
+$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && $conf->global->MAIN_FEATURES_LEVEL >= 2;
 $tabcond[44] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)

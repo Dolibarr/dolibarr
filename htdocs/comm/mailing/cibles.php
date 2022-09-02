@@ -515,7 +515,7 @@ if ($object->fetch($id) >= 0) {
 		$num = $db->num_rows($resql);
 
 		$param = "&id=".$object->id;
-		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		//if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.urlencode($limit);
 		}

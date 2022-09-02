@@ -136,7 +136,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect";
 		}
-		if (!empty($conf->adherent->enabled)) {
+		if (isModEnabled('adherent')) {
 			$typeexample .= ($typeexample ? " / " : "")."3=Member";
 		}
 		if (isModEnabled("societe")) {
@@ -160,7 +160,7 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled('agenda')) {
 			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
 		}
-		if (!empty($conf->website->enabled)) {
+		if (isModEnabled('website')) {
 			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
 		}
 
@@ -297,7 +297,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
 		$this->export_label[$r] = 'CatMemberList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->adherent->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled("adherent")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("adherent", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'MemberId', 'p.lastname'=>'LastName', 'p.firstname'=>'Firstname');
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
@@ -527,7 +527,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 3 Members
-		if (!empty($conf->adherent->enabled)) {
+		if (isModEnabled('adherent')) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key

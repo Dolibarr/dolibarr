@@ -2650,7 +2650,7 @@ class Contrat extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					if (! empty($contractlineprocessed[$obj->lid]) || ! empty($contractignored[$obj->rowid]) || ! empty($contracterror[$obj->rowid])) {
+					if (!empty($contractlineprocessed[$obj->lid]) || !empty($contractignored[$obj->rowid]) || !empty($contracterror[$obj->rowid])) {
 						continue;
 					}
 

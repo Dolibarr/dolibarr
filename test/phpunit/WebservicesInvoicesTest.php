@@ -261,7 +261,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
@@ -316,7 +316,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;
@@ -413,7 +413,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			print 'Error: '.$this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;

@@ -295,7 +295,7 @@ if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
 // If edited user is an extern user, we show warning for external users
-if (! empty($object->socid)) {
+if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 

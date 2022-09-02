@@ -217,7 +217,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
@@ -271,7 +271,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
@@ -334,7 +334,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 			$result=0;
 		}
 		print $this->soapclient->response;
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
@@ -393,7 +393,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			print 'Error: '.$this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;

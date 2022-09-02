@@ -123,7 +123,7 @@ if ($object->id) {
 
 
 	$morehtmlref = '';
-	//if (! empty($modCodeContract->code_auto)) {
+	//if (!empty($modCodeContract->code_auto)) {
 	$morehtmlref .= $object->ref;
 	/*} else {
 	 $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
