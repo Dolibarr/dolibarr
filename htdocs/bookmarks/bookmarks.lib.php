@@ -43,7 +43,7 @@ function printDropdownBookmarksList()
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
 				if ($val != '') {
-					$url_param[$key]=http_build_query(array($key => $val));
+					$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 				}
 			}
 		}
@@ -62,7 +62,7 @@ function printDropdownBookmarksList()
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
-				$url_param[$key]=http_build_query(array($key => $val));
+				$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 			}
 		}
 	}
