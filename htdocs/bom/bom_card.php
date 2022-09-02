@@ -183,7 +183,7 @@ if (empty($reshook)) {
 		// We check if we're allowed to add this bom
 		$TParentBom=array();
 		$object->getParentBomTreeRecursive($TParentBom, $object->id);
-		if($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
+		if ($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
 			$n_child = new BOM($db);
 			$n_child->fetch($bom_child_id);
 			setEventMessages($langs->transnoentities('BomCantAddChildBom', $n_child->getNomUrl(1), $object->getNomUrl(1)), null, 'errors');
