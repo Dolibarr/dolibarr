@@ -331,8 +331,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
-NotifiedExportDate=Date d'exportation notifiée sur les lignes exportées (la modification des enregistrements ne sera pas possible)
-NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning">(pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité)</span>
+NotifiedValidationDate=Valider et bloquer les lignes exportées <span class="warning">(même effet que la fonctionnalité de "%s", la modification et la suppression de ces lignes ne sera DÉFINITIVEMENT plus possible)</span>
+DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
