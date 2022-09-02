@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,9 @@ class ExtraFields
 	 */
 	public $errno;
 
-
+	/**
+	 * @var array array of type to label
+	 */
 	public static $type2label = array(
 		'varchar'=>'String1Line',
 		'text'=>'TextLongNLines',

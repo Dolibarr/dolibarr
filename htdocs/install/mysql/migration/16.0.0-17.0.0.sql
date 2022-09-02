@@ -132,3 +132,13 @@ ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country
 ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
 ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
+
+CREATE TABLE llx_bank_extrafields
+(
+  rowid      integer AUTO_INCREMENT PRIMARY KEY,
+  tms        timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object  integer NOT NULL,
+  import_key varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
