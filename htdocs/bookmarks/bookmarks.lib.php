@@ -36,7 +36,7 @@ function printDropdownBookmarksList()
 
 	$langs->load("bookmarks");
 
-	$authorized_var=array('page','limit','optioncss','contextpage');
+	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];
 	$url_param=array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
