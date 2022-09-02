@@ -58,15 +58,16 @@ if (!$res) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook"));
+$langs->loadLangs(array('webhook'));
 
-$action = GETPOST('action', 'aZ09');
 
 
 // Security check
 // if (! $user->rights->webhook->myobject->read) {
 // 	accessforbidden();
 // }
+
+$action = GETPOST('action', 'aZ09');
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
