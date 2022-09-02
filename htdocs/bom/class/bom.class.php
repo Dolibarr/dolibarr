@@ -1153,10 +1153,18 @@ class BOM extends CommonObject
 	 *
 	 * @param 	array	$TParentBom		We put all found parent bom in $TParentBom
 	 * @param 	int		$bom_id			ID of bom from which we want to get parent bom ids
+	 * @param 	int		$level		Protection against infinite loop
 	 * @return 	void
 	 */
-	public function getParentBomTreeRecursive(&$TParentBom, $bom_id)
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id='', $level=1)
 	{
+
+		// Protection against infinite loop
+		if ($level > 1000) {
+			return 0;
+		}
+
+		if(empty($bom_id)) $bom_id=$this->id;
 
 		$sql = 'SELECT l.fk_bom, b.label
 				FROM '.MAIN_DB_PREFIX.'bom_bomline l
@@ -1167,7 +1175,7 @@ class BOM extends CommonObject
 		if (!empty($resql)) {
 			while ($res = $this->db->fetch_object($resql)) {
 				$TParentBom[$res->fk_bom] = $res->fk_bom;
-				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom);
+				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level+1);
 			}
 		}
 	}
