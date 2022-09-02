@@ -174,8 +174,8 @@ class UserBankAccount extends Account
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
 		$sql .= " FROM ".$this->db->prefix()."user_rib as ur";
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON ur.fk_country=c.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ur.state_id=d.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_country as c ON ur.fk_country=c.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_departements as d ON ur.state_id=d.rowid';
 
 		if ($id) {
 			$sql .= " WHERE ur.rowid = ".((int) $id);
