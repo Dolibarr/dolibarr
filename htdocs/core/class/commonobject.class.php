@@ -2566,7 +2566,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -7444,11 +7444,29 @@ abstract class CommonObject
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special cas for product because default valut of fetch are wrong
+							$get_name_url_param_arr = array($getnomurlparam, $getnomurlparam2, 0, -1, 0, '', 0);
+							if (isset($val['get_name_url_params'])) {
+								$get_name_url_params = explode(':', $val['get_name_url_params']);
+								if (!empty($get_name_url_params)) {
+									$param_num_max = count($get_name_url_param_arr) - 1;
+									foreach ($get_name_url_params as $param_num => $param_value) {
+										if ($param_num > $param_num_max) {
+											break;
+										}
+										$get_name_url_param_arr[$param_num] = $param_value;
+									}
+								}
+							}
+
+							/**
+							 * @var Product $object
+							 */
 							$object->fetch($value, '', '', '', 0, 1, 1);
+							$value = $object->getNomUrl($get_name_url_param_arr[0], $get_name_url_param_arr[1], $get_name_url_param_arr[2], $get_name_url_param_arr[3], $get_name_url_param_arr[4], $get_name_url_param_arr[5], $get_name_url_param_arr[6]);
 						} else {
 							$object->fetch($value);
+							$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 						}
-						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);

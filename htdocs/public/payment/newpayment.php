@@ -865,6 +865,7 @@ if (!empty($conf->global->$paramlogo)) {
 // Define urllogo
 $urllogo = '';
 $urllogofull = '';
+$width = 1080;
 if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
@@ -878,10 +879,11 @@ if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+	if ($width) print ' style="max-width: '.$width.'px; max-height: 250px;"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="160px"></a></div>';
 	}
 	print '</div>';
 }
@@ -911,7 +913,7 @@ print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+print '<table id="dolpaymenttable" summary="Payment form" class="center" style="width: '.$width.'px;">'."\n";
 
 // Output introduction text
 $text = '';
@@ -925,7 +927,8 @@ if (!empty($conf->global->PAYMENT_NEWFORM_TEXT)) {
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
 if (empty($text)) {
-	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment titlepublicpayment"><br><strong>'.$langs->trans("WelcomeOnPaymentPage").'</strong></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment">&nbsp;</td></tr>'."\n";
 	$text .= '<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToPay", $creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
@@ -933,7 +936,7 @@ print $text;
 // Output payment summary form
 print '<tr><td align="center">';
 print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
+print '<tr><td align="left" colspan="2" class="CTableRow1 opacitymedium">'.$langs->trans("ThisIsInformationOnPayment").' :</td></tr>'."\n";
 
 $found = false;
 $error = 0;
@@ -1046,7 +1049,7 @@ if ($source == 'order') {
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($order->id).'">';
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink) {
-		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
+		print '&nbsp;&nbsp;&nbsp;<a href="'.$directdownloadlink.'" rel="nofollow noopener">';
 		print img_mime($order->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
@@ -1170,7 +1173,7 @@ if ($source == 'invoice') {
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($invoice->id).'">';
 	$directdownloadlink = $invoice->getLastMainDocLink('facture');
 	if ($directdownloadlink) {
-		print '<br><a href="'.$directdownloadlink.'">';
+		print '&nbsp;&nbsp;&nbsp;<a href="'.$directdownloadlink.'">';
 		print img_mime($invoice->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
@@ -1355,7 +1358,7 @@ if ($source == 'contractline') {
 	print '<input type="hidden" name="dol_id" value="'.dol_escape_htmltag($contractline->id).'">';
 	$directdownloadlink = $contract->getLastMainDocLink('contract');
 	if ($directdownloadlink) {
-		print '<br><a href="'.$directdownloadlink.'">';
+		print '&nbsp;&nbsp;&nbsp;<a href="'.$directdownloadlink.'">';
 		print img_mime($contract->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}

@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2018  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +109,7 @@ llxHeader('', $langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
-$sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.email";
+$sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -139,7 +140,7 @@ if ($search_bon) {
 }
 if ($type == 'bank-transfer') {
 	if ($search_code) {
-		$sql .= natural_search("s.code_fourn", $search_code);
+		$sql .= natural_search("s.code_fournisseur", $search_code);
 	}
 } else {
 	if ($search_code) {
@@ -172,6 +173,9 @@ if ($result) {
 
 	$param = "&amp;statut=".urlencode($statut);
 	$param .= "&amp;search_bon=".urlencode($search_bon);
+	if ($type == 'bank-transfer') {
+		$param .= '&amp;type=bank-transfer';
+	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
@@ -204,7 +208,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_bon" value="'.dol_escape_htmltag($search_bon).'" size="6"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_company" value="'.dol_escape_htmltag($search_company).'" size="6"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'.dol_escape_htmltag($search_code).'" size="6"></td>';
+	print '<td class="liste_titre center"><input type="text" class="flat" name="search_code" value="'.dol_escape_htmltag($search_code).'" size="6"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
@@ -214,8 +218,12 @@ if ($result) {
 	print '</tr>';
 
 	$columntitle = "WithdrawalsReceipts";
+	$columntitlethirdparty = "CustomerCode";
+	$columncodethirdparty = "s.code_client";
 	if ($type == 'bank-transfer') {
 		$columntitle = "BankTransferReceipts";
+		$columntitlethirdparty = "SupplierCode";
+		$columncodethirdparty = "s.code_fournisseur";
 	}
 
 	print '<tr class="liste_titre">';
@@ -223,7 +231,7 @@ if ($result) {
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($columntitlethirdparty, $_SERVER["PHP_SELF"], $columncodethirdparty, '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
@@ -256,9 +264,17 @@ if ($result) {
 			print '</a></td>';
 
 			print '<td>';
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
-			print img_object($langs->trans("ShowBill"), "bill");
-			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->invoiceref."</a></td>\n";
+			$link_to_bill = '/compta/facture/card.php?facid=';
+			$link_title = 'Invoice';
+			$link_picto = 'bill';
+			if ($type == 'bank-transfer') {
+				$link_to_bill = '/fourn/facture/card.php?facid=';
+				$link_title = 'SupplierInvoice';
+				$link_picto = 'supplier_invoice';
+			}
+			print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
+			print img_object($langs->trans($link_title), $link_picto);
+			print '&nbsp;'.$obj->invoiceref."</td>\n";
 			print '</a>';
 			print '</td>';
 
@@ -266,7 +282,15 @@ if ($result) {
 			print $company->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+
+			print '<td class="center">';
+			$link_to_tab = '/comm/card.php?socid=';
+			$link_code = $obj->code_client;
+			if ($type == 'bank-transfer') {
+				$link_to_tab = '/fourn/card.php?socid=';
+				$link_code = $obj->code_fournisseur;
+			}
+			print '<a href="'.DOL_URL_ROOT.$link_to_tab.$company->id.'">'.$link_code."</a></td>\n";
 
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 

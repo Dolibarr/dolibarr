@@ -850,6 +850,7 @@ class FormFile
 
 					// Show file name with link to download
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
+					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param, 'paddingright')."\n";
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -859,8 +860,7 @@ class FormFile
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>'."\n";
-					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$out .= '</a>';
 					$out .= '</td>';
 
 					// Show file size
@@ -1307,6 +1307,11 @@ class FormFile
 					// File name
 					print '<td class="minwith200">';
 
+					// Preview link
+					if (!$editline) {
+						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity), 'paddingright') . "\n";
+					}
+
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a class="paddingright" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
@@ -1337,10 +1342,6 @@ class FormFile
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
 						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
 						print '</a>';
-					}
-					// Preview link
-					if (!$editline) {
-						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 					}
 
 					print "</td>\n";
@@ -2097,9 +2098,10 @@ class FormFile
 	 * @param   string    $relativepath   Relative path of docs
 	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file)
 	 * @param	string	  $param		  More param on http links
+	 * @param	string	  $moreclass	  Add more class to class style
 	 * @return  string    $out            Output string with HTML
 	 */
-	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto = 0, $param = '')
+	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto = 0, $param = '', $moreclass = '')
 	{
 		global $langs, $conf;
 
@@ -2107,7 +2109,7 @@ class FormFile
 		if ($conf->browser->layout != 'phone' && !empty($conf->use_javascript_ajax)) {
 			$urladvancedpreview = getAdvancedPreviewUrl($modulepart, $relativepath, 1, $param); // Return if a file is qualified for preview.
 			if (count($urladvancedpreview)) {
-				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
+				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].(!empty($moreclass)?' '.$moreclass:'').'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');

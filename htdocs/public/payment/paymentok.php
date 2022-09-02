@@ -207,6 +207,7 @@ if (!empty($conf->global->$paramlogo)) {
 // Define urllogo
 $urllogo = '';
 $urllogofull = '';
+$width = 1080;
 if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
@@ -220,10 +221,11 @@ if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+	if ($width) print ' style="max-width: '.$width.'px; max-height: 250px;"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="160px"></a></div>';
 	}
 	print '</div>';
 }
@@ -1333,15 +1335,15 @@ if ($ispaymentok) {
 		if ($result < 0) $error++;
 	}
 
-	print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
+    print '<span class="titlepublicpayment"><strong>'.$langs->trans("YourPaymentHasBeenRecorded")."</strong></span><br><br>\n";
 	if ($TRANSACTIONID) {
-		print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
+		print '<span style="font-size: 20px;">'.$langs->trans("ThisIsTransactionId",$TRANSACTIONID)."</span><br><br><br>\n";
 	}
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_OK';
 	if (!empty($conf->global->$key)) {
 		print '<br>';
-		print $conf->global->$key;
+		print '<span class="titlepublicpayment"><strong>'.$conf->global->$key."</strong></span><br><br>\n";
 	}
 
 	$sendemail = '';
