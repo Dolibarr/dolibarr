@@ -417,7 +417,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if ( isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
+if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
 		activitytrim(0);
 	}
