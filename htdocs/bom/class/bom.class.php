@@ -1156,7 +1156,7 @@ class BOM extends CommonObject
 	 * @param 	int		$level		Protection against infinite loop
 	 * @return 	void
 	 */
-	public function getParentBomTreeRecursive(&$TParentBom, $bom_id='', $level=1)
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
 	{
 
 		// Protection against infinite loop
@@ -1164,7 +1164,7 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		if(empty($bom_id)) $bom_id=$this->id;
+		if (empty($bom_id)) $bom_id=$this->id;
 
 		$sql = 'SELECT l.fk_bom, b.label
 				FROM '.MAIN_DB_PREFIX.'bom_bomline l
