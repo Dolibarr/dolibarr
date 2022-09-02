@@ -1028,10 +1028,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1048,10 +1051,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1068,10 +1074,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1088,10 +1097,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1108,10 +1120,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1128,10 +1143,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1140,6 +1158,8 @@ if (empty($reshook)) {
 		}
 	}
 }
+
+
 /*
  * View
  */
