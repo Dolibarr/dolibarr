@@ -586,7 +586,7 @@ class MouvementStock extends CommonObject
 
 		// Add movement for sub products (recursive call)
 		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct)) {
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode, $datem); // we use 0 as price, because AWP must not change for subproduct
 		}
 
 		if ($movestock && !$error) {
@@ -705,17 +705,18 @@ class MouvementStock extends CommonObject
 	/**
 	 *  Create movement in database for all subproducts
 	 *
-	 * 	@param 		User	$user			Object user
-	 * 	@param		int		$idProduct		Id product
-	 * 	@param		int		$entrepot_id	Warehouse id
-	 * 	@param		int		$qty			Quantity
-	 * 	@param		int		$type			Type
-	 * 	@param		int		$price			Price
-	 * 	@param		string	$label			Label of movement
-	 *  @param		string	$inventorycode	Inventory code
-	 * 	@return 	int     				<0 if KO, 0 if OK
+	 * 	@param 		User			$user			Object user
+	 * 	@param		int				$idProduct		Id product
+	 * 	@param		int				$entrepot_id	Warehouse id
+	 * 	@param		int				$qty			Quantity
+	 * 	@param		int				$type			Type
+	 * 	@param		int				$price			Price
+	 * 	@param		string			$label			Label of movement
+	 *  @param		string			$inventorycode	Inventory code
+	 *  @param		integer|string	$datem			Force date of movement
+	 * 	@return 	int     		<0 if KO, 0 if OK
 	 */
-	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '')
+	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
 	{
 		global $langs;
 
@@ -747,7 +748,7 @@ class MouvementStock extends CommonObject
 			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
 
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
+				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
 					$this->errors = array_merge($this->errors, $tmpmove->errors);
