@@ -468,7 +468,6 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<br>';
 			if ($message == 'refused') {
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
-
 			} else {
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
