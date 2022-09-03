@@ -7398,7 +7398,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (!empty($conf->project->enabled)) {		// Most objects
+			if (isModEnabled('project')) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';

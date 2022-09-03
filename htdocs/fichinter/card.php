@@ -7,7 +7,7 @@
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
- * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -787,7 +787,7 @@ $formfile = new FormFile($db);
 if (isModEnabled('contrat')) {
 	$formcontract = new FormContract($db);
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -908,7 +908,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 
 			$langs->load("project");
@@ -1159,7 +1159,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ficheinter->creer) {

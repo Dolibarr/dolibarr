@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2021 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2022 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -1574,7 +1574,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = new FormMargin($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1835,7 +1835,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		print '<tr class="field_projectid">';
 		print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
@@ -2267,7 +2267,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br><span class="paddingrightonly">'.$langs->trans('Project').'</span>';
 		if ($usercancreate) {

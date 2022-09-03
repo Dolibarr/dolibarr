@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
@@ -869,7 +869,7 @@ llxHeader('', $langs->trans("RepeatableSupplierInvoice"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -898,7 +898,7 @@ if ($action == 'create') {
 		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
-		if (!empty($conf->project->enabled)) $rowspan++;
+		if (isModEnabled('project')) $rowspan++;
 		if ($object->fk_account > 0) $rowspan++;
 
 		print '<table class="border centpercent">';
@@ -986,7 +986,7 @@ if ($action == 'create') {
 		print "</td></tr>";
 
 		// Project
-		if (!empty($conf->project->enabled) && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
 			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
@@ -1135,7 +1135,7 @@ if ($action == 'create') {
 		$morehtmlref .= '<br>' . $langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load('projects');
 			$morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
 			if ($usercancreate) {

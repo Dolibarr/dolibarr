@@ -456,7 +456,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (!empty($conf->project->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
+					if (isModEnabled('project') && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
 						$objecttmp->fetch_projet();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);

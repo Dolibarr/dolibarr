@@ -7,7 +7,7 @@
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -297,7 +297,7 @@ class Propal extends CommonObject
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>40),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>23),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>24),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>24),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'datep' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
@@ -1364,7 +1364,7 @@ class Propal extends CommonObject
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$object->fk_delivery_address = '';
 
-				/*if (!empty($conf->project->enabled))
+				/*if (isModEnabled('project'))
 				{
 					$project = new Project($db);
 					if ($this->fk_project > 0 && $project->fetch($this->fk_project)) {

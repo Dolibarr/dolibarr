@@ -876,7 +876,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -897,7 +897,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;

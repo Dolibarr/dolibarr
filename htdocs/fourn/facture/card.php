@@ -5,7 +5,7 @@
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2019	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
@@ -49,7 +49,7 @@ if (isModEnabled("product")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -1888,7 +1888,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $bankaccountstatic = new Account($db);
 $paymentstatic = new PaiementFourn($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -2408,7 +2408,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
@@ -2864,7 +2864,7 @@ if ($action == 'create') {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($usercancreate) {
@@ -3247,7 +3247,7 @@ if ($action == 'create') {
 		}
 
 		$nbrows = 9; $nbcols = 3;
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$nbrows++;
 		}
 		if (isModEnabled("banque")) {

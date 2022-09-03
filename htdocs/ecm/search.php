@@ -143,8 +143,8 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 if (isModEnabled('tax')) {
 	$langs->load("compta"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'tax', 'test'=>$conf->tax->enabled, 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
 }
-if (!empty($conf->project->enabled)) {
-	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>$conf->project->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+if (isModEnabled('project')) {
+	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
 }
 if (!empty($conf->ficheinter->enabled)) {
 	$langs->load("interventions"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
