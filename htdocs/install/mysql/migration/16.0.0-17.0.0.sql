@@ -142,3 +142,5 @@ CREATE TABLE llx_bank_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
+
+ALTER TABLE llx_user RENAME COLUMN note TO note_private;
