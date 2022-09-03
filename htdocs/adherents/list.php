@@ -1130,9 +1130,9 @@ while ($i < min($num, $limit)) {
 	}
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print '<td class="center">';
 		$tmparray = getCountry($obj->country, 'all');
-		print $tmparray['label'];
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
