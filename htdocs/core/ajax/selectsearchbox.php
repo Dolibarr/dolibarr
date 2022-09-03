@@ -25,6 +25,8 @@
 // This script is called with a POST method or as an include.
 
 if (!isset($usedbyinclude) || empty($usedbyinclude)) {
+	top_httphead('application/json');
+
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', 1); // Disables token renewal
 	}

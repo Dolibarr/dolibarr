@@ -91,6 +91,8 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnable
  * View
  */
 
+top_httphead();
+
 if ($action == "importSignature") {
 	if (!empty($signature) && $signature[0] == "image/png;base64") {
 		$signature = $signature[1];
