@@ -64,7 +64,7 @@ $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
  * Actions
  */
 $parameters = array('id'=>$socid);
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
