@@ -575,7 +575,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<td>'.$langs->trans('RefSupplier').'</td>';
 						print '<td class="center">'.$langs->trans('Date').'</td>';
 						print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							print '<td>'.$langs->trans('Currency').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
@@ -612,7 +612,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							// Multicurrency Price
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								$multicurrency_payment = $invoice->getSommePaiement(1);
 								$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 								$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
@@ -653,7 +653,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 
 							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								// Currency
 								print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
@@ -767,7 +767,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Print total
 							print '<tr class="liste_total">';
 							print '<td colspan="4" class="left">'.$langs->trans('TotalTTC').':</td>';
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
