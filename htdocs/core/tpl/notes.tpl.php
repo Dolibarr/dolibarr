@@ -91,6 +91,8 @@ if ($module == 'propal') {
 	$permission = $user->rights->produit->creer;
 } elseif ($module == 'ecmfiles') {
 	$permission = $user->rights->ecm->setup;
+} elseif ($module == 'user') {
+	$permission = $user->hasRight("user", "self", "write");
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
