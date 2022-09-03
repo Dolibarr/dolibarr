@@ -2125,7 +2125,7 @@ class FactureFournisseur extends CommonInvoice
 				$product_type = $type;
 			}
 
-			if (!empty($conf->multicurrency->enabled) && $pu_devise > 0) {
+			if (isModEnabled("multicurrency") && $pu_devise > 0) {
 				$pu = 0;
 			}
 
