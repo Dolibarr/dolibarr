@@ -1514,7 +1514,7 @@ if ($action == 'create') {
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-				//if (!empty($conf->multicurrency->enabled)) {
+				//if (isModEnabled("multicurrency")) {
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
@@ -1575,7 +1575,7 @@ if ($action == 'create') {
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 					// Price multicurrency
-					/*if (!empty($conf->multicurrency->enabled)) {
+					/*if (isModEnabled("multicurrency")) {
 						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					}*/
 					// Quantity
@@ -1718,7 +1718,7 @@ if ($action == 'create') {
 					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 
 					// Price multicurrency
-					/*if (!empty($conf->multicurrency->enabled)) {
+					/*if (isModEnabled("multicurrency")) {
 					 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					 }*/
 

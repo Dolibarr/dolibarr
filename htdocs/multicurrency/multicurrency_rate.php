@@ -102,7 +102,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
 // One permission to read rates (history) and one to add/edit rates.
-if (!$user->admin || empty($conf->multicurrency->enabled)) {
+if (!$user->admin || !isModEnabled("multicurrency")) {
 	accessforbidden();
 }
 
