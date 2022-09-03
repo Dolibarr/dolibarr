@@ -40,7 +40,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 	accessforbidden();
 }
 
@@ -52,7 +52,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -89,7 +89,7 @@ if ($id) {
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight("user", "user", "read") || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
@@ -97,7 +97,7 @@ if ($id) {
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -117,7 +117,7 @@ if ($id) {
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
