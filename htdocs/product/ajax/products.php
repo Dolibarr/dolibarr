@@ -62,6 +62,7 @@ $finished = GETPOST('finished', 'int');
 $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
+$limit = (GETPOST('limit', 'int') >= 0) ? GETPOST('limit', 'int') : '';
 
 // Security check
 restrictedArea($user, 'produit|service', 0, 'product&product');
@@ -261,9 +262,9 @@ if ($action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, $limit, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, $limit, $alsoproductwithnosupplierprice);
 	}
 
 	$db->close();
