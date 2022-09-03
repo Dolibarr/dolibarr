@@ -42,6 +42,7 @@ NEW: Accept 'auto' for ref of object on import of purchase order/proposal
 NEW: Accountancy - Add more filters and info on page to bind accounting accounts
 NEW: Accountancy - Add subledger account when generate a transaction with a deposit invoice
 NEW: Accountancy - Add a massaction to preselect an account (customer and supplier list)
+NEW: Accountancy - Add hidden feature for accounting reconciliation
 NEW: ACE Editor is restored at same cursor position after a save.
 NEW: Add "addMoreActionsButtons" hook to subscription form
 NEW: Add an option in GUI to show a Quick add button into top menu bar
@@ -50,9 +51,6 @@ NEW: Add column date of Signature on proposal list
 NEW: Add column template invoice in invoice list
 NEW: Add column "Total HT" to products array on document creation card
 NEW: Add configuration for text color of button action
-NEW: Add constant to hide categories in TakePos
-NEW: Add constant to show category description in TakePos
-NEW: Add constant to show only the products in stock in TakePos
 NEW: Add entity filter in exports
 NEW: Show the event block on recurring invoices #20870
 NEW: Add filter "opportunity status" on statistics of projects.
@@ -116,11 +114,11 @@ NEW: payment conditions enabling semi-automatic deposit creation (Issue #18439)
 NEW: possibility to consume multiple batch
 NEW: Reverse movement product consumption
 NEW: Send email to the supplier order contact
-NEW: New permission to report time on timesheet.
+NEW: add permission to report time on timesheet
 NEW: SEPA XML - option to place payment Type Info at Credit transfer Transaction level
 NEW: Show number of votes into the label of tab "Results" of a survey
 NEW: Some core tables are created only at module activation
-NEW: split consumption line on MO
+NEW: MRP - split consumption line on MO
 NEW: stock filter in reassort lists
 NEW: stock limit in stock export CSV
 NEW: Supplier order - Show ref supplier of reception in linked object block
@@ -128,6 +126,9 @@ NEW: support user_modif in order
 NEW: TakePOS - barcode rule to insert product in TakePOS
 NEW: TakePOS - pagination on search results
 NEW: TakePOS - show product reference
+NEW: TakePOS - add constant to hide categories
+NEW: TakePOS - add constant to show category description
+NEW: TakePOS - add constant to show only the products in stock
 NEW: The backup tools has an "lowmemory" option for mysqldump on large database
 NEW: The 'reposition' class works on ajax constantonoff that make redirects
 NEW: Thirdparty - Add rules "customer accountancy code" is mandatory to validate invoice
@@ -136,7 +137,6 @@ NEW: total mark rate in list
 NEW: uncheck "send message" by default on a ticket when private messages has been checked
 NEW: VAT Report by month - Show detail by rate and also by code
 NEW: Ticket triggers: allow to automatically send messages on new tickets
-NEW: Accountancy - Add hidden feature for accounting reconciliation
 NEW: Can store the session into database (instead of beeing managed by PHP)
 NEW: Added MMK currency (Myanmar Kyat)
 NEW: On a form to send an email, we show all emails of contacts of object
@@ -161,7 +161,7 @@ NEW: Identification of tr is possible with by attribute data-id on some pages
 NEW: Import with select boxes V2
 NEW: Can use current entity filter on 'chkbxlst'
 NEW: Creation of the function select_bom() used to display bom select list
-NEW: add printFieldListWhere hook in product reassort card
+
 NEW: Add trigger and event on completely received status change
 NEW: Add utility function send backup by mail
 NEW: add WordPress OAuth to save a token (not SSO)
@@ -194,6 +194,7 @@ NEW: Add hook before the public ticket list
 NEW: Add hook doaction in takepos invoice
 NEW: Add hook for Notif
 NEW: Add hook for more buttons
+NEW: add hook printFieldListWhere in product ressort card
 NEW: Add hook printFieldListWhere in "show_contacts" function
 NEW: Add hook printFieldWhere in load_state_board function
 NEW: Add hooks contact tab badge and hooks parameter for avoid conflicts
