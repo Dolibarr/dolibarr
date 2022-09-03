@@ -416,7 +416,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
+			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -752,7 +752,7 @@ class FormTicket
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
@@ -864,7 +864,7 @@ class FormTicket
 				}
 			}
 			print '</select>';
-			if ($user->admin && !$noadmininfo) {
+			if (isset($user->admin) && $user->admin && !$noadmininfo) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
 
@@ -1199,7 +1199,7 @@ class FormTicket
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 

@@ -69,6 +69,8 @@ $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 // Get parameters
 $id = GETPOST('id', 'int');
 $msg_id = GETPOST('msg_id', 'int');
+$socid = GETPOST('socid', 'int');
+$suffix = "";
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
