@@ -243,6 +243,7 @@ $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
 $filemanifestjson = $pathofwebsite.'/manifest.json.php';
 $filereadme = $pathofwebsite.'/README.md';
+$filelicense = $pathofwebsite.'/LICENSE';
 $filemaster = $pathofwebsite.'/master.inc.php';
 
 // Define $urlwithroot
@@ -1191,6 +1192,11 @@ if ($action == 'addcontainer' && $usercanedit) {
 			$result = dolSaveReadme($filereadme, $readmecontent);
 		}
 
+		if (!dol_is_file($filelicense)) {
+			$licensecontent = "MIT License";
+			$result = dolSaveLicense($filelicense, $licensecontent);
+		}
+
 		$action = 'preview';
 	}
 }
@@ -1669,6 +1675,43 @@ if ($action == 'updatecss' && $usercanedit) {
 				$error++;
 			}
 
+			$dataposted = trim(GETPOST('WEBSITE_LICENSE', 'restricthtml'));
+			$dataposted = str_replace('<?=', '<?php', $dataposted);
+
+			// LICENSE file
+			$phpfullcodestringold = '';
+			$phpfullcodestring = dolKeepOnlyPhpCode($dataposted);
+
+			// Security analysis
+			$errorphpcheck = checkPHPCode($phpfullcodestringold, $phpfullcodestring);	// Contains the setEventMessages
+
+			if (!$errorphpcheck) {
+				$licensecontent = '';
+
+				/*$readmecontent.= "<?php // BEGIN PHP\n";
+				 $readmecontent.= '$websitekey=basename(__DIR__);'."\n";
+				 $readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+				 $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+				 $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+				 $readmecontent.= "ob_start();\n";
+				 $readmecontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+				 $readmecontent.= "header('Content-type: application/manifest+json');\n";
+				 $readmecontent.= "// END PHP ?>\n";*/
+
+				$licensecontent .= $dataposted."\n";
+
+				/*$readmecontent.= '<?php // BEGIN PHP'."\n";
+				 $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+				 $readmecontent.= "// END PHP ?>"."\n";*/
+
+				$result = dolSaveLicense($filelicense, $licensecontent);
+				if (!$result) {
+					$error++;
+					setEventMessages('Failed to write file '.$filelicense, null, 'errors');
+				}
+			} else {
+				$error++;
+			}
 
 			// Save wrapper.php
 			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper, $object);
@@ -3365,6 +3408,17 @@ if ($action == 'editcss') {
 		//$readmecontent.="";
 	}
 
+	if (!GETPOSTISSET('WEBSITE_LICENSE')) {
+		$licensecontent = @file_get_contents($filelicense);
+		// Clean the readme file to remove php code and get only html part
+		$licensecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $licensecontent);
+	} else {
+		$licensecontent = GETPOST('WEBSITE_LICENSE', 'none');
+	}
+	if (!trim($licensecontent)) {
+		//$readmecontent.="";
+	}
+
 	print dol_get_fiche_head();
 
 	print '<!-- Edit Website properties -->'."\n";
@@ -3507,13 +3561,25 @@ if ($action == 'editcss') {
 
 	// README.md
 	print '<tr><td class="tdtop">';
-	$htmlhelp = $langs->trans("EnterHereLicenseInformation");
-	print $form->textwithpicto($langs->trans('WEBSITE_README'), $htmlhelp, 1, 'help', '', 0, 2, 'readmetooltip');
+	$htmlhelp = $langs->trans("EnterHereReadmeInformation");
+	print $form->textwithpicto($langs->trans("File").' README.md', $htmlhelp, 1, 'help', '', 0, 2, 'readmetooltip');
 	print '</td><td>';
 
 	$poscursor = array('x'=>GETPOST('WEBSITE_README_x'), 'y'=>GETPOST('WEBSITE_README_y'));
 	$doleditor = new DolEditor('WEBSITE_README', $readmecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
 	print $doleditor->Create(1, '', true, $langs->trans("File").' README.md', 'text');
+
+	print '</td></tr>';
+
+	// LICENSE
+	print '<tr><td class="tdtop">';
+	$htmlhelp = $langs->trans("EnterHereLicenseInformation");
+	print $form->textwithpicto($langs->trans("File").' LICENSE', $htmlhelp, 1, 'help', '', 0, 2, 'licensetooltip');
+	print '</td><td>';
+
+	$poscursor = array('x'=>GETPOST('WEBSITE_LICENSE_x'), 'y'=>GETPOST('WEBSITE_LICENSE_y'));
+	$doleditor = new DolEditor('WEBSITE_LICENSE', $licensecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '', $poscursor);
+	print $doleditor->Create(1, '', true, $langs->trans("File").' LICENSE', 'text');
 
 	print '</td></tr>';
 
