@@ -338,7 +338,7 @@ if ($nolinesbefore) {
 		}
 		if (isModEnabled("product") || isModEnabled("service")) {
 			echo '<br>';
-			if (!empty($conf->variants->enabled)) {
+			if (isModEnabled('variants')) {
 				echo '<div id="attributes_box"></div>';
 			}
 		}
