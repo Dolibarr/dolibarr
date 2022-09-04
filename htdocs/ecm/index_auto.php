@@ -319,7 +319,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	if (!empty($conf->propal->enabled)) {
 		$rowspan++; $sectionauto[] = array('position'=>30, 'level'=>1, 'module'=>'propal', 'test'=>$conf->propal->enabled, 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
-	if (!empty($conf->contrat->enabled)) {
+	if (isModEnabled('contrat')) {
 		$rowspan++; $sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
 	if (!empty($conf->commande->enabled)) {
