@@ -2505,7 +2505,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Parent product.
-			if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+			if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 				$combination = new ProductCombination($db);
 
 				if ($combination->fetchByFkProductChild($object->id) > 0) {
