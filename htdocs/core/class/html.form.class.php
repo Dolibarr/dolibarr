@@ -8685,7 +8685,7 @@ class Form
 					'label'=>'LinkToTemplateInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
-					'enabled'=>(!empty($conf->contrat->enabled) ? $conf->contrat->enabled : 0),
+					'enabled'=>isModEnabled('contrat'),
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht

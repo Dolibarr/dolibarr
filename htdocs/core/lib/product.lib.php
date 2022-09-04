@@ -508,7 +508,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
 		if ($ret < 0) {
