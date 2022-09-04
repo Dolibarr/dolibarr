@@ -389,7 +389,7 @@ if (empty($reshook)) {
 			}
 		} else {
 			$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
 			}
 			setEventMessages($langs->trans("ErrorFieldRequired", $labelfieldmissing), null, 'errors');
@@ -729,7 +729,7 @@ if (empty($reshook)) {
 									unset($_POST[$qty]);
 								}
 							}
-						} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+						} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 							$qty = "qtyl".$line_id;
 							$line->id = $line_id;
 							$line->qty = GETPOST($qty, 'int');
@@ -851,7 +851,7 @@ if ($action == 'create') {
 			$author = new User($db);
 			$author->fetch($object->user_author_id);
 
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$entrepot = new Entrepot($db);
 			}
 
@@ -1064,7 +1064,7 @@ if ($action == 'create') {
 				}
 				print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Reset"), 'eraser').'</span>';
 				print '</td>';
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					if (empty($conf->productbatch->enabled)) {
 						print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 					} else {
@@ -1196,7 +1196,7 @@ if ($action == 'create') {
 					}
 
 					$warehouseObject = null;
-					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || !isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
@@ -1224,7 +1224,7 @@ if ($action == 'create') {
 							print '</td>';
 
 							// Stock
-							if (!empty($conf->stock->enabled)) {
+							if (isModEnabled('stock')) {
 								print '<td class="left">';
 								if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {   // Type of product need stock change ?
 									// Show warehouse combo list
@@ -1407,7 +1407,7 @@ if ($action == 'create') {
 									print '</td>';
 
 									// Stock
-									if (!empty($conf->stock->enabled)) {
+									if (isModEnabled('stock')) {
 										print '<td class="left">';
 										if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 											print $tmpwarehouseObject->getNomUrl(0).' ';
@@ -2023,7 +2023,7 @@ if ($action == 'create') {
 		}
 		if ($action == 'editline') {
 			$editColspan = 3;
-			if (empty($conf->stock->enabled)) {
+			if (!isModEnabled('stock')) {
 				$editColspan--;
 			}
 			if (empty($conf->productbatch->enabled)) {
@@ -2035,7 +2035,7 @@ if ($action == 'create') {
 			} else {
 				print $langs->trans("QtyShipped").' - ';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print $langs->trans("WarehouseSource").' - ';
 			}
 			if (!empty($conf->productbatch->enabled)) {
@@ -2048,7 +2048,7 @@ if ($action == 'create') {
 			} else {
 				print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="left linecolwarehousesource">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
@@ -2233,7 +2233,7 @@ if ($action == 'create') {
 								print $shipment_static->getNomUrl(1);
 								print ' - '.$shipmentline_var['qty_shipped'];
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($shipmentline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($shipmentline_var['date_valid'], 'dayhour'));
-								if (!empty($conf->stock->enabled) && $shipmentline_var['warehouse'] > 0) {
+								if (isModEnabled('stock') && $shipmentline_var['warehouse'] > 0) {
 									$warehousestatic->fetch($shipmentline_var['warehouse']);
 									$htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
@@ -2270,7 +2270,7 @@ if ($action == 'create') {
 						// Batch number managment
 						print '<td>'.$formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product).'</td>';
 						print '</tr>';
-					} elseif (!empty($conf->stock->enabled)) {
+					} elseif (isModEnabled('stock')) {
 						if ($lines[$i]->fk_product > 0) {
 							if ($lines[$i]->entrepot_id > 0) {
 								print '<!-- case edit 2 -->';
@@ -2309,7 +2309,7 @@ if ($action == 'create') {
 							print '<td></td>';
 							print '</tr>';
 						}
-					} elseif (empty($conf->stock->enabled) && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
+					} elseif (!isModEnabled('stock') && empty($conf->productbatch->enabled)) { // both product batch and stock are not activated.
 						print '<!-- case edit 6 -->';
 						print '<tr>';
 						// Qty to ship or shipped
@@ -2327,7 +2327,7 @@ if ($action == 'create') {
 					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.' '.$unit_order.'</td>';
 
 					// Warehouse source
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="linecolwarehousesource left">';
 						if ($lines[$i]->entrepot_id > 0) {
 							$entrepot = new Entrepot($db);
@@ -2430,7 +2430,7 @@ if ($action == 'create') {
 					if (!empty($conf->productbatch->enabled)) {
 						$colspan++;
 					}
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						$colspan++;
 					}
 

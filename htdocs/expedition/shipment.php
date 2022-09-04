@@ -37,7 +37,7 @@ if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (!empty($conf->propal->enabled)) {
@@ -430,7 +430,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>';
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>';
@@ -641,7 +641,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
 			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
 			print '<th class="center">'.$langs->trans("KeepToShip").'</th>';
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<th class="center">'.$langs->trans("RealStock").'</th>';
 			} else {
 				print '<th>&nbsp;</th>';
@@ -793,7 +793,7 @@ if ($id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && !empty($conf->stock->enabled)) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && isModEnabled('stock')) {
 						print '<td class="center">';
 						print $product->stock_reel;
 						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
@@ -857,7 +857,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="tabsAction">';
 
 			// Bouton expedier sans gestion des stocks
-			if (empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 				if ($user->rights->expedition->creer) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
@@ -873,11 +873,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Bouton expedier avec gestion des stocks
 
-		if (!empty($conf->stock->enabled) && $object->statut == Commande::STATUS_DRAFT) {
+		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
 		}
 
-		if (!empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+		if (isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 			if ($user->rights->expedition->creer) {
 				//print load_fiche_titre($langs->trans("CreateShipment"));
 				print '<div class="tabsAction">';
@@ -895,7 +895,7 @@ if ($id > 0 || !empty($ref)) {
 
 				//print '<tr>';
 
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					//print '<td>';
 					print $langs->trans("WarehouseSource");
 					//print '</td>';
