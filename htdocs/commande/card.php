@@ -2739,7 +2739,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create intervention
-				if (!empty($conf->ficheinter->enabled)) {
+				if (isModEnabled('ficheinter')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
