@@ -276,7 +276,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
@@ -385,7 +385,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td class="center">'.$objp->qty_shipped.'</td>';
 
 				// Warehouse
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					print '<td>';
 					if ($objp->warehouse_id > 0) {
 						$warehousestatic->fetch($objp->warehouse_id);
