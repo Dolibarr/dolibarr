@@ -198,7 +198,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
-if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
+if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
 }
 if (!empty($conf->adherent->enabled)) {

@@ -1146,7 +1146,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Accountancy code
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print '<input type="text" class="maxwidthonsmartphone" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
@@ -2530,7 +2530,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Accountancy code
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print "<tr>";
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
