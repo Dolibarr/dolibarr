@@ -144,3 +144,5 @@ CREATE TABLE llx_bank_extrafields
 ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
 
 ALTER TABLE llx_user CHANGE COLUMN note note_private text;
+
+UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF100-500';
