@@ -1291,7 +1291,7 @@ if ($resql) {
 		print $langs->trans('ValidateInvoices');
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 			print $form->selectyesno('validate_invoices', 0, 1, 1);
 			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 		} else {
@@ -1354,7 +1354,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -2315,7 +2315,7 @@ if ($resql) {
 		// Show shippable Icon (this creates subloops, so may be slow)
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
-			if (!empty($show_shippable_command) && !empty($conf->stock->enabled)) {
+			if (!empty($show_shippable_command) && isModEnabled('stock')) {
 				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
 					$generic_commande->getLinesArray(); 	// Load array ->lines
 					$generic_commande->loadExpeditions();	// Load array ->expeditions
