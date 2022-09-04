@@ -195,7 +195,7 @@ if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
 if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
 }
-if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || isModEnabled('ficheinter') || !empty($conf->contrat->enabled)) {
+if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || isModEnabled('ficheinter') || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
 if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
