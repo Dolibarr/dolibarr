@@ -176,7 +176,7 @@ if ($object->client) {
 	}
 }
 
-if (!empty($conf->ficheinter->enabled) && !empty($user->rights->ficheinter->lire)) {
+if (isModEnabled('ficheinter') && !empty($user->rights->ficheinter->lire)) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
