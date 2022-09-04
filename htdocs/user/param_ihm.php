@@ -201,7 +201,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (isModEnabled("propal") || isModEnabled('commande') || !empty($conf->ficheinter->enabled) || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
-if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
+if (isModEnabled('comptabilite') || !empty($conf->accounting->enabled)) {
 	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
 }
 if (isModEnabled('adherent')) {
