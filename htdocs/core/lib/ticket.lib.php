@@ -560,7 +560,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	// Set $out to sow events
 	$out = '';
 
-	if (empty($conf->agenda->enabled)) {
+	if (!isModEnabled('agenda')) {
 		$langs->loadLangs(array("admin", "errors"));
 		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
