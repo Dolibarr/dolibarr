@@ -146,7 +146,7 @@ if (!empty($conf->tax->enabled)) {
 if (!empty($conf->project->enabled)) {
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'project', 'test'=>$conf->project->enabled, 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 }
 if (!empty($conf->expensereport->enabled)) {
