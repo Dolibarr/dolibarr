@@ -1097,7 +1097,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (empty($error) && !empty($conf->mailing->enabled) && !empty($contact->email) && isset($no_email)) {
+		if (empty($error) && isModEnabled('mailing') && !empty($contact->email) && isset($no_email)) {
 			$result = $contact->setNoEmail($no_email);
 			if ($result < 0) {
 				$this->error = $contact->error;
