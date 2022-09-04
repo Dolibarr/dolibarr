@@ -2933,7 +2933,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire} || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contrat->multidir_output[$entity])) {

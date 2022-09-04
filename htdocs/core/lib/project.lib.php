@@ -127,7 +127,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
 		|| isModEnabled('facture') || !empty($conf->contrat->enabled)
-		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
+		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || isModEnabled('stock')) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -135,7 +135,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
 		} else {
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
 			}
 			if (!empty($conf->propal->enabled)) {
@@ -189,7 +189,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->project->enabled)) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
 			if (!empty($conf->salaries->enabled)) {
