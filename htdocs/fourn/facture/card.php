@@ -57,7 +57,7 @@ if (!empty($conf->project->enabled)) {
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -3319,7 +3319,7 @@ if ($action == 'create') {
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
 
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							$bankaccountstatic->account_number = $objp->account_number;
 
 							$accountingjournal = new AccountingJournal($db);
