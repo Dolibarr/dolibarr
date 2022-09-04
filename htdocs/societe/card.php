@@ -48,13 +48,13 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->adherent->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 if (! empty($conf->eventorganization->enabled)) {
@@ -75,7 +75,7 @@ if (!empty($conf->incoterm->enabled)) {
 if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$langs->load("products");
 }
 
@@ -952,7 +952,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -1823,7 +1823,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<table class="border" width="100%">';
 
-			if (! empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
@@ -2551,7 +2551,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<br>';
 				print '<table class="border centpercent">';
 
-				if (! empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2973,7 +2973,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancySellCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				if (! empty($object->accountancy_code_sell)) {
 					$accountingaccount = new AccountingAccount($db);
 					$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
@@ -2989,7 +2989,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="nowrap">';
 			print $langs->trans("ProductAccountancyBuyCode");
 			print '</td><td colspan="2">';
-			if (! empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				if (! empty($object->accountancy_code_buy)) {
 					$accountingaccount2 = new AccountingAccount($db);
 					$accountingaccount2->fetch('', $object->accountancy_code_buy, 1);

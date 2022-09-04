@@ -4971,7 +4971,7 @@ class Product extends CommonObject
 			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 		}
 
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				$label .= '<br>';
