@@ -1234,7 +1234,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
 				print $object->ref_contrat ? $object->ref_contrat : ('<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>');
 				print '</td></tr>';
@@ -1511,7 +1511,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if (!empty($conf->contrat->enabled)) {
+		if (isModEnabled('contrat')) {
 			print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
 			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
 			print '</td></tr>';

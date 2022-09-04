@@ -5428,7 +5428,7 @@ if ($action == 'create') {
 
 			// Create contract
 			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-				if (!empty($conf->contrat->enabled) && $object->statut == Facture::STATUS_VALIDATED) {
+				if (isModEnabled('contrat') && $object->statut == Facture::STATUS_VALIDATED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {
