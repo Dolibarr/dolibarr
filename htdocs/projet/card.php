@@ -1291,7 +1291,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Accounting Report
 			/*
-			$accouting_module_activated = !empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled);
+			$accouting_module_activated = !empty($conf->comptabilite->enabled) || isModEnabled('accounting');
 			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
 				$start = dol_getdate((int) $object->date_start);
 				$end = dol_getdate((int) $object->date_end);
