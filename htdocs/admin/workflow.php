@@ -74,7 +74,7 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'enabled'=>(!empty($conf->ticket->enabled) && isModEnabled('ficheinter')),
 		'picto'=>'ticket'
 	),
 

@@ -206,7 +206,7 @@ if (!empty($conf->expedition->enabled)) {
 if (!empty($conf->reception->enabled)) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
 }
 if (!empty($conf->supplier_proposal->enabled)) {
