@@ -2752,7 +2752,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create contract
-				if (!empty($conf->contrat->enabled) && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
+				if (isModEnabled('contrat') && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_SHIPMENTONPROCESS || $object->statut == Commande::STATUS_CLOSED)) {
 					$langs->load("contracts");
 
 					if ($user->rights->contrat->creer) {

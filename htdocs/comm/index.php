@@ -810,7 +810,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 /*
  * Latest contracts
  */
-if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

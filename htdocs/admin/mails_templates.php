@@ -218,7 +218,7 @@ if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->c
 if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
-if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
+if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
