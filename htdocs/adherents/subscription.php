@@ -762,7 +762,7 @@ if ($rowid > 0) {
 						$accountstatic->account_number = $objp->account_number;
 						$accountstatic->currency_code = $objp->currency_code;
 
-						if (!empty($conf->accounting->enabled) && $objp->fk_accountancy_journal > 0) {
+						if (isModEnabled('accounting') && $objp->fk_accountancy_journal > 0) {
 							$accountingjournal = new AccountingJournal($db);
 							$accountingjournal->fetch($objp->fk_accountancy_journal);
 

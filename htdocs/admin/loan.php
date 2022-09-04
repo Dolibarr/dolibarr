@@ -26,7 +26,7 @@ require '../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -76,7 +76,7 @@ if ($action == 'update') {
 llxHeader();
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -104,7 +104,7 @@ foreach ($list as $key) {
 
 	// Value
 	print '<td>';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';

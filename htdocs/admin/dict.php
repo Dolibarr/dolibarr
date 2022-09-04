@@ -513,7 +513,7 @@ $tabcond[27] = !empty($conf->societe->enabled);
 $tabcond[28] = !empty($conf->holiday->enabled);
 $tabcond[29] = !empty($conf->project->enabled);
 $tabcond[30] = !empty($conf->label->enabled);
-//$tabcond[31]= !empty($conf->accounting->enabled);
+//$tabcond[31]= isModEnabled('accounting');
 $tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
 $tabcond[33] = !empty($conf->hrm->enabled);
 $tabcond[34] = !empty($conf->hrm->enabled);
@@ -2076,7 +2076,7 @@ if ($id > 0) {
 							} elseif (in_array($value, array('recuperableonly'))) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
-								if (!empty($conf->accounting->enabled)) {
+								if (isModEnabled('accounting')) {
 									require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 									$tmpaccountingaccount = new AccountingAccount($db);
 									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
@@ -2485,7 +2485,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 			print '<td>';
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$fieldname = $value;
 				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
 				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');
