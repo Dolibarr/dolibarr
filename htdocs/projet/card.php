@@ -1354,7 +1354,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
-				if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
+				if (isModEnabled('contrat') && $user->rights->contrat->creer) {
 					$langs->load("contracts");
 					print dolGetButtonAction('', $langs->trans('AddContract'), 'default', DOL_URL_ROOT.'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}

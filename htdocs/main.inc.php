@@ -2461,7 +2461,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"activation" => isModEnabled('contrat') && $user->rights->contrat->creer, // vs hooking
 				"position" => 60,
 			),
 			array(
