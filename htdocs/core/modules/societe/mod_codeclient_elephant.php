@@ -170,7 +170,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
 			"ErrorCounterMustHaveMoreThan3Digits",
 			"ErrorBadMaskBadRazMonth",
-			"ErrorCantUseRazWithYearOnOneDigit",			
+			"ErrorCantUseRazWithYearOnOneDigit",
 		);
 		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
@@ -204,7 +204,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		} else {
 			if ($error == 1) {
 				return $examplecust.' '.$examplesup;
-			}else{
+			} else {
 				return $examplecust.'<br>'.$examplesup;
 			}
 		}
