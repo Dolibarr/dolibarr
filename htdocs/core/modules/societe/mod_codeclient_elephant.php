@@ -179,7 +179,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (!$examplesup) {
 				$examplesup = $langs->trans('NotConfigured');
 			}
-			if (strpos('Error', $examplecust) !== false) {
+			if (strpos('Error', $examplesup) !== false) {
 				$langs->load("errors");
 				$examplesup = $langs->trans($examplesup);
 			}
