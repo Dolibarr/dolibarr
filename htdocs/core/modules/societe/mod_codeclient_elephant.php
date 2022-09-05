@@ -163,17 +163,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
 		$examplecust = '';
 		$examplesup = '';
-		$errmsg = array(
-			"ErrorBadMask",
-			"ErrorCantUseRazIfNoYearInMask",
-			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
-		);
+
 		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
 			if (!$examplecust) {
 				$examplecust = $langs->trans('NotConfigured');
 			}
-			if (in_array($examplecust, $errmsg)) {
+			if (strpos('Error', $examplecust) !== false) {
 				$langs->load("errors");
 				$examplecust = $langs->trans($examplecust);
 			}
@@ -183,7 +179,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (!$examplesup) {
 				$examplesup = $langs->trans('NotConfigured');
 			}
-			if (in_array($examplesup, $errmsg)) {
+			if (strpos('Error', $examplecust) !== false) {
 				$langs->load("errors");
 				$examplesup = $langs->trans($examplesup);
 			}
