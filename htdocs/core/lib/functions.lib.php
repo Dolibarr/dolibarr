@@ -1577,7 +1577,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  *  @param  int			$level					Log level
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_NOTICE=5, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	int			$ident					1=Increase ident of 1 (after log), -1=Decrease ident of 1 (before log)
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
  *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
