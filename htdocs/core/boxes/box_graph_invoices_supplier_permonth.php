@@ -56,7 +56,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->fournisseur->facture->lire);
+		$this->hidden = empty($user->rights->fournisseur->facture->lire);
 	}
 
 	/**

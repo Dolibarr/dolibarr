@@ -89,7 +89,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -113,7 +113,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
@@ -173,6 +173,17 @@ class doc_generic_bom_odt extends ModelePDFBom
 			}
 			$texte .= '</div>';
 		}
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="BOM_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 
@@ -225,6 +236,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->bom->dir_output) {
@@ -240,6 +252,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 			}
 
 			$object->fetch_thirdparty();
+			$object->fetch_product();
 
 			$dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -261,7 +274,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -270,11 +283,11 @@ class doc_generic_bom_odt extends ModelePDFBom
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -282,8 +295,8 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 				dol_mkdir($conf->bom->dir_temp);
 				if (!is_writable($conf->bom->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->bom->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->bom->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 

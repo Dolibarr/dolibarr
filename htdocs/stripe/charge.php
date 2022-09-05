@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +53,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $result = restrictedArea($user, 'banque');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 /*
  * View
@@ -162,15 +162,15 @@ if (!$rowid) {
 			$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
 		}
 
-		if ($charge->payment_method_details->type == 'card') {
+		if (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'card') {
 			$type = $langs->trans("card");
-		} elseif ($charge->source->type == 'card') {
+		} elseif (isset($charge->source->type) && $charge->source->type == 'card') {
 			$type = $langs->trans("card");
-		} elseif ($charge->payment_method_details->type == 'three_d_secure') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'three_d_secure') {
 			$type = $langs->trans("card3DS");
-		} elseif ($charge->payment_method_details->type == 'sepa_debit') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'sepa_debit') {
 			$type = $langs->trans("sepadebit");
-		} elseif ($charge->payment_method_details->type == 'ideal') {
+		} elseif (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'ideal') {
 			$type = $langs->trans("iDEAL");
 		}
 
@@ -206,6 +206,8 @@ if (!$rowid) {
 
 		if (!empty($stripeacc)) {
 			$connect = $stripeacc.'/';
+		} else {
+			$connect = '';
 		}
 
 		// Ref
@@ -249,16 +251,15 @@ if (!$rowid) {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}
 		} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
-			print $charge->metadata->dol_type.' '.$charge->metadata->dol_id.' - ';
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}

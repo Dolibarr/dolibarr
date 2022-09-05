@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - projects
+SharedProject=A todos
+TaskTimeUser=Usuário
+ProjectModifiedInDolibarr=Projeto %s modificado
+LinkToElementShort=Link para
+ProjectReferers=Itens correlatos
+OppStatusPROPO=Proposta
+OppStatusPENDING=Pedente
+ServiceToUseOnLines=Service to use on lines by default
+NewInter=Nova Intervenção
+StartDateCannotBeAfterEndDate=A data final não pode ser anterior a data de início

@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Non se debe desactivar Javascript para que esta fun
 ErrorPasswordsMustMatch=Os dous contrasinais escritos deben coincidir entre si
 ErrorContactEMail=Produciuse un erro técnico. Póñase en contacto co administrador no seguinte correo electrónico <b>%s</b> e proporcione o código de erro <b>%s</b> na súa mensaxe ou engada unha copia desta páxina.
 ErrorWrongValueForField=O campo <b>%s</b>:'<b>%s</b>' non coincide coa regra  <b>%s</b>
+ErrorHtmlInjectionForField=Campo <b> %s </b> : O valor ' <b> %s </b> non contén datos perigosos '
 ErrorFieldValueNotIn=Campo <b>%s</b>:'<b>%s</b>' non é un valor atopado no campo <b>%s</b> de <b>%s</b>
 ErrorFieldRefNotIn=Campo <b>%s</b>:'<b>%s</b>' non é unha referencia <b>%s</b> existente
 ErrorsOnXLines=Atopáronse %s erros
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Primeiro debe configurar o seu plan de 
 ErrorFailedToFindEmailTemplate=Fallo ao atopar o modelo co nome de código %s 
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración non definida no servizo. Non hai forma de calcular o prezo por hora. 
 ErrorActionCommPropertyUserowneridNotDefined=É preciso o supervisor do usuario
-ErrorActionCommBadType=O tipo de evento seleccionado (id: %n, código: %s) non existe no diccionario Tipo de Evento
+ErrorActionCommBadType=O tipo de evento seleccionado (id: %s, código: %s) non existe no dicionario de tipo de evento
 CheckVersionFail=Fallou a comprobación da versión
 ErrorWrongFileName=O nome do ficheiro non pode conte  __SOMETHING__ nel
 ErrorNotInDictionaryPaymentConditions=Non está no Dicionario de Condicións de Pagamento. Modifíqueo. 
@@ -283,11 +284,18 @@ ErrorAttributeIsUsedIntoProduct=Este atributo úsase nunha ou máis variantes do
 ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo úsase nunha ou máis variantes do produto
 ErrorPaymentInBothCurrency=Erro, todas as cantidades deben introducirse na mesma columna
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Tenta pagar facturas na moeda %s desde unha conta coa moeda %s
+ErrorInvoiceLoadThirdParty=Non se pode cargar o obxecto de terceiros para a factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Chave de terceiros "%s" non definida para a factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=O estado actual do obxecto non permite eliminar a liña
+ErrorAjaxRequestFailed=Produciuse un erro na solicitude
+ErrorThirpdartyOrMemberidIsMandatory=Terceiro ou membro da sociedade é obrigatorio
+ErrorFailedToWriteInTempDirectory=Produciuse un erro ao escribir no directorio temporal
+ErrorQuantityIsLimitedTo=A cantidade está limitada a %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=O seu parámetro PHP upload_max_filesize (%s) é superior ao parámetro PHP post_max_size (%s). Esta non é unha configuración consistente.
 WarningPasswordSetWithNoAccount=Estableceuse un contrasinal para este membro. En calquera caso, non se creou ningunha conta de usuario. Polo tanto, este contrasinal está almacenado pero non se pode usar para iniciar sesión en Dolibarr. Pode ser usado por un módulo/interface externo, pero se non precisa definir ningún login ou contrasinal para un membro, pode desactivar a opción "Xestionar un inicio de sesión para cada membro" desde a configuración do módulo Membros. Se precisa xestionar un inicio de sesión pero non precisa ningún contrasinal, pode manter este campo baleiro para evitar este aviso. Nota: o correo electrónico tamén pode ser usado como inicio de sesión se o membro está ligado a un usuario.
-WarningMandatorySetupNotComplete=Faga clic aquí para configurar os parámetros obrigatorios
+WarningMandatorySetupNotComplete=Prema aquí para configurar os parámetros principais
 WarningEnableYourModulesApplications=Faga clic aquí para habilitar os seus módulos e aplicacións
 WarningSafeModeOnCheckExecDir=Aviso, a opción PHP <b>safe_mode</b> está activada polo que o comando debe almacenarse dentro dun directorio declarado polo parámetro php <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Xa existe un marcador con este título ou este destino (URL).
@@ -317,6 +325,7 @@ WarningCreateSubAccounts=Aviso, non pode crear directamente unha subconta, debe 
 WarningAvailableOnlyForHTTPSServers=Dispoñible só se usa conexión segura HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=Non foi activado o módulo %s . Pode que perda moitos eventos aquí
 WarningPaypalPaymentNotCompatibleWithStrict=O valor "Estricto" fai que as funcións de pago en liña non funcionen correctamente. Use "Laxo" no seu lugar. 
+WarningThemeForcedTo=Aviso, o tema foi forzado a <b> %s </b> pola constante oculta MAIN_FORCETHEME
 
 # Validate
 RequireValidValue = Valor non válido

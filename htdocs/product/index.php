@@ -28,6 +28,8 @@
  *  \brief      Homepage products and services
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -47,6 +49,7 @@ $langs->loadLangs(array('products', 'stocks'));
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
+// Initialize objects
 $product_static = new Product($db);
 
 // Security check
@@ -90,7 +93,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
 	// Search contract
-	if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
 	}
 
@@ -123,7 +126,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -185,12 +188,12 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 
 		$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
 		$dataseries = array();
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnSale"), round($SommeA));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsOnPurchase"), round($SommeB));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ProductsNotOnSell"), round($SommeC));
 		}
-		if (!empty($conf->service->enabled)) {
+		if (isModEnabled("service")) {
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
@@ -281,7 +284,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -408,10 +411,10 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
 if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
-	if (!empty($conf->product->enabled)) {
+	if (isModEnabled("product")) {
 		activitytrim(0);
 	}
-	if (!empty($conf->service->enabled)) {
+	if (isModEnabled("service")) {
 		activitytrim(1);
 	}
 }

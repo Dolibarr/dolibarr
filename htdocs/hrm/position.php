@@ -20,9 +20,9 @@
  */
 
 /**
- *    \file       position.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view position
+ *    \file       htdocs/hrm/position.php
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view position
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
@@ -88,10 +88,6 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
-$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$fk_job 	= GETPOST('fk_job', 'int');
 
 // Get parameters
 $id 	 = GETPOST('fk_job', 'int');
@@ -105,12 +101,18 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'positioncard'; // To manage different context of search
 
+$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$fk_job 	= GETPOST('fk_job', 'int');
+
 // Initialize technical objects
 $object = new Job($db);
 
 $extrafields = new ExtraFields($db);
 
 $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
+
 $hookmanager->initHooks(array('positiontab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -130,6 +132,7 @@ foreach ($object->fields as $key => $val) {
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->hrm->all->delete;

@@ -140,7 +140,7 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
-		if (!empty($conf->facture->enabled)) {
+		if (isModEnabled('facture')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
 			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
@@ -151,7 +151,7 @@ class BlockedLog
 		}
 
 		/* Supplier
-		if (!empty($conf->fournisseur->enabled)) {
+		if (isModEnabled("fournisseur")) {
 			 $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
 			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
 			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
@@ -184,7 +184,7 @@ class BlockedLog
 			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
 			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
 		}
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
@@ -361,11 +361,11 @@ class BlockedLog
 		$this->amounts = $amounts;
 		// date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
-			$this->date_object = $object->datepaye;
+			$this->date_object = empty($object->datepaye) ? $object->date : $object->datepaye;
 		} elseif ($object->element == 'payment_salary') {
 			$this->date_object = $object->datev;
 		} elseif ($object->element == 'payment_donation' || $object->element == 'payment_various') {
-			$this->date_object = $object->datepaid ? $object->datepaid : $object->datep;
+			$this->date_object = empty($object->datepaid) ? $object->datep : $object->datepaid;
 		} elseif ($object->element == 'subscription') {
 			$this->date_object = $object->dateh;
 		} elseif ($object->element == 'cashcontrol') {
@@ -527,7 +527,7 @@ class BlockedLog
 
 			$totalamount = 0;
 
-			// Loop on each invoice payment amount
+			// Loop on each invoice payment amount (payment_part)
 			if (is_array($object->amounts) && !empty($object->amounts)) {
 				$paymentpartnumber = 0;
 				foreach ($object->amounts as $objid => $amount) {

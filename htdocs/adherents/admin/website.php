@@ -167,10 +167,30 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(empty($conf->global->MEMBER_ENABLE_PUBLIC) ? 0 : 1).'">';
 
+print '<br><br>';
 
-print '<br>';
 
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+	print '<br>';
+	//print $langs->trans('FollowingLinksArePublic').'<br>';
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (isModEnabled('multicompany')) {
+		$entity_qr = '?entity='.$conf->entity;
+	} else {
+		$entity_qr = '';
+	}
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
+
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -178,14 +198,14 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td class="right">'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
 	// Force Type
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
 	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
@@ -197,7 +217,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
@@ -205,31 +225,31 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
-	print '</td><td class="right">';
-	print '<input type="text" class="right width75" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '</td><td>';
+	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
+	print '</td><td>';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td class="right">';
+	print '</td><td>';
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) {
+	if (isModEnabled('paybox')) {
 		$listofval['paybox'] = 'Paybox';
 	}
-	if (!empty($conf->paypal->enabled)) {
+	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}
-	if (!empty($conf->stripe->enabled)) {
+	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
@@ -247,29 +267,6 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 print dol_get_fiche_end();
 
 print '</form>';
-
-
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-	print '<br>';
-	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
-		$entity_qr = '?entity='.$conf->entity;
-	} else {
-		$entity_qr = '';
-	}
-
-	// Define $urlwithroot
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
-	print '</div>';
-	print ajax_autoselect('publicurlmember');
-}
 
 // End of page
 llxFooter();

@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
@@ -111,7 +111,7 @@ $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
 $pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
 $maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -212,7 +212,7 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
  $event->fetch($actionid);
  $event->fetch_optionals();
  $event->fetch_userassigned();
- $event->oldcopy = clone $event;
+ $event->oldcopy = dol_clone($event);
 
  $result = $event->delete();
  }
@@ -497,7 +497,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -757,14 +757,17 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1') {
+if ($status == 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
+}
 if ($status == '50') {
+	// Running already started
 	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
+}
 if ($status == 'done' || $status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
@@ -848,7 +851,6 @@ if ($resql) {
 		$event->fk_project = $obj->fk_project;
 
 		$event->socid = $obj->fk_soc;
-		$event->thirdparty_id = $obj->fk_soc;
 		$event->contact_id = $obj->fk_contact;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property

@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,21 +22,7 @@
  *  \brief      Page of StockTransfer events
  */
 
-// Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
-
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -134,7 +119,7 @@ if ($object->id > 0) {
 	$head = stocktransferPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("StockTransfer"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -148,7 +133,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (! empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -191,7 +176,7 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 
@@ -214,7 +199,7 @@ if ($object->id > 0) {
 
 	print '<div class="tabsAction">';
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
 		} else {
@@ -224,7 +209,7 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$param = '&id='.$object->id.'&socid='.$socid;
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);

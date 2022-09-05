@@ -63,7 +63,7 @@ if ($socid > 0) {
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -92,8 +92,8 @@ if ($socid > 0) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			if (!$num > 0) {
-				print '<tr><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			if ($num <= 0) {
+				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 			}
 
 			$solde = 0;

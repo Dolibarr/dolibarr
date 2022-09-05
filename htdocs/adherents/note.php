@@ -23,24 +23,33 @@
  *      \brief      Tab for note of a member
 */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills"));
 
+
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
+
+// Initialize objects
 $object = new Adherent($db);
+
 $result = $object->fetch($id);
 if ($result > 0) {
 	$adht = new AdherentType($db);
 	$result = $adht->fetch($object->typeid);
 }
+
 
 $permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
 

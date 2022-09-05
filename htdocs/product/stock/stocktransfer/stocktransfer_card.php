@@ -22,41 +22,7 @@
  *		\brief      Page to create/edit/view stocktransfer
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER','1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC','1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN','1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION','1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION','1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK','1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL','1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK','1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU','1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML','1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX','1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN",'1');						// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK','1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT','auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE','aloginmodule');		// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP','none');					// Disable all Content Security Policies
-
-
-// Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
-
+require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -422,7 +388,7 @@ if ($action == 'create') {
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	// Set some default values
 	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
@@ -454,7 +420,7 @@ if ($action == 'create') {
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -479,7 +445,7 @@ if (($id || $ref) && $action == 'edit') {
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">' . "\n";
 
@@ -491,7 +457,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -506,7 +472,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = stocktransferPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("StockTransfer"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -592,11 +558,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 
 	// Thirdparty
-	if ($conf->societe->enabled) {
+	if (isModEnabled('societe')) {
 		$morehtmlref .= $langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '').'<br>';
 	}
 	// Project
-	if (! empty($conf->projet->enabled)) {
+	if (! empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref.=$langs->trans('Project') . ' ';
 		if ($permissiontoadd) {
@@ -675,7 +641,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*
@@ -749,7 +715,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<tr class="liste_titre">';
 	print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
-	if ($conf->productbatch->enabled) {
+	if (isModEnabled('productbatch')) {
 		print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 	}
 	print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
@@ -789,7 +755,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($action === 'editline' && $line->id == $lineid) $form->select_produits($line->fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
 		else print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			if ($action === 'editline' && $line->id == $lineid) print '<input type="text" value="'.$line->batch.'" name="batch" class="flat maxwidth50"/>';
 			else {
@@ -883,7 +849,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$form->select_produits($fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
 		print '</td>';
 		// Batch number
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print '<input type="text" name="batch" class="flat maxwidth50" '.(!empty($error) ? 'value="'.$batch.'"' : '').'>';
 			print '</td>';

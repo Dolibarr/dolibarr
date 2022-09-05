@@ -60,9 +60,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 $userstatic = new User($db);
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
+$canadduser = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
@@ -121,7 +121,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -131,7 +131,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
+		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
 			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		} elseif ($userstatic->admin) {
 			$li .= img_picto($langs->trans("Administrator"), 'star');

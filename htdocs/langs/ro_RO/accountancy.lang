@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Dezactivează înregistrarea directă a tranzacției �
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activați schița de export în jurnal
 ACCOUNTANCY_COMBO_FOR_AUX=Activare listă combinată pentru contul subsidiar (poate fi lent dacă aveți o mulțime de terți, întrerupe capacitatea de a căuta după o valoare parţială)
 ACCOUNTING_DATE_START_BINDING=Definiți o dată pentru a începe legarea și transferul în contabilitate. Înainte de această dată, tranzacțiile nu vor fi transferate în contabilitate.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=La transferul contabil, selectați perioada în mod implicit 
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pentru transferul contabil, care este perioada selectată implicit 
 
 ACCOUNTING_SELL_JOURNAL=Jurnal vânzări
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal cumpărări
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Contul contabil pentru înregistrarea donațiilor
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cont contabil pentru a înregistra abonamente
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT= Cont contabil implicit pentru înregistra depunerilor clientului
+UseAuxiliaryAccountOnCustomerDeposit=Stochează contul de client ca și cont contabil individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Contul contabil implicit pentru produsele cumpărate (se foloseşte dacă nu este definit în fișa de produs)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT= Contul contabil implicit pentru produsele cumpărate din CEE (utilizat dacă nu este definit în fișa de produs)
@@ -278,10 +279,10 @@ DescVentilExpenseReportMore=Dacă configurezi contul contabil pe linii de raport
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor de cheltuieli și contul contabil a taxelor lor
 
 Closure=Închidere anuală
-DescClosure=Consultă aici numărul de mișcări lunar care nu sunt încă validate și blocate
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
+OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
+AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
+NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate
 ValidateMovements=Validare şi blocare înregistrare...
 DescValidateMovements= Orice modificare sau ștergere a înregistrărilor va fi interzisă. Toate intrările pentru un exercițiu financiar trebuie validate, altfel închiderea nu va fi posibilă
 
@@ -289,7 +290,7 @@ ValidateHistory=Asociază automat
 AutomaticBindingDone=Asicierea automată a fost efectuată (%s) - Asocierea automată nu este posibilă pentru unele înregistrări (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-MvtNotCorrectlyBalanced=Contarea nu este corect echilibrată. Debit = %s | Credit = %s
+MvtNotCorrectlyBalanced=Mișcarea nu este echilibrată corect. Debit = %s & Credit = %s
 Balancing=în balanţă
 FicheVentilation=Fişă asociere
 GeneralLedgerIsWritten=Tranzacțiile sunt scrise în Registrul jurnal
@@ -397,19 +398,19 @@ Calculated=Calculat
 Formula=Formulă
 
 ## Reconcile
-Unlettering=Unreconcile
-AccountancyNoLetteringModified=No reconcile modified
-AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
-AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
-AccountancyNoUnletteringModified=No unreconcile modified
-AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
-AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+Unlettering=Dereconciliere
+AccountancyNoLetteringModified=Nicio reconciliere modificată
+AccountancyOneLetteringModifiedSuccessfully=O reconciliere a fost modificată cu succes
+AccountancyLetteringModifiedSuccessfully=%s reconciliere modificată cu succes
+AccountancyNoUnletteringModified=Nicio dereconciliere modificată
+AccountancyOneUnletteringModifiedSuccessfully=O dereconciliere a fost modificată cu succes
+AccountancyUnletteringModifiedSuccessfully=Dereconcilierea %s a fost modificată cu succes
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnlettering=Confirmare dereconciliere în masă
+ConfirmMassUnletteringQuestion=Sigur vrei să anulezi dereconcilierea înregistrăr(ilor) %s selectate? 
 ConfirmMassDeleteBookkeepingWriting=Confirmare ştergere în bloc
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWritingQuestion=Aceasta va șterge tranzacția din contabilitate (toate liniile legate de aceeași tranzacție vor fi șterse) Sunteți sigur că doriți să ștergeți înregistrăr(ile) %sselectate?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Câțiva pași obligatorii de configurare nu au fost făcuți, efectuează-i
@@ -423,9 +424,10 @@ Binded=Linii asociate
 ToBind=Linii de asociat
 UseMenuToSetBindindManualy=Linii care nu sunt încă asociate, utilizează meniul <a href="%s">%s</a> pentru a face asocierea manual
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Ne pare rău, acest modul nu este compatibil cu caracteristica experimentală a facturilor de situație
-AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchLetterCode=Nepotrivire cod de reconciliere
 AccountancyErrorMismatchBalanceAmount=Soldul (%s) nu este egal cu 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+AccountancyErrorLetteringBookkeeping=Au apărut erori cu privire la tranzacții: %s
+ErrorAccountNumberAlreadyExists=Numărul de cont contabil %s există deja
 
 ## Import
 ImportAccountingEntries=Intrări contabile

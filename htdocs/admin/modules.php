@@ -43,10 +43,15 @@ require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
-if (empty($mode)) {
-	$mode = 'common';
+// if we set another view list mode, we keep it (till we change one more time)
+if (GETPOSTISSET('mode')) {
+	$mode = GETPOST('mode', 'alpha');
+	if ($mode =='common' || $mode =='commonkanban')
+		dolibarr_set_const($db, "MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT", $mode, 'chaine', 0, '', $conf->entity);
+} else {
+	$mode = (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT);
 }
+
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 $page_y = GETPOST('page_y', 'int');
@@ -781,14 +786,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			if (!empty($objMod->disabled)) {
 				$codeenabledisable .= $langs->trans("Disabled");
-			} elseif (!empty($objMod->always_enabled) || ((!empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
+			} elseif (!empty($objMod->always_enabled) || ((isModEnabled('multicompany') && $objMod->core_enabled) && ($user->entity || $conf->entity != 1))) {
 				if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
 					$codeenabledisable .= $langs->trans("Used");
 				} else {
 					$codeenabledisable .= img_picto($langs->trans("Required"), 'switch_on', '', false, 0, 0, '', 'opacitymedium valignmiddle');
 					//print $langs->trans("Required");
 				}
-				if (!empty($conf->multicompany->enabled) && $user->entity) {
+				if (isModEnabled('multicompany') && $user->entity) {
 					$disableSetup++;
 				}
 			} else {
@@ -1212,7 +1217,7 @@ if ($mode == 'deploy') {
 				});
 				</script>'."\n";
 				// MAX_FILE_SIZE doit précéder le champ input de type file
-				print '<input type="hidden" name="max_file_size" value="'.($maxmin * 1024).'">';
+				print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';
 			}
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
@@ -1274,7 +1279,7 @@ if ($mode == 'develop') {
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td class="maxwidth300">';
-	if (!empty($conf->modulebuilder->enabled)) {
+	if (isModEnabled('modulebuilder')) {
 		print $langs->trans("SeeTopRightMenu");
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("ModuleBuilder")).'</span>';

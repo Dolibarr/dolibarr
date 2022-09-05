@@ -29,6 +29,8 @@
  *       \brief      Card of a contact
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -49,12 +51,14 @@ $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg = ''; $error = 0; $errors = array();
 
+// Get parameters
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
 $socid		= GETPOST('socid', 'int');
 
+// Initialize objects
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
@@ -252,7 +256,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$out = '';
 		$newcardbutton = '';
-		if (!empty($conf->agenda->enabled)) {
+		if (isModEnabled('agenda')) {
 			$permok = $user->rights->agenda->myactions->create;
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
@@ -267,7 +271,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 
-		if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 			print '<br>';
 
 			$param = '&id='.$id;

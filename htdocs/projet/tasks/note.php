@@ -110,13 +110,18 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $userstatic = new User($db);
 
 $now = dol_now();
+
+$title = $object->ref . ' - ' . $langs->trans("Notes");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
@@ -180,7 +185,7 @@ if ($object->id > 0) {
 				print '<br>';
 			}
 			if (!empty($conf->eventorganization->enabled)) {
-				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 			}
@@ -235,7 +240,7 @@ if ($object->id > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";

@@ -643,6 +643,9 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
@@ -814,8 +817,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK);
+		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

@@ -42,8 +42,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((!empty($conf->expedition->enabled) && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-		|| (!empty($conf->expedition->enabled) && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
+	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
 		$langs->load("sendings");
 		$text = '';
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;

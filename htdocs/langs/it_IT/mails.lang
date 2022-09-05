@@ -178,3 +178,4 @@ IsAnAnswer=È la risposta di una prima email
 RecordCreatedByEmailCollector=Record creato da Email Collector %s dall'email %s
 DefaultBlacklistMailingStatus=Valore predefinito per il campo '%s' durante la creazione di un nuovo contatto
 DefaultStatusEmptyMandatory=Vuoto ma obbligatorio
+WarningLimitSendByDay=ATTENZIONE: la configurazione o il contratto della tua istanza limita il numero di email al giorno a <b> %s </b> . Il tentativo di inviarne di più potrebbe comportare un rallentamento o la sospensione dell'istanza. Contatta il tuo supporto se hai bisogno di una quota più alta.

@@ -157,18 +157,21 @@ $morehtmlref .= $object->subject;
 if ($object->fk_user_create > 0) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
-	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
 	$morehtmlref .= $fuser->getNomUrl(-1);
-}
-if (!empty($object->origin_email)) {
+} elseif (!empty($object->email_msgid)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+} elseif (!empty($object->origin_email)) {
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 }
 
 // Thirdparty
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
@@ -182,7 +185,7 @@ if (!empty($conf->societe->enabled)) {
 }
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project');
 	if ($user->rights->ticket->write) {

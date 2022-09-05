@@ -81,24 +81,23 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled('banque')) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled('societe')) {
 	$list_account[] = '---Deposits---';
-	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
 
 /*
@@ -106,7 +105,7 @@ if (!empty($conf->societe->enabled)) {
  */
 if ($action == 'update') {
 	$error = 0;
-
+	// Process $list_account_main
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
@@ -114,7 +113,7 @@ if ($action == 'update') {
 			$error++;
 		}
 	}
-
+	// Process $list_account
 	foreach ($list_account as $constname) {
 		$reg = array();
 		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
@@ -128,6 +127,19 @@ if ($action == 'update') {
 		}
 	}
 
+	$constname = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
+	$constvalue = GETPOST($constname, 'int');
+	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+
+	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
+	$constvalue = GETPOST($constname, 'int');
+	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -135,9 +147,23 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'setdisableauxiliaryaccountoncustomerdeposit') {
+if ($action == 'setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT') {
 	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT') {
+	$setDisableAuxiliaryAccountOnSupplierDeposit = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnSupplierDeposit, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -195,7 +221,8 @@ foreach ($list_account_main as $key) {
 	print '</td>';
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	$key_value = getDolGlobalString($key);
+	print $formaccounting->select_account($key_value, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
 	print '</td>';
 	print '</tr>';
 }
@@ -246,15 +273,55 @@ foreach ($list_account as $key) {
 	}
 }
 
-if (!empty($conf->societe->enabled)) {
+
+// Customer deposit account
+print '<tr class="oddeven value">';
+// Param
+print '<td>';
+print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT');
+print '</td>';
+// Value
+print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print '</td>';
+print '</tr>';
+
+if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT') != '-1') {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
-	if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=0">';
+	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+}
+
+// Supplier deposit account
+print '<tr class="oddeven value">';
+// Param
+print '<td>';
+print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT');
+print '</td>';
+// Value
+print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT', 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
+print '</td>';
+print '</tr>';
+
+if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') != '-1') {
+	print '<tr class="oddeven">';
+	print '<td>' . img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnSupplierDeposit") . '</td>';
+	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
@@ -264,7 +331,7 @@ if (!empty($conf->societe->enabled)) {
 print "</table>\n";
 print "</div>\n";
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 
 print '</form>';
 

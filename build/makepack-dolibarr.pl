@@ -65,7 +65,7 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
-if ($SOURCE !~ /^\//)
+if ($SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i)
 {
 	print "Error: Launch the script $PROG.$Extension with its full path from /.\n";
 	print "$PROG.$Extension aborted.\n";
@@ -76,15 +76,23 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
 	print "Error: Missing environment variables.\n";
 	print "You must define the environment variable DESTIBETARC and DESTISTABLE to point to the\ndirectories where you want to save the generated packages.\n";
+	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set them with\n";
+	print "On Linux:\n";
+	print "export DESTIBETARC='/tmp'; export DESTISTABLE='/tmp';\n";
+	print "On Windows:\n";
+	print "set DESTIBETARC=c:/tmp\n";
+	print "set DESTISTABLE=c:/tmp\n";
+	print "\n";
 	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
 	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
-	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
 }
 if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 {
-	print "Error: Directory of environment variable DESTIBETARC or DESTISTABLE does not exist.\n";
+	print "Error: Directory of environment variable DESTIBETARC ($ENV{'DESTIBETARC'}) or DESTISTABLE ($ENV{'DESTISTABLE'}) does not exist.\n";
 	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
@@ -94,7 +102,7 @@ if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 # --------------
 if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='linux'; $CR=''; }
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
-elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
+elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i || "$^O" =~ /msys/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
 	print "Error: Can't detect your OS.\n";
 	print "Can't continue.\n";
@@ -390,7 +398,7 @@ if ($nboftargetok) {
 		$olddir=getcwd();
 		chdir("$SOURCE");
 		
-		print "Clean $SOURCE/htdocs\n";
+		print "Clean $SOURCE/htdocs/includes/autoload.php\n";
 		$ret=`rm -f  $SOURCE/htdocs/includes/autoload.php`;
 		
 		$ret=`git ls-files . --exclude-standard --others`;
@@ -499,8 +507,9 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.nova*`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
-		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
+		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.pgsql`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
 
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/install/mssql/README`;
@@ -623,7 +632,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/autoload.php`;
@@ -1073,28 +1082,52 @@ if ($nboftargetok) {
      		print "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
  
- 			print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
-
+ 			if ($OS eq 'windows') {
+ 				print "Check that ISCC.exe is in your PATH.\n";
+			} else {
+ 				print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
+			}
+			
  			$SOURCEBACK=$SOURCE;
  			$SOURCEBACK =~ s/\//\\/g;
 
-    		print "Prepare file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss from \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
-    		$ret=`cat "$SOURCE/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+    		print "Prepare file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" from \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+    		
+    		#$ret=`cat "$SOURCE/build/exe/doliwamp/doliwamp.iss" | sed -e 's/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g' > "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+    		open(IN, '<' . $SOURCE."/build/exe/doliwamp/doliwamp.iss") or die $!;
+			open(OUT, '>' . "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss") or die $!;
+			while(<IN>)
+			{
+			    $_ =~ s/__FILENAMEEXEDOLIWAMP__/$FILENAMEEXEDOLIWAMP/g;
+			    print OUT $_;
+			}
+			close(IN);
+			close(OUT);
 
-    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"\n";
-    		$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\" on OS $OS\n";
+    		
+ 			if ($OS eq 'windows') {
+	    		$cmd= "ISCC.exe \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+	    	} else {
+	    		#$cmd= "wine ISCC.exe \"Z:$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.tmp.iss\"";
+	    	}
 			print "$cmd\n";
 			$ret= `$cmd`;
-			#print "$ret\n";
+			print "ret=$ret\n";
 
 			# Move to final dir
 			print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
     		rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
             print "Move $SOURCE/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
-            $ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+            
+            use File::Copy;
+
+            #$ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
+            $ret=move("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe", "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
             
             print "Remove tmp file $SOURCE/build/exe/doliwamp/doliwamp.tmp.iss\n";
-            $ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+            #$ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
+            $ret=unlink("$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss");
             
     		next;
     	}
@@ -1241,7 +1274,7 @@ if ($nboftargetok) {
 
 print "\n----- Summary -----\n";
 foreach my $target (sort keys %CHOOSEDTARGET) {
-	if ($target eq '-CHKSUM') { print "Checksum was generated"; next; }
+	if ($target eq '-CHKSUM') { print "Checksum was generated\n"; next; }
 	if ($CHOOSEDTARGET{$target} < 0) {
 		print "Package $target not built (bad requirement).\n";
 	} else {

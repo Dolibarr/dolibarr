@@ -475,13 +475,17 @@ print '<br>';
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
-print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 print '<span class="opacitymedium">';
 print $langs->trans("or").' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
 
+$maxfilesizearray = getMaxFileSizeArray();
+$maxmin = $maxfilesizearray['maxmin'];
+if ($maxmin > 0) {
+	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+}
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
 print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
@@ -565,7 +569,7 @@ print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
-if ($conf->productbatch->enabled) {
+if (isModEnabled('productbatch')) {
 	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
 print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
@@ -597,14 +601,14 @@ print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
 print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
-if ($conf->productbatch->enabled) {
+if (isModEnabled('productbatch')) {
 	print '<td>';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
-	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
+	print '<input type="text" name="batch" class="flat maxwidth50" value="'.dol_escape_htmltag($batch).'">';
 	print '</td>';
 }
 // Qty
-print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$qty.'"></td>';
+print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.price2num((float) $qty, 'MS').'"></td>';
 // Button to add line
 print '<td class="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
@@ -637,14 +641,14 @@ foreach ($listofdata as $key => $val) {
 		print $warehousestatict->getNomUrl(1);
 		print '</td>';
 		print '<td>';
-		print $productstatic->getNomUrl(1).' - '.$productstatic->label;
+		print $productstatic->getNomUrl(1).' - '.dol_escape_htmltag($productstatic->label);
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
-			print $val['batch'];
+			print dol_escape_htmltag($val['batch']);
 			print '</td>';
 		}
-		print '<td class="center">'.$val['qty'].'</td>';
+		print '<td class="center">'.price2num((float) $val['qty'], 'MS').'</td>';
 		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}

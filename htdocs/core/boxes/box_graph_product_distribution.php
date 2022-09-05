@@ -60,9 +60,9 @@ class box_graph_product_distribution extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !(
-			(!empty($conf->facture->enabled) && !empty($user->rights->facture->lire))
-		 || (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire))
-		 || (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire))
+			(isModEnabled('facture') && !empty($user->rights->facture->lire))
+			|| (isModEnabled('commande') && !empty($user->rights->commande->lire))
+			|| (isModEnabled('propal') && !empty($user->rights->propale->lire))
 		);
 	}
 
@@ -107,7 +107,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showinvoicenb = 1;
 			$showordernb = 1;
 		}
-		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) {
+		if (!isModEnabled('facture') || empty($user->rights->facture->lire)) {
 			$showinvoicenb = 0;
 		}
 		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) {
@@ -152,7 +152,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
 		$HEIGHT = '150';	// Height require to have 5+1 entries into legend visible.
 
-		if (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
+		if (isModEnabled("propal") && !empty($user->rights->propale->lire)) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb) {
 				$langs->load("propal");
@@ -278,7 +278,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 
 
-		if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+		if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb) {
 				$langs->load("bills");
@@ -365,14 +365,14 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
-			if (!empty($conf->propal->enabled) || !empty($user->rights->propale->lire)) {
+			if (isModEnabled("propal") || !empty($user->rights->propale->lire)) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
 				$stringtoshow .= '&nbsp;';
 			}
 			if (!empty($conf->commande->enabled) || !empty($user->rights->commande->lire)) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb ? ' checked' : '').'> '.$langs->trans("ForCustomersOrders");
 			}
-			if (!empty($conf->facture->enabled) || !empty($user->rights->facture->lire)) {
+			if (isModEnabled('facture') || !empty($user->rights->facture->lire)) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb ? ' checked' : '').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow .= ' &nbsp; ';
 			}

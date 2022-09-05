@@ -105,6 +105,7 @@ if ($cancel) {
 	$action = '';
 }
 
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -493,7 +494,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (! empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -607,7 +608,7 @@ if ($object->id > 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			if ($permissiontoadd) {
 				// Link to launch scan tool
-				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+				if (isModEnabled('barcode') || !empty($conf->productbatch->enabled)) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 				}
 

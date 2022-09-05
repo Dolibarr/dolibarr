@@ -242,11 +242,11 @@ class pdf_beluga extends ModelePDFProjects
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->project->dir_output;
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
 			}
@@ -407,7 +407,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'CommandeFournisseur',
 						'table'=>'commande_fournisseur',
 						'datefieldname'=>'date_commande',
-						'test'=>(!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire),
+						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire),
 						'lang'=>'orders'),
 					'invoice_supplier'=>array(
 						'name'=>"BillsSuppliers",
@@ -416,7 +416,7 @@ class pdf_beluga extends ModelePDFProjects
 						'margin'=>'minus',
 						'table'=>'facture_fourn',
 						'datefieldname'=>'datef',
-						'test'=>(!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire),
+						'test'=>(isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire),
 						'lang'=>'bills'),
 					'contract'=>array(
 						'name'=>"Contracts",
@@ -742,6 +742,9 @@ class pdf_beluga extends ModelePDFProjects
 						$pdf->setPageOrientation($this->orientation, 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
 						}
 					}
 				}

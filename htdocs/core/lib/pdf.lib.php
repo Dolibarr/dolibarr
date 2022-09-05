@@ -61,7 +61,7 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (!empty($conf->propal->enabled)) {
+	if (isModEnabled("propal")) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
 		$head[$h][1] = $langs->trans("Other");
 		$head[$h][2] = 'other';
@@ -391,12 +391,19 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	$socname = '';
 
 	if ($thirdparty instanceof Societe) {
-		$socname .= $thirdparty->name;
-		if (($includealias || !empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
-			$socname .= " - ".$thirdparty->name_alias;
+		$socname = $thirdparty->name;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
+				$socname = $thirdparty->name_alias." - ".$thirdparty->name;
+			} else {
+				$socname = $thirdparty->name." - ".$thirdparty->name_alias;
+			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+		}
 	} else {
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}
@@ -446,7 +453,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if (empty($reshook)) {
 		if ($mode == 'source') {
 			$withCountry = 0;
-			if (!empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+			if (isset($targetcompany->country_code) && !empty($sourcecompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
 				$withCountry = 1;
 			}
 
@@ -1174,6 +1181,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
@@ -1183,6 +1191,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				}
 				$posy -= $freetextheight;
 			}
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$pdf->SetY(-$posy);
 
@@ -1192,16 +1201,15 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
-				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
-				$posy -= getDolGlobalInt('PDF_FOOTER_TOP_MARGIN');
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
 			} else {
 				$posy--;
 			}
 
-			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
+			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
-			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
+			if (getDolGlobalInt('PDF_FOOTER_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
 		} else {
@@ -1217,6 +1225,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
 			}
 
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
 				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
@@ -1226,6 +1235,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 				}
 				$posy -= $freetextheight;
 			}
+			if (getDolGlobalInt('PDF_FREETEXT_DISABLE_PAGEBREAK') === 1) { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$pdf->SetY(-$posy);
 
@@ -1235,9 +1245,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
-				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
-				$posy -= getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalInt('PDF_FOOTER_TOP_MARGIN') === 0) {
+				$posy -= floatval(getDolGlobalString('PDF_FOOTER_TOP_MARGIN'));
 			} else {
 				$posy--;
 			}
@@ -1483,12 +1492,12 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
+			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		} elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoive_supplier_source : $discount->ref_facture_source;
+			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
@@ -2352,13 +2361,13 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
 				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '').' ');
 					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs).'<br>');
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}

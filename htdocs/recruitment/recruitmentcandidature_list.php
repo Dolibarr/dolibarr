@@ -21,25 +21,6 @@
  *		\brief      List page for recruitmentcandidature
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');					// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');					// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');					// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');					// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');			// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');			// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');					// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');					// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');					// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');					// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       		  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');						// If this page is public (can be called outside logged session)
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');						// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');			// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');		// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', '1');		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("XFRAMEOPTIONS_ALLOWALL"))   define('XFRAMEOPTIONS_ALLOWALL', '1');			// Do not add the HTTP header 'X-Frame-Options: SAMEORIGIN' but 'X-Frame-Options: ALLOWALL'
-
 // Load Dolibarr environment
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
@@ -97,14 +78,14 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	$sortfield = "t.ref"; // Set here default search field. By default 1st field in definition.
+	$sortfield = "t.date_creation"; // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -148,8 +129,6 @@ if ($id > 0 || !empty($ref)) {
 	$jobposition->fetch($id, $ref);
 	$id = $jobposition->id;
 }
-
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -229,7 +208,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_RecruitmentCandidature|FR:Module_RecruitmentCandidature_FR|ES:Módulo_RecruitmentCandidature";
 $help_url = '';
-$title = $langs->trans('ListOfCandidatures');
+$title = $langs->trans('RecruitmentCandidatures');
 $morejs = array();
 $morecss = array();
 
@@ -370,7 +349,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
 
 // Part to show record
@@ -444,7 +423,7 @@ if ($jobposition->id > 0 && (empty($action) || ($action != 'edit' && $action != 
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 */
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
@@ -577,7 +556,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.((int) $id)), '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?action=create&fk_recruitmentjobposition='.$id, '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -637,7 +616,7 @@ if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 }
 foreach ($object->fields as $key => $val) {
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {

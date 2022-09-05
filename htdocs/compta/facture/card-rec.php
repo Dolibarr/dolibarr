@@ -34,7 +34,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	//include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
@@ -201,12 +201,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->titre = GETPOST('title', 'nohtml'); // deprecated
-			$object->title = GETPOST('title', 'nohtml');
+			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
+			$object->title = GETPOST('title', 'alphanohtml');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice', 'alpha');
+			$object->model_pdf = GETPOST('modelpdf', 'alphanohtml');
+			$object->usenewprice = GETPOST('usenewprice', 'alphanohtml');
 
 			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
@@ -650,8 +650,8 @@ if (empty($reshook)) {
 						// Define output language
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 						if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -857,9 +857,9 @@ if (empty($reshook)) {
 						// Define output language
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09'))
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id','aZ09'))
 							$newlang = GETPOST('lang_id','aZ09');
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
 								$newlang = $object->thirdparty->default_lang;
 								if (! empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
@@ -924,7 +924,7 @@ llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 $companystatic = new Societe($db);
@@ -954,7 +954,7 @@ if ($action == 'create') {
 		print dol_get_fiche_head(null, '', '', 0);
 
 		$rowspan = 4;
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$rowspan++;
 		}
 		if ($object->fk_account > 0) {
@@ -990,8 +990,8 @@ if ($action == 'create') {
 		$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date, '%Y').')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y').')';
 		// Only on template invoices
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
-		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date_when, $object->frequency, $object->unit_frequency), 'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), 'dayhour').')';
+		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 2, 'm'), 'dayhour').')';
 		$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $langs->trans("Count");
 		$substitutionarray['__INVOICE_COUNTER_MAX__'] = $langs->trans("MaxPeriodNumber");
 
@@ -1047,7 +1047,7 @@ if ($action == 'create') {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled) && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
 			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
@@ -1117,9 +1117,9 @@ if ($action == 'create') {
 
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled)) {
+		if (!isModEnabled('service')) {
 			$title = $langs->trans("Products");
-		} elseif (empty($conf->product->enabled)) {
+		} elseif (!isModEnabled('product')) {
 			$title = $langs->trans("Services");
 		}
 
@@ -1203,7 +1203,7 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
@@ -1310,7 +1310,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			// Multicurrency code
 			print '<tr>';
 			print '<td>';
@@ -1573,7 +1573,7 @@ if ($action == 'create') {
 		if ($object->frequency > 0) {
 			print '<br>';
 
-			if (empty($conf->cron->enabled)) {
+			if (!isModEnabled('cron')) {
 				print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));
 			}
 

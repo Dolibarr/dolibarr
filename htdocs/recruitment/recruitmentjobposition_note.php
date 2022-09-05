@@ -85,9 +85,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = '';
-llxHeader('', $langs->trans('RecruitmentJobPosition'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
@@ -109,7 +109,7 @@ if ($id > 0 || !empty($ref)) {
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {

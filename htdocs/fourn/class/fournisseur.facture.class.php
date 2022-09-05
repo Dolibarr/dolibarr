@@ -297,7 +297,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>145),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>145),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -443,7 +443,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->entity = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
-			$this->fk_projet = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
+			$this->fk_project = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_projet;
+			$this->fk_projet = $this->fk_project;
 			$this->note_public = GETPOST('note_public', 'restricthtml') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private = GETPOST('note_private', 'restricthtml') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
 			$this->model_pdf = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
@@ -503,10 +504,10 @@ class FactureFournisseur extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
 			if (! empty($newlang)) {
@@ -2073,7 +2074,7 @@ class FactureFournisseur extends CommonInvoice
 				if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db, $fk_product);
+					$prod = new Product($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
@@ -3059,7 +3060,7 @@ class FactureFournisseur extends CommonInvoice
 		// Clear fields
 		$object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
 		$object->author             = $user->id;
-		$object->user_valid         = '';
+		$object->user_valid         = 0;
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';

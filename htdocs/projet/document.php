@@ -49,7 +49,7 @@ if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 }
 
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
 // Get parameters
@@ -97,7 +97,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans('Project').' - '.$langs->trans('Document').' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('Documents').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
@@ -109,7 +109,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');

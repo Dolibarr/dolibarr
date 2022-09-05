@@ -137,7 +137,7 @@ if ($reshook < 0) {
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || GETPOST('valid')) { // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = '';
 	$search_label = '';
 	$sall = '';
@@ -423,7 +423,7 @@ if ($usevirtualstock) {
 		$sqlCommandesCli = '0';
 	}
 
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
@@ -438,7 +438,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli = '0';
 	}
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
@@ -467,7 +467,7 @@ if ($usevirtualstock) {
 		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
 		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
 
-		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
+		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToProduce .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToProduce .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
 		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
@@ -623,7 +623,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input type="submit" class="button small" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<input type="submit" class="button smallpaddingimp" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
 
 print '</form>';
@@ -669,6 +669,8 @@ if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$filters .= '&limit='.urlencode($limit);
 }
+if (!empty($includeproductswithoutdesiredqty)) $filters .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
+if (!empty($salert)) $filters .= '&salert='.urlencode($salert);
 
 $param = (isset($type) ? '&type='.urlencode($type) : '');
 $param .= '&fourn_id='.urlencode($fourn_id).'&search_label='.urlencode($search_label).'&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty).'&salert='.urlencode($salert).'&draftorder='.urlencode($draftorder);
@@ -676,6 +678,8 @@ $param .= '&search_ref='.urlencode($search_ref);
 $param .= '&mode='.urlencode($mode);
 $param .= '&fk_supplier='.urlencode($fk_supplier);
 $param .= '&fk_entrepot='.urlencode($fk_entrepot);
+if (!empty($includeproductswithoutdesiredqty)) $param .= '&includeproductswithoutdesiredqty='.urlencode($includeproductswithoutdesiredqty);
+if (!empty($salert)) $param .= '&salert='.urlencode($salert);
 
 $stocklabel = $langs->trans('Stock');
 $stocklabelbis = $langs->trans('Stock');
@@ -693,7 +697,7 @@ $texte = $langs->trans('Replenishment');
 
 print '<br>';
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">';
 
 if (!empty($conf->global->REPLENISH_ALLOW_VARIABLESIZELIST)) {
 	print_barre_liste(
@@ -734,7 +738,7 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'"></td>';
-if (!empty($conf->service->enabled) && $type == 1) {
+if (isModEnabled("service") && $type == 1) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 print '<td class="liste_titre right">'.$form->textwithpicto($langs->trans('IncludeEmptyDesiredStock'), $langs->trans('IncludeProductWithUndefinedAlerts')).'&nbsp;<input type="checkbox" id="includeproductswithoutdesiredqty" name="includeproductswithoutdesiredqty" '.(!empty($includeproductswithoutdesiredqtychecked) ? $includeproductswithoutdesiredqtychecked : '').'></td>';
@@ -765,7 +769,7 @@ print '<tr class="liste_titre">';
 print_liste_field_titre('<input type="checkbox" onClick="toggle(this)" />', $_SERVER["PHP_SELF"], '');
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-if (!empty($conf->service->enabled) && $type == 1) {
+if (isModEnabled("service") && $type == 1) {
 	print_liste_field_titre('Duration', $_SERVER["PHP_SELF"], 'p.duration', $param, '', '', $sortfield, $sortorder, 'center ');
 }
 print_liste_field_titre('DesiredStock', $_SERVER["PHP_SELF"], 'p.desiredstock', $param, '', '', $sortfield, $sortorder, 'right ');
@@ -890,11 +894,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, 'stock').'</td>';
 
-		print '<td>'.$objp->label;
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">';
+		print dol_escape_htmltag($objp->label);
 		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
 		print '</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1) {
+		if (isModEnabled("service") && $type == 1) {
 			$regs = array();
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				$duration = $regs[1].' '.$langs->trans('DurationYear');

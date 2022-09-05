@@ -274,7 +274,7 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'" autofocus="autofocus"></td></tr>';
 
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
@@ -309,7 +309,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$formproject = new FormProjets($db);
 
 		// Projet associe
@@ -424,7 +424,7 @@ if ($id > 0) {
 		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$langs->loadLangs(array("projects"));
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->loan->write) {
@@ -473,7 +473,7 @@ if ($id > 0) {
 			print '<input name="capital" size="10" value="'.$object->capital.'"></td></tr>';
 			print '</td></tr>';
 		} else {
-			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td><span class="amount">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Insurance
@@ -482,7 +482,7 @@ if ($id > 0) {
 			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
 			print '</td></tr>';
 		} else {
-			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td><span class="amount">'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Date start

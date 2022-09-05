@@ -74,11 +74,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->readall) {
-	accessforbidden();
-}
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
@@ -92,12 +87,12 @@ $arrayfields = array();
 $arrayofmassactions = array();
 
 if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+	accessforbidden('Module not enabled');
+}
+
+// Si l'utilisateur n'a pas le droit de lire cette page
+if (!$user->rights->holiday->readall) {
+	accessforbidden();
 }
 
 
@@ -159,15 +154,15 @@ if (empty($reshook)) {
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cpl.rowid'=>array('label'=>$langs->trans("ID"), 'checked'=>1),
-	'cpl.date_action'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-	'cpl.fk_user_action'=>array('label'=>$langs->trans("ActionByCP"), 'checked'=>1),
-	'cpl.fk_user_update'=>array('label'=>$langs->trans("UserUpdateCP"), 'checked'=>1),
-	'cpl.type_action'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
-	'cpl.fk_type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'cpl.prev_solde'=>array('label'=>$langs->trans("PrevSoldeCP"), 'checked'=>1),
-	'variation'=>array('label'=>$langs->trans("Variation"), 'checked'=>1),
-	'cpl.new_solde'=>array('label'=>$langs->trans("NewSoldeCP"), 'checked'=>1),
+	'cpl.rowid'=>array('label'=>"ID", 'checked'=>1),
+	'cpl.date_action'=>array('label'=>"Date", 'checked'=>1),
+	'cpl.fk_user_action'=>array('label'=>"ActionByCP", 'checked'=>1),
+	'cpl.fk_user_update'=>array('label'=>"UserUpdateCP", 'checked'=>1),
+	'cpl.type_action'=>array('label'=>"Description", 'checked'=>1),
+	'cpl.fk_type'=>array('label'=>"Type", 'checked'=>1),
+	'cpl.prev_solde'=>array('label'=>"PrevSoldeCP", 'checked'=>1),
+	'variation'=>array('label'=>"Variation", 'checked'=>1),
+	'cpl.new_solde'=>array('label'=>"NewSoldeCP", 'checked'=>1),
 );
 
 
@@ -306,6 +301,9 @@ print '</div>';
 print '<br>';
 
 $moreforfilter = '';
+$morefilter = '';
+$disabled = 0;
+$include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
@@ -400,7 +398,7 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
@@ -481,15 +479,18 @@ while ($i < min($num, $limit)) {
 
 	// Description
 	if (!empty($arrayfields['cpl.type_action']['checked'])) {
-		print '<td>'.$holidaylogstatic->description.'</td>';
+		print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($holidaylogstatic->description).'">'.dol_escape_htmltag($holidaylogstatic->description).'</td>';
 	}
 
 	// Type
 	if (!empty($arrayfields['cpl.fk_type']['checked'])) {
-		if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
-			$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
-		} else {
-			$label = $alltypeleaves[$holidaylogstatic->type]['label'];
+		$label = '';
+		if (!empty($alltypeleaves[$holidaylogstatic->type])) {
+			if ($alltypeleaves[$holidaylogstatic->type]['code'] && $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']) != $alltypeleaves[$holidaylogstatic->type]['code']) {
+				$label = $langs->trans($alltypeleaves[$holidaylogstatic->type]['code']);
+			} else {
+				$label = $alltypeleaves[$holidaylogstatic->type]['label'];
+			}
 		}
 
 		print '<td>';
@@ -505,8 +506,13 @@ while ($i < min($num, $limit)) {
 	// Variation
 	if (!empty($arrayfields['variation']['checked'])) {
 		$delta = price2num($holidaylogstatic->balance_new - $holidaylogstatic->balance_previous, 5);
-		$detasign = ($delta > 0 ? '+' : '');
-		print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
+		print '<td style="text-align: right;">';
+		if ($delta > 0) {
+			print '<span class="stockmovemententry fontsizeunset">+'.$delta.'</span>';
+		} else {
+			print '<span class="stockmovementexit fontsizeunset">'.$delta.'</span>';
+		}
+		print '</td>';
 	}
 
 	// New Balance

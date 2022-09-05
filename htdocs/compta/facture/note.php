@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -77,19 +77,24 @@ if (empty($reshook)) {
  * View
  */
 
+$form = new Form($db);
+
 if (empty($object->id)) {
-	llxHeader();
+	$title = $object->ref." - ".$langs->trans('Notes');
+} else {
+	$title = $langs->trans('Notes');
+}
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $helpurl);
+
+if (empty($object->id)) {
 	$langs->load('errors');
 	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	llxFooter();
 	exit;
 }
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Notes');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Facture($db);
@@ -114,7 +119,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->facture->creer) {

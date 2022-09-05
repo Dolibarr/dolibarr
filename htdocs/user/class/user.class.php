@@ -316,7 +316,9 @@ class User extends CommonObject
 	 * @var stdClass To store personal config
 	 */
 	public $conf;
-	public $default_values; // To store default values for user
+
+	public $default_values; // To store default values for user. Loaded by loadDefaultValues().
+
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
 
@@ -416,9 +418,10 @@ class User extends CommonObject
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	int		$email       		If defined, email to used for search
+	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '')
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
 	{
 		global $conf, $user;
 
@@ -465,14 +468,14 @@ class User extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
 
 		if ($entity < 0) {
-			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
+			if ((!isModEnabled('multicompany') || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
 				$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			}
 		} else {
 			// The fetch was forced on an entity
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
 				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
@@ -486,6 +489,8 @@ class User extends CommonObject
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
+		} elseif ($fk_socpeople > 0) {
+			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
 		} else {
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
@@ -585,7 +590,7 @@ class User extends CommonObject
 
 				// Protection when module multicompany was set, admin was set to first entity and then, the module was disabled,
 				// in such case, this admin user must be admin for ALL entities.
-				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) {
+				if (!isModEnabled('multicompany') && $this->admin && $this->entity == 1) {
 					$this->entity = 0;
 				}
 
@@ -700,14 +705,13 @@ class User extends CommonObject
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
 		global $conf;
-
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
 			'member' => 'adherent',	// We must check $user->rights->adherent...
 			'mo' => 'mrp',
 			'order' => 'commande',
-			'product' => 'produit',	// We must check $user->rights->produit...
+			//'product' => 'produit',	// We must check $user->rights->produit...
 			'project' => 'projet',
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
@@ -721,14 +725,24 @@ class User extends CommonObject
 			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'facturerec' => 'facture'
 		);
+
 		if (!empty($moduletomoduletouse[$module])) {
 			$module = $moduletomoduletouse[$module];
 		}
 
+		$moduleRightsMapping = array(
+			'product' => 'produit',	// We must check $user->rights->produit...
+		);
+
+		$rightsPath = $module;
+		if (!empty($moduleRightsMapping[$rightsPath])) {
+			$rightsPath = $moduleRightsMapping[$rightsPath];
+		}
+
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
-		$tmp = explode('@', $module, 2);
+		$tmp = explode('@', $rightsPath, 2);
 		if (! empty($tmp[1])) {
-			$module = $tmp[1];
+			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];
 		}
@@ -749,49 +763,49 @@ class User extends CommonObject
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
 		}
-
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2);
-		if (empty($module) || empty($this->rights) || empty($this->rights->$module) || empty($permlevel1)) {
+		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
+		//var_dump($this->rights);
+		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
 
 		if ($permlevel2) {
-			if (!empty($this->rights->$module->$permlevel1)) {
-				if (!empty($this->rights->$module->$permlevel1->$permlevel2)) {
-					return $this->rights->$module->$permlevel1->$permlevel2;
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				if (!empty($this->rights->$rightsPath->$permlevel1->$permlevel2)) {
+					return $this->rights->$rightsPath->$permlevel1->$permlevel2;
 				}
 				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 				// instead of "read", "write", "delete"
-				if ($permlevel2 == 'read' && !empty($this->rights->$module->$permlevel1->lire)) {
-					return $this->rights->$module->lire;
+				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
+					return $this->rights->$rightsPath->$permlevel1->lire;
 				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->creer)) {
-					return $this->rights->$module->create;
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
+					return $this->rights->$rightsPath->$permlevel1->creer;
 				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$module->$permlevel1->create)) {
-					return $this->rights->$module->create;
+				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
+					return $this->rights->$rightsPath->$permlevel1->create;
 				}
-				if ($permlevel2 == 'delete' && !empty($this->rights->$module->$permlevel1->supprimer)) {
-					return $this->rights->$module->supprimer;
+				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
+					return $this->rights->$rightsPath->$permlevel1->supprimer;
 				}
 			}
 		} else {
-			if (!empty($this->rights->$module->$permlevel1)) {
-				return $this->rights->$module->$permlevel1;
+			if (!empty($this->rights->$rightsPath->$permlevel1)) {
+				return $this->rights->$rightsPath->$permlevel1;
 			}
 			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
 			// instead of "read", "write", "delete"
-			if ($permlevel1 == 'read' && !empty($this->rights->$module->lire)) {
-				return $this->rights->$module->lire;
+			if ($permlevel1 == 'read' && !empty($this->rights->$rightsPath->lire)) {
+				return $this->rights->$rightsPath->lire;
 			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$module->creer)) {
-				return $this->rights->$module->create;
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
+				return $this->rights->$rightsPath->creer;
 			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$module->create)) {
-				return $this->rights->$module->create;
+			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
+				return $this->rights->$rightsPath->create;
 			}
-			if ($permlevel1 == 'delete' && !empty($this->rights->$module->supprimer)) {
-				return $this->rights->$module->supprimer;
+			if ($permlevel1 == 'delete' && !empty($this->rights->$rightsPath->supprimer)) {
+				return $this->rights->$rightsPath->supprimer;
 			}
 		}
 
@@ -1118,7 +1132,7 @@ class User extends CommonObject
 		$sql .= " WHERE r.id = ur.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			// on old version, we use entity defined into table r only
-			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
+			$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
 			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
 			// So we must include the filter on entity on both table r. and ur.
@@ -1176,7 +1190,7 @@ class User extends CommonObject
 		$sql .= " ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = gr.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 			} else {
 				$sql .= " AND r.entity = ".((int) $conf->entity);
@@ -1476,8 +1490,8 @@ class User extends CommonObject
 		// Clean parameters
 		$this->setUpperOrLowerCase();
 
-		$this->civility_code = trim($this->civility_code);
-		$this->login = trim($this->login);
+		$this->civility_code = trim((string) $this->civility_code);
+		$this->login = trim((string) $this->login);
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
 		}
@@ -1839,47 +1853,46 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->civility_code = trim($this->civility_code);
-		$this->lastname     = trim($this->lastname);
-		$this->firstname    = trim($this->firstname);
-		$this->ref_employee    = trim($this->ref_employee);
-		$this->national_registration_number    = trim($this->national_registration_number);
-		$this->employee    	= $this->employee ? $this->employee : 0;
-		$this->login        = trim($this->login);
-		$this->gender       = trim($this->gender);
-		$this->pass         = trim($this->pass);
-		$this->api_key      = trim($this->api_key);
-		$this->address = $this->address ? trim($this->address) : trim($this->address);
-		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
-		$this->town = $this->town ? trim($this->town) : trim($this->town);
-		$this->setUpperOrLowerCase();
-		$this->state_id = trim($this->state_id);
-		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
-		$this->office_phone = trim($this->office_phone);
-		$this->office_fax   = trim($this->office_fax);
-		$this->user_mobile  = trim($this->user_mobile);
-		$this->personal_mobile = trim($this->personal_mobile);
-		$this->email        = trim($this->email);
-		$this->personal_email = trim($this->personal_email);
+		$this->civility_code				= trim((string) $this->civility_code);
+		$this->lastname						= trim((string) $this->lastname);
+		$this->firstname					= trim((string) $this->firstname);
+		$this->ref_employee					= trim((string) $this->ref_employee);
+		$this->national_registration_number	= trim((string) $this->national_registration_number);
+		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
+		$this->login						= trim((string) $this->login);
+		$this->gender						= trim((string) $this->gender);
+		$this->pass							= trim((string) $this->pass);
+		$this->api_key						= trim((string) $this->api_key);
+		$this->address						= trim((string) $this->address);
+		$this->zip							= trim((string) $this->zip);
+		$this->town							= trim((string) $this->town);
 
-		$this->job = trim($this->job);
-		$this->signature    = trim($this->signature);
-		$this->note_public  = trim($this->note_public);
-		$this->note_private = trim($this->note_private);
-		$this->openid       = trim(empty($this->openid) ? '' : $this->openid); // Avoid warning
-		$this->admin        = $this->admin ? $this->admin : 0;
-		$this->address = empty($this->address) ? '' : $this->address;
-		$this->zip			= empty($this->zip) ? '' : $this->zip;
-		$this->town = empty($this->town) ? '' : $this->town;
+		$this->state_id						= ($this->state_id > 0 ? $this->state_id : 0);
+		$this->country_id					= ($this->country_id > 0 ? $this->country_id : 0);
+		$this->office_phone					= trim((string) $this->office_phone);
+		$this->office_fax					= trim((string) $this->office_fax);
+		$this->user_mobile					= trim((string) $this->user_mobile);
+		$this->personal_mobile				= trim((string) $this->personal_mobile);
+		$this->email						= trim((string) $this->email);
+		$this->personal_email				= trim((string) $this->personal_email);
+
+		$this->job							= trim((string) $this->job);
+		$this->signature					= trim((string) $this->signature);
+		$this->note_public					= trim((string) $this->note_public);
+		$this->note_private					= trim((string) $this->note_private);
+		$this->openid						= trim((string) $this->openid);
+		$this->admin						= ($this->admin > 0 ? $this->admin : 0);
+
+		$this->accountancy_code				= trim((string) $this->accountancy_code);
+		$this->color						= trim((string) $this->color);
+		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
+		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
+		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+		$this->birth						= empty($this->birth) ? '' : $this->birth;
+		$this->fk_warehouse					= (int) $this->fk_warehouse;
+
 		$this->setUpperOrLowerCase();
-		$this->accountancy_code = trim($this->accountancy_code);
-		$this->color = empty($this->color) ? '' : $this->color;
-		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
-		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
-		$this->birth        = trim($this->birth);
-		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
 		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
@@ -2049,8 +2062,6 @@ class User extends CommonObject
 
 						$adh->pass = $this->pass;
 
-						//$adh->societe = (empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
-
 						$adh->address = $this->address;
 						$adh->town = $this->town;
 						$adh->zip = $this->zip;
@@ -2063,6 +2074,8 @@ class User extends CommonObject
 
 						$adh->phone = $this->office_phone;
 						$adh->phone_mobile = $this->user_mobile;
+
+						$adh->default_lang = $this->lang;
 
 						$adh->user_id = $this->id;
 						$adh->user_login = $this->login;
@@ -2100,8 +2113,6 @@ class User extends CommonObject
 
 						//$tmpobj->pass=$this->pass;
 
-						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
-
 						$tmpobj->email = $this->email;
 
 						$tmpobj->socialnetworks = $this->socialnetworks;
@@ -2109,6 +2120,8 @@ class User extends CommonObject
 						$tmpobj->phone_pro = $this->office_phone;
 						$tmpobj->phone_mobile = $this->user_mobile;
 						$tmpobj->fax = $this->office_fax;
+
+						$tmpobj->default_lang = $this->lang;
 
 						$tmpobj->address = $this->address;
 						$tmpobj->town = $this->town;
@@ -2746,10 +2759,10 @@ class User extends CommonObject
 			if (empty($hidethirdpartylogo)) {
 				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.dol_string_nohtmltag($thirdpartystatic->name).')';
+			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
-		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
-		$label .= '<br><b>'.$langs->trans("Type").':</b> '.dol_string_nohtmltag($type);
+		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
+		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
 		$label .= '</div>';
 		if ($infologin > 0) {
 			$label .= '<br>';
@@ -2814,7 +2827,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -2919,7 +2932,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? $this->statut : $this->status, $mode);
+		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2964,13 +2977,27 @@ class User extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+
+		$label = '';
+		if (!empty($this->photo)) {
+			//$label .= '<div class="photointooltip floatright">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			//$label .= '</div>';
+			//$label .= '<div style="clear: both;"></div>';
+			$return .= $label;
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+
 		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
 		if (property_exists($this, 'label')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if ($this->email) {
+			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
@@ -3636,7 +3663,7 @@ class User extends CommonObject
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid";
@@ -3773,7 +3800,7 @@ class User extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (isset($this->fields[$key]['type']) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;

@@ -77,7 +77,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';

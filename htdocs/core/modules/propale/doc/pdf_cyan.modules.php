@@ -850,6 +850,9 @@ class pdf_cyan extends ModelePDFPropales
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
@@ -937,15 +940,15 @@ class pdf_cyan extends ModelePDFPropales
 								foreach ($filetomerge->lines as $linefile) {
 									if (!empty($linefile->id) && !empty($linefile->file_name)) {
 										if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}

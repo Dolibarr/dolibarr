@@ -300,3 +300,4 @@ InvoiceToPay15Days=To pay (15 to 30 days)
 InvoiceToPay30Days=To pay (> 30 days)
 ConfirmPreselectAccount=Preselect accountancy code
 ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
+AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment

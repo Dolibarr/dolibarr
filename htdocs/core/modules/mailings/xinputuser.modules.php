@@ -127,10 +127,11 @@ class mailing_xinputuser extends MailingTargets
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$tmparray = explode(';', GETPOST('xinputuser'));
+
 		$email = $tmparray[0];
-		$lastname = $tmparray[1];
-		$firstname = $tmparray[2];
-		$other = $tmparray[3];
+		$lastname = empty($tmparray[1]) ? '' : $tmparray[1];
+		$firstname = empty($tmparray[2]) ? '' : $tmparray[2];
+		$other = empty($tmparray[3]) ? '' : $tmparray[3];
 
 		$cibles = array();
 		if (!empty($email)) {

@@ -67,4 +67,4 @@ ToCreateAPredefinedIntervention=Lai izveidotu iepriekš noteiktu vai atkārtotu 
 ConfirmReopenIntervention=Vai tiešām vēlaties atvērt iejaukšanos <b> %s </b>?
 GenerateInter=Ģenerēt iejaukšanos
 FichinterNoContractLinked=Intervence %s ir izveidota bez saistīta līguma.
-ErrorFicheinterCompanyDoesNotExist=Company does not exist. Intervention has not been created.
+ErrorFicheinterCompanyDoesNotExist=Uzņēmums neeksistē. Intervence nav izveidota.

@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
+$socid = GETPOST('socid', 'int');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
@@ -104,6 +105,7 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
+$optioncss = GETPOST('optioncss', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -164,7 +166,7 @@ $arrayfields = array(
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -185,7 +187,7 @@ if ($search_date_end && empty($search_date_endyear)) {
 	$search_date_endday = $tmparray['mday'];
 }
 
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -571,6 +573,7 @@ $num = count($object->lines);
 //}
 
 // Print form confirm
+$formconfirm = '';
 print $formconfirm;
 
 // List of mass actions available
@@ -821,17 +824,22 @@ print $hookmanager->resPrint;
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
-
-$total_debit = 0;
-$total_credit = 0;
-$sous_total_debit = 0;
-$sous_total_credit = 0;
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+
 $totalarray = array();
+$totalarray['val'] = array ();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+$sous_total_debit = 0;
+$sous_total_credit = 0;
+$totalarray['val']['totaldebit'] = 0;
+$totalarray['val']['totalcredit'] = 0;
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 

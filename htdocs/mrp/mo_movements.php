@@ -122,7 +122,7 @@ $arrayfields = array(
 	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>"Author", 'checked'=>0, 'position'=>120),
 	'm.inventorycode'=>array('label'=>"InventoryCodeShort", 'checked'=>1, 'position'=>130),
 	'm.label'=>array('label'=>"MovementLabel", 'checked'=>1, 'position'=>140),
@@ -327,7 +327,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {

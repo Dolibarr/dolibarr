@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -109,7 +109,7 @@ $arrayfields = array(
 	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+	'e.ref'=>array('label'=>$langs->trans("Warehouse"), 'checked'=>1, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
 	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
 	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
@@ -425,7 +425,7 @@ $userstatic = new User($db);
 $form = new Form($db);
 $formother = new FormOther($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	$formproject = new FormProjets($db);
 }
 

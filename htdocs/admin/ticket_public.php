@@ -89,7 +89,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 		}
 	}
 
-	$topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'nohtml');
+	$topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'alphanohtml');
 	if (!empty($topic_interface)) {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
 	} else {
@@ -101,7 +101,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	}
 
 	$text_home = GETPOST('TICKET_PUBLIC_TEXT_HOME', 'restricthtml');
-	if (!empty($text_home)) {
+	if (GETPOSTISSET('TICKET_PUBLIC_TEXT_HOME')) {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $text_home, 'chaine', 0, '', $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
@@ -183,7 +183,8 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 			}
 
 			// enable captcha by default
-			$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA', 1, 'chaine', 0, '', $conf->entity);
+			// TODO Add a visible option in this setup page for this
+			$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_TICKET', 1, 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
 				$error++;
 				$errors[] = $db->lasterror();
@@ -234,11 +235,9 @@ $head = ticketAdminPrepareHead();
 
 print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.DOL_URL_ROOT.'/public/ticket/index.php?entity='.$conf->entity.'" target="_blank" rel="noopener noreferrer">'.dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 2).'</a>';
-
-print dol_get_fiche_end();
-
 $param = '';
+
+print '<br>';
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';
 if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
@@ -255,9 +254,30 @@ if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="TICKET_ENABLE_PUBLIC_INTERFACE" name="TICKET_ENABLE_PUBLIC_INTERFACE" value="'.(empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ? 0 : 1).'">';
 
-print '<br><br>';
+print dol_get_fiche_end();
+
+
 
 if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+	print '<br>';
+
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> :<br>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/ticket/index.php?entity='.$conf->entity.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/ticket/index.php?entity='.$conf->entity.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
+
+
+	print '<br><br>';
+
+
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setvar">';
@@ -370,24 +390,24 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
 	print '</td></tr>';
 
-	// Texte d'accueil homepage
-	$public_text_home = $conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans('TicketPublicInterfaceTextHome');
+	// Text on home page
+	$public_text_home = getDolGlobalString('TICKET_PUBLIC_TEXT_HOME', '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc").'</span>');
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTextHomeLabelAdmin").'</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HOME', $public_text_home, '100%', 180, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '<td class="center">';
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHomeHelpAdmin"), 1, 'help');
 	print '</td></tr>';
 
-	// Texte d'aide à la saisie du message
+	// Text to help to enter a ticket
 	$public_text_help_message = $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe');
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTextHelpMessageLabelAdmin").'</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_PUBLIC_TEXT_HELP_MESSAGE', $public_text_help_message, '100%', 180, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '<td class="center">';
@@ -434,7 +454,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
 	$doleditor->Create();
 	print '</td>';
 	print '</tr>';

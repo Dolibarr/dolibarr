@@ -58,7 +58,7 @@ $permissiontoadd = $user->rights->asset->write; // Used by the include of action
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!empty($object->not_depreciated)) accessforbidden();
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;

@@ -286,7 +286,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -341,7 +341,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -396,7 +396,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -416,7 +416,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_approve)) {
+		if (!empty($object->user_approve) && is_object($object->user_approve)) {
 			if ($object->user_approve->id) {
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -451,7 +451,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -498,7 +498,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -508,7 +508,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User signature
-	if (!empty($object->user_signature)) {
+	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -526,7 +526,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature);
+			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -553,7 +553,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_signature, 'dayhour');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans('CurrentHour').' &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;'.$langs->trans('ClientHour');
+			print ' <span class="opacitymedium">'.$langs->trans('CurrentHour').'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans('ClientHour').'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -563,7 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing)) {
+	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
 		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
 			$object->user_closing = $object->user_cloture;
 		}
@@ -584,7 +584,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing);
+			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -614,7 +614,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -624,7 +624,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User conciliate
-	if (!empty($object->user_rappro)) {
+	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -642,7 +642,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro);
+			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -669,7 +669,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -691,7 +691,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_envoi, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
+			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
 		if ($usetable) {
 			print '</td></tr>';

@@ -37,22 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -64,7 +64,7 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 
@@ -522,7 +522,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->projet->dir_output) {
+		if ($conf->project->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -536,7 +536,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->project->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -556,7 +556,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$newfiletmp = preg_replace('/\.od(t|s)/i', '', $newfile);
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -565,20 +565,20 @@ class doc_generic_project_odt extends ModelePDFProjects
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->projet->dir_temp);
-				if (!is_writable($conf->projet->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->projet->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+				dol_mkdir($conf->project->dir_temp);
+				if (!is_writable($conf->project->dir_temp)) {
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->project->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -615,7 +615,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
+						'PATH_TO_TMP'	  => $conf->project->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
@@ -826,7 +826,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						// Replace tags of project files
 						$listtasksfiles = $listlines->__get('tasksfiles');
 
-						$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
+						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref).'/'.dol_sanitizeFileName($task->ref);
 						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 
@@ -861,7 +861,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 
-					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 					foreach ($filearray as $filedetail) {
@@ -971,13 +971,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListSupplierOrdersAssociatedProject",
 						'table' => 'commande_fournisseur',
 						'class' => 'CommandeFournisseur',
-						'test' => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)
+						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
 					),
 					'invoice_supplier' => array(
 						'title' => "ListSupplierInvoicesAssociatedProject",
 						'table' => 'facture_fourn',
 						'class' => 'FactureFournisseur',
-						'test' => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)
+						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
 					),
 					'contract' => array(
 						'title' => "ListContractAssociatedProject",

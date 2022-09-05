@@ -708,6 +708,9 @@ class pdf_espadon extends ModelePdfExpedition
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == 1) {
@@ -983,20 +986,20 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		// Show barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$posx = 105;
 		} else {
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);

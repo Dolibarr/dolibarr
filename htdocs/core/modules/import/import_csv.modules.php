@@ -115,7 +115,7 @@ class ImportCsv extends ModeleImports
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
-			$this->thirpartyobject = new Societe($this->db);
+			$this->thirdpartyobject = new Societe($this->db);
 		}
 	}
 
@@ -470,9 +470,9 @@ class ImportCsv extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', num2Alpha($key - 1), $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
 												}
@@ -512,7 +512,7 @@ class ImportCsv extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
 												}
@@ -549,7 +549,7 @@ class ImportCsv extends ModeleImports
 											$newval = $scaleorid ? $scaleorid : 0;
 										} else {
 											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 											} else {
 												$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
 											}
@@ -560,8 +560,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codeclient(0, 0);
-										$newval = $this->thirpartyobject->code_client;
+										$this->thirdpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) {
@@ -569,8 +569,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-										$newval = $this->thirpartyobject->code_fournisseur;
+										$newval = $this->thirdpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) {
@@ -578,8 +578,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('customer');
-										$newval = $this->thirpartyobject->code_compta;
+										$this->thirdpartyobject->get_codecompta('customer');
+										$newval = $this->thirdpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -587,8 +587,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('supplier');
-										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										$this->thirdpartyobject->get_codecompta('supplier');
+										$newval = $this->thirdpartyobject->code_compta_fournisseur;
 										if (empty($newval)) {
 											$arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
 										}
@@ -697,7 +697,7 @@ class ImportCsv extends ModeleImports
 										if (!empty($filter)) {
 											$tableforerror .= ':'.$filter;
 										}
-										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
+										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
 										$error++;
@@ -705,11 +705,20 @@ class ImportCsv extends ModeleImports
 								} elseif (!preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
-									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
+									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', num2Alpha($key - 1), $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
 									$error++;
 								}
+							}
+
+							// Check HTML injection
+							$inj = testSqlAndScriptInject($newval, 0);
+							if ($inj) {
+								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', num2Alpha($key - 1), dol_trunc($newval, 100));
+								$this->errors[$error]['type'] = 'HTMLINJECTION';
+								$errorforthistable++;
+								$error++;
 							}
 
 							// Other tests

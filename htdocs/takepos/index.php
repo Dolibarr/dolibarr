@@ -58,7 +58,7 @@ $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if (empty($_SESSION["takeposterminal"])) {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -97,11 +97,11 @@ $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG) ? $maxcategbydefaultforth
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT) ? $maxproductbydefaultforthisdevice : $conf->global->TAKEPOS_NB_MAXPRODUCT);
 
 /*
-$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-$soc = new Societe($db);
-if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-else $soc->fetch($conf->global->$constforcompanyid);
-*/
+ $constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+ $soc = new Societe($db);
+ if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+ else $soc->fetch($conf->global->$constforcompanyid);
+ */
 
 // Security check
 $result = restrictedArea($user, 'takepos', 0, '');
@@ -116,8 +116,13 @@ $form = new Form($db);
 
 $disablejs = 0;
 $disablehead = 0;
-$arrayofjs = array();
-$arrayofcss = array();
+$arrayofjs = array('/takepos/js/jquery.colorbox-min.js'); // TODO It seems we don't need this
+$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/colorbox.css');
+
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$arrayofcss[] =  '/takepos/css/colorful.css';
+}
+
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -130,17 +135,7 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-?>
-<link rel="stylesheet" href="css/pos.css.php">
-<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
-<?php
-if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
-<script type="text/javascript">
-<?php
+
 $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
 
 
@@ -172,6 +167,9 @@ $maincategories = dol_sort_array($maincategories, 'label');
 $subcategories = dol_sort_array($subcategories, 'label');
 ?>
 
+<body class="bodytakepos" style="overflow: hidden;">
+
+<script>
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
 
@@ -205,6 +203,9 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
+	$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+	$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+	$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
@@ -371,7 +372,11 @@ function LoadProducts(position, issubcat) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
 				}
+				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
+				console.log($("#prodiv"+ishow));
+
 				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				console.log($('#prodiv4').data('rowid'));
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
@@ -461,7 +466,7 @@ function MoreProducts(moreorless) {
 }
 
 function ClickProduct(position, qty = 1) {
-	console.log("ClickProduct");
+	console.log("ClickProduct at position"+position);
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat')==1){
@@ -469,6 +474,7 @@ function ClickProduct(position, qty = 1) {
 		LoadProducts(position, true);
 	}
 	else{
+		console.log($('#prodiv4').data('rowid'));
 		idproduct=$('#prodiv'+position).data('rowid');
 		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty);
 		if (idproduct=="") return;
@@ -720,8 +726,9 @@ function Search2(keyCodeForEnter, moreorless) {
 
 }
 
+/* Function called on an action into the PAD */
 function Edit(number) {
-	console.log("We click on PAD on number="+number);
+	console.log("We click on PAD on key="+number);
 
 	if (typeof(selectedtext) == "undefined") {
 		return;	// We click on an action on the number pad but there is no line selected
@@ -730,20 +737,19 @@ function Edit(number) {
 	var text=selectedtext+"<br> ";
 
 
-	if (number=='c'){
-		editnumber="";
+	if (number=='c') {
+		editnumber='';
 		Refresh();
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 		return;
-	}
-	else if (number=='qty'){
-		if (editaction=='qty' && editnumber!=""){
+	} else if (number=='qty') {
+		if (editaction=='qty' && editnumber != '') {
 			$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
+				$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
 			});
 
 			setFocusOnSearchField();
@@ -752,13 +758,12 @@ function Edit(number) {
 		else {
 			editaction="qty";
 		}
-	}
-	else if (number=='p'){
-		if (editaction=='p' && editnumber!=""){
+	} else if (number=='p') {
+		if (editaction=='p' && editnumber!="") {
 			$("#poslines").load("invoice.php?action=updateprice&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#price").html("<?php echo $langs->trans("Price"); ?>");
+				$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -767,13 +772,12 @@ function Edit(number) {
 		else {
 			editaction="p";
 		}
-	}
-	else if (number=='r'){
-		if (editaction=='r' && editnumber!=""){
+	} else if (number=='r') {
+		if (editaction=='r' && editnumber!="") {
 			$("#poslines").load("invoice.php?action=updatereduction&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
 				editnumber="";
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
-				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+				$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 			});
 
 			ClearSearch();
@@ -788,21 +792,21 @@ function Edit(number) {
 	}
 	if (editaction=='qty'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Qty").": "; ?>";
-		$("#qty").html("OK");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("OK").addClass("clicked");
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='p'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("Price").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("OK");
-		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("OK").addClass("clicked");
+		$("#reduction").html("<?php echo $langs->trans("ReductionShort"); ?>").removeClass('clicked');
 	}
 	if (editaction=='r'){
 		text=text+"<?php echo $langs->trans("Modify")." -> ".$langs->trans("ReductionShort").": "; ?>";
-		$("#qty").html("<?php echo $langs->trans("Qty"); ?>");
-		$("#price").html("<?php echo $langs->trans("Price"); ?>");
-		$("#reduction").html("OK");
+		$("#qty").html("<?php echo $langs->trans("Qty"); ?>").removeClass('clicked');
+		$("#price").html("<?php echo $langs->trans("Price"); ?>").removeClass('clicked');
+		$("#reduction").html("OK").addClass("clicked");
 	}
 	$('#'+selectedline).find("td:first").html(text+editnumber);
 }
@@ -938,7 +942,6 @@ $( document ).ready(function() {
 });
 </script>
 
-<body class="bodytakepos" style="overflow: hidden;">
 <?php
 $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
 ?>
@@ -954,19 +957,14 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
 				<span class="fa fa-cash-register"></span>
 				<span class="hideonsmartphone">
-				<?php echo $langs->trans("Terminal"); ?>
+				<?php echo getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$_SESSION["takeposterminal"], $langs->trans("TerminalName", $_SESSION["takeposterminal"])); ?>
 				</span>
-				<?php echo " ";
-				if ($_SESSION["takeposterminal"] == "") {
-					echo "1";
-				} else {
-					echo $_SESSION["takeposterminal"];
-				}
+				<?php
 				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
 				?>
 				</a>
 				<?php
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
 					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
 					print '</a>';
@@ -980,7 +978,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<!-- More info about customer -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
 				<?php
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					?>
 				<!-- More info about warehouse -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
@@ -1018,11 +1016,11 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		<h3><?php print $langs->trans("TerminalSelect"); ?></h3>
 	</div>
 	<div class="modal-body">
-		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
+		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print getDolGlobalString("TAKEPOS_TERMINAL_NAME_1", $langs->trans("TerminalName", 1)); ?></button>
 		<?php
 		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
 		for ($i = 2; $i <= $nbloop; $i++) {
-			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
+			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i, $langs->trans("TerminalName", $i)).'</button>';
 		}
 		?>
 	</div>
@@ -1030,7 +1028,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-<?php if (!empty($conf->multicurrency->enabled)) { ?>
+<?php if (isModEnabled('multicurrency')) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1136,7 +1134,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 		}
 	}
 
-	if (empty($paiementsModes)) {
+	if (empty($paiementsModes) && isModEnabled("banque")) {
 		$langs->load('errors');
 		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');

@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -712,6 +718,7 @@ FeatureDisabled=Función desactivada
 MoveBox=Mover panel
 Offered=S/Custo
 NotEnoughPermissions=Non ten permisos para esta acción
+UserNotInHierachy=Esta acción está reservada aos supervisores deste usuario
 SessionName=Nome sesión
 Method=Método
 Receive=Recepción
@@ -1174,3 +1181,9 @@ ConfirmAllocateCommercial=Asignar a confirmación do representante de vendas
 ConfirmAllocateCommercialQuestion=Está certo de querer asignar o(s) rexistro(s) seleccionado(s) a %s?
 CommercialsAffected=Representantes de vendas afectados
 CommercialAffected=Representante de vendas afectado
+YourMessage=A súa mensaxe
+YourMessageHasBeenReceived=Recibiuse a súa mensaxe. Atenderemos ou contactaremos con vostede canto antes.
+UrlToCheck=URL para comprobar
+Automation=Automatización
+CreatedByEmailCollector=Creado por Recolector de Correo
+CreatedByPublicPortal=Creado a partir do portal público

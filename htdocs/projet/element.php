@@ -39,10 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
@@ -52,10 +52,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -64,7 +64,7 @@ if (!empty($conf->contrat->enabled)) {
 if (!empty($conf->ficheinter->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 if (!empty($conf->deplacement->enabled)) {
@@ -73,7 +73,7 @@ if (!empty($conf->deplacement->enabled)) {
 if (!empty($conf->expensereport->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 if (!empty($conf->don->enabled)) {
@@ -89,7 +89,7 @@ if (!empty($conf->stock->enabled)) {
 if (!empty($conf->tax->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
@@ -104,13 +104,13 @@ if (!empty($conf->mrp->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 if (!empty($conf->commande->enabled)) {
 	$langs->load("orders");
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
 if (!empty($conf->ficheinter->enabled)) {
@@ -343,7 +343,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if ($conf->categorie->enabled) {
+if (isModEnabled('categorie')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
@@ -579,7 +579,7 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
 	'testnew'=>$user->rights->projet->creer,
-	'test'=>($conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
+	'test'=>($conf->project->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
 'stock_mouvement'=>array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",

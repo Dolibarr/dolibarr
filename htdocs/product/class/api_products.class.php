@@ -253,12 +253,12 @@ class Products extends DolibarrApi
 				if (!$ids_only) {
 					$product_static = new Product($this->db);
 					if ($product_static->fetch($obj->rowid)) {
-						if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
+						if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
 							$product_static->load_stock();
 
 							if (is_array($product_static->stock_warehouse)) {
 								foreach ($product_static->stock_warehouse as $keytmp => $valtmp) {
-									if (is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
+									if (isset($product_static->stock_warehouse[$keytmp]->detail_batch) && is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
 										foreach ($product_static->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 											unset($product_static->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 										}
@@ -354,7 +354,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 0);
+		$oldproduct = dol_clone($this->product);
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -1644,10 +1644,10 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if ($includestock==1 && DolibarrApiAccess::$user->rights->stock->lire) {
+			if (!empty($includestock) && DolibarrApiAccess::$user->rights->stock->lire) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
-				$productModel->load_stock();
+				$productModel->load_stock($includestock);
 				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 			}
 		}
@@ -2040,12 +2040,12 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
-			$this->product->load_stock();
+		if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
+			$this->product->load_stock($includestockdata);
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
-					if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+					if (isset($this->product->stock_warehouse[$keytmp]->detail_batch) && is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
 						foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 							unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 						}

@@ -22,6 +22,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colorbackmobilemenu: #f8f8f8;
+	--colorbackgrey: #f0f0f0;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -72,6 +73,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
 				--colorbackmobilemenu: #080808;
+				--colorbackgrey: #0f0f0f;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -228,6 +230,9 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
+.tableforfield input {
+	padding: 2px;
+}
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -270,8 +275,7 @@ input:invalid, select:invalid, input.--error , select.--error {
 
 section.setupsection {
 	padding: 20px;
-	/* background-color: var(--colorbacktitle1); */
-	background-color: #f0f0f0;
+	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
 
@@ -282,7 +286,7 @@ div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
- select:focus, .select2-container--open .select2-selection--single {
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -419,8 +423,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.onholidayallday:not(.weekend) input {
+	background-color: #f8f7f0;
+}
 td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
 }
 /*
 td.leftborder, td.hide0 {
@@ -539,6 +549,7 @@ fieldset {
 	border: 1px solid #AAAAAA !important;
 	padding-inline-start: 2em;
 	padding-inline-end: 2em;
+	min-inline-size: auto;
 }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
@@ -861,10 +872,20 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.nomarginleft {
+	margin-<?php print $left; ?>: unset;
+}
+.nomarginright {
+	margin-<?php print $right; ?>: unset;
+}
+
 .cursordefault {
 	cursor: default;
 }
 .cursorpointer {
+	cursor: pointer;
+}
+.classfortooltiponclick .fa-question-circle {
 	cursor: pointer;
 }
 .cursormove {
@@ -1041,6 +1062,7 @@ div.divsearchfield {
 	overflow: auto;
 	padding-bottom: 5px;
 	opacity: 0.6;
+	font-size: small;
 }
 .divadvancedsearchfield:first-child {
 	margin-top: 3px;
@@ -2302,7 +2324,7 @@ span.widthpictotitle.pictotitle {
 .pictofixedwidth {
 	text-align: <?php echo $left; ?>;
 	width: 20px;
-	padding-right: 0;
+	/* padding-right: 0; */
 }
 
 .colorthumb {
@@ -2374,6 +2396,9 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+img.photokanban, div.photokanban {
+	padding: 0;
+}
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
 }
@@ -2384,6 +2409,10 @@ div.photoref {
 	display:table-cell;
 	vertical-align:middle;
 	text-align:center;
+}
+.difforspanimgright {
+	display: table-cell;
+	padding-right: 10px;
 }
 img.photorefnoborder {
 	padding: 2px;
@@ -2731,6 +2760,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
 			print " background-position-y: 3px;\n";
+			print " filter: saturate(0);\n";
 			print "}\n";
 		}
 	}
@@ -3083,7 +3113,10 @@ a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
-	font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; color: #aaa;
+	font-family: <?php print $fontlist ?>;
+	text-align: <?php print $left; ?>;
+	color: #aaa;
+	white-space: nowrap;
 }
 a.vsmenu:link, a.vsmenu:visited {
 	color: var(--colortextbackvmenu);
@@ -4698,9 +4731,10 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
 	margin-right: 15px;
 }
+
 .photowithborder {
 	border: 1px solid #f0f0f0;
 }
@@ -4810,7 +4844,7 @@ div#card-errors {
 	color: #fa755a;
 	text-align: center;
 	padding-top: 3px;
-	max-width: 320px;
+	/* max-width: 320px; */
 }
 
 
@@ -4861,10 +4895,10 @@ div#card-errors {
 }
 .ui-dialog-content {
 }
-
-.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
-	z-index: 1002 !important;		/* Default 101 with jquery, top menu have a z-index of 1000 */
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
+	z-index: 1002 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
 }
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5084,6 +5118,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
+	z-index: 1000;
 }
 
 .exampleapachesetup {
@@ -5122,6 +5157,7 @@ span[phptag] {
 }
 .centpercent.websitebar {
 	width: calc(100% - 10px);
+	font-size: 0.94em;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -5336,11 +5372,11 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
-.treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview ul { background-color: transparent !important; margin-top: 0 !important; /* margin-bottom: 4px !important; padding-top: 2px !important; */ }
+.treeview li { background-color: transparent !important; padding: 0 0 0 20px !important; min-height: 30px; }
+.treeview .hitarea { width: 20px !important; margin-left: -20px !important; margin-top: 3px; }
 .treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */
@@ -6025,7 +6061,7 @@ span.select2.select2-container.select2-container--default {
 }
 span.select2.select2-container.select2-container--default {
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
-	//border-bottom: solid 1px var(--inputbordercolor);
+	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
 
@@ -6342,6 +6378,17 @@ span#select2-boxbookmark-container {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
 }
 
 
@@ -7233,9 +7280,11 @@ span.clipboardCPValueToPrint, div.clipboardCPValueToPrint  {
 }
 span.clipboardCPValue.hidewithsize {
 	width: 0 !important;
-	display: inline-block;
+	display: inline-block;	/* this will be modifiy on the fly by the copy-paste js code in lib_foot.js.php to have copy feature working */
 	color: transparent;
 	white-space: nowrap;
+	overflow-x: hidden;
+	vertical-align: middle;
 }
 div.clipboardCPValue.hidewithsize {
 	width: 0 !important;
@@ -7596,6 +7645,18 @@ div.clipboardCPValue.hidewithsize {
 	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
 		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
 		border-bottom: 1px solid var(--colortopbordertitle1) !important;
+	}
+
+	div#card-errors {
+		max-width: unset;
+	}
+
+	#dolpaymenttable {
+		padding: 5px;
+	}
+
+	.lilevel1 span.paddingright {
+		padding-right: 4px;
 	}
 }
 

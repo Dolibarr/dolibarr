@@ -62,7 +62,7 @@ class box_produits extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>(!empty($conf->product->enabled) || !empty($conf->service->enabled)), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
+		$tmpentry = array('enabled'=>(isModEnabled("product") || isModEnabled("service")), 'perms'=>(!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)), 'module'=>'product|service');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -148,6 +148,7 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
 					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+					$productstatic->date_modification = $datem;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
@@ -190,7 +191,7 @@ class box_produits extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 

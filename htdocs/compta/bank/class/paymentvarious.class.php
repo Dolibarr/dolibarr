@@ -423,11 +423,11 @@ class PaymentVarious extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->fk_account) || $this->fk_account <= 0)) {
+		if (isModEnabled("banque") && (empty($this->fk_account) || $this->fk_account <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("BankAccount"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
@@ -481,7 +481,7 @@ class PaymentVarious extends CommonObject
 			$this->ref = $this->id;
 
 			if ($this->id > 0) {
-				if (!empty($conf->banque->enabled) && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -606,45 +606,20 @@ class PaymentVarious extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 2) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		} elseif ($mode == 3) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-			}
-		} elseif ($mode == 5) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 2 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			/*$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');*/
 		}
+
+		$statusType = 'status'.$status;
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

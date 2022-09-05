@@ -48,8 +48,9 @@ CountriesNotInEEC=EEC இல் இல்லாத நாடுகள்
 CountriesInEECExceptMe=%s தவிர EEC இல் உள்ள நாடுகள்
 CountriesExceptMe=%s தவிர அனைத்து நாடுகளும்
 AccountantFiles=மூல ஆவணங்களை ஏற்றுமதி செய்யவும்
-ExportAccountingSourceDocHelp=இந்தக் கருவி மூலம், உங்கள் கணக்கை உருவாக்கப் பயன்படுத்தப்படும் மூல நிகழ்வுகளை (CSV மற்றும் PDFகளில் உள்ள பட்டியல்) ஏற்றுமதி செய்யலாம்.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=உங்கள் பத்திரிகைகளை ஏற்றுமதி செய்ய, %s - %s என்ற மெனு உள்ளீட்டைப் பயன்படுத்தவும்.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=கணக்கு கணக்கு மூலம் பார்க்கவும்
 VueBySubAccountAccounting=கணக்கியல் துணைக் கணக்கு மூலம் பார்க்கவும்
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=வங்கிக் கணக்கில் பர�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=ஜர்னலில் வரைவு ஏற்றுமதியை இயக்கவும்
 ACCOUNTANCY_COMBO_FOR_AUX=துணைக் கணக்கிற்கான சேர்க்கை பட்டியலை இயக்கவும் (உங்களிடம் நிறைய மூன்றாம் தரப்பினர் இருந்தால் மெதுவாக இருக்கலாம், மதிப்பின் ஒரு பகுதியை தேடும் திறனை உடைக்கவும்)
 ACCOUNTING_DATE_START_BINDING=கணக்கியலில் பிணைப்பு மற்றும் பரிமாற்றத்தைத் தொடங்குவதற்கான தேதியை வரையறுக்கவும். இந்த தேதிக்கு கீழே, பரிவர்த்தனைகள் கணக்கியலுக்கு மாற்றப்படாது.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=கணக்கியல் பரிமாற்றத்தில், இயல்புநிலையாக காலக் காட்சியைத் தேர்ந்தெடுக்கவும்
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=பத்திரிக்கையை விற்கவும்
 ACCOUNTING_PURCHASE_JOURNAL=கொள்முதல் இதழ்
@@ -182,6 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=நன்கொடைகளை பதிவு செ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=சந்தாக்களை பதிவு செய்ய கணக்கியல் கணக்கு
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=வாடிக்கையாளர் வைப்புத்தொகையை பதிவு செய்ய இயல்புநிலையாக கணக்கு கணக்கு
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=வாங்கிய பொருட்களுக்கான இயல்புநிலை கணக்கு கணக்கு (தயாரிப்பு தாளில் வரையறுக்கப்படவில்லை என்றால் பயன்படுத்தப்படும்)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC இல் வாங்கிய தயாரிப்புகளுக்கான இயல்புநிலை கணக்கு கணக்கு (தயாரிப்பு தாளில் வரையறுக்கப்படவில்லை என்றால் பயன்படுத்தப்படும்)
@@ -289,7 +291,7 @@ ValidateHistory=தானாக பிணைக்கவும்
 AutomaticBindingDone=தானியங்கி பிணைப்புகள் செய்யப்பட்டன (%s) - சில பதிவுகளுக்கு தானியங்கு பிணைப்பு சாத்தியமில்லை (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=பிழை, இந்தக் கணக்கியல் கணக்கு பயன்படுத்தப்படுவதால் உங்களால் நீக்க முடியாது
-MvtNotCorrectlyBalanced=இயக்கம் சரியாக சமநிலையில் இல்லை. பற்று = %s | கடன் = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=சமநிலைப்படுத்துதல்
 FicheVentilation=பைண்டிங் கார்டு
 GeneralLedgerIsWritten=பரிவர்த்தனைகள் லெட்ஜரில் எழுதப்பட்டுள்ளன
@@ -331,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=செலவு அறிக்க�
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Date validation and lock
 ConfirmExportFile=கணக்கியல் ஏற்றுமதி கோப்பின் தலைமுறையை உறுதிப்படுத்தவா?
 ExportDraftJournal=ஏற்றுமதி வரைவு இதழ்
@@ -426,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=ம�
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=கணக்கு பதிவுகள்

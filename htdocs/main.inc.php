@@ -131,7 +131,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
-		$inj += preg_match('/update.+set.+=/i', $val);
+		$inj += preg_match('/update[^&].*set.+=/i', $val);	// the [^&] test is to avoir error when request is like action=update&...set...
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
@@ -183,7 +183,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
-	if ($type == 1) {
+	if ($type == 1 || $type == 3) {
 		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
@@ -197,7 +197,7 @@ function testSqlAndScriptInject($val, $type)
 /**
  * Return true if security check on parameters are OK, false otherwise.
  *
- * @param		string			$var		Variable name
+ * @param		string|array	$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
  * @return		boolean|null				true if there is no injection. Stop code if injection found.
  */
@@ -210,7 +210,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			} else {
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type).' paramkey='.htmlentities($key).' paramvalue='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]);
+				$errormessage = 'Access refused to '.htmlentities($ip, ENT_COMPAT, 'UTF-8').' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type, ENT_COMPAT, 'UTF-8').' paramkey='.htmlentities($key, ENT_COMPAT, 'UTF-8').' paramvalue='.htmlentities($value, ENT_COMPAT, 'UTF-8').' page='.htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8');
 				print $errormessage;
 				// Add entry into error log
 				if (function_exists('error_log')) {
@@ -376,7 +376,7 @@ if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
+if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile'])) {
 	global $debugbar;
 	include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
 	$debugbar = new DolibarrDebugBar();
@@ -480,10 +480,13 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	$dolibarrversionlastupgrade = preg_split('/[.-]/', $versiontocompare);
 	$dolibarrversionprogram = preg_split('/[.-]/', DOL_VERSION);
 	$rescomp = versioncompare($dolibarrversionprogram, $dolibarrversionlastupgrade);
-	if ($rescomp > 0) {   // Programs have a version higher than database. We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
-		dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install page.", LOG_WARNING);
-		header("Location: ".DOL_URL_ROOT."/install/index.php");
-		exit;
+	if ($rescomp > 0) {   // Programs have a version higher than database.
+		if (empty($conf->global->MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE) || $rescomp < 3) {
+			// We did not add "&& $rescomp < 3" because we want upgrade process for build upgrades
+			dol_syslog("main.inc: database version ".$versiontocompare." is lower than programs version ".DOL_VERSION.". Redirect to install/upgrade page.", LOG_WARNING);
+			header("Location: ".DOL_URL_ROOT."/install/index.php");
+			exit;
+		}
 	}
 }
 
@@ -533,7 +536,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	}
 
 	// Check a token is provided for all cases that need a mandatory token
-	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	// (all POST actions + all sensitive GET actions + all mass actions + all login/actions/logout on pages with CSRFCHECK_WITH_TOKEN set)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
 		$sensitiveget ||
@@ -570,7 +573,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
 	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -1150,6 +1153,11 @@ if (!defined('NOLOGIN')) {
 		$conf->theme = $user->conf->MAIN_THEME;
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
+} else {
+	// We may have NOLOGIN set, but NOREQUIREUSER not
+	if (!empty($user) && method_exists($user, 'loadDefaultValues')) {
+		$user->loadDefaultValues();		// Load default values for everybody (works even if $user->id = 0
+	}
 }
 
 
@@ -1346,7 +1354,7 @@ if (!function_exists("llxHeader")) {
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		// html header
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
@@ -1365,6 +1373,12 @@ if (!function_exists("llxHeader")) {
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
+
+		$parameters = array('help_url' => $help_url);
+		$reshook = $hookmanager->executeHooks('changeHelpURL', $parameters);
+		if ($reshook > 0) {
+			$help_url = $hookmanager->resPrint;
+		}
 
 		// top menu and left menu area
 		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
@@ -1403,21 +1417,27 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 	}
 
 	// Security options
+
+	// X-Content-Type-Options
 	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
+
+	// X-Frame-Options
 	if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
 		header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 	} else {
 		header("X-Frame-Options: ALLOWALL");
 	}
+
+	// X-XSS-Protection
 	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
-	if (!defined('FORCECSP')) {
-		//if (! isset($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
-		//{
-		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
+
+	// Content-Security-Policy
+	if (!defined('MAIN_SECURITY_FORCECSP')) {
+		// If CSP not forced from the page
+
+		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
-		//}
-		//else
-		$contentsecuritypolicy = empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY) ? '' : $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
 			$hookmanager = new HookManager($db);
@@ -1439,16 +1459,29 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			// default-src https://cdn.example.net; object-src 'none'
 			// For example, to restrict everything to itself except img that can be on other servers:
 			// default-src 'self'; img-src *;
-			// Pre-existing site that uses too much inline code to fix but wants to ensure resources are loaded only over https and disable plugins:
-			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
+			// Pre-existing site that uses too much js code to fix but wants to ensure resources are loaded only over https and disable plugins:
+			// default-src https: 'unsafe-inline' 'unsafe-eval'; object-src 'none'
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
-	} elseif (constant('FORCECSP')) {
-		header("Content-Security-Policy: ".constant('FORCECSP'));
+	} else {
+		header("Content-Security-Policy: ".constant('MAIN_SECURITY_FORCECSP'));
 	}
+
+	// Referrer-Policy
+	// Say if we must provide the referrer when we jump onto another web page.
+	// Default browser are 'strict-origin-when-cross-origin', we want more so we use 'same-origin' so we don't send any referrer when going into another web site
+	if (!defined('MAIN_SECURITY_FORCERP')) {
+		$referrerpolicy = getDolGlobalString('MAIN_SECURITY_FORCERP', "same-origin");
+
+		header("Referrer-Policy: ".$referrerpolicy);
+	}
+
 	if ($forcenocache) {
 		header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 	}
+
+	// No need to add this token in header, we use instead the one into the forms.
+	//header("anti-csrf-token: ".newToken());
 }
 
 /**
@@ -1752,7 +1785,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!$disablejs && !empty($conf->use_javascript_ajax)) {
 			// CKEditor
-			if (empty($disableforlogin) && (!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
+			if (empty($disableforlogin) && (isModEnabled('fckeditor') && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR')) {
 				print '<!-- Includes JS for CKEditor -->'."\n";
 				$pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
 				$jsckeditor = 'ckeditor.js';
@@ -1780,7 +1813,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Browser notifications (if NOREQUIREMENU is on, it is mostly a page for popup, so we do not enable notif too. We hide also for public pages).
 			if (!defined('NOBROWSERNOTIF') && !defined('NOREQUIREMENU') && !defined('NOLOGIN')) {
 				$enablebrowsernotif = false;
-				if (!empty($conf->agenda->enabled) && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
+				if (isModEnabled('agenda') && !empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 					$enablebrowsernotif = true;
 				}
 				if ($conf->browser->layout == 'phone') {
@@ -1959,7 +1992,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		}
 
 		// Link to module builder
-		if (!empty($conf->modulebuilder->enabled)) {
+		if (isModEnabled('modulebuilder')) {
 			$text = '<a href="'.DOL_URL_ROOT.'/modulebuilder/index.php?mainmenu=home&leftmenu=admintools" target="modulebuilder">';
 			//$text.= img_picto(":".$langs->trans("ModuleBuilder"), 'printer_top.png', 'class="printer"');
 			$text .= '<span class="fa fa-bug atoplogin valignmiddle"></span>';
@@ -2247,7 +2280,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            '.$userImage.(empty($user->photo) ? '<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>' : '').'
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -2404,7 +2437,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewMember@members",
 				"name" => "Adherent@members",
 				"picto" => "object_member",
-				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"activation" => !empty($conf->adherent->enabled) && $user->hasRight("adherent", "write"), // vs hooking
 				"position" => 5,
 			),
 			array(
@@ -2412,7 +2445,7 @@ function printDropdownQuickadd()
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "write"), // vs hooking
 				"position" => 10,
 			),
 			array(
@@ -2420,7 +2453,7 @@ function printDropdownQuickadd()
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
-				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"activation" => isModEnabled("societe") && $user->hasRight("societe", "contact", "write"), // vs hooking
 				"position" => 20,
 			),
 			array(
@@ -2428,7 +2461,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"activation" => isModEnabled("propal") && $user->hasRight("propale", "write"), // vs hooking
 				"position" => 30,
 			),
 
@@ -2437,7 +2470,7 @@ function printDropdownQuickadd()
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
-				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"activation" => !empty($conf->commande->enabled) && $user->hasRight("commande", "write"), // vs hooking
 				"position" => 40,
 			),
 			array(
@@ -2445,7 +2478,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->hasRight("facture", "write"), // vs hooking
 				"position" => 50,
 			),
 			array(
@@ -2453,7 +2486,7 @@ function printDropdownQuickadd()
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
-				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"activation" => !empty($conf->contrat->enabled) && $user->hasRight("contrat", "write"), // vs hooking
 				"position" => 60,
 			),
 			array(
@@ -2461,7 +2494,7 @@ function printDropdownQuickadd()
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "supplier_proposal",
-				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->hasRight("supplier_invoice", "write"), // vs hooking
 				"position" => 70,
 			),
 			array(
@@ -2469,7 +2502,7 @@ function printDropdownQuickadd()
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "supplier_order",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"activation" => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "commande", "write")) || (isModEnabled("supplier_order") && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 80,
 			),
 			array(
@@ -2477,7 +2510,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "supplier_invoice",
-				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"activation" => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "write")) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "write")), // vs hooking
 				"position" => 90,
 			),
 			array(
@@ -2485,7 +2518,7 @@ function printDropdownQuickadd()
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
-				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"activation" => isModEnabled("product") && $user->hasRight("produit", "write"), // vs hooking
 				"position" => 100,
 			),
 			array(
@@ -2493,7 +2526,7 @@ function printDropdownQuickadd()
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
-				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"activation" => isModEnabled("service") && $user->hasRight("service", "write"), // vs hooking
 				"position" => 110,
 			),
 			array(
@@ -2501,7 +2534,7 @@ function printDropdownQuickadd()
 				"title" => "AddUser@users",
 				"name" => "User@users",
 				"picto" => "user",
-				"activation" => $user->rights->user->user->creer, // vs hooking
+				"activation" => $user->hasRight("user", "user", "write"), // vs hooking
 				"position" => 500,
 			),
 		),
@@ -2529,7 +2562,8 @@ function printDropdownQuickadd()
 		foreach ($items['items'] as $key => $row) {
 			$position[$key] = $row['position'];
 		}
-		array_multisort($position, SORT_ASC, $items['items']);
+		$array1_sort_order = SORT_ASC;
+		array_multisort($position, $array1_sort_order, $items['items']);
 	}
 
 	foreach ($items['items'] as $item) {
@@ -2814,7 +2848,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			} else {
 				if (is_array($arrayresult)) {
 					foreach ($arrayresult as $key => $val) {
-						$searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, $val['img']);
+						$searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', (empty($val['shortcut']) ? '' : $val['shortcut']), 'searchleft'.$key, $val['img']);
 					}
 				}
 			}
@@ -3172,7 +3206,7 @@ if (!function_exists("llxFooter")) {
 			// Clean and save data
 			foreach ($user->lastsearch_values_tmp as $key => $val) {
 				unset($_SESSION['lastsearch_values_tmp_'.$key]); // Clean array to rebuild it just after
-				if (count($val) && empty($_POST['button_removefilter'])) {	// If there is search criteria to save and we did not click on 'Clear filter' button
+				if (count($val) && empty($_POST['button_removefilter']) && empty($_POST['button_removefilter_x'])) {
 					if (empty($val['sortfield'])) {
 						unset($val['sortfield']);
 					}
@@ -3360,7 +3394,7 @@ if (!function_exists("llxFooter")) {
 												url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												timeout: 500,     // timeout milliseconds
 												cache: false,
-												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: 'notrequired' },	// for update
+												data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingok', token: '<?php echo currentToken(); ?>' },	// for update
 											  });
 									  },
 									  error: function (data,status,xhr) {   // error callback function
@@ -3370,7 +3404,7 @@ if (!function_exists("llxFooter")) {
 												  url: '<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>',
 												  timeout: 500,     // timeout milliseconds
 												  cache: false,
-												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: 'notrequired' },
+												  data: { hash_algo: 'md5', hash_unique_id: '<?php echo dol_escape_js($hash_unique_id); ?>', action: 'firstpingko', token: '<?php echo currentToken(); ?>' },
 												});
 									  }
 								});

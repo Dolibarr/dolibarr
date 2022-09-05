@@ -28,6 +28,8 @@
  *  \brief      Page of web sites accounts
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -35,13 +37,17 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "website"));
 
-$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$show_files = GETPOST('show_files', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
+// Get parameters
+$action 	 = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';               // The action 'add', 'create', 'edit', 'update', 'view', ...
+$show_files  = GETPOST('show_files', 'int');
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'websitelist';  // To manage different context of search
+$backtopage  = GETPOST('backtopage', 'alpha');                                              // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ');                                                  // Option for the css output (always '' except when 'print')
 
 // Security check
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');

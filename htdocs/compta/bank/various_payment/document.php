@@ -97,7 +97,7 @@ if ($object->id) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' : ';
 		if ($user->rights->banque->modifier && 0) {

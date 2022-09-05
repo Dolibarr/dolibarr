@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Номи модул/барномаро ворид кунед, то бидуни фосила эҷод кунед. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Номи объектро ворид кунед, ки бидуни фосила эҷод карда шавад. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyObject, Student, Teacher ...). Файли синфи CRUD, инчунин файли API, саҳифаҳо барои рӯйхат/илова/таҳрир/нест кардани объект ва файлҳои SQL тавлид карда мешаванд.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Роҳе, ки модулҳо тавлид/таҳрир карда мешаванд (феҳристи аввал барои модулҳои беруна ба %s муайян карда шудааст): <strong> %s </strong>
 ModuleBuilderDesc3=Модулҳои тавлидшуда/таҳриршаванда ёфт шуданд: <strong> %s </strong>
 ModuleBuilderDesc4=Ҳангоме ки файли <strong> %s </strong> дар решаи директорияи модул мавҷуд аст, модул ҳамчун "таҳриршаванда" муайян карда мешавад
 NewModule=Модули нав
 NewObjectInModulebuilder=Объекти нав
+NewDictionary=New dictionary
 ModuleKey=Калиди модул
 ObjectKey=Калиди объект
+DicKey=Dictionary key
 ModuleInitialized=Модул оғоз карда шуд
 FilesForObjectInitialized=Файлҳо барои объекти нави '%s' оғоз карда шуданд
 FilesForObjectUpdated=Файлҳо барои объекти '%s' нав карда шуданд (файлҳои .sql ва файли .class.php)

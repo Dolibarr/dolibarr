@@ -1368,7 +1368,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// For the moment, we manage this with hard coded exception
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
-					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					if (isModEnabled("product") || isModEnabled("service")) {
 						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
@@ -1452,8 +1452,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
-				$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
-				if ($class) {
+				//$sql .= " WHERE module_name = '".$this->db->escape(empty($this->rights_class) ?strtolower($this->name) : $this->rights_class)."'";
+				$sql .= " WHERE label = '".$this->db->escape($label)."'";
+				/*if ($class) {
 					$sql .= " AND classesname = '".$this->db->escape($class)."'";
 				}
 				if ($objectname) {
@@ -1467,7 +1468,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				}
 				if ($parameters) {
 					$sql .= " AND params = '".$this->db->escape($parameters)."'";
-				}
+				}*/
 				$sql .= " AND entity = ".((int) $entity); // Must be exact entity
 
 				$now = dol_now();
@@ -1516,7 +1517,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$sql .= "'".$this->db->escape($priority)."', ";
 							}
 							if (is_int($status)) {
-								$sql .= "'".$this->db->escape($status)."', ";
+								$sql .= ((int) $status).", ";
 							}
 							$sql .= $entity.",";
 							$sql .= "'".$this->db->escape($test)."'";

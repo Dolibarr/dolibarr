@@ -175,11 +175,10 @@ class Categorie extends CommonObject
 	);
 
 	/**
-	 * @var array Object table mapping from type string (table llx_...) when value of key does not match table name.
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @var array 	Object table mapping from type string (table llx_...) when value of key does not match table name.
+	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
-	public static $MAP_OBJ_TABLE = array(
+	public $MAP_OBJ_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'societe',
 		'member'   => 'adherent',
@@ -333,6 +332,7 @@ class Categorie extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) {
+			$this->error = "No category to search for";
 			return -1;
 		}
 		if (!is_null($type) && !is_numeric($type)) {
@@ -372,6 +372,8 @@ class Categorie extends CommonObject
 				$this->entity = (int) $res['entity'];
 				$this->date_creation = $this->db->jdate($res['date_creation']);
 				$this->date_modification = $this->db->jdate($res['tms']);
+				$this->user_creation_id = (int) $res['fk_user_creat'];
+				$this->user_modification_id = (int) $res['fk_user_modif'];
 				$this->user_creation = (int) $res['fk_user_creat'];
 				$this->user_modification = (int) $res['fk_user_modif'];
 
@@ -388,6 +390,7 @@ class Categorie extends CommonObject
 
 				return 1;
 			} else {
+				$this->error = "No category found";
 				return 0;
 			}
 		} else {
@@ -700,13 +703,14 @@ class Categorie extends CommonObject
 			$type = $obj->element;
 		}
 
+		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
 		$sql .= " (fk_categorie, fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type]).")";
 		$sql .= " VALUES (".((int) $this->id).", ".((int) $obj->id).")";
 
-		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			if (!empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
@@ -826,7 +830,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management' ...)
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset
@@ -989,7 +993,7 @@ class Categorie extends CommonObject
 					$categories[$i]['array_options'] = $category_static->array_options;
 
 					// multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (!empty($conf->global->MAIN_MULTILANGS) && isset($category_static->multilangs)) {
 						$categories[$i]['multilangs'] = $category_static->multilangs;
 					}
 				}
@@ -1214,9 +1218,10 @@ class Categorie extends CommonObject
 		while ((empty($protection) || $i < $protection) && !empty($this->motherof[$cursor_categ])) {
 			//print '&nbsp; cursor_categ='.$cursor_categ.' i='.$i.' '.$this->motherof[$cursor_categ].'<br>'."\n";
 			$this->cats[$id_categ]['fullpath'] = '_'.$this->motherof[$cursor_categ].$this->cats[$id_categ]['fullpath'];
-			$this->cats[$id_categ]['fulllabel'] = $this->cats[$this->motherof[$cursor_categ]]['label'].' >> '.$this->cats[$id_categ]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'] = (empty($this->cats[$this->motherof[$cursor_categ]]) ? 'NotFound' : $this->cats[$this->motherof[$cursor_categ]]['label']).' >> '.$this->cats[$id_categ]['fulllabel'];
 			//print '&nbsp; Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].' '.$this->cats[$id_categ]['fulllabel'].'<br>'."\n";
-			$i++; $cursor_categ = $this->motherof[$cursor_categ];
+			$i++;
+			$cursor_categ = $this->motherof[$cursor_categ];
 		}
 		//print 'Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].'<br>'."\n";
 

@@ -127,25 +127,25 @@ class modCategorie extends DolibarrModules
 		$this->export_permission[$r] = array(array("categorie", "lire"));
 
 		$typeexample = "";
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			$typeexample .= ($typeexample ? " / " : "")."0=Product-Service";
 		}
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$typeexample .= ($typeexample ? "/" : "")."1=Supplier";
 		}
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect";
 		}
 		if (!empty($conf->adherent->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."3=Member";
 		}
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$typeexample .= ($typeexample ? " / " : "")."4=Contact";
 		}
 		if (!empty($conf->bank->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
 		}
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."6=Project";
 		}
 		if (!empty($conf->user->enabled)) {
@@ -157,7 +157,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->stock->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."9=Warehouse";
 		}
-		if (!empty($conf->agenda->enabled)) {
+		if (isModEnabled('agenda')) {
 			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
 		}
 		if (!empty($conf->website->enabled)) {
@@ -179,7 +179,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
 		$this->export_label[$r] = 'CatProdList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->product->enabled) || !empty($conf->service->abled)';
+		$this->export_enabled[$r] = 'isModEnabled("product") || !empty($conf->service->abled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("produit", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProductId', 'p.ref'=>'Ref', 'p.label'=>'Label');
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 'p.label'=>'Text');
@@ -203,7 +203,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 		$this->export_label[$r] = 'CatSupList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("fournisseur", "lire"));
 		$this->export_fields_array[$r] = array(
 			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
@@ -249,7 +249,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_2_'.Categorie::$MAP_ID_TO_CODE[2];
 		$this->export_label[$r] = 'CatCusList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->societe->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled("societe")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "export"));
 		$this->export_fields_array[$r] = array(
 			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
@@ -321,7 +321,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_4_'.Categorie::$MAP_ID_TO_CODE[4];
 		$this->export_label[$r] = 'CatContactList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->societe->enabled)';
+		$this->export_enabled[$r] = 'isModEnabled("societe")';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("societe", "contact", "export"));
 		$this->export_fields_array[$r] = array(
 			'cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory",
@@ -379,7 +379,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 		$this->export_label[$r] = 'CatProjectsList';
 		$this->export_icon[$r] = $this->picto;
-		$this->export_enabled[$r] = '!empty($conf->projet->enabled)';
+		$this->export_enabled[$r] = '!empty($conf->project->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>"Text");
@@ -466,7 +466,7 @@ class modCategorie extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
 
 		// 0 Products
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
 			$this->import_label[$r] = "CatProdLinks"; // Translation key
@@ -485,7 +485,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 1 Suppliers
-		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 			$this->import_label[$r] = "CatSupLinks"; // Translation key
@@ -506,7 +506,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 2 Customers
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_2_'.Categorie::$MAP_ID_TO_CODE[2];
 			$this->import_label[$r] = "CatCusLinks"; // Translation key
@@ -545,7 +545,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 4 Contacts/Addresses
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_4_'.Categorie::$MAP_ID_TO_CODE[4];
 			$this->import_label[$r] = "CatContactsLinks"; // Translation key
@@ -568,7 +568,7 @@ class modCategorie extends DolibarrModules
 		// 5 Bank accounts, TODO ?
 
 		// 6 Projects
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->project->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 			$this->import_label[$r] = "CatProjectsLinks"; // Translation key

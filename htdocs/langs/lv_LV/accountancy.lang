@@ -48,7 +48,7 @@ CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
-ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu CSV un PDF formātā), kas tiek izmantoti jūsu grāmatvedības uzskaitei.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kont�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
 ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu meitas kontam (tas var būt lēns, ja jums ir daudz trešo pušu, pārtraukt iespēju meklēt daļu vērtības)
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pārsūtot grāmatvedību, pēc noklusējuma atlasiet periodu
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Kāds ir grāmatvedības pārskaitījuma periods, kas atlasīts pēc noklusējuma
 
 ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
 ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grāmatvedības konts, lai reģistrētu abonementus
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Grāmatvedības konts pēc noklusējuma reģistrē klientu depozītu
+UseAuxiliaryAccountOnCustomerDeposit=Saglabājiet klienta kontu kā individuālu kontu meitas virsgrāmatā pirmo iemaksu rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Nopirkto produktu grāmatvedības konts pēc noklusējuma (tiek izmantots, ja tas nav definēts produktu lapā)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem EEK (lietots, ja nav definēts produktu lapā)
@@ -278,10 +279,10 @@ DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
 Closure=Gada slēgšana
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
-OverviewOfMovementsNotValidated=Overview of movements not validated and locked
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+DescClosure=Consult here the number of movements by month not yet validated & locked
+OverviewOfMovementsNotValidated=Pārskats par kustībām, kas nav apstiprinātas un bloķētas
+AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas un bloķētas
+NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas un bloķētas
 ValidateMovements=Apstiprināt un bloķēt ierakstu...
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
 
@@ -289,7 +290,7 @@ ValidateHistory=Piesaistiet automātiski
 AutomaticBindingDone=Automātiskā saistīšana ir pabeigta (%s) — dažiem ierakstiem automātiskā saistīšana nav iespējama (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Kļūda, nevarat izdzēst šo grāmatvedības kontu, jo tas tiek izmantots
-MvtNotCorrectlyBalanced=Kustība nav pareizi sabalansēta. Debits = %s | Kredīts = %s
+MvtNotCorrectlyBalanced=Kustības nav pareizi līdzsvarotas. Debets = %s & kredīts = %s
 Balancing=Līdzsvarošana
 FicheVentilation=Iesiešanas kartiņa
 GeneralLedgerIsWritten=Darījumi ir rakstīti grāmatvedībā
@@ -302,7 +303,7 @@ NotYetAccounted=Vēl nav pārnests uz grāmatvedību
 ShowTutorial=Rādīt apmācību
 NotReconciled=Nesaskaņots
 WarningRecordWithoutSubledgerAreExcluded=Brīdinājums! Visas rindas bez apakšvirsgrāmatas konta tiek filtrētas un izslēgtas no šī skata
-AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
+AccountRemovedFromCurrentChartOfAccount=Grāmatvedības konts, kas neeksistē pašreizējā kontu plānā
 
 ## Admin
 BindingOptions=Iesiešanas iespējas
@@ -331,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesie�
 
 ## Export
 NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
-NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "Aizvērt", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts
@@ -397,19 +398,19 @@ Calculated=Aprēķināts
 Formula=Formula
 
 ## Reconcile
-Unlettering=Unreconcile
-AccountancyNoLetteringModified=No reconcile modified
-AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
-AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
-AccountancyNoUnletteringModified=No unreconcile modified
-AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
-AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+Unlettering=Nesamierināties
+AccountancyNoLetteringModified=Saskaņošana nav mainīta
+AccountancyOneLetteringModifiedSuccessfully=Viens saskaņojums ir veiksmīgi pārveidots
+AccountancyLetteringModifiedSuccessfully=%s saskaņošana ir veiksmīgi modificēta
+AccountancyNoUnletteringModified=Neviena nesaskaņošana nav mainīta
+AccountancyOneUnletteringModifiedSuccessfully=Viena nesaskaņošana ir veiksmīgi pārveidota
+AccountancyUnletteringModifiedSuccessfully=%s nesaskaņošana ir veiksmīgi modificēta
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
-ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
-ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+ConfirmMassUnlettering=Lielapjoma nesaskaņošanas apstiprinājums
+ConfirmMassUnletteringQuestion=Vai tiešām vēlaties nesaskaņot %s atlasītos ierakstus?
+ConfirmMassDeleteBookkeepingWriting=Lielapjoma dzēšanas apstiprinājums
+ConfirmMassDeleteBookkeepingWritingQuestion=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēstas visas ar to pašu darījumu saistītās rindas) Vai tiešām vēlaties dzēst %s atlasītos ierakstus?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Daži obligāti uzstādīšanas soļi nav pabeigti, lūdzu, aizpildiet tos
@@ -423,9 +424,10 @@ Binded=Līnijas saistītas
 ToBind=Rindiņas saistīt
 UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diemžēl šis modulis nav saderīgs ar situāciju rēķinu eksperimentālo līdzekli
-AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
-AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
-AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+AccountancyErrorMismatchLetterCode=Saskaņošanas koda neatbilstība
+AccountancyErrorMismatchBalanceAmount=Atlikums (%s) nav vienāds ar 0
+AccountancyErrorLetteringBookkeeping=Ir radušās kļūdas saistībā ar darījumiem: %s
+ErrorAccountNumberAlreadyExists=Grāmatvedības numurs %s jau pastāv
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti

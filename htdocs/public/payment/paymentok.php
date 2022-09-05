@@ -369,6 +369,7 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->facture)) {
 		$user->rights->facture = new stdClass();
+		$user->rights->facture->invoice_advance = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
@@ -376,6 +377,7 @@ if ($ispaymentok) {
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
+	$user->rights->facture->invoice_advance->validate = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
 	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0) {
@@ -504,9 +506,13 @@ if ($ispaymentok) {
 					$datesubend = dol_time_plus_duree($datesubend, -1, 'd');
 				}
 
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
-				$label = 'Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
+				$label = $langs->trans("OnlineSubscriptionPaymentLine", $formatteddate, $paymentmethod, $ipaddress, $TRANSACTIONID);
 
 				// Payment informations
 				$accountid = 0;
@@ -533,11 +539,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -693,9 +699,6 @@ if ($ispaymentok) {
 						// Send subscription email
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
-						// Set output language
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 						// Load traductions files required by page
 						$outputlangs->loadLangs(array("main", "members"));
 						// Get email content from template
@@ -849,7 +852,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -927,7 +930,7 @@ if ($ispaymentok) {
 			}
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -966,7 +969,7 @@ if ($ispaymentok) {
 							}
 						}
 
-						if (!$error && !empty($conf->banque->enabled)) {
+						if (!$error && isModEnabled("banque")) {
 							$bankaccountid = 0;
 							if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 							elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1086,7 +1089,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1202,7 +1205,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1411,7 +1414,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;

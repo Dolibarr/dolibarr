@@ -26,6 +26,8 @@
  *		\brief      Home page for HRM area.
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -34,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
@@ -48,12 +51,15 @@ if (!empty($conf->holiday->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
+// Get Parameters
 $socid = GETPOST("socid", "int");
 
 // Protection if external user
@@ -343,11 +349,11 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if ($conf->societe->enabled && empty($user->rights->societe->client->voir) && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {

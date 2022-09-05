@@ -25,12 +25,19 @@
  *	\brief      Home page of customer order module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'bills'));
+
 
 if (!$user->rights->commande->lire) {
 	accessforbidden();
@@ -41,8 +48,6 @@ $hookmanager = new HookManager($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ordersindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid = GETPOST('socid', 'int');

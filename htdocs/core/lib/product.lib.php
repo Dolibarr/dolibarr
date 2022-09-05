@@ -38,8 +38,11 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
+		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
 	}
 
 	$h = 0;
@@ -50,7 +53,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status)) {
+	if (!empty($object->status) && $usercancreadprice) {
 		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SellingPrices");
 		$head[$h][2] = 'price';
@@ -58,13 +61,15 @@ function product_prepare_head($object)
 	}
 
 	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
-		if ((((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
+		if ((((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->lire)
 		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
 		) {
-			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
-			$head[$h][1] = $langs->trans("BuyingPrices");
-			$head[$h][2] = 'suppliers';
-			$h++;
+			if ($usercancreadprice) {
+				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
+				$head[$h][1] = $langs->trans("BuyingPrices");
+				$head[$h][2] = 'suppliers';
+				$h++;
+			}
 		}
 	}
 
@@ -171,18 +176,18 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
-	if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
+	if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-		if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
-		if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
+		if (isModEnabled("service") && ($object->type == Product::TYPE_SERVICE)) {
 			$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
 		$nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
@@ -201,7 +206,7 @@ function product_prepare_head($object)
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -374,7 +379,7 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
+	if (isModEnabled("propal") && $user->rights->propale->lire) {
 		$nblines++;
 		$ret = $product->load_stats_propale($socid);
 		if ($ret < 0) {
@@ -431,7 +436,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) {
@@ -450,7 +455,7 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
 		if ($ret < 0) {
@@ -468,8 +473,27 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	// Customer template invoices
+	if (isModEnabled("facture") && $user->rights->facture->lire) {
+		$nblines++;
+		$ret = $product->load_stats_facturerec($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_facture['customers'];
+		print '</td><td class="right">';
+		print $product->stats_facturerec['nb'];
+		print '</td><td class="right">';
+		print $product->stats_facturerec['qty'];
+		print '</td>';
+		print '</tr>';
+	}
 	// Supplier invoices
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) {

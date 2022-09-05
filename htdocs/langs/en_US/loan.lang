@@ -24,7 +24,7 @@ FinancialCommitment=Financial commitment
 InterestAmount=Interest
 CapitalRemain=Capital remain
 TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
 # Admin
 ConfigLoan=Configuration of the module loan

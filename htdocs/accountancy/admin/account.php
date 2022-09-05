@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries"));
+$langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
 $mesg = '';
 $action = GETPOST('action', 'aZ09');
@@ -52,8 +52,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-$permissiontoadd = !empty($user->rights->accounting->chartofaccount);
-$permissiontodelete = !empty($user->rights->accounting->chartofaccount);
+$permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
+$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
 
 // Security check
 if ($user->socid > 0) {
@@ -294,7 +294,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // List of mass actions available
-if ($user->rights->accounting->chartofaccount) {
+if ($user->hasRight('accounting', 'chartofaccount')) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
@@ -349,6 +349,8 @@ if ($resql) {
 			});
 	    	</script>';
 	}
+
+	$newcardbutton = '';
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
@@ -588,7 +590,7 @@ if ($resql) {
 
 		// Action
 		print '<td class="center nowraponall">';
-		if ($user->rights->accounting->chartofaccount) {
+		if ($user->hasRight('accounting', 'chartofaccount')) {
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 			print img_edit();
 			print '</a>';

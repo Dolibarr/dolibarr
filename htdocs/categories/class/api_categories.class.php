@@ -51,10 +51,13 @@ class Categories extends DolibarrApi
 		4 => 'contact',
 		5 => 'account',
 		6 => 'project',
-		//7 => 'user',
-		//8 => 'bank_line',
-		//9 => 'warehouse',
-		//10 => 'actioncomm',
+		7 => 'user',
+		8 => 'bank_line',
+		9 => 'warehouse',
+		10 => 'actioncomm',
+		11 => 'website_page',
+		12 => 'ticket',
+		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -302,7 +305,8 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_CUSTOMER,
 			Categorie::TYPE_SUPPLIER,
 			Categorie::TYPE_MEMBER,
-			Categorie::TYPE_PROJECT
+			Categorie::TYPE_PROJECT,
+			Categorie::TYPE_KNOWLEDGEMANAGEMENT
 		])) {
 			throw new RestException(401);
 		}
@@ -318,6 +322,8 @@ class Categories extends DolibarrApi
 		} elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->rights->adherent->lire) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
 			throw new RestException(401);
 		}
 
@@ -662,6 +668,10 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevent to categories
+		unset($object->MAP_CAT_FK);
+		unset($object->MAP_CAT_TABLE);
+		unset($object->MAP_OBJ_CLASS);
+		unset($object->MAP_OBJ_TABLE);
 		unset($object->country);
 		unset($object->country_id);
 		unset($object->country_code);

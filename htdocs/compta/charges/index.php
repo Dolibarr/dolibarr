@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ $filtre = GETPOST("filtre", 'alpha');
 if (!$year) {
 	$year = date("Y", time());
 }
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $search_account = GETPOST('search_account', 'int');
 
@@ -132,7 +133,7 @@ if ($year) {
 print '<span class="opacitymedium">'.$langs->trans("DescTaxAndDividendsArea").'</span><br>';
 print "<br>";
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	// Social contributions only
 	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
@@ -145,7 +146,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -184,7 +185,6 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 		$total = 0;
-		$totalnb = 0;
 		$totalpaid = 0;
 
 		while ($i < min($num, $limit)) {
@@ -204,7 +204,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
@@ -220,7 +220,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			}
 			print $obj->num_payment.'</td>';
 			// Account
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<td>';
 				if ($obj->fk_bank > 0) {
 					//$accountstatic->fetch($obj->fk_bank);
@@ -246,7 +246,6 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			print '</tr>';
 
 			$total = $total + $obj->total;
-			$totalnb = $totalnb + $obj->nb;
 			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
@@ -255,7 +254,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<td></td>';
 		}
 		print '<td class="liste_total right">'.price($totalpaid)."</td>";
@@ -267,14 +266,14 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 }
 
 // VAT
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print "<br>";
 
 	$tva = new Tva($db);
 
 	print load_fiche_titre($langs->trans("VATDeclarations").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
-	$sql = "SELECT ptva.rowid, pv.rowid as id_tva, pv.amount as amount_tva, ptva.amount, pv.label, pv.datev as dm, ptva.datep as date_payment, ptva.fk_bank,";
+	$sql = "SELECT ptva.rowid, pv.rowid as id_tva, pv.amount as amount_tva, ptva.amount, pv.label, pv.datev as dm, ptva.datep as date_payment, ptva.fk_bank, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
@@ -305,7 +304,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 		print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 		}
 		print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -342,7 +341,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			print $obj->num_payment.'</td>';
 
 			// Account
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<td>';
 				if ($obj->fk_bank > 0) {
 					//$accountstatic->fetch($obj->fk_bank);

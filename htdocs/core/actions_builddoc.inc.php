@@ -26,7 +26,7 @@
 // $id must be defined
 // $object must be defined and must have a method generateDocument().
 // $permissiontoadd must be defined
-// $upload_dir must be defined (example $conf->projet->dir_output . "/";)
+// $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
@@ -34,7 +34,7 @@ if (!empty($permissioncreate) && empty($permissiontoadd)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $permissiontoadd) {
+if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) {
 	if (is_numeric(GETPOST('model', 'alpha'))) {
 		$error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
 	} else {

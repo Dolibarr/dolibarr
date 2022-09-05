@@ -1149,8 +1149,10 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;
-		$this->user_valid = '';
+		$this->user_author = $user->id;		// deprecated
+		$this->user_author_id = $user->id;
+		$this->user_valid = 0;				// deprecated
+		$this->user_valid_id = 0;
 		$this->date = $now;
 
 		// Set ref
@@ -2190,7 +2192,7 @@ class SupplierProposal extends CommonObject
 			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSigned");
 			$this->labelStatus[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosed");
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraftShort");
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("Opened");
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("SupplierProposalStatusValidatedShort");
 			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSignedShort");
 			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSignedShort");
 			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosedShort");

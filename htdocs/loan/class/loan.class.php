@@ -220,19 +220,19 @@ class Loan extends CommonObject
 		}
 
 		// Check parameters
-		if (!$newcapital > 0 || empty($this->datestart) || empty($this->dateend)) {
+		if (!($newcapital > 0) || empty($this->datestart) || empty($this->dateend)) {
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_capital)) {
+		if (isModEnabled('accounting') && empty($this->account_capital)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_insurance)) {
+		if (isModEnabled('accounting') && empty($this->account_insurance)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_interest)) {
+		if (isModEnabled('accounting') && empty($this->account_interest)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
 			return -2;
 		}
@@ -690,7 +690,7 @@ class Loan extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
-		$sql .= ' l.tms';
+		$sql .= ' l.tms as datem';
 		$sql .= ' WHERE l.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
@@ -700,21 +700,11 @@ class Loan extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-				$this->date_creation = $this->db->jdate($obj->datec);
-				if (empty($obj->fk_user_modif)) {
-					$obj->tms = "";
-				}
-				$this->date_modification = $this->db->jdate($obj->tms);
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 
 				$this->db->free($result);
 				return 1;

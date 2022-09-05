@@ -47,6 +47,9 @@ class FormTicket
 	 */
 	public $db;
 
+	/**
+	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 */
 	public $track_id;
 
 	/**
@@ -116,7 +119,7 @@ class FormTicket
 
 		$this->action = 'add';
 
-		$this->withcompany = $conf->societe->enabled ? 1 : 0;
+		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
 		//$this->withreadid=0;
@@ -166,7 +169,7 @@ class FormTicket
 			print dol_get_fiche_head(null, 'card', '', 0, '');
 		}
 
-		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
+		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : "").'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		foreach ($this->param as $key => $value) {
@@ -312,7 +315,7 @@ class FormTicket
 
 		// Type
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 0, 0, 0, 'minwidth200');
+		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Group
@@ -321,12 +324,12 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 0, 0, 0, 'minwidth200');
+		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity
-		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 0);
+		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		// Subject
@@ -338,10 +341,12 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 				print '</td></tr>';
 			} else {
-				if ($this->withreadid > 0) {
+				if (isset($this->withreadid) &&  $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+				} else {
+					$subject = GETPOST('subject', 'alpha');
 				}
-				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
 				print '</td></tr>';
 			}
 		}
@@ -415,7 +420,7 @@ class FormTicket
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
-		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_8, '90%');
+		$doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_8, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -433,7 +438,7 @@ class FormTicket
 		}
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 1);
 
@@ -488,6 +493,11 @@ class FormTicket
 				$out .= $langs->trans("NoAttachedFiles").'<br>';
 			}
 			if ($this->withfile == 2) { // Can add other files
+				$maxfilesizearray = getMaxFileSizeArray();
+				$maxmin = $maxfilesizearray['maxmin'];
+				if ($maxmin > 0) {
+					$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+				}
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
 				$out .= '<input type="submit" class="button smallpaddingimp reposition" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
@@ -612,7 +622,7 @@ class FormTicket
 		}
 
 		if ($subelement != 'project') {
-			if (!empty($conf->projet->enabled) && !$this->ispublic) {
+			if (!empty($conf->project->enabled) && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -633,9 +643,9 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
-		print $form->buttonsSaveCancel((($this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+		print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
 		/*
 		print '<div class="center">';
@@ -725,6 +735,7 @@ class FormTicket
 				}
 
 				print '>';
+
 				$value = '&nbsp;';
 				if ($format == 0) {
 					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
@@ -736,7 +747,7 @@ class FormTicket
 					$value = $arraytypes['code'];
 				}
 
-				print $value;
+				print $value ? $value : '&nbsp;';
 				print '</option>';
 			}
 		}
@@ -831,6 +842,7 @@ class FormTicket
 
 					print '>';
 
+					$value = '';
 					if ($format == 0) {
 						$value = ($maxlength ? dol_trunc($label, $maxlength) : $label);
 					}
@@ -1164,6 +1176,8 @@ class FormTicket
 				}
 
 				print '>';
+
+				$value = '';
 				if ($format == 0) {
 					$value = ($maxlength ? dol_trunc($arrayseverities['label'], $maxlength) : $arrayseverities['label']);
 				}
@@ -1211,7 +1225,7 @@ class FormTicket
 			dol_delete_dir_recursive($upload_dir);
 		}
 
-		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+		$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 		unset($_SESSION["listofpaths".$keytoavoidconflict]);
 		unset($_SESSION["listofnames".$keytoavoidconflict]);
 		unset($_SESSION["listofmimes".$keytoavoidconflict]);
@@ -1245,7 +1259,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1269,7 +1283,7 @@ class FormTicket
 		$listofpaths = array();
 		$listofnames = array();
 		$listofmimes = array();
-		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
+		$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
@@ -1292,7 +1306,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1467,7 +1481,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
@@ -1504,7 +1518,7 @@ class FormTicket
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
+		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, 70);
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1516,7 +1530,7 @@ class FormTicket
 			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
 			$doleditor->Create();
 			print '</td></tr>';
 		}

@@ -75,7 +75,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -471,7 +471,7 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag($object->title).'">';
 } else {
 	print dol_htmlentities($object->title);
 }

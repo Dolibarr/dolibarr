@@ -40,7 +40,7 @@ class Fichinter extends CommonObject
 	public $fields = array(
 	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>20),
+	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>20),
 	'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>'$conf->contrat->enabled', 'visible'=>-1, 'position'=>25),
 	'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
 	'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
@@ -524,6 +524,8 @@ class Fichinter extends CommonObject
 
 		dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
 
+		$this->oldcopy = dol_clone($this);
+
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
@@ -532,10 +534,6 @@ class Fichinter extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
-
 			if (!$error) {
 				// Call trigger
 				$result = $this->call_trigger('FICHINTER_UNVALIDATE', $user);
@@ -590,7 +588,7 @@ class Fichinter extends CommonObject
 			$sql .= " SET fk_statut = 1";
 			$sql .= ", ref = '".$this->db->escape($num)."'";
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
-			$sql .= ", fk_user_valid = ".((int) $user->id);
+			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND fk_statut = 0";
@@ -1204,7 +1202,7 @@ class Fichinter extends CommonObject
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = '';
+		$this->user_valid         = 0;
 		$this->date_creation      = '';
 		$this->date_validation    = '';
 		$this->ref_client         = '';
@@ -1411,6 +1409,8 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
+			$this->oldcopy = dol_clone($this);
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -1422,7 +1422,6 @@ class Fichinter extends CommonObject
 			}
 
 			if (!$error) {
-				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
 			}
 
@@ -1473,9 +1472,19 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_fichinter;
 
-	public $desc; // Description ligne
-	public $datei; // Date intervention
-	public $duration; // Duree de l'intervention
+	public $desc; 		// Description ligne
+
+	/**
+	 * @var int Date of intervention
+	 */
+	public $date; 		// Date intervention
+	/**
+	 * @var int Date of intervention
+	 * @deprecated
+	 */
+	public $datei; 		// Date intervention
+
+	public $duration; 	// Duration of intervention
 	public $rang = 0;
 
 	/**

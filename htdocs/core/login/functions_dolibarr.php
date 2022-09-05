@@ -40,7 +40,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -134,11 +134,11 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 
 				// We must check entity
-				if ($passok && !empty($conf->multicompany->enabled)) {	// We must check entity
+				if ($passok && isModEnabled('multicompany')) {	// We must check entity
 					global $mc;
 
 					if (!isset($mc)) {
-						$conf->multicompany->enabled = false; // Global not available, disable $conf->multicompany->enabled for safety
+						!isModEnabled('multicompany'); // Global not available, disable $conf->multicompany->enabled for safety
 					} else {
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0) {
