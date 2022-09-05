@@ -2308,3 +2308,5 @@ UsePassword=Use a password
 UseOauth=Use a OAUTH token
 Images=Images
 MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
+ScriptIsEmpty=The script is empty
+ShowHideTheNRequests=Show/hide the %s SQL request(s)

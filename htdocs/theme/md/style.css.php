@@ -973,6 +973,9 @@ textarea.centpercent {
 .nounderline {
 	text-decoration: none;
 }
+.nounderlineimp {
+	text-decoration: none !important;
+}
 .nopadding {
 	padding: 0;
 }
@@ -1623,6 +1626,7 @@ tr.nobottom td {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
