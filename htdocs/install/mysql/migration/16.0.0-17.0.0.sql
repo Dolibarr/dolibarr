@@ -142,3 +142,6 @@ CREATE TABLE llx_bank_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
+
+ALTER TABLE llx_product_lot ADD COLUMN note_public text DEFAULT NULL after batch;
+ALTER TABLE llx_product_lot ADD COLUMN note_private text DEFAULT NULL after note_public;

@@ -102,6 +102,8 @@ class Productlot extends CommonObject
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',)
 	);
 
 	/**
@@ -124,6 +126,8 @@ class Productlot extends CommonObject
 	//public $qc_frequency = '';
 	public $datec = '';
 	public $tms = '';
+	public $note_private;
+	public $note_public;
 
 	/**
 	 * @var int ID
@@ -295,7 +299,9 @@ class Productlot extends CommonObject
 		$sql .= " t.tms,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " t.import_key";
+		$sql .= " t.import_key,";
+		$sql .= " t.note_public,";
+		$sql .= " t.note_private";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($product_id > 0 && $batch != '') {
 			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".((int) $product_id);
@@ -329,6 +335,8 @@ class Productlot extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
