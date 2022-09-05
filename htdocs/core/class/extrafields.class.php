@@ -1881,36 +1881,27 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
+		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-		} else {
-			$type = $this->attribute_type[$key];
 		}
 
 		$cssstring = '';
 
-		if ($type == 'date') {
+		if (in_array($type, array('date', 'datetime'))) {
 			$cssstring = "center";
-		} elseif ($type == 'datetime') {
-			$cssstring = "center";
-		} elseif ($type == 'int') {
+		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
-		} elseif ($type == 'price') {
-			$cssstring = "right";
-		} elseif ($type == 'double') {
-			$cssstring = "right";
-		} elseif ($type == 'boolean') {
+		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip'))) {
 			$cssstring = "center";
-		} elseif ($type == 'radio') {
-			$cssstring = "center";
-		} elseif ($type == 'checkbox') {
-			$cssstring = "center";
-		} elseif ($type == 'price') {
-			$cssstring = "right";
 		}
 
 		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
 			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		} else {
+			if (in_array($type, array('ip'))) {
+				$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+			}
 		}
 
 		return $cssstring;
