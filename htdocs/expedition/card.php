@@ -581,6 +581,7 @@ if (empty($reshook)) {
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
 				$line = new ExpeditionLigne($db);
+				$line->fk_expedition = $object->id;
 
 				// Extrafields Lines
 				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
