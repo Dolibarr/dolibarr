@@ -441,6 +441,7 @@ ExtrafieldPhone = Phone
 ExtrafieldPrice = Price
 ExtrafieldMail = Email
 ExtrafieldUrl = Url
+ExtrafieldIP = IP
 ExtrafieldSelect = Select list
 ExtrafieldSelectList = Select from table
 ExtrafieldSeparator=Separator (not a field)
