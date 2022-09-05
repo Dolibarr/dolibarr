@@ -45,9 +45,9 @@ if ($action == 'presend') {
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
 		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
-	    if(!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file ( DOL_DATA_ROOT.'/'.$object->last_main_doc )){
-	        $fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
-	    } else {
+		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			// Special case
 			if ($object->element == 'invoice_supplier') {
