@@ -42,12 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron", "errors"));
 
-$action = GETPOST('action', 'aZ09');
+// GET Parameters
+$action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'alpha');
+$cancel  = GETPOST('cancel', 'alpha');
 
-$sortfield=GETPOST('sortfield', 'alpha');
-$sortorder=GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
 
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
@@ -123,6 +124,7 @@ $form = new Form($db);
 
 // Define $listofmodules
 $dirsrootforscan = array($dirread);
+
 // Add also the core modules into the list of modules to show/edit
 if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) {
 	$dirsrootforscan[] = DOL_DOCUMENT_ROOT;
@@ -905,7 +907,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 		 *  'label' the translation key.
 		 *  'picto' is code of a picto to show before value in forms
-		 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or '!empty($conf->multicurrency->enabled)' ...)
+		 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
 		 *  'position' is the sort order of field.
 		 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 		 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -927,23 +929,23 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 */
 
 		/*public $fields=array(
-		 'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		 'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		 'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-		 'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
-		 'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
-		 'fk_soc' 		 =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
-		 'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
-		 'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
-		 'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
-		 'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-		 'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		 //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		 'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
-		 'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		 //'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
-		 'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
-		 'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		 'rowid'          =>array('type'=>'integer',        'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		 'ref'            =>array('type'=>'varchar(128)',   'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		 'entity'         =>array('type'=>'integer',        'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		 'label'          =>array('type'=>'varchar(255)',   'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+		 'amount'         =>array('type'=>'double(24,8)',   'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
+		 'fk_soc'         =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirdparty'),
+		 'description'    =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		 'note_public'    =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		 'note_private'   =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
+		 'date_creation'  =>array('type'=>'datetime',       'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		 'tms'            =>array('type'=>'timestamp',      'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		//'date_valid'     =>array('type'=>'datetime',       'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		 'fk_user_creat'  =>array('type'=>'integer',        'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		 'fk_user_modif'  =>array('type'=>'integer',        'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid'  =>array('type'=>'integer',        'label'=>'UserValidation',   'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		 'import_key'     =>array('type'=>'varchar(14)',    'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+		 'status'         =>array('type'=>'integer',        'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		 );*/
 
 		$string = 'public $fields=array('."\n";
@@ -2093,8 +2095,11 @@ if ($module == 'initmodule') {
 
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span> <input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
 	print '<span class="opacitymedium">';
-	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeIDsInUse").'</a>';
-	print ' - <a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>)';
+	print ' &nbsp; (';
+	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', '', '');
+	print ' - ';
+	print '<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>';
+	print ')';
 	print '</span>';
 	print '<br>';
 	print '<span class="opacitymedium">'.$langs->trans("Version").'</span> <input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';

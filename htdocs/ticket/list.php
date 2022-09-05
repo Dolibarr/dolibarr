@@ -56,7 +56,6 @@ $projectid  = GETPOST('projectid', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project = GETPOST('search_fk_project', 'int') ?GETPOST('search_fk_project', 'int') : GETPOST('projectid', 'int');
-$search_fk_status = GETPOST('search_fk_statut', 'array');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_dateread_start = dol_mktime(0, 0, 0, GETPOST('search_dateread_startmonth', 'int'), GETPOST('search_dateread_startday', 'int'), GETPOST('search_dateread_startyear', 'int'));
@@ -140,7 +139,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -621,8 +620,8 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 foreach ($search as $key => $val) {
-	if (is_array($val) && count($val)) {
-		foreach ($val as $skey) {
+	if (is_array($search[$key])) {
+		foreach ($search[$key] as $skey) {
 			if ($skey != '') {
 				$param .= (!empty($val)) ? '&search_'.$key.'[]='.urlencode($skey) : "";
 			}
@@ -757,10 +756,13 @@ if ($massaction == 'presendonclose') {
 }
 
 if ($search_all) {
+	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
 	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<!-- Search done like if PRODUCT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';

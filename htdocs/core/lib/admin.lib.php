@@ -603,7 +603,8 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$value = $obj->value;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$value = dolDecrypt($obj->value);
 		}
 	}
 	return $value;
@@ -651,11 +652,22 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
+		if (!preg_match('/^MAIN_LOGEVENTS/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+			// This seems a sensitive constant, we encrypt its value
+			// To list all sensitive constant, you can make a
+			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'
+			// or name like '%\_SECURITY_TOKEN' or name like '%\WEB_TOKEN'
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$newvalue = dolEncrypt($value);
+		} else {
+			$newvalue = $value;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
-		$sql .= ", ".$db->encrypt($value);
-		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
+		$sql .= ", ".$db->encrypt($newvalue);
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -693,7 +705,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 
 	$h = 0;
 	$head = array();
-	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
+	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
@@ -1552,10 +1564,10 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified

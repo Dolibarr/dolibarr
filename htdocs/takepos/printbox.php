@@ -67,7 +67,9 @@ $arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
 
 $head = '';
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
+
 ?>
+<body>
 <script>
 	/**
 	 * Save (validate)
@@ -82,8 +84,7 @@ top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 		$('#label').focus()
 	});
 </script>
-</head>
-<body>
+
 <br>
 <center>
 <?php

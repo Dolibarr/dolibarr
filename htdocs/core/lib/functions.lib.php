@@ -432,8 +432,8 @@ function GETPOSTISSET($paramname)
  * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
  *
  * @param 	string	$paramname		Name or parameter to test
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ * @param	int		$method			Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISARRAY($paramname, $method = 0)
 {
@@ -954,12 +954,15 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
-
-				preg_match_all('/(<img)/i', $out, $reg);
-				if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-					$out = '';
-				}
 			} while ($oldstringtoclean != $out);
+
+			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+			$reg = array();
+			preg_match_all('/(<img|url\()/i', $out, $reg);
+			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+				return 'TooManyLinksIntoHTMLString';
+			}
+
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -1690,7 +1693,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Url to open
+ *	@param  string	$url				Relative Url to open
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1699,6 +1702,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
+	global $conf;
+
 	if (strpos($url, '?') > 0) {
 		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
@@ -1722,44 +1727,50 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
-	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
-	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
-	$out .= '<!-- Add js code to open dialog popup on dialog -->';
-	$out .= '<script type="text/javascript">
-				jQuery(document).ready(function () {
-					jQuery(".button_'.$name.'").click(function () {
-						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
-						var $tmpdialog = $(\'#idfordialog'.$name.'\');
-						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
-						$tmpdialog.dialog({
-							autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: \''.dol_escape_js($label).'\',
-							open: function (event, ui) {
-								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
-       						},
-							close: function (event, ui) {
-								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
-								if (returnedid != "" && returnedid != "div for returned id") {
-									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	if (empty($conf->use_javascript_ajax)) {
+		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
+	}
+	$out .= '>'.$buttonstring.'</a>';
+	if (!empty($conf->use_javascript_ajax)) {
+		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+		$out .= '<!-- Add js code to open dialog popup on dialog -->';
+		$out .= '<script type="text/javascript">
+					jQuery(document).ready(function () {
+						jQuery(".button_'.$name.'").click(function () {
+							console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+							var $tmpdialog = $(\'#idfordialog'.$name.'\');
+							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+							$tmpdialog.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: \''.dol_escape_js($label).'\',
+								open: function (event, ui) {
+									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+	       						},
+								close: function (event, ui) {
+									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
+									if (returnedid != "" && returnedid != "div for returned id") {
+										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+									}
+									if (returnedlabel != "" && returnedlabel != "div for returned label") {
+										jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+									}
 								}
-								if (returnedlabel != "" && returnedlabel != "div for returned label") {
-									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
-								}
-							}
-						});
+							});
 
-						$tmpdialog.dialog(\'open\');
+							$tmpdialog.dialog(\'open\');
+						});
 					});
-				});
-			</script>';
+				</script>';
+	}
 	return $out;
 }
 
@@ -2965,7 +2976,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
-		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+		if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_EMAIL';
 			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
@@ -3071,7 +3082,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+			if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
@@ -3196,6 +3207,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -3307,8 +3320,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 5).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 4);
 		}
 	} elseif (strtoupper($countrycode) == "MG") {//Madagascar
-		if (dol_strlen($phone) == 13) {//ex: +261_AB_CD_EF_GHI
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 3);
+		if (dol_strlen($phone) == 13) {//ex: +261_AB_CD_EFG_HI
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);
 		}
 	} elseif (strtoupper($countrycode) == "GB") {//Royaume uni
 		if (dol_strlen($phone) == 13) {//ex: +44_ABCD_EFG_HIJ
@@ -3405,7 +3418,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -6820,11 +6833,12 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
-					if (! empty($attrs->item($ii)->name)) {
-						// Delete attribute if not into allowed_attributes
+					if (!empty($attrs->item($ii)->name)) {
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							// If attribute is 'style'
 							$valuetoclean = $attrs->item($ii)->value;
 
 							if (isset($valuetoclean)) {
@@ -6833,10 +6847,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
 									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
 									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
 									}
+
+									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
 								} while ($oldvaluetoclean != $valuetoclean);
 							}
 
@@ -7046,7 +7064,7 @@ function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
 	if ($keepsomeentities) {
 		$newstring = strtr($newstring, array('&amp;'=>'__andamp__', '&lt;'=>'__andlt__', '&gt;'=>'__andgt__', '"'=>'__dquot__'));
 	}
-	$newstring = html_entity_decode($newstring, $b, $c);
+	$newstring = html_entity_decode((string) $newstring, (int) $b, (string) $c);
 	if ($keepsomeentities) {
 		$newstring = strtr($newstring, array('__andamp__'=>'&amp;', '__andlt__'=>'&lt;', '__andgt__'=>'&gt;', '__dquot__'=>'"'));
 	}
@@ -7331,7 +7349,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			if (!empty($conf->societe->enabled)) {	// Most objects are concerned
+			if (isModEnabled("societe")) {	// Most objects are concerned
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
@@ -7353,7 +7371,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (!empty($conf->adherent->enabled) && (!is_object($object) || $object->element == 'adherent')) {
+			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent')) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
@@ -7375,25 +7393,25 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
+			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (!empty($conf->project->enabled)) {		// Most objects
+			if (isModEnabled('project')) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
 				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
-			if (!empty($conf->contrat->enabled) && (!is_object($object) || $object->element == 'contract')) {
+			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract')) {
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 			}
-			if (!empty($conf->propal->enabled) && (!is_object($object) || $object->element == 'propal')) {
+			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
@@ -7410,11 +7428,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
-			if (!empty($conf->reception->enabled) && (!is_object($object) || $object->element == 'reception')) {
+			if (isModEnabled("reception") && (!is_object($object) || $object->element == 'reception')) {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
@@ -7653,6 +7671,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__ONLINE_PAYMENT_URL__'] = $paymenturl;
 
 				if (is_object($object) && $object->element == 'propal') {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
 				}
 				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal') {
@@ -7794,7 +7813,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		));
 	}
 
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$substitutionarray = array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
 	}
 	if (empty($exclude) || !in_array('system', $exclude)) {
@@ -9364,16 +9383,16 @@ function dol_set_focus($selector)
 /**
  * Return getmypid() or random PID when function is disabled
  * Some web hosts disable this php function for security reasons
- * and sometimes we can't redeclare function
+ * and sometimes we can't redeclare function.
  *
  * @return	int
  */
 function dol_getmypid()
 {
 	if (!function_exists('getmypid')) {
-		return mt_rand(1, 32768);
+		return mt_rand(99900000, 99965535);
 	} else {
-		return getmypid();
+		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
 
@@ -10400,8 +10419,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
- * @param string    $html       optional : content with html
+ * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
@@ -10426,7 +10445,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * // phpcs:enable
  * @return string               html button
  */
-function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
 	global $hookmanager, $action, $object, $langs;
 
@@ -10446,8 +10465,8 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		'title' => $label
 	);
 
-	if (empty($html)) {
-		$html = $label;
+	if (empty($text)) {
+		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
@@ -10526,7 +10545,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,
-		'html' => $html,
+		'html' => $text,
 		'actionType' => $actionType,
 		'url' => $url,
 		'id' => $id,
@@ -10538,7 +10557,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	if (empty($reshook)) {
-		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+		if (dol_textishtml($text)) {	// If content already HTML encoded
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . $text . '</' . $tag . '>';
+		} else {
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . dol_escape_htmltag($text) . '</' . $tag . '>';
+		}
 	} else {
 		return $hookmanager->resPrint;
 	}

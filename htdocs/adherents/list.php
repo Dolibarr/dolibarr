@@ -27,14 +27,20 @@
  *  \brief      Page to list all members of foundation
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("members", "companies"));
 
+
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -42,6 +48,8 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 
+
+// Search fields
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -659,7 +667,7 @@ if ($sall) {
 
 // Filter on categories
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
@@ -1122,9 +1130,9 @@ while ($i < min($num, $limit)) {
 	}
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print '<td class="center">';
 		$tmparray = getCountry($obj->country, 'all');
-		print $tmparray['label'];
+		print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

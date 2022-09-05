@@ -492,14 +492,14 @@ if ($action == 'edit') {
 			print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
-				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
+				print '<textarea class="flat" name="' . $constname . '" id="' . $constname . '" cols="50" rows="5" wrap="soft">' . "\n";
 				print $conf->global->{$constname};
 				print "</textarea>\n";
-			} elseif ($val['type']== 'integer') {
-				print '<input  class="flat" name="'.$constname.'" id="'.$constname.'" value="'.$conf->global->$constname.'" type="number" step="1" min="0" max="50" >' . "\n";
-			} elseif ($val['type']== 'html') {
+			} elseif ($val['type'] == 'integer') {
+				print '<input  class="flat" name="' . $constname . '" id="' . $constname . '" value="' . $conf->global->$constname . '" type="number" step="1" min="0" max="50" >' . "\n";
+			} elseif ($val['type'] == 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
 			} elseif ($val['type'] == 'yesno') {
 				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
@@ -532,25 +532,25 @@ if ($action == 'edit') {
 				print img_picto('', 'category', 'class="pictofixedwidth"');
 				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
 			} elseif ($val['type'] == 'securekey') {
-				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				print '<input required="required" type="text" class="flat" id="' . $constname . '" name="' . $constname . '" value="' . (GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : $conf->global->{$constname}) . '" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+					print '&nbsp;' . img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token' . $constname . '" class="linkobject"');
 				}
 
 				// Add button to autosuggest a key
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
+				print dolJSToSetRandomPassword($constname, 'generate_token' . $constname);
 			} elseif ($val['type'] == 'product') {
-				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+				if (isModEnabled('product') || isModEnabled('service')) {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
 			}
 			print '</td></tr>';
 		}

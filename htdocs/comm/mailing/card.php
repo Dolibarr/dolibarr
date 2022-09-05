@@ -258,7 +258,7 @@ if (empty($reshook)) {
 							}
 						}
 						if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((!empty($conf->multicompany->enabled)) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
+							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
 						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
@@ -980,7 +980,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer) {
-					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
+					if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';

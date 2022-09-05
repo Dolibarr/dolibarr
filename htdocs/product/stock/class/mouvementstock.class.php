@@ -168,7 +168,6 @@ class MouvementStock extends CommonObject
 	 */
 	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0, $force_update_batch = false)
 	{
-
 		// phpcs:enable
 		global $conf, $langs;
 
@@ -273,7 +272,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Test if product require batch data. If yes, and there is not or values are not correct, we throw an error.
-		if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+		if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 			if (empty($batch)) {
 				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
@@ -385,7 +384,7 @@ class MouvementStock extends CommonObject
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
 		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
-			if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
 
@@ -545,7 +544,7 @@ class MouvementStock extends CommonObject
 			}
 
 			// Update detail of stock for the lot.
-			if (!$error && !empty($conf->productbatch->enabled) && (($product->hasbatch() && !$skip_batch) || $force_update_batch)) {
+			if (!$error && isModEnabled('productbatch') && (($product->hasbatch() && !$skip_batch) || $force_update_batch)) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 				} else {
@@ -597,7 +596,7 @@ class MouvementStock extends CommonObject
 			// End call triggers
 
 			// Check unicity for serial numbered equipments once all movement were done.
-			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
 						$error++;

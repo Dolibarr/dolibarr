@@ -887,7 +887,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		$soc->fetch($socid);
 
 		// Type
-		if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+		if (isModEnabled("product") && isModEnabled("service")) {
 			$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 			print '<tr><td class="">';
 			print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -971,7 +971,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	} else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -986,7 +986,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '</tr>';
 		} else {
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -1391,6 +1391,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 }
 
 if ($action == 'edit_price' && $object->getRights()->creer) {
+	print '<br>';
 	print load_fiche_titre($langs->trans("NewPrice"), '');
 
 	if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
@@ -1915,14 +1916,17 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Form to add a new customer price
 		$maxpricesupplier = $object->min_recommended_price();
 
-		print load_fiche_titre($langs->trans('PriceByCustomer'));
+		print '<!-- add_customer_price -->';
+		print load_fiche_titre($langs->trans('AddCustomerPrice'));
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		print '<table class="liste centpercent">';
+		print '<div class="tabBar tabBarWithBottom">';
+
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 		print '<td>';
@@ -1976,6 +1980,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
+		print '</div>';
+
 
 		print '<div class="center">';
 
@@ -1992,6 +1998,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Edit mode
 		$maxpricesupplier = $object->min_recommended_price();
 
+		print '<!-- edit_customer_price -->';
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));

@@ -538,7 +538,7 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 			}
 			// End date
-			$repeateventlimitdate = dol_mktime('23', '59', '59', GETPOSTISSET("limitmonth", 'int') ? GETPOST("limitmonth", 'int') :  01, GETPOSTISSET("limitday", 'int') ? GETPOST("limitday", 'int') : 01, GETPOSTISSET("limityear", 'int') && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuser');
+			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOST("limitmonth", 'int') : 1, GETPOSTISSET("limitday") ? GETPOST("limitday", 'int') : 1, GETPOSTISSET("limityear") && GETPOST("limityear", 'int') < 2100 ? GETPOST("limityear", 'int') : 2100, $tzforfullday ? $tzforfullday : 'tzuser');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
 			$datef = dol_time_plus_duree($datef, $deltatime, 'd');
@@ -677,7 +677,7 @@ if (empty($reshook) && $action == 'update') {
 		$object->fetch($id);
 		$object->fetch_optionals();
 		$object->fetch_userassigned();
-		$object->oldcopy = clone $object;
+		$object->oldcopy = dol_clone($object);
 
 		// Clean parameters
 		if ($fulldayevent) {
@@ -927,7 +927,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 	$object->fetch($id);
 	$object->fetch_optionals();
 	$object->fetch_userassigned();
-	$object->oldcopy = clone $object;
+	$object->oldcopy = dol_clone($object);
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete) {
@@ -1362,7 +1362,7 @@ if ($action == 'create') {
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
@@ -1378,7 +1378,7 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 		if (GETPOST('socid', 'int') > 0) {
@@ -1411,7 +1411,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 
 		$projectid = GETPOST('projectid', 'int');
@@ -1496,7 +1496,7 @@ if ($action == 'create') {
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+	$doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $object->note_private), '', 120, 'dolibarr_notes', 'In', true, true, isModEnabled('fckeditor'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -1870,7 +1870,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1891,7 +1891,7 @@ if ($id > 0) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			// Related company
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
@@ -1914,7 +1914,7 @@ if ($id > 0) {
 		}
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
@@ -1939,7 +1939,7 @@ if ($id > 0) {
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
 
-			if ($object->elementtype == 'task' && !empty($conf->project->enabled)) {
+			if ($object->elementtype == 'task' && isModEnabled('project')) {
 				print '<td id="project-task-input-container" >';
 
 				$urloption = '?action=create&donotclearsession=1'; // we use create not edit for more flexibility
@@ -2132,7 +2132,7 @@ if ($id > 0) {
 		// Thirdparty
 		//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			$morehtmlref .= $langs->trans('Project').' ';
@@ -2285,7 +2285,7 @@ if ($id > 0) {
 		}
 
 		// Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";
@@ -2300,7 +2300,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			// Related company
 			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {

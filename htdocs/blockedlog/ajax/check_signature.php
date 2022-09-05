@@ -48,6 +48,12 @@ if (empty($conf->global->BLOCKEDLOG_AUTHORITY_URL)) {
 }
 
 
+/*
+ * View
+ */
+
+top_httphead();
+
 $auth = new BlockedLogAuthority($db);
 $auth->syncSignatureWithAuthority();
 

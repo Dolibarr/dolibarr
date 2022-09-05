@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,17 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
@@ -227,7 +227,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -287,7 +287,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
@@ -558,7 +558,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="border centpercent tableforfield">';
 
-		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
 			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 			print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';

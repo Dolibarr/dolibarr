@@ -101,7 +101,7 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall'),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall', 'picto'=>'bom'),
 		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
@@ -224,7 +224,7 @@ class Mo extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -697,7 +697,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / ( ! empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( ! empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = price2num(($line->qty / ( !empty($bom->qty) ? $bom->qty : 1 ) ) * $this->qty / ( !empty($line->efficiency) ? $line->efficiency : 1 ), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -770,13 +770,13 @@ class Mo extends CommonObject
 		$fk_movement = GETPOST('fk_movement', 'int');
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
 
-		if (! empty($arrayoflines)) {
+		if (!empty($arrayoflines)) {
 			$this->db->begin();
 
 			$stockmove = new MouvementStock($this->db);
 			$stockmove->setOrigin($this->element, $this->id);
 
-			if (! empty($fk_movement)) {
+			if (!empty($fk_movement)) {
 				$moline = new MoLine($this->db);
 				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
 				$moline = array_shift($TArrayMoLine);
@@ -903,8 +903,8 @@ class Mo extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mrp->create))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mrp->mrp_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mrp->create))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mrp->mrp_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -1015,8 +1015,8 @@ class Mo extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1039,8 +1039,8 @@ class Mo extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1063,8 +1063,8 @@ class Mo extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1375,13 +1375,13 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		// Product or sub-bom
-		print '<td class="linecoldescription">'.$langs->trans('Description');
+		print '<td class="linecoldescription">'.$langs->trans('Ref');
 		if (!empty($conf->global->BOM_SUB_BOM)) {
 			print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 		}
 		print '</td>';
-		print '<td>'.$langs->trans('Ref').'</td>';
+		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
 			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
@@ -1395,7 +1395,7 @@ class Mo extends CommonObject
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		//      print '<td class="center"></td>';
+		//print '<td class="center"></td>';
 		print '</tr>';
 		$i = 0;
 
@@ -1637,7 +1637,7 @@ class MoLine extends CommonObjectLine
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 

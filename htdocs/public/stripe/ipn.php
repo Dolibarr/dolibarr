@@ -126,7 +126,7 @@ try {
 $langs->load("main");
 
 
-if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
+if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($event->account)."%'";

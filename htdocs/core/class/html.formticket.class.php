@@ -315,7 +315,7 @@ class FormTicket
 
 		// Type
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 0, 0, 0, 'minwidth200');
+		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Group
@@ -324,12 +324,12 @@ class FormTicket
 		if ($public) {
 			$filter = 'public=1';
 		}
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 0, 0, 0, 'minwidth200');
+		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity
-		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 0);
+		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		// Subject
@@ -416,7 +416,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
+			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -622,7 +622,7 @@ class FormTicket
 		}
 
 		if ($subelement != 'project') {
-			if (!empty($conf->project->enabled) && !$this->ispublic) {
+			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -643,7 +643,7 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
 		print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
@@ -735,6 +735,7 @@ class FormTicket
 				}
 
 				print '>';
+
 				$value = '&nbsp;';
 				if ($format == 0) {
 					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
@@ -746,12 +747,12 @@ class FormTicket
 					$value = $arraytypes['code'];
 				}
 
-				print $value;
+				print $value ? $value : '&nbsp;';
 				print '</option>';
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
@@ -841,6 +842,7 @@ class FormTicket
 
 					print '>';
 
+					$value = '';
 					if ($format == 0) {
 						$value = ($maxlength ? dol_trunc($label, $maxlength) : $label);
 					}
@@ -862,7 +864,7 @@ class FormTicket
 				}
 			}
 			print '</select>';
-			if ($user->admin && !$noadmininfo) {
+			if (isset($user->admin) && $user->admin && !$noadmininfo) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
 
@@ -1174,6 +1176,8 @@ class FormTicket
 				}
 
 				print '>';
+
+				$value = '';
 				if ($format == 0) {
 					$value = ($maxlength ? dol_trunc($arrayseverities['label'], $maxlength) : $arrayseverities['label']);
 				}
@@ -1195,7 +1199,7 @@ class FormTicket
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
@@ -1255,7 +1259,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1302,7 +1306,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {

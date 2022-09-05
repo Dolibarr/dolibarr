@@ -69,7 +69,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 1;
 		}
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);

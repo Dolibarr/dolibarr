@@ -45,7 +45,7 @@ if (!empty($conf->project->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -125,10 +125,10 @@ $arrayfields = array(
 	'm.datem'=>array('label'=>"Date", 'checked'=>1, 'position'=>2),
 	'p.ref'=>array('label'=>"ProductRef", 'checked'=>1, 'css'=>'maxwidth100', 'position'=>3),
 	'p.label'=>array('label'=>"ProductLabel", 'checked'=>0, 'position'=>5),
-	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
-	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!$id > 0)), // If we are on specific warehouse, we hide it
+	'm.batch'=>array('label'=>"BatchNumberShort", 'checked'=>1, 'position'=>8, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.eatby'=>array('label'=>"EatByDate", 'checked'=>0, 'position'=>9, 'enabled'=>(isModEnabled('productbatch'))),
+	'pl.sellby'=>array('label'=>"SellByDate", 'checked'=>0, 'position'=>10, 'enabled'=>(isModEnabled('productbatch'))),
+	'e.ref'=>array('label'=>"Warehouse", 'checked'=>1, 'position'=>100, 'enabled'=>(!($id > 0))), // If we are on specific warehouse, we hide it
 	'm.fk_user_author'=>array('label'=>"Author", 'checked'=>0, 'position'=>120),
 	'm.inventorycode'=>array('label'=>"InventoryCodeShort", 'checked'=>1, 'position'=>130),
 	'm.label'=>array('label'=>"MovementLabel", 'checked'=>1, 'position'=>140),
@@ -268,10 +268,10 @@ if (empty($reshook)) {
 		// Define output language (Here it is not used because we do only merging existing PDF)
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+		//elseif (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
 		//	$newlang = $objecttmp->thirdparty->default_lang;
 		//}
 		if (!empty($newlang)) {
@@ -448,7 +448,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$action = 'transfert';
 	}
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$product = new Product($db);
 		$result = $product->fetch($product_id);
 
@@ -942,12 +942,17 @@ if ($action == "transfert") {
 if ((empty($action) || $action == 'list') && $id > 0) {
 	print "<div class=\"tabsAction\">\n";
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
-	}
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+																								   // modified by hook
+	if (empty($reshook)) {
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("CorrectStock").'</a>';
+		}
 
-	if ($user->rights->stock->mouvement->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		if ($user->rights->stock->mouvement->creer) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+		}
 	}
 
 	print '</div><br>';
@@ -1093,7 +1098,7 @@ if (!empty($arrayfields['m.rowid']['checked'])) {
 	print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['m.datem']['checked'])) {
+if (!empty($arrayfields['m.datem']['checked'])) {
 	// Date
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';

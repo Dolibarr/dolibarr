@@ -27,7 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -93,7 +93,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 	$morehtmlref = '';
-	//if (! empty($modCodeContract->code_auto)) {
+	//if (!empty($modCodeContract->code_auto)) {
 	$morehtmlref .= $object->ref;
 	/*} else {
 	 $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
@@ -111,7 +111,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->contrat->creer) {

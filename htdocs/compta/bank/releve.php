@@ -223,6 +223,17 @@ if ($id > 0) {
 	$param .= '&id='.urlencode($id);
 }
 
+if (empty($numref)) {
+	$title = $object->ref.' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+} else {
+	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+	$helpurl = "";
+}
+
+
+llxHeader('', $title, $helpurl);
+
 
 if (empty($numref)) {
 	$sortfield = 'numr';
@@ -247,10 +258,6 @@ if (empty($numref)) {
 	if ($result) {
 		$numrows = $db->num_rows($result);
 		$i = 0;
-
-		$title = $object->ref.' - '.$langs->trans("AccountStatements");
-		$helpurl = "";
-		llxHeader('', $title, $helpurl);
 
 		// Onglets
 		$head = bank_prepare_head($object);
@@ -386,10 +393,6 @@ if (empty($numref)) {
 	/**
 	 *   Show list of record into a bank statement
 	 */
-
-	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
 
 	// Onglets
 	$head = account_statement_prepare_head($object, $numref);

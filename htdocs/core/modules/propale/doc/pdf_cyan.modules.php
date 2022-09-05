@@ -764,7 +764,7 @@ class pdf_cyan extends ModelePDFPropales
 
 
 					// Collection of totals by value of vat in $this->tva["rate"] = total_tva
-					if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) {
+					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {
 						$tvaligne = $object->lines[$i]->total_tva;
@@ -940,15 +940,15 @@ class pdf_cyan extends ModelePDFPropales
 								foreach ($filetomerge->lines as $linefile) {
 									if (!empty($linefile->id) && !empty($linefile->file_name)) {
 										if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
-											if (!empty($conf->product->enabled)) {
+											if (isModEnabled("product")) {
 												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
-											} elseif (!empty($conf->service->enabled)) {
+											} elseif (isModEnabled("service")) {
 												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
@@ -1238,14 +1238,14 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
-		$total_ht = ((!empty($conf->multicurrency->enabled) && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
 
-		$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 
 		$this->atleastoneratenotnull = 0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
@@ -1254,7 +1254,7 @@ class pdf_cyan extends ModelePDFPropales
 				// Nothing to do
 			} else {
 				//Local tax 1 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1285,7 +1285,7 @@ class pdf_cyan extends ModelePDFPropales
 				}
 				//}
 				//Local tax 2 before VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('1', '3', '5'))) {
@@ -1342,7 +1342,7 @@ class pdf_cyan extends ModelePDFPropales
 				}
 
 				//Local tax 1 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
 				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
@@ -1373,7 +1373,7 @@ class pdf_cyan extends ModelePDFPropales
 				}
 				//}
 				//Local tax 2 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
 				foreach ($this->localtax2 as $localtax_type => $localtax_rate) {
 					if (in_array((string) $localtax_type, array('2', '4', '6'))) {
@@ -1423,7 +1423,7 @@ class pdf_cyan extends ModelePDFPropales
 		$resteapayer = 0;
 		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if (! empty($object->paye)) $resteapayer=0;
+		if (!empty($object->paye)) $resteapayer=0;
 		*/
 
 		if ($deja_regle > 0) {

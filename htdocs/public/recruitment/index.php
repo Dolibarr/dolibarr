@@ -47,7 +47,10 @@ $langs->loadLangs(array("companies", "other", "recruitment"));
 // Get parameters
 $action   = GETPOST('action', 'aZ09');
 $cancel   = GETPOST('cancel', 'alpha');
+$SECUREKEY = GETPOST("securekey");
+$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
 $backtopage = '';
+$suffix = "";
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -272,9 +275,10 @@ if (is_array($results)) {
 
 
 			if ($action != 'dosubmit') {
-				if ($found && !$error) {	// We are in a management option and no error
+				if ($found && !$error) {
+					// We are in a management option and no error
 				} else {
-					dol_print_error_email('ERRORNEWONLINESIGN');
+					dol_print_error_email('ERRORSUBMITAPPLICATION');
 				}
 			} else {
 				// Print

@@ -378,7 +378,7 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);

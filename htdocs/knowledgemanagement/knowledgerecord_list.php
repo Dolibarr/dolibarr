@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 // for other modules
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 //dol_include_once('/othermodule/class/otherobject.class.php');
@@ -99,13 +99,12 @@ if (!$sortorder) {
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		if ($key == "lang") {
-			$search[$key] = GETPOST('search_'.$key, 'alpha')!='0' ? GETPOST('search_'.$key, 'alpha') : '';
-		} else {
-			$search[$key] = GETPOST('search_'.$key, 'alpha');
-		}
+	if ($key == "lang") {
+		$search[$key] = GETPOST('search_'.$key, 'alpha')!='0' ? GETPOST('search_'.$key, 'alpha') : '';
+	} else {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
+
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
@@ -331,7 +330,7 @@ foreach($object->fields as $key => $val) {
 	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 }
 // Add where from hooks
@@ -476,7 +475,7 @@ $moreforfilter.= '</div>';*/
 
 // Filter on categories
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);

@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -172,7 +172,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -295,7 +295,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
 			}
 		}
@@ -378,8 +378,8 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"ThirdPartyType"
 		);
 		// Add multicompany field
-		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
-			if (!empty($conf->multicompany->enabled)) {
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
 					$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -413,7 +413,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"company",
 			's.entity'=>'company',
 		); // We define here only fields that use another picto
-		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
@@ -520,7 +520,7 @@ class modSociete extends DolibarrModules
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -693,7 +693,7 @@ class modSociete extends DolibarrModules
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -757,7 +757,7 @@ class modSociete extends DolibarrModules
 			's.note_public' => "NotePublic"
 		);
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -835,7 +835,7 @@ class modSociete extends DolibarrModules
 			's.rowid' => 'Id',
 			's.lastname' => "Lastname",
 		);
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {

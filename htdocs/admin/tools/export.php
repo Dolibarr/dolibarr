@@ -56,21 +56,23 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-if ($file && !$what) {
-	//print DOL_URL_ROOT.'/dolibarr_export.php';
-	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOST('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
-	exit;
-}
-
 $errormsg = '';
+
+$utils = new Utils($db);
 
 
 /*
  * Actions
  */
 
+if ($file && !$what) {
+	//print DOL_URL_ROOT.'/dolibarr_export.php';
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOST('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	exit;
+}
+
 if ($action == 'delete') {
-	$file = $conf->admin->dir_output.'/'.GETPOST('urlfile');
+	$file = $conf->admin->dir_output.'/'.dol_sanitizeFileName(GETPOST('urlfile'));
 	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -79,11 +81,6 @@ if ($action == 'delete') {
 	}
 	$action = '';
 }
-
-
-/*
- * View
- */
 
 $_SESSION["commandbackuplastdone"] = '';
 $_SESSION["commandbackuptorun"] = '';
@@ -103,13 +100,6 @@ if (!empty($MemoryLimit)) {
 	@ini_set('memory_limit', $MemoryLimit);
 }
 
-
-//$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-//llxHeader('','',$help_url);
-
-//print load_fiche_titre($langs->trans("Backup"),'','title_setup');
-
-
 // Start with empty buffer
 $dump_buffer = '';
 $dump_buffer_len = 0;
@@ -120,9 +110,6 @@ $time_start = time();
 
 $outputdir  = $conf->admin->dir_output.'/backup';
 $result = dol_mkdir($outputdir);
-
-
-$utils = new Utils($db);
 
 
 // MYSQL
@@ -166,7 +153,7 @@ if ($what == 'postgresql') {
 	$cmddump = dol_sanitizePathName($cmddump);
 
 	/* Not required, the command is output on screen but not ran for pgsql
-	if (! empty($dolibarr_main_restrict_os_commands))
+	if (!empty($dolibarr_main_restrict_os_commands))
 	{
 		$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
@@ -216,7 +203,16 @@ if ($errormsg) {
 	}*/
 }
 
+
+
+/*
+ * View
+ */
+
+top_httphead();
+
 $db->close();
 
 // Redirect to backup page
 header("Location: dolibarr_export.php".(GETPOST('page_y', 'int') ? '?page_y='.GETPOST('page_y', 'int') : ''));
+exit();

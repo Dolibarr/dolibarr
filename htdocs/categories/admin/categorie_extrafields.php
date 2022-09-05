@@ -63,7 +63,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject = $langs->transnoentitiesnoconv("Categories");
 
-$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
+$help_url = 'EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías|DE:Modul_Kategorien';
 llxHeader('', $langs->trans("Categories"), $help_url);
 
 

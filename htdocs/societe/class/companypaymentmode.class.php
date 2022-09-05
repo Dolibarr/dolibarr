@@ -235,7 +235,7 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}
@@ -329,7 +329,7 @@ class CompanyPaymentMode extends CommonObject
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
 
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 

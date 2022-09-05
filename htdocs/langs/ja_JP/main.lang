@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=cid0jp
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -345,7 +351,7 @@ KiloBytes=キロバイト
 MegaBytes=メガバイト
 GigaBytes=ギガバイト
 TeraBytes=テラバイト
-UserAuthor=Created by
+UserAuthor=により作成済
 UserModif=更新済の原因
 b=B。
 Kb=KB
@@ -712,7 +718,7 @@ FeatureDisabled=機能が無効に
 MoveBox=ウィジェットの移動
 Offered=提供
 NotEnoughPermissions=このアクションの権限を持っていない
-UserNotInHierachy=This action is reserved to the supervisors of this user
+UserNotInHierachy=このアクションは、このユーザのスーパーバイザに予約された
 SessionName=セッション名
 Method=方法
 Receive=受け取る
@@ -802,7 +808,6 @@ URLPhoto=写真/ロゴのURL
 SetLinkToAnotherThirdParty=別の第三者へのリンク
 LinkTo=リンク先
 LinkToProposal=提案へのリンク
-LinkToExpedition= 遠征へのリンク
 LinkToOrder=注文へのリンク
 LinkToInvoice=請求書へのリンク
 LinkToTemplateInvoice=テンプレート請求書へのリンク
@@ -1180,3 +1185,5 @@ YourMessage=あなたのメッセージ
 YourMessageHasBeenReceived=貴方のメッセージは受理済。できるだけ早く回答または連絡する予定。
 UrlToCheck=チェックするURL
 Automation=オートメーション
+CreatedByEmailCollector=メールコレクターによって作成された
+CreatedByPublicPortal=公開ポータルから作成

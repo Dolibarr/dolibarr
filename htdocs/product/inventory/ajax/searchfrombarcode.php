@@ -58,6 +58,13 @@ $warehousefound = 0;
 $warehouseid = 0;
 $objectreturn = array();
 
+
+/*
+ * View
+ */
+
+top_httphead('application/json');
+
 if ($action == "existbarcode" && !empty($barcode)) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";

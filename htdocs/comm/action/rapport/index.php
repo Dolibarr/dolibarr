@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));

@@ -214,8 +214,8 @@ class Societe extends CommonObject
 		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
 		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
 		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
-		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
-		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
+		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
+		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
 		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
@@ -1561,7 +1561,7 @@ class Societe extends CommonObject
 
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
-					if (!$nosyncmember && !empty($conf->adherent->enabled)) {
+					if (!$nosyncmember && isModEnabled('adherent')) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 						dol_syslog(get_class($this)."::update update linked member");
@@ -1581,6 +1581,7 @@ class Societe extends CommonObject
 							$lmember->phone = $this->phone;
 							$lmember->state_id = $this->state_id;
 							$lmember->country_id = $this->country_id;
+							$lmember->default_lang = $this->default_lang;
 
 							$result = $lmember->update($user, 0, 1, 1, 1); // Use nosync to 1 to avoid cyclic updates
 							if ($result < 0) {
@@ -1736,7 +1737,7 @@ class Societe extends CommonObject
 		$sql .= ', st.libelle as stcomm, st.picto as stcomm_picto';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as label_incoterms';
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$sql .= ', s.remise_client, s.remise_supplier';
 		} else {
 			$sql .= ', sr.remise_client, sr2.remise_supplier';
@@ -1755,7 +1756,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
 		// With default setup, llx_societe_remise is a history table in default setup and current value is in llx_societe.
 		// We use it for real value when multicompany is on. A better place would be into llx_societe_perentity.
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise_supplier as sr2 ON sr2.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise_supplier WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 		}
@@ -2290,7 +2291,7 @@ class Societe extends CommonObject
 		$desc = trim($desc);
 
 		// Check parameters
-		if (!$remise > 0) {
+		if (!($remise > 0)) {
 			$this->error = $langs->trans("ErrorWrongValueForParameter", "1");
 			return -1;
 		}
@@ -2377,7 +2378,7 @@ class Societe extends CommonObject
 		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
 			$sql .= " AND ug.entity = ".$conf->entity.")";
@@ -2807,7 +2808,7 @@ class Societe extends CommonObject
 			}
 		}
 		if (empty($option) || preg_match('/supplier/', $option)) {
-			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $this->fournisseur) {
+			if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $this->fournisseur) {
 				$s .= '<'.$tag.' class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</'.$tag.'>';
 			}
 		}
@@ -4024,12 +4025,25 @@ class Societe extends CommonObject
 		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
+		$fullname = $member->getFullName($langs);
 
-		$name = $socname ? $socname : $member->societe;
-		if (empty($name)) {
-			$name = $member->getFullName($langs);
+		if ($member->morphy == 'mor') {
+			if (empty($socname)) {
+				$socname = $member->company? $member->company : $member->societe;
+			}
+			if (!empty($fullname) && empty($socalias)) {
+				$socalias = $fullname;
+			}
+		} elseif (empty($socname) && $member->morphy == 'phy') {
+			if (empty($socname)) {
+				$socname = $fullname;
+			}
+			if (!empty($member->company) && empty($socalias)) {
+				$socalias = $member->company;
+			}
 		}
 
+		$name = $socname;
 		$alias = $socalias ? $socalias : '';
 
 		// Positionne parametres
