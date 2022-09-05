@@ -225,7 +225,7 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>"UserAccountancyCode",
 			'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.office_phone'=>'Phone', 'u.user_mobile'=>"Mobile", 'u.office_fax'=>'Fax',
-			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
+			'u.email'=>"Email", 'u.note_private'=>"Note", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
 			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
