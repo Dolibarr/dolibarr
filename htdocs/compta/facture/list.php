@@ -2356,7 +2356,7 @@ if ($resql) {
 			print $hookmanager->resPrint;
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -2365,7 +2365,7 @@ if ($resql) {
 			}
 			// Date modification
 			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -2374,7 +2374,7 @@ if ($resql) {
 			}
 			// Date closing
 			if (!empty($arrayfields['f.date_closing']['checked'])) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
