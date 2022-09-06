@@ -69,7 +69,7 @@ if ($user->socid) {
 }
 
 $allowed = 0;
-if (!empty($user->rights->accounting->chartofaccount)) {
+if ($user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Dictionary with list of banks accounting account allowed to manager of chart account
 }
 if (!$allowed) {
