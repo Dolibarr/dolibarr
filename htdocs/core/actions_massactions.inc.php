@@ -815,6 +815,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							$lineid = $result;
 						} else {
 							$lineid = 0;
+							$errors[] = $objecttmp->error;
 							$error++;
 							break;
 						}
@@ -959,7 +960,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		$action = 'create';
 		$_GET["origin"] = $_POST["origin"];
 		$_GET["originid"] = $_POST["originid"];
-		setEventMessages("Error", null, 'errors');
+		setEventMessages("Error", $errors, 'errors');
 		$error++;
 	}
 }
