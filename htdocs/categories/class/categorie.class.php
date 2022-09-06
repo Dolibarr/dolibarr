@@ -156,7 +156,7 @@ class Categorie extends CommonObject
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
 		'knowledgemanagement' => 'KnowledgeRecord',
-		'task' => 'Task';
+		'task' => 'Task'
 	);
 
 	/**
