@@ -537,7 +537,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document export
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
 		print '<td>';
@@ -545,7 +545,7 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document validation
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
 		print '<td>';
@@ -604,6 +604,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
+
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -636,18 +637,21 @@ if ($action == 'create') {
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
-					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
 					print_liste_field_titre("");
 				}
 
 				print "</tr>\n";
 
-				// Empty line is the first line of $object->linesmvt
-				// So we must get the first line (the empty one) and pu it at the end of the array
-				// in order to display it correctly to the user
-				$empty_line = array_shift($object->linesmvt);
-				$object->linesmvt[]= $empty_line;
+				// Add an empty line if there is not yet
+				if (!empty($object->linesmvt[0])) {
+					$tmpline = $object->linesmvt[0];
+					if (!empty($tmpline->numero_compte)) {
+						$line = new BookKeepingLine();
+						$object->linesmvt[] = $line;
+					}
+				}
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
@@ -700,9 +704,7 @@ if ($action == 'create') {
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td>';
-							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
-							print '</td>';
+							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 						}
 					} else {
 						print '<!-- td columns in display mode -->';

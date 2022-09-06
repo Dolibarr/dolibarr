@@ -231,7 +231,8 @@ class modPartnership extends DolibarrModules
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid'=>array("rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->partnership->enabled)
+			'tabcond'=>array($conf->partnership->enabled),
+			'tabhelp' => array(array())
 		);
 
 		// Boxes/Widgets
