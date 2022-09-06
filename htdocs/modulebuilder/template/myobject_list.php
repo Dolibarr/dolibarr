@@ -457,12 +457,8 @@ foreach ($search as $key => $val) {
 				$param .= '&search_'.$key.'[]='.urlencode($skey);
 			}
 		}
-	} elseif (preg_match('/dtstart/', $key) && !empty($val)) {
-		$param .= '&search'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
-		$param .= '&search_'.$key.'day='.urlencode(GETPOST('search_'.$key.'day', 'int'));
-		$param .= '&search_'.$key.'year='.urlencode(GETPOST('search_'.$key.'year', 'int'));
-	} elseif (preg_match('/dtend/', $key) && !empty($val)) {
-		$param .= '&search'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
+	} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
+		$param .= '&search_'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
 		$param .= '&search_'.$key.'day='.urlencode(GETPOST('search_'.$key.'day', 'int'));
 		$param .= '&search_'.$key.'year='.urlencode(GETPOST('search_'.$key.'year', 'int'));
 	} elseif ($search[$key] != '') {
