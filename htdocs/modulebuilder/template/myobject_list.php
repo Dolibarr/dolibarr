@@ -147,13 +147,9 @@ foreach ($object->fields as $key => $val) {
 	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 		if (empty(GETPOST('search_'.$key.'_dtstart', 'int'))) {
 			$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
-		} else {
-			$search[$key.'_dtstart'] = GETPOST('search_'.$key.'_dtstart', 'int');
 		}
 		if (empty(GETPOST('search_'.$key.'_dtend', 'int'))) {
 			$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
-		} else {
-			$search[$key.'_dtend'] = GETPOST('search_'.$key.'_dtend', 'int');
 		}
 	}
 }
@@ -465,6 +461,14 @@ foreach ($search as $key => $val) {
 				$param .= '&search_'.$key.'[]='.urlencode($skey);
 			}
 		}
+	} elseif (preg_match('/dtstart/', $key) && !empty($val)) {
+		$param .= '&search'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
+		$param .= '&search_'.$key.'day='.urlencode(GETPOST('search_'.$key.'day', 'int'));
+		$param .= '&search_'.$key.'year='.urlencode(GETPOST('search_'.$key.'year', 'int'));
+	} elseif (preg_match('/dtend/', $key) && !empty($val)) {
+		$param .= '&search'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
+		$param .= '&search_'.$key.'day='.urlencode(GETPOST('search_'.$key.'day', 'int'));
+		$param .= '&search_'.$key.'year='.urlencode(GETPOST('search_'.$key.'year', 'int'));
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
