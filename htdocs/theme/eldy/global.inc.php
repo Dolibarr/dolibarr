@@ -3545,6 +3545,14 @@ input.button[name="upload"] {
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
 }
+input.buttonlink {
+	color: var(--colortextlink);
+	background-color: transparent;
+	cursor: pointer;
+}
+input.buttonlink:hover {
+	text-decoration: underline;
+}
 input.buttonreset {
 	margin-top: 3px;
 	margin-bottom: 3px;
