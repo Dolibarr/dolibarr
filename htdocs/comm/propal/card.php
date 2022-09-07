@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2021 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2022 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -448,7 +448,7 @@ if (empty($reshook)) {
 				$object->origin_id = GETPOST('originid');
 
 				// Multicurrency
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				}
 
@@ -693,7 +693,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& ! empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
+					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -722,7 +722,7 @@ if (empty($reshook)) {
 						$ret = $deposit->fetch($deposit->id); // Reload to get new records
 						$outputlangs = $langs;
 
-						if ($conf->global->MAIN_MULTILANGS) {
+						if (!empty($conf->global->MAIN_MULTILANGS)) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang($deposit->thirdparty->default_lang);
 							$outputlangs->load('products');
@@ -1405,7 +1405,7 @@ if (empty($reshook)) {
 
 			$pu = $pu_ht;
 			$price_base_type = 'HT';
-			if (empty($pu) && ! empty($pu_ttc)) {
+			if (empty($pu) && !empty($pu_ttc)) {
 				$pu = $pu_ttc;
 				$price_base_type = 'TTC';
 			}
@@ -1574,7 +1574,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = new FormMargin($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1653,7 +1653,7 @@ if ($action == 'create') {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			if (!empty($conf->multicurrency->enabled)) {
+			if (isModEnabled("multicurrency")) {
 				if (!empty($objectsrc->multicurrency_code)) {
 					$currency_code = $objectsrc->multicurrency_code;
 				}
@@ -1663,7 +1663,7 @@ if ($action == 'create') {
 			}
 		}
 	} else {
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) {
+		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
 	}
@@ -1792,7 +1792,7 @@ if ($action == 'create') {
 
 	// Delivery delay
 	print '<tr class="field_availability_id"><td class="titlefieldcreate">'.$langs->trans('AvailabilityPeriod');
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print ' ('.$langs->trans('AfterOrder').')';
 	}
 	print '</td><td class="valuefieldcreate">';
@@ -1835,7 +1835,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		print '<tr class="field_projectid">';
 		print '<td class="titlefieldcreate">'.$langs->trans("Project").'</td><td class="valuefieldcreate">';
@@ -1865,7 +1865,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled("multicurrency")) {
 		print '<tr class="field_currency">';
 		print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="valuefieldcreate maxwidthonsmartphone">';
@@ -1937,7 +1937,7 @@ if ($action == 'create') {
 		}
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc, 0, $langs, 1, -1, -1, $conf->currency)."</td></tr>";
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
@@ -2057,7 +2057,7 @@ if ($action == 'create') {
 
 		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && ! empty($user->rights->facture->creer)) {
+		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
 			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 			$object->fetchObjectLinked();
@@ -2106,7 +2106,7 @@ if ($action == 'create') {
 					'datenow' => true
 				);
 
-				if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+				if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 					$formquestion[] = array(
 						'type' => 'date',
 						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
@@ -2267,7 +2267,7 @@ if ($action == 'create') {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherProposals").'</a>)';
 	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br><span class="paddingrightonly">'.$langs->trans('Project').'</span>';
 		if ($usercancreate) {
@@ -2441,7 +2441,7 @@ if ($action == 'create') {
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		print $form->textwithpicto($langs->trans('AvailabilityPeriod'), $langs->trans('AvailabilityPeriod').' ('.$langs->trans('AfterOrder').')');
 	} else {
 		print $langs->trans('AvailabilityPeriod');
@@ -2518,7 +2518,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled("multicurrency")) {
 		// Multicurrency code
 		print '<tr>';
 		print '<td>';
@@ -2649,7 +2649,7 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 		print '<td class="nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -2799,7 +2799,7 @@ if ($action == 'create') {
 					}
 				}
 				// Create event
-				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
 				}*/
@@ -2809,7 +2809,7 @@ if ($action == 'create') {
 				}
 
 				// ReOpen
-				if ( (( ! empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
+				if ( (( !empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && $object->statut == Propal::STATUS_NOTSIGNED) || (empty($conf->global->PROPAL_REOPEN_UNSIGNED_ONLY) && ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED))) && $usercanclose) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
@@ -2826,7 +2826,7 @@ if ($action == 'create') {
 				}
 
 				// Create a sale order
-				if (!empty($conf->commande->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('commande') && $object->statut == Propal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a>';
 					}
@@ -2850,7 +2850,7 @@ if ($action == 'create') {
 				}
 
 				// Create contract
-				if (!empty($conf->contrat->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+				if (isModEnabled('contrat') && $object->statut == Propal::STATUS_SIGNED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {

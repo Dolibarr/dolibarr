@@ -68,7 +68,7 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
-if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+if (!empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
 	if (empty($date_start)) {
 		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
 	}
@@ -117,7 +117,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = $conf->project->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && !empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
@@ -1624,7 +1624,7 @@ if ($action == 'create') {
 
 			print '</form>';
 		} else {
-			$taxlessUnitPriceDisabled = ! empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+			$taxlessUnitPriceDisabled = !empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
@@ -1697,7 +1697,7 @@ if ($action == 'create') {
 			 // Thirdparty
 			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 			 // Project
-			 if (! empty($conf->project->enabled))
+			 if (isModEnabled('project'))
 			 {
 			 $langs->load("projects");
 			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -1717,7 +1717,7 @@ if ($action == 'create') {
 			 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			 }
 			 } else {
-			 if (! empty($object->fk_project)) {
+			 if (!empty($object->fk_project)) {
 			 $proj = new Project($db);
 			 $proj->fetch($object->fk_project);
 			 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
@@ -2064,7 +2064,7 @@ if ($action == 'create') {
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
 				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
@@ -2109,7 +2109,7 @@ if ($action == 'create') {
 						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td class="center dateproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
@@ -2270,7 +2270,7 @@ if ($action == 'create') {
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							$colspan++;
 						}
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2345,7 +2345,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Select project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td>';
 							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 							print '</td>';
@@ -2418,7 +2418,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					$colspan++;
 				}
 				if ($action != 'editline') {
@@ -2495,7 +2495,7 @@ if ($action == 'create') {
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
 				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
@@ -2524,7 +2524,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Select project
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="inputproject">';
 					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';

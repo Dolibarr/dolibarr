@@ -296,7 +296,7 @@ class ProductFournisseur extends Product
 		// Multicurrency
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (empty($multicurrency_tx)) {
 				$multicurrency_tx = 1;
 			}
@@ -1173,7 +1173,7 @@ class ProductFournisseur extends Product
 		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}

@@ -23,24 +23,33 @@
  *      \brief      Tab for note of a member
 */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "bills"));
 
+
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
+
+// Initialize objects
 $object = new Adherent($db);
+
 $result = $object->fetch($id);
 if ($result > 0) {
 	$adht = new AdherentType($db);
 	$result = $adht->fetch($object->typeid);
 }
+
 
 $permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
 
@@ -120,7 +129,7 @@ if ($id) {
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 	}
 
 	// Type
@@ -134,10 +143,10 @@ if ($id) {
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 	print '</tr>';
 
 	print "</table>";

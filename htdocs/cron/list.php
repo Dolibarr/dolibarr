@@ -64,6 +64,7 @@ $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int')
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
+$search_processing = GETPOST("search_processing", "int");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -276,6 +277,9 @@ if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 }
 if ($search_lastresult != '') {
 	$sql .= natural_search("t.lastresult", $search_lastresult, 1);
+}
+if (GETPOSTISSET('search_processing')) {
+	$sql .= " AND t.processing = ".((int) $search_processing);
 }
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {

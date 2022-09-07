@@ -85,7 +85,7 @@ if ($id || $ref) {
 	$object->fetch($id, $productid, $batch);
 	$object->ref = $object->batch; // Old system for document management ( it uses $object->ref)
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 		$filearray = dol_dir_list($upload_dir, "files");
 		if (empty($filearray)) {

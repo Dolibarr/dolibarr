@@ -58,7 +58,7 @@ $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
 if (empty($_SESSION["takeposterminal"])) {
-	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
 		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
@@ -964,7 +964,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				?>
 				</a>
 				<?php
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
 					print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
 					print '</a>';
@@ -978,7 +978,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<!-- More info about customer -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
 				<?php
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					?>
 				<!-- More info about warehouse -->
 				<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
@@ -1028,7 +1028,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 
 <!-- Modal multicurrency box -->
-<?php if (!empty($conf->multicurrency->enabled)) { ?>
+<?php if (isModEnabled('multicurrency')) { ?>
 <div id="ModalCurrency" class="modal">
 	<div class="modal-content">
 		<div class="modal-header">
@@ -1128,7 +1128,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 
 			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
 			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+			if ( !empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
 				array_push($paiementsModes, $obj);
 			}
 		}

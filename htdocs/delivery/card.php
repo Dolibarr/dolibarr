@@ -43,7 +43,7 @@ if (!empty($conf->expedition_bon->enabled)) {
 if (!empty($conf->stock->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -308,7 +308,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			 *   Delivery
 			 */
 
-			if ($typeobject == 'commande' && $expedition->origin_id > 0 && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id > 0 && isModEnabled('commande')) {
 				$objectsrc = new Commande($db);
 				$objectsrc->fetch($expedition->origin_id);
 			}
@@ -328,7 +328,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			// Thirdparty
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if (0) {    // Do not change on shipment
@@ -400,7 +400,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			*/
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && !empty($conf->commande->enabled)) {
+			if ($typeobject == 'commande' && $expedition->origin_id && isModEnabled('commande')) {
 				print '<tr><td class="titlefield">'.$langs->trans("RefOrder").'</td>';
 				$order = new Commande($db);
 				$order->fetch($expedition->origin_id);

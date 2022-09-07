@@ -59,29 +59,6 @@ $id = GETPOST('id', 'int');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-$result = restrictedArea($user, 'holiday', '', '');
-// If we are on the view of a specific user
-if ($id > 0) {
-	$canread = 0;
-	if ($id == $user->id) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->readall)) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
-		$canread = 1;
-	}
-	if (!$canread) {
-		accessforbidden();
-	}
-}
 
 $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -156,14 +133,35 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+
+// Security check
+$socid = 0;
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
 }
+
+if (empty($conf->holiday->enabled)) accessforbidden('Module not enabled');
+
+$result = restrictedArea($user, 'holiday', '', '');
+// If we are on the view of a specific user
+if ($id > 0) {
+	$canread = 0;
+	if ($id == $user->id) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
+
 
 
 /*
@@ -211,9 +209,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Holiday';
 	$objectlabel = 'Holiday';
-	$permissiontoread = $user->rights->holiday->read;
-	$permissiontodelete = $user->rights->holiday->delete;
-	$permissiontoapprove = $user->rights->holiday->approve;
+	$permissiontoread = $user->hasRight('holiday', 'read');
+	$permissiontodelete = $user->hasRight('holiday', 'delete');
+	$permissiontoapprove = $user->hasRight('holiday', 'approve');
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -582,7 +580,7 @@ if ($resql) {
 
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-		if ($user->rights->holiday->readall) {
+		if ($user->hasRight('holiday', 'readall')) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;

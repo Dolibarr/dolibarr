@@ -226,7 +226,7 @@ if ($resql) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (empty($conf->banque->enabled)) {
+		if (!isModEnabled('banque')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
 		}
 	}
@@ -650,8 +650,8 @@ if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty
 	}
 }
 
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {

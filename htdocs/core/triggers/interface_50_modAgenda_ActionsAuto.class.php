@@ -974,6 +974,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->trackid = 'tas'.$object->id;
 			} elseif (preg_match('/^TICKET_/', $action)) {
 				$object->trackid = 'tic'.$object->id;
+			} elseif (preg_match('/^USER_/', $action)) {
+				$object->trackid = 'use'.$object->id;
 			} else {
 				$object->trackid = '';
 			}

@@ -506,7 +506,7 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
 				// add creator as contributor
 				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
 					$error++;
@@ -1843,7 +1843,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				if (isModEnabled('ficheinter') && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {

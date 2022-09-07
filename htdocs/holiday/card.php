@@ -254,6 +254,12 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
 			$result = 0;
 
 			if (!$error) {

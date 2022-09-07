@@ -614,7 +614,7 @@ class Utils
 			//if ($compression == 'bz')
 			$paramcrypted = $param;
 			$paramclear = $param;
-			/*if (! empty($dolibarr_main_db_pass))
+			/*if (!empty($dolibarr_main_db_pass))
 			 {
 			 $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
 			 $paramclear.=" -W".$dolibarr_main_db_pass;
@@ -652,7 +652,7 @@ class Utils
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the command. if not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.

@@ -66,6 +66,8 @@ $lang = GETPOST('lang', 'aZ09');
  * View
  */
 
+top_httphead('application/json');
+
 if ($action == "getKnowledgeRecord") {
 	$response = '';
 	$sql = "SELECT kr.rowid, kr.ref, kr.question, kr.answer,kr.url,ctc.code";

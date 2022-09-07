@@ -60,7 +60,7 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**

@@ -41,6 +41,8 @@
  *  \brief      Page to show product
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
@@ -60,7 +62,7 @@ if (isModEnabled("propal")) {
 if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (!empty($conf->accounting->enabled)) {
@@ -80,7 +82,7 @@ if (!empty($conf->stock->enabled)) {
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -88,6 +90,7 @@ $mesg = ''; $error = 0; $errors = array();
 
 $refalreadyexists = 0;
 
+// Get parameters
 $id = GETPOST('id', 'int');
 $ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
@@ -107,6 +110,7 @@ $accountancy_code_buy_intra = GETPOST('accountancy_code_buy_intra', 'alpha');
 $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
+
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
 $label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
 
@@ -1349,7 +1353,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Batch number management
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
@@ -1600,7 +1604,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Note (private, no output on invoices, propales...)
-		//if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
+		//if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
 		//{
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
@@ -1611,7 +1615,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print "</td></tr>";
 		//}
 
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
@@ -2364,7 +2368,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Batch number management (to batch)
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					print $object->getLibStatut(0, 2);
@@ -2819,7 +2823,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Commande
-	if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
+	if (isModEnabled('commande') && $user->rights->commande->creer) {
 		$commande = new Commande($db);
 
 		$langs->load("orders");
