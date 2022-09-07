@@ -966,7 +966,7 @@ if ($object->id > 0) {
 			print '<td class="right">';
 			print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 			print '</td>';
-        }
+		}
 		// Actions
 		print '<td class="center">';
 		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
