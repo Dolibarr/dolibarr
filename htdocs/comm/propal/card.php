@@ -2059,126 +2059,132 @@ if ($action == 'create') {
 		}
 		$formquestion[] = array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
 
-		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+		if (getDolGlobalInt('PROPOSAL_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
+			// This is a hidden option:
+			// Suggestion to create invoice during proposal signature is not enabled by default.
+			// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
+			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
+			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
-			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-			$object->fetchObjectLinked();
+				$object->fetchObjectLinked();
 
-			$eligibleForDepositGeneration = true;
+				$eligibleForDepositGeneration = true;
 
-			if (array_key_exists('facture', $object->linkedObjects)) {
-				foreach ($object->linkedObjects['facture'] as $invoice) {
-					if ($invoice->type == Facture::TYPE_DEPOSIT) {
-						$eligibleForDepositGeneration = false;
-						break;
+				if (array_key_exists('facture', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['facture'] as $invoice) {
+						if ($invoice->type == Facture::TYPE_DEPOSIT) {
+							$eligibleForDepositGeneration = false;
+							break;
+						}
 					}
 				}
-			}
 
-			if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
-				foreach ($object->linkedObjects['commande'] as $order) {
-					$order->fetchObjectLinked();
+				if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['commande'] as $order) {
+						$order->fetchObjectLinked();
 
-					if (array_key_exists('facture', $order->linkedObjects)) {
-						foreach ($order->linkedObjects['facture'] as $invoice) {
-							if ($invoice->type == Facture::TYPE_DEPOSIT) {
-								$eligibleForDepositGeneration = false;
-								break 2;
+						if (array_key_exists('facture', $order->linkedObjects)) {
+							foreach ($order->linkedObjects['facture'] as $invoice) {
+								if ($invoice->type == Facture::TYPE_DEPOSIT) {
+									$eligibleForDepositGeneration = false;
+									break 2;
+								}
 							}
 						}
 					}
 				}
-			}
 
 
-			if ($eligibleForDepositGeneration) {
-				$formquestion[] = array(
-					'type' => 'checkbox',
-					'tdclass' => 'showonlyifsigned',
-					'name' => 'generate_deposit',
-					'morecss' => 'margintoponly marginbottomonly',
-					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
-				);
+				if ($eligibleForDepositGeneration) {
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => 'showonlyifsigned',
+						'name' => 'generate_deposit',
+						'morecss' => 'margintoponly marginbottomonly',
+						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+					);
 
-				$formquestion[] = array(
-					'type' => 'date',
-					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-					'name' => 'datef',
-					'label' => $langs->trans('DateInvoice'),
-					'value' => dol_now(),
-					'datenow' => true
-				);
-
-				if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 					$formquestion[] = array(
 						'type' => 'date',
 						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'date_pointoftax',
-						'label' => $langs->trans('DatePointOfTax'),
+						'name' => 'datef',
+						'label' => $langs->trans('DateInvoice'),
 						'value' => dol_now(),
 						'datenow' => true
 					);
+
+					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+						$formquestion[] = array(
+							'type' => 'date',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'date_pointoftax',
+							'label' => $langs->trans('DatePointOfTax'),
+							'value' => dol_now(),
+							'datenow' => true
+						);
+					}
+
+					$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 1, 'minwidth200');
+
+					$formquestion[] = array(
+						'type' => 'other',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'cond_reglement_id',
+						'label' => $langs->trans('PaymentTerm'),
+						'value' => $paymentTermsSelect
+					);
+
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => 'showonlyifgeneratedeposit',
+						'name' => 'validate_generated_deposit',
+						'morecss' => 'margintoponly marginbottomonly',
+						'label' => $langs->trans('ValidateGeneratedDeposit')
+					);
+
+					$formquestion[] = array(
+						'type' => 'onecolumn',
+						'value' => '
+							<script>
+								let signedValue = ' . $object::STATUS_SIGNED . ';
+
+								$(document).ready(function() {
+									$("[name=generate_deposit]").change(function () {
+										let $self = $(this);
+										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+											$target.show();
+										} else {
+											$target.hide();
+										}
+
+										return true;
+									});
+
+									$("#statut").change(function() {
+										let $target = $(".showonlyifsigned").parent(".tagtr");
+
+										if ($(this).val() == signedValue) {
+											$target.show();
+										} else {
+											$target.hide();
+										}
+
+										$("[name=generate_deposit]").trigger("change");
+
+										return true;
+									});
+
+									$("#statut").trigger("change");
+								});
+							</script>
+						'
+					);
 				}
-
-				$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 1, 'minwidth200');
-
-				$formquestion[] = array(
-					'type' => 'other',
-					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-					'name' => 'cond_reglement_id',
-					'label' => $langs->trans('PaymentTerm'),
-					'value' => $paymentTermsSelect
-				);
-
-				$formquestion[] = array(
-					'type' => 'checkbox',
-					'tdclass' => 'showonlyifgeneratedeposit',
-					'name' => 'validate_generated_deposit',
-					'morecss' => 'margintoponly marginbottomonly',
-					'label' => $langs->trans('ValidateGeneratedDeposit')
-				);
-
-				$formquestion[] = array(
-					'type' => 'onecolumn',
-					'value' => '
-						<script>
-							let signedValue = ' . $object::STATUS_SIGNED . ';
-
-							$(document).ready(function() {
-								$("[name=generate_deposit]").change(function () {
-									let $self = $(this);
-									let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
-
-									if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
-										$target.show();
-									} else {
-										$target.hide();
-									}
-
-									return true;
-								});
-
-								$("#statut").change(function() {
-									let $target = $(".showonlyifsigned").parent(".tagtr");
-
-									if ($(this).val() == signedValue) {
-										$target.show();
-									} else {
-										$target.hide();
-									}
-
-									$("[name=generate_deposit]").trigger("change");
-
-									return true;
-								});
-
-								$("#statut").trigger("change");
-							});
-						</script>
-					'
-				);
 			}
 		}
 
@@ -2191,9 +2197,9 @@ if ($action == 'create') {
 		}
 
 		if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 300);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 		} else {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 300);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 		}
 	} elseif ($action == 'delete') {
 		// Confirm delete
