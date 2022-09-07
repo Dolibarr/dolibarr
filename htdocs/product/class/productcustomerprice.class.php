@@ -356,7 +356,7 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for select
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
-	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -421,7 +421,7 @@ class Productcustomerprice extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->lines = array();
@@ -832,7 +832,7 @@ class Productcustomerprice extends CommonObject
 					't.fk_product' => $this->fk_product, 't.fk_soc' => $obj->rowid
 				);
 
-				$result = $prodsocprice->fetch_all('', '', 0, 0, $filter);
+				$result = $prodsocprice->fetchAll('', '', 0, 0, $filter);
 				if ($result < 0) {
 					$error++;
 					$this->error = $prodsocprice->error;
