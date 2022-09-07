@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *

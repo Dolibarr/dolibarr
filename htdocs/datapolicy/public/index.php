@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
