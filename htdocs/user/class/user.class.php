@@ -713,6 +713,7 @@ class User extends CommonObject
 			'order' => 'commande',
 			//'product' => 'produit',	// We must check $user->rights->produit...
 			'project' => 'projet',
+			'propale' => 'propal',
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
