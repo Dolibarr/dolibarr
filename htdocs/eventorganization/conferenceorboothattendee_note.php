@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       conferenceorboothattendee_note.php
- *  \ingroup    eventorganization
- *  \brief      Tab for notes on ConferenceOrBoothAttendee
+ *    \file       htdocs/eventorganization/conferenceorboothattendee_note.php
+ *    \ingroup    eventorganization
+ *    \brief      Tab for notes on ConferenceOrBoothAttendee
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
@@ -41,6 +41,7 @@
 //if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
+
 
 // Load Dolibarr environment
 $res = 0;
@@ -77,7 +78,7 @@ dol_include_once('/eventorganization/class/conferenceorboothattendee.class.php')
 dol_include_once('/eventorganization/lib/eventorganization_conferenceorboothattendee.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization@eventorganization", "companies"));
+$langs->loadLangs(array('eventorganization', 'companies'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -105,6 +106,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity]."/".$object->id;
 }
 
+// Permissions
 $permissionnote = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_addupdatedelete.inc.php
 
