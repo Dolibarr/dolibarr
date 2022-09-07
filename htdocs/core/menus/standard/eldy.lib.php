@@ -95,8 +95,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Members
 	$tmpentry = array(
-		'enabled' => (isModEnabled('adherent')),
-		'perms' => (!empty($user->hasRight('adherent',  'lire'))),
+		'enabled' => isModEnabled('adherent'),
+		'perms' => $user->hasRight('adherent',  'lire'),
 		'module' => 'adherent'
 	);
 	$menu_arr[] = array(
@@ -125,7 +125,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			)
 			|| ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order') || isModEnabled('supplier_invoice'))
 			),
-		'perms'=> (!empty($user->hasRight('societe',  'lire')) || !empty($user->hasRight('fournisseur',  'lire')) || !empty($user->hasRight('supplier_order',  'lire')) || !empty($user->hasRight('supplier_invoice',  'lire')) || !empty($user->hasRight('supplier_proposal',  'lire'))),
+		'perms'=> ($user->hasRight('societe',  'lire') || $user->hasRight('fournisseur',  'lire') || $user->hasRight('supplier_order',  'lire') || $user->hasRight('supplier_invoice',  'lire') || $user->hasRight('supplier_proposal',  'lire')),
 		'module'=>'societe|fournisseur'
 	);
 	$menu_arr[] = array(
@@ -150,7 +150,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Products-Services
 	$tmpentry = array(
 		'enabled'=> (isModEnabled('product') || isModEnabled('service') || isModEnabled('expedition')),
-		'perms'=> (!empty($user->hasRight('produit',  'lire')) || !empty($user->hasRight('service',  'lire')) || !empty($user->hasRight('expedition',  'lire'))),
+		'perms'=> ($user->hasRight('produit',  'lire') || $user->hasRight('service',  'lire') || $user->hasRight('expedition',  'lire')),
 		'module'=>'product|service'
 	);
 	$menu_arr[] = array(
@@ -177,7 +177,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// MRP - GPAO
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('bom') || isModEnabled('mrp')),
-		'perms'=>(!empty($user->hasRight('bom',  'read')) || !empty($user->hasRight('mrp',  'read'))),
+		'perms'=>($user->hasRight('bom',  'read') || $user->hasRight('mrp',  'read')),
 		'module'=>'bom|mrp'
 	);
 	$menu_arr[] = array(
@@ -202,7 +202,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Projects
 	$tmpentry = array(
 		'enabled'=> (isModEnabled('projet') ? 1 : 0),
-		'perms'=> (!empty($user->hasRight('projet',  'lire')) ? 1 : 0),
+		'perms'=> ($user->hasRight('projet',  'lire') ? 1 : 0),
 		'module'=>'projet'
 	);
 	$menu_arr[] = array(
@@ -234,25 +234,25 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| isModEnabled('contrat')
 			|| isModEnabled('ficheinter')
 			) ? 1 : 0,
-		'perms'=>(!empty($user->hasRight('propal',  'lire'))
-			|| !empty($user->hasRight('commande',  'lire'))
-			|| !empty($user->hasRight('supplier_proposal',  'lire'))
-			|| !empty($user->hasRight('fournisseur',  'lire'))
-			|| !empty($user->hasRight('fournisseur',  'commande', 'lire'))
-			|| !empty($user->hasRight('supplier_order',  'lire'))
-			|| !empty($user->hasRight('contrat',  'lire'))
-			|| !empty($user->hasRight('ficheinter',  'lire'))
+		'perms'=>($user->hasRight('propal',  'lire')
+			|| $user->hasRight('commande',  'lire')
+			|| $user->hasRight('supplier_proposal',  'lire')
+			|| $user->hasRight('fournisseur',  'lire')
+			|| $user->hasRight('fournisseur',  'commande', 'lire')
+			|| $user->hasRight('supplier_order',  'lire')
+			|| $user->hasRight('contrat',  'lire')
+			|| $user->hasRight('ficheinter',  'lire')
 			),
 		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
-	$onlysupplierorder = !empty($user->hasRight('fournisseur',  'commande', 'lire')) &&
-	empty($user->hasRight('propal',  'lire')) &&
-	empty($user->hasRight('commande',  'lire')) &&
-	empty($user->hasRight('supplier_order',  'lire')) &&
-	empty($user->hasRight('supplier_proposal',  'lire')) &&
-	empty($user->hasRight('contrat',  'lire')) &&
-	empty($user->hasRight('ficheinter',  'lire'));
+	$onlysupplierorder = $user->hasRight('fournisseur',  'commande', 'lire') &&
+	!$user->hasRight('propal',  'lire') &&
+	!$user->hasRight('commande',  'lire') &&
+	!$user->hasRight('supplier_order',  'lire') &&
+	!$user->hasRight('supplier_proposal',  'lire') &&
+	!$user->hasRight('contrat',  'lire') &&
+	!$user->hasRight('ficheinter',  'lire');
 
 	$menu_arr[] = array(
 		'name' => 'Commercial',
@@ -283,9 +283,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			isModEnabled('loan') ||
 			isModEnabled('margins')
 			) ? 1 : 0,
-		'perms'=>(!empty($user->hasRight('facture',  'lire')) || !empty($user->hasRight('don',  'contact', 'lire'))
-			|| !empty($user->hasRight('tax',  'charges', 'lire')) || !empty($user->hasRight('salaries',  'read'))
-			|| !empty($user->hasRight('fournisseur',  'facture', 'lire')) || !empty($user->hasRight('loan',  'read')) || !empty($user->hasRight('margins',  'liretous'))),
+		'perms'=>($user->hasRight('facture',  'lire') || $user->hasRight('don',  'contact', 'lire')
+			|| $user->hasRight('tax',  'charges', 'lire') || $user->hasRight('salaries',  'read')
+			|| $user->hasRight('fournisseur',  'facture', 'lire') || $user->hasRight('loan',  'read') || $user->hasRight('margins',  'liretous')),
 		'module'=>'facture|supplier_invoice|don|tax|salaries|loan'
 	);
 	$menu_arr[] = array(
@@ -310,7 +310,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Bank
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('banque') || isModEnabled('prelevement')),
-		'perms'=>(!empty($user->hasRight('banque',  'lire')) || !empty($user->hasRight('prelevement',  'lire')) || !empty($user->hasRight('paymentbybanktransfer',  'read'))),
+		'perms'=>($user->hasRight('banque',  'lire') || $user->hasRight('prelevement',  'lire') || $user->hasRight('paymentbybanktransfer',  'read')),
 		'module'=>'banque|prelevement|paymentbybanktransfer'
 	);
 	$menu_arr[] = array(
@@ -335,7 +335,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Accounting
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('comptabilite') || isModEnabled('accounting') || isModEnabled('asset') || isModEnabled('intracommreport')),
-		'perms'=>(!empty($user->hasRight('compta',  'resultat', 'lire')) || !empty($user->hasRight('accounting',  'comptarapport', 'lire')) || !empty($user->hasRight('accounting',  'mouvements', 'lire')) || !empty($user->hasRight('asset',  'read')) || !empty($user->hasRight('intracommreport',  'read'))),
+		'perms'=>($user->hasRight('compta',  'resultat', 'lire') || $user->hasRight('accounting',  'comptarapport', 'lire') || $user->hasRight('accounting',  'mouvements', 'lire') || $user->hasRight('asset',  'read') || $user->hasRight('intracommreport',  'read')),
 		'module'=>'comptabilite|accounting|asset|intracommreport'
 	);
 	$menu_arr[] = array(
@@ -360,7 +360,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// HRM
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('hrm') || (isModEnabled('holiday')) || isModEnabled('deplacement') || isModEnabled('expensereport') || isModEnabled('recruitment')),
-		'perms'=>(!empty($user->hasRight('user',  'user', 'lire')) || !empty($user->hasRight('holiday',  'read')) || !empty($user->hasRight('deplacement',  'lire')) || !empty($user->hasRight('expensereport',  'lire')) || !empty($user->hasRight('recruitment',  'recruitmentjobposition', 'read'))),
+		'perms'=>($user->hasRight('user',  'user', 'lire') || $user->hasRight('holiday',  'read') || $user->hasRight('deplacement',  'lire') || $user->hasRight('expensereport',  'lire') || $user->hasRight('recruitment',  'recruitmentjobposition', 'read')),
 		'module'=>'hrm|holiday|deplacement|expensereport|recruitment'
 	);
 
@@ -386,7 +386,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Tickets and knowledge base
 	$tmpentry = array(
 		'enabled'=>(isModEnabled('ticket') || isModEnabled('knowledgemanagement')),
-		'perms'=>(!empty($user->hasRight('ticket',  'read')) || !empty($user->hasRight('knowledgemanagement',  'knowledgerecord', 'read'))),
+		'perms'=>($user->hasRight('ticket',  'read') || $user->hasRight('knowledgemanagement',  'knowledgerecord', 'read')),
 		'module'=>'ticket|knowledgemanagement'
 	);
 	$link = '';
@@ -1658,7 +1658,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			}
 
 			// Journals
-			if (isModEnabled('accounting') && !empty($user->hasRight('accounting',  'comptarapport', 'lire')) && $mainmenu == 'accountancy') {
+			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
 				$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->hasRight('accounting',  'comptarapport', 'lire'), '', '', '');
 
 				// Multi journal
@@ -1759,7 +1759,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			}
 
 			$modecompta = 'CREANCES-DETTES';
-			if (isModEnabled('accounting') && !empty($user->hasRight('accounting',  'comptarapport', 'lire')) && $mainmenu == 'accountancy') {
+			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
 				$modecompta = 'BOOKKEEPING'; // Not yet implemented. Should be BOOKKEEPINGCOLLECTED
 			}
 			if ($modecompta) {
@@ -1773,7 +1773,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			}
 
 			$modecompta = 'RECETTES-DEPENSES';
-			//if (isModEnabled('accounting') && !empty($user->hasRight('accounting',  'comptarapport', 'lire')) && $mainmenu == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
+			//if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
 			if ($modecompta) {
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 					$newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportTurnoverCollected"), 2, $user->hasRight('accounting',  'comptarapport', 'lire'));
@@ -1785,7 +1785,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			}
 
 			$modecompta = 'CREANCES-DETTES';
-			if (isModEnabled('accounting') && !empty($user->hasRight('accounting',  'comptarapport', 'lire')) && $mainmenu == 'accountancy') {
+			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
 				$modecompta = 'BOOKKEEPING'; // Not yet implemented.
 			}
 			if ($modecompta && ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))) {
@@ -1797,7 +1797,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			}
 
 			$modecompta = 'RECETTES-DEPENSES';
-			if (isModEnabled('accounting') && !empty($user->hasRight('accounting',  'comptarapport', 'lire')) && $mainmenu == 'accountancy') {
+			if (isModEnabled('accounting') && $user->hasRight('accounting',  'comptarapport', 'lire') && $mainmenu == 'accountancy') {
 				$modecompta = 'BOOKKEEPINGCOLLECTED'; // Not yet implemented.
 			}
 			if ($modecompta && ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice'))) {
@@ -1881,10 +1881,10 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->hasRight('asset',  'read'), '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create", $langs->trans("MenuNewAsset"), 1, $user->hasRight('asset',  'write'));
 			$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->hasRight('asset',  'read'));
-			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->hasRight('asset',  'model_advance', 'read'))), '', $mainmenu, 'asset_model');
+			$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuAssetModels"), 1, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'model_advance', 'read')), '', $mainmenu, 'asset_model');
 			if ($usemenuhider || empty($leftmenu) || preg_match('/asset_model/', $leftmenu)) {
-				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&amp;action=create", $langs->trans("MenuNewAssetModel"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->hasRight('asset',  'model_advance', 'write'))));
-				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->hasRight('asset',  'model_advance', 'read'))));
+				$newmenu->add("/asset/model/card.php?leftmenu=asset_model&amp;action=create", $langs->trans("MenuNewAssetModel"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'model_advance', 'write')));
+				$newmenu->add("/asset/model/list.php?leftmenu=asset_model", $langs->trans("MenuListAssetModels"), 2, (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset',  'model_advance', 'read')));
 			}
 		}
 	}
@@ -2165,8 +2165,8 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$search_project_user = GETPOST('search_project_user', 'int');
 
 			$tmpentry = array(
-				'enabled'=>(isModEnabled('projet')),
-				'perms'=>(!empty($user->hasRight('projet',  'lire'))),
+				'enabled'=>isModEnabled('projet'),
+				'perms'=>$user->hasRight('projet',  'lire'),
 				'module'=>'projet'
 			);
 			$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
