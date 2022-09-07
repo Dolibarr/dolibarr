@@ -39,6 +39,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late

@@ -26,6 +26,7 @@
  *       \brief      Home page for BOM and MRP modules
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';

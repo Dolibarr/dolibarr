@@ -31,6 +31,7 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 	define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti SQL+XSS injection attack test
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

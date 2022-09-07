@@ -24,6 +24,7 @@
  *       \brief      Tab to manage contacts/adresses of proposal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

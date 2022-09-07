@@ -27,6 +27,7 @@
  *		\brief      Page to setup invoice module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Libraries

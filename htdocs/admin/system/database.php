@@ -23,6 +23,7 @@
  *   \brief      Page with system information of database
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");
