@@ -2643,7 +2643,7 @@ if ($action == 'create') {
 		 *	View card
 		 */
 		$objectidnext = $object->getIdReplacingInvoice();
-		
+
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
@@ -3305,7 +3305,10 @@ if ($action == 'create') {
 					$paymentstatic->datepaye = $db->jdate($objp->dp);
 					$paymentstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_payment = $objp->num_payment;
+
 					$paymentstatic->paiementcode = $objp->payment_code;
+					$paymentstatic->type_code = $objp->payment_code;
+					$paymentstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddeven">';
 					print '<td>';
