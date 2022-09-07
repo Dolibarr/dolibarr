@@ -384,7 +384,7 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->duree_validite = isset($conf->global->PROPALE_VALIDITY_DURATION)?((int) $conf->global->PROPALE_VALIDITY_DURATION):0;
+		$this->duree_validite = getDolGlobalInt('PROPALE_VALIDITY_DURATION', 0);
 	}
 
 
