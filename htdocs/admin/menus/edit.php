@@ -305,7 +305,7 @@ if ($action == 'create') {
 	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
 
 	// Type
-	print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td><td>';
 	if ($parent_rowid) {
 		print $langs->trans('Left');
 		print '<input type="hidden" name="type" value="left">';
@@ -315,6 +315,7 @@ if ($action == 'create') {
 		print '<option value="top"'.(GETPOST("type") == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
 		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
+		print ajax_combobox('topleft');
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
@@ -352,12 +353,6 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Position').'</td>';
 	print '<td><input type="text" class="width100" name="position" value="'.dol_escape_htmltag(GETPOSTISSET("position") ? GETPOST("position", 'int') : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
-	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.(GETPOSTISSET('enabled') ? GETPOST("enabled", 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
@@ -365,6 +360,14 @@ if ($action == 'create') {
 	// Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+
+	// Target
+	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '</select>';
+	print ajax_combobox("target");
+	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
 
