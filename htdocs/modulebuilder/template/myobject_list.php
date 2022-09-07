@@ -458,9 +458,9 @@ foreach ($search as $key => $val) {
 			}
 		}
 	} elseif (preg_match('/(_dtstart|_dtend)$/', $key) && !empty($val)) {
-		$param .= '&search_'.$key.'month='.urlencode(GETPOST('search_'.$key.'month', 'int'));
-		$param .= '&search_'.$key.'day='.urlencode(GETPOST('search_'.$key.'day', 'int'));
-		$param .= '&search_'.$key.'year='.urlencode(GETPOST('search_'.$key.'year', 'int'));
+		$param .= '&search_'.$key.'month='.((int) GETPOST('search_'.$key.'month', 'int'));
+		$param .= '&search_'.$key.'day='.((int) GETPOST('search_'.$key.'day', 'int'));
+		$param .= '&search_'.$key.'year='.((int) GETPOST('search_'.$key.'year', 'int'));
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
