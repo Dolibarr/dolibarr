@@ -110,7 +110,8 @@ $fieldstosearchall = array(
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.note_public'=>"NotePublic",
+	'u.note_private'=>"NotePrivate"
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
