@@ -1291,6 +1291,14 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield']=0;
+		$totalarray['val'] = array();
+		$totalarray['val']['f.total_ht']=0;
+		$totalarray['val']['f.total_vat']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_ttc']=0;
+
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
