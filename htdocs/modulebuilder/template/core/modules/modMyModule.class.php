@@ -45,10 +45,10 @@ class modMyModule extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 303500; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
 
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'mymodule';
+		$this->rights_class = 'fsa';
 
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
@@ -63,13 +63,13 @@ class modMyModule extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
-		$this->description = "MyModuleDescription";
+		$this->description = "FACILITY SAFETY ASSESSMENT";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "MyModuleDescription";
+		$this->descriptionlong = "FACILITY SAFETY ASSESSMENT, RECOMMENDATION AND ACTION TRACKER";
 
 		// Author
-		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
+		$this->editor_name = 'Tobe Obiakor';
+		$this->editor_url = 'https://www.github.com/obixav';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
