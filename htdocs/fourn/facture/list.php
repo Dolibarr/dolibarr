@@ -10,7 +10,7 @@
  * Copyright (C) 2015		Abbes Bahfir			<bafbes@gmail.com>
  * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
@@ -649,7 +649,7 @@ if (!$search_all) {
 		}
 	}
 	// Add GroupBy from hooks
-	$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+	$parameters = array('all' => $search_all, 'fieldstosearchall' => $fieldstosearchall);
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
@@ -682,7 +682,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->facid;
 
@@ -1291,6 +1291,14 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield']=0;
+		$totalarray['val'] = array();
+		$totalarray['val']['f.total_ht']=0;
+		$totalarray['val']['f.total_vat']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_ttc']=0;
+
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
