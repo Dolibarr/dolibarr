@@ -50,6 +50,7 @@ PathToModulePackage=Path to zip of module/application package
 PathToModuleDocumentation=Path to file of module/application documentation (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
 FileNotYetGenerated=File not yet generated
+GenerateCode=Generate code
 RegenerateClassAndSql=Force update of .class and .sql files
 RegenerateMissingFiles=Generate missing files
 SpecificationFile=File of documentation
