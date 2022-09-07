@@ -234,7 +234,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| isModEnabled('contrat')
 			|| isModEnabled('ficheinter')
 			) ? 1 : 0,
-		'perms'=>($user->hasRight('propal',  'lire')
+		'perms'=>($user->hasRight('propal',  'read')
 			|| $user->hasRight('commande',  'lire')
 			|| $user->hasRight('supplier_proposal',  'lire')
 			|| $user->hasRight('fournisseur',  'lire')
@@ -1294,18 +1294,18 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 		// Customer proposal
 		if (isModEnabled('propal')) {
 			$langs->load("propal");
-			$newmenu->add("/comm/propal/index.php?leftmenu=propals", $langs->trans("Proposals"), 0, $user->hasRight('propale',  'lire'), '', $mainmenu, 'propals', 100, '', '', '', img_picto('', 'propal', 'class="paddingright pictofixedwidth"'));
-			$newmenu->add("/comm/propal/card.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->hasRight('propale',  'creer'));
-			$newmenu->add("/comm/propal/list.php?leftmenu=propals", $langs->trans("List"), 1, $user->hasRight('propale',  'lire'));
+			$newmenu->add("/comm/propal/index.php?leftmenu=propals", $langs->trans("Proposals"), 0, $user->hasRight('propal',  'read'), '', $mainmenu, 'propals', 100, '', '', '', img_picto('', 'propal', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/comm/propal/card.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->hasRight('propal',  'write'));
+			$newmenu->add("/comm/propal/list.php?leftmenu=propals", $langs->trans("List"), 1, $user->hasRight('propal',  'read'));
 			if ($usemenuhider || empty($leftmenu) || $leftmenu == "propals") {
-				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=0", $langs->trans("PropalsDraft"), 2, $user->hasRight('propale',  'lire'));
-				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=1", $langs->trans("PropalsOpened"), 2, $user->hasRight('propale',  'lire'));
-				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2", $langs->trans("PropalStatusSigned"), 2, $user->hasRight('propale',  'lire'));
-				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=3", $langs->trans("PropalStatusNotSigned"), 2, $user->hasRight('propale',  'lire'));
-				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=4", $langs->trans("PropalStatusBilled"), 2, $user->hasRight('propale',  'lire'));
-				//$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->hasRight('propale',  'lire'));
+				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=0", $langs->trans("PropalsDraft"), 2, $user->hasRight('propal',  'read'));
+				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=1", $langs->trans("PropalsOpened"), 2, $user->hasRight('propal',  'read'));
+				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2", $langs->trans("PropalStatusSigned"), 2, $user->hasRight('propal',  'read'));
+				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=3", $langs->trans("PropalStatusNotSigned"), 2, $user->hasRight('propal',  'read'));
+				$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=4", $langs->trans("PropalStatusBilled"), 2, $user->hasRight('propal',  'read'));
+				//$newmenu->add("/comm/propal/list.php?leftmenu=propals&search_status=2,3,4", $langs->trans("PropalStatusClosedShort"), 2, $user->hasRight('propal',  'read'));
 			}
-			$newmenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->hasRight('propale',  'lire'));
+			$newmenu->add("/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->hasRight('propal',  'read'));
 		}
 
 		// Customers orders

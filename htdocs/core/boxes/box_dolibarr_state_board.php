@@ -124,7 +124,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'contacts' => isModEnabled('societe') && $user->hasRight('societe', 'contact', 'lire'),
 				'products' => isModEnabled('product') && $user->hasRight('produit', 'lire'),
 				'services' => isModEnabled('service') && $user->hasRight('service', 'lire'),
-				'proposals' => isModEnabled('propal') && $user->hasRight('propale', 'lire'),
+				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'read'),
 				'orders' => isModEnabled('commande') && $user->hasRight('commande', 'lire'),
 				'invoices' => isModEnabled('facture') && $user->hasRight('facture', 'lire'),
 				'donations' => isModEnabled('don') && $user->hasRight('don', 'lire'),
