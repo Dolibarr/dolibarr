@@ -2645,6 +2645,8 @@ if ($action == 'create') {
 		/*
 		 *	View card
 		 */
+		$objectidnext = $object->getIdReplacingInvoice();
+
 		$head = facturefourn_prepare_head($object);
 		$titre = $langs->trans('SupplierInvoice');
 
@@ -2937,7 +2939,7 @@ if ($action == 'create') {
 			}
 			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
-		if (isset($facidnext) && $facidnext > 0) {
+		if (isset($objectidnext) && $objectidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
 			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
@@ -3269,7 +3271,7 @@ if ($action == 'create') {
 		}
 
 		$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
-		$sql .= ' c.id as paiement_type,';
+		$sql .= ' c.id as paiement_type, c.code as payment_code,';
 		$sql .= ' pf.amount,';
 		$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
@@ -3306,7 +3308,10 @@ if ($action == 'create') {
 					$paymentstatic->datepaye = $db->jdate($objp->dp);
 					$paymentstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 					$paymentstatic->num_payment = $objp->num_payment;
-					$paymentstatic->payment_code = $objp->payment_code;
+
+					$paymentstatic->paiementcode = $objp->payment_code;
+					$paymentstatic->type_code = $objp->payment_code;
+					$paymentstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddeven">';
 					print '<td>';
@@ -3651,7 +3656,7 @@ if ($action == 'create') {
 					|| ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && empty($discount->id))
 					|| ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discount->id)))
 					&& ($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED)) {				// A paid invoice (partially or completely)
-					if (!$facidnext && $object->close_code != 'replaced' && $usercancreate) {	// Not replaced by another invoice
+					if (!$objectidnext && $object->close_code != 'replaced' && $usercancreate) {	// Not replaced by another invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a>';
 					} else {
 						if ($usercancreate) {
