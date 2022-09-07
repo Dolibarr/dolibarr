@@ -2238,7 +2238,7 @@ if (empty($reshook)) {
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 			}
-			
+
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 			// Margin
@@ -2287,7 +2287,7 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (!empty-$conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
