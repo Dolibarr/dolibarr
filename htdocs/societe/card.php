@@ -602,7 +602,7 @@ if (empty($reshook)) {
 
 				$result = $object->create($user);
 
-				if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email) && !empty($object->no_email)) {
+				if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email) && $object->no_email == 1) {
 					// Add mass emailing flag into table mailing_unsubscribe
 					$result = $object->setNoEmail($object->no_email);
 					if ($result < 0) {
