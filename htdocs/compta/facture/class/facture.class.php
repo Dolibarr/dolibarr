@@ -137,7 +137,8 @@ class Facture extends CommonInvoice
 	/**
 	 * @var string customer ref
 	 */
-	public $ref_client;
+	public $ref_client;		// deprecated; use ref_customer instead
+	public $ref_customer;
 
 	/**
 	 * @var int Ref Int
