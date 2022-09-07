@@ -918,7 +918,7 @@ class pdf_cyan extends ModelePDFPropales
 							// Find the desire PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
-							if ($conf->global->MAIN_MULTILANGS) {
+							if (!empty($conf->global->MAIN_MULTILANGS)) {
 								$filetomerge->fetch_by_product($line->fk_product, $outputlangs->defaultlang);
 							} else {
 								$filetomerge->fetch_by_product($line->fk_product);
