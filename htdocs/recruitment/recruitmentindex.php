@@ -46,6 +46,14 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = 5;
 $now = dol_now();
 
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+// if (! $user->hasRights('mymodule', 'myobject', 'read')) {
+// 	accessforbidden();
+// }
+restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentjobposition', 'recruitmentjobposition', '', 'rowid');
+
 
 /*
  * Actions
