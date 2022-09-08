@@ -48,8 +48,9 @@ CountriesNotInEEC=Pays hors CEE
 CountriesInEECExceptMe=Pays de la CEE sauf %s
 CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
-ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste en CSV et PDF) qui servent à générer votre comptabilité.
+ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez rechercher et exporter les événements sources qui servent à générer votre comptabilité. <br> Le fichier ZIP exporté contiendra les listes des éléments demandés au format CSV, ainsi que leurs fichiers joints dans leur format d'origine (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
+ExportAccountingProjectHelp=Spécifiez un projet si vous avez besoin d'un rapport uniquement pour un projet spécifique. Les notes de frais et les remboursements de prêts ne sont pas inclus dans les rapports de projet.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les ad
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour les acomptes clients
 UseAuxiliaryAccountOnCustomerDeposit=Enregistrer le compte client comme compte individuel dans le grand livre auxiliaire pour les lignes d'acompte (si désactivé, le compte individuel pour les lignes d'acompte restera vide)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable par défaut pour enregistrer l'acompte fournisseur
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte comptable par défaut pour les produits achetés dans la CEE (utilisé si non défini dans la fiche produit)
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transf
 
 ## Export
 NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning"> (pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validez et verrouillez les entrées exportées <span class="warning"> (même effet que la fonctionnalité "%s", la modification et la suppression des lignes ne seront définitivement plus possibles) </span>
 DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
