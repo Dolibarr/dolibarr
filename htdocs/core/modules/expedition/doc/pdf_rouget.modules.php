@@ -914,8 +914,16 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo) {
+			$logodir = $conf->mycompany->dir_output;
+			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			}
+			if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$this->emetteur->logo;
+			}
 			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
