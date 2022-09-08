@@ -49,6 +49,17 @@ $modBarCodeThirdparty = '';
 
 $maxperinit = 1000;
 
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+//restrictedArea($user, 'barcode');
+if (empty($user->admin)) {
+	accessforbidden('Must be admin');
+}
+
 
 /*
  * Actions
@@ -261,13 +272,6 @@ if ($action == 'initbarcodeproducts') {
 /*
  * View
  */
-
-if (!$user->admin) {
-	accessforbidden();
-}
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
 
 $form = new Form($db);
 
