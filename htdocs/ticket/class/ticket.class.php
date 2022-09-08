@@ -1016,6 +1016,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		// Delete all child tables
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
+			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ticket";
 			$sql .= " WHERE rowid=".((int) $this->id);
