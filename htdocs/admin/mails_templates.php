@@ -1065,7 +1065,35 @@ if ($num) {
 						// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
 						// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 						// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-						$acceptlocallinktomedia = true;	// TODO Set it to true only if $urlwithroot is a HTTPS link ?
+						$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+						if ($acceptlocallinktomedia) {
+							global $dolibarr_main_url_root;
+							$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+
+							// Parse $newUrl
+							$newUrlArray = parse_url($urlwithouturlroot);
+							$hosttocheck = $newUrlArray['host'];
+							$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+							if (function_exists('gethostbyname')) {
+								$iptocheck = gethostbyname($hosttocheck);
+							} else {
+								$iptocheck = $hosttocheck;
+							}
+
+							//var_dump($iptocheck.' '.$acceptlocallinktomedia);
+							if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+								// If ip of public url is an private network IP, we do not allow this.
+								$acceptlocallinktomedia = 0;
+								// TODO Show a warning
+							}
+
+							if (preg_match('/http:/i', $urlwithouturlroot)) {
+								// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
+								$acceptlocallinktomedia = 0;
+								// TODO Show a warning
+							}
+						}
 
 						if ($tmpfieldlist == 'content') {
 							print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
