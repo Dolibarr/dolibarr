@@ -750,7 +750,6 @@ class User extends CommonObject
 
 		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
 		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
-		//if ($a) { var_dump($module); var_dump($this->rights->$rightsPath); var_dump($conf->modules); }
 		if (!in_array($module, $conf->modules)) {
 			return 0;
 		}
@@ -766,7 +765,6 @@ class User extends CommonObject
 			$permlevel1 = 'recruitmentjobposition';
 		}
 
-		//var_dump($this->rights);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
 		}
