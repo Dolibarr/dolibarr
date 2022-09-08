@@ -23,15 +23,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/multicurrency/multicurrency_rate.php
- *  \ingroup    multicurrency
- *  \brief      Page to list multicurrency rate
+ *    \file       htdocs/multicurrency/multicurrency_rate.php
+ *    \ingroup    multicurrency
+ *    \brief      Page to list multicurrency rate
  */
 
+// Dolibarr Environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
@@ -39,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('multicurrency'));
 
+// Get Parameters
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
 $show_files			= GETPOST('show_files', 'int');
