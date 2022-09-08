@@ -65,7 +65,9 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-$domData  = ' data-element="'.$line->element.'service"';
+if($filtertype == 1) $domData  = ' data-element="'.$line->element.'service"';
+else $domData  = ' data-element="'.$line->element.'"';
+
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';

@@ -427,9 +427,9 @@ class CUnits // extends CommonObject
 	{
 
 		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, ' AND unit_type = "'.$unit_type.'"');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, ' AND unit_type = "'.$this->db->escape($unit_type).'"');
 		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, ' AND unit_type = "'. $unit_type .'"');
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, ' AND unit_type = "'. $this->db->escape($unit_type) .'"');
 		}
 
 		return $code;

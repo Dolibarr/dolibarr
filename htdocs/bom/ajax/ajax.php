@@ -66,7 +66,7 @@ $idproduct = GETPOST('idproduct', 'int');
 
 top_httphead();
 
-if ($action == 'getDurationUnitByProduct') {
+if ($action == 'getDurationUnitByProduct' && $user->hasRight('product', 'lire')) {
 	$product = new Product($db);
 	$res = $product->fetch($idproduct);
 
