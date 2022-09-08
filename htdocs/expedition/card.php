@@ -407,11 +407,17 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'create_delivery' && $conf->delivery_note->enabled && $user->rights->expedition->delivery->creer) {
 		// Build a receiving receipt
+		$db->begin();
+
 		$result = $object->create_delivery($user);
 		if ($result > 0) {
+			$db->commit();
+
 			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&id='.$result);
 			exit;
 		} else {
+			$db->rollback();
+
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
