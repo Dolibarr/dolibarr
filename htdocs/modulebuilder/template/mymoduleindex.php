@@ -75,7 +75,7 @@ if (isset($user->socid) && $user->socid > 0) {
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//if (!isModEnabled('barcode')) {
+//if (!isModEnabled('mymodule')) {
 //	accessforbidden('Module not enabled');
 //}
 //if (! $user->hasRight('mymodule', 'myobject', 'read')) {
