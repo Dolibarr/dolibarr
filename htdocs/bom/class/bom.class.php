@@ -667,6 +667,7 @@ class BOM extends CommonObject
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	string	$import_key				Import Key
+	 * @param	int	$fk_unit					Unit of line
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit)
