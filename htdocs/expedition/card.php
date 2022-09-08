@@ -540,6 +540,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new ExpeditionLigne($db);
+		$line->fk_expedition = $object->id;
 
 		$num_prod = count($lines);
 		for ($i = 0; $i < $num_prod; $i++) {
@@ -581,6 +582,7 @@ if (empty($reshook)) {
 		for ($i = 0; $i < $num_prod; $i++) {
 			if ($lines[$i]->id == $line_id) {		// we have found line to update
 				$line = new ExpeditionLigne($db);
+				$line->fk_expedition = $object->id;
 
 				// Extrafields Lines
 				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
@@ -1445,6 +1447,10 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children.
+									continue;
+								}
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
