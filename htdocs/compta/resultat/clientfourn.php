@@ -1062,7 +1062,11 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 			}
 
-			$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
+			if ($modecompta == 'CREANCES-DETTES') {
+				//No need of GROUP BY
+			} else {
+				$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
+			}
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
 				$newsortfield = 'p.ref';
