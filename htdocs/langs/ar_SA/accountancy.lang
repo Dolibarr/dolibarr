@@ -48,8 +48,9 @@ CountriesNotInEEC=ليس ضمن دول الاتحاد الأوروبي
 CountriesInEECExceptMe=البلدان في المجموعة الاقتصادية الأوروبية باستثناء %s
 CountriesExceptMe=جميع الدول باستثناء %s
 AccountantFiles=تصدير مستندات المصدر
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp=باستخدام هذه الأداة ، يمكنك البحث عن مصدر الأحداث التي يتم استخدامها لإنشاء المحاسبة الخاصة بك وتصديرها. <br> سيحتوي ملف ZIP المُصدَّر على قوائم العناصر المطلوبة في CSV ، بالإضافة إلى الملفات المرفقة بتنسيقها الأصلي (PDF ، ODT ، DOCX ...).
 ExportAccountingSourceDocHelp2=لتصدير دفاترك المحاسبية ، إستخدم القائمة %s - %s .
+ExportAccountingProjectHelp=حدد مشروعًا إذا كنت بحاجة إلى تقرير محاسبة لمشروع معين فقط. لا يتم تضمين تقارير المصروفات ودفعات القرض في تقارير المشروع.
 VueByAccountAccounting=عرض حسب الحساب المحاسبي
 VueBySubAccountAccounting=عرض حسب الحساب المحاسبة الفرعي
 
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=حساب تسجيل الاشتراكات
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=حساب افتراضي لتسجيل إيداع العميل
 UseAuxiliaryAccountOnCustomerDeposit=تخزين حساب العميل كحساب فردي في دفتر الأستاذ الفرعي لخطوط الدفعات المقدمة (إذا تم تعطيله ، فسيظل الحساب الفردي لبنود الدَفعة المقدمة فارغًا)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Accounting account by default to register supplier deposit
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=حساب افتراضي للمنتجات المشتراة (يستخدم إذا لم يتم تحديده في ورقة المنتج)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=حساب افتراضي للمنتجات المشتراة في الاتحاد الاوروبي (يستخدم إذا لم يتم تحديده في ورقة المنتج)
@@ -279,7 +282,7 @@ DescVentilExpenseReportMore=إذا قمت بإعداد حساب على نوع ب
 DescVentilDoneExpenseReport=راجع هنا قائمة بنود تقارير المصروفات وحساب رسومها
 
 Closure=الإغلاق السنوي
-DescClosure=Consult here the number of movements by month not yet validated & locked
+DescClosure=استشر هنا عدد الحركات حسب الشهر التي لم يتم التحقق من صحتها وإغلاقها
 OverviewOfMovementsNotValidated=نظرة عامة على الحركات التي لم يتم التحقق من صحتها وإغلاقها
 AllMovementsWereRecordedAsValidated=تم تسجيل جميع الحركات على أنها محققة ومغلقة
 NotAllMovementsCouldBeRecordedAsValidated=لا يمكن تسجيل جميع الحركات على أنها تم التحقق من صحتها وقفلها
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=تعطيل الربط والتحو�
 
 ## Export
 NotifiedExportDate=ضع علامة على الخطوط المصدرة كـ <span class="warning"> (لتعديل سطر ، ستحتاج إلى حذف المعاملة بالكامل وإعادة تحويلها إلى المحاسبة) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=تحقق من صحة الإدخالات التي تم تصديرها وقفلها <span class="warning"> (نفس التأثير من ميزة "%s" ، ولن يكون تعديل الأسطر وحذفها بالتأكيد ممكنًا) </span>
 DateValidationAndLock=التحقق من صحة التاريخ والقفل
 ConfirmExportFile=تأكيد إنشاء ملف محاسبي تصدير؟
 ExportDraftJournal=تصدير مسودة دفتر اليومية
