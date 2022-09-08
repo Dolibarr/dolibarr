@@ -79,7 +79,7 @@ if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) 
 }
 
 // Permissions
-$permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'));
+$permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 
 /*

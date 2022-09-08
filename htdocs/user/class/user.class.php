@@ -708,7 +708,7 @@ class User extends CommonObject
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
-			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'member' => 'adherent',
 			'mo' => 'mrp',
 			'order' => 'commande',
 			'produit' => 'product',
