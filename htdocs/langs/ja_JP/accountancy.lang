@@ -48,8 +48,9 @@ CountriesNotInEEC=EECにない国
 CountriesInEECExceptMe=%sを除くEECの国
 CountriesExceptMe=%sを除く全国
 AccountantFiles=ソースドキュメントのエクスポート
-ExportAccountingSourceDocHelp=このツールで、会計処理を生成するために使用されるソースイベント（CSVおよびPDFのリスト）をエクスポートできる。
+ExportAccountingSourceDocHelp=このツールを使用すると、アカウンティを生成するために使用されるソースイベントを検索およびエクスポートできる。 <br>エクスポートされたZIPファイルには、CSVで要求されたアイテムのリストと、元の形式（PDF、ODT、DOCX ...）の添付ファイルが含まれる。
 ExportAccountingSourceDocHelp2=仕訳日記帳をエクスポートするには、メニューエントリ%s --%sを使用。
+ExportAccountingProjectHelp=特定のプロジェクトについてのみアカウンティングレポートが必要な場合は、プロジェクトを指定する。経費報告書とローン支払いはプロジェクト報告書に含まれていない。
 VueByAccountAccounting=勘定科目順に表示
 VueBySubAccountAccounting=会計補助勘定科目で表示
 
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=サブスクリプションを登録す�
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=顧客入金を登録するためのデフォルトの勘定科目
 UseAuxiliaryAccountOnCustomerDeposit=顧客アカウントを頭金ラインの補助元帳に個人アカウントとして保存する（無効にした場合、頭金ラインの個人アカウントは空のままになる）
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=仕入先預金を登録するためのデフォルトの会計口座
+UseAuxiliaryAccountOnSupplierDeposit=仕入先勘定を、前払明細の補助元帳に個別勘定として保管する (無効にすると、前払明細の個別勘定は空のままになる)。
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=購入した製品のデフォルトの勘定科目(製品シートで定義されていない場合に使用)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC域内で購入した製品のデフォルト勘定科目(製品シートで定義されていない場合に使用)
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=経費報告書sの会計におけ�
 
 ## Export
 NotifiedExportDate=エクスポートされた行にエクスポート済みのフラグを付ける<span class="warning">（行を変更するには、トランザクション全体を削除して、会計に再転送する必要がある）</span>
-NotifiedValidationDate=エクスポートされたエントリの検証とロック<span class="warning">（「閉鎖」機能と同じ効果、行の変更と削除は完全に不可能 ）</span>
+NotifiedValidationDate=エクスポートされたエントリ<span class="warning">を検証してロックする（「%s」機能と同じ効果、行の変更と削除は絶対に不可）</span>
 DateValidationAndLock=日付の検証とロック
 ConfirmExportFile=会計エクスポートファイルの生成を確定するか？
 ExportDraftJournal=下書き仕訳帳のエクスポート

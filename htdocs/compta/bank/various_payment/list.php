@@ -419,7 +419,7 @@ if ($resql) {
 	// Payment type
 	if ($arrayfields['type']['checked']) {
 		print '<td class="liste_titre center">';
-		$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 

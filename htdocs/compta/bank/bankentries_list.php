@@ -1085,7 +1085,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		$form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero

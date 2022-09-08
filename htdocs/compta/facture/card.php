@@ -3670,7 +3670,7 @@ if ($action == 'create') {
 
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 
@@ -3702,7 +3702,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
 			}
 		}
-		$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 		print '</td></tr>';
 
 		print '<script type="text/javascript">
@@ -4728,7 +4728,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-				$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+				print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {

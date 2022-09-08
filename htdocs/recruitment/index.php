@@ -35,17 +35,22 @@ $langs->loadLangs(array("recruitment", "boxes"));
 
 $action = GETPOST('action', 'aZ09');
 
+$max = 5;
+$now = dol_now();
 
-// Security check
-//if (! $user->rights->recruitment->myobject->read) accessforbidden();
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = 5;
-$now = dol_now();
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+// if (! $user->hasRight('mymodule', 'myobject', 'read')) {
+// 	accessforbidden();
+// }
+restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentjobposition', 'recruitmentjobposition', '', 'rowid');
 
 
 /*

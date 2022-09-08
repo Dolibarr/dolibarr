@@ -18,14 +18,11 @@
 /**
  * \file    htdocs/datapolicy/admin/setup.php
  * \ingroup datapolicy
- * \brief   datapolicy setup page.
+ * \brief   Page to show the result of updating it Data policiy preferences after an email campaign using sendMailDataPolicyContact()
  */
 
 if (!defined('NOLOGIN')) {
 	define("NOLOGIN", 1); // This means this output page does not require to be logged.
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
 }
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -38,89 +35,103 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 $idc = GETPOST('c', 'int');
 $ids = GETPOST('s', 'int');
 $ida = GETPOST('a', 'int');
-$action = GETPOST('action', 'aZ09');
-$lang = GETPOST('l', 'alpha');
-$code = GETPOST('key', 'alpha');
+$action = GETPOST('action', 'aZ09');	// 1 or 2
+$l = GETPOST('l', 'alpha');
+$securitykey = GETPOST('key', 'alpha');
 
-$acc = "DATAPOLICIESACCEPT_".$lang;
-$ref = "DATAPOLICIESREFUSE_".$lang;
-$langs->load('datapolicy@datapolicy', 0, 0, $lang);
+$acc = "DATAPOLICIESACCEPT_".$l;
+$ref = "DATAPOLICIESREFUSE_".$l;
+$langs->load('datapolicy', 0, 0, $l);
+
+
+/*
+ * Actions
+ */
 
 if (empty($action) || (empty($idc) && empty($ids) && empty($ida))) {
+	print 'Missing paramater s, c or a';
 	return 0;
 } elseif (!empty($idc)) {
 	$contact = new Contact($db);
 	$contact->fetch($idc);
-	$check = md5($contact->email);
-	if ($check != $code) {
-		$return = $langs->trans('ErrorEmailDATAPOLICIES');
+	$check = dol_hash($contact->email, 'md5');
+	if ($check != $securitykey) {
+		$return = $langs->trans('Bad value for key.');
 	} elseif ($action == 1) {
 		$contact->array_options['options_datapolicy_consentement'] = 1;
 		$contact->array_options['options_datapolicy_opposition_traitement'] = 0;
 		$contact->array_options['options_datapolicy_opposition_prospection'] = 0;
-		$contact->array_options['options_datapolicy_date'] = date('Y-m-d', time());
+		$contact->array_options['options_datapolicy_date'] = dol_now();
 
-		$return = $conf->global->$acc;
+		$return = getDolGlobalString($acc);
 	} elseif ($action == 2) {
 		$contact->no_email = 1;
 		$contact->array_options['options_datapolicy_consentement'] = 0;
 		$contact->array_options['options_datapolicy_opposition_traitement'] = 1;
 		$contact->array_options['options_datapolicy_opposition_prospection'] = 1;
-		$contact->array_options['options_datapolicy_date'] = date('Y-m-d', time());
+		$contact->array_options['options_datapolicy_date'] = dol_now();
 
-		$return = $conf->global->$ref;
+		$return = getDolGlobalString($ref);
 	}
 	$contact->update($idc);
 } elseif (!empty($ids)) {
 	$societe = new Societe($db);
 	$societe->fetch($ids);
-	$check = md5($societe->email);
-	if ($check != $code) {
-		$return = $langs->trans('ErrorEmailDATAPOLICIES');
+	$check = dol_hash($societe->email, 'md5');
+	if ($check != $securitykey) {
+		$return = $langs->trans('Bad value for key.');
 	} elseif ($action == 1) {
 		$societe->array_options['options_datapolicy_consentement'] = 1;
 		$societe->array_options['options_datapolicy_opposition_traitement'] = 0;
 		$societe->array_options['options_datapolicy_opposition_prospection'] = 0;
-		$societe->array_options['options_datapolicy_date'] = date('Y-m-d', time());
-		$return = $conf->global->$acc;
+		$societe->array_options['options_datapolicy_date'] = dol_now();
+
+		$return = getDolGlobalString($acc);
 	} elseif ($action == 2) {
 		$societe->array_options['options_datapolicy_consentement'] = 0;
 		$societe->array_options['options_datapolicy_opposition_traitement'] = 1;
 		$societe->array_options['options_datapolicy_opposition_prospection'] = 1;
-		$societe->array_options['options_datapolicy_date'] = date('Y-m-d', time());
+		$societe->array_options['options_datapolicy_date'] = dol_now();
 
-		$return = $conf->global->$ref;
+		$return = getDolGlobalString($ref);
 	}
 	$societe->update($ids);
 } elseif (!empty($ida)) {
 	$adherent = new Adherent($db);
 	$adherent->fetch($ida);
-	$check = md5($adherent->email);
-	if ($check != $code) {
-		$return = $langs->trans('ErrorEmailDATAPOLICIES');
+	$check = dol_hash($adherent->email, 'md5');
+	if ($check != $securitykey) {
+		$return = $langs->trans('Bad value for key.');
 	} elseif ($action == 1) {
 		$adherent->array_options['options_datapolicy_consentement'] = 1;
 		$adherent->array_options['options_datapolicy_opposition_traitement'] = 0;
 		$adherent->array_options['options_datapolicy_opposition_prospection'] = 0;
-		//$adherent->array_options['options_datapolicy_date'] = date('Y-m-d', time());
-		$return = $conf->global->$acc;
+		//$adherent->array_options['options_datapolicy_date'] = dol_now();
+
+		$return = getDolGlobalString($acc);
 	} elseif ($action == 2) {
 		$adherent->array_options['options_datapolicy_consentement'] = 0;
 		$adherent->array_options['options_datapolicy_opposition_traitement'] = 1;
 		$adherent->array_options['options_datapolicy_opposition_prospection'] = 1;
-		//$adherent->array_options['options_datapolicy_date'] = date('Y-m-d', time());
+		//$adherent->array_options['options_datapolicy_date'] = dol_now();
 
-		$return = $conf->global->$ref;
+		$return = getDolGlobalString($ref);
 	}
 	$newuser = new User($db);
 	$adherent->update($newuser);
 }
 
-header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+/*
+ * View
+ */
+
+top_httphead();
 
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 print "\n";

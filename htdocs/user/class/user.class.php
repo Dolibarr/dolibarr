@@ -708,10 +708,10 @@ class User extends CommonObject
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
-			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'member' => 'adherent',
 			'mo' => 'mrp',
 			'order' => 'commande',
-			//'product' => 'produit',	// We must check $user->rights->produit...
+			'produit' => 'product',
 			'project' => 'projet',
 			'propale' => 'propal',
 			'shipping' => 'expedition',
@@ -748,8 +748,11 @@ class User extends CommonObject
 			$permlevel1 = $tmp[0];
 		}
 
+		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
+		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($module);
-		//var_dump($this->rights->$module);
+		//var_dump($this->rights->$rightsPath);
+		//var_dump($conf->modules);
 		if (!in_array($module, $conf->modules)) {
 			return 0;
 		}
@@ -764,7 +767,7 @@ class User extends CommonObject
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
 		}
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
+
 		//var_dump($this->rights);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;

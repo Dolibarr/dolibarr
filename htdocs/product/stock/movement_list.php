@@ -137,7 +137,7 @@ $arrayfields = array(
 	'origin'=>array('label'=>"Origin", 'checked'=>1, 'position'=>155),
 	'm.fk_projet'=>array('label'=>'Project', 'checked'=>0, 'position'=>180),
 	'm.value'=>array('label'=>"Qty", 'checked'=>1, 'position'=>200),
-	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>empty($conf->global->STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE))
+	'm.price'=>array('label'=>"UnitPurchaseValue", 'checked'=>0, 'position'=>210, 'enabled'=>(!getDolGlobalInt('STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE')))
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );

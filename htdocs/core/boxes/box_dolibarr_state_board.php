@@ -122,8 +122,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 								 )
 								 && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
 				'contacts' => isModEnabled('societe') && $user->hasRight('societe', 'contact', 'lire'),
-				'products' => isModEnabled('product') && $user->hasRight('produit', 'lire'),
-				'services' => isModEnabled('service') && $user->hasRight('service', 'lire'),
+				'products' => isModEnabled('product') && $user->hasRight('product', 'read'),
+				'services' => isModEnabled('service') && $user->hasRight('service', 'read'),
 				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'read'),
 				'orders' => isModEnabled('commande') && $user->hasRight('commande', 'lire'),
 				'invoices' => isModEnabled('facture') && $user->hasRight('facture', 'lire'),
