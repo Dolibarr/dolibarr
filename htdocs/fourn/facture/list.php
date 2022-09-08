@@ -1045,7 +1045,7 @@ if ($resql) {
 	// Condition of payment
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre left">';
-		$form->select_conditions_paiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
+		print $form->getSelectConditionsPaiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
 		print '</td>';
 	}
 	// Payment mode
