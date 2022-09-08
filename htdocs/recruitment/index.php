@@ -49,7 +49,7 @@ if (isset($user->socid) && $user->socid > 0) {
 // if (! $user->hasRights('mymodule', 'myobject', 'read')) {
 // 	accessforbidden();
 // }
-restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid');
+restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentjobposition', 'recruitmentjobposition', '', 'rowid');
 
 
 /*
