@@ -3009,8 +3009,8 @@ class Product extends CommonObject
 					$sql .= ' WHERE c.fk_statut IN ('.$this->db->sanitize($filtrestatut).') AND f.fk_statut > '.Facture::STATUS_DRAFT.' AND fd.fk_product = '.((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
-					if($resql) {
-						if($this->db->num_rows($resql) > 0) {
+					if ($resql) {
+						if ($this->db->num_rows($resql) > 0) {
 							$obj = $this->db->fetch_object($resql);
 							$adeduire += $obj->count;
 						}
