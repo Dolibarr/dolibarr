@@ -79,6 +79,8 @@ if ($action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	top_httphead('application/json');
+
 	$outjson = array();
 
 	$object = new Product($db);

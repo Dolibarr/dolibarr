@@ -257,10 +257,15 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("RecruitmentCandidature");
-$help_url = '';
-llxHeader('', $title, $help_url);
+if ($action == 'create') {
+	$title    = $langs->trans('NewCandidature');
+	$help_url = '';
+} else {
+	$title = $object->ref." - ".$langs->trans('Card');
+	$help_url = '';
+}
 
+llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
@@ -428,7 +433,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (!empty($conf->project->enabled))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
@@ -448,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();
@@ -650,6 +655,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$diroutput = $conf->recruitment->dir_output;
 	$trackid = 'recruitmentcandidature'.$object->id;
 	$inreplyto = $object->email_msgid;
+
+	$job = new RecruitmentJobPosition($db);
+	$job->fetch($object->fk_recruitmentjobposition);
+
+	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	$recruiter = new User($db);
+	$recruiter->fetch($job->fk_user_recruiter);
+
+	$recruitername = $recruiter->getFullName('');
+	$recruitermail = (!empty($job->email_recruiter) ? $job->email_recruiter : $recruiter->email);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

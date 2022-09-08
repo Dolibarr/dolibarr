@@ -106,7 +106,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?l='.$l.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
-if ($conf->global->MAIN_MULTILANGS) {
+if (!empty($conf->global->MAIN_MULTILANGS)) {
 	print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', null, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 	print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 	print '</tr>';

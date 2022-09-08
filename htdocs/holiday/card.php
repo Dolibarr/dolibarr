@@ -254,6 +254,12 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
 			$result = 0;
 
 			if (!$error) {
@@ -284,7 +290,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// If this is an update and we are an approver, we can update to change the approver
+	// If this is an update and we are an approver, we can update to change the expected approver with another one (including himself)
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
@@ -558,9 +564,10 @@ if (empty($reshook)) {
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
 			$object->oldcopy = dol_clone($object);
 
-			$object->date_valid = dol_now();
-			$object->fk_user_valid = $user->id;
+			$object->date_approval = dol_now();
+			$object->fk_user_approve = $user->id;
 			$object->statut = Holiday::STATUS_APPROVED;
+			$object->status = Holiday::STATUS_APPROVED;
 
 			$db->begin();
 
@@ -663,6 +670,7 @@ if (empty($reshook)) {
 				$object->date_refuse = dol_print_date('dayhour', dol_now());
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
+				$object->status = Holiday::STATUS_REFUSED;
 				$object->detail_refuse = GETPOST('detail_refuse', 'alphanohtml');
 
 				$db->begin();
@@ -751,6 +759,7 @@ if (empty($reshook)) {
 
 		$oldstatus = $object->statut;
 		$object->statut = Holiday::STATUS_DRAFT;
+		$object->status = Holiday::STATUS_DRAFT;
 
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -783,6 +792,7 @@ if (empty($reshook)) {
 			$object->date_cancel = dol_now();
 			$object->fk_user_cancel = $user->id;
 			$object->statut = Holiday::STATUS_CANCELED;
+			$object->status = Holiday::STATUS_CANCELED;
 
 			$result = $object->update($user);
 
@@ -1497,8 +1507,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 					if ($object->statut == Holiday::STATUS_APPROVED) { // If validated and approved
-						if ($user->id == $object->fk_validator || $cancreate || $cancreateall) {
-							if (($object->date_debut > dol_now()) || !empty($user->admin)) {
+						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $cancreate || $cancreateall) {
+							if (($object->date_debut > dol_now()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';

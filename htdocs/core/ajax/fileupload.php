@@ -50,6 +50,13 @@ $element = GETPOST('element', 'alpha');
 
 $upload_handler = new FileUpload(null, $fk_element, $element);
 
+
+/*
+ * View
+ */
+
+top_httphead();
+
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Content-Disposition: inline; filename="files.json"');

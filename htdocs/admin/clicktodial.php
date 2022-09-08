@@ -107,7 +107,7 @@ print '* https://myphoneserver/phoneurl?login=__LOGIN__&password=__PASS__&caller
 print '* sip:__PHONETO__@my.sip.server';
 print '</span>';
 
-//if (! empty($user->clicktodial_url))
+//if (!empty($user->clicktodial_url))
 //{
 	print '<br>';
 	print info_admin($langs->trans("ValueOverwrittenByUserSetup"));

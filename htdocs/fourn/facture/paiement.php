@@ -224,7 +224,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			// If bank module is on, account is required to enter a payment
 			if (GETPOST('accountid') <= 0) {
 				setEventMessages($langs->transnoentities('ErrorFieldRequired', $langs->transnoentities('AccountToCredit')), null, 'errors');
@@ -504,7 +504,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
 			$form->select_types_paiements(!GETPOST('paiementid') ? $obj->fk_mode_reglement : GETPOST('paiementid'), 'paiementid');
 			print '</td>';
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 				print $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
@@ -575,7 +575,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<td>'.$langs->trans('RefSupplier').'</td>';
 						print '<td class="center">'.$langs->trans('Date').'</td>';
 						print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							print '<td>'.$langs->trans('Currency').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
@@ -612,7 +612,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							// Multicurrency Price
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								$multicurrency_payment = $invoice->getSommePaiement(1);
 								$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 								$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
@@ -653,7 +653,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 
 							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								// Currency
 								print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
@@ -767,7 +767,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Print total
 							print '<tr class="liste_total">';
 							print '<td colspan="4" class="left">'.$langs->trans('TotalTTC').':</td>';
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';

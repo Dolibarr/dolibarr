@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       recruitment/recruitmentindex.php
+ *	\file       recruitment/index.php
  *	\ingroup    recruitment
  *	\brief      Home page of recruitment top menu
  */
@@ -242,7 +242,7 @@ print '<br>';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
+if (isModEnabled('recruitment') && $user->rights->recruitment->read)
 {
 	$langs->load("orders");
 
@@ -327,7 +327,7 @@ $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
@@ -398,7 +398,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 }
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";

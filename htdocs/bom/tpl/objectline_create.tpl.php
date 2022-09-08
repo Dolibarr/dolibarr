@@ -104,14 +104,13 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	if ($filtertype == 1) {
 		print $langs->trans("Service");
 	} elseif (!empty($conf->global->BOM_SUB_BOM)) {
 		print $langs->trans("Product");
 	}
 	echo '<span class="prod_entry_mode_predef">';
-
 	$statustoshow = -1;
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 		// hide products in closed warehouse, but show products for internal transfer
@@ -144,6 +143,7 @@ if ($filtertype != 1) {
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"' . (GETPOST("qty_frozen", 'alpha') ? ' checked="checked"' : '') . '>';
 	print '</td>';
+
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"' . (GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '') . '">';
@@ -197,6 +197,8 @@ jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod").change(function()
 	{
+		console.log("#idprod change triggered");
+
 		  /* To set focus */
 		  if (jQuery('#idprod').val() > 0)
 			{
@@ -209,7 +211,6 @@ jQuery(document).ready(function() {
 				   if (editor) { editor.focus(); }
 			}
 			}
-
 	});
 
 	//change unit selected if we change service selected

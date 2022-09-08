@@ -465,7 +465,7 @@ if (empty($reshook)) {
 		// Thirdparty
 		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 		// Project
-		if (! empty($conf->project->enabled))
+		if (isModEnabled('project'))
 		{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -485,7 +485,7 @@ if (empty($reshook)) {
 				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();
@@ -629,6 +629,8 @@ if (empty($reshook)) {
 		print '</div>';
 
 		print "</form>\n";
+
+		mrpCollapseBomManagement();
 	}
 
 	$res = $object->fetchLines();

@@ -61,7 +61,7 @@ class box_propales extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->hasRight('propale', 'lire'));
+		$this->hidden = !($user->hasRight('propal', 'read'));
 	}
 
 	/**

@@ -54,6 +54,8 @@ $langs->loadLangs(array("admin"));
  * View
  */
 
+top_httphead();
+
 print '<div id="pop-info"><table width="100%" height="80%" class="border"><thead><th width="50%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
 print '<tbody>';
 

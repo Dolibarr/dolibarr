@@ -133,7 +133,7 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 			// Load origin object according to metadata
-			if (! empty($tmparray['CUS']))
+			if (!empty($tmparray['CUS']))
 			{
 				$societestatic->fetch($tmparray['CUS']);
 			}
@@ -141,7 +141,7 @@ if (!$rowid) {
 			{
 				$societestatic->id = 0;
 			}
-			if (! empty($tmparray['MEM']))
+			if (!empty($tmparray['MEM']))
 			{
 				$memberstatic->fetch($tmparray['MEM']);
 			}

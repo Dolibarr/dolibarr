@@ -296,7 +296,7 @@ class ProductFournisseur extends Product
 		// Multicurrency
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (empty($multicurrency_tx)) {
 				$multicurrency_tx = 1;
 			}
@@ -808,7 +808,7 @@ class ProductFournisseur extends Product
 		$sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-		$sql .= " AND pfp.entity = ".$conf->entity; // only current entity
+		$sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_product = ".((int) $prodid);
 		$sql .= " AND pfp.fk_soc = s.rowid";
 		$sql .= " AND s.status = 1"; // only enabled society
@@ -1173,7 +1173,7 @@ class ProductFournisseur extends Product
 		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}

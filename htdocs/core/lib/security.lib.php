@@ -92,6 +92,21 @@ function dol_decode($chain, $key = '1')
 }
 
 /**
+ * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ *
+ * @param 	int			$length		Length of random string
+ * @return	string					Random string
+ */
+function dolGetRandomBytes($length)
+{
+	if (function_exists('random_bytes')) {	// Available with PHP 7 only.
+		return bin2hex(random_bytes((int) floor($length / 2)));	// the bin2hex will double the number of bytes so we take length / 2
+	}
+
+	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
+}
+
+/**
  *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $dolibarr_main_instance_unique_id, then decoded value will differ.
  *
@@ -121,11 +136,20 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 
 	$newchain = $chain;
 
-	if (!function_exists('openssl_encrypt')) {
-		return $chain;
+	if (function_exists('openssl_encrypt')) {
+		$ivlen = 16;
+		if (function_exists('openssl_cipher_iv_length')) {
+			$ivlen = openssl_cipher_iv_length($ciphering);
+		}
+		if ($ivlen === false || $ivlen < 1 || $ivlen > 32) {
+			$ivlen = 16;
+		}
+		$ivseed = dolGetRandomBytes($ivlen);
+
+		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
-		$newchain = openssl_encrypt($chain, $ciphering, $key);
-		return 'dolcrypt:'.$ciphering.':'.$newchain;
+		return $chain;
 	}
 }
 
@@ -154,7 +178,12 @@ function dolDecrypt($chain, $key = '')
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
-			$newchain = openssl_decrypt($reg[2], $ciphering, $key);
+			$tmpexplode = explode(':', $reg[2]);
+			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+			} else {
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+			}
 		} else {
 			$newchain = 'Error function openssl_decrypt() not available';
 		}
@@ -763,11 +792,11 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
 		}
 
-		// Check permission for object on entity only
-		if (in_array($feature, $check)) {
+		// Check permission for objectid on entity only
+		if (in_array($feature, $check) && $objectid > 0) {		// For $objectid = 0, no check
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			if (($feature == 'user' || $feature == 'usergroup') && !empty($conf->multicompany->enabled)) {	// Special for multicompany
+			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
 				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
@@ -796,13 +825,13 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checksoc)) {	// We check feature = checksoc
+		if (in_array($feature, $checksoc) && $objectid > 0) {	// We check feature = checksoc. For $objectid = 0, no check
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -811,7 +840,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " AND sc.fk_user = ".((int) $user->id);
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
-			} elseif (!empty($conf->multicompany->enabled)) {
+			} elseif (isModEnabled('multicompany')) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				$sql = "SELECT COUNT(s.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -821,14 +850,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checkother)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
+		if (in_array($feature, $checkother) && $objectid > 0) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -836,7 +865,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-			} elseif (!empty($conf->multicompany->enabled)) {
+			} elseif (isModEnabled('multicompany')) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -846,8 +875,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checkproject)) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+		if (in_array($feature, $checkproject) && $objectid > 0) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -867,8 +896,8 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checktask)) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+		if (in_array($feature, $checktask) && $objectid > 0) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;
@@ -890,7 +919,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 			$checkonentitydone = 1;
 		}
-		if (!$checkonentitydone && !in_array($feature, $nocheck)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
+		if (!$checkonentitydone && !in_array($feature, $nocheck) && $objectid > 0) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
@@ -900,7 +929,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
@@ -922,7 +951,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND (sc.fk_user = ".((int) $user->id)." OR sc.fk_user IS NULL)";
 				}
-			} elseif (!empty($conf->multicompany->enabled)) {
+			} elseif (isModEnabled('multicompany')) {
 				// If multicompany and internal users with all permissions, check user is in correct entity
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -933,7 +962,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		//print $sql;
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda') {
+		if ($feature === 'agenda' && $objectid > 0) {
 			// Also check owner or attendee for users without allactions->read
 			if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -947,7 +976,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 		// For some object, we also have to check it is in the user hierarchy
 		// Param $object must be the full object and not a simple id to have this test possible.
-		if (in_array($feature, $checkhierarchy) && is_object($object)) {
+		if (in_array($feature, $checkhierarchy) && is_object($object) && $objectid > 0) {
 			$childids = $user->getAllChildIds(1);
 			$useridtocheck = 0;
 			if ($feature == 'holiday') {

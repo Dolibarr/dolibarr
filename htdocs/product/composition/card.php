@@ -179,7 +179,7 @@ if ($action == 'search') {
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (!empty($conf->categorie->enabled) && !empty($parent) && $parent != -1) {
+	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -231,7 +231,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table class="border centpercent tableforfield">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -293,7 +293,7 @@ if ($id > 0 || !empty($ref)) {
 		$prods_arbo = $object->get_arbo_each_prod();
 
 		$tmpid = $id;
-		if (! empty($conf->use_javascript_ajax)) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$nboflines = $prods_arbo;
 			$table_element_line='product_association';
 
@@ -590,7 +590,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				$rowspan++;
 			}
 
@@ -603,7 +603,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';

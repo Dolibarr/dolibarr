@@ -127,7 +127,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($export_type == 'externalmodule' && ! empty($what)) {
+if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;
@@ -205,7 +205,12 @@ if ($compression == 'zip') {
 	print $errormsg;
 }
 
+
+// Output export
+
 if ($export_type != 'externalmodule' || empty($what)) {
+	top_httphead();
+
 	if ($errormsg) {
 		setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 	} else {
@@ -218,12 +223,15 @@ if ($export_type != 'externalmodule' || empty($what)) {
 	$returnto = 'dolibarr_export.php';
 
 	header("Location: ".$returnto);
+
 	exit();
 } else {
+	top_httphead('application/zip');
+
 	$zipname = $outputdir."/".$file;
 
 	// Then download the zipped file.
-	header('Content-Type: application/zip');
+
 	header('Content-disposition: attachment; filename='.basename($zipname));
 	header('Content-Length: '.filesize($zipname));
 	readfile($zipname);

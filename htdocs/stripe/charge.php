@@ -175,7 +175,7 @@ if (!$rowid) {
 		}
 
 		// Why this ?
-		/*if (! empty($charge->payment_intent)) {
+		/*if (!empty($charge->payment_intent)) {
 		 if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 		 $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
 		 } else {

@@ -178,6 +178,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -826,6 +827,10 @@ if ($rowid > 0) {
 		print '<input name="amount" size="5" value="';
 		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

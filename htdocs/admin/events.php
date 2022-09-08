@@ -111,7 +111,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList("TrackableSecurityEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print "</tr>\n";
 // Loop on each event type
