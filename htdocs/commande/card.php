@@ -35,6 +35,7 @@
  *   \brief     Page to show customer order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -1813,13 +1814,13 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -2105,109 +2106,112 @@ if ($action == 'create' && $usercancreate) {
 			}
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
+			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
+				// This is a hidden option:
+				// Suggestion to create invoice during order validation is not enabled by default.
+				// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
+				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
+				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
+					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-			if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
-				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$object->fetchObjectLinked();
 
-				$object->fetchObjectLinked();
+					$eligibleForDepositGeneration = true;
 
-				$eligibleForDepositGeneration = true;
-
-				if (array_key_exists('facture', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['facture'] as $invoice) {
-						if ($invoice->type == Facture::TYPE_DEPOSIT) {
-							$eligibleForDepositGeneration = false;
-							break;
+					if (array_key_exists('facture', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['facture'] as $invoice) {
+							if ($invoice->type == Facture::TYPE_DEPOSIT) {
+								$eligibleForDepositGeneration = false;
+								break;
+							}
 						}
 					}
-				}
 
-				if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['propal'] as $proposal) {
-						$proposal->fetchObjectLinked();
+					if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['propal'] as $proposal) {
+							$proposal->fetchObjectLinked();
 
-						if (array_key_exists('facture', $proposal->linkedObjects)) {
-							foreach ($proposal->linkedObjects['facture'] as $invoice) {
-								if ($invoice->type == Facture::TYPE_DEPOSIT) {
-									$eligibleForDepositGeneration = false;
-									break 2;
+							if (array_key_exists('facture', $proposal->linkedObjects)) {
+								foreach ($proposal->linkedObjects['facture'] as $invoice) {
+									if ($invoice->type == Facture::TYPE_DEPOSIT) {
+										$eligibleForDepositGeneration = false;
+										break 2;
+									}
 								}
 							}
 						}
 					}
-				}
 
+					if ($eligibleForDepositGeneration) {
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => '',
+							'name' => 'generate_deposit',
+							'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+						);
 
-				if ($eligibleForDepositGeneration) {
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => '',
-						'name' => 'generate_deposit',
-						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
-					);
-
-					$formquestion[] = array(
-						'type' => 'date',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'datef',
-						'label' => $langs->trans('DateInvoice'),
-						'value' => dol_now(),
-						'datenow' => true
-					);
-
-					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 						$formquestion[] = array(
 							'type' => 'date',
 							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-							'name' => 'date_pointoftax',
-							'label' => $langs->trans('DatePointOfTax'),
+							'name' => 'datef',
+							'label' => $langs->trans('DateInvoice'),
 							'value' => dol_now(),
 							'datenow' => true
 						);
-					}
 
-					ob_start();
-					$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
-					$paymentTermsSelect = ob_get_clean();
+						if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+							$formquestion[] = array(
+								'type' => 'date',
+								'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+								'name' => 'date_pointoftax',
+								'label' => $langs->trans('DatePointOfTax'),
+								'value' => dol_now(),
+								'datenow' => true
+							);
+						}
 
-					$formquestion[] = array(
-						'type' => 'other',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'cond_reglement_id',
-						'label' => $langs->trans('PaymentTerm'),
-						'value' => $paymentTermsSelect
-					);
 
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => 'showonlyifgeneratedeposit',
-						'name' => 'validate_generated_deposit',
-						'label' => $langs->trans('ValidateGeneratedDeposit')
-					);
+						$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 
-					$formquestion[] = array(
-						'type' => 'onecolumn',
-						'value' => '
-							<script>
-								$(document).ready(function() {
-									$("[name=generate_deposit]").change(function () {
-										let $self = $(this);
-										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+						$formquestion[] = array(
+							'type' => 'other',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'cond_reglement_id',
+							'label' => $langs->trans('PaymentTerm'),
+							'value' => $paymentTermsSelect
+						);
 
-										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
-											$target.show();
-										} else {
-											$target.hide();
-										}
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => 'showonlyifgeneratedeposit',
+							'name' => 'validate_generated_deposit',
+							'label' => $langs->trans('ValidateGeneratedDeposit')
+						);
 
-										return true;
+						$formquestion[] = array(
+							'type' => 'onecolumn',
+							'value' => '
+								<script>
+									$(document).ready(function() {
+										$("[name=generate_deposit]").change(function () {
+											let $self = $(this);
+											let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+											if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+												$target.show();
+											} else {
+												$target.hide();
+											}
+
+											return true;
+										});
 									});
-								});
-							</script>
-						'
-					);
+								</script>
+							'
+						);
+					}
 				}
 			}
 

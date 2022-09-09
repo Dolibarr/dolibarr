@@ -194,11 +194,13 @@ delete from llx_delivery    where rowid not in (select fk_target from llx_elemen
 
 -- Fix delete element_element orphelins (right side)
 delete from llx_element_element where targettype='shipping' and fk_target not in (select rowid from llx_expedition);
+delete from llx_element_element where targettype='delivery' and fk_target not in (select rowid from llx_delivery);
 delete from llx_element_element where targettype='propal' and fk_target not in (select rowid from llx_propal);
 delete from llx_element_element where targettype='facture' and fk_target not in (select rowid from llx_facture);
 delete from llx_element_element where targettype='commande' and fk_target not in (select rowid from llx_commande);
 -- Fix delete element_element orphelins (left side)
 delete from llx_element_element where sourcetype='shipping' and fk_source not in (select rowid from llx_expedition);
+delete from llx_element_element where sourcetype='delivery' and fk_source not in (select rowid from llx_delivery);
 delete from llx_element_element where sourcetype='propal' and fk_source not in (select rowid from llx_propal);
 delete from llx_element_element where sourcetype='facture' and fk_source not in (select rowid from llx_facture);
 delete from llx_element_element where sourcetype='commande' and fk_source not in (select rowid from llx_commande);

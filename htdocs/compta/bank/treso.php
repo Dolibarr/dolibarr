@@ -25,6 +25,7 @@
  *	\brief      Page to estimate future balance
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -293,7 +294,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";

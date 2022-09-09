@@ -21,6 +21,7 @@
  *		\brief      Tabe to enter counting
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';

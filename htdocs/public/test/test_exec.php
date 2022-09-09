@@ -41,6 +41,7 @@ if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security

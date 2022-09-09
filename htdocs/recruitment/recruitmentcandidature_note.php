@@ -24,17 +24,17 @@
 
 // Load Dolibarr environment
 require_once '../main.inc.php';
-dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "companies"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
@@ -138,7 +138,6 @@ if ($id > 0 || !empty($ref)) {
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
