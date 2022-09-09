@@ -63,6 +63,8 @@ if (!$sortfield) {
 
 $year = GETPOST("year");
 $month = GETPOST("month");
+$optioncss = GETPOST('optioncss', 'alpha');
+$view = GETPOST("view", 'alpha');
 
 $form = new Form($db);
 $formother = new FormOther($db);
