@@ -22,6 +22,7 @@
  * \brief   Datapolicy setup page to define duration of data keeping.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';

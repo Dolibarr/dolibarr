@@ -30,7 +30,6 @@
  *    \brief      Page for event card
  */
 
-
 // Load Dolibarr environment
 require '../../main.inc.php';
 
