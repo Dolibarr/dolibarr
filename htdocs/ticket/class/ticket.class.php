@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
-	 * @deprecated
+	 * @deprecated use status
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -217,7 +218,9 @@ class Ticket extends CommonObject
 	 */
 	public $oldcopy;
 
-
+	/**
+	 * @var array array of TicketsLine
+	 */
 	public $lines;
 
 
@@ -504,7 +507,7 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
 				// add creator as contributor
 				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
 					$error++;
@@ -3013,7 +3016,7 @@ class TicketsLine
 {
 	/**
 	 * @var int ID
-	 * @deprecated
+	 * @deprecated use id
 	 */
 	public $rowid;
 

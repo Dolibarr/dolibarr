@@ -51,7 +51,7 @@ if ($result > 0) {
 } elseif ($result < 0) {
 	dol_print_error('', $object->error, $object->errors);
 } elseif ($result == 0) {
-	accessforbidden($langs->trans('ErrorRecordNotFound'));
+	accessforbidden('ErrorRecordNotFound');
 }
 
 $hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));

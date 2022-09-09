@@ -59,7 +59,7 @@ $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) &&
 
 // Security check
 if (empty($conf->opensurvey->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Survey not enabled');
 }
 
 
@@ -74,7 +74,7 @@ $listofvoters = explode(',', $_SESSION["savevoter"]);
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$error = 0;
@@ -108,7 +108,7 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 // Add vote
 if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// boutonp for chrome, boutonp_x for firefox
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	//Si le nom est bien entré
@@ -214,7 +214,7 @@ if ($testmodifier) {
 	}
 
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$idtomodify = GETPOST("idtomodify".$modifier);
@@ -232,7 +232,7 @@ if ($testmodifier) {
 $idcomment = GETPOST('deletecomment', 'int');
 if ($idcomment) {
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$resql = $object->deleteComment($idcomment);
@@ -695,7 +695,7 @@ if ($object->allow_spy) {
 		print '<tr>'."\n";
 		print '<td class="somme"></td>'."\n";
 		for ($i = 0; $i < $nbcolonnes; $i++) {
-			//print 'xx'.(! empty($listofanswers[$i]['format'])).'-'.$sumfor[$i].'-'.$meilleurecolonne;
+			//print 'xx'.(!empty($listofanswers[$i]['format'])).'-'.$sumfor[$i].'-'.$meilleurecolonne;
 			if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst')) && isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
 				print '<td class="somme"><img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"></td>'."\n";
 			} else {

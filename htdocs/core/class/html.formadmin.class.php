@@ -343,6 +343,8 @@ class FormAdmin
 			print '</option>'."\n";
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 	}
 
 

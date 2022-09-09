@@ -52,6 +52,8 @@ restrictedArea($user, 'salaries');
  * View
  */
 
+top_httphead('application/json');
+
 $fk_user = GETPOST('fk_user', 'int');
 $return_arr = array();
 

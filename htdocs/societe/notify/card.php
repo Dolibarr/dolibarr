@@ -201,7 +201,7 @@ if ($result > 0) {
 	$tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
 	foreach($tmparray as $tmpkey => $tmpval)
 	{
-		if (! empty($tmpkey)) $nbofrecipientemails++;
+		if (!empty($tmpkey)) $nbofrecipientemails++;
 	}
 	print $nbofrecipientemails;
 	print '</td></tr>';*/

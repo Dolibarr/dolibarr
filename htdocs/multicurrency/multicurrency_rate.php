@@ -23,15 +23,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/multicurrency/multicurrency_rate.php
- *  \ingroup    multicurrency
- *  \brief      Page to list multicurrency rate
+ *    \file       htdocs/multicurrency/multicurrency_rate.php
+ *    \ingroup    multicurrency
+ *    \brief      Page to list multicurrency rate
  */
 
+// Dolibarr Environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
@@ -39,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('multicurrency'));
 
+// Get Parameters
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
 $show_files			= GETPOST('show_files', 'int');
@@ -102,7 +104,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
 // One permission to read rates (history) and one to add/edit rates.
-if (!$user->admin || empty($conf->multicurrency->enabled)) {
+if (!$user->admin || !isModEnabled("multicurrency")) {
 	accessforbidden();
 }
 
@@ -506,7 +508,7 @@ if ($resql) {
 			}
 
 			// code
-			if (! empty($arrayfields['m.code']['checked'])) {
+			if (!empty($arrayfields['m.code']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->code;
 				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
@@ -516,7 +518,7 @@ if ($resql) {
 			}
 
 			// rate
-			if (! empty($arrayfields['cr.rate']['checked'])) {
+			if (!empty($arrayfields['cr.rate']['checked'])) {
 				print '<td class="tdoverflowmax200">';
 				print $obj->rate;
 				print "</td>\n";

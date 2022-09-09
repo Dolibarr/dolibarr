@@ -52,7 +52,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
-
+$param = "";
+$num = 0;
+$totalnboflines = 0;
 $result = restrictedArea($user, 'banque');
 
 
@@ -95,12 +97,12 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeTransactionList");
-	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= (!empty($stripeacc) ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -113,6 +115,7 @@ if (!$rowid) {
 	print_liste_field_titre("Fee", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
+	$connect = "";
 
 	try {
 		if ($stripeacc) {
@@ -131,7 +134,7 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 			// Load origin object according to metadata
-			if (! empty($tmparray['CUS']))
+			if (!empty($tmparray['CUS']))
 			{
 				$societestatic->fetch($tmparray['CUS']);
 			}
@@ -139,14 +142,14 @@ if (!$rowid) {
 			{
 				$societestatic->id = 0;
 			}
-			if (! empty($tmparray['MEM']))
+			if (!empty($tmparray['MEM']))
 			{
 				$memberstatic->fetch($tmparray['MEM']);
 			}
 			else
 			{
 				$memberstatic->id = 0;
-			}*/
+			}
 
 			$societestatic->fetch($charge->metadata->idcustomer);
 			$societestatic->id = $charge->metadata->idcustomer;
@@ -155,7 +158,7 @@ if (!$rowid) {
 			$societestatic->admin = $obj->admin;
 			$societestatic->login = $obj->login;
 			$societestatic->email = $obj->email;
-			$societestatic->societe_id = $obj->fk_soc;
+			$societestatic->societe_id = $obj->fk_soc;*/
 
 			print '<tr class="oddeven">';
 

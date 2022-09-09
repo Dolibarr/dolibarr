@@ -1787,7 +1787,7 @@ if (empty($reshook)) {
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						if (!empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
 							$originforcontact = $object->origin;
 							$originidforcontact = $object->origin_id;
@@ -2268,6 +2268,7 @@ if (empty($reshook)) {
 				$desc = $product_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
+
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 
@@ -2275,6 +2276,8 @@ if (empty($reshook)) {
 					$price_base_type = 'TTC';
 				}
 			}
+
+			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
@@ -2321,7 +2324,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Add batchinfo if the detail_batch array is defined
-				if (!empty($conf->productbatch->enabled) && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
+				if (isModEnabled('productbatch') && !empty($lines[$i]->detail_batch) && is_array($lines[$i]->detail_batch) && !empty($conf->global->INVOICE_INCUDE_DETAILS_OF_LOTS_SERIALS)) {
 					$langs->load('productbatch');
 					foreach ($lines[$i]->detail_batch as $batchline) {
 						$desc .= ' '.$langs->trans('Batch').' '.$batchline->batch.' '.$langs->trans('printQty', $batchline->qty).' ';
@@ -2559,7 +2562,7 @@ if (empty($reshook)) {
 
 			$price_base_type = 'HT';
 			$pu = $pu_ht;
-			if (empty($pu) && ! empty($pu_ttc)) {
+			if (empty($pu) && !empty($pu_ttc)) {
 				$pu = $pu_ttc;
 				$price_base_type = 'TTC';
 			}
@@ -3367,13 +3370,13 @@ if ($action == 'create') {
 				);
 				$typedeposit = GETPOST('typedeposit', 'aZ09');
 				$valuedeposit = GETPOST('valuedeposit', 'int');
-				if (empty($typedeposit) && ! empty($objectsrc->deposit_percent)) {
+				if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {
 					$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
-					if (! empty($origin_payment_conditions_deposit_percent)) {
+					if (!empty($origin_payment_conditions_deposit_percent)) {
 						$typedeposit = 'variable';
 					}
 				}
-				if (empty($valuedeposit) && $typedeposit == 'variable' && ! empty($objectsrc->deposit_percent)) {
+				if (empty($valuedeposit) && $typedeposit == 'variable' && !empty($objectsrc->deposit_percent)) {
 					$valuedeposit = $objectsrc->deposit_percent;
 				}
 				print $form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1);
@@ -3667,7 +3670,7 @@ if ($action == 'create') {
 
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 
@@ -3699,7 +3702,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
 			}
 		}
-		$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 		print '</td></tr>';
 
 		print '<script type="text/javascript">
@@ -4725,7 +4728,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-				$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+				print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
@@ -5511,7 +5514,7 @@ if ($action == 'create') {
 
 			// Create contract
 			if (!empty($conf->global->CONTRACT_CREATE_FROM_INVOICE)) {
-				if (!empty($conf->contrat->enabled) && $object->statut == Facture::STATUS_VALIDATED) {
+				if (isModEnabled('contrat') && $object->statut == Facture::STATUS_VALIDATED) {
 					$langs->load("contracts");
 
 					if ($usercancreatecontract) {

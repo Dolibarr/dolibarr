@@ -68,7 +68,7 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 	print $langs->trans('VAT');
 }
 
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
 	if (empty($disableedit)) {
@@ -88,7 +88,7 @@ print '</td>';
 print '<td class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</td>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
 }
 
@@ -152,7 +152,7 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
 print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
 }
 

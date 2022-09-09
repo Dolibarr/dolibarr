@@ -103,12 +103,12 @@ $webservices = array(
 		'thirdparty'		=> 'isModEnabled("societe")',
 		'contact'			=> 'isModEnabled("societe")',
 		'productorservice'	=> '(isModEnabled("product") || isModEnabled("service"))',
-		'order'				=> '!empty($conf->commande->enabled)',
+		'order'				=> 'isModEnabled("commande")',
 		'invoice'			=> 'isModEnabled("facture")',
 		'supplier_invoice'	=> 'isModEnabled("fournisseur")',
-		'actioncomm'		=> '!empty($conf->agenda->enabled)',
-		'category'			=> '!empty($conf->categorie->enabled)',
-		'project'			=> '!empty($conf->project->enabled)',
+		'actioncomm'		=> 'isModEnabled("agenda")',
+		'category'			=> 'isModEnabled("categorie")',
+		'project'			=> 'isModEnabled("project")',
 		'other'				=> ''
 );
 

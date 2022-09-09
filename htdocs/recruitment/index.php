@@ -34,17 +34,22 @@ $langs->loadLangs(array("recruitment", "boxes"));
 
 $action = GETPOST('action', 'aZ09');
 
+$max = 5;
+$now = dol_now();
 
-// Security check
-//if (! $user->rights->recruitment->myobject->read) accessforbidden();
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = 5;
-$now = dol_now();
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+// if (! $user->hasRight('mymodule', 'myobject', 'read')) {
+// 	accessforbidden();
+// }
+restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentjobposition', 'recruitmentjobposition', '', 'rowid');
 
 
 /*
@@ -242,7 +247,7 @@ print '<br>';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->read)
+if (isModEnabled('recruitment') && $user->rights->recruitment->read)
 {
 	$langs->load("orders");
 
@@ -327,7 +332,7 @@ $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms, s.status, COUNT(rc.rowid) as nbapplications";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc ON rc.fk_recruitmentjobposition = s.rowid";
@@ -398,7 +403,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 }
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";

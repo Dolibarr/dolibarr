@@ -785,12 +785,13 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Return list of custom groups that are active
+	 * Return list of custom groups.
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
+	 * @param	int			$active				1= active, 0=not active
 	 * @return	array|int						Array of groups or -1 if error
 	 */
-	public function getCats($categorytype = -1)
+	public function getCats($categorytype = -1, $active = 1)
 	{
 		global $conf, $mysoc;
 
@@ -801,7 +802,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-		$sql .= " WHERE c.active = 1";
+		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";

@@ -243,7 +243,7 @@ if (empty($reshook)) {
 				$_POST["price"] = 0;
 			}
 		}
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (!GETPOST("multicurrency_code")) {
 				$error++;
 				$langs->load("errors");
@@ -299,7 +299,7 @@ if (empty($reshook)) {
 				}*/
 				$object->packaging = $packaging;
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
@@ -506,6 +506,43 @@ if ($id > 0 || $ref) {
 							print '</a>';
 						}
 					}
+					print '<script type="text/javascript">
+					$(document).ready(function () {
+						$("#search_id_fourn").change(load_vat)
+						console.log("Requesting default VAT rate for the supplier...")
+					});
+					function load_vat() {
+						// get soc id
+						let socid = $("#id_fourn")[0].value
+	
+						// load available VAT rates
+						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
+						//Make GET request with params 
+						let options = "";
+						options += "id=" + socid
+						options += "&htmlname=tva_tx"
+						options += "&action=default" // not defined in vatrates.php, default behavior.
+	
+						var get = $.getJSON(
+							vat_url,
+							options,
+							(data) => {
+								rate_options = $.parseHTML(data.value)
+								rate_options.forEach(opt => {
+									if (opt.selected) {
+										replaceVATWithSupplierValue(opt.value)
+										return
+									}
+								})
+							}
+						);
+	
+					}
+					function replaceVATWithSupplierValue(vat_rate) {
+						console.log("Default VAT rate for the supplier: " + vat_rate + "%")
+						$("[name=\'tva_tx\']")[0].value = vat_rate;
+					}
+				</script>';
 				}
 				print '</td></tr>';
 
@@ -630,7 +667,7 @@ if ($id > 0 || $ref) {
 					</script>';
 				}
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					// Currency
 					print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 					print '<td>';
@@ -973,7 +1010,7 @@ END;
 				}
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				}
 				if (!empty($arrayfields['pfp.unitprice']['checked'])) {
@@ -982,7 +1019,7 @@ END;
 				if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked'])) {
 					print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
 				}
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				}
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1089,7 +1126,7 @@ END;
 						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
 						print '</td>';
 
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
@@ -1112,7 +1149,7 @@ END;
 						}
 
 						// Currency
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							print '<td class="right nowraponall">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';

@@ -316,7 +316,9 @@ class User extends CommonObject
 	 * @var stdClass To store personal config
 	 */
 	public $conf;
-	public $default_values; // To store default values for user
+
+	public $default_values; // To store default values for user. Loaded by loadDefaultValues().
+
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
 
@@ -431,7 +433,7 @@ class User extends CommonObject
 		$sql .= " u.socialnetworks,";
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
-		$sql .= " u.admin, u.login, u.note as note_private, u.note_public,";
+		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
 		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql .= " u.statut, u.lang, u.entity,";
@@ -706,11 +708,12 @@ class User extends CommonObject
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
-			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'member' => 'adherent',
 			'mo' => 'mrp',
 			'order' => 'commande',
-			//'product' => 'produit',	// We must check $user->rights->produit...
+			'produit' => 'product',
 			'project' => 'projet',
+			'propale' => 'propal',
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
@@ -739,15 +742,18 @@ class User extends CommonObject
 
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
-		if (! empty($tmp[1])) {
+		if (!empty($tmp[1])) {
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];
 		}
 
+		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
+		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($module);
-		//var_dump($this->rights->$module);
-		if (!in_array($module, $conf->modules)) {
+		//var_dump($this->rights->$rightsPath);
+		//var_dump($conf->modules);
+		if (!isModEnabled($module)) {
 			return 0;
 		}
 
@@ -761,7 +767,7 @@ class User extends CommonObject
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
 		}
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
+
 		//var_dump($this->rights);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;
@@ -1977,7 +1983,7 @@ class User extends CommonObject
 		$sql .= ", dateemploymentend=".(strval($this->dateemploymentend) != '' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
 		$sql .= ", datestartvalidity=".(strval($this->datestartvalidity) != '' ? "'".$this->db->idate($this->datestartvalidity)."'" : 'null');
 		$sql .= ", dateendvalidity=".(strval($this->dateendvalidity) != '' ? "'".$this->db->idate($this->dateendvalidity)."'" : 'null');
-		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
+		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", openid = ".($this->openid ? "'".$this->db->escape($this->openid)."'" : "null");
@@ -2701,7 +2707,7 @@ class User extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!$user->rights->user->user->lire && $user->id != $this->id) {
+		if (!$user->hasRight('user', 'user', 'read') && $user->id != $this->id) {
 			$option = 'nolink';
 		}
 
@@ -2825,7 +2831,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs($withpictoimg) == 1) {
+			if (abs((int) $withpictoimg) == 1) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto

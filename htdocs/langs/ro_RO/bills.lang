@@ -446,6 +446,7 @@ ErrorPaymentConditionsNotEligibleToDepositCreation=Condițiile de plată alese n
 PaymentTypeVIR=Transfer bancar
 PaymentTypeShortVIR=Transfer bancar
 PaymentTypePRE=Ordin de plată prin direct debit
+PaymentTypePREdetails=(în cont *-%s)
 PaymentTypeShortPRE=Ordin de plată de debit
 PaymentTypeLIQ=Numerar
 PaymentTypeShortLIQ=Numerar

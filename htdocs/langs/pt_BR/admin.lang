@@ -365,7 +365,6 @@ InstalledInto=Instalado no diretório %s
 BarcodeInitForThirdparties=Inicialização de código de barras em massa para terceiros
 BarcodeInitForProductsOrServices=Inicialização de código de barras em massa ou redefinir de produtos ou serviços
 CurrentlyNWithoutBarCode=Atualmente, você tem <strong>%s</strong> registro(s) no <strong>%s</strong> %s sem um código de barras definido.
-InitEmptyBarCode=Valor Init para o próximo registros vazios
 EraseAllCurrentBarCode=Apague todos os valores de código de barras atuais
 ConfirmEraseAllCurrentBarCode=Você tem certeza que deseja apagar todos os valores atuais do código de barras?
 AllBarcodeReset=Todos os valores de código de barras foram removidas

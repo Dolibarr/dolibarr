@@ -59,6 +59,8 @@ if (empty($user->rights->takepos->run)) {
  * View
  */
 
+top_httphead('application/json');
+
 if ($action == 'getConnexionToken') {
 	try {
 		// Be sure to authenticate the endpoint for creating connection tokens.

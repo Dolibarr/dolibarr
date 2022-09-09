@@ -821,8 +821,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
-			|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->create))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		{
 			$this->error='NotEnoughPermissions';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -933,8 +933,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -957,8 +957,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -981,8 +981,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -1338,9 +1338,9 @@ class BOM extends CommonObject
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
 	{
-		if (! empty($this->lines)) {
+		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (! empty($line->childBom)) {
+				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
 				} else {
 					if (empty($TNetNeeds[$line->fk_product])) {
@@ -1362,9 +1362,9 @@ class BOM extends CommonObject
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
 	{
-		if (! empty($this->lines)) {
+		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (! empty($line->childBom)) {
+				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
@@ -1376,6 +1376,38 @@ class BOM extends CommonObject
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
 				}
+			}
+		}
+	}
+
+	/**
+	 * Recursively retrieves all parent bom in the tree that leads to the $bom_id bom
+	 *
+	 * @param 	array	$TParentBom		We put all found parent bom in $TParentBom
+	 * @param 	int		$bom_id			ID of bom from which we want to get parent bom ids
+	 * @param 	int		$level		Protection against infinite loop
+	 * @return 	void
+	 */
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
+	{
+
+		// Protection against infinite loop
+		if ($level > 1000) {
+			return;
+		}
+
+		if (empty($bom_id)) $bom_id=$this->id;
+
+		$sql = 'SELECT l.fk_bom, b.label
+				FROM '.MAIN_DB_PREFIX.'bom_bomline l
+				INNER JOIN '.MAIN_DB_PREFIX.$this->table_element.' b ON b.rowid = l.fk_bom
+				WHERE fk_bom_child = '.((int) $bom_id);
+
+		$resql = $this->db->query($sql);
+		if (!empty($resql)) {
+			while ($res = $this->db->fetch_object($resql)) {
+				$TParentBom[$res->fk_bom] = $res->fk_bom;
+				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level+1);
 			}
 		}
 	}
@@ -1572,7 +1604,7 @@ class BOMLine extends CommonObjectLine
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 

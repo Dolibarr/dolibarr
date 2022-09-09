@@ -51,6 +51,10 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$optioncss = GETPOST('optioncss', 'alpha');
+$param = "";
+$num = 0;
+$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -95,12 +99,12 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripePayoutList");
-	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -133,7 +137,7 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 			// Load origin object according to metadata
-			if (! empty($tmparray['CUS']))
+			if (!empty($tmparray['CUS']))
 			{
 				$societestatic->fetch($tmparray['CUS']);
 			}
@@ -141,7 +145,7 @@ if (!$rowid) {
 			{
 				$societestatic->id = 0;
 			}
-			if (! empty($tmparray['MEM']))
+			if (!empty($tmparray['MEM']))
 			{
 				$memberstatic->fetch($tmparray['MEM']);
 			}

@@ -61,6 +61,7 @@ $offset = $limit * $page;
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 
 // Security check
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -71,7 +72,7 @@ if ($type == 'bank-transfer') {
 }
 
 $error = 0;
-
+$option = "";
 
 /*
  * Actions

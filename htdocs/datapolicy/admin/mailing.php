@@ -17,25 +17,56 @@
  */
 
 /**
- * \file    htdocs/datapolicy/mailing.php
+ * \file    htdocs/datapolicy/admin/mailing.php
  * \ingroup datapolicy
- * \brief   datapolicy mailing page.
+ * \brief   Page called by the setupmail.php page to send agreements by email.
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';
 
-$idcontact = GETPOST('idc');
+$idcontact = GETPOST('idc', 'int');
+$idcompany = GETPOST('ids', 'int');
+$idmember = GETPOST('ida', 'int');
+
+// Security
+if (!isModEnabled("datapolicy")) {
+	accessforbidden();
+}
+if (!$user->admin) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
 
 if (!empty($idcontact)) {
 	$contact = new Contact($db);
 	$contact->fetch($idcontact);
 	DataPolicy::sendMailDataPolicyContact($contact);
+} elseif (!empty($idcompany)) {
+	$company = new Societe($db);
+	$company->fetch($idcompany);
+	DataPolicy::sendMailDataPolicyCompany($company);
+} elseif (!empty($idmember)) {
+	$member = new Adherent($db);
+	$member->fetch($idmember);
+	DataPolicy::sendMailDataPolicyAdherent($member);
 } else {
 	$contacts = new DataPolicy($db);
+
+	// Send email to all contacts where email was not already sent
 	$contacts->getAllContactNotInformed();
 	$contacts->getAllCompaniesNotInformed();
 	$contacts->getAllAdherentsNotInformed();
-	echo $langs->trans('AllAgreementSend');
 }
+
+
+/*
+ * View
+ */
+
+echo $langs->trans('AllAgreementSend');

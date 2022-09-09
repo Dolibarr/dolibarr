@@ -38,7 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy', 'loan'));
@@ -1062,7 +1064,11 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 			}
 
-			$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
+			if ($modecompta == 'CREANCES-DETTES') {
+				//No need of GROUP BY
+			} else {
+				$sql .= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
+			}
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
 				$newsortfield = 'p.ref';
@@ -1520,15 +1526,17 @@ $hookmanager->initHooks(array('externalbalance'));
 $reshook = $hookmanager->executeHooks('addBalanceLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 
+
+
 // Total
 print '<tr>';
-print '<td colspan="4">&nbsp;</td>';
+print '<td colspan="'.($modecompta == 'BOOKKEEPING' ? 3 : 4).'">&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht_income, 'MT')).'</td>';
-} else {
+} elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc_income, 'MT')).'</td>';
@@ -1536,7 +1544,7 @@ print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
-} else {
+} elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
@@ -1544,7 +1552,7 @@ print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
-} else {
+} elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
 print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';

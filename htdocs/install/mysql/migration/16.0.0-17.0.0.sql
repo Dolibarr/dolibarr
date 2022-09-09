@@ -61,6 +61,9 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
 ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
 
+ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
+ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;
+
 UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHERENT_MAILMAN_ADMINPW';
 
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
@@ -129,3 +132,20 @@ ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country
 ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
 ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
+
+CREATE TABLE llx_bank_extrafields
+(
+  rowid      integer AUTO_INCREMENT PRIMARY KEY,
+  tms        timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object  integer NOT NULL,
+  import_key varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
+
+ALTER TABLE llx_user CHANGE COLUMN note note_private text;
+
+UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF100-500';
+
+ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
