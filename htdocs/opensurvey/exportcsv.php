@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
  *
