@@ -17,9 +17,9 @@
  */
 
 /**
- *      \file		htdocs/intracommreport/admin/intracommreport.php
- *      \ingroup	intracommreport
- *      \brief		Page to setup the module intracomm report
+ *    \file       htdocs/intracommreport/admin/intracommreport.php
+ *    \ingroup    intracommreport
+ *    \brief      Page to setup the module intracomm report
  */
 
 // Load Dolibarr environment
@@ -31,10 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
 
+// Access Control
 if (!$user->admin) {
 	accessforbidden();
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 
 // Parameters INTRACOMMREPORT_* and others
@@ -81,6 +83,7 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
+
 
 /*
  * View
