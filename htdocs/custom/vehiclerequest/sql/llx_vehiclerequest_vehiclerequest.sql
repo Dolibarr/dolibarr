@@ -31,6 +31,8 @@ CREATE TABLE llx_vehiclerequest_vehiclerequest(
 	fk_admin integer, 
 	tripdate datetime NOT NULL, 
 	destination varchar(100) NOT NULL, 
-	tripstatus integer NOT NULL
+	tripstatus integer NOT NULL, 
+	status integer NOT NULL, 
+	fk_approved_by integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

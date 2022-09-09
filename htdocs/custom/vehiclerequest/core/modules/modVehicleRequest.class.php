@@ -283,14 +283,14 @@ class modVehicleRequest extends DolibarrModules
 		$this->rights[$r][5] = 'supervisorapprove'; // In php code, permission will be checked by test if ($user->rights->vehiclerequest->vehicle->delete)
 		$r++;
 		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Approve and Assign vehicles to vehicle requests'; // Permission label
-		$this->rights[$r][4] = 'vehicle';
-		$this->rights[$r][5] = 'approve'; // In php code, permission will be checked by test if ($user->rights->vehiclerequest->vehicle->delete)
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Make vehicle requests'; // Permission label
 		$this->rights[$r][4] = 'vehicle';
 		$this->rights[$r][5] = 'request'; // In php code, permission will be checked by test if ($user->rights->vehiclerequest->vehicle->delete)
+		$r++;
+		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Assign vehicle to Vehicle Requests'; // Permission label
+		$this->rights[$r][4] = 'vehicle';
+		$this->rights[$r][5] = 'assign'; // In php code, permission will be checked by test if ($user->rights->vehiclerequest->vehicle->delete)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 

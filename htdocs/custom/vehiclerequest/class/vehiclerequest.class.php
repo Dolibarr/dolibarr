@@ -68,6 +68,14 @@ class VehicleRequest extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
 
+	const APPROVAL_PENDING=0;
+	const APPROVAL_APPROVED=1;
+	const APPROVAL_REJECTED=2;
+
+	const TRIPSTATUS_PENDING=0;
+	const TRIPSTATUS_ONTRIP=1;
+	const TRIPSTATUS_COMPLETED=2;
+
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -107,7 +115,7 @@ class VehicleRequest extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'validate'=>'1',),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Created By', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>5,),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
@@ -118,6 +126,8 @@ class VehicleRequest extends CommonObject
 		'tripdate' => array('type'=>'datetime', 'label'=>'TripDate', 'enabled'=>'1', 'position'=>1050, 'notnull'=>1, 'visible'=>1, 'validate'=>'1',),
 		'destination' => array('type'=>'varchar(100)', 'label'=>'Destination', 'enabled'=>'1', 'position'=>1005, 'notnull'=>1, 'visible'=>1, 'validate'=>'1',),
 		'tripstatus' => array('type'=>'integer', 'label'=>'Trip Status', 'enabled'=>'1', 'position'=>1060, 'notnull'=>1, 'visible'=>4, 'default'=>'0', 'arrayofkeyval'=>array('0'=>'Pending', '1'=>'On Trip', '2'=>'Completed'),),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1,),
+		'fk_approved_by' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Approved By', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>5,),
 	);
 	public $rowid;
 	public $ref;
@@ -135,6 +145,8 @@ class VehicleRequest extends CommonObject
 	public $tripdate;
 	public $destination;
 	public $tripstatus;
+	public $status;
+	public $fk_approved_by;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -633,6 +645,67 @@ class VehicleRequest extends CommonObject
 		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'VEHICLEREQUEST_UNVALIDATE');
+	}
+	public function setApprovalApproved($user, $notrigger = 0)
+	{
+		if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fsa->vehicle->supervisorapprove))
+		 ))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }
+		return $this->setApprovalStatus($user, self::APPROVAL_APPROVED, $notrigger, 'VEHICLEREQUEST_APPROVED');
+	}
+	public function setApprovalRejected($user, $notrigger = 0)
+	{
+		if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fsa->vehicle->supervisorapprove))
+		))
+		{
+			$this->error='Permission denied';
+			return -1;
+		}
+		return $this->setApprovalStatus($user, self::APPROVAL_REJECTED, $notrigger, 'VEHICLEREQUEST_REJECTED');
+	}
+
+	public function setApprovalStatus($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error = 0;
+
+		$this->db->begin();
+
+		$statusfield = 'approval_status';
+
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET ".$statusfield." = ".((int) $status)." , fk_approved_by=".$user->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		if ($this->db->query($sql)) {
+			if (!$error) {
+				$this->oldcopy = clone $this;
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger($triggercode, $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
