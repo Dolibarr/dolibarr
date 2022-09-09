@@ -1443,7 +1443,7 @@ function dol_escape_json($stringtoescape)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes to tag.
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
@@ -1471,7 +1471,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
-		// TODO Does not works yet when there is attributes to tag
+		// TODO Does not works yet when there is attributes into tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
