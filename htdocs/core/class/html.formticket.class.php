@@ -77,6 +77,7 @@ class FormTicket
 
 	public $withtitletopic;
 	public $withtopicreadonly;
+	public $withreadid;
 	public $withcompany; // affiche liste déroulante company
 	public $withfromsocid;
 	public $withfromcontactid;
