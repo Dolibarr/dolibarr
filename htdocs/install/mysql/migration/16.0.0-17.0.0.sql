@@ -149,3 +149,4 @@ UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF10
 
 ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_establishment ADD COLUMN label varchar(255) NOT NULL AFTER entity;
