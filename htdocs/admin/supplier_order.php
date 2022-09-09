@@ -1,63 +1,63 @@
 <?php
-																																/* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
-																																* Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
-																																* Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
-																																* Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
-																																* Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
-																																* Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
-																																* Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
-																																*
-																																* This program is free software; you can redistribute it and/or modify
-																																* it under the terms of the GNU General Public License as published by
-																																* the Free Software Foundation; either version 3 of the License, or
-																																* (at your option) any later version.
-																																*
-																																* This program is distributed in the hope that it will be useful,
-																																* but WITHOUT ANY WARRANTY; without even the implied warranty of
-																																* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-																																* GNU General Public License for more details.
-																																*
-																																* You should have received a copy of the GNU General Public License
-																																* along with this program. If not, see <https://www.gnu.org/licenses/>.
-																																*/
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+* Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
+* Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
+* Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+* Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
+* Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
+* Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
 
-																																/**
-																																 *  \file       htdocs/admin/supplier_order.php
-																																 *  \ingroup    fournisseur
-																																 *  \brief      Page d'administration-configuration du module Fournisseur
-																																 */
+/**
+ *  \file       htdocs/admin/supplier_order.php
+ *  \ingroup    fournisseur
+ *  \brief      Page d'administration-configuration du module Fournisseur
+ */
 
-																																require '../main.inc.php';
-																																require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-																																require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-																																require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-																																require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-																																require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-																																// Load translation files required by the page
-																																$langs->loadLangs(array("admin", "other", "orders", "stocks"));
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
 if (!$user->admin) {
 	accessforbidden();
 }
 
-																																$type = GETPOST('type', 'alpha');
-																																$value = GETPOST('value', 'alpha');
-																																$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+$type = GETPOST('type', 'alpha');
+$value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
-																																$label = GETPOST('label', 'alpha');
-																																$action = GETPOST('action', 'aZ09');
-																																$scandir = GETPOST('scan_dir', 'alpha');
+$label = GETPOST('label', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$scandir = GETPOST('scan_dir', 'alpha');
 
-																																$specimenthirdparty = new Societe($db);
-																																$specimenthirdparty->initAsSpecimen();
+$specimenthirdparty = new Societe($db);
+$specimenthirdparty->initAsSpecimen();
 
 
-																																/*
-																																* Actions
-																																*/
+/*
+* Actions
+*/
 
-																																include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -193,40 +193,40 @@ if ($action == 'updateMask') {
 }
 
 
-																																/*
-																																* View
-																																*/
+/*
+* View
+*/
 
-																																$form = new Form($db);
+$form = new Form($db);
 
-																																$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-																																llxHeader("", "");
+llxHeader("", "");
 
-																																$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-																																print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("SuppliersSetup"), $linkback, 'title_setup');
 
-																																print "<br>";
+print "<br>";
 
-																																$head = supplierorder_admin_prepare_head();
+$head = supplierorder_admin_prepare_head();
 
-																																print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'company');
+print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'company');
 
 
-																																// Supplier order numbering module
+// Supplier order numbering module
 
-																																print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
+print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
 
-																																print '<table class="noborder centpercent">';
-																																print '<tr class="liste_titre">';
-																																print '<td width="100">'.$langs->trans("Name").'</td>';
-																																print '<td>'.$langs->trans("Description").'</td>';
-																																print '<td>'.$langs->trans("Example").'</td>';
-																																print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-																																print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-																																print "</tr>\n";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print "</tr>\n";
 
-																																clearstatcache();
+clearstatcache();
 
 foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/supplier_order/");
@@ -309,24 +309,24 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-																																print '</table><br>';
+print '</table><br>';
 
 
-																																/*
-																																*  Documents models for supplier orders
-																																*/
+/*
+*  Documents models for supplier orders
+*/
 
-																																print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
+print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
 
-																																// Defini tableau def de modele
-																																$def = array();
+// Defini tableau def de modele
+$def = array();
 
-																																$sql = "SELECT nom";
-																																$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-																																$sql .= " WHERE type = 'order_supplier'";
-																																$sql .= " AND entity = ".$conf->entity;
+$sql = "SELECT nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = 'order_supplier'";
+$sql .= " AND entity = ".$conf->entity;
 
-																																$resql = $db->query($sql);
+$resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
@@ -339,17 +339,17 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-																																print '<table class="noborder centpercent">'."\n";
-																																print '<tr class="liste_titre">'."\n";
-																																print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
-																																print '<td>'.$langs->trans("Description").'</td>'."\n";
-																																print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
-																																print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-																																print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-																																print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
-																																print '</tr>'."\n";
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
+print '<td>'.$langs->trans("Description").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
+print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
+print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
+print '</tr>'."\n";
 
-																																clearstatcache();
+clearstatcache();
 
 foreach ($dirmodels as $reldir) {
 	$realpath = $reldir."core/modules/supplier_order/doc";
@@ -434,76 +434,76 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-																																print '</table><br>';
+print '</table><br>';
 
-																																/*
-																																* Other options
-																																*/
+/*
+* Other options
+*/
 
-																																print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-																																print '<input type="hidden" name="token" value="'.newToken().'">';
-																																print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
-																																print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-																																print '<table class="noborder centpercent">';
-																																print '<tr class="liste_titre">';
-																																print '<td>'.$langs->trans("Parameter").'</td>';
-																																print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
-																																print '<td width="80">&nbsp;</td>';
-																																print "</tr>\n";
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
 
-																																print '<tr class="oddeven"><td>';
-																																print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
-																																print $langs->trans("IfSetToYesDontForgetPermission");
-																																print '</td><td>';
-																																print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.getDolGlobalString("SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED").'">';
-																																print '</td><td class="right">';
-																																print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-																																print "</td></tr>\n";
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
+print $langs->trans("IfSetToYesDontForgetPermission");
+print '</td><td>';
+print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.getDolGlobalString("SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED").'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 
 
-																																// Ask for payment bank during supplier order
-																																/* Kept as hidden for the moment
-																																if (isModEnabled('banque')) {
+// Ask for payment bank during supplier order
+/* Kept as hidden for the moment
+if (isModEnabled('banque')) {
 
-																																print '<tr class="oddeven"><td>';
-																																print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
-																																if (!empty($conf->use_javascript_ajax))
-																																{
-																																print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
-																																}
-																																else
-																																{
-																																if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
-																																{
-																																print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-																																}
-																																else
-																																{
-																																print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-																																}
-																																}
-																																print '</td></tr>';
-																																}
-																																else
-																																{
+print '<tr class="oddeven"><td>';
+print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
+if (!empty($conf->use_javascript_ajax))
+{
+print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
+}
+else
+{
+if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
+{
+print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+}
+else
+{
+print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+}
+}
+print '</td></tr>';
+}
+else
+{
 
-																																print '<tr class="oddeven"><td>';
-																																print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
-																																}
-																																*/
+print '<tr class="oddeven"><td>';
+print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+}
+*/
 
-																																$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
-																																$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
-																																$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val) {
 	$htmltext .= $key.'<br>';
 }
-																																$htmltext .= '</i>';
+$htmltext .= '</i>';
 
-																																print '<tr class="oddeven"><td colspan="2">';
-																																print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-																																$variablename = 'SUPPLIER_ORDER_FREE_TEXT';
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename = 'SUPPLIER_ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
@@ -511,15 +511,15 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
-																																print '</td><td class="right">';
-																																print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-																																print "</td></tr>\n";
+print '</td><td class="right">';
+print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 
-																																// Option to add a quality/validation step, on products, after reception.
-																																print '<tr class="oddeven">';
-																																print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-																																print '<td></td>';
-																																print '<td class="center">';
+// Option to add a quality/validation step, on products, after reception.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
+print '<td></td>';
+print '<td class="center">';
 if (isModEnabled('reception')) {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
 } else {
@@ -530,33 +530,33 @@ if (isModEnabled('reception')) {
 		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
 	}
 }
-																																print "</td>\n";
-																																print "</tr>\n";
+print "</td>\n";
+print "</tr>\n";
 
-																																print '</table><br>';
+print '</table><br>';
 
-																																print '</form>';
+print '</form>';
 
 
-																																/*
-																																* Notifications
-																																*/
+/*
+* Notifications
+*/
 
-																																print load_fiche_titre($langs->trans("Notifications"), '', '');
-																																print '<table class="noborder centpercent">';
-																																print '<tr class="liste_titre">';
-																																print '<td>'.$langs->trans("Parameter").'</td>';
-																																print '<td align="center" width="60"></td>';
-																																print '<td width="80">&nbsp;</td>';
-																																print "</tr>\n";
+print load_fiche_titre($langs->trans("Notifications"), '', '');
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60"></td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
 
-																																print '<tr class="oddeven"><td colspan="2">';
-																																print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
-																																print '</td><td class="right">';
-																																print "</td></tr>\n";
+print '<tr class="oddeven"><td colspan="2">';
+print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print '</td><td class="right">';
+print "</td></tr>\n";
 
-																																print '</table>';
+print '</table>';
 
-																																// End of page
-																																llxFooter();
-																																$db->close();
+// End of page
+llxFooter();
+$db->close();
