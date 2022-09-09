@@ -733,6 +733,7 @@ class User extends CommonObject
 
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
+			'margin' => 'margins'
 		);
 
 		$rightsPath = $module;
