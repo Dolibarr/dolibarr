@@ -232,7 +232,7 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($massaction == 'close' && $user->rights->adherent->creer) {
+	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbclose = 0;
@@ -262,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($massaction == 'createexternaluser' && $user->rights->adherent->creer && $user->rights->user->user->creer) {
+	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbcreated = 0;
@@ -302,7 +302,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Members';
 	$permissiontoread = $user->rights->adherent->lire;
 	$permissiontodelete = $user->rights->adherent->supprimer;
-	$permissiontoadd = $user->rights->adherent->creer;
+	$permissiontoadd = $user->hasRight('adherent', 'creer');
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -617,7 +617,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->creer) {
+if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
 if ($user->rights->adherent->supprimer) {
@@ -626,7 +626,7 @@ if ($user->rights->adherent->supprimer) {
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
+if ($user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -635,7 +635,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->adherent->creer) {
+if ($user->hasRight('adherent', 'creer')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
