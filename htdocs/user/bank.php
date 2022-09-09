@@ -646,9 +646,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$salary->paye = $objp->paye;
 				$salary->amount = $objp->amount;
 
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->ref;
-				$payment_salary->datep = $db->jdate($objp->datep);
+				$payment_salary->id = !empty($objp->rowid) ? $objp->rowid : 0;
+				$payment_salary->ref = !empty($objp->ref) ? $objp->ref : "";
+				$payment_salary->datep = $db->jdate(!empty($objp->datep) ? $objp->datep : "");
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
