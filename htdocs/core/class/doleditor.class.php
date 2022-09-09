@@ -68,7 +68,7 @@ class DolEditor
 	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
 	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
 	{
 		global $conf, $langs;
 

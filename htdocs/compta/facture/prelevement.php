@@ -112,8 +112,14 @@ if (empty($reshook)) {
 				$sourcetype = 'supplier_invoice';
 				$newtype = 'bank-transfer';
 			}
+			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			if (preg_match('/stripesepa/', $paymentservice)) {
+				$result = $object->demande_prelevement_stripe($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			} else {
+				$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			}
+
 			if ($result > 0) {
 				$db->commit();
 
@@ -737,6 +743,22 @@ if ($object->id > 0) {
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
+
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+					print "<br>";
+					//add stripe sepa button
+					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+					print '<form method="POST" action="">';
+					print '<input type="hidden" name="token" value="'.newToken().'" />';
+					print '<input type="hidden" name="id" value="'.$object->id.'" />';
+					print '<input type="hidden" name="type" value="'.$type.'" />';
+					print '<input type="hidden" name="action" value="new" />';
+					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
+					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+					print '</form>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}

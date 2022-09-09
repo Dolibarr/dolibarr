@@ -694,7 +694,7 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
-	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1);
+	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1, 0, 0, '', 'maxwidth150');
 	print "</td>\n";
 }
 // Tracking number
@@ -959,7 +959,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 		// Get code using getLabelFromKey
 		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 		if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
 		print '</td>';
 	}
