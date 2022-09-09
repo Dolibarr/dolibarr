@@ -18,9 +18,9 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/card.php
- *       \brief      Page display/creation of bookmarks
- *       \ingroup    bookmark
+ *    \file       htdocs/bookmarks/card.php
+ *    \ingroup    bookmark
+ *    \brief      Page display/creation of bookmarks
  */
 
 
@@ -28,14 +28,12 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'other'));
 
-// Security check
-if (empty($user->rights->bookmark->lire)) {
-	restrictedArea($user, 'bookmarks');
-}
 
+// Get Parameters
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
@@ -46,10 +44,20 @@ $userid = GETPOST("userid", "int");
 $position = GETPOST("position", "int");
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+// Initialize Objects
 $object = new Bookmark($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+
+// Security check
+if (empty($user->rights->bookmark->lire)) {
+	restrictedArea($user, 'bookmarks');
+}
+
+
 
 
 /*
@@ -123,6 +131,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 		$action = $invertedaction;
 	}
 }
+
 
 
 /*
