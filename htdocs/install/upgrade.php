@@ -336,6 +336,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				$filelist[] = $file;
 			} elseif (preg_match('/\-'.$to.'/i', $file)) {	// First test may be false if we migrate from x.y.* to x.y.*
 				$filelist[] = $file;
+			} else {
+				$versionarray = explode('-', $file);
+				if (!empty($versionarray) && $versionarray[0] > $newversionfrom && $versionarray[0] < $newversionto) {
+					$filelist[] = $file;
+				}
 			}
 		}
 
