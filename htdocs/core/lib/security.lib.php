@@ -1016,8 +1016,30 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	return true;
 }
 
+
 /**
- *	Show a message to say access is forbidden and stop program
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes only HTTP header.
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message			Force error message
+ *	@param	int			$http_response_code	HTTP response code
+ *  @return	void
+ *  @see accessforbidden()
+ */
+function httponly_accessforbidden($message = 1, $http_response_code = 403)
+{
+	top_httphead('text/html');
+	http_response_code($http_response_code);
+
+	print htmlentities($message);
+
+	exit(1);
+}
+
+/**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes HTTP and HTML header and footer.
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
@@ -1026,10 +1048,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
  *  @param  array|null  $params         	More parameters provided to hook
  *  @return	void
+ *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
@@ -1049,7 +1073,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	if (!$message) {
 		print $langs->trans("ErrorForbidden");
 	} else {
-		print $message;
+		print $langs->trans($message);
 	}
 	print '</div>';
 	print '<br>';
@@ -1077,6 +1101,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
 	}
+
 	exit(0);
 }
 
