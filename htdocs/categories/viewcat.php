@@ -563,7 +563,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'products');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -643,7 +643,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -724,7 +724,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -808,7 +808,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'members');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -895,7 +895,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'contact');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -977,7 +977,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'bank');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1060,7 +1060,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'project');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1137,7 +1137,7 @@ if ($type == Categorie::TYPE_USER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'user');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1201,7 +1201,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'stock');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1280,7 +1280,7 @@ if ($type == Categorie::TYPE_TICKET) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'ticket');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 

@@ -75,6 +75,18 @@ if ($pageid > 0) {
 
 	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
 		$weblangs->load("website");
+
+		// Security options
+
+		// X-Content-Type-Options
+		header("X-Content-Type-Options: nosniff");
+
+		// X-Frame-Options
+		if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+			header("X-Frame-Options: SAMEORIGIN");
+		}
+
+		//httponly_accessforbidden('<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage", $websitepage->pageurl, $websitepage->type_container, $websitepage->status).'</center>', 404, 1);
 		http_response_code(404);
 		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage", $websitepage->pageurl, $websitepage->type_container, $websitepage->status).'</center>';
 		exit;
@@ -198,9 +210,21 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php') {	// If we browsi
 	}
 }
 
-// Show off line message
+// Show off line message when all website is off
 if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
+	// Security options
+
+	// X-Content-Type-Options
+	header("X-Content-Type-Options: nosniff");
+
+	// X-Frame-Options
+	if (empty($websitepage->allowed_in_frames) && empty($conf->global->WEBSITE_ALLOW_FRAMES_ON_ALL_PAGES)) {
+		header("X-Frame-Options: SAMEORIGIN");
+	}
+
 	$weblangs->load("website");
+
+	//httponly_accessforbidden('<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>', 503, 1);
 	http_response_code(503);
 	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
 	exit;

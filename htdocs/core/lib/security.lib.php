@@ -329,11 +329,11 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string		$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string		$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int			$isdraft		1=The object with id=$objectid is a draft
- *  @param	int			$mode			Mode (0=default, 1=return with not die)
+ *  @param	int			$mode			Mode (0=default, 1=return without dieing)
  * 	@return	int							If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
-function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
+function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -1022,24 +1022,29 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  This includes only HTTP header.
  *	Calling this function terminate execution of PHP.
  *
- *	@param	string		$message			Force error message
- *	@param	int			$http_response_code	HTTP response code
+ *	@param	string		$message					Force error message
+ *	@param	int			$http_response_code			HTTP response code
+ *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	void
  *  @see accessforbidden()
  */
-function httponly_accessforbidden($message = 1, $http_response_code = 403)
+function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
 {
-	top_httphead('text/html');
+	top_httphead();
 	http_response_code($http_response_code);
 
-	print htmlentities($message);
+	if ($stringalreadysanitized) {
+		print $message;
+	} else {
+		print htmlentities($message);
+	}
 
 	exit(1);
 }
 
 /**
  *	Show a message to say access is forbidden and stop program.
- *  This includes HTTP and HTML header and footer.
+ *  This includes HTTP and HTML header and footer (except if $printheader and $printfooter is  0, use this case inside an already started page).
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
@@ -1070,7 +1075,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	print '<div class="error">';
-	if (!$message) {
+	if (empty($message)) {
 		print $langs->trans("ErrorForbidden");
 	} else {
 		print $langs->trans($message);

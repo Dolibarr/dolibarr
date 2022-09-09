@@ -40,6 +40,7 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 		define('NOREQUIREAJAX', '1');
 	}
 	if (!defined('NOREDIRECTBYMAINTOLOGIN')) {
+		// Disable redirect to main login because the selectsearch must not ask a login
 		define('NOREDIRECTBYMAINTOLOGIN', '1');
 	}
 
