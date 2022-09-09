@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -1045,7 +1045,7 @@ llxHeader('', $langs->trans("Contract"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1204,7 +1204,7 @@ if ($action == 'create') {
 	print "</td></tr>";
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load('projects');
 
 		$formproject = new FormProjets($db);
@@ -1368,7 +1368,7 @@ if ($action == 'create') {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)';
 		}
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->contrat->creer) {
@@ -1514,7 +1514,7 @@ if ($action == 'create') {
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-				//if (!empty($conf->multicurrency->enabled)) {
+				//if (isModEnabled("multicurrency")) {
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
@@ -1575,7 +1575,7 @@ if ($action == 'create') {
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 					// Price multicurrency
-					/*if (!empty($conf->multicurrency->enabled)) {
+					/*if (isModEnabled("multicurrency")) {
 						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					}*/
 					// Quantity
@@ -1718,7 +1718,7 @@ if ($action == 'create') {
 					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 
 					// Price multicurrency
-					/*if (!empty($conf->multicurrency->enabled)) {
+					/*if (isModEnabled("multicurrency")) {
 					 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
 					 }*/
 

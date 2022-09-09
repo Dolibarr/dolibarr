@@ -573,7 +573,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					*/
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) {
+					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 						$tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					} else {
 						$tvaligne = $object->lines[$i]->total_tva;
@@ -1323,7 +1323,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				}
 			} else {
 				$text = $this->emetteur->name;
-				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0);
 			}
 		}
 
@@ -1343,11 +1343,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if ($object->ref_client) {
+		if ($object->ref_fourn) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_client), 65), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_fourn), 65), '', 'R');
 		}
 		/* PHFAVRE
 		$posy+=4;

@@ -35,6 +35,7 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
 
@@ -49,6 +50,13 @@ $element = GETPOST('element', 'alpha');
 
 
 $upload_handler = new FileUpload(null, $fk_element, $element);
+
+
+/*
+ * View
+ */
+
+top_httphead();
 
 header('Pragma: no-cache');
 header('Cache-Control: no-store, no-cache, must-revalidate');

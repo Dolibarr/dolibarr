@@ -47,7 +47,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Skill($db);
@@ -577,7 +577,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-
+	$nbtotalofrecords = 0;
 
 	// Build and execute select
 	// --------------------------------------------------------------------
@@ -626,8 +626,10 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->rowid;
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid :0);
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
+	$param = "";
+	$massactionbutton = "";
 	//$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/skilldet_card.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF']) . $param_fk . '&backtopage=' . $backtopage, '', $permissiontoadd);
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, "", '', '', 0, 0, 1);
@@ -688,7 +690,7 @@ if ($action != "create" && $action != "edit") {
 		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'right';
 		//      }
 		if (!empty($arrayfields['t.' . $key]['checked'])) {
-			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, ($cssforfield ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield . ' ' : '')) . "\n";
+			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, (!empty($cssforfield) ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, (!empty($cssforfield) ? $cssforfield . ' ' : '')) . "\n";
 		}
 	}
 	print '<td></td>';
@@ -814,8 +816,7 @@ if ($action != "create" && $action != "edit") {
 		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
 	}
 
-
-	$db->free($resql);
+	if (!empty($resql)) $db->free($resql);
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $objectline); // Note that $action and $objectline may have been modified by hook

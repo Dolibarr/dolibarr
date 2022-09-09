@@ -71,7 +71,7 @@ class FormFile
 	 *  @param	Object		$object			Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
 	 *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
-	 *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
+	 *                                      Deprecated 2 should never be used and if 1 is used, option should not be enabled.
 	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
@@ -104,7 +104,8 @@ class FormFile
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
 			// TODO: Thisdoes not work when param nooutput=1
-			return $this->_formAjaxFileUpload($object);
+			//return $this->_formAjaxFileUpload($object);
+			return 'Feature too bugged so removed';
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
@@ -1470,10 +1471,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -1917,37 +1918,6 @@ class FormFile
 			print '</form>';
 		}
 		// Fin de zone
-	}
-
-	/**
-	 *    Show form to upload a new file with jquery fileupload.
-	 *    This form use the fileupload.php file.
-	 *
-	 *    @param	Object	$object		Object to use
-	 *    @return	void
-	 */
-	private function _formAjaxFileUpload($object)
-	{
-		global $langs, $conf;
-
-		// PHP post_max_size
-		$post_max_size				= ini_get('post_max_size');
-		$mul_post_max_size			= substr($post_max_size, -1);
-		$mul_post_max_size			= ($mul_post_max_size == 'M' ? 1048576 : ($mul_post_max_size == 'K' ? 1024 : ($mul_post_max_size == 'G' ? 1073741824 : 1)));
-		$post_max_size				= $mul_post_max_size * (int) $post_max_size;
-		// PHP upload_max_filesize
-		$upload_max_filesize		= ini_get('upload_max_filesize');
-		$mul_upload_max_filesize	= substr($upload_max_filesize, -1);
-		$mul_upload_max_filesize	= ($mul_upload_max_filesize == 'M' ? 1048576 : ($mul_upload_max_filesize == 'K' ? 1024 : ($mul_upload_max_filesize == 'G' ? 1073741824 : 1)));
-		$upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
-		// Max file size
-		$max_file_size = (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-
-		// Include main
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php';
-
-		// Include template
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 	}
 
 	/**

@@ -22,6 +22,7 @@ if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security

@@ -39,6 +39,7 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $objectdesc = GETPOST('objectdesc', 'alpha');

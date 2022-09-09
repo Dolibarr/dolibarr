@@ -58,6 +58,7 @@ ConfirmDeleteCP=Confirm the deletion of this leave request?
 ErrorCantDeleteCP=Error you don't have the right to delete this leave request.
 CantCreateCP=You don't have the right to make leave requests.
 InvalidValidatorCP=You must choose the approver for your leave request.
+InvalidValidator=The user chosen isn't an approver.
 NoDateDebut=You must select a start date.
 NoDateFin=You must select an end date.
 ErrorDureeCP=Your leave request does not contain working day.

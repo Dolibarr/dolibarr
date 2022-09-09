@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/action/rapport.pdf.php
+ *	\file       htdocs/core/modules/action/rapport.class.php
  *	\ingroup    commercial
  *	\brief      File to build PDF with events
  */
