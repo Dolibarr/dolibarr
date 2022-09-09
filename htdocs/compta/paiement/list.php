@@ -30,6 +30,7 @@
  *  \brief      Payment page for customer invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -400,7 +401,7 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 // Filter: Payment type
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1);
+	print $form->select_types_paiements($search_paymenttype, 'search_paymenttype', '', 2, 1, 1, 1, 1, '', 1);
 	print '</td>';
 }
 

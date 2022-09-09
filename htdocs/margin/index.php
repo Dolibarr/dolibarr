@@ -22,6 +22,7 @@
  *	\brief      Page d'index du module margin
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 if ($user->rights->produit->lire) {

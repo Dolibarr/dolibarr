@@ -446,6 +446,7 @@ ErrorPaymentConditionsNotEligibleToDepositCreation=Die gewählten Zahlungsbeding
 PaymentTypeVIR=Banküberweisung
 PaymentTypeShortVIR=Banküberweisung
 PaymentTypePRE=Lastschrift
+PaymentTypePREdetails=(auf Rechnung *-%s)
 PaymentTypeShortPRE=Lastschrift
 PaymentTypeLIQ=Bar
 PaymentTypeShortLIQ=Bar

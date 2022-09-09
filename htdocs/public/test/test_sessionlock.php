@@ -61,6 +61,7 @@ print '<br>';
 print 'session_status='.session_status().' (before main.inc.php)';
 print '<br>';
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Security

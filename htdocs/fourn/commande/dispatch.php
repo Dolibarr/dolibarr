@@ -30,6 +30,7 @@
  * \brief Page to dispatch receiving
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -39,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -243,7 +244,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
 
 			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 					if (!empty($dto)) {
 						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
@@ -269,7 +270,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 					}
 
 					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 							$dto = price2num(GETPOST("dto_".$reg[1].'_'.$reg[2], 'int'), '');
 							if (empty($dto)) {
 								$dto = 0;
@@ -311,7 +312,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 
 			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 					if (!empty($dto)) {
 						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
@@ -344,7 +345,7 @@ if ($action == 'dispatch' && $permissiontoreceive) {
 					}
 
 					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+						if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 							//update supplier price
 							if (GETPOSTISSET($saveprice)) {
@@ -541,7 +542,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
@@ -742,7 +743,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-					if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+					if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 						print '<td class="right">'.$langs->trans("Price").'</td>';
 						print '<td class="right">'.$langs->trans("ReductionShort").' (%)</td>';
 						print '<td class="right">'.$langs->trans("UpdatePrice").'</td>';
@@ -991,7 +992,7 @@ if ($id > 0 || !empty($ref)) {
 						print '</td>';
 
 						if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
-							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+							if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 								// Price
 								print '<td class="right">';
 								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? GETPOST('pu'.$suffix) : $up_ht_disc)).'">';

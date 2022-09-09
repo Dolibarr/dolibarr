@@ -34,6 +34,7 @@
  *		\brief      Page to administer data tables
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -511,7 +512,7 @@ $tabcond[25] = isModEnabled('website');
 //$tabcond[26]= isModEnabled("product");
 $tabcond[27] = isModEnabled("societe");
 $tabcond[28] = isModEnabled('holiday');
-$tabcond[29] = !empty($conf->project->enabled);
+$tabcond[29] = isModEnabled('project');
 $tabcond[30] = isModEnabled('label');
 //$tabcond[31]= !empty($conf->accounting->enabled);
 $tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
@@ -1028,10 +1029,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1048,10 +1052,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1068,10 +1075,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1088,10 +1098,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1108,10 +1121,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1128,10 +1144,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1140,6 +1159,8 @@ if (empty($reshook)) {
 		}
 	}
 }
+
+
 /*
  * View
  */
@@ -2066,7 +2087,7 @@ if ($id > 0) {
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
-										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										$valuetoshow = $form->cache_vatrates[$key]['label'];
 										break;
 									}
 								}

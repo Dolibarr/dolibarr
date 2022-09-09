@@ -42,6 +42,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -56,9 +57,10 @@ $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$suffix = "";
 
 if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 
@@ -79,8 +81,10 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<div class="ticketpublicarea">';
-print '<p style="text-align: center">'.(!empty($conf->global->TICKET_PUBLIC_TEXT_HOME) ? $conf->global->TICKET_PUBLIC_TEXT_HOME : '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc")).'</span></p>';
+
+print '<p style="text-align: center">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HOME", '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc")).'</span></p>').'</p>';
 print '<br>';
+
 print '<div class="ticketform">';
 print '<a href="create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
 print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15 fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';

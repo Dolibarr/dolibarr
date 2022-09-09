@@ -28,6 +28,7 @@
  *		\brief      Page to setup extra fields of supplierinvoice line
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

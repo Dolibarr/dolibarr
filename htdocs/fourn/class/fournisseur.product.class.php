@@ -296,7 +296,7 @@ class ProductFournisseur extends Product
 		// Multicurrency
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (empty($multicurrency_tx)) {
 				$multicurrency_tx = 1;
 			}

@@ -16,17 +16,19 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
- *       \brief       Page reporting purchase turnover by thirdparty
+ *    \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
+ *    \brief       Page reporting purchase turnover by thirdparty
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -38,6 +40,7 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
+// Sort Order
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
@@ -46,6 +49,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
+
 
 $socid = GETPOST('socid', 'int');
 
@@ -59,13 +63,17 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Hook
 $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
-// Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+
+// Search Parameters
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
 $search_country = GETPOST("search_country", 'alpha');
+
+
+// Date range
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
 $date_startyear = GETPOST("date_startyear", 'alpha');
 $date_startmonth = GETPOST("date_startmonth", 'alpha');
 $date_startday = GETPOST("date_startday", 'alpha');

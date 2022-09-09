@@ -500,6 +500,8 @@ if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 		}
 
 		if (!isset($_SESSION['newtoken']) || getDolGlobalInt('MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL')) {
+			// Note: Using MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL is not recommended: if a user succeed in entering a data from
+			// a public page with a link that make a token regeneration, it can make use of the backoffice no more possible !
 			// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
 			$token = dol_hash(uniqid(mt_rand(), false), 'md5'); // Generates a hash of a random number. We don't need a secured hash, just a changing random value.
 			$_SESSION['newtoken'] = $token;
@@ -545,12 +547,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	) {
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
+			top_httphead();
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
-				die;
 			} else {
 				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
@@ -565,8 +567,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					}
 					print " into setup).\n";
 				}
-				die;
 			}
+			die;
 		}
 	}
 
@@ -849,12 +851,16 @@ if (!defined('NOLOGIN')) {
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_INFO);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
+				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
+				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
+				// report a message to ask to login when search ajax component is used after a timeout.
+				//top_httphead();
 				return 'ERROR_NOT_LOGGED';
 			} else {
 				if ($_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
 					http_response_code(401); // It makes easier to understand if session was broken during security tests
 				}
-				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));
+				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));	// This include http headers
 			}
 			exit;
 		}
@@ -1240,8 +1246,7 @@ if (!defined('NOLOGIN')) {
 		// If not active, we refuse the user
 		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
-		accessforbidden($langs->trans("ErrorLoginDisabled"));
-		exit;
+		accessforbidden("ErrorLoginDisabled");
 	}
 
 	// Load permissions
@@ -1605,7 +1610,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", ((int) $conf->global->MAIN_IHM_PARAMS_REV) + 1, 'chaine', 0, '', $conf->entity);
 		}
 
-		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
+		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').(empty($user->id) ? '' : ('&amp;userid='.$user->id)).'&amp;entity='.$conf->entity;
 
 		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV");
 		if (GETPOSTISSET('dol_hide_topmenu')) {

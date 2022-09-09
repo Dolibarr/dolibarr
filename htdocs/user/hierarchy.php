@@ -26,6 +26,7 @@
  *      \brief      Page of hierarchy view of user module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 

@@ -22,6 +22,7 @@
  *		\brief      Home page of setup area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Load translation files required by the page

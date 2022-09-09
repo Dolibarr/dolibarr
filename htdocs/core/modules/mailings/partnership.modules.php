@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>

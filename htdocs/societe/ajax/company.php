@@ -41,6 +41,7 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
