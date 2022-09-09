@@ -60,7 +60,7 @@ if (!$sortorder) {
 $object = new Bookmark($db);
 
 // Security check
-restrictedArea($user, 'bookmarks');
+restrictedArea($user, 'bookmark');
 
 // Permissions
 $permissiontoread = !empty($user->rights->bookmark->lire);
