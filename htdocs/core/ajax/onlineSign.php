@@ -74,9 +74,7 @@ if ($type == 'proposal') {
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
 
@@ -214,6 +212,15 @@ if ($action == "importSignature") {
 					$db->commit();
 					$response = "success";
 					setEventMessages("PropalSigned", null, 'warnings');
+					if (method_exists($object, 'call_trigger')) {
+						//customer is not a user !?! so could we use same user as validation ?
+						$user = new User($db);
+						$user->fetch($object->user_valid_id);
+						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
+						if ($result < 0) {
+							$error++;
+						}
+					}
 				} else {
 					$db->rollback();
 					$error++;

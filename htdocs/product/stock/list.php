@@ -25,6 +25,7 @@
  *      \brief      Page with warehouse and stock value
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 

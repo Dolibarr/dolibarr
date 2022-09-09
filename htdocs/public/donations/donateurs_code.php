@@ -55,12 +55,13 @@ function llxFooterVierge()
 	print '</body></html>';
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
 if (empty($conf->don->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Donation not enabled');
 }
 
 
