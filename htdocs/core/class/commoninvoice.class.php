@@ -856,7 +856,7 @@ abstract class CommonInvoice extends CommonObject
 
 			$sql = 'SELECT count(*)';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-			$sql .= ' WHERE fk_facture = '.$this->id;
+			$sql .= ' WHERE fk_facture = '.((int) $this->id);
 			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
 			$sql .= ' AND traite = 0';
 
@@ -1039,7 +1039,7 @@ abstract class CommonInvoice extends CommonObject
 										// if (!$error && empty($nocancelifpaymenterror)) {	// If we are not in a mode that ask to avoid cancelation, we cancel payment.
 										// 	// Test if last AC_PAYMENT_STRIPE_KO event is an old error lower than $nbhoursbetweentries hours.
 										// 	$recentfailedpayment = false;
-										// 	$sqlonevents = 'SELECT COUNT(*) as nb FROM ' . MAIN_DB_PREFIX . 'actioncomm WHERE fk_soc = ' . $thirdparty->id . " AND code ='AC_PAYMENT_STRIPE_KO' AND datep > '" . $this->db->idate($now - ($nbhoursbetweentries * 3600)) . "'";
+										// 	$sqlonevents = 'SELECT COUNT(*) as nb FROM ' . MAIN_DB_PREFIX . 'actioncomm WHERE fk_soc = ' . ((int) $thirdparty->id) . " AND code ='AC_PAYMENT_STRIPE_KO' AND datep > '" . $this->db->idate($now - ($nbhoursbetweentries * 3600)) . "'";
 										// 	$resqlonevents = $this->db->query($sqlonevents);
 										// 	if ($resqlonevents) {
 										// 		$obj = $this->db->fetch_object($resqlonevents);
