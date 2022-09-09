@@ -950,17 +950,21 @@ if ($object->id > 0) {
 			print '</td>';
 		}
 		print '<td class="right"></td>';
-		print '<td class="right">';
-		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
-		print '</td>';
 		if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 			print '<td class="right">';
 			print '</td>';
 			print '<td class="right">';
 			print '</td>';
 			print '<td class="right">';
+			print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 			print '</td>';
 			print '<td class="right">';
+			print '</td>';
+			print '<td class="right">';
+			print '</td>';
+		} else {
+			print '<td class="right">';
+			print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 			print '</td>';
 		}
 		// Actions
@@ -1160,9 +1164,9 @@ if ($object->id > 0) {
 	}
 	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 		print '<tr class="liste_total">';
-		print '<td colspan="5">'.$langs->trans("Total").'</td>';
+		print '<td colspan="4">'.$langs->trans("Total").'</td>';
 		print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
-		print '<td class="right" id="totalRealValuation" colspan="2">'.price($totalRealValuation).'</td>';
+		print '<td class="right" id="totalRealValuation" colspan="3">'.price($totalRealValuation).'</td>';
 		print '<td></td>';
 		print '</tr>';
 	}
