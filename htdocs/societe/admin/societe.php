@@ -714,7 +714,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';

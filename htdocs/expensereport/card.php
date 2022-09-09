@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -1990,7 +1990,7 @@ if ($action == 'create') {
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
 
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							$bankaccountstatic->account_number = $objp->account_number;
 
 							$accountingjournal = new AccountingJournal($db);
@@ -2122,7 +2122,7 @@ if ($action == 'create') {
 						}
 
 						$titlealt = '';
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 							$accountingaccount = new AccountingAccount($db);
 							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);

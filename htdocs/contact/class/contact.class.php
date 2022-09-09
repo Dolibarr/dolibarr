@@ -344,7 +344,7 @@ class Contact extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->mailing->enabled)) {
+		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
 		// typical ['s.nom'] is used for third-parties

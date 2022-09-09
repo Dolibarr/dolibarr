@@ -29,10 +29,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -245,7 +245,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -342,7 +342,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Accountancy
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
@@ -533,7 +533,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
@@ -544,7 +544,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_capital, 1);
 
@@ -564,7 +564,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
@@ -575,7 +575,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_insurance, 1);
 
@@ -595,7 +595,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
@@ -606,7 +606,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_interest, 1);
 
