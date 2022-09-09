@@ -435,6 +435,7 @@ if (empty($reshook)) {
 			$result = $companypaymentmode->delete($user);
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -458,8 +459,10 @@ if (empty($reshook)) {
 			}*/
 
 			$result = $companybankaccount->delete($user);
+
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -545,11 +548,11 @@ if (empty($reshook)) {
 				// Get the Stripe customer
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				// print json_encode($cu);
-				if (!$cu) {
+				if (empty($cu)) {
 					$error++;
-					setEventMessages($stripe->error, $stripe->errors, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorStripeCustomerNotFoundCreateFirst"), null, 'errors');
 				}
-
 				if (!$error) {
 					// Creation of Stripe SEPA + update of llx_societe_rib
 					$card = $stripe->sepaStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
@@ -1587,8 +1590,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
 				if (empty($rib->stripe_card_ref)) {
+					// Add link to create BAN on Stripe
 					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
-					print img_picto($langs->trans("CreateBAN"), 'stripe');
+					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
 					print '</a>';
 				}
 
