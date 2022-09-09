@@ -98,6 +98,12 @@ source_file = htdocs/langs/en_US/cron.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.datapolicy]
+file_filter = htdocs/langs/<lang>/datapolicy.lang
+source_file = htdocs/langs/en_US/datapolicy.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.deliveries]
 file_filter = htdocs/langs/<lang>/deliveries.lang
 source_file = htdocs/langs/en_US/deliveries.lang

@@ -37,7 +37,6 @@ ServerAddressDescription=Nombre o dirección IP para el servidor de base de dato
 ServerPortDescription=Puerto del servidor de base de datos. Mantener vacío si se desconoce.
 DatabasePrefix=Prefijo de tabla de base de datos
 AdminLogin=Cuenta de usuario para el propietario de la base de datos Dolibarr.
-PasswordAgain=Vuelva a escribir la confirmación de la contraseña
 AdminPassword=Contraseña para el propietario de la base de datos Dolibarr.
 CreateDatabase=Crear base de datos
 CreateUser=Cree una cuenta de usuario o otorgue permiso de cuenta de usuario en la base de datos de Dolibarr

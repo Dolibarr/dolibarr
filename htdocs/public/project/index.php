@@ -84,7 +84,7 @@ if ($resultproject < 0) {
 
 // Security check
 if (empty($conf->project->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Project not enabled');
 }
 
 

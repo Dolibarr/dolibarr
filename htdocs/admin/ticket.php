@@ -428,7 +428,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->TICKET_ADDON_PDF == $name) {
+								if (getDolGlobalString("TICKET_ADDON_PDF") == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -540,9 +540,10 @@ print '</td>';
 print '</tr>';
 
 if (isModEnabled('product')) {
+	$htmlname = "product_category_id";
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
 	print '<td class="left">';
-	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, $htmlname);
 	if ($conf->use_javascript_ajax) {
 		print ajax_combobox('select_'.$htmlname);
 	}

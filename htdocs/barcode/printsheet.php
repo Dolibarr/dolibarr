@@ -56,6 +56,17 @@ $action = GETPOST('action', 'aZ09');
 $producttmp = new Product($db);
 $thirdpartytmp = new Societe($db);
 
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+if (!$user->hasRight('barcode', 'read')) {
+	accessforbidden();
+}
+restrictedArea($user, 'barcode');
+
 
 /*
  * Actions
@@ -262,10 +273,6 @@ if ($action == 'builddoc') {
 /*
  * View
  */
-
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
 
 $form = new Form($db);
 

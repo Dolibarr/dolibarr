@@ -59,7 +59,7 @@ $action = GETPOST('action', 'aZ09');
 $suffix = "";
 
 if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 

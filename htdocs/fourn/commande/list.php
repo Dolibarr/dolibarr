@@ -188,7 +188,9 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
 	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
-	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51)
+	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51),
+	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>100),
+	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>110),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -1440,6 +1442,16 @@ if ($resql) {
 		print '</div>';
 		print '</td>';
 	}
+	// Note public
+	if (!empty($arrayfields['cf.note_public']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// Note private
+	if (!empty($arrayfields['cf.note_private']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Action column
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterButtons();
@@ -1539,6 +1551,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cf.date_approve']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.date_approve']['label'], $_SERVER["PHP_SELF"], 'cf.date_approve', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.note_public']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.note_public']['label'], $_SERVER["PHP_SELF"], "cf.note_public", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.note_private']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.note_private']['label'], $_SERVER["PHP_SELF"], "cf.note_private", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -1862,6 +1880,25 @@ if ($resql) {
 		if (!empty($arrayfields['cf.date_approve']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_approve), 'day');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['cf.note_public']['checked'])) {
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_public);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Note private
+		if (!empty($arrayfields['cf.note_private']['checked'])) {
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

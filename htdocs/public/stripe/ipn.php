@@ -49,11 +49,6 @@ require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
-if (empty($conf->stripe->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
-
-
 // You can find your endpoint's secret in your webhook settings
 if (isset($_GET['connect'])) {
 	if (isset($_GET['test'])) {
@@ -77,10 +72,12 @@ if (isset($_GET['connect'])) {
 	}
 }
 
+if (empty($conf->stripe->enabled)) {
+	httponly_accessforbidden('Module Stripe not enabled');
+}
+
 if (empty($endpoint_secret)) {
-	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The WEBHOOK_KEY is not defined.';
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The WEBHOOK_KEY is not defined.', 400, 1);
 }
 
 if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
@@ -89,9 +86,7 @@ if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
 	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
 	$user->getrights();
 } else {
-	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.';
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }
 
 
@@ -113,12 +108,9 @@ try {
 	$event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
 } catch (\UnexpectedValueException $e) {
 	// Invalid payload
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+	httponly_accessforbidden('Invalid payload', 400);
 } catch (\Stripe\Error\SignatureVerification $e) {
-	// Invalid signature
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
+	httponly_accessforbidden('Invalid signature', 400);
 }
 
 // Do something with $event
@@ -155,6 +147,7 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
+top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
 
@@ -195,11 +188,10 @@ if ($event->type == 'payout.created') {
 
 		$ret = $mailfile->sendfile();
 
-		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	} else {
 		$error++;
-		http_response_code(500); // PHP 5.4 or greater
+		http_response_code(500);
 		return -1;
 	}
 } elseif ($event->type == 'payout.paid') {
@@ -287,7 +279,6 @@ if ($event->type == 'payout.created') {
 
 		$ret = $mailfile->sendfile();
 
-		http_response_code(200);
 		return 1;
 	} else {
 		$error++;
@@ -396,4 +387,4 @@ if ($event->type == 'payout.created') {
 	// This event is deprecated.
 }
 
-http_response_code(200);
+// End of page. Default return HTTP code will be 200

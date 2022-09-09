@@ -5372,7 +5372,7 @@ class Form
 			if ($type) {
 				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			$this->select_conditions_paiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
+			print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
 			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {

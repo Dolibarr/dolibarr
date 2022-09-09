@@ -4955,8 +4955,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 	}
 
-	// Return a http error code if possible
+	// Return a http header with error code if possible
 	if (!headers_sent()) {
+		top_httphead();
 		http_response_code(500);
 	}
 

@@ -52,6 +52,8 @@ if (!$sortfield) {
 	$sortfield = "p.datec";
 }
 
+$optioncss = GETPOST('optioncss', 'alpha');
+
 // Get supervariables
 $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
