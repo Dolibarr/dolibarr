@@ -16,10 +16,11 @@
  */
 
 /**
- *   	\file       mo_card.php
- *		\ingroup    mrp
- *		\brief      Page to create/edit/view mo
+ *    \file       htdocs/mrp/mo_card.php
+ *    \ingroup    mrp
+ *    \brief      Page to create/edit/view MO Manufacturing Order
  */
+
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -35,7 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "other"));
+$langs->loadLangs(array('mrp', 'other'));
+
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -97,6 +99,7 @@ if (GETPOST('fk_bom', 'int') > 0) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
+// Permissions
 $permissionnote = $user->rights->mrp->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mrp->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php

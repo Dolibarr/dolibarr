@@ -27,6 +27,7 @@
  *	\brief      Page to describe a delivery receipt
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -259,9 +260,10 @@ llxHeader('', $title, 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if ($action == 'create') {    // Create. Seems to no be used
-} else // View
-{
+if ($action == 'create') {
+	// Create. Seems to no be used
+} else {
+	// View
 	if ($object->id > 0) {
 		// Origin of a 'livraison' (delivery receipt) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)

@@ -1217,7 +1217,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			// Add lines because it is not included into create function
 			foreach ($this->lines as $line) {
-				$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
+				$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration, $line->array_options);
 			}
 
 			// Hook of thirdparty module

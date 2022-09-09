@@ -33,10 +33,8 @@ if (empty($conf) || !is_object($conf)) {
 // DDOS protection
 $size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
 if ($size > 10000) {
-	http_response_code(413);
 	$langs->loadLangs(array("errors", "install"));
-	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
-	exit;
+	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

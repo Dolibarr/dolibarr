@@ -434,8 +434,10 @@ class Stripe extends CommonObject
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
+			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
 			}
 			if (!empty($conf->global->STRIPE_KLARNA)) {
 				$paymentmethodtypes[] = "klarna";
@@ -463,7 +465,8 @@ class Stripe extends CommonObject
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,
 				"description" => $description,
-				"statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => $descriptor, // For card payment, 22 chars that appears on bank receipt (prefix into stripe setup + this suffix)
+				"statement_descriptor" => $descriptor, // For SEPA, it will take only statement_descriptor, not statement_descriptor_suffix
 				//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
@@ -587,131 +590,6 @@ class Stripe extends CommonObject
 		} else {
 			return null;
 		}
-	}
-
-	/**
-		 * Get the Stripe SEPA of a company payment mode
-		 *
-		 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
-		 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
-		 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-		 * @param	int						$status							Status (0=test, 1=live)
-		 * @param	int						$createifnotlinkedtostripe		1=Create the stripe sepa and the link if the sepa is not yet linked to a stripe sepa. Deprecated with new Stripe API and SCA.
-		 * @return 	\Stripe\PaymentMethod|null 			Stripe SEPA or null if not found
-		 */
-	public function sepaStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
-	{
-		global $conf, $user, $langs;
-		$sepa = null;
-
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix"; // stripe_card_ref is src_ for sepa
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
-		$sql .= " WHERE sa.rowid = '".$this->db->escape($object->id)."'"; // We get record from ID, no need for filter on entity
-		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
-
-		$soc = new Societe($this->db);
-		$soc->fetch($object->fk_soc);
-
-		dol_syslog(get_class($this)."::fetch search stripe sepa(card) id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				$obj = $this->db->fetch_object($resql);
-				$cardref = $obj->stripe_card_ref;
-				dol_syslog(get_class($this)."::cardStripe cardref=".$cardref);
-				if ($cardref) {
-					try {
-						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
-								$sepa = $cu->sources->retrieve($cardref);
-							} else {
-								$sepa = \Stripe\PaymentMethod::retrieve($cardref);
-							}
-						} else {
-							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
-								//$sepa = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
-								$sepa = $cu->sources->retrieve($cardref);
-							} else {
-								//$sepa = \Stripe\PaymentMethod::retrieve($cardref, array("stripe_account" => $stripeacc));		// Don't know if this works
-								$sepa = \Stripe\PaymentMethod::retrieve($cardref);
-							}
-						}
-					} catch (Exception $e) {
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
-					}
-				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban_prefix; //prefix ?
-					$ipaddress = getUserRemoteIP();
-
-					$dataforcard = array(
-						'type'=>'sepa_debit',
-						"sepa_debit" => array('iban' => $iban),
-						'currency' => 'eur',
-						'usage' => 'reusable',
-						'owner' => array(
-							'name' => $soc->name,
-						),
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
-					);
-
-					//$a = \Stripe\Stripe::getApiKey();
-					//var_dump($a);var_dump($stripeacc);exit;
-					try {
-						dol_syslog("Try to create sepa_debit 0");
-
-						$service = 'StripeTest';
-						$servicestatus = 0;
-						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-							$service = 'StripeLive';
-							$servicestatus = 1;
-						}
-						// Force to use the correct API key
-						global $stripearrayofkeysbyenv;
-						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
-
-						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
-						$s = new \Stripe\StripeClient($stripeacc);
-						$sepa = $s->sources->create($dataforcard);
-						if (!$sepa) {
-							$this->error = 'Creation of sepa_debit on Stripe has failed';
-						} else {
-							//association du client avec cette source de paimeent
-							$cs = $cu->createSource(
-								$cu->id,
-								[
-								'source' => $sepa->id,
-								]
-							);
-							if (!$cs) {
-								$this->error = 'Link SEPA <-> Customer failed';
-							} else {
-								dol_syslog("Try to create sepa_debit 3");
-								// print json_encode($sepa);
-
-								$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
-								$sql .= " SET stripe_card_ref = '".$this->db->escape($sepa->id)."', card_type = 'sepa_debit',";
-								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "'";
-								$sql .= " WHERE rowid = '".$this->db->escape($object->id)."'";
-								$sql .= " AND type = 'ban'";
-								$resql = $this->db->query($sql);
-								if (!$resql) {
-									$this->error = $this->db->lasterror();
-								}
-							}
-						}
-					} catch (Exception $e) {
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
-					}
-				}
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		return $sepa;
 	}
 
 	/**
@@ -896,7 +774,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this)."::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
+		dol_syslog(get_class($this)."::cardStripe search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1010,6 +888,127 @@ class Stripe extends CommonObject
 		}
 
 		return $card;
+	}
+
+
+	/**
+	 * Get the Stripe SEPA of a company payment mode
+	 *
+	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer.
+	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
+	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int						$status							Status (0=test, 1=live)
+	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe sepa and the link if the sepa is not yet linked to a stripe sepa. Deprecated with new Stripe API and SCA.
+	 * @return 	\Stripe\PaymentMethod|null 			Stripe SEPA or null if not found
+	 */
+	public function sepaStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
+	{
+		global $conf, $user, $langs;
+		$sepa = null;
+
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix"; // stripe_card_ref is src_ for sepa
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
+		$sql .= " WHERE sa.rowid = '".$this->db->escape($object->id)."'"; // We get record from ID, no need for filter on entity
+		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
+
+		$soc = new Societe($this->db);
+		$soc->fetch($object->fk_soc);
+
+		dol_syslog(get_class($this)."::sepaStripe search stripe ban id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num) {
+				$obj = $this->db->fetch_object($resql);
+				$cardref = $obj->stripe_card_ref;
+				dol_syslog(get_class($this)."::sepaStripe cardref=".$cardref);
+				if ($cardref) {
+					try {
+						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
+								$sepa = $cu->sources->retrieve($cardref);
+							} else {
+								$sepa = \Stripe\PaymentMethod::retrieve($cardref);
+							}
+						} else {
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
+								//$sepa = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
+								$sepa = $cu->sources->retrieve($cardref);
+							} else {
+								//$sepa = \Stripe\PaymentMethod::retrieve($cardref, array("stripe_account" => $stripeacc));		// Don't know if this works
+								$sepa = \Stripe\PaymentMethod::retrieve($cardref);
+							}
+						}
+					} catch (Exception $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+					}
+				} elseif ($createifnotlinkedtostripe) {
+					$iban = $obj->iban_prefix; //prefix ?
+					$ipaddress = getUserRemoteIP();
+
+					$dataforcard = array(
+						'type'=>'sepa_debit',
+						"sepa_debit" => array('iban' => $iban),
+						'currency' => 'eur',
+						'usage' => 'reusable',
+						'owner' => array(
+							'name' => $soc->name,
+						),
+						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
+					);
+
+					//$a = \Stripe\Stripe::getApiKey();
+					//var_dump($a);var_dump($stripeacc);exit;
+					try {
+						dol_syslog("Try to create sepa_debit 0");
+
+						$service = 'StripeTest';
+						$servicestatus = 0;
+						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+							$service = 'StripeLive';
+							$servicestatus = 1;
+						}
+						// Force to use the correct API key
+						global $stripearrayofkeysbyenv;
+						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
+
+						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+						$s = new \Stripe\StripeClient($stripeacc);
+						$sepa = $s->sources->create($dataforcard);
+						if (!$sepa) {
+							$this->error = 'Creation of sepa_debit on Stripe has failed';
+						} else {
+							// association du client avec cette source de paimeent
+							$cs = $cu->createSource($cu->id, array('source' => $sepa->id));
+							if (!$cs) {
+								$this->error = 'Link SEPA <-> Customer failed';
+							} else {
+								dol_syslog("Try to create sepa_debit 3");
+								// print json_encode($sepa);
+
+								$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
+								$sql .= " SET stripe_card_ref = '".$this->db->escape($sepa->id)."', card_type = 'sepa_debit',";
+								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "'";
+								$sql .= " WHERE rowid = ".((int) $object->id);
+								$sql .= " AND type = 'ban'";
+								$resql = $this->db->query($sql);
+								if (!$resql) {
+									$this->error = $this->db->lasterror();
+								}
+							}
+						}
+					} catch (Exception $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+					}
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		return $sepa;
 	}
 
 	/**

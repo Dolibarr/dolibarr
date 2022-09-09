@@ -23,6 +23,7 @@
  *      \brief      Page to add payment of a tax
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
@@ -207,7 +208,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
+	print $form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print '</tr>';
 

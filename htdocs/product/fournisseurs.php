@@ -32,6 +32,7 @@
  *  \brief      Page of tab suppliers for products
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -514,15 +515,15 @@ if ($id > 0 || $ref) {
 					function load_vat() {
 						// get soc id
 						let socid = $("#id_fourn")[0].value
-	
+
 						// load available VAT rates
 						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
-						//Make GET request with params 
+						//Make GET request with params
 						let options = "";
 						options += "id=" + socid
 						options += "&htmlname=tva_tx"
 						options += "&action=default" // not defined in vatrates.php, default behavior.
-	
+
 						var get = $.getJSON(
 							vat_url,
 							options,
@@ -536,7 +537,7 @@ if ($id > 0 || $ref) {
 								})
 							}
 						);
-	
+
 					}
 					function replaceVATWithSupplierValue(vat_rate) {
 						console.log("Default VAT rate for the supplier: " + vat_rate + "%")

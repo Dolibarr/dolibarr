@@ -24,6 +24,7 @@
  *  \ingroup    holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Security check (access forbidden for external user too)

@@ -26,6 +26,7 @@
  *		\brief      Page with customers or suppliers orders statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';

@@ -362,6 +362,7 @@ ValueOverwrittenByUserSetup=Advertencia, este valor puede ser sobrescrito por la
 BarcodeInitForThirdparties=init para código de barras masivo para terceros
 BarcodeInitForProductsOrServices=Código de barras masivo de inicio o reinicio para productos o servicios.
 CurrentlyNWithoutBarCode=Actualmente, tienes el registro <strong> %s </strong> en <strong> %s </strong> %s sin un código de barras definido.
+InitEmptyBarCode=Init value for the %s empty barcodes
 EraseAllCurrentBarCode=Borrar todos los valores de código de barras actuales
 ConfirmEraseAllCurrentBarCode=¿Está seguro de que desea borrar todos los valores de código de barras actuales?
 AllBarcodeReset=Todos los valores de código de barras han sido eliminados
@@ -1493,6 +1494,7 @@ MailToSendSupplierRequestForQuotation=Solicitud de presupuesto
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas de proveedores
 MailToSendContract=Los contratos
+MailToExpenseReport=Reporte de gastos
 ByDefaultInList=Mostrar por defecto en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta versión principal (siéntase libre de usarlo en sus sitios web)
@@ -1572,7 +1574,7 @@ WithDolTrackingID=Mensaje de una conversación iniciada por un primer correo ele
 WithoutDolTrackingID=Mensaje de una conversación iniciada por un primer correo electrónico NO enviado desde Dolibarr
 MainMenuCode=Código de entrada de menú (menú principal)
 ECMAutoTree=Mostrar árbol ECM automático
-OperationParamDesc=Defina las reglas que se utilizarán para extraer o establecer valores. <br> Ejemplo de operaciones que necesitan extraer un nombre del asunto del correo electrónico: <br> nombre=EXTRACT:SUBJECT:Mensaje de la empresa ([^\n] *) <br> Ejemplo para las operaciones que crean objetos: <br>objproperty1=SET: el valor puesto <br>objproperty2=SET: un valor incluyendo el valor de __objproperty1__ <br> objproperty3=SETIFEMPTY: valor utilizado si objproperty3 no está ya definido <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*) <br> options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*) <br> object.objproperty5=EXTRACT:BODY:El nombre de mi empresa es\\s( [^\\s]*) <br> <br> Use un ; char como separador para extraer o establecer varias propiedades.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Horario de oficina
 OpeningHoursDesc=Introduzca aquí el horario habitual de trabajo/servicio de su empresa.
 ResourceSetup=Configuración del módulo de recursos
