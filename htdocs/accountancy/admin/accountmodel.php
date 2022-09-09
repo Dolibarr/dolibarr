@@ -79,7 +79,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 

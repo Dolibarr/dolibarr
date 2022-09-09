@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('intracommreport'));
 
+// Get Parameters
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -124,6 +125,7 @@ $arrayfields = array(
 	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->produit->enabled) && isModEnabled("service"))),
 );
+
 /*
 // Extra fields
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
@@ -135,6 +137,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	}
 }
 */
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -211,6 +214,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 }
 */
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook

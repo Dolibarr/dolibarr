@@ -78,7 +78,7 @@ $search_phone_pro = GETPOST("search_phone_pro", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_fax = GETPOST("search_fax", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
-if (!empty($conf->mailing->enabled)) {
+if (isModEnabled('mailing')) {
 	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOST("search_no_email", 'int') : -1;
 } else {
 	$search_no_email = -1;
@@ -218,7 +218,7 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 $arrayfields['unsubscribed'] = array(
 		'label'=>'No_Email',
 		'checked'=>0,
-		'enabled'=>(!empty($conf->mailing->enabled)),
+		'enabled'=>(isModEnabled('mailing')),
 		'position'=>111);
 
 if (isModEnabled('socialnetworks')) {
@@ -385,7 +385,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
-if (!empty($conf->mailing->enabled)) {
+if (isModEnabled('mailing')) {
 	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) as unsubscribed";
 }
 // Add fields from hooks

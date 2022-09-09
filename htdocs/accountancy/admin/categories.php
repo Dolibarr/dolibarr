@@ -45,7 +45,7 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 

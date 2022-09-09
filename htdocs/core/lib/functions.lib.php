@@ -2272,7 +2272,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
+	if (isModEnabled('accounting') && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
 		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta();
