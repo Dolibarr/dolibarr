@@ -21,15 +21,12 @@
  *    \brief      Page to display list of bookmarks
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
-
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
@@ -40,7 +37,6 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 $id = GETPOST("id", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -60,22 +56,18 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-
 // Initialize Objects
 $object = new Bookmark($db);
-
 
 // Security check
 if (empty($user->rights->bookmark->lire)) {
 	restrictedArea($user, 'bookmarks');
 }
 
-
 // Permissions
 $permissiontoread = !empty($user->rights->bookmark->lire);
 $permissiontoadd = !empty($user->rights->bookmark->creer);
 $permissiontodelete = !empty($user->rights->bookmark->supprimer);
-
 
 
 /*

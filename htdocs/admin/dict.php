@@ -34,6 +34,7 @@
  *		\brief      Page to administer data tables
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -2086,7 +2087,7 @@ if ($id > 0) {
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
-										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										$valuetoshow = $form->cache_vatrates[$key]['label'];
 										break;
 									}
 								}

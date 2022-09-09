@@ -72,6 +72,7 @@ ExtrafieldCheckBoxFromList=Les cases à cocher du tableau
 ExtrafieldLink=Lier à un objet
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération de PDF
 CurrentlyNWithoutBarCode=Actuellement, vous avez <strong>%s</strong> enregistrements sur <strong>%s</strong> %s sans code à barres défini.
+InitEmptyBarCode=Init value for the %s empty barcodes
 ConfirmEraseAllCurrentBarCode=Êtes-vous sûr de vouloir effacer toutes les valeurs actuelles du code-barres?
 EnableFileCache=Activer le cache de fichiers
 DisplayCompanyManagers=Afficher les noms des gestionnaires
@@ -210,6 +211,7 @@ FillFixTZOnlyIfRequired=Exemple: +2 (remplir seulement si le problème est connu
 ExpectedChecksum=Somme attendue
 CurrentChecksum=Somme actuel
 ForcedConstants=Valeurs constantes requises
+MailToExpenseReport=Note de frais
 MailToMember=Membres
 ByDefaultInList=Afficher par défaut sur la liste vue
 TitleExampleForMajorRelease=Exemple de message que vous pouvez utiliser pour annoncer cette version majeure ( se sentir libre de l'utiliser sur vos sites web )
@@ -235,6 +237,6 @@ LandingPage=Page d'atterrissage
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les autorisations pour les modules activés ont été données uniquement aux utilisateurs administratifs. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
 BaseCurrency=Monnaie de référence de la société (entrer dans la configuration de l'entreprise pour modifier cela)
 FormatZip=Code postal
-OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 UseSearchToSelectResource=Utilisez un formulaire de recherche pour choisir une ressource (plutôt qu'une liste déroulante).
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>

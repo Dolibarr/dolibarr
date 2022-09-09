@@ -22,6 +22,7 @@
  *	\brief      Page to make mass init of barcode
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -48,6 +49,17 @@ $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
 $maxperinit = 1000;
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+//restrictedArea($user, 'barcode');
+if (empty($user->admin)) {
+	accessforbidden('Must be admin');
+}
 
 
 /*
@@ -261,13 +273,6 @@ if ($action == 'initbarcodeproducts') {
 /*
  * View
  */
-
-if (!$user->admin) {
-	accessforbidden();
-}
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
 
 $form = new Form($db);
 

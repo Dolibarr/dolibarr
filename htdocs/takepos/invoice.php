@@ -18,15 +18,16 @@
  */
 
 /**
- *	\file       htdocs/takepos/invoice.php
- *	\ingroup    takepos
- *	\brief      Page to generate section with list of lines
+ *    \file       htdocs/takepos/invoice.php
+ *    \ingroup    takepos
+ *    \brief      Page to generate section with list of lines
  */
 
-// if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIREDB'))        define('NOREQUIREDB', '1');        // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
-// if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
+// if (! defined('NOREQUIREUSER')) 		define('NOREQUIREUSER', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB')) 		define('NOREQUIREDB', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC')) 		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN')) 		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
@@ -43,13 +44,16 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../main.inc.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
+
 $hookmanager->initHooks(array('takeposinvoice'));
 
 global $mysoc;

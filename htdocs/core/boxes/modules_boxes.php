@@ -326,7 +326,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 							}
 
 							$maxlength = $MAXLENGTHBOX;
-							if (!empty($contents[$i][$j]['maxlength'])) {
+							if (isset($contents[$i][$j]['maxlength'])) {
 								$maxlength = $contents[$i][$j]['maxlength'];
 							}
 
