@@ -238,7 +238,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->RECEPTION_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).(!empty($module->scandir) ? '&scan_dir='.$module->scandir : '').(!empty($module->name) ? '&label='.urlencode($module->name) : '').'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -345,10 +345,10 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if (isset($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if (isset($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
 								$modulequalified = 0;
 							}
 

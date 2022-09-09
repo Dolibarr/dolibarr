@@ -27,9 +27,9 @@
  */
 
 /**
- *  \file       htdocs/multicurrency/multicurrency_rate.php
- *  \ingroup    multicurrency
- *  \brief      Page to list multicurrency rate
+ *    \file       htdocs/multicurrency/multicurrency_rate.php
+ *    \ingroup    multicurrency
+ *    \brief      Page to list multicurrency rate
  */
 
 // Load Dolibarr environment
@@ -37,9 +37,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('multicurrency'));
 
+// Get Parameters
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
 $show_files			= GETPOST('show_files', 'int');
@@ -70,12 +72,13 @@ if (!$sortfield) $sortfield = "cr.date_sync";
 if (!$sortorder) $sortorder = "DESC";
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize technical objects
 $object = new CurrencyRate($db);
-
-$extrafields = new ExtraFields($db);
 $form = new Form($db);
+$extrafields = new ExtraFields($db);
 
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('EditorRatelist', 'globallist'));
 
 if (empty($action)) {

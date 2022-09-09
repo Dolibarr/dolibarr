@@ -107,7 +107,7 @@ $arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conf
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 

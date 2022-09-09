@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/exportcsv.php
- *	\ingroup    opensurvey
- *	\brief      Page to list surveys
+ *    \file       htdocs/opensurvey/exportcsv.php
+ *    \ingroup    opensurvey
+ *    \brief      Page to list surveys
  */
 
 
@@ -29,12 +29,14 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
+
 $action = GETPOST('action', 'aZ09');
 $numsondage = '';
 if (GETPOST('id')) {
 	$numsondage = GETPOST("id", 'alpha');
 }
 
+// Initialize Objects
 $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
 if ($result <= 0) {

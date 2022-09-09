@@ -22,9 +22,9 @@
  */
 
 /**
- *		\file       htdocs/compta/bank/transfer.php
- *		\ingroup    banque
- *		\brief      Page de saisie d'un virement
+ *    \file       htdocs/compta/bank/transfer.php
+ *    \ingroup    bank
+ *    \brief      Page for entering a bank transfer
  */
 
 // Load Dolibarr environment
@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks", "categories", "multicurrency"));
+$langs->loadLangs(array('banks', 'categories', 'multicurrency'));
+
+
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;

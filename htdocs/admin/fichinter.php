@@ -538,7 +538,7 @@ print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">'
 print '<tr class="oddeven"><td>';
 print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
 print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
-if ($conf->global->FICHINTER_PRINT_PRODUCTS) {
+if (getDolGlobalString("FICHINTER_PRINT_PRODUCTS")) {
 	print 'checked ';
 }
 print '/>';
@@ -555,7 +555,7 @@ print '<td>';
 print $langs->trans("UseServicesDurationOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.($conf->global->FICHINTER_USE_SERVICE_DURATION ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_USE_SERVICE_DURATION"'.(getDolGlobalString("FICHINTER_USE_SERVICE_DURATION") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
@@ -571,7 +571,7 @@ print '<td>';
 print $langs->trans("UseDurationOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.($conf->global->FICHINTER_WITHOUT_DURATION ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"'.(getDolGlobalString("FICHINTER_WITHOUT_DURATION") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
@@ -587,7 +587,7 @@ print '<td>';
 print $langs->trans("UseDateWithoutHourOnFichinter");
 print '</td>';
 print '<td class="center">';
-print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.($conf->global->FICHINTER_DATE_WITHOUT_HOUR ? ' checked' : '').'>';
+print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"'.(getDolGlobalString("FICHINTER_DATE_WITHOUT_HOUR") ? ' checked' : '').'>';
 print '</td>';
 print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';

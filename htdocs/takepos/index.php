@@ -18,15 +18,16 @@
  */
 
 /**
- *	\file       htdocs/takepos/index.php
- *	\ingroup    takepos
- *	\brief      Main TakePOS screen
+ *    \file       htdocs/takepos/index.php
+ *    \ingroup    takepos
+ *    \brief      Main TakePOS screen
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
+// if (! defined('NOREQUIREUSER')) 		define('NOREQUIREUSER','1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB')) 		define('NOREQUIREDB','1'); 			// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC')) 		define('NOREQUIRESOC','1');
+// if (! defined('NOREQUIRETRAN')) 		define('NOREQUIRETRAN','1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
@@ -47,11 +48,12 @@ if (!defined('NOREQUIREAJAX')) {
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');

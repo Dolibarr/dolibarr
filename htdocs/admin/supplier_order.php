@@ -1,25 +1,25 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
+* Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
+* Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
+* Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+* Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
+* Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
+* Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
 
 /**
  *  \file       htdocs/admin/supplier_order.php
@@ -55,8 +55,8 @@ $specimenthirdparty->initAsSpecimen();
 
 
 /*
- * Actions
- */
+* Actions
+*/
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -85,7 +85,9 @@ if ($action == 'updateMask') {
 	$commande->thirdparty = $specimenthirdparty;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/supplier_order/doc/pdf_".$modele.".modules.php", 0);
@@ -195,8 +197,8 @@ if ($action == 'updateMask') {
 
 
 /*
- * View
- */
+* View
+*/
 
 $form = new Form($db);
 
@@ -314,8 +316,8 @@ print '</table><br>';
 
 
 /*
- *  Documents models for supplier orders
- */
+*  Documents models for supplier orders
+*/
 
 print load_fiche_titre($langs->trans("OrdersModelModule"), '', '');
 
@@ -370,7 +372,7 @@ foreach ($dirmodels as $reldir) {
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
-					print (empty($module->name) ? $name : $module->name);
+					print(empty($module->name) ? $name : $module->name);
 					print "</td>\n";
 					print "<td>\n";
 					require_once $dir.'/'.$file;
@@ -438,8 +440,8 @@ foreach ($dirmodels as $reldir) {
 print '</table><br>';
 
 /*
- * Other options
- */
+* Other options
+*/
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -457,7 +459,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
 print $langs->trans("IfSetToYesDontForgetPermission");
 print '</td><td>';
-print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
+print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.getDolGlobalString("SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED").'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
@@ -467,30 +469,30 @@ print "</td></tr>\n";
 /* Kept as hidden for the moment
 if (isModEnabled('banque')) {
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
-	if (!empty($conf->use_javascript_ajax))
-	{
-		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
-	}
-	else
-	{
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-		}
-	}
-	print '</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
+if (!empty($conf->use_javascript_ajax))
+{
+print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
+}
+else
+{
+if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
+{
+print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+}
+else
+{
+print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+}
+}
+print '</td></tr>';
 }
 else
 {
 
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
 
@@ -540,8 +542,8 @@ print '</form>';
 
 
 /*
- * Notifications
- */
+* Notifications
+*/
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
 print '<table class="noborder centpercent">';

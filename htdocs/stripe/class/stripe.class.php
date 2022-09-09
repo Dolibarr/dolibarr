@@ -774,7 +774,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this)."::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
+		dol_syslog(get_class($this)."::cardStripe search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -914,14 +914,14 @@ class Stripe extends CommonObject
 		$soc = new Societe($this->db);
 		$soc->fetch($object->fk_soc);
 
-		dol_syslog(get_class($this)."::fetch search stripe sepa(card) id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
+		dol_syslog(get_class($this)."::sepaStripe search stripe ban id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
-				dol_syslog(get_class($this)."::cardStripe cardref=".$cardref);
+				dol_syslog(get_class($this)."::sepaStripe cardref=".$cardref);
 				if ($cardref) {
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
@@ -990,7 +990,7 @@ class Stripe extends CommonObject
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
 								$sql .= " SET stripe_card_ref = '".$this->db->escape($sepa->id)."', card_type = 'sepa_debit',";
 								$sql .= " stripe_account= '" . $this->db->escape($cu->id . "@" . $stripeacc) . "'";
-								$sql .= " WHERE rowid = '".$this->db->escape($object->id)."'";
+								$sql .= " WHERE rowid = ".((int) $object->id);
 								$sql .= " AND type = 'ban'";
 								$resql = $this->db->query($sql);
 								if (!$resql) {

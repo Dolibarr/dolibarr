@@ -85,7 +85,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 // Security check
 if (empty($conf->agenda->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Agenda not enabled');
 }
 
 // Not older than

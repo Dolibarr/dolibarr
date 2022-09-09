@@ -139,7 +139,7 @@ if (!empty($conf->stripe->enabled)) {
 
 // Security check
 if (empty($validpaymentmethod)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('No valid payment mode');
 }
 
 

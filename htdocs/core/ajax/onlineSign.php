@@ -74,9 +74,7 @@ if ($type == 'proposal') {
 }
 
 if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
 

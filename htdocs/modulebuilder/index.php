@@ -82,10 +82,10 @@ $idmodule= GETPOST('idmodule', 'alpha');
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
-	accessforbidden();
+	accessforbidden('Module ModuleBuilder not enabled');
 }
 if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {
-	accessforbidden($langs->trans('ModuleBuilderNotAllowed'));
+	accessforbidden('ModuleBuilderNotAllowed');
 }
 
 

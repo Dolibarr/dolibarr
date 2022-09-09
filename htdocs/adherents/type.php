@@ -754,7 +754,7 @@ if ($rowid > 0) {
 
 				// Actions
 				print '<td class="center">';
-				if ($user->rights->adherent->creer) {
+				if ($user->hasRight('adherent', 'creer')) {
 					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				if ($user->rights->adherent->supprimer) {

@@ -118,7 +118,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
-	} elseif ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer) {
+	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -564,7 +564,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("ProductsAndServices"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'products');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -644,7 +644,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Customers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -725,7 +725,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Suppliers"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'companies');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -734,7 +734,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 	if ($user->hasRight("adherent", "read")) {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-		$permission = $user->rights->adherent->creer;
+		$permission = $user->hasRight('adherent', 'creer');
 
 		$prods = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($prods < 0) {
@@ -769,7 +769,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 
 			print '<br>';
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->adherent->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddMember"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create&memcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('adherent', 'creer'));
 			print_barre_liste($langs->trans("Member"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 			print "<table class='noborder' width='100%'>\n";
@@ -809,7 +809,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Member"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'members');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -896,7 +896,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Contact"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'contact');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -978,7 +978,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Banque"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'bank');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1061,7 +1061,7 @@ if ($type == Categorie::TYPE_PROJECT) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Project"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'project');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1138,7 +1138,7 @@ if ($type == Categorie::TYPE_USER) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Users"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'user');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1202,7 +1202,7 @@ if ($type == Categorie::TYPE_WAREHOUSE) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Warehouse"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'stock');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 
@@ -1281,7 +1281,7 @@ if ($type == Categorie::TYPE_TICKET) {
 		}
 	} else {
 		print_barre_liste($langs->trans("Ticket"), null, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'ticket');
-		accessforbidden($langs->trans("NotEnoughPermissions"), 0, 0);
+		accessforbidden("NotEnoughPermissions", 0, 0);
 	}
 }
 

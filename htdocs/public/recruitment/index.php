@@ -81,7 +81,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 

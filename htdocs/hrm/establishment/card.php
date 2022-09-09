@@ -255,7 +255,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = establishment_prepare_head($object);

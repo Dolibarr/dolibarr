@@ -80,7 +80,7 @@ $object = new Ticket($db);
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 

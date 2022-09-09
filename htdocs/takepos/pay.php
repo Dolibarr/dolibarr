@@ -22,10 +22,11 @@
  *	\brief      Page with the content of the popup to enter payments
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+// if (! defined('NOREQUIREUSER'))		define('NOREQUIREUSER', '1');		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');			// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
@@ -43,8 +44,9 @@ if (!defined('NOREQUIREHTML')) {
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant

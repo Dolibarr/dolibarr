@@ -72,12 +72,11 @@ $langs->loadLangs(array("main", "members", "partnership", "companies", "install"
 
 // Security check
 if (empty($conf->partnership->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Partnership not enabled');
 }
 
 if (empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
-	print $langs->trans("Auto subscription form for public visitors has not been enabled");
-	exit;
+	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

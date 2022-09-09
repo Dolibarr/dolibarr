@@ -294,7 +294,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";
