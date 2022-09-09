@@ -41,9 +41,7 @@ if (!defined('NOREQUIREHTML')) {
 }
 
 // Load Dolibarr environment
-require '../main.inc.php';		// Load $user and permissions
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 

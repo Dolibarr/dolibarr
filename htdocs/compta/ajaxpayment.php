@@ -36,6 +36,7 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 $langs->load('compta');

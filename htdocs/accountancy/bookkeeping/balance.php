@@ -24,6 +24,7 @@
  *  \brief 		Balance of book keeping
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class
