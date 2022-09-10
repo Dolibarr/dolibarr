@@ -211,3 +211,5 @@ ClickHereToGoToApp=Click here to go to your application
 ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test
+NodoUpgradeAfterDB=No action requested by external modules after upgrade of database
+NodoUpgradeAfterFiles=No action requested by external modules after upgrade of files or directories
