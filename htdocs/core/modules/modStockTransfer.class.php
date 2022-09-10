@@ -27,7 +27,8 @@
  *  \ingroup    stocktransfer
  *  \brief      Description and activation file for module StockTransfer
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module StockTransfer
