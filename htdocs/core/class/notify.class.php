@@ -625,6 +625,8 @@ class Notify
 							$mimefilename_list[] = $ref.".pdf";
 						}
 
+						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
+
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {
 							$action = '';
