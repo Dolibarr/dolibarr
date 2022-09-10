@@ -384,7 +384,7 @@ if (empty($reshook)) {
 	$objectclass = 'Societe';
 	$objectlabel = 'ThirdParty';
 	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -898,7 +898,7 @@ if ($user->rights->societe->creer) {
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
-if ($user->rights->societe->supprimer) {
+if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);

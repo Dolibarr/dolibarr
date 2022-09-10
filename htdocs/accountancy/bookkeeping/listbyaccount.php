@@ -396,7 +396,7 @@ if (empty($reshook)) {
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
 	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';

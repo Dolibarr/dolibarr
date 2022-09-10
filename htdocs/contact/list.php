@@ -313,7 +313,7 @@ if (empty($reshook)) {
 	$objectclass = 'Contact';
 	$objectlabel = 'Contact';
 	$permissiontoread = $user->hasRight('societe', 'lire');
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -690,7 +690,7 @@ $arrayofmassactions = array(
 //    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) {
+if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->societe->creer) {
