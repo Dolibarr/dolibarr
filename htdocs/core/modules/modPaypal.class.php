@@ -24,7 +24,8 @@
  *  \ingroup    paypal
  *  \brief      Description and activation file for the module Paypal
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
