@@ -1567,7 +1567,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$productCustomerPriceStatic = new Productcustomerprice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
-				$nbCustomerPrices = $productCustomerPriceStatic->fetch_all('', '', 1, 0, $filter);
+				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
 				if ($nbCustomerPrices > 0) {
 					$productCustomerPrice = $productCustomerPriceStatic->lines[0];

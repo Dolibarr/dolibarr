@@ -1412,7 +1412,7 @@ class Propal extends CommonObject
 							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 								$prodcustprice = new Productcustomerprice($this->db);
 								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
-								$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+								$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 								if ($result) {
 									// If there is some prices specific to the customer
 									if (count($prodcustprice->lines) > 0) {

@@ -168,7 +168,7 @@ if ($search_type != '') {
 }
 
 // Including the previous script generate the correct SQL filter for all the extrafields
-// we are playing with the behaviour of the Dolresource::fetch_all() by generating a fake
+// we are playing with the behaviour of the Dolresource::fetchAll() by generating a fake
 // extrafields filter key to make it works
 $filter['ef.resource'] = $sql;
 
