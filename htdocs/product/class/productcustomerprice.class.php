@@ -354,11 +354,31 @@ class Productcustomerprice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
+	 * @deprecated since dolibarr v17 use fetchAll
 	 * @return 	int 				<0 if KO, >0 if OK
+	 */
+	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	{
+		// phpcs:enable
+
+		dol_syslog(get_class($this)."::fetch_all is deprecated, use fetchAll instead", LOG_NOTICE);
+
+		return $this->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+	}
+
+	/**
+	 * Load all customer prices in memory from database
+	 *
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for select
+	 * @return 	int 				<0 if KO, >0 if OK
+	 * @since dolibarr v17
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
-		// phpcs:enable
 		global $langs;
 
 		if (empty($sortfield)) {
