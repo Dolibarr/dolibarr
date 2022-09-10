@@ -266,12 +266,12 @@ if ($id > 0) {
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td class=\"center\">";
+				$datedetail = dol_print_date($data['date'], 'dayhour');
 				if (!empty($data['fk_facture'])) {
-					print dol_print_date($data['date'], 'day');
-				} elseif (!empty($data['fk_paiement'])) {
-					print dol_print_date($data['date'], 'dayhour');
+					$datedetail = dol_print_date($data['date'], 'day');
 				}
+				print '<td class="center" title="'.dol_escape_htmltag($datedetail).'">';
+				print dol_print_date($data['date'], 'day');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";
