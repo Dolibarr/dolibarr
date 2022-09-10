@@ -157,3 +157,5 @@ ALTER TABLE llx_don ADD INDEX idx_don_fk_project (fk_projet);
 ALTER TABLE llx_don ADD INDEX idx_don_fk_user_author (fk_user_author);
 ALTER TABLE llx_don ADD INDEX idx_don_fk_user_valid (fk_user_valid);
 
+ALTER TABLE llx_commande ADD COLUMN revenuestamp double(24,8) DEFAULT 0 after localtax2;
+
