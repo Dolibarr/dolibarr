@@ -85,7 +85,7 @@ if ($action == "send") {
 	$sendto = $email;
 	$from = $mysoc->email;
 	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
-	if ($mail->error || $mail->errors) {
+	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
 	} else {
 		$result = $mail->sendfile();
