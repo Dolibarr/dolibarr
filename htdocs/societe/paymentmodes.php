@@ -1616,8 +1616,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				continue; // Already in previous list
 			}
 
-			$nbremote++;
-
 			$imgline = '';
 			if ($src->object == 'source' && $src->type == 'sepa_debit') {
 				$imgline = '<span class="fa fa-university fa-2x fa-fw"></span>';
@@ -1626,6 +1624,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			} else {
 				continue;
 			}
+
+			$nbremote++;
 
 			print '<tr class="oddeven">';
 			print '<td>';
@@ -1715,7 +1715,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = 10;
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				$colspan += 3;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
