@@ -381,14 +381,17 @@ if ($action != 'create') {
 
 	if ($action == 'edit') {
 		print '<table class="border centpercent tableforfield">';
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $object->label).'"></td></tr>';
-		print '<tr><td>'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" class="width300" value="'.(GETPOSTISSET('label') ? GETPOST('label', 'alphanohtml') : $object->label).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Email").'</td><td>';
+		print img_picto('', 'email', 'class="pictofixedwidth"');
+		print '<input type="text" name="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : $object->email).'"></td></tr>';
 		print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('signature', (GETPOSTISSET('signature') ? GETPOST('signature', 'restricthtml') : $object->signature), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("User").'</td><td>';
+		print img_picto('', 'user', 'class="pictofixedwidth"');
 		print $form->select_dolusers((GETPOSTISSET('private') ? GETPOST('private', 'int') : $object->private), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.(GETPOSTISSET('position') ? GETPOST('position', 'int') : $object->position).'"></td></tr>';
@@ -410,14 +413,17 @@ if ($action != 'create') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	*/
 	print '<table class="border centpercent tableforfield">';
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" value="'.GETPOST('label', 'alphanohtml').'" autofocus></td></tr>';
-	print '<tr><td class="fieldrequired">'.$langs->trans("Email").'</td><td><input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" class="width300" value="'.GETPOST('label', 'alphanohtml').'" autofocus></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Email").'</td><td>';
+	print img_picto('', 'email', 'class="pictofixedwidth"');
+	print '<input type="text" name="email" value="'.GETPOST('email', 'alphanohtml').'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Signature").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('signature', GETPOST('signature'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("User").'</td><td>';
+	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers((GETPOSTISSET('private') ? GETPOST('private', 'int') : -1), 'private', 1, null, 0, ($user->admin ? '' : $user->id));
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("Position").'</td><td><input type="text" name="position" class="maxwidth50" value="'.GETPOST('position', 'int').'"></td></tr>';
