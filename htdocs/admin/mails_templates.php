@@ -1243,7 +1243,7 @@ if ($num) {
 				// Status / Active
 				print '<td class="center nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+					print '<a class="reposition" href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
 				}
