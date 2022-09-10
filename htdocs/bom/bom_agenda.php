@@ -32,15 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "other"));
+$langs->loadLangs(array('mrp', 'other'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$id     = GETPOST('id', 'int');
+$socid  = GETPOST('socid', 'int');
+$ref    = GETPOST('ref', 'alpha');
+
+$action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$socid = GETPOST('socid', 'int');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -50,8 +51,10 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Load variables for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -74,6 +77,7 @@ $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
