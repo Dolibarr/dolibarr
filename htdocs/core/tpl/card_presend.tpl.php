@@ -242,13 +242,13 @@ if ($action == 'presend') {
 		} elseif (preg_match('/company/', $formmail->fromtype, $reg)) {
 			$emailsendersignature = '';
 		} elseif (preg_match('/senderprofile_(\d+)/', $formmail->fromtype, $reg)) {
-			$sql = "SELECT rowid, label, email FROM ".$db->prefix()."c_email_senderprofile";
+			$sql = "SELECT rowid, label, email, signature FROM ".$db->prefix()."c_email_senderprofile";
 			$sql .= " WHERE rowid = ".((int) $reg[1]);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
-					$emailsendersignature = $obj->label;
+					$emailsendersignature = $obj->signature;
 				}
 			}
 		}
