@@ -25,7 +25,9 @@
  * \ingroup		Double entry accounting
  * \brief		Module to activate the double entry accounting module
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  * Class to describe and enable double entry accounting module
