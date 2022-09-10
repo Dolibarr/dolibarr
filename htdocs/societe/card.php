@@ -137,7 +137,7 @@ if (!empty($canvas)) {
 }
 
 // Permissions
-$permissiontoread 	= $user->rights->societe->lire;
+$permissiontoread 	= $user->hasRight('societe', 'lire');
 $permissiontoadd 	= $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
 $permissionnote 	= $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
@@ -3277,7 +3277,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				 */
 				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
-				$genallowed = $user->rights->societe->lire;
+				$genallowed = $user->hasRight('societe', 'lire');
 				$delallowed = $user->rights->societe->creer;
 
 				print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);

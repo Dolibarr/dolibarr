@@ -161,7 +161,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$permissiontoread = $user->rights->societe->lire;
+	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->rights->societe->supprimer;
 	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
