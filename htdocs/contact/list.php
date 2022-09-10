@@ -312,7 +312,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Contact';
 	$objectlabel = 'Contact';
-	$permissiontoread = $user->rights->societe->lire;
+	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->rights->societe->supprimer;
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
