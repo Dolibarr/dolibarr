@@ -186,7 +186,7 @@ if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
 if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
-if (isModEnabled("societe") && !empty($user->rights->societe->lire)) {
+if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
 if (isModEnabled('project')) {
