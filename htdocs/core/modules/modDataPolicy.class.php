@@ -24,8 +24,8 @@
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for the module datapolicy
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
+require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 // The class name should start with a lower case mod for Dolibarr to pick it up
