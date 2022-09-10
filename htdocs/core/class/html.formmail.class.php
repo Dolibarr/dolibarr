@@ -511,7 +511,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button reposition" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -847,7 +847,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button small" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
