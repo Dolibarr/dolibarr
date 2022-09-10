@@ -421,7 +421,7 @@ function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
+			if (!$user->hasRight('societe', 'lire') && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
