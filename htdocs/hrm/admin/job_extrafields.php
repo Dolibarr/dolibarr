@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/job_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/job_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm jobs
  */
 
 // Load Dolibarr environment
@@ -44,10 +44,12 @@ foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->transnoentitiesnoconv($val);
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_job'; //Must be the $table_element of the class that manage extrafield
 
+// Security Check
 if (!$user->admin) {
 	accessforbidden();
 }
