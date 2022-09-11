@@ -58,6 +58,19 @@ class StockTransfer extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
+	* @var string Customer ref
+	* @deprecated
+	* @see $ref_customer
+	*/
+	public $ref_client;
+
+	/**
+	 * @var string Customer ref
+	 */
+	public $ref_customer;
+
+
+	/**
 	 * @var string String with name of icon for stocktransfer. Must be the part after the 'object_' into object_stocktransfer.png
 	 */
 	public $picto = 'stock';
