@@ -563,6 +563,21 @@ print '<br>';
 print '<br>';
 
 
+print load_fiche_titre($langs->trans("LimitsAndMitigation"), '', 'folder');
+
+print '<span class="opacitymedium">';
+print 'For a higher security, we also recommend to implement limits and mitigation on number of endpoints per minutes for the following URL'."<br>";
+print '</span>';
+
+print '<br>';
+print 'Login process -> This can be done using a fail2ban rule (see example into dev/setup)'."<br>";
+print DOL_URL_ROOT.'/passwordforgotten.php (see example into dev/setup)'."<br>";
+print DOL_URL_ROOT.'/public/* (see example into dev/setup)'."<br>";
+
+
+
+
+
 // End of page
 llxFooter();
 $db->close();
