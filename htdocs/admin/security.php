@@ -356,7 +356,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '	}';
 
 	print '	function generatelink(){';
-	print '		return "security.php?action=updatepattern&pattern="+getStringArg();';
+	print '		return "security.php?action=updatepattern&token='.newToken().'&pattern="+getStringArg();';
 	print '	}';
 
 	print '	function valuePatternChange(){';
