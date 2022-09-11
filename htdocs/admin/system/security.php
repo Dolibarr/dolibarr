@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,11 +312,48 @@ print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
 print '<br>';
 print '<br>';
 
+print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
+print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
+if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+
+/* Already into section conf file */
+/*
+$usepassinconfencrypted = 0;
+global $dolibarr_main_db_pass, $dolibarr_main_db_encrypted_pass;
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	$usepassinconfencrypted = 1;
+}
+print '<strong>'.$langs->trans("MainDbPasswordFileConfEncrypted").'</strong>: ';
+print $usepassinconfencrypted ? img_picto('', 'tick').' ' : img_warning().' ';
+print yn($usepassinconfencrypted);
+if (empty($usepassinconfencrypted)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+*/
+
+print '<strong>'.$langs->trans("PasswordLength").'</strong>: ';
+print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
+print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
+if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+	print ' <span class="opacitymedium">('.$langs->trans("Recommended").' '.yn(1).')</span>';
+}
+print '<br>';
+print '<br>';
+
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
+print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
-if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
+	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transcountrynoentities("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
+} else {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
@@ -324,6 +361,7 @@ if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 }
 print '<br>';
 print '<br>';
+
 
 $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
