@@ -1099,7 +1099,7 @@ while ($i < min($num, $limit)) {
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50">';
-		print $obj->rowid;
+		print dol_escape_htmltag($obj->rowid);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1107,7 +1107,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Name
 	if (!empty($arrayfields['p.lastname']['checked'])) {
-		print '<td class="middle tdoverflowmax200">';
+		print '<td class="middle tdoverflowmax150">';
 		print $contactstatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -1116,35 +1116,35 @@ while ($i < min($num, $limit)) {
 	}
 	// Firstname
 	if (!empty($arrayfields['p.firstname']['checked'])) {
-		print '<td class="tdoverflowmax200">'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Job position
 	if (!empty($arrayfields['p.poste']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
+		print '<td class="tdoverflowmax100">'.dol_escape_htmltag($obj->poste).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Address
 	if (!empty($arrayfields['p.address']['checked'])) {
-		print '<td>'.$obj->address.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Zip
 	if (!empty($arrayfields['p.zip']['checked'])) {
-		print '<td>'.$obj->zip.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->zip).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Town
 	if (!empty($arrayfields['p.town']['checked'])) {
-		print '<td>'.$obj->town.'</td>';
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1165,7 +1165,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center">';
 		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1222,7 +1222,7 @@ while ($i < min($num, $limit)) {
 	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
+				print '<td class="tdoverflowmax100">'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1291,7 +1291,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['p.datec']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1300,7 +1300,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['p.tms']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
