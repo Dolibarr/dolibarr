@@ -297,7 +297,7 @@ if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
 
 
 
-// Menu security
+// Menu Home - Setup - Security
 
 print '<br>';
 print '<br>';
@@ -338,6 +338,11 @@ print '<br>';
 print '<br>';
 */
 
+/* Password length
+
+// Stored into $tabconf[0] if module generator is "Perso" or specific to the module generator.
+$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
+
 print '<strong>'.$langs->trans("PasswordLength").'</strong>: ';
 print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);
@@ -346,7 +351,7 @@ if (empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 }
 print '<br>';
 print '<br>';
-
+*/
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
@@ -358,6 +363,19 @@ if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 	}
+}
+print '<br>';
+print '<br>';
+
+$umask = getDolGlobalString('MAIN_UMASK');
+
+print '<strong>'.$langs->trans("UMask").'</strong>: ';
+if (! in_array($umask, array('600', '660', '0600', '0660'))) {
+	print img_warning().' ';
+}
+print $umask;
+if (! in_array($umask, array('600', '660', '0600', '0660'))) {
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0600 | 0660'.')</span>';
 }
 print '<br>';
 print '<br>';
@@ -527,10 +545,10 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"default-src 'self'; img-src *;\")</span><br>";
 print '<br>';
 
-print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;\")</span><br>";
+print '<strong>MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\")</span><br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"same-origin\")</span><br>";
+print '<strong>WEBSITE_MAIN_SECURITY_FORCECSP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCECSP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCECSP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;\")</span><br>";
 print '<br>';
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCERP</strong> = '.(empty($conf->global->WEBSITE_MAIN_SECURITY_FORCERP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->WEBSITE_MAIN_SECURITY_FORCERP).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or")." \"strict-origin-when-cross-origin\")</span><br>";

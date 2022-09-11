@@ -229,7 +229,7 @@ foreach ($arrayhandler as $key => $module) {
 
 	if ($module->isEnabled()) {
 		print '<tr class="oddeven"><td>';
-		print img_picto('', $module->picto, 'class="width25 size15x opacitymedium"').' ';
+		print img_picto('', $module->picto, 'class="width25 size15x"').' ';
 		print ucfirst($key);
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
