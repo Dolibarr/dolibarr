@@ -375,7 +375,7 @@ if (! in_array($umask, array('600', '660', '0600', '0660'))) {
 }
 print $umask;
 if (! in_array($umask, array('600', '660', '0600', '0660'))) {
-	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0600 | 0660'.')</span>';
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0600 | 0660)</span>';
 }
 print '<br>';
 print '<br>';
