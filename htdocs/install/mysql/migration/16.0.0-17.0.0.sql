@@ -159,3 +159,14 @@ ALTER TABLE llx_don ADD INDEX idx_don_fk_user_valid (fk_user_valid);
 
 ALTER TABLE llx_commande ADD COLUMN revenuestamp double(24,8) DEFAULT 0 after localtax2;
 
+create table llx_element_categorie
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  fk_categorie  integer NOT NULL,
+  fk_element  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk_element, fk_categorie);
+
+ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie)     REFERENCES llx_fk_categorie(rowid);
