@@ -20,9 +20,9 @@
  */
 
 /**
- *   	\file       evaluation_card.php
- *		\ingroup    hrm
- *		\brief      Page to create/edit/view evaluation
+ *    \file       htdocs/hrm/evaluation_card.php
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view evaluation
  */
 
 // Load Dolibarr environment
@@ -32,14 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/evaluation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm_skillrank.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other", 'products'));
+$langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -79,7 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-
+// Permissions
 $permissiontoread = $user->rights->hrm->evaluation->read;
 $permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontovalidate = $user->rights->hrm->evaluation_advance->validate;
