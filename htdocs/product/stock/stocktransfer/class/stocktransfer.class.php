@@ -140,6 +140,7 @@ class StockTransfer extends CommonObject
 	public $note_private;
 	public $date_creation;
 	public $tms;
+	public $lead_time_for_warning;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
