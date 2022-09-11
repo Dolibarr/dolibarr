@@ -1448,9 +1448,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 	// escape quotes and backslashes, newlines, etc.
 	if ($escapeonlyhtmltags) {
-		$tmp = htmlspecialchars_decode($stringtoescape, ENT_COMPAT);
+		$tmp = htmlspecialchars_decode((string) $stringtoescape, ENT_COMPAT);
 	} else {
-		$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');
+		$tmp = html_entity_decode((string) $stringtoescape, ENT_COMPAT, 'UTF-8');
 	}
 	if (!$keepb) {
 		$tmp = strtr($tmp, array("<b>"=>'', '</b>'=>''));
