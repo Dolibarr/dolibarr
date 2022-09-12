@@ -149,7 +149,8 @@ UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF10
 
 ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-ALTER TABLE llx_establishment ADD COLUMN label varchar(255) NOT NULL AFTER entity;
+UPDATE llx_establishment SET name='' WHERE name IS NULL;
+ALTER TABLE llx_establishment CHANGE name label varchar(255) NOT NULL;
 
 ALTER TABLE llx_don ADD UNIQUE INDEX idx_don_uk_ref (ref, entity);
 
