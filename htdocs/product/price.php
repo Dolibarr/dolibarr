@@ -1067,7 +1067,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</td></tr>';
 
 	// Price
-	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+	print '<tr id="selling_price"><td>'.$langs->trans("SellingPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
@@ -1080,7 +1080,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</td></tr>';
 
 	// Price minimum
-	print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+	print '<tr id="min_price"><td>'.$langs->trans("MinPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
