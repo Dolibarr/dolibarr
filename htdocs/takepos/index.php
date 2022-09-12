@@ -684,8 +684,8 @@ function Search2(keyCodeForEnter, moreorless) {
 						console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
 						ChangeThirdparty(data[0]['rowid']);
 					}
-					else if ('product' == data[0]['object']) {
-						console.log("There is only 1 answer matching the search, so we add the product in basket, qty="+data[0]['qty']);
+					else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
+						console.log("There is only 1 answer and we found search on a barcode, so we add the product in basket, qty="+data[0]['qty']);
 						ClickProduct(0, data[0]['qty']);
 					}
 				}
