@@ -5177,7 +5177,7 @@ class Product extends CommonObject
 		$statuttrans = empty($status) ? 'status5' : 'status4';
 
 		if ($status == 0) {
-			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch", 3= Status " to produce"
 			if ($type == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnSellShort');
 				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnSell');
@@ -5187,9 +5187,12 @@ class Product extends CommonObject
 			} elseif ($type == 2) {
 				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnBatch');
 				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnBatchShort');
+			} elseif ($type == 3) {
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusNotOnProduction');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusNotOnProductionShort');
 			}
 		} elseif ($status == 1) {
-			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+			// $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch", 3= Status " to produce"
 			if ($type == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSellShort');
 				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnSell');
@@ -5199,6 +5202,9 @@ class Product extends CommonObject
 			} elseif ($type == 2) {
 				$labelStatus = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnSerial'));
 				$labelStatusShort = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnSerialShort'));
+			} elseif ($type == 3) {
+				$labelStatus = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnProduction'));
+				$labelStatusShort = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnProductionShort'));
 			}
 		} elseif ( $type == 2 && $status == 2 ) {
 			$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSerial');
