@@ -44,20 +44,20 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
-if (isModEnabled("propal")) {
+if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 if (isModEnabled('facture')) {
@@ -66,7 +66,7 @@ if (isModEnabled('facture')) {
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -92,7 +92,7 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id  = GETPOST('id', 'int');
 $ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
@@ -185,7 +185,8 @@ if ($object->id > 0) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productcard', 'globalcard'));
 
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+// Permissions
+$usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
@@ -1205,7 +1206,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -1682,7 +1683,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border centpercent">';
 
 		if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
@@ -2205,7 +2206,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2406,7 +2407,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_sell)) {
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
@@ -2423,7 +2424,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="nowrap">';
 					print $langs->trans("ProductAccountancySellIntraCode");
 					print '</td><td>';
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						if (!empty($object->accountancy_code_sell_intra)) {
 							$accountingaccount2 = new AccountingAccount($db);
 							$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
@@ -2440,7 +2441,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellExportCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_sell_export)) {
 						$accountingaccount3 = new AccountingAccount($db);
 						$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
@@ -2456,7 +2457,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancyBuyCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_buy)) {
 						$accountingaccount4 = new AccountingAccount($db);
 						$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
@@ -2473,7 +2474,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="nowrap">';
 					print $langs->trans("ProductAccountancyBuyIntraCode");
 					print '</td><td>';
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						if (!empty($object->accountancy_code_buy_intra)) {
 							$accountingaccount5 = new AccountingAccount($db);
 							$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
@@ -2490,7 +2491,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancyBuyExportCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_buy_export)) {
 						$accountingaccount6 = new AccountingAccount($db);
 						$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);

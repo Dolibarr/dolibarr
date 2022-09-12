@@ -116,3 +116,4 @@ MOAndLines=Ordres de fabrication et lignes
 MoChildGenerate=Generate Child Mo
 ParentMo=MO Parent
 MOChild=MO Child
+BomCantAddChildBom=La nomenclature %s est déjà présente dans l'arborescence qui mène à la nomenclature %s

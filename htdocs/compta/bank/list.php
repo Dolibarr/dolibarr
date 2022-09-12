@@ -26,6 +26,7 @@
  *       \brief      Home page of bank module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -69,7 +70,7 @@ if ($user->socid) {
 }
 
 $allowed = 0;
-if (!empty($user->rights->accounting->chartofaccount)) {
+if ($user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Dictionary with list of banks accounting account allowed to manager of chart account
 }
 if (!$allowed) {

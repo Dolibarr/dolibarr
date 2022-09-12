@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       htdocs/bom/bom_card.php
- *		\ingroup    bom
- *		\brief      Page to create/edit/view bom
+ *    \file       htdocs/bom/bom_card.php
+ *    \ingroup    bom
+ *    \brief      Page to create/edit/view BOM
  */
 
 // Load Dolibarr environment
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "other"));
+$langs->loadLangs(array('mrp', 'other'));
 
 global $filtertype;
 
@@ -179,6 +179,16 @@ if (empty($reshook)) {
 
 		if ($object->fk_product == $idprod) {
 			setEventMessages($langs->trans('TheProductXIsAlreadyTheProductToProduce'), null, 'errors');
+			$error++;
+		}
+
+		// We check if we're allowed to add this bom
+		$TParentBom=array();
+		$object->getParentBomTreeRecursive($TParentBom);
+		if ($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
+			$n_child = new BOM($db);
+			$n_child->fetch($bom_child_id);
+			setEventMessages($langs->transnoentities('BomCantAddChildBom', $n_child->getNomUrl(1), $object->getNomUrl(1)), null, 'errors');
 			$error++;
 		}
 
@@ -485,7 +495,7 @@ if (empty($reshook)) {
 				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (!empty($object->fk_project)) {
+			if (! empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();

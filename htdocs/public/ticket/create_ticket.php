@@ -52,6 +52,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -91,7 +92,7 @@ if (!empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 
@@ -367,7 +368,7 @@ if (empty($reshook)) {
 					}
 					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
-					if ($mailfile->error || $mailfile->errors) {
+					if ($mailfile->error || !empty($mailfile->errors)) {
 						setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 					} else {
 						$result = $mailfile->sendfile();
@@ -408,7 +409,7 @@ if (empty($reshook)) {
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
-						if ($mailfile->error || $mailfile->errors) {
+						if ($mailfile->error || !empty($mailfile->errors)) {
 							setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 						} else {
 							$result = $mailfile->sendfile();

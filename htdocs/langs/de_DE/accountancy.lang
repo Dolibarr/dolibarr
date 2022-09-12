@@ -48,8 +48,9 @@ CountriesNotInEEC=Nicht-EU Länder
 CountriesInEECExceptMe=EU-Länder außer %s
 CountriesExceptMe=Alle Länder außer %s
 AccountantFiles=Belegdokumente exportieren
-ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (CSV-Liste und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet werden.
+ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse suchen und exportieren, die zum Erstellen Ihrer Buchhaltung verwendet werden. <br> Die exportierte ZIP-Datei enthält die Listen der angeforderten Buchhaltungsdaten im CSV-Format sowie die zugehörigen Dokumente im Originalformat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Um Ihre Journale zu exportieren, verwenden Sie den Menüeintrag %s - %s.
+ExportAccountingProjectHelp=Geben Sie ein Projekt an, wenn Sie einen Buchhaltungsbericht nur für ein bestimmtes Projekt benötigen. Spesenabrechnungen und Darlehenszahlungen sind in den Projektberichten nicht enthalten.
 VueByAccountAccounting=Ansicht nach Buchungskonto
 VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 
@@ -181,8 +182,10 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Verrechnungskonto/Zwischenkonto
 DONATION_ACCOUNTINGACCOUNT=Buchungskonto für Spenden
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Buchungskonto für Abonnements
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standard-Buchungskonto zur Registrierung der Kundeneinzahlung
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standard-Buchungskonto zur Erfassung einer Kundenanzahlung
 UseAuxiliaryAccountOnCustomerDeposit=Debitorenkonto als Einzelkonto im Nebenbuch für Anzahlungspositionen hinterlegen (bei Deaktivierung bleibt Einzelkonto für Anzahlungspositionen leer)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Standard-Buchungskonto zur Erfassung der Lieferantenkaution
+UseAuxiliaryAccountOnSupplierDeposit=Lieferantenkonto als Einzelkonto im Nebenbuch für Anzahlungsbuchungen speichern (falls deaktiviert, bleibt Einzelkonto für Anzahlungsbuchungen leer)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard-Buchungskonto für gekaufte Produkte \n(wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Standard-Buchungskonto für gekaufte Produkte in der EWG (wird verwendet, wenn nicht im Produktblatt definiert)
@@ -192,8 +195,8 @@ ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standard-Buchungskonto für in die EWG ver
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standard-Buchungskonto für außerhalb der EWG verkaufte Produkte [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
 
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard-Buchungskonto für die gekauften Leistungen (wenn nicht anders im Produktblatt definiert)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Standardmäßig Buchungskonto für eingekaufte Dienstleistungen in der EWG (wird verwendet, wenn nicht im Leistungsblatt definiert)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standardmäßig Buchungskonto für die gekauften und aus der EWG importierten Dienstleistungen (wird verwendet, wenn nicht im Leistungsblatt definiert)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Standard-Buchungskonto für eingekaufte Dienstleistungen in der EWG (wird verwendet, wenn nicht im Leistungsblatt definiert)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standard-Buchungskonto für die gekauften und aus der EWG importierten Dienstleistungen (wird verwendet, wenn nicht im Leistungsblatt definiert)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard-Buchungskonto für die verkauften Leistungen (wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standard-Buchungskonto für in die EWG verkaufte Dienstleistungen \n(wird verwendet, wenn nicht im Produktblatt definiert) 
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standard-Buchungskonto für außerhalb der EWG verkaufte Dienstleistungen [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktivieren Sie die Bindung und Ü
 
 ## Export
 NotifiedExportDate=Exportierte Zeilen als exportiert kennzeichnen <span class="warning">(um eine Zeile zu ändern, müssen Sie die gesamte Transaktion löschen und erneut in die Buchhaltung übertragen)</span>
-NotifiedValidationDate=Festschreiben der exportierten Einträge <span class="warning">(gleiche Wirkung wie die "Abschluss"-Funktion, Änderungen und Löschungen der Zeilen sind DEFINITIV NICHT möglich)</span>
+NotifiedValidationDate=Festschreiben der exportierten Einträge <span class="warning">(gleiche Wirkung wie die Funktion  "%s", Änderungen und Löschungen der Zeilen sind danach DEFINITIV NICHT möglich)</span>
 DateValidationAndLock=Festschreibungsdatum
 ConfirmExportFile=Exportdatei der Buchhaltung erstellen?
 ExportDraftJournal=Entwurfsjournal exportieren
@@ -413,7 +416,7 @@ ConfirmMassDeleteBookkeepingWriting=Bestätigung für Massenlöschen
 ConfirmMassDeleteBookkeepingWritingQuestion=Dadurch wird die Transaktion aus der Buchhaltung gelöscht (alle Zeilen, die sich auf dieselbe Transaktion beziehen, werden gelöscht). Möchten Sie die %s ausgewählten Datensätze wirklich löschen?
 
 ## Error
-SomeMandatoryStepsOfSetupWereNotDone=Einige zwingende Einstellungen wurden nicht gemacht, bitte vervollständigen sie die Einrichtung
+SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
 ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Startseite - Einstellungen - Stammdaten)
 ErrorInvoiceContainsLinesNotYetBounded=Sie versuchen einige Rechnungspositionen der Rechnung <strong>%s</strong> zu journalisieren, aber einige Postionen sind keinem Buchungskonto zugewiesen. Alle Rechnungspositionen dieser Rechnung werden ignoriert.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Einige Rechnungspositionen sind unkontiert.
