@@ -382,15 +382,16 @@ if ($mode == 'feature') {
 	$text .= '<br><br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
+	$sqlfiles1 = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/mysql/tables/', 'files', 0, 'llx.*-'.$moduledir.'\.sql', array('\.key\.sql', '\.sql\.back'));
+	$sqlfiles2 = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
+	$sqlfiles = array_merge($sqlfiles1, $sqlfiles2);
+
 	if (count($sqlfiles) > 0) {
-		$text .= $langs->trans("Yes").' (';
 		$i = 0;
 		foreach ($sqlfiles as $val) {
-			$text .= ($i ? ', ' : '').preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name']));
+			$text .= ($i ? ', ' : '').preg_replace('/\-'.$moduledir.'$/', '', preg_replace('/\.sql$/', '', preg_replace('/llx_/', '', $val['name'])));
 			$i++;
 		}
-		$text .= ')';
 	} else {
 		$text .= $langs->trans("No");
 	}
@@ -413,7 +414,7 @@ if ($mode == 'feature') {
 	$text .= '<br><strong>'.$langs->trans("AddData").':</strong> ';
 	$filedata = dol_buildpath($moduledir.'/sql/data.sql');
 	if (dol_is_file($filedata)) {
-		$text .= $langs->trans("Yes").' ('.$moduledir.'/sql/data.sql)';
+		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
 	} else {
 		$text .= $langs->trans("No");
 	}
