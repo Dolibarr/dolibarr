@@ -988,7 +988,7 @@ while ($i < min($num, $limit)) {
 		// Description
 		if (!empty($arrayfields['t.description']['checked'])) {
 			print '<td>';
-			print dol_escape_htmltag($object->description);
+			print $object->description;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
