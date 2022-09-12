@@ -56,7 +56,7 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 -- v17
 
 
-ALTER TABLE llx_pproduct ADD COLUMN toproduce tinyint(4) AFTER tobuy;
+ALTER TABLE llx_product ADD COLUMN toproduce tinyint(4) AFTER tobuy;
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
