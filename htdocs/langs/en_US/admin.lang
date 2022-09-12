@@ -2312,4 +2312,4 @@ ScriptIsEmpty=The script is empty
 ShowHideTheNRequests=Show/hide the %s SQL request(s)
 DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>
 TriggerCodes=Triggerable events
-TriggerCodeInfo=Enter here the list of trigger codes that must generate a post of a web request
+TriggerCodeInfo=Enter here the trigger code(s) that must generate a post of a web request (only external URL are allowed). You can enter several trigger codes separated by a comma.
