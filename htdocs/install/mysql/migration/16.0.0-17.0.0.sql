@@ -114,8 +114,9 @@ ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 
 
-ALTER TABLE llx_element_element CHANGE sourcetype sourcetype VARCHAR(64) NOT NULL;
-ALTER TABLE llx_element_element CHANGE targettype targettype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_element_element MODIFY COLUMN sourcetype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
+ALTER TABLE llx_c_type_contact MODIFY COLUMN element VARCHAR(64) NOT NULL;
 
 CREATE TABLE llx_element_properties
 (
