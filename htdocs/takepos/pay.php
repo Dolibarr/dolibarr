@@ -27,9 +27,6 @@
 // if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 // if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }

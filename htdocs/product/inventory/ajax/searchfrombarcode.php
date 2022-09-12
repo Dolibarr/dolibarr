@@ -34,9 +34,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
 $warehouse = new Entrepot($db);
