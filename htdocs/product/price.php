@@ -1072,7 +1072,11 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price minimum
@@ -1081,7 +1085,11 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price_min).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_min_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_min_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price by quantity
