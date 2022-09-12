@@ -180,6 +180,16 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		// We check if we're allowed to add this bom
+		$TParentBom=array();
+		$object->getParentBomTreeRecursive($TParentBom);
+		if ($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
+			$n_child = new BOM($db);
+			$n_child->fetch($bom_child_id);
+			setEventMessages($langs->transnoentities('BomCantAddChildBom', $n_child->getNomUrl(1), $object->getNomUrl(1)), null, 'errors');
+			$error++;
+		}
+
 		if (!$error) {
 			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null);
 

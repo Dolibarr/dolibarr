@@ -37,6 +37,7 @@
  * \brief 		Page of commercial proposals card and list
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -273,6 +274,9 @@ if (empty($reshook)) {
 		// Validation
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 		$result = $object->valid($user);
+		if ( $result > 0 && ! empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) ) {
+			$result = $object->closeProposal($user, $object::STATUS_SIGNED);
+		}
 		if ($result >= 0) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
@@ -313,8 +317,28 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = $object->set_date($user, $datep);
+			if ($result > 0 && !empty($object->duree_validite) && !empty($object->fin_validite)) {
+				$datev = $datep + ($object->duree_validite * 24 * 3600);
+				$result = $object->set_echeance($user, $datev, 1);
+			}
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
+			} elseif (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->model_pdf;
+				$ret = $object->fetch($id); // Reload to get new records
+				if ($ret > 0) {
+					$object->fetch_thirdparty();
+				}
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
 	} elseif ($action == 'setecheance' && $usercancreate) {
@@ -677,7 +701,7 @@ if (empty($reshook)) {
 			$action = 'closeas';
 		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == $object::STATUS_VALIDATED) {
+			if ($object->statut == $object::STATUS_VALIDATED || ( ! empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
 
 				$result = $object->closeProposal($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
@@ -751,7 +775,7 @@ if (empty($reshook)) {
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED) {
 			$db->begin();
 
-			$result = $object->reopen($user, 1);
+			$result = $object->reopen($user, empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE));
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -1768,13 +1792,13 @@ if ($action == 'create') {
 	// Terms of payment
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	$form->select_conditions_paiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -2050,131 +2074,138 @@ if ($action == 'create') {
 
 	if ($action == 'closeas') {
 		//Form to close proposal (signed or not)
-		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED))),
-			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
-		);
+		$formquestion = array();
+		if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
+			$formquestion[] = array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_SIGNED => $object->LibStatut($object::STATUS_SIGNED), $object::STATUS_NOTSIGNED => $object->LibStatut($object::STATUS_NOTSIGNED)));
+		}
+		$formquestion[] = array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '');				// Field to complete private note (not replace)
 
-		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+		if (getDolGlobalInt('PROPOSAL_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
+			// This is a hidden option:
+			// Suggestion to create invoice during proposal signature is not enabled by default.
+			// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
+			// It may also break step of creating an order when invoicing must be done from orders and not from proposal
+			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
-			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-			$object->fetchObjectLinked();
+				$object->fetchObjectLinked();
 
-			$eligibleForDepositGeneration = true;
+				$eligibleForDepositGeneration = true;
 
-			if (array_key_exists('facture', $object->linkedObjects)) {
-				foreach ($object->linkedObjects['facture'] as $invoice) {
-					if ($invoice->type == Facture::TYPE_DEPOSIT) {
-						$eligibleForDepositGeneration = false;
-						break;
+				if (array_key_exists('facture', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['facture'] as $invoice) {
+						if ($invoice->type == Facture::TYPE_DEPOSIT) {
+							$eligibleForDepositGeneration = false;
+							break;
+						}
 					}
 				}
-			}
 
-			if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
-				foreach ($object->linkedObjects['commande'] as $order) {
-					$order->fetchObjectLinked();
+				if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
+					foreach ($object->linkedObjects['commande'] as $order) {
+						$order->fetchObjectLinked();
 
-					if (array_key_exists('facture', $order->linkedObjects)) {
-						foreach ($order->linkedObjects['facture'] as $invoice) {
-							if ($invoice->type == Facture::TYPE_DEPOSIT) {
-								$eligibleForDepositGeneration = false;
-								break 2;
+						if (array_key_exists('facture', $order->linkedObjects)) {
+							foreach ($order->linkedObjects['facture'] as $invoice) {
+								if ($invoice->type == Facture::TYPE_DEPOSIT) {
+									$eligibleForDepositGeneration = false;
+									break 2;
+								}
 							}
 						}
 					}
 				}
-			}
 
 
-			if ($eligibleForDepositGeneration) {
-				$formquestion[] = array(
-					'type' => 'checkbox',
-					'tdclass' => 'showonlyifsigned',
-					'name' => 'generate_deposit',
-					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
-				);
+				if ($eligibleForDepositGeneration) {
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => 'showonlyifsigned',
+						'name' => 'generate_deposit',
+						'morecss' => 'margintoponly marginbottomonly',
+						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+					);
 
-				$formquestion[] = array(
-					'type' => 'date',
-					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-					'name' => 'datef',
-					'label' => $langs->trans('DateInvoice'),
-					'value' => dol_now(),
-					'datenow' => true
-				);
-
-				if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 					$formquestion[] = array(
 						'type' => 'date',
 						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'date_pointoftax',
-						'label' => $langs->trans('DatePointOfTax'),
+						'name' => 'datef',
+						'label' => $langs->trans('DateInvoice'),
 						'value' => dol_now(),
 						'datenow' => true
 					);
+
+					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+						$formquestion[] = array(
+							'type' => 'date',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'date_pointoftax',
+							'label' => $langs->trans('DatePointOfTax'),
+							'value' => dol_now(),
+							'datenow' => true
+						);
+					}
+
+					$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 1, 'minwidth200');
+
+					$formquestion[] = array(
+						'type' => 'other',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'cond_reglement_id',
+						'label' => $langs->trans('PaymentTerm'),
+						'value' => $paymentTermsSelect
+					);
+
+					$formquestion[] = array(
+						'type' => 'checkbox',
+						'tdclass' => 'showonlyifgeneratedeposit',
+						'name' => 'validate_generated_deposit',
+						'morecss' => 'margintoponly marginbottomonly',
+						'label' => $langs->trans('ValidateGeneratedDeposit')
+					);
+
+					$formquestion[] = array(
+						'type' => 'onecolumn',
+						'value' => '
+							<script>
+								let signedValue = ' . $object::STATUS_SIGNED . ';
+
+								$(document).ready(function() {
+									$("[name=generate_deposit]").change(function () {
+										let $self = $(this);
+										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+											$target.show();
+										} else {
+											$target.hide();
+										}
+
+										return true;
+									});
+
+									$("#statut").change(function() {
+										let $target = $(".showonlyifsigned").parent(".tagtr");
+
+										if ($(this).val() == signedValue) {
+											$target.show();
+										} else {
+											$target.hide();
+										}
+
+										$("[name=generate_deposit]").trigger("change");
+
+										return true;
+									});
+
+									$("#statut").trigger("change");
+								});
+							</script>
+						'
+					);
 				}
-
-				ob_start();
-				$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
-				$paymentTermsSelect = ob_get_clean();
-
-				$formquestion[] = array(
-					'type' => 'other',
-					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-					'name' => 'cond_reglement_id',
-					'label' => $langs->trans('PaymentTerm'),
-					'value' => $paymentTermsSelect
-				);
-
-				$formquestion[] = array(
-					'type' => 'checkbox',
-					'tdclass' => 'showonlyifgeneratedeposit',
-					'name' => 'validate_generated_deposit',
-					'label' => $langs->trans('ValidateGeneratedDeposit')
-				);
-
-				$formquestion[] = array(
-					'type' => 'onecolumn',
-					'value' => '
-						<script>
-							let signedValue = ' . $object::STATUS_SIGNED . ';
-
-							$(document).ready(function() {
-								$("[name=generate_deposit]").change(function () {
-									let $self = $(this);
-									let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
-
-									if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
-										$target.show();
-									} else {
-										$target.hide();
-									}
-
-									return true;
-								});
-
-								$("#statut").change(function() {
-									let $target = $(".showonlyifsigned").parent(".tagtr");
-
-									if ($(this).val() == signedValue) {
-										$target.show();
-									} else {
-										$target.hide();
-									}
-
-									$("[name=generate_deposit]").trigger("change");
-
-									return true;
-								});
-
-								$("#statut").trigger("change");
-							});
-						</script>
-					'
-				);
 			}
 		}
 
@@ -2186,7 +2217,11 @@ if ($action == 'create') {
 			));
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		} else {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?statut=3&id=' . $object->id, $langs->trans('Close'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+		}
 	} elseif ($action == 'delete') {
 		// Confirm delete
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -2338,13 +2373,16 @@ if ($action == 'create') {
 	// Date of proposal
 	print '<tr>';
 	print '<td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DatePropal');
-	print '</td>';
-	if ($action != 'editdate' && $usercancreate && $caneditfield) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
-	}
-	print '</tr></table>';
+	// print '<table class="nobordernopadding" width="100%"><tr><td>';
+	// print $langs->trans('DatePropal');
+	// print '</td>';
+	// if ($action != 'editdate' && $usercancreate && $caneditfield) {
+	// 	print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+	// }
+
+	// print '</tr></table>';
+	$editenable = $usercancreate && $caneditfield && $object->statut == Propal::STATUS_DRAFT;
+	print $form->editfieldkey("DatePropal", 'date', '', $object, $editenable);
 	print '</td><td class="valuefield">';
 	if ($action == 'editdate' && $usercancreate && $caneditfield) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
@@ -2793,7 +2831,7 @@ if ($action == 'create') {
 				if (($object->statut == Propal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0)
 					|| ($object->statut == Propal::STATUS_DRAFT && !empty($conf->global->PROPAL_ENABLE_NEGATIVE) && count($object->lines) > 0)) {
 					if ($usercanvalidate) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans('Validate').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=validate&token='.newToken().'">'.(empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) ? $langs->trans('Validate') : $langs->trans('ValidateAndSign')).'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 					}
@@ -2874,14 +2912,22 @@ if ($action == 'create') {
 					}
 				}
 
-				// Close as accepted/refused
-				if ($object->statut == Propal::STATUS_VALIDATED) {
-					if ($usercanclose) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
-						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
-					} else {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
-						print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+				if (empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE)) {
+					// Close as accepted/refused
+					if ($object->statut == Propal::STATUS_VALIDATED) {
+						if ($usercanclose) {
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+							print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+						} else {
+							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'"';
+							print '>'.$langs->trans('SetAcceptedRefused').'</a>';
+						}
+					}
+				} else {
+					// Set not signed (close)
+					if ($object->statut == Propal::STATUS_DRAFT && $usercanclose) {
+						print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&token='.newToken().'&action=closeas&token='.newToken() . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
+						print '>' . $langs->trans('SetRefusedAndClose') . '</a>';
 					}
 				}
 

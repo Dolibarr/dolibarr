@@ -29,6 +29,7 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -55,6 +56,17 @@ $action = GETPOST('action', 'aZ09');
 
 $producttmp = new Product($db);
 $thirdpartytmp = new Societe($db);
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+if (!isModEnabled('barcode')) {
+	accessforbidden('Module not enabled');
+}
+if (!$user->hasRight('barcode', 'read')) {
+	accessforbidden();
+}
+restrictedArea($user, 'barcode');
 
 
 /*
@@ -262,10 +274,6 @@ if ($action == 'builddoc') {
 /*
  * View
  */
-
-if (empty($conf->barcode->enabled)) {
-	accessforbidden();
-}
 
 $form = new Form($db);
 

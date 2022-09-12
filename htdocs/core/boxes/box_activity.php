@@ -64,7 +64,7 @@ class box_activity extends ModeleBoxes
 
 		$this->hidden = !((isModEnabled('facture') && $user->hasRight('facture', 'read'))
 			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
-			|| (isModEnabled('propal') && $user->hasRight('propale', 'read'))
+			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
 			);
 	}
 

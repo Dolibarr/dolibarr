@@ -26,6 +26,7 @@
  *      \brief      Page to list all shipments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -261,7 +262,10 @@ if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number, e.fk_shipping_method,";
-$sql .= " l.date_delivery as date_reception,";
+if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+	// Link for delivery fields ref and date. Does not duplicate the line because we should always have ony 1 link or 0 per shipment
+	$sql .= " l.date_delivery as date_reception,";
+}
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -298,8 +302,11 @@ if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
+if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+	// Link for delivery fields ref and date. Does not duplicate the line because we should always have ony 1 link or 0 per shipment
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
+}
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
 if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk_source
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
@@ -369,14 +376,11 @@ if ($search_user > 0) {
 	// The contact on a shipment is also the contact of the order.
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".((int) $search_user);
 }
-if ($search_ref_exp) {
-	$sql .= natural_search('e.ref', $search_ref_exp);
-}
-if ($search_ref_liv) {
-	$sql .= natural_search('l.ref', $search_ref_liv);
-}
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
+}
+if ($search_ref_exp) {
+	$sql .= natural_search('e.ref', $search_ref_exp);
 }
 if ($search_datedelivery_start) {
 	$sql .= " AND e.date_delivery >= '".$db->idate($search_datedelivery_start)."'";
@@ -384,11 +388,16 @@ if ($search_datedelivery_start) {
 if ($search_datedelivery_end) {
 	$sql .= " AND e.date_delivery <= '".$db->idate($search_datedelivery_end)."'";
 }
-if ($search_datereceipt_start) {
-	$sql .= " AND l.date_delivery >= '".$db->idate($search_datereceipt_start)."'";
-}
-if ($search_datereceipt_end) {
-	$sql .= " AND l.date_delivery <= '".$db->idate($search_datereceipt_end)."'";
+if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+	if ($search_ref_liv) {
+		$sql .= natural_search('l.ref', $search_ref_liv);
+	}
+	if ($search_datereceipt_start) {
+		$sql .= " AND l.date_delivery >= '".$db->idate($search_datereceipt_start)."'";
+	}
+	if ($search_datereceipt_end) {
+		$sql .= " AND l.date_delivery <= '".$db->idate($search_datereceipt_end)."'";
+	}
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -693,7 +702,7 @@ if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
-	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1);
+	print $form->selectarray("search_shipping_method_id", $shipment->meths, $search_shipping_method_id, 1, 0, 0, "", 1, 0, 0, '', 'maxwidth150');
 	print "</td>\n";
 }
 // Tracking number
@@ -958,7 +967,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 		// Get code using getLabelFromKey
 		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
 		if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
 		print '</td>';
 	}

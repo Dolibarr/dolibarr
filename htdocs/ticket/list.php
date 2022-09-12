@@ -25,6 +25,7 @@
  *    \brief    List page for tickets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -684,7 +685,6 @@ if ($search_dateclose_end) {
 	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
 	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
 }
-
 // List of mass actions available
 $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),

@@ -31,6 +31,7 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 	define('NOSCANPOSTFORINJECTION', '1'); // Do not check anti SQL+XSS injection attack test
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -81,10 +82,10 @@ $idmodule= GETPOST('idmodule', 'alpha');
 
 // Security check
 if (!isModEnabled('modulebuilder')) {
-	accessforbidden();
+	accessforbidden('Module ModuleBuilder not enabled');
 }
 if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {
-	accessforbidden($langs->trans('ModuleBuilderNotAllowed'));
+	accessforbidden('ModuleBuilderNotAllowed');
 }
 
 
@@ -2090,10 +2091,12 @@ if ($module == 'initmodule') {
 	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print '<br>';
 
-	print '<span class="opacitymedium">'.$langs->trans("ModuleName").'</span> <input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" autofocus>';
-	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc")).'<br>';
+	print '<div class="tagtable">';
 
-	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span> <input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
 	print '<span class="opacitymedium">';
 	print ' &nbsp; (';
 	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', '', '');
@@ -2101,9 +2104,30 @@ if ($module == 'initmodule') {
 	print '<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>';
 	print ')';
 	print '</span>';
-	print '<br>';
-	print '<span class="opacitymedium">'.$langs->trans("Version").'</span> <input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'"><br>';
-	print '<span class="opacitymedium">'.$langs->trans("Family").'</span> ';
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("ModuleName").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="modulename" value="'.dol_escape_htmltag($modulename).'" autofocus>';
+	print ' '.$form->textwithpicto('', $langs->trans("EnterNameOfModuleDesc"));
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("Description").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="description" value="" class="minwidth500"><br>';
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("Version").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'">';
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("Family").'</span>';
+	print '</div><div class="tagtd">';
 	print '<select name="family" id="family" class="minwidth400">';
 	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
 	print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
@@ -2117,15 +2141,28 @@ if ($module == 'initmodule') {
 	print '<option value="interface">'.$langs->trans("ModuleFamilyInterface").'</option>';
 	print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
 	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
-	print '</select><br>';
+	print '</select>';
 	print ajax_combobox("family");
-	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> <input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
-	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
-	print '<br>';
-	print '<span class="opacitymedium">'.$langs->trans("Description").'</span> <input type="text" name="description" value="" class="minwidth500"><br>';
+	print '</div></div>';
 
-	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span> <input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
-	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span> <input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '</div></div>';
+
+	print '<div class="tagtr"><div class="tagtd">';
+	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span>';
+	print '</div><div class="tagtd">';
+	print '<input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '</div></div>';
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
@@ -2273,7 +2310,7 @@ if ($module == 'initmodule') {
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($form->textwithpicto($langs->trans("DescriptorFile"), $pathtofile), '', '');
+				print load_fiche_titre($form->textwithpicto($langs->trans("DescriptorFile"), $langs->transnoentitiesnoconv("File").' '.$pathtofile), '', '');
 
 				if (!empty($moduleobj)) {
 					print '<div class="underbanner clearboth"></div>';
@@ -2287,7 +2324,7 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '<tr><td>';
-					print $langs->trans("Numero");
+					print $langs->trans("IdModule");
 					print '</td><td>';
 					print $moduleobj->numero;
 					print '<span class="opacitymedium">';
@@ -2297,9 +2334,15 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '<tr><td>';
-					print $langs->trans("Name");
+					print $langs->trans("ModuleName");
 					print '</td><td>';
 					print $moduleobj->getName();
+					print '</td></tr>';
+
+					print '<tr><td>';
+					print $langs->trans("Description");
+					print '</td><td>';
+					print $moduleobj->getDesc();
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -2320,12 +2363,6 @@ if ($module == 'initmodule') {
 					print '</td><td>';
 					print $moduleobj->picto;
 					print ' &nbsp; '.img_picto('', $moduleobj->picto, 'class="valignmiddle pictomodule paddingrightonly"');
-					print '</td></tr>';
-
-					print '<tr><td>';
-					print $langs->trans("Description");
-					print '</td><td>';
-					print $moduleobj->getDesc();
 					print '</td></tr>';
 
 					print '<tr><td>';
@@ -2351,7 +2388,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// Readme file
-					print load_fiche_titre($form->textwithpicto($langs->trans("ReadmeFile"), $pathtofilereadme), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ReadmeFile"), $langs->transnoentitiesnoconv("File").' '.$pathtofilereadme), '', '');
 
 					print '<!-- readme file -->';
 					if (dol_is_file($dirread.'/'.$pathtofilereadme)) {
@@ -2363,7 +2400,7 @@ if ($module == 'initmodule') {
 					print '<br><br>';
 
 					// ChangeLog
-					print load_fiche_titre($form->textwithpicto($langs->trans("ChangeLog"), $pathtochangelog), '', '');
+					print load_fiche_titre($form->textwithpicto($langs->trans("ChangeLog"), $langs->transnoentitiesnoconv("File").' '.$pathtochangelog), '', '');
 
 					print '<!-- changelog file -->';
 					if (dol_is_file($dirread.'/'.$pathtochangelog)) {
@@ -2555,7 +2592,7 @@ if ($module == 'initmodule') {
 				print '<input type="text" name="objectname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('objectname', 'alpha') ? GETPOST('objectname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'" autofocus><br>';
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
-				print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+				print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
 				print '<br>';
 				print '<br>';
@@ -2565,7 +2602,7 @@ if ($module == 'initmodule') {
 				//print '<input type="checkbox" name="initfromtablecheck"> ';
 				print $langs->trans("InitStructureFromExistingTable");
 				print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
-				print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+				print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 				print '<br>';
 
 				print '</form>';
@@ -3373,7 +3410,7 @@ if ($module == 'initmodule') {
 					print '<input type="text" name="dicname" maxlength="64" value="'.dol_escape_htmltag(GETPOST('dicname', 'alpha') ? GETPOST('dicname', 'alpha') : $modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("DicKey")).'" autofocus><br>';
 					//print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 					//print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
-					print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+					print '<input type="submit" class="button smallpaddingimp" name="create" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					/*print '<br>';
 					print '<br>';
 					print '<br>';
@@ -3383,7 +3420,7 @@ if ($module == 'initmodule') {
 					//print '<input type="checkbox" name="initfromtablecheck"> ';
 					print $langs->trans("InitStructureFromExistingTable");
 					print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
-					print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+					print '<input type="submit" class="button smallpaddingimp" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("GenerateCode")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
 					print '<br>';
 					*/
 					print '</form>';
@@ -3464,18 +3501,18 @@ if ($module == 'initmodule') {
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'thsticky ');
-				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("LinkToParentMenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("RelativeURL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->transnoentitiesnoconv('DetailUrl'));
 				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ');
-				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
-				print_liste_field_titre("UserType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'center ', $langs->trans('DetailEnabled'));
+				print_liste_field_titre("Rights", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->trans('DetailRight'));
+				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, '', $langs->trans('DetailTarget'));
+				print_liste_field_titre("MenuForUsers", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder, 'right ', $langs->trans('DetailUser'));
 				print "</tr>\n";
 
 				if (count($menus)) {
@@ -3534,7 +3571,15 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td class="right">';
-						print dol_escape_htmltag($menu['user']);
+						if ($menu['user'] == 2) {
+							print $langs->trans("AllMenus");
+						} elseif ($menu['user'] == 0) {
+							print $langs->trans('Internal');
+						} elseif ($menu['user'] == 1) {
+							print $langs->trans('External');
+						} else {
+							print $menu['user']; // should not happen
+						}
 						print '</td>';
 
 						print '</tr>';

@@ -28,6 +28,7 @@
  *	\brief		Page to list all social contributions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -457,7 +458,7 @@ if (!empty($arrayfields['cs.fk_user']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150');
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1);
 	print '</td>';
 }
 

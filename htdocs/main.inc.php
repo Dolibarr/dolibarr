@@ -547,12 +547,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	) {
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
+			top_httphead();
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
-				die;
 			} else {
 				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
@@ -567,8 +567,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					}
 					print " into setup).\n";
 				}
-				die;
 			}
+			die;
 		}
 	}
 
@@ -851,12 +851,16 @@ if (!defined('NOLOGIN')) {
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_INFO);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
+				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
+				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
+				// report a message to ask to login when search ajax component is used after a timeout.
+				//top_httphead();
 				return 'ERROR_NOT_LOGGED';
 			} else {
 				if ($_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
 					http_response_code(401); // It makes easier to understand if session was broken during security tests
 				}
-				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));
+				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));	// This include http headers
 			}
 			exit;
 		}
@@ -1242,8 +1246,7 @@ if (!defined('NOLOGIN')) {
 		// If not active, we refuse the user
 		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
-		accessforbidden($langs->trans("ErrorLoginDisabled"));
-		exit;
+		accessforbidden("ErrorLoginDisabled");
 	}
 
 	// Load permissions
@@ -1442,6 +1445,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));

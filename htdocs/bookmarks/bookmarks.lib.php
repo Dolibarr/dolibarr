@@ -29,7 +29,7 @@
  */
 function printDropdownBookmarksList()
 {
-	global $conf, $user, $db, $langs;
+	global $conf, $user, $db, $langs, $sortfield, $sortorder;
 
 	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -48,7 +48,6 @@ function printDropdownBookmarksList()
 			}
 		}
 	}
-	global $sortfield, $sortorder;
 	$tmpurl = '';
 	// No urlencode, all param $url will be urlencoded later
 	if ($sortfield) {
