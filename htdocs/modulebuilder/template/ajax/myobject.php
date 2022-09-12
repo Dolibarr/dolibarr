@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/projet/ajax/projects.php
+ *       \file       htdocs/mymodule/ajax/myobject.php
  *       \brief      File to return Ajax response on product list request
  */
 
@@ -38,6 +35,9 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
@@ -45,45 +45,23 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-$htmlname = GETPOST('htmlname', 'aZ09');
-$socid = GETPOST('socid', 'int');
 $mode = GETPOST('mode', 'aZ09');
-$discard_closed = GETPOST('discardclosed', 'int');
 
 // Security check
-restrictedArea($user, 'projet', 0, 'projet&project');
+restrictedArea($user, 'mymodule', 0, 'myobject');
 
 
 /*
  * View
  */
 
-dol_syslog("Call ajax projet/ajax/projects.php");
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+dol_syslog("Call ajax mymodule/ajax/myobject.php");
 
 top_httphead('application/json');
 
-if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
-	return;
-}
+$arrayresult = array();
 
-// Mode to get list of projects
-if (empty($mode) || $mode != 'gettasks') {
-	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
-
-	$formproject = new FormProjets($db);
-	$arrayresult = $formproject->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
-}
-
-// Mode to get list of tasks
-if ($mode == 'gettasks') {
-	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
-	return;
-}
-
+// ....
 
 $db->close();
 

@@ -21,9 +21,6 @@
  *       \brief      File to return Ajax response on file upload
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }

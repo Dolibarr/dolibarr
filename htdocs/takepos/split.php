@@ -164,7 +164,7 @@ $arrayOfValidBankAccount = array();
 <script>
 function Split(selectedline, split) {
 	$.ajax({
-		url: "split.php?action=split&line="+selectedline+"&split="+split+"&place=<?php echo $place;?>",
+		url: "split.php?action=split&token=<?php echo newToken(); ?>&line="+selectedline+"&split="+split+"&place=<?php echo $place;?>",
 		context: document.body
 	}).done(function() {
 		$("#currentplace").load("invoice.php?place="+parent.place+"&invoiceid="+parent.invoiceid, function() {

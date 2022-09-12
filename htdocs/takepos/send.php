@@ -107,7 +107,7 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.$facid.'&email='; ?>" + $("#email"). val(),
 	});
 	parent.$.colorbox.close();
 }

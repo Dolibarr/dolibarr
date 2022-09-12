@@ -225,7 +225,7 @@ function AddProduct(placeid, productid){
 	// If is a public terminal first show product information
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print 'place=placeid;
-		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
+		$("#phonediv1").load("auto_order.php?action=productinfo&token='.newToken().'&place="+place+"&idproduct="+productid, function() {
 		});';
 	} else {
 		print 'AddProductConfirm(placeid, productid);';
@@ -234,7 +234,7 @@ function AddProduct(placeid, productid){
 }
 
 function PublicPreOrder(){
-	$("#phonediv1").load("auto_order.php?action=publicpreorder&place="+place, function() {
+	$("#phonediv1").load("auto_order.php?action=publicpreorder&token=<?php echo newToken(); ?>&place="+place, function() {
 	});
 }
 
@@ -260,7 +260,7 @@ function SetQty(place, selectedline, qty){
 		});
 	}
 	else{
-		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
 		<?php
@@ -271,7 +271,7 @@ function SetQty(place, selectedline, qty){
 		});
 	}
 	else{
-		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
 		<?php
@@ -282,7 +282,7 @@ function SetQty(place, selectedline, qty){
 
 function SetNote(place, selectedline){
 	var note = prompt("<?php $langs->trans('Note'); ?>", "");
-	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&token=<?php echo newToken(); ?>&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 	});
 	LoadCats();
 }
@@ -321,12 +321,12 @@ function TakeposPrintingOrder(){
 	console.log("TakeposPrintingOrder");
 	<?php
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-		echo '$("#phonediv2").load("auto_order.php?action=order&mobilepage=order&place="+place, function() {
+		echo '$("#phonediv2").load("auto_order.php?action=order&token='.newToken().'&mobilepage=order&place="+place, function() {
 		});';
-		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&place="+place, function() {
+		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&token='.newToken().'&place="+place, function() {
 		});';
 	} else {
-		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
+		echo '$("#phonediv2").load("invoice.php?action=order&token='.newToken().'&place="+place, function() {
 		});';
 	}
 	?>
@@ -338,12 +338,12 @@ function Exit(){
 
 function CheckPlease(payment){
 	if (payment==undefined){
-		$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
+		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place="+place, function() {
 		});
 	}
 	else{
 		console.log("Request the check to the waiter");
-		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place; ?>&payment="+payment, function() {
+		$("#phonediv1").load("auto_order.php?action=checkplease&token=<?php echo newToken(); ?>&place=<?php echo $place; ?>&payment="+payment, function() {
 		});
 	}
 }

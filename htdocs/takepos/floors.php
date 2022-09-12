@@ -25,9 +25,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN','1');
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
@@ -182,7 +179,7 @@ function LoadPlace(place){
 
 
 $( document ).ready(function() {
-	$.getJSON('./floors.php?action=getTables&floor=<?php echo $floor; ?>', function(data) {
+	$.getJSON('./floors.php?action=getTables&token=<?php echo newToken();?>&floor=<?php echo $floor; ?>', function(data) {
 		$.each(data, function(key, val) {
 			<?php if ($mode == "edit") {?>
 			$('body').append('<div class="tablediv" contenteditable onblur="updatename('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
