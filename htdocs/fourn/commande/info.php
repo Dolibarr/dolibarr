@@ -19,17 +19,18 @@
  */
 
 /**
- *       \file       htdocs/fourn/commande/info.php
- *       \ingroup    commande
- *       \brief      Fiche commande
+ *    \file       htdocs/fourn/commande/info.php
+ *    \ingroup    commande
+ *    \brief      Info page for Purchase Order / Supplier Order
  */
+
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -37,8 +38,9 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
+// Get Paramters
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -79,6 +81,7 @@ if (empty($user->rights->fournisseur->commande->lire)) {
 	accessforbidden();
 }
 
+// Init Hooks
 $hookmanager->initHooks(array('ordersuppliercardinfo'));
 
 
