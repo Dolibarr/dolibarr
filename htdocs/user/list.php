@@ -25,6 +25,7 @@
  *      \brief      Page of users
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (isModEnabled('categorie')) {
@@ -110,7 +111,8 @@ $fieldstosearchall = array(
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.note_public'=>"NotePublic",
+	'u.note_private'=>"NotePrivate"
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";

@@ -25,6 +25,7 @@
  *		\brief      List of holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -209,9 +210,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Holiday';
 	$objectlabel = 'Holiday';
-	$permissiontoread = $user->rights->holiday->read;
-	$permissiontodelete = $user->rights->holiday->delete;
-	$permissiontoapprove = $user->rights->holiday->approve;
+	$permissiontoread = $user->hasRight('holiday', 'read');
+	$permissiontodelete = $user->hasRight('holiday', 'delete');
+	$permissiontoapprove = $user->hasRight('holiday', 'approve');
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -580,7 +581,7 @@ if ($resql) {
 
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-		if ($user->rights->holiday->readall) {
+		if ($user->hasRight('holiday', 'readall')) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;

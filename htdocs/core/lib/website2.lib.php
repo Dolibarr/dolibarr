@@ -533,6 +533,27 @@ function dolSaveReadme($file, $content)
 	return $result;
 }
 
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$file				Full path of filename to generate
+ * @param	string		$content			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveLicense($file, $content)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save LICENSE file into ".$file);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($file, $content);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
+
+	return $result;
+}
 
 /**
  * 	Show list of themes. Show all thumbs of themes/skins

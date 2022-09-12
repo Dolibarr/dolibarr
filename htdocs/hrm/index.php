@@ -270,7 +270,7 @@ if (isModEnabled('holiday') && $user->rights->holiday->read) {
 
 
 // Latest expense report
-if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
@@ -342,7 +342,7 @@ if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
 
 
 // Last modified job position
-if (isModEnabled('recruitment') && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 	$staticrecruitmentjobposition = new RecruitmentJobPosition($db);
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status,";

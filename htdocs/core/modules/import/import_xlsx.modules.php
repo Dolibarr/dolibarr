@@ -876,11 +876,12 @@ class ImportXlsx extends ModeleImports
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
+							$where = array();
+
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = "SELECT ".$fname." FROM " . $tablename;
 
 								$data = array_combine($listfields, $listvalues);
-								$where = array();
 								$filters = array();
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
@@ -928,6 +929,7 @@ class ImportXlsx extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
+
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';

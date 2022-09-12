@@ -42,6 +42,13 @@ $id = GETPOST('id', 'int');
 $element = GETPOST('element', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+
+/*
+ * View
+ */
+
+top_httphead();
+
 if ($element === 'facture') {
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';

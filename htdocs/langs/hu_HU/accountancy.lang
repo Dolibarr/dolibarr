@@ -48,8 +48,9 @@ CountriesNotInEEC=Az EGK-n kívüli országok
 CountriesInEECExceptMe=Az EGK országai, kivéve %s
 CountriesExceptMe=Minden ország, kivéve %s
 AccountantFiles=Forrásdokumentumok exportálása
-ExportAccountingSourceDocHelp=Ezzel az eszközzel exportálhatja azokat a forráseseményeket (listát CSV-ben és PDF-ben), amelyek a könyvelés létrehozására szolgálnak.
+ExportAccountingSourceDocHelp=Ezzel az eszközzel megkeresheti és exportálhatja a könyvelés generálásához használt forráseseményeket. <br> Az exportált ZIP fájl tartalmazza a kért elemek listáját CSV-ben, valamint a hozzájuk csatolt fájlokat eredeti formátumukban (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=A naplók exportálásához használja a %s - %s menüpontot.
+ExportAccountingProjectHelp=Adjon meg egy projektet, ha csak egy adott projekthez van szüksége számviteli jelentésre. A költségjelentések és a hitelkifizetések nem szerepelnek a projektjelentésekben.
 VueByAccountAccounting=Megtekintés könyvelési fiók szerint
 VueBySubAccountAccounting=Megtekintés könyvelési alfiók szerint
 
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számviteli fiók az előfizetések regi
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Alapértelmezés szerint számlaszámla az ügyfél befizetésének regisztrálásához
 UseAuxiliaryAccountOnCustomerDeposit=Ügyfélszámla tárolása egyéni számlaként a leányfőkönyvben az előlegsorokhoz (ha le van tiltva, az előlegsorokhoz tartozó egyéni számla üres marad)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Alapértelmezett számviteli számla szállítói előleg nyilvántartásba vételére
+UseAuxiliaryAccountOnSupplierDeposit=Tárolja a szállítói számlát egyéni számlaként a alfőkönyvben az előlegsorokhoz (letiltás esetén az előlegsorok egyéni számla üresen marad)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Alapértelmezés szerint a vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Alapértelmezés szerint az EGK-ban vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=A kötés és átvitel letiltása a
 
 ## Export
 NotifiedExportDate=Az exportált sorok megjelölése exportáltként (a sorok módosítása nem lehetséges)
-NotifiedValidationDate=Érvényesítse az exportált bejegyzéseket (a sorok módosítása vagy törlése nem lehetséges)
+NotifiedValidationDate=Érvényesítse és zárolja az exportált bejegyzéseket <span class="warning"> (ugyanaz a hatás, mint az "%s" funkciónál, a sorok módosítása és törlése BIZTOSAN nem lehetséges) </span>
 DateValidationAndLock=Dátumellenőrzés és zárolás
 ConfirmExportFile=A számviteli exportfájl létrehozásának megerősítése?
 ExportDraftJournal=Vázlatos napló exportálása

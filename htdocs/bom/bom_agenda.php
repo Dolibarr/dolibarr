@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       htdocs/modulebuilder/template/myobject_agenda.php
- *  \ingroup    bom
- *  \brief      Page of MyObject events
+ *    \file       htdocs/bom/bom_agenda.php
+ *    \ingroup    bom
+ *    \brief      Page of BOM events
  */
 
 // Load Dolibarr environment
@@ -150,7 +150,7 @@ if ($object->id > 0) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	 // Project
-	 if (!empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

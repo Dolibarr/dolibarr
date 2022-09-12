@@ -93,3 +93,4 @@ JobXMustBeEnabled=Job %s must be enabled
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

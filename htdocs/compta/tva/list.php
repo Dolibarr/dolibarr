@@ -26,6 +26,7 @@
  *	\brief		List of VAT payments
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -354,7 +355,7 @@ if (!empty($arrayfields['t.datev']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print '<td class="liste_titre left">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16, 1, '', 1);
 	print '</td>';
 }
 
