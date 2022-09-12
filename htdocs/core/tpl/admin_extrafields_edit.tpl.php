@@ -191,17 +191,17 @@ if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_a
 <?php
 // Define list of possible type transition
 $typewecanchangeinto = array(
-	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
+	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
 	'double'=>array('double', 'price'),
 	'price'=>array('double', 'price'),
 	'text'=>array('text', 'html'),
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
-	'mail'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
-	'url'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
-	'phone'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
-	'ip'=>array('ip', 'varchar', 'phone', 'mail', 'url', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'mail'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'url'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'phone'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'ip'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
 	'date'=>array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert

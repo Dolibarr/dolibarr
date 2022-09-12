@@ -574,7 +574,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					print '</td></tr>';
 				}
 			} else {
-				//if (! empty($conf->modules))
+				//if (!empty($conf->modules))
 				if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 					print '<tr class="trforrunsql"><td colspan="4">';
 					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterDB");
@@ -646,7 +646,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '</td></tr>';
 			}
 		} else {
-			//if (! empty($conf->modules))
+			//if (!empty($conf->modules))
 			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterFiles");
@@ -2024,7 +2024,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -4094,6 +4094,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
+		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
 		'/core/menus/smartphone/iphone_backoffice.php',
 		'/core/menus/smartphone/iphone_frontoffice.php',

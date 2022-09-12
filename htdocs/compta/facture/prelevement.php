@@ -27,6 +27,7 @@
  *	\brief      Management of direct debit order or credit tranfer of invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -111,8 +112,14 @@ if (empty($reshook)) {
 				$sourcetype = 'supplier_invoice';
 				$newtype = 'bank-transfer';
 			}
+			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			if (preg_match('/stripesepa/', $paymentservice)) {
+				$result = $object->demande_prelevement_stripe($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			} else {
+				$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			}
+
 			if ($result > 0) {
 				$db->commit();
 
@@ -349,7 +356,7 @@ if ($object->id > 0) {
 		}
 	}
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
@@ -616,7 +623,7 @@ if ($object->id > 0) {
 
 	print '<table class="border centpercent tableforfield">';
 
-	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 		print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -712,7 +719,7 @@ if ($object->id > 0) {
 	 * Buttons
 	 */
 
-	print "\n<div class=\"tabsAction\">\n";
+	print "\n".'<div class="tabsAction">'."\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
 	$user_perms = $user->rights->prelevement->bons->creer;
@@ -736,6 +743,23 @@ if ($object->id > 0) {
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
+
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_BUTTON)) {
+					// TODO Replace this with a checkbox for each payment mode: "Send request to PaymentModeManager immediatly..."
+					print "<br>";
+					//add stripe sepa button
+					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+					print '<form method="POST" action="">';
+					print '<input type="hidden" name="token" value="'.newToken().'" />';
+					print '<input type="hidden" name="id" value="'.$object->id.'" />';
+					print '<input type="hidden" name="type" value="'.$type.'" />';
+					print '<input type="hidden" name="action" value="new" />';
+					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
+					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+					print '</form>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
@@ -754,13 +778,23 @@ if ($object->id > 0) {
 		}
 	}
 
-	print "</div><br>\n";
+	print "</div>\n";
 
 
 	if ($type == 'bank-transfer') {
-		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments").'</div><br>';
+		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments");
+		if (isModEnabled('stripe')) {
+			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
+		}
+		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
+		print '</div><br>';
 	} else {
-		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments").'</div><br>';
+		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments");
+		if (isModEnabled('stripe')) {
+			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
+		}
+		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
+		print '</div><br>';
 	}
 
 	/*
@@ -774,13 +808,13 @@ if ($object->id > 0) {
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td class="center">'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td>&nbsp;</td>';
 	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
-	print '<td>&nbsp;</td>';
-	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
@@ -821,17 +855,27 @@ if ($object->id > 0) {
 
 			print '<tr class="oddeven">';
 
+			// Date
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
+			// User
 			print '<td align="center">';
 			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
-			print '<td class="center">'.price($obj->amount).'</td>';
-			print '<td align="center">-</td>';
-			print '<td>&nbsp;</td>';
+			// Amount
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
-			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
+			// Ref of SEPA request
+			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
+
+			print '<td>';
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=new&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("SendToStripe").'</a>';
+			}
+			print '</td>';
+
+			print '<td align="center">-</td>';
 
 			print '<td class="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';

@@ -135,7 +135,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
 /*foreach($object->fields as $key => $val)
  {
  // If $val['visible']==0, then we never show the field
- if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+ if (!empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
  }*/
 // Definition of fields for list
 // Extra fields
@@ -544,7 +544,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
- if (! empty($conf->categorie->enabled))
+ if (!empty($conf->categorie->enabled))
  {
  require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  $moreforfilter.='<div class="divsearchfield">';

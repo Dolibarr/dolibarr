@@ -71,7 +71,7 @@ class FormFile
 	 *  @param	Object		$object			Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
 	 *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
-	 *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
+	 *                                      Deprecated 2 should never be used and if 1 is used, option should not be enabled.
 	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
@@ -104,7 +104,8 @@ class FormFile
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
 			// TODO: Thisdoes not work when param nooutput=1
-			return $this->_formAjaxFileUpload($object);
+			//return $this->_formAjaxFileUpload($object);
+			return 'Feature too bugged so removed';
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
@@ -837,6 +838,7 @@ class FormFile
 
 					// Show file name with link to download
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
+					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param, 'paddingright')."\n";
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -845,9 +847,8 @@ class FormFile
 					}
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-					$out .= dol_trunc($file["name"], 40);
-					$out .= '</a>'."\n";
-					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$out .= dol_trunc($file["name"], 150);
+					$out .= '</a>';
 					$out .= '</td>';
 
 					// Show file size
@@ -1299,6 +1300,11 @@ class FormFile
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
 
+					// Preview link
+					if (!$editline) {
+						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity), 'paddingright') . "\n";
+					}
+
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a class="paddingright valignmiddle" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
@@ -1329,10 +1335,6 @@ class FormFile
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
 						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
 						print '</a>';
-					}
-					// Preview link
-					if (!$editline) {
-						print $this->showPreview($file, $modulepart, $filepath, 0, 'entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
 					}
 
 					print "</td>\n";
@@ -1470,10 +1472,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -1889,7 +1891,7 @@ class FormFile
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
-				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				//if (!empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
@@ -1917,37 +1919,6 @@ class FormFile
 			print '</form>';
 		}
 		// Fin de zone
-	}
-
-	/**
-	 *    Show form to upload a new file with jquery fileupload.
-	 *    This form use the fileupload.php file.
-	 *
-	 *    @param	Object	$object		Object to use
-	 *    @return	void
-	 */
-	private function _formAjaxFileUpload($object)
-	{
-		global $langs, $conf;
-
-		// PHP post_max_size
-		$post_max_size				= ini_get('post_max_size');
-		$mul_post_max_size			= substr($post_max_size, -1);
-		$mul_post_max_size			= ($mul_post_max_size == 'M' ? 1048576 : ($mul_post_max_size == 'K' ? 1024 : ($mul_post_max_size == 'G' ? 1073741824 : 1)));
-		$post_max_size				= $mul_post_max_size * (int) $post_max_size;
-		// PHP upload_max_filesize
-		$upload_max_filesize		= ini_get('upload_max_filesize');
-		$mul_upload_max_filesize	= substr($upload_max_filesize, -1);
-		$mul_upload_max_filesize	= ($mul_upload_max_filesize == 'M' ? 1048576 : ($mul_upload_max_filesize == 'K' ? 1024 : ($mul_upload_max_filesize == 'G' ? 1073741824 : 1)));
-		$upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
-		// Max file size
-		$max_file_size = (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-
-		// Include main
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php';
-
-		// Include template
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 	}
 
 	/**
@@ -2102,9 +2073,10 @@ class FormFile
 	 * @param   string    $relativepath   Relative path of docs
 	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
 	 * @param	string	  $param		  More param on http links
+	 * @param	string	  $moreclass	  Add more class to class style
 	 * @return  string    $out            Output string with HTML
 	 */
-	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto = 0, $param = '')
+	public function showPreview($file, $modulepart, $relativepath, $ruleforpicto = 0, $param = '', $moreclass = '')
 	{
 		global $langs, $conf;
 
@@ -2112,7 +2084,7 @@ class FormFile
 		if ($conf->browser->layout != 'phone' && !empty($conf->use_javascript_ajax)) {
 			$urladvancedpreview = getAdvancedPreviewUrl($modulepart, $relativepath, 1, $param); // Return if a file is qualified for preview.
 			if (count($urladvancedpreview)) {
-				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
+				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].(!empty($moreclass)?' '.$moreclass:'').'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');

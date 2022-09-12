@@ -26,6 +26,7 @@
  *  \brief      Page to list stocks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -41,7 +42,7 @@ $snom = GETPOST("snom", 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
-$toolowstock = GETPOST('toolowstock');
+$search_toolowstock = GETPOST('search_toolowstock');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
@@ -116,7 +117,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$tobuy = "";
 	$search_sale = "";
 	$search_categ = "";
-	$toolowstock = '';
+	$search_toolowstock = '';
 	$fourn_id = '';
 	$sbarcode = '';
 	$search_stock_physique = '';
@@ -210,7 +211,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql_having = '';
-if ($toolowstock) {
+if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
 }
 if ($search_stock_physique != '') {
@@ -296,8 +297,8 @@ if ($resql) {
 	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
-	if ($toolowstock) {
-		$param .= "&toolowstock=".urlencode($toolowstock);
+	if ($search_toolowstock) {
+		$param .= "&search_toolowstock=".urlencode($search_toolowstock);
 	}
 	if ($sbarcode) {
 		$param .= "&sbarcode=".urlencode($sbarcode);
@@ -328,7 +329,7 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
@@ -336,7 +337,7 @@ if ($resql) {
 	}
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock ? ' checked' : '').'>';
+	$moreforfilter .= '<label for="search_toolowstock">'.$langs->trans("StockTooLow").' </label><input type="checkbox" id="search_toolowstock" name="search_toolowstock" value="1"'.($search_toolowstock ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
 	if (!empty($moreforfilter)) {

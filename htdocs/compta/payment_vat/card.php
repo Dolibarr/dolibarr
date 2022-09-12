@@ -26,6 +26,7 @@
  *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
@@ -95,7 +96,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 			$fac->fetch($id);
 
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			if (!empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -292,7 +293,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 /*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{

@@ -35,6 +35,7 @@
  *       \brief      Tab of user card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -51,10 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (!empty($conf->ldap->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 if (!empty($conf->stock->enabled)) {
@@ -262,7 +263,7 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				$object->socialnetworks = array();
 				foreach ($socialnetworks as $key => $value) {
 					if (GETPOST($key, 'alphanohtml')) {
@@ -343,7 +344,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = "create"; // Go back to create page
 				} else {
-					if (! empty($conf->categorie->enabled)) {
+					if (!empty($conf->categorie->enabled)) {
 						// Categories association
 						$usercats = GETPOST('usercats', 'array');
 						$object->setCategories($usercats);
@@ -432,7 +433,7 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-				if (!empty($conf->socialnetworks->enabled)) {
+				if (isModEnabled('socialnetworks')) {
 					$object->socialnetworks = array();
 					foreach ($socialnetworks as $key => $value) {
 						if (GETPOST($key, 'alphanohtml')) {
@@ -730,12 +731,18 @@ if (!empty($conf->stock->enabled)) {
 	$formproduct = new FormProduct($db);
 }
 
+if ($object->id > 0) {
+	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+	$title = $person_name." - ".$langs->trans('Card');
+} else {
+	$title = $langs->trans("NewUser");
+}
 $help_url = '';
 
-if ($action == 'create' || $action == 'adduserldap') {
-	$title = $langs->trans("NewUser");
-	llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url);
 
+
+if ($action == 'create' || $action == 'adduserldap') {
 	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
 	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
@@ -944,7 +951,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</tr>\n";
 
 	// Expense report validator
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		print '<tr><td class="titlefieldcreate">';
 		$text = $langs->trans("ForceUserExpenseValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -956,7 +963,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Holiday request validator
-	if (!empty($conf->holiday->enabled)) {
+	if (isModEnabled('holiday')) {
 		print '<tr><td class="titlefieldcreate">';
 		$text = $langs->trans("ForceUserHolidayValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1122,7 +1129,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '</td></tr>';
 
 	// Social networks
-	if (!empty($conf->socialnetworks->enabled)) {
+	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active']) {
 				print '<tr><td>'.$langs->trans($value['label']).'</td>';
@@ -1149,7 +1156,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Accountancy code
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print '<input type="text" class="maxwidthonsmartphone" name="accountancy_code" value="'.dol_escape_htmltag(GETPOST('accountancy_code', 'alphanohtml')).'">';
@@ -1165,7 +1172,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+	if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 		print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td><td>';
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
 		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), 0, 0, 'maxwdith300 widthcentpercentminusx', 0, '90%');
@@ -1236,7 +1243,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($id, $childids))
 		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 		$langs->load("salaries");
 
 		// THM
@@ -1352,10 +1359,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 		}
-
-		$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-		$title = $person_name." - ".$langs->trans('Card');
-		llxHeader('', $title, $help_url);
 
 		// Show tabs
 		if ($mode == 'employee') { // For HRM module development
@@ -1496,7 +1499,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Expense report validator
-			if (!empty($conf->expensereport->enabled)) {
+			if (isModEnabled('expensereport')) {
 				print '<tr><td>';
 				$text = $langs->trans("ForceUserExpenseValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1512,7 +1515,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Holiday request validator
-			if (!empty($conf->holiday->enabled)) {
+			if (isModEnabled('holiday')) {
 				print '<tr><td>';
 				$text = $langs->trans("ForceUserHolidayValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -1542,7 +1545,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 				$langs->load("salaries");
 
 				// Salary
@@ -1625,7 +1628,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+			if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 				print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
@@ -1705,7 +1708,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
@@ -2237,7 +2240,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Expense report validator
-			if (!empty($conf->expensereport->enabled)) {
+			if (isModEnabled('expensereport')) {
 				print '<tr><td class="titlefield">';
 				$text = $langs->trans("ForceUserExpenseValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -2256,7 +2259,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Holiday request validator
-			if (!empty($conf->holiday->enabled)) {
+			if (isModEnabled('holiday')) {
 				print '<tr><td class="titlefield">';
 				$text = $langs->trans("ForceUserHolidayValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -2505,7 +2508,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td></tr>';
 
-			if (!empty($conf->socialnetworks->enabled)) {
+			if (isModEnabled('socialnetworks')) {
 				foreach ($socialnetworks as $key => $value) {
 					if ($value['active']) {
 						print '<tr><td>'.$langs->trans($value['label']).'</td>';
@@ -2538,7 +2541,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Accountancy code
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print "<tr>";
 				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
@@ -2573,7 +2576,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Categories
-			if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+			if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
 				print img_picto('', 'category', 'class="pictofixedwidth"');
@@ -2627,7 +2630,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Module Adherent
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
 				print '<td>';
@@ -2719,7 +2722,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Sensitive salary/value information
 			if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 				|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-				|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+				|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 					$langs->load("salaries");
 
 				// Salary

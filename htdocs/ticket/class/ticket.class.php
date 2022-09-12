@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
-	 * @deprecated
+	 * @deprecated use status
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -217,7 +218,9 @@ class Ticket extends CommonObject
 	 */
 	public $oldcopy;
 
-
+	/**
+	 * @var array array of TicketsLine
+	 */
 	public $lines;
 
 
@@ -504,7 +507,7 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
 				// add creator as contributor
 				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
 					$error++;
@@ -1053,6 +1056,19 @@ class Ticket extends CommonObject
 			if ($result < 0) {
 				$error++;
 				dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
+			}
+		}
+
+		// Delete all child tables
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
+			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
 			}
 		}
 
@@ -1841,7 +1857,7 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				if (!empty($conf->ficheinter->enabled) && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+				if (isModEnabled('ficheinter') && !empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
 					dol_syslog("We have closed the ticket, so we close all linked interventions");
 					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
 					if ($this->linkedObjectsIds) {
@@ -3015,7 +3031,7 @@ class TicketsLine
 {
 	/**
 	 * @var int ID
-	 * @deprecated
+	 * @deprecated use id
 	 */
 	public $rowid;
 

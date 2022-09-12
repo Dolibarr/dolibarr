@@ -108,62 +108,62 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string Last result from end job execution
+	 * @var string 			Last result from end job execution
 	 */
 	public $lastresult;
 
 	/**
-	 * @var string Last output from end job execution
+	 * @var string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
 	/**
-	 * @var string Unit frequency of job execution
+	 * @var string 			Unit frequency of job execution
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int Frequency of job execution
+	 * @var int 			Frequency of job execution
 	 */
 	public $frequency;
 
 	/**
-	 * @var int Status
+	 * @var int 			Status
 	 */
 	public $status;
 
 	/**
-	 * @var int Is job processing
+	 * @var int 			Is job running ?
 	 */
 	public $processing;
 
 	/**
-	 * @var int The job current PID
+	 * @var int 			The job current PID
 	 */
 	public $pid;
 
 	/**
-	 * @var int ID
+	 * @var int 			User ID of creation
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
 	/**
-	 * @var int Number of run job execution
+	 * @var int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int Maximum run job execution
+	 * @var int 			Maximum run job execution
 	 */
 	public $maxrun;
 
 	/**
-	 * @var string Libname
+	 * @var string 			Libname
 	 */
 	public $libname;
 
@@ -1513,10 +1513,12 @@ class Cronjobline
 	public $datenextrun = '';
 	public $dateend = '';
 	public $datestart = '';
+	public $datelastresult = '';
 	public $lastresult = '';
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+	public $processing;
 
 	/**
 	 * @var int Status
@@ -1534,8 +1536,10 @@ class Cronjobline
 	public $fk_user_mod;
 
 	public $note;
+	public $note_private;
 	public $nbrun;
 	public $libname;
+	public $test;
 
 	/**
 	 *  Constructor

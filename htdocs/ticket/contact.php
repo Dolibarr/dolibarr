@@ -24,6 +24,7 @@
  *       \brief      Contacts of tickets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -224,7 +225,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->ticket->write) {

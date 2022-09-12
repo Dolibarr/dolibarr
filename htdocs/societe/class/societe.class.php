@@ -214,8 +214,8 @@ class Societe extends CommonObject
 		'mode_reglement_supplier' =>array('type'=>'integer', 'label'=>'Mode reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
 		'cond_reglement_supplier' =>array('type'=>'integer', 'label'=>'Cond reglement supplier', 'enabled'=>1, 'visible'=>-1, 'position'=>308),
 		'outstanding_limit' =>array('type'=>'double(24,8)', 'label'=>'OutstandingBill', 'enabled'=>1, 'visible'=>-1, 'position'=>310, 'isameasure'=>1),
-		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
-		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
+		'order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>315, 'isameasure'=>1),
+		'supplier_order_min_amount' =>array('type'=>'double(24,8)', 'label'=>'Supplier order min amount', 'enabled'=>'isModEnabled("commande") && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)', 'visible'=>-1, 'position'=>320, 'isameasure'=>1),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'Fk shipping method', 'enabled'=>1, 'visible'=>-1, 'position'=>330),
 		'tva_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Tva assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'localtax1_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax1 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>340),
@@ -1097,7 +1097,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (empty($error) && !empty($conf->mailing->enabled) && !empty($contact->email) && isset($no_email)) {
+		if (empty($error) && isModEnabled('mailing') && !empty($contact->email) && isset($no_email)) {
 			$result = $contact->setNoEmail($no_email);
 			if ($result < 0) {
 				$this->error = $contact->error;
@@ -1561,7 +1561,7 @@ class Societe extends CommonObject
 
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
-					if (!$nosyncmember && !empty($conf->adherent->enabled)) {
+					if (!$nosyncmember && isModEnabled('adherent')) {
 						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 						dol_syslog(get_class($this)."::update update linked member");
@@ -2711,10 +2711,10 @@ class Societe extends CommonObject
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
 			$label2 .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
 		}
-		if (!empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3)) {
+		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
 			$label2 .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
-		if (!empty($conf->accounting->enabled) && $this->fournisseur) {
+		if (isModEnabled('accounting') && $this->fournisseur) {
 			$label2 .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
 		$label .= ($label2 ? '<br>'.$label2 : '').'</div>';
@@ -4008,6 +4008,111 @@ class Societe extends CommonObject
 		return -1;
 	}
 
+	/**
+	 *  Return number of mass Emailing received by this contacts with its email
+	 *
+	 *  @return       int     Number of EMailings
+	 */
+	public function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+		$sql .= " WHERE mc.fk_mailing=m.rowid AND mc.email = '".$this->db->escape($this->email)."' ";
+		$sql .= " AND m.entity IN (".getEntity($this->element).") AND mc.statut NOT IN (-1,0)"; // -1 error, 0 not sent, 1 sent with success
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			$nb = $obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *  Set "blacklist" mailing status
+	 *
+	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to recieve mailling
+	 *  @return int					<0 if KO, >0 if OK
+	 */
+	public function setNoEmail($no_email)
+	{
+		$error = 0;
+
+		// Update mass emailing flag into table mailing_unsubscribe
+		if ($this->email) {
+			$this->db->begin();
+
+			if ($no_email) {
+				$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($this->email)."'";
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$noemail = $obj->nb;
+					if (empty($noemail)) {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$resql = $this->db->query($sql);
+						if (!$resql) {
+							$error++;
+							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
+						}
+					}
+				} else {
+					$error++;
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+				}
+			} else {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity IN (".getEntity('mailing', 0).")";
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+					$this->errors[] = $this->error;
+				}
+			}
+
+			if (empty($error)) {
+				$this->no_email = $no_email;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return $error * -1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 *  get "blacklist" mailing status
+	 * 	set no_email attribut to 1 or 0
+	 *
+	 *  @return int					<0 if KO, >0 if OK
+	 */
+	public function getNoEmail()
+	{
+		if ($this->email) {
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($this->email)."'";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				$this->no_email = $obj->nb;
+				return 1;
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				return -1;
+			}
+		}
+		return 0;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

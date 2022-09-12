@@ -27,6 +27,7 @@
  *	\brief		Home page of commercial area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -93,10 +94,10 @@ $companystatic = new Societe($db);
 if (isModEnabled("propal")) {
 	$propalstatic = new Propal($db);
 }
-if (!empty($conf->supplier_proposal->enabled)) {
+if (isModEnabled('supplier_proposal')) {
 	$supplierproposalstatic = new SupplierProposal($db);
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$orderstatic = new Commande($db);
 }
 if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
@@ -194,7 +195,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price((!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
@@ -226,7 +227,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 
-if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -291,7 +292,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -323,7 +324,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
  * Draft customer orders
  */
 
-if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.total_tva, c.total_ttc, c.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -389,7 +390,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -487,7 +488,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -573,8 +574,9 @@ if (!empty($conf->ficheinter->enabled)) {
 				$companystatic->email = $obj->email;
 				$companystatic->entity = $obj->entity;
 				$companystatic->canvas = $obj->canvas;
+
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">';
+				print '<td class="nowraponall tdoverflowmax100">';
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="nowrap tdoverflowmax100">';
@@ -654,7 +656,7 @@ if (isModEnabled("societe") && $user->rights->societe->lire) {
 				$companystatic->canvas = $objp->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap">';
 				//print $companystatic->getLibCustProspStatut();
 
@@ -751,7 +753,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 				$companystatic->canvas = $objp->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
+				print '<td class="nowraponall tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td>';
 
 				$obj = $companystatic;
@@ -809,7 +811,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Latest contracts
  */
-if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -865,8 +867,8 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 				$staticcontrat->ref = $obj->ref;
 
 				print '<tr class="oddeven">';
-				print '<td>'.$staticcontrat->getNomUrl(1).'</td>';
-				print '<td>'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="nowraponall">'.$staticcontrat->getNomUrl(1).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.$staticcontrat->LibStatut($obj->statut, 3).'</td>';
 				print '</tr>';
 
@@ -962,7 +964,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 
 				print '<td class="nowrap" width="140">';
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nobordernopadding nowraponall">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td width="18" class="nobordernopadding nowrap">'.$warning.'</td>';
 				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($propalstatic->element, $filename, $filedir).'</td>';
 				print '</tr>';
@@ -1006,7 +1008,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
 /*
  * Opened (validated) order
  */
-if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+if (isModEnabled('commande') && $user->rights->commande->lire) {
 	$sql = "SELECT c.rowid as commandeid, c.total_ttc, c.total_ht, c.total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -1082,7 +1084,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 				print '<td class="nowrap" width="140">';
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td class="nobordernopadding nowrap">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td class="nobordernopadding nowraponall">'.$orderstatic->getNomUrl(1).'</td>';
 				print '<td width="18" class="nobordernopadding nowrap"></td>';
 				print '<td width="16" align="center" class="nobordernopadding">'.$formfile->getDocumentsLink($orderstatic->element, $filename, $filedir).'</td>';
 				print '</tr>';

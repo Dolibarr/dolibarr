@@ -159,7 +159,7 @@ if (!function_exists('dol_loginfunction')) {
 		/*
 		$conf->css = "/theme/".(GETPOST('theme','aZ09')?GETPOST('theme','aZ09'):$conf->theme)."/style.css.php";
 		$themepath=dol_buildpath($conf->css,1);
-		if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
+		if (!empty($conf->modules_parts['theme']))		// Using this feature slow down application
 		{
 			foreach($conf->modules_parts['theme'] as $reldir)
 			{

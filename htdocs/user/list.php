@@ -25,9 +25,10 @@
  *      \brief      Page of users
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -110,7 +111,8 @@ $fieldstosearchall = array(
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.note_public'=>"NotePublic",
+	'u.note_private'=>"NotePrivate"
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -658,7 +660,7 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
 	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
@@ -941,7 +943,7 @@ while ($i < $imaxinloop) {
 	$canreadhrmdata = 0;
 	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
 		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;

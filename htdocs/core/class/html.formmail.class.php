@@ -511,7 +511,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input type="submit" class="button reposition" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button reposition smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -648,19 +648,9 @@ class FormMail extends Form
 							}
 						}
 
-						// Set the default "From"
-						$defaultfrom = '';
-						$reshook = $hookmanager->executeHooks('getDefaultFromEmail', $parameters, $this);
-						if (empty($reshook)) {
-							$defaultfrom = $this->fromtype;
-						}
-						if (!empty($hookmanager->resArray['defaultfrom'])) {
-							$defaultfrom = $hookmanager->resArray['defaultfrom'];
-						}
-
 						// Using combo here make the '<email>' no more visible on list.
 						//$out.= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 1, '', $disablebademails);
-						$out .= ' '.$form->selectarray('fromtype', $liste, $defaultfrom, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 0, '', $disablebademails);
+						$out .= ' '.$form->selectarray('fromtype', $liste, $this->fromtype, 0, 0, 0, '', 0, 0, 0, '', 'fromforsendingprofile maxwidth200onsmartphone', 0, '', $disablebademails);
 					}
 
 					$out .= "</td></tr>\n";
@@ -847,7 +837,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button small" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -920,6 +910,9 @@ class FormMail extends Form
 				if (strpos($defaultmessage, '__USER_SIGNATURE__') !== false && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$atleastonecomponentishtml++;
 				}
+				if (strpos($defaultmessage, '__SENDEREMAIL_SIGNATURE__') !== false && dol_textishtml($this->substit['__SENDEREMAIL_SIGNATURE__'])) {
+					$atleastonecomponentishtml++;
+				}
 				if (strpos($defaultmessage, '__ONLINE_PAYMENT_TEXT_AND_URL__') !== false && dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
 					$atleastonecomponentishtml++;
 				}
@@ -932,6 +925,9 @@ class FormMail extends Form
 				if ($atleastonecomponentishtml) {
 					if (!dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 						$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
+					}
+					if (!dol_textishtml($this->substit['__SENDEREMAIL_SIGNATURE__'])) {
+						$this->substit['__SENDEREMAIL_SIGNATURE__'] = dol_nl2br($this->substit['__SENDEREMAIL_SIGNATURE__']);
 					}
 					if (!dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
 						$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = dol_nl2br($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']);
@@ -1612,7 +1608,8 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__USER_SIGNATURE__'] = 'TagSignature';
+			$tmparray['__USER_SIGNATURE__'] = 'TagUserSignature';
+			$tmparray['__SENDEREMAIL_SIGNATURE__'] = 'TagEmailSenderSignature';
 			$tmparray['__CHECK_READ__'] = 'TagCheckMail';
 			$tmparray['__UNSUBSCRIBE__'] = 'TagUnsubscribe';
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
@@ -1630,7 +1627,7 @@ class FormMail extends Form
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1639,15 +1636,15 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
 					//Online payement link
-					if (!empty($conf->adherent->enabled)) {
+					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
@@ -1656,10 +1653,10 @@ class FormMail extends Form
 					if (isModEnabled('facture')) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 					}
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}

@@ -29,6 +29,7 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -251,6 +252,12 @@ if (empty($reshook)) {
 			// If no validator designated
 			if ($approverid < 1) {
 				setEventMessages($langs->transnoentitiesnoconv('InvalidValidatorCP'), null, 'errors');
+				$error++;
+			}
+
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
 				$error++;
 			}
 

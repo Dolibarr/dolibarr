@@ -25,6 +25,7 @@
  * \brief 		List operation of ledger ordered by account number
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -824,17 +825,22 @@ print $hookmanager->resPrint;
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
-
-$total_debit = 0;
-$total_credit = 0;
-$sous_total_debit = 0;
-$sous_total_credit = 0;
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+
 $totalarray = array();
+$totalarray['val'] = array ();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+$sous_total_debit = 0;
+$sous_total_credit = 0;
+$totalarray['val']['totaldebit'] = 0;
+$totalarray['val']['totalcredit'] = 0;
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 

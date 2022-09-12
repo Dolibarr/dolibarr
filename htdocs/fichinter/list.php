@@ -29,24 +29,25 @@
  *	\ingroup    ficheinter
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$langs->load("contracts");
 }
 
@@ -120,7 +121,7 @@ $arrayfields = array(
 	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
 	'f.ref_client'=>array('label'=>'RefCustomer', 'checked'=>1),
 	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
-	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1)),
+	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1)),
 	'c.ref'=>array('label'=>'Contract', 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled) ? 0 : 1)),
 	'f.description'=>array('label'=>'Description', 'checked'=>1),
 	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>500),
@@ -202,10 +203,10 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $objectstatic = new Fichinter($db);
 $companystatic = new Societe($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$projetstatic = new Project($db);
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$contratstatic = new Contrat($db);
 }
 
@@ -234,10 +235,10 @@ if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) 
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_customer, c.ref_supplier as contrat_ref_supplier";
 }
 // Add fields from extrafields
@@ -251,10 +252,10 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -801,7 +802,7 @@ while ($i < $imaxinloop) {
 	// Note public
 	if (!empty($arrayfields['f.note_public']['checked'])) {
 		print '<td class="center">';
-		print dol_escape_htmltag($obj->note_public);
+		print dol_string_nohtmltag($obj->note_public);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -810,7 +811,7 @@ while ($i < $imaxinloop) {
 	// Note private
 	if (!empty($arrayfields['f.note_private']['checked'])) {
 		print '<td class="center">';
-		print dol_escape_htmltag($obj->note_private);
+		print dol_string_nohtmltag($obj->note_private);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

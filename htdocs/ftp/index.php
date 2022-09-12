@@ -23,6 +23,7 @@
  *  \brief      Main page for FTP section area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -647,7 +648,7 @@ if (!function_exists('ftp_connect')) {
 
 		// Actions
 		/*
-		if ($user->rights->ftp->write && ! empty($section))
+		if ($user->rights->ftp->write && !empty($section))
 		{
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
 		}

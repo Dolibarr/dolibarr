@@ -4943,7 +4943,7 @@ class Product extends CommonObject
 			$label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
 		}
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}
@@ -4985,7 +4985,7 @@ class Product extends CommonObject
 			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 		}
 
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				$label .= '<br>';
@@ -5141,7 +5141,7 @@ class Product extends CommonObject
 		$labelStatus = $labelStatusShort = '';
 
 		$langs->load('products');
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			$langs->load("productbatch");
 		}
 
@@ -5456,7 +5456,7 @@ class Product extends CommonObject
 
 		//dol_syslog("load_virtual_stock");
 
-		if (!empty($conf->commande->enabled)) {
+		if (isModEnabled('commande')) {
 			$result = $this->load_stats_commande(0, '1,2', 1);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
