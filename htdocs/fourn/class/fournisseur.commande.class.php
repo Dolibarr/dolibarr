@@ -2006,6 +2006,8 @@ class CommandeFournisseur extends CommonOrder
 
 		$now = dol_now();
 
+		$inventorycode = $langs->trans("Reception").' '.$this->ref;
+
 		if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
 
@@ -2039,7 +2041,7 @@ class CommandeFournisseur extends CommonOrder
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 					$mouv->origin = &$this;
 					$mouv->setOrigin($this->element, $this->id);
-					$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+					$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, $inventorycode);
 					if ($result < 0) {
 						$this->error = $mouv->error;
 						$this->errors = $mouv->errors;
