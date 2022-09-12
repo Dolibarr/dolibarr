@@ -147,6 +147,10 @@ ALTER TABLE llx_user CHANGE COLUMN note note_private text;
 
 UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF100-500';
 
+
+ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+
 ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
@@ -170,3 +174,4 @@ create table llx_element_categorie
 ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk_element, fk_categorie);
 
 ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie)     REFERENCES llx_fk_categorie(rowid);
+
