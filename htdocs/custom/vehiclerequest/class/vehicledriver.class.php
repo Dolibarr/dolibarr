@@ -112,7 +112,7 @@ class VehicleDriver extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'), 'validate'=>'1',),
-		'name' => array('type'=>'varchar(100)', 'label'=>'Name', 'enabled'=>'1', 'position'=>1010, 'notnull'=>1, 'visible'=>1, 'validate'=>'1',),
+		'name' => array('type'=>'varchar(100)', 'label'=>'Name', 'enabled'=>'1', 'position'=>1010, 'notnull'=>1, 'visible'=>1,'showoncombobox'=>'1', 'validate'=>'1',),
 	);
 	public $rowid;
 	public $ref;

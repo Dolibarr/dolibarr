@@ -29,6 +29,7 @@ CREATE TABLE llx_vehiclerequest_vehicle(
 	fk_vehicle_type integer, 
 	plate_no varchar(10) NOT NULL, 
 	fk_vehicle_driver integer, 
-	vehicle_status integer DEFAULT 1 NOT NULL
+	vehicle_status integer DEFAULT 1 NOT NULL, 
+	fk_last_request integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

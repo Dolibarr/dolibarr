@@ -375,7 +375,7 @@ class modVehicleRequest extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->vehiclerequest->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled' => '$conf->vehiclerequest->enabled',
 			// Use 'perms'=>'$user->rights->vehiclerequest->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->fsa->vehicle->write',
+			'perms' => '$user->rights->fsa->vehicle->assign',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -395,7 +395,7 @@ class modVehicleRequest extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->vehiclerequest->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled' => '$conf->vehiclerequest->enabled',
 			// Use 'perms'=>'$user->rights->vehiclerequest->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->fsa->vehicle->write',
+			'perms' => '$user->rights->fsa->vehicle->assign',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,
@@ -415,7 +415,7 @@ class modVehicleRequest extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->vehiclerequest->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled' => '$conf->vehiclerequest->enabled',
 			// Use 'perms'=>'$user->rights->vehiclerequest->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->fsa->vehicle->write',
+			'perms' => '$user->rights->fsa->vehicle->assign',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2
@@ -476,7 +476,7 @@ class modVehicleRequest extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->vehiclerequest->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled' => '$conf->vehiclerequest->enabled',
 			// Use 'perms'=>'$user->rights->vehiclerequest->level1->level2' if you want your menu with a permission rules
-			'perms' => '$user->rights->fsa->vehicle->write',
+			'perms' => '$user->rights->fsa->vehicle->assign',
 			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user' => 2,

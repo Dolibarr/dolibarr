@@ -64,6 +64,8 @@ class Vehicle extends CommonObject
 	public $picto = 'vehicle@vehiclerequest';
 
 
+
+
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -103,7 +105,7 @@ class Vehicle extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'validate'=>'1', 'comment'=>"Reference of object"),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -113,9 +115,10 @@ class Vehicle extends CommonObject
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>0, 'default'=>'1', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 		'fk_vehicle_type' => array('type'=>'integer:VehicleType:custom/vehiclerequest/class/vehicletype.class.php', 'label'=>'VehicleType', 'enabled'=>'1', 'position'=>1020, 'notnull'=>-1, 'visible'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'validate'=>'1', 'comment'=>"vehicle type id"),
-		'plate_no' => array('type'=>'varchar(10)', 'label'=>'Plate Number', 'enabled'=>'1', 'position'=>1040, 'notnull'=>1, 'visible'=>1, 'validate'=>'1',),
+		'plate_no' => array('type'=>'varchar(10)', 'label'=>'Plate Number', 'enabled'=>'1', 'position'=>1040, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1',),
 		'fk_vehicle_driver' => array('type'=>'integer:VehicleDriver:custom/vehiclerequest/class/vehicledriver.class.php', 'label'=>'Current Driver', 'enabled'=>'1', 'position'=>1030, 'notnull'=>0, 'visible'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx',),
 		'vehicle_status' => array('type'=>'integer', 'label'=>'Vehicle Status', 'enabled'=>'1', 'position'=>1050, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'arrayofkeyval'=>array('0'=>'Maintenance', '1'=>'Available', '2'=>'On Trip'), 'validate'=>'1',),
+		'fk_last_request' => array('type'=>'integer:VehicleRequest:custom/vehiclerequest/class/vehiclerequest.class.php', 'label'=>'Last Vehicle Request', 'enabled'=>'1', 'position'=>1050, 'notnull'=>0, 'visible'=>5, 'default'=>'0',),
 	);
 	public $rowid;
 	public $ref;
@@ -131,6 +134,8 @@ class Vehicle extends CommonObject
 	public $plate_no;
 	public $fk_vehicle_driver;
 	public $vehicle_status;
+	public $fk_last_request;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -211,6 +216,7 @@ class Vehicle extends CommonObject
 				}
 			}
 		}
+
 	}
 
 	/**
