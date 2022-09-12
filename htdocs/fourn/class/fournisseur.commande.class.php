@@ -2006,7 +2006,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$now = dol_now();
 
-		$inventorycode = $langs->trans("Reception").' '.$this->ref;
+		$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
 
 		if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
