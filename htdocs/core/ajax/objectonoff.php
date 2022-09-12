@@ -72,7 +72,7 @@ if (!empty($user->socid)) {
 
 if (in_array($field, array('status'))) {
 	restrictedArea($user, $element, $id);
-} elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
+} elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'toproduce', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
 } else {
 	httponly_accessforbidden("Bad value for combination of parameters element/field.");

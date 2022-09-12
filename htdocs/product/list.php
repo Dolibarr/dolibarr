@@ -79,6 +79,7 @@ if (GETPOSTISSET('formfilteraction')) {
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
+$search_toproduce = GETPOST("search_toproduce", 'int');
 $search_country = GETPOST("search_country", 'int');
 $search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
@@ -250,7 +251,8 @@ $arrayfields = array(
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.tosell'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked'=>1, 'position'=>1000),
-	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000)
+	'p.tobuy'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked'=>1, 'position'=>1000),
+	'p.toproduce'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Produce").')', 'checked'=>1, 'position'=>1000)
 );
 /*foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -324,20 +326,21 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		$sall = "";
+		$sall = '';
 		$search_id = '';
-		$search_ref = "";
-		$search_ref_supplier = "";
-		$search_label = "";
-		$search_barcode = "";
+		$search_ref = '';
+		$search_ref_supplier = '';
+		$search_label = '';
+		$search_barcode = '';
 		$searchCategoryProductOperator = 0;
 		$searchCategoryProductList = array();
-		$search_tosell = "";
-		$search_tobuy = "";
+		$search_tosell = '';
+		$search_tobuy = '';
+		$search_toproduce = '';
 		$search_tobatch = '';
-		$search_country = "";
-		$search_state = "";
-		$search_vatrate = "";
+		$search_country = '';
+		$search_state = '';
+		$search_vatrate = '';
 		$search_finished = '';
 		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
@@ -384,6 +387,15 @@ if (empty($reshook)) {
 			}
 		}
 	}
+	if (!$error && $massaction == 'switchonproducestatus' && $permissiontoadd) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$product->setStatut($product->status_produce ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'toproduce');
+			}
+		}
+	}
 }
 
 
@@ -402,7 +414,7 @@ if ($search_type != '' && $search_type != '-1') {
 }
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
-$sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+$sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.toproduce, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -487,6 +499,9 @@ if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell !=
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1) {
 	$sql .= " AND p.tobuy = ".((int) $search_tobuy);
 }
+if (isset($search_toproduce) && dol_strlen($search_toproduce) > 0 && $search_toproduce != -1) {
+	$sql .= " AND p.toproduce = ".((int) $search_toproduce);
+}
 if (isset($search_tobatch) && dol_strlen($search_tobatch) > 0 && $search_tobatch != -1) {
 	$sql .= " AND p.tobatch = ".((int) $search_tobatch);
 }
@@ -564,7 +579,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
-$sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
+$sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.toproduce, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -674,6 +689,9 @@ if ($resql) {
 	if ($search_tobuy != '') {
 		$param .= "&search_tobuy=".urlencode($search_tobuy);
 	}
+	if ($search_tobuy != '') {
+		$param .= "&search_toproduce=".urlencode($search_toproduce);
+	}
 	if ($search_tobatch) {
 		$param = "&search_tobatch=".urlencode($search_tobatch);
 	}
@@ -739,7 +757,8 @@ if ($resql) {
 	}
 	if ($user->rights->{$rightskey}->creer) {
 		$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
-		$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
+		$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");		
+		$arrayofmassactions['switchonproducestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnProduceStatus");
 		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields'))) {
@@ -1123,6 +1142,11 @@ if ($resql) {
 		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
 		print '</td>';
 	}
+	if (!empty($arrayfields['p.toproduce']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectarray('search_toproduce', array('0'=>$langs->trans('ProductStatusNotOnProductionShort'), '1'=>$langs->trans('ProductStatusOnProductionShort')), $search_tobuy, 1);
+		print '</td>';
+	}
 	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print '<td class="liste_titre center maxwidthsearch">';
 		$searchpicto = $form->showFilterButtons();
@@ -1287,6 +1311,9 @@ if ($resql) {
 	if (!empty($arrayfields['p.tobuy']['checked'])) {
 		print_liste_field_titre($arrayfields['p.tobuy']['label'], $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
+	if (!empty($arrayfields['p.toproduce']['checked'])) {
+		print_liste_field_titre($arrayfields['p.toproduce']['label'], $_SERVER["PHP_SELF"], "p.toproduce", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
 	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
@@ -1326,8 +1353,9 @@ if ($resql) {
 		$product_static->label = $obj->label;
 		$product_static->finished = $obj->finished;
 		$product_static->type = $obj->fk_product_type;
-		$product_static->status_buy = $obj->tobuy;
 		$product_static->status     = $obj->tosell;
+		$product_static->status_buy = $obj->tobuy;
+		$product_static->status_produce = $obj->toproduce;
 		$product_static->status_batch = $obj->tobatch;
 		$product_static->entity = $obj->entity;
 		$product_static->pmp = $obj->pmp;
@@ -1927,6 +1955,19 @@ if ($resql) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($obj->tobuy, 5, 1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status (to produce)
+		if (!empty($arrayfields['p.toproduce']['checked'])) {
+			print '<td class="center nowrap">';
+			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+				print ajax_object_onoff($product_static, 'status_produce', 'toproduce', 'ProductStatusOnProduction', 'ProductStatusNotOnProduction');
+			} else {
+				print $product_static->LibStatut($obj->tobuy, 5, 3);
 			}
 			print '</td>';
 			if (!$i) {

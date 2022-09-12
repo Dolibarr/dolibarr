@@ -2235,6 +2235,12 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
+		$morehtmlstatus .= ' &nbsp; ';
+		if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			$morehtmlstatus .= ajax_object_onoff($object, 'status_produce', 'toproduce', 'ProductStatusOnProduction', 'ProductStatusNotOnProduction');
+		} else {
+			$morehtmlstatus .= '<span class="statusrefproduce">'.$object->getLibStatut(6, 3).'</span>';
+		}
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {

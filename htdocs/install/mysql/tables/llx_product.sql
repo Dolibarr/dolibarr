@@ -57,6 +57,7 @@ create table llx_product
   fk_user_modif                 integer,                            -- user making last change
   tosell                        tinyint      DEFAULT 1,             -- Product you sell
   tobuy                         tinyint      DEFAULT 1,             -- Product you buy
+  toproduce                     tinyint      DEFAULT 1,             -- Product you produce
   onportal                      tinyint      DEFAULT 0,	            -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
   sell_or_eat_by_mandatory      tinyint      DEFAULT 0 NOT NULL,    -- Make sell-by or eat-by date mandatory

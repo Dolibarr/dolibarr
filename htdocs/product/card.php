@@ -527,6 +527,7 @@ if (empty($reshook)) {
 			$object->type               	 = $type;
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy = GETPOST('statut_buy');
+			$object->status_produce = GETPOST('statut_produce');
 			$object->status_batch = GETPOST('status_batch');
 			$object->batch_mask = GETPOST('batch_mask');
 
@@ -720,6 +721,7 @@ if (empty($reshook)) {
 				$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
+				$object->status_produce         = GETPOST('statut_produce', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
@@ -874,6 +876,7 @@ if (empty($reshook)) {
 				$object->ref = GETPOST('clone_ref', 'alphanohtml');
 				$object->status = 0;
 				$object->status_buy = 0;
+				$object->status_produce = 0;
 				$object->id = null;
 				$object->barcode = -1;
 
@@ -1351,6 +1354,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 		$statutarray = array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
 		print $form->selectarray('statut_buy', $statutarray, GETPOST('statut_buy'));
+		print '</td></tr>';
+
+		// To produce
+		print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Produce").')</td><td>';
+		$statutarray = array('1' => $langs->trans("ProductStatusOnProduction"), '0' => $langs->trans("ProductStatusNotOnProduction"));
+		print $form->selectarray('statut_produce', $statutarray, GETPOST('statut_produce'));
 		print '</td></tr>';
 
 		// Batch number management
@@ -1883,6 +1892,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				print '<option value="1">'.$langs->trans("ProductStatusOnBuy").'</option>';
 				print '<option value="0" selected>'.$langs->trans("ProductStatusNotOnBuy").'</option>';
+			}
+			print '</select>';
+			print '</td></tr>';
+
+			// Status To Produce
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Produce").')</td><td colspan="3">';
+			print '<select class="flat" name="statut_buy">';
+			if ($object->status_produce) {
+				print '<option value="1" selected>'.$langs->trans("ProductStatusOnProduction").'</option>';
+				print '<option value="0">'.$langs->trans("ProductStatusNotOnProduction").'</option>';
+			} else {
+				print '<option value="1">'.$langs->trans("ProductStatusOnProduction").'</option>';
+				print '<option value="0" selected>'.$langs->trans("ProductStatusNotOnProduction").'</option>';
 			}
 			print '</select>';
 			print '</td></tr>';

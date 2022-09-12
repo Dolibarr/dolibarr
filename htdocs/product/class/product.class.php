@@ -712,6 +712,7 @@ class Product extends CommonObject
 					$sql .= ", price_base_type";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
+					$sql .= ", toproduce";
 					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", accountancy_code_buy";
 						$sql .= ", accountancy_code_buy_intra";
@@ -741,6 +742,7 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
 					$sql .= ", ".((int) $this->status);
 					$sql .= ", ".((int) $this->status_buy);
+					$sql .= ", ".((int) $this->status_produce);
 					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
@@ -1126,6 +1128,7 @@ class Product extends CommonObject
 
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
+			$sql .= ", toproduce = ".(int) $this->status_produce;
 			$sql .= ", tobatch = ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
 			$sql .= ", batch_mask = '".$this->db->escape($this->batch_mask)."'";
 
@@ -2287,7 +2290,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
-		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+		$sql .= " p.tobuy, p.toproduce, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
 		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period,";
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -2349,7 +2352,7 @@ class Product extends CommonObject
 		if ($separatedStock) {
 			$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 			$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
-			$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+			$sql .= " p.tobuy, p.toproduce, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 			$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
 			$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -2386,10 +2389,11 @@ class Product extends CommonObject
 				$this->note_private                   = $obj->note_private;
 				$this->note                           = $obj->note_private; // deprecated
 
-				$this->type                            = $obj->fk_product_type;
+				$this->type                          = $obj->fk_product_type;
 				$this->status                        = $obj->tosell;
 				$this->status_buy                    = $obj->tobuy;
-				$this->status_batch                    = $obj->tobatch;
+				$this->status_produce                = $obj->toproduce;
+				$this->status_batch                  = $obj->tobatch;
 				$this->batch_mask                    = $obj->batch_mask;
 
 				$this->customcode                    = $obj->customcode;
@@ -4767,7 +4771,7 @@ class Product extends CommonObject
 	public function getFather()
 	{
 		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty, pa.incdec, p.entity";
-		$sql .= ", p.tosell as status, p.tobuy as status_buy";
+		$sql .= ", p.tosell as status, p.tobuy as status_buy, p.toproduce as status_produce";
 		$sql .= " FROM ".$this->db->prefix()."product_association as pa,";
 		$sql .= " ".$this->db->prefix()."product as p";
 		$sql .= " WHERE p.rowid = pa.fk_product_pere";
@@ -4778,15 +4782,16 @@ class Product extends CommonObject
 			$prods = array();
 			while ($record = $this->db->fetch_array($res)) {
 				// $record['id'] = $record['rowid'] = id of father
-				$prods[$record['id']]['id'] = $record['rowid'];
-				$prods[$record['id']]['ref'] = $record['ref'];
-				$prods[$record['id']]['label'] = $record['label'];
-				$prods[$record['id']]['qty'] = $record['qty'];
-				$prods[$record['id']]['incdec'] = $record['incdec'];
-				$prods[$record['id']]['fk_product_type'] = $record['fk_product_type'];
-				$prods[$record['id']]['entity'] = $record['entity'];
-				$prods[$record['id']]['status'] = $record['status'];
-				$prods[$record['id']]['status_buy'] = $record['status_buy'];
+				$prods[$record['id']]['id'] 				= $record['rowid'];
+				$prods[$record['id']]['ref'] 				= $record['ref'];
+				$prods[$record['id']]['label'] 				= $record['label'];
+				$prods[$record['id']]['qty']				= $record['qty'];
+				$prods[$record['id']]['incdec'] 			= $record['incdec'];
+				$prods[$record['id']]['fk_product_type'] 	= $record['fk_product_type'];
+				$prods[$record['id']]['entity'] 			= $record['entity'];
+				$prods[$record['id']]['status'] 			= $record['status'];
+				$prods[$record['id']]['status_buy'] 		= $record['status_buy'];
+				$prods[$record['id']]['status_produce'] 	= $record['status_produce'];
 			}
 			return $prods;
 		} else {
@@ -4934,6 +4939,7 @@ class Product extends CommonObject
 		if (isset($this->status) && isset($this->status_buy)) {
 			$label .= ' '.$this->getLibStatut(5, 0);
 			$label .= ' '.$this->getLibStatut(5, 1);
+			$label .= ' '.$this->getLibStatut(5, 3);
 		}
 
 		if (!empty($this->ref)) {
@@ -5118,6 +5124,8 @@ class Product extends CommonObject
 				return $this->LibStatut($this->status_buy, $mode, $type);
 			case 2:
 				return $this->LibStatut($this->status_batch, $mode, $type);
+			case 3:
+				return $this->LibStatut($this->status_produce, $mode, $type);
 			default:
 				//Simulate previous behavior but should return an error string
 				return $this->LibStatut($this->status_buy, $mode, $type);
@@ -5916,6 +5924,7 @@ class Product extends CommonObject
 		$this->country_id = 1;
 		$this->tosell = 1;
 		$this->tobuy = 1;
+		$this->toproduce = 1;
 		$this->tobatch = 0;
 		$this->note = 'This is a comment (private)';
 		$this->date_creation = $now;
