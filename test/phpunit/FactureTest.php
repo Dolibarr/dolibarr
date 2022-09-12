@@ -83,10 +83,10 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->facture->enabled)) {
+		if (!isModEnabled('facture')) {
 			print __METHOD__." module customer invoice must be enabled.\n"; die(1);
 		}
-		if (! empty($conf->ecotaxdeee->enabled)) {
+		if (!empty($conf->ecotaxdeee->enabled)) {
 			print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(1);
 		}
 

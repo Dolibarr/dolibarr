@@ -39,6 +39,9 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					//var_dump($obj);
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
 					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
+					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+						$obj->$tmpkey = price2num($value);
+					}
 					//var_dump($value);
 				}
 
@@ -64,7 +67,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
 					}
-					if (is_numeric($obj->$tmpkey)) {
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
+						if (!isset($totalarray['totalizable'][$key]['total'])) {
+							$totalarray['totalizable'][$key]['total'] = 0;
+						}
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}

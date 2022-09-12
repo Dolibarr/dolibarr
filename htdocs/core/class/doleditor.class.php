@@ -68,7 +68,7 @@ class DolEditor
 	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
 	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
 	{
 		global $conf, $langs;
 
@@ -152,7 +152,7 @@ class DolEditor
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
-			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled)) {
+			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && isModEnabled('fckeditor')) {
 				if (!defined('REQUIRE_CKEDITOR')) {
 					define('REQUIRE_CKEDITOR', '1');
 				}
@@ -169,6 +169,9 @@ class DolEditor
 				}
 				if (empty($conf->global->FCKEDITOR_ENABLE_WSC)) {	// spellchecker has end of life december 2021
 					$pluginstodisable .= ',wsc';
+				}
+				if (empty($conf->global->FCKEDITOR_ENABLE_PDF)) {
+					$pluginstodisable .= ',exportpdf';
 				}
 				$scaytautostartup = '';
 				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
@@ -189,14 +192,14 @@ class DolEditor
                             tmpeditor = CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
-            						customConfig : ckeditorConfig,
-									removePlugins : \''.$pluginstodisable.'\',
-            						readOnly : '.($this->readonly ? 'true' : 'false').',
-                            		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
-            						extraAllowedContent : \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
-									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
-            						fullPage : '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
+            						customConfig: ckeditorConfig,
+									removePlugins: \''.$pluginstodisable.'\',
+            						readOnly: '.($this->readonly ? 'true' : 'false').',
+                            		htmlEncodeOutput:'.$htmlencode_force.',
+            						allowedContent:'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
+            						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
+									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+            						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',

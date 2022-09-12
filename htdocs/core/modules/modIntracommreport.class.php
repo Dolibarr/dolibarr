@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ class modIntracommreport extends DolibarrModules
 		$this->description = "Intracomm report management (Support for French DEB/DES format)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'experimental';
+		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'intracommreport';
@@ -138,7 +138,7 @@ class modIntracommreport extends DolibarrModules
 	{
 		global $conf;
 
-		$result = $this->_load_tables('/install/mysql/tables/', 'intracommreport');
+		$result = $this->_load_tables('/install/mysql/', 'intracommreport');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

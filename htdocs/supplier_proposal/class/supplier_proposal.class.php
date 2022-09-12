@@ -331,7 +331,6 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->subprice = -$remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Id produit predefini
 			$supplier_proposalligne->qty = 1;
-			$supplier_proposalligne->remise = 0;
 			$supplier_proposalligne->remise_percent = 0;
 			$supplier_proposalligne->rang = -1;
 			$supplier_proposalligne->info_bits = 2;
@@ -519,7 +518,7 @@ class SupplierProposal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
+			if (isModEnabled("multicurrency") && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
@@ -721,7 +720,7 @@ class SupplierProposal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
+			if (isModEnabled("multicurrency") && $pu_ht_devise > 0) {
 				$pu = 0;
 			}
 
@@ -1150,8 +1149,10 @@ class SupplierProposal extends CommonObject
 		}
 
 		// Clear fields
-		$this->user_author = $user->id;
-		$this->user_valid = '';
+		$this->user_author = $user->id;		// deprecated
+		$this->user_author_id = $user->id;
+		$this->user_valid = 0;				// deprecated
+		$this->user_valid_id = 0;
 		$this->date = $now;
 
 		// Set ref
@@ -1256,6 +1257,7 @@ class SupplierProposal extends CommonObject
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->statut               = (int) $obj->fk_statut;
+				$this->status               = (int) $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -1778,7 +1780,7 @@ class SupplierProposal extends CommonObject
 			if (empty($ref_fourn)) {
 				$ref_fourn = $product->ref_supplier;
 			}
-			if (!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) {
+			if (isModEnabled("multicurrency") && !empty($product->multicurrency_code)) {
 				list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
 			}
 			$productsupplier->id = $product->fk_product;
@@ -1841,7 +1843,7 @@ class SupplierProposal extends CommonObject
 			$product->tva_tx,
 			$user->id
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (!empty($product->multicurrency_code)) {
 				include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 				$multicurrency = new MultiCurrency($this->db); //need to fetch because empty fk_multicurrency and rate
@@ -1862,7 +1864,7 @@ class SupplierProposal extends CommonObject
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_fournisseur_price ';
 		$sql .= '(datec, fk_product, fk_soc, ref_fourn, price, quantity, unitprice, tva_tx, fk_user';
-		if (!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) {
+		if (isModEnabled("multicurrency") && !empty($product->multicurrency_code)) {
 			$sql .= ',fk_multicurrency, multicurrency_code, multicurrency_unitprice, multicurrency_price, multicurrency_tx';
 		}
 		$sql .= ')  VALUES ('.implode(',', $values).')';
@@ -2191,7 +2193,7 @@ class SupplierProposal extends CommonObject
 			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSigned");
 			$this->labelStatus[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosed");
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraftShort");
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("Opened");
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("SupplierProposalStatusValidatedShort");
 			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSignedShort");
 			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSignedShort");
 			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosedShort");
@@ -2948,7 +2950,7 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
 
-			$this->ref_fourn = $objp->ref_produit_forun;
+			$this->ref_fourn = $objp->ref_produit_fourn;
 
 			// Multicurrency
 			$this->fk_multicurrency = $objp->fk_multicurrency;
@@ -3005,9 +3007,6 @@ class SupplierProposalLine extends CommonObjectLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

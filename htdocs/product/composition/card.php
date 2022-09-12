@@ -27,8 +27,9 @@
  *  \brief      Page of product file
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -74,6 +75,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -141,9 +145,10 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
  * View
  */
 
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
-$form = new Form($db);
 
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search') {
@@ -170,12 +175,12 @@ if ($action == 'search') {
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$params[] = 'p.barcode';
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (!empty($conf->categorie->enabled) && !empty($parent) && $parent != -1) {
+	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -198,8 +203,10 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $help_url);
 
 $head = product_prepare_head($object);
+
 $titre = $langs->trans("CardProduct".$object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+
 print dol_get_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
@@ -215,34 +222,45 @@ if ($id > 0 || !empty($ref)) {
 			$shownav = 0;
 		}
 
-		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
 		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefieldcreate">';
+				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
 
+			print '</table>';
+
+			print '</div><div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("Nature").'</td><td>';
-				print $object->getLibFinished();
-				print '</td></tr>';
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $object->getLibFinished();
+					//print $formproduct->selectProductNature('finished', $object->finished);
+					print '</td></tr>';
+				}
 			}
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td><td>';
+				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
 					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 				} else {
@@ -262,16 +280,13 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 			print '</div>';
+			print '</div>';
 		}
 
 		print dol_get_fiche_end();
 
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-		print '</div>';
-
-		print '<br>';
+		print '<br><br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
 		$object->get_sousproduits_arbo(); // Load $object->sousprods
@@ -279,7 +294,7 @@ if ($id > 0 || !empty($ref)) {
 		$prods_arbo = $object->get_arbo_each_prod();
 
 		$tmpid = $id;
-		if (! empty($conf->use_javascript_ajax)) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$nboflines = $prods_arbo;
 			$table_element_line='product_association';
 
@@ -366,6 +381,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>'."\n";
 
 		$totalsell = 0;
+		$total = 0;
 		if (count($prods_arbo))	{
 			foreach ($prods_arbo as $value)	{
 				$productstatic->fetch($value['id']);
@@ -404,7 +420,7 @@ if ($id > 0 || !empty($ref)) {
 
 					$unitline = price2num(($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MU');
 					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
-					$total += $totalline;
+					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
 					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
@@ -549,7 +565,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</tr>'."\n";
 		} else {
-			$colspan = 8;
+			$colspan = 10;
 			if (!empty($conf->stock->enabled)) {
 				$colspan++;
 			}
@@ -575,7 +591,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				$rowspan++;
 			}
 
@@ -588,7 +604,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
@@ -666,7 +682,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
-						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->labelm)) {
 							$labeltoshow = $objp->labelm;
 						}
 

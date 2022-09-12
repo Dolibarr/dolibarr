@@ -26,6 +26,7 @@
  *      \brief      Home page of category area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
@@ -174,6 +175,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
@@ -207,6 +209,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
@@ -240,6 +243,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';

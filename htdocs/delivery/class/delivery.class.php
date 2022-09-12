@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -105,6 +105,8 @@ class Delivery extends CommonObject
 	 * @var string model pdf
 	 */
 	public $model_pdf;
+
+	public $commande_id;
 
 	public $lines = array();
 
@@ -528,6 +530,8 @@ class Delivery extends CommonObject
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
 
@@ -772,9 +776,9 @@ class Delivery extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines
+	 *	Load lines insto $this->lines.
 	 *
-	 *	@return	void
+	 *	@return		int								<0 if KO, >0 if OK
 	 */
 	public function fetch_lines()
 	{
@@ -840,9 +844,11 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
 
-		return $this->lines;
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
@@ -973,7 +979,7 @@ class Delivery extends CommonObject
 		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$resultArray = array();
+			$array = array();
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
@@ -1133,14 +1139,6 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-	public $price;
-	public $fk_product;
-	public $origin_id;
-
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1162,10 +1160,24 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	public $origin_line_id;
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
 
+	public $fk_product;
+	public $product_desc;
+	public $product_type;
 	public $product_ref;
 	public $product_label;
+
+	public $fk_origin_line;
+	public $origin_id;
+
+	public $price;
+
+	public $origin_line_id;
+
 
 	/**
 	 *	Constructor

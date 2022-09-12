@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -138,7 +138,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -171,7 +171,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Tab to link resources
-	if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_ON_THIRDPARTIES)) {
+	if (isModEnabled('resource') && !empty($conf->global->RESOURCE_ON_THIRDPARTIES)) {
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
@@ -179,7 +179,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -195,7 +195,7 @@ function societe_prepare_head(Societe $object)
 
 		$title = $langs->trans("PaymentModes");
 
-		if (!empty($conf->stripe->enabled)) {
+		if (isModEnabled('stripe')) {
 			//$langs->load("stripe");
 			//$title = $langs->trans("BankAccountsAndGateways");
 
@@ -215,7 +215,7 @@ function societe_prepare_head(Societe $object)
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
 		$sql .= " WHERE n.fk_soc = ".((int) $object->id);
-		if (empty($conf->stripe->enabled)) {
+		if (!isModEnabled('stripe')) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
 			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
@@ -229,7 +229,7 @@ function societe_prepare_head(Societe $object)
 			dol_print_error($db);
 		}
 
-		//if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
+		//if (isModEnabled('stripe') && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode($object->id);
 		$head[$h][1] = $title;
@@ -242,7 +242,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->website->enabled) && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
+	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
@@ -263,7 +263,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
 		if (!empty($user->rights->partnership->read)) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
@@ -285,7 +285,7 @@ function societe_prepare_head(Societe $object)
 
 	if ($user->socid == 0) {
 		// Notifications
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			$nbNotif = 0;
 			// Enable caching of thirdparty count notifications
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -361,7 +361,7 @@ function societe_prepare_head(Societe $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda')&& (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$nbEvent = 0;
 		// Enable caching of thirdrparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -777,22 +777,23 @@ function isInEEC($object)
  */
 function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
 {
-	global $user;
+	global $user, $action, $hookmanager;
 
 	$i = -1;
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
 		print "\n";
 		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
-		print '<div class="div-table-responsive">';
-		print "\n".'<table class="noborder" width=100%>';
+
+		print '<div class="div-table-responsive">'."\n";
+		print '<table class="noborder centpercent">';
 
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
@@ -835,12 +836,12 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						print '<tr class="oddeven">';
 
 						// Ref
-						print '<td>';
+						print '<td class="nowraponall">';
 						print $projecttmp->getNomUrl(1);
 						print '</td>';
 
 						// Label
-						print '<td>'.$obj->title.'</td>';
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
 						// Date start
 						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
 						// Date end
@@ -877,6 +878,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		} else {
 			dol_print_error($db);
 		}
+
+		$parameters = array('sql'=>$sql, 'function'=>'show_projects');
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		print "</table>";
 		print '</div>';
 
@@ -890,14 +896,15 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 /**
  * 		Show html area for list of contacts
  *
- *		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Database handler
- * 		@param	Societe		$object		Third party object
- *      @param  string		$backtopage	Url to go once contact is created
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Societe		$object			Third party object
+ *      @param  string		$backtopage		Url to go once contact is created
+ *      @param	int			$showuserlogin 	1=Show also user login if it exists
  *      @return	int
  */
-function show_contacts($conf, $langs, $db, $object, $backtopage = '')
+function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserlogin = 0)
 {
 	global $user, $conf, $extrafields, $hookmanager;
 	global $contextpage;
@@ -1131,12 +1138,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			if (in_array($key, array('statut'))) {
 				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
 			} elseif (in_array($key, array('role'))) {
-				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
+				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles, 'minwidth200 maxwidth300');
 			} else {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
+	}
+	if ($showuserlogin) {
+		print '<td></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1176,6 +1186,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		if (!empty($arrayfields['sc.'.$key]['checked'])) {
 			print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
 		}
+	}
+	if ($showuserlogin) {
+		print '<td>'.$langs->trans("DolibarrLogin").'</td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1275,6 +1288,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 				print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
 			}
 
+			if ($showuserlogin) {
+				print '<td>';
+				$tmpuser= new User($db);
+				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
+				if ($resfetch > 0) {
+					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+				}
+				print '</td>';
+			}
+
 			// Extra fields
 			$extrafieldsobjectkey = $contactstatic->table_element;
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -1283,7 +1306,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			print '<td align="right">';
 
 			// Add to agenda
-			if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+			if (isModEnabled('agenda')&& $user->rights->agenda->myactions->create) {
 				print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 				print img_object($langs->trans("Event"), "action");
 				print '</a> &nbsp; ';
@@ -1410,7 +1433,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 	$sql = '';
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		// Recherche histo sur actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -1665,7 +1688,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 	}
 
-	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
+	if (isModEnabled('agenda')|| (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -2097,7 +2120,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 {
 	global $conf, $langs, $db;
 	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-	if (!empty($conf->mailing->enabled) && !empty($objcon->email)
+	if (isModEnabled('mailing') && !empty($objcon->email)
 		&& (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$langs->load("mails");
 

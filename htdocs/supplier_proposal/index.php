@@ -24,6 +24,7 @@
  *	\brief      Home page of vendor proposal area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
@@ -162,7 +163,7 @@ if ($resql) {
 /*
  * Draft askprice
  */
-if (!empty($conf->supplier_proposal->enabled)) {
+if (isModEnabled('supplier_proposal')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -297,7 +298,7 @@ if ($resql) {
 /*
  * Opened askprice
  */
-if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
 	$langs->load("supplier_proposal");
 
 	$now = dol_now();

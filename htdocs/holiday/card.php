@@ -29,6 +29,7 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -49,6 +50,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
+$socid = GETPOST('socid', 'int');
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -253,6 +255,12 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
 			$result = 0;
 
 			if (!$error) {
@@ -283,7 +291,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// If this is an update and we are an approver, we can update to change the approver
+	// If this is an update and we are an approver, we can update to change the expected approver with another one (including himself)
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
@@ -557,9 +565,10 @@ if (empty($reshook)) {
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
 			$object->oldcopy = dol_clone($object);
 
-			$object->date_valid = dol_now();
-			$object->fk_user_valid = $user->id;
+			$object->date_approval = dol_now();
+			$object->fk_user_approve = $user->id;
 			$object->statut = Holiday::STATUS_APPROVED;
+			$object->status = Holiday::STATUS_APPROVED;
 
 			$db->begin();
 
@@ -662,6 +671,7 @@ if (empty($reshook)) {
 				$object->date_refuse = dol_print_date('dayhour', dol_now());
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
+				$object->status = Holiday::STATUS_REFUSED;
 				$object->detail_refuse = GETPOST('detail_refuse', 'alphanohtml');
 
 				$db->begin();
@@ -750,6 +760,7 @@ if (empty($reshook)) {
 
 		$oldstatus = $object->statut;
 		$object->statut = Holiday::STATUS_DRAFT;
+		$object->status = Holiday::STATUS_DRAFT;
 
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -782,6 +793,7 @@ if (empty($reshook)) {
 			$object->date_cancel = dol_now();
 			$object->fk_user_cancel = $user->id;
 			$object->statut = Holiday::STATUS_CANCELED;
+			$object->status = Holiday::STATUS_CANCELED;
 
 			$result = $object->update($user);
 
@@ -905,9 +917,11 @@ $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url);
 
+$edit = false;
+
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
+	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance) || empty($user->rights->holiday->writeall))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -920,7 +934,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$errors[] = $langs->trans('ErrorEndDateCP');
 					break;
 				case 'SQL_Create':
-					$errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
+					$errors[] = $langs->trans('ErrorSQLCreateCP');
 					break;
 				case 'CantCreate':
 					$errors[] = $langs->trans('CantCreateCP');
@@ -987,6 +1001,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
+			$nb_holiday = 0;
 			$typeleaves = $object->getTypes(1, 1);
 			foreach ($typeleaves as $key => $val) {
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
@@ -1149,7 +1164,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
 						break;
 					case 'SQL_Create':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP').' '.$_GET['msg'];
+						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP');
 						break;
 					case 'CantCreate':
 						$errors[] = $langs->transnoentitiesnoconv('CantCreateCP');
@@ -1170,7 +1185,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('NoMotifRefuseCP');
 						break;
 					case 'mail':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend')."\n".$_GET['error_content'];
+						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend');
 						break;
 				}
 
@@ -1493,8 +1508,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 					if ($object->statut == Holiday::STATUS_APPROVED) { // If validated and approved
-						if ($user->id == $object->fk_validator || $cancreate || $cancreateall) {
-							if (($object->date_debut > dol_now()) || !empty($user->admin)) {
+						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $cancreate || $cancreateall) {
+							if (($object->date_debut > dol_now()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
@@ -1561,6 +1576,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
+			$morehtmlright = '';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

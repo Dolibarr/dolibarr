@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuració del mòdul Stripe
-StripeDesc=Oferiu als vostres clients una pàgina de pagament en línia per als pagaments amb targetes de crèdit/dèbit mitjançant <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Això es pot utilitzar per permetre als vostres clients fer pagaments ad hoc o per a pagaments relacionats amb un objecte Dolibarr concret (factura, comanda, ...)
+StripeDesc=Oferiu als vostres clients una pàgina de pagament en línia per als pagaments amb targetes de crèdit/dèbit mitjançant <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Això es pot utilitzar per a permetre als vostres clients fer pagaments ad hoc o per a pagaments relacionats amb un objecte Dolibarr concret (factura, comanda, ...)
 StripeOrCBDoPayment=Pagar amb targeta de crèdit o Stripe
 FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
 PaymentForm=Formulari de pagament
@@ -23,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL per oferir una pàgina de pagament 
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per oferir una pàgina de pagament en línia %s per a una subscripció per membres
 ToOfferALinkForOnlinePaymentOnDonation=URL per oferir una pàgina de pagament en línia %s per al pagament d’una donació
 YouCanAddTagOnUrl=També podeu afegir el paràmetre URL <b> &tag=<i>valor</i></b> a qualsevol d’aquests URL (obligatori només per al pagament que no estigui vinculat a un objecte) per a afegir la vostra pròpia etiqueta de comentari de pagament. <br>Per a l'URL de pagaments sense objecte existent, també podeu afegir el paràmetre <strong> &noidempotency=1 </strong>, de manera que es pot utilitzar el mateix enllaç amb la mateixa etiqueta diverses vegades (alguns modes de pagament poden limitar el pagament a 1 per a cada enllaç diferent sense aquest paràmetre)
-SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b>%s</b> per fer que el pagament es creï automàticament quan es valide mitjançant Stripe.
+SetupStripeToHavePaymentCreatedAutomatically=Configureu el vostre Stripe amb l'URL <b> %s </b> perquè el pagament es creï automàticament quan Stripe el validi.
 AccountParameter=Paràmetres del compte
 UsageParameter=Paràmetres d'ús
 InformationToFindParameters=Ajuda per a trobar la vostra informació del compte %s
@@ -67,5 +67,6 @@ StripePayoutList=Llista de pagaments de Stripe
 ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode de prova)
 ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
-ClickHereToTryAgain=<a href="%s">Feu clic aquí per tornar-ho a provar ...</a>
+ClickHereToTryAgain=<a href="%s"> Feu clic aquí per a tornar-ho a provar... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una fitxa s'ha de fer des del panell de Stripe. Podeu fer clic aquí per a activar el registre de clients de Stripe: %s
+TERMINAL_LOCATION=Ubicació (adreça) per a terminals

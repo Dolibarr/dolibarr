@@ -232,13 +232,13 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
@@ -366,10 +366,11 @@ class Contrat extends CommonObject
 	 *  @param	int|string	$date_start		Date start (now if empty)
 	 *  @param	int			$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param	string		$comment		Comment
+	 *  @param	int|string	$date_end		Date end
 	 *	@return	int							<0 if KO, >0 if OK
 	 *  @see ()
 	 */
-	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '')
+	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '', $date_end = '')
 	{
 		if (empty($date_start)) {
 			$date_start = dol_now();
@@ -387,7 +388,7 @@ class Contrat extends CommonObject
 			if ($contratline->statut != ContratLigne::STATUS_OPEN) {
 				$contratline->context = $this->context;
 
-				$result = $contratline->active_line($user, $date_start, -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
+				$result = $contratline->active_line($user, $date_start, !empty($date_end) ? $date_end : -1, $comment);	// This call trigger LINECONTRACT_ACTIVATE
 				if ($result < 0) {
 					$error++;
 					$this->error = $contratline->error;
@@ -667,7 +668,7 @@ class Contrat extends CommonObject
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
 		} else {
-			$sql .= " WHERE rowid=".(int) $id;
+			$sql .= " WHERE rowid = ".(int) $id;
 		}
 		if ($ref_customer) {
 			$sql .= " AND ref_customer = '".$this->db->escape($ref_customer)."'";
@@ -676,7 +677,7 @@ class Contrat extends CommonObject
 			$sql .= " AND ref_supplier = '".$this->db->escape($ref_supplier)."'";
 		}
 		if ($ref) {
-			$sql .= " AND ref='".$this->db->escape($ref)."'";
+			$sql .= " AND ref = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -723,10 +724,13 @@ class Contrat extends CommonObject
 
 					// Retrieve all extrafields
 					// fetch optionals attributes and labels
-					$this->fetch_optionals();
+					$result = $this->fetch_optionals();
 
 					// Lines
-					$result = $this->fetch_lines();
+					if ($result >= 0 && !empty($this->table_element_line)) {
+						$result = $this->fetch_lines();
+					}
+
 					if ($result < 0) {
 						$this->error = $this->db->lasterror();
 						return -3;
@@ -771,16 +775,6 @@ class Contrat extends CommonObject
 		$total_ht = 0;
 
 		$now = dol_now();
-
-		/*
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-
-		$line = new ContratLigne($this->db);
-		$extrafields->fetch_name_optionals_label(ContratLigne::$table_element, true);
-		*/
 
 		$this->lines = array();
 		$pos = 0;
@@ -875,15 +869,17 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retrieve all extrafields for contract
+				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$pos] = $line;
@@ -1066,7 +1062,7 @@ class Contrat extends CommonObject
 						if (count($exp->linkedObjectsIds['commande']) > 0) {
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$originforcontact = 'commande';
-								$originidforcontact = $value->id;
+								$originidforcontact = $value;
 								break; // We take first one
 							}
 						}
@@ -2134,7 +2130,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Return list of other contracts for same company than current contract
+	 *  Return list of other contracts for the same company than current contract
 	 *
 	 *	@param	string		$option					'all' or 'others'
 	 *	@param	array		$status					sort contracts having these status
@@ -2146,7 +2142,7 @@ class Contrat extends CommonObject
 	{
 		$tab = array();
 
-		$sql = "SELECT c.rowid, c.ref";
+		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		if (!empty($product_categories)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
@@ -2167,12 +2163,12 @@ class Contrat extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$contrat = new Contrat($this->db);
 				$contrat->fetch($obj->rowid);
-				$tab[] = $contrat;
+				$tab[$contrat->id] = $contrat;
 				$i++;
 			}
 			return $tab;
 		} else {
-			$this->error = $this->db->error();
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2604,6 +2600,177 @@ class Contrat extends CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 * Action executed by scheduler
+	 * CAN BE A CRON TASK
+	 * Loop on each contract lines and update the end of date. Do not execute the update if there is one pending invoice linked to contract.
+	 *
+	 * @param	int		$thirdparty_id			Thirdparty id
+	 * @param	int		$delayindaysshort 		To renew the resources x day before (positive value) or after (negative value) the end of date (default is 0)
+	 * @return	int								0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function doAutoRenewContracts($thirdparty_id = 0, $delayindaysshort = 0)
+	{
+		global $langs, $user;
+
+		$langs->load("agenda");
+
+		$now = dol_now();
+
+		$enddatetoscan = dol_time_plus_duree($now, -1 * abs($delayindaysshort), 'd');
+
+		$error = 0;
+		$this->output = '';
+		$this->error='';
+
+		$contractlineprocessed = array();
+		$contractignored = array();
+		$contracterror = array();
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$sql = 'SELECT c.rowid, c.ref_customer, cd.rowid as lid, cd.date_fin_validite, p.duration';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'contrat as c, '.MAIN_DB_PREFIX.'contratdet as cd';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid = cd.fk_product';
+		$sql.= ' WHERE cd.fk_contrat = c.rowid';
+		$sql.= " AND date_format(cd.date_fin_validite, '%Y-%m-%d') <= date_format('".$this->db->idate($enddatetoscan)."', '%Y-%m-%d')";
+		$sql.= " AND cd.statut = 4";
+		if ($thirdparty_id > 0) $sql.=" AND c.fk_soc = ".((int) $thirdparty_id);
+		//print $sql;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
+			$i=0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					if (!empty($contractlineprocessed[$obj->lid]) || !empty($contractignored[$obj->rowid]) || !empty($contracterror[$obj->rowid])) {
+						continue;
+					}
+
+					// Load contract
+					$object = new Contrat($this->db);
+					$object->fetch($obj->rowid);		// fetch also lines
+					$object->fetch_thirdparty();
+
+					if ($object->id <= 0) {
+						$error++;
+						$this->errors[] = 'Failed to load contract with id='.$obj->rowid;
+						continue;
+					}
+
+					dol_syslog("* Process contract line in doRenewalContracts for contract id=".$object->id." ref=".$object->ref." ref_customer=".$object->ref_customer." contract line id=".$obj->lid);
+
+					// Update expiration date of line
+					$expirationdate = $this->db->jdate($obj->date_fin_validite);
+					$duration_value = preg_replace('/[^0-9]/', '', $obj->duration);
+					$duration_unit = preg_replace('/\d/', '', $obj->duration);
+					//var_dump($expirationdate.' '.$enddatetoscan);
+
+					// Test if there is pending invoice
+					$object->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 1);
+
+					if (is_array($object->linkedObjects['facture']) && count($object->linkedObjects['facture']) > 0) {
+						usort($object->linkedObjects['facture'], "cmp");
+
+						//dol_sort_array($contract->linkedObjects['facture'], 'date');
+						$someinvoicenotpaid=0;
+						foreach ($object->linkedObjects['facture'] as $idinvoice => $invoice) {
+							if ($invoice->statut == Facture::STATUS_DRAFT) continue;	// Draft invoice are not invoice not paid
+
+							if (empty($invoice->paye)) {
+								$someinvoicenotpaid++;
+							}
+						}
+						if ($someinvoicenotpaid) {
+							$this->output .= 'Contract '.$object->ref.' is qualified for renewal but there is '.$someinvoicenotpaid.' invoice(s) unpayed so we cancel renewal'."\n";
+							$contractignored[$object->id]=$object->ref;
+							continue;
+						}
+					}
+
+					if ($expirationdate && $expirationdate < $enddatetoscan) {
+						dol_syslog("Define the newdate of end of services from expirationdate=".$expirationdate);
+						$newdate = $expirationdate;
+						$protecti=0;	//$protecti is to avoid infinite loop
+						while ($newdate < $enddatetoscan && $protecti < 1000) {
+							$newdate = dol_time_plus_duree($newdate, $duration_value, $duration_unit);
+							$protecti++;
+						}
+
+						if ($protecti < 1000) {	// If not, there is a pb
+							// We will update the end of date of contrat, so first we refresh contract data
+							dol_syslog("We will update the end of date of contract with newdate = ".dol_print_date($newdate, 'dayhourrfc'));
+
+							$this->db->begin();
+
+							$errorforlocaltransaction = 0;
+
+							$label = 'Renewal of contrat '.$object->ref.' line '.$obj->lid;
+							$comment = 'Renew date of contract '.$object->ref.' line '.$obj->lid.' by doAutoRenewContracts';
+
+							$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."contratdet SET date_fin_validite = '".$this->db->idate($newdate)."'";
+							$sqlupdate.= ' WHERE rowid = '.((int) $obj->lid);
+							$resqlupdate = $this->db->query($sqlupdate);
+							if ($resqlupdate) {
+								$contractlineprocessed[$obj->lid]=$object->ref;
+
+								$actioncode = 'RENEW_CONTRACT';
+								$now = dol_now();
+
+								// Create an event
+								$actioncomm = new ActionComm($this->db);
+								$actioncomm->type_code    = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+								$actioncomm->code         = 'AC_'.$actioncode;
+								$actioncomm->label        = $label;
+								$actioncomm->datep        = $now;
+								$actioncomm->datef        = $now;
+								$actioncomm->percentage   = -1;   // Not applicable
+								$actioncomm->socid        = $object->thirdparty->id;
+								$actioncomm->authorid     = $user->id;   // User saving action
+								$actioncomm->userownerid  = $user->id;	// Owner of action
+								$actioncomm->fk_element   = $object->id;
+								$actioncomm->elementtype  = 'contract';
+								$actioncomm->note_private = $comment;
+
+								$ret = $actioncomm->create($user);       // User creating action
+							} else {
+								$contracterror[$object->id]=$object->ref;
+
+								$error++;
+								$errorforlocaltransaction++;
+								$this->error = $this->db->lasterror();
+							}
+
+							if (! $errorforlocaltransaction) {
+								$this->db->commit();
+							} else {
+								$this->db->rollback();
+							}
+						} else {
+							$error++;
+							$this->error = "Bad value for newdate in doAutoRenewContracts - expirationdate=".$expirationdate." enddatetoscan=".$enddatetoscan." duration_value=".$duration_value." duration_unit=".$duration_value;
+							dol_syslog($this->error, LOG_ERR);
+						}
+					}
+				}
+				$i++;
+			}
+		} else {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
+		$this->output .= count($contractlineprocessed).' contract line(s) with end date before '.dol_print_date($enddatetoscan, 'day').' were renewed'.(count($contractlineprocessed)>0 ? ' : '.join(',', $contractlineprocessed) : '');
+
+		return ($error ? 1: 0);
+	}
 }
 
 
@@ -2698,6 +2865,7 @@ class ContratLigne extends CommonObjectLine
 	public $date_cloture; // date end real
 
 	public $tva_tx;
+	public $vat_src_code;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type; // Local tax 1 type
@@ -2753,6 +2921,7 @@ class ContratLigne extends CommonObjectLine
 	public $fk_user_cloture;
 
 	public $commentaire;
+
 
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
@@ -2998,7 +3167,6 @@ class ContratLigne extends CommonObjectLine
 				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
-				$this->remise = $obj->remise;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
 				$this->price_ht = $obj->price_ht;
@@ -3056,7 +3224,6 @@ class ContratLigne extends CommonObjectLine
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);
 		$this->remise_percent = trim($this->remise_percent);
-		$this->remise = trim($this->remise);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
@@ -3136,11 +3303,12 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
+		if (empty($this->oldcopy)) {
+			$this->oldcopy = dol_clone($this);
+		}
 
 		$this->db->begin();
-
-		$this->oldcopy = new ContratLigne($this->db);
-		$this->oldcopy->fetch($this->id);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";

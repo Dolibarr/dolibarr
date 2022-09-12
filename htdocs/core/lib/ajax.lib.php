@@ -62,6 +62,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 		$dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 	}
 
+	$htmlnamejquery = str_replace('.', '\\\\.', $htmlname);
+
 	// Input search_htmlname is original field
 	// Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" '.($moreparams ? $moreparams : '').' />';
@@ -73,21 +75,21 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
 					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
-					$("input#search_'.$htmlname.'").keydown(function(e) {
+					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
 							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
 							console.log("Clear id previously selected for field '.$htmlname.'");
-							$("#'.$htmlname.'").val("");
+							$("#'.$htmlnamejquery.'").val("");
 						}
 					});
 
 					// Check options for secondary actions when keyup
-					$("input#search_'.$htmlname.'").keyup(function() {
+					$("input#search_'.$htmlnamejquery.'").keyup(function() {
 						    if ($(this).val().length == 0)
 						    {
-	                            $("#search_'.$htmlname.'").val("");
-	                            $("#'.$htmlname.'").val("").trigger("change");
+	                            $("#search_'.$htmlnamejquery.'").val("");
+	                            $("#'.$htmlnamejquery.'").val("").trigger("change");
 	                            if (options.option_disabled) {
 	    							$("#" + options.option_disabled).removeAttr("disabled");
 	    						}
@@ -118,15 +120,15 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						    }
                     });
 
-    				$("input#search_'.$htmlname.'").autocomplete({
+    				$("input#search_'.$htmlnamejquery.'").autocomplete({
     					source: function( request, response ) {
-    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { '.$htmlname.': request.term }, function(data){
+    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
 								if (data != null)
 								{
 									response($.map( data, function(item) {
 										if (autoselect == 1 && data.length == 1) {
-											$("#search_'.$htmlname.'").val(item.value);
-											$("#'.$htmlname.'").val(item.key).trigger("change");
+											$("#search_'.$htmlnamejquery.'").val(item.value);
+											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
 										var label = item.label.toString();
 										var update = {};
@@ -151,12 +153,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 description : item.description,
 												 ref_customer: item.ref_customer }
 									}));
+								} else {
+									console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
 								}
-								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",
-    					minLength: '.$minLength.',
+    					minLength: '.((int) $minLength).',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
@@ -164,25 +167,25 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							console.log("Propagate before some properties retrieved by ajax into data-xxx properties");
 
 							// For supplier price and customer when price by quantity is off
-							$("#'.$htmlname.'").attr("data-up", ui.item.price_ht);
-							$("#'.$htmlname.'").attr("data-base", ui.item.pricebasetype);
-							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
-							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
-							$("#'.$htmlname.'").attr("data-description", ui.item.description);
-							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
+							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
+							$("#'.$htmlnamejquery.'").attr("data-base", ui.item.pricebasetype);
+							$("#'.$htmlnamejquery.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlnamejquery.'").attr("data-discount", ui.item.discount);
+							$("#'.$htmlnamejquery.'").attr("data-description", ui.item.description);
+							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 	';
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
-							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
-							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
-							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
-							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
+							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
+							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#'.$htmlnamejquery.'").attr("data-pbqqty", ui.item.qty);
+							$("#'.$htmlnamejquery.'").attr("data-pbqpercent", ui.item.discount);
 		';
 	}
 	$script .= '
-							$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
 
     						// Disable an element
     						if (options.option_disabled) {
@@ -236,7 +239,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change also on original component so on field #search_'.$htmlname.'");
 
-    						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
+    						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
@@ -445,20 +448,32 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 
 	$tmpplugin = 'select2';
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-          <script>
-        	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
-        		    dir: \'ltr\',
-        			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
+		<script>
+			$(document).ready(function () {
+				$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
+					dir: \'ltr\',
+					width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
-    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					matcher: function (params, data) {
+						if ($.trim(params.term) === "") {
+							return data;
+						}
+						keywords = (params.term).split(" ");
+						for (var i = 0; i < keywords.length; i++) {
+							if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1) {
+								return null;
+							}
+						}
+						return data;
+					},
+					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-					    //console.log($(data.element).attr("data-html"));
-					    if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
+						//console.log($(data.element).attr("data-html"));
+						if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
 						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
@@ -495,7 +510,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 				$.getJSON(url,
 						{
 							action: method,

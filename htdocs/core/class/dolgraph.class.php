@@ -515,7 +515,7 @@ class DolGraph
 	/**
 	 * Show pointvalue or not
 	 *
-	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
+	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value, 2=Show values for each serie on same point
 	 * @return	void
 	 */
 	public function setShowPointValue($showpointvalue)
@@ -1299,8 +1299,12 @@ class DolGraph
 				$type = 'line';
 			}
 
+			// Set options
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
 			$this->stringtoshow .= $xaxis;
+			if ($this->showpointvalue == 2) {
+				$this->stringtoshow .= 'interaction: { intersect: true, mode: \'index\'}, ';
+			}
 
 			/* For Chartjs v2.9 */
 			/*
@@ -1316,7 +1320,7 @@ class DolGraph
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' },'."\n";
+				$this->stringtoshow .= 'legend: { maxWidth: '.round(intVal($this->width) / 2).', labels: { boxWidth: 15 }, position: \'' . (($showlegend && $showlegend == 2) ? 'right' : 'top') . '\' },'."\n";
 			}
 			$this->stringtoshow .= "}, \n";
 
@@ -1548,7 +1552,7 @@ class DolGraph
 			}
 		}
 		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '200') : '160');
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
 		}
 		return 0;
 	}

@@ -684,10 +684,10 @@ class TraceableDB extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie la ligne courante (comme un objet) pour le curseur resultset
+	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource $resultset    Curseur de la requete voulue
-	 * @return  Object                 Object result line or false if KO or end of cursor
+	 * @param   resource|Connection	 		$resultset    	Handler of the desired SQL request
+	 * @return  Object                 						Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{

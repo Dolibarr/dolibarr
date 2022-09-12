@@ -25,14 +25,15 @@
  *  \brief      List of donations
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "donations"));
+$langs->loadLangs(array('companies', 'donations'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sclist';
 
@@ -93,7 +94,7 @@ $fieldstosearchall = array(
 
 $donationstatic = new Don($db);
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$projectstatic = new Project($db);
 }
 
@@ -219,7 +220,7 @@ if ($resql) {
 	print '<td class="liste_titre left">';
 	print '&nbsp;';
 	print '</td>';
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		print '<td class="liste_titre right">';
 		print '&nbsp;';
 		print '</td>';
@@ -249,7 +250,7 @@ if ($resql) {
 	}
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
@@ -280,7 +281,7 @@ if ($resql) {
 		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			print "<td>";
 			if ($objp->pid) {
 				$projectstatic->id = $objp->pid;

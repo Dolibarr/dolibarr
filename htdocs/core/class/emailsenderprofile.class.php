@@ -56,6 +56,8 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $picto = 'emailsenderprofile';
 
+	public $fk_user_creat;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -147,7 +149,7 @@ class EmailSenderProfile extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 	}

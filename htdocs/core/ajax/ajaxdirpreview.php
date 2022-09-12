@@ -77,7 +77,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			//dol_print_error($db,$ecmdir->error);
 			//exit;
 		}
@@ -90,7 +90,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$relativepath = '';
 	if ($section > 0) {
 		$result = $ecmdir->fetch($section);
-		if (!$result > 0) {
+		if (!($result > 0)) {
 			dol_print_error($db, $ecmdir->error);
 			exit;
 		}
@@ -252,9 +252,9 @@ if ($type == 'directory') {
 	} elseif ($module == 'salaries') {
 		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'project_task') {
-		$upload_dir = $conf->projet->dir_output;
+		$upload_dir = $conf->project->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {

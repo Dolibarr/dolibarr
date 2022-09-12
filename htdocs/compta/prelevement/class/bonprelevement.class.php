@@ -78,6 +78,8 @@ class BonPrelevement extends CommonObject
 	public $statut; // 0-Wait, 1-Trans, 2-Done
 	public $labelStatus = array();
 
+	public $factures = array();
+
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 
@@ -394,10 +396,10 @@ class BonPrelevement extends CommonObject
 					$amounts[$fac->id] = $facs[$i][1];
 					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 
-					$totalpaye = $fac->getSommePaiement();
+					$totalpaid = $fac->getSommePaiement();
 					$totalcreditnotes = $fac->getSumCreditNotesUsed();
 					$totaldeposits = $fac->getSumDepositsUsed();
-					$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
+					$alreadypayed = $totalpaid + $totalcreditnotes + $totaldeposits;
 
 					// @TODO Move this after creation of payment
 					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
@@ -913,6 +915,7 @@ class BonPrelevement extends CommonObject
 			$this->db->begin();
 
 			$now = dol_now();
+			$ref = '';
 
 			/*
 			 * Process order generation
@@ -922,7 +925,7 @@ class BonPrelevement extends CommonObject
 
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
-				$sql .= " WHERE ref LIKE '%".$this->db->escape($ref)."%'";
+				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
@@ -933,7 +936,7 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 
 					// Build the new ref
-					$ref = "T".$ref.str_pad(dol_substr("00".(intval($row[0]) + 1), 0, 2), 2, "0", STR_PAD_LEFT);
+					$ref = "T".$ref.sprintf("%02d", (intval($row[0]) + 1));
 
 					// $conf->abc->dir_output may be:
 					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
@@ -1066,8 +1069,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
+						//var_dump($this->error);
+						//var_dump($this->invoice_in_error);
 						$error++;
 					}
 				}
@@ -1243,13 +1246,6 @@ class BonPrelevement extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1492,7 +1488,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '			<NbOfTxs>'.$i.'</NbOfTxs>'.$CrLf);
 				fputs($this->file, '			<CtrlSum>'.$this->total.'</CtrlSum>'.$CrLf);
 				fputs($this->file, '			<InitgPty>'.$CrLf);
-				fputs($this->file, '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf);
+				fputs($this->file, '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf);
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
@@ -1608,7 +1604,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '			<NbOfTxs>'.$i.'</NbOfTxs>'.$CrLf);
 				fputs($this->file, '			<CtrlSum>'.$this->total.'</CtrlSum>'.$CrLf);
 				fputs($this->file, '			<InitgPty>'.$CrLf);
-				fputs($this->file, '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf);
+				fputs($this->file, '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf);
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
@@ -1858,16 +1854,16 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					</FinInstnId>'.$CrLf;
 			$XML_DEBITOR .= '				</DbtrAgt>'.$CrLf;
 			$XML_DEBITOR .= '				<Dbtr>'.$CrLf;
-			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))).'</Nm>'.$CrLf;
 			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
 			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_DEBITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '				</Dbtr>'.$CrLf;
@@ -1912,14 +1908,14 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
 			/*
-			$XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
-			$XML_CREDITOR .= '					<MndtRltdInf>'.$CrLf;
-			$XML_CREDITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
-			$XML_CREDITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
-			$XML_CREDITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
-			$XML_CREDITOR .= '					</MndtRltdInf>'.$CrLf;
-			$XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
-			*/
+			 $XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
+			 $XML_CREDITOR .= '					<MndtRltdInf>'.$CrLf;
+			 $XML_CREDITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
+			 $XML_CREDITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
+			 $XML_CREDITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
+			 $XML_CREDITOR .= '					</MndtRltdInf>'.$CrLf;
+			 $XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
+			 */
 			//$XML_CREDITOR .= '				<ChrgBr>SLEV</ChrgBr>'.$CrLf;
 			$XML_CREDITOR .= '				<CdtrAgt>'.$CrLf;
 			$XML_CREDITOR .= '					<FinInstnId>'.$CrLf;
@@ -1927,16 +1923,16 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					</FinInstnId>'.$CrLf;
 			$XML_CREDITOR .= '				</CdtrAgt>'.$CrLf;
 			$XML_CREDITOR .= '				<Cdtr>'.$CrLf;
-			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))).'</Nm>'.$CrLf;
 			$XML_CREDITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
 			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			if (trim($addressline2)) {
-				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
 			$XML_CREDITOR .= '					</PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '				</Cdtr>'.$CrLf;
@@ -2100,16 +2096,16 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
 				$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
 				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
 				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
@@ -2124,11 +2120,11 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
 				$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
-				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>').$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN).'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_nospecial(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS), ' ')).'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_nospecial(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN), ' ')).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
 				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
@@ -2166,16 +2162,16 @@ class BonPrelevement extends CommonObject
 				}
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>'.dol_print_date($dateTime_ETAD, 'dayrfc').'</ReqdExctnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Dbtr>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 				$addressline1 = strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => ""));
 				$addressline2 = strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => ""));
 				if ($addressline1) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline1), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				if ($addressline2) {
-					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_unaccent($addressline2), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
+					$XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline2), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 				}
 				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				$XML_SEPA_INFO .= '			</Dbtr>'.$CrLf;
@@ -2190,26 +2186,26 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
 				$XML_SEPA_INFO .= '			</DbtrAgt>'.$CrLf;
 				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
-				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($this->raison_sociale), ' '))).'</Nm>'.$CrLf;
 				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'</AdrLine>'.$CrLf;
-				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN).'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_nospecial(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ADDRESS), ' ')).'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.dolEscapeXML(dol_string_nospecial(dol_string_unaccent($conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN), ' ')).'</AdrLine>'.$CrLf;
 				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
 				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
 				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf; // Field "Responsible of fees". Must be SLEV
 				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
-				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
-				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
-				$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
-				$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
-				$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
-				$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
-				$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
-				$XML_SEPA_INFO .= '						</Othr>'.$CrLf;
-				$XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
-				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
-				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
+				 $XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
+				 $XML_SEPA_INFO .= '						<Othr>'.$CrLf;
+				 $XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
+				 $XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
+				 $XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
+				 $XML_SEPA_INFO .= '						</Othr>'.$CrLf;
+				 $XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
+				 $XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				 $XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
 			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
@@ -2347,59 +2343,59 @@ class BonPrelevement extends CommonObject
 		}
 
 		/*
-		if ($mode == 'direct_debit') {
-			$sql = "SELECT b.rowid, f.datedue as datefin";
-			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " WHERE f.entity IN (".getEntity('facture').")";
-			$sql .= " AND f.total_ttc > 0";
-		} else {
-			$sql = "SELECT b.rowid, f.datedue as datefin";
-			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-			$sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
-			$sql .= " AND f.total_ttc > 0";
-		}
+		 if ($mode == 'direct_debit') {
+		 $sql = "SELECT b.rowid, f.datedue as datefin";
+		 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		 $sql .= " WHERE f.entity IN (".getEntity('facture').")";
+		 $sql .= " AND f.total_ttc > 0";
+		 } else {
+		 $sql = "SELECT b.rowid, f.datedue as datefin";
+		 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		 $sql .= " WHERE f.entity IN (".getEntity('facture_fourn').")";
+		 $sql .= " AND f.total_ttc > 0";
+		 }
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$langs->load("banks");
-			$now = dol_now();
+		 $resql = $this->db->query($sql);
+		 if ($resql) {
+		 $langs->load("banks");
+		 $now = dol_now();
 
-			$response = new WorkboardResponse();
-			if ($mode == 'direct_debit') {
-				$response->warning_delay = $conf->prelevement->warning_delay / 60 / 60 / 24;
-				$response->label = $langs->trans("PendingDirectDebitToComplete");
-				$response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
-				$response->url = DOL_URL_ROOT.'/compta/prelevement/index.php?leftmenu=checks&mainmenu=bank';
-			} else {
-				$response->warning_delay = $conf->paymentbybanktransfer->warning_delay / 60 / 60 / 24;
-				$response->label = $langs->trans("PendingCreditTransferToComplete");
-				$response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
-				$response->url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php?leftmenu=checks&mainmenu=bank';
-			}
-			$response->img = img_object('', "payment");
+		 $response = new WorkboardResponse();
+		 if ($mode == 'direct_debit') {
+		 $response->warning_delay = $conf->prelevement->warning_delay / 60 / 60 / 24;
+		 $response->label = $langs->trans("PendingDirectDebitToComplete");
+		 $response->labelShort = $langs->trans("PendingDirectDebitToCompleteShort");
+		 $response->url = DOL_URL_ROOT.'/compta/prelevement/index.php?leftmenu=checks&mainmenu=bank';
+		 } else {
+		 $response->warning_delay = $conf->paymentbybanktransfer->warning_delay / 60 / 60 / 24;
+		 $response->label = $langs->trans("PendingCreditTransferToComplete");
+		 $response->labelShort = $langs->trans("PendingCreditTransferToCompleteShort");
+		 $response->url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php?leftmenu=checks&mainmenu=bank';
+		 }
+		 $response->img = img_object('', "payment");
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$response->nbtodo++;
+		 while ($obj = $this->db->fetch_object($resql)) {
+		 $response->nbtodo++;
 
-				if ($this->db->jdate($obj->datefin) < ($now - $conf->withdraw->warning_delay)) {
-					$response->nbtodolate++;
-				}
-			}
+		 if ($this->db->jdate($obj->datefin) < ($now - $conf->withdraw->warning_delay)) {
+		 $response->nbtodolate++;
+		 }
+		 }
 
-			$response->nbtodo = 0;
-			$response->nbtodolate = 0;
-			// Return workboard only if quantity is not 0
-			if ($response->nbtodo) {
-				return $response;
-			} else {
-				return 0;
-			}
-		} else {
-			dol_print_error($this->db);
-			$this->error = $this->db->error();
-			return -1;
-		}
-		*/
+		 $response->nbtodo = 0;
+		 $response->nbtodolate = 0;
+		 // Return workboard only if quantity is not 0
+		 if ($response->nbtodo) {
+		 return $response;
+		 } else {
+		 return 0;
+		 }
+		 } else {
+		 dol_print_error($this->db);
+		 $this->error = $this->db->error();
+		 return -1;
+		 }
+		 */
 		return 0;
 	}
 }

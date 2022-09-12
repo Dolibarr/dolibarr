@@ -86,6 +86,11 @@ class Task extends CommonObjectLine
 	public $progress;
 
 	/**
+	 * @deprecated Use date_end instead
+	 */
+	public $datee;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_statut;
@@ -122,6 +127,7 @@ class Task extends CommonObjectLine
 	public $timespent_fk_user;
 	public $timespent_thm;
 	public $timespent_note;
+	public $timespent_fk_product;
 
 	public $comments = array();
 
@@ -473,15 +479,15 @@ class Task extends CommonObjectLine
 
 		if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref)) {
 			// We remove directory
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$project = new Project($this->db);
 				$project->fetch($this->fk_project);
 
-				$olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
-				$newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+				$olddir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+				$newdir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$res = dol_move($olddir, $newdir);
+					$res = dol_move_dir($olddir, $newdir);
 					if (!$res) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
@@ -600,11 +606,11 @@ class Task extends CommonObjectLine
 			return -1 * $error;
 		} else {
 			//Delete associated link file
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($this->fk_project);
 
-				$dir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
+				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
 				dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 				if (file_exists($dir)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -920,6 +926,7 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		global $db; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();
@@ -1184,6 +1191,7 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 
 		$ret = 0;
+		$now = dol_now();
 
 		// Check parameters
 		if (!is_object($user)) {
@@ -1199,7 +1207,7 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1220,7 +1228,9 @@ class Task extends CommonObjectLine
 		$sql .= ", task_date_withhour";
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
+		$sql .= ", fk_product";
 		$sql .= ", note";
+		$sql .= ", datec";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
@@ -1228,7 +1238,9 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
+		$sql .= ", ".((int) $this->timespent_fk_product);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1514,6 +1526,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.task_date_withhour,";
 		$sql .= " t.task_duration,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.fk_product,";
 		$sql .= " t.thm,";
 		$sql .= " t.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -1532,6 +1545,7 @@ class Task extends CommonObjectLine
 				$this->timespent_withhour   = $obj->task_date_withhour;
 				$this->timespent_duration = $obj->task_duration;
 				$this->timespent_fk_user	= $obj->fk_user;
+				$this->timespent_fk_product	= $obj->fk_product;
 				$this->timespent_thm    	= $obj->thm; // hourly rate
 				$this->timespent_note = $obj->note;
 			}
@@ -1666,7 +1680,7 @@ class Task extends CommonObjectLine
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1685,6 +1699,7 @@ class Task extends CommonObjectLine
 		$sql .= " task_date_withhour = ".(empty($this->timespent_withhour) ? 0 : 1).",";
 		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
 		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
+		$sql .= " fk_product = ".((int) $this->timespent_fk_product).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
@@ -1709,26 +1724,31 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
-		if ($ret == 1 && ($this->timespent_old_duration != $this->timespent_duration)) {
-			// Recalculate amount of time spent for task and update denormalized field
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
-			if (isset($this->progress)) {
-				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
-			}
-			$sql .= " WHERE rowid = ".((int) $this->id);
+		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM))) {
+			if ($this->timespent_old_duration != $this->timespent_duration) {
+				// Recalculate amount of time spent for task and update denormalized field
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+				$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM " . MAIN_DB_PREFIX . "projet_task_time as ptt where ptt.fk_task = " . ((int) $this->id) . ")";
+				if (isset($this->progress)) {
+					$sql .= ", progress = " . ((float) $this->progress); // Do not overwrite value if not provided
+				}
+				$sql .= " WHERE rowid = " . ((int) $this->id);
 
-			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
-			if (!$this->db->query($sql)) {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				$ret = -2;
+				dol_syslog(get_class($this) . "::updateTimeSpent", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					$ret = -2;
+				}
 			}
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
 			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
-			$sql .= " WHERE (thm IS NULL OR thm = 0) AND rowid = ".((int) $this->timespent_id);
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+			if (empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) { // then if not empty we always update, in case of new thm for user, or change user of task time line
+				$sql .= " AND (thm IS NULL OR thm = 0)";
+			}
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1756,7 +1776,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1953,8 +1973,8 @@ class Task extends CommonObjectLine
 					$clone_project_ref = $ori_project_ref;
 				}
 
-				$clone_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
-				$ori_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
+				$clone_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
+				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
 
 				$filearray = dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach ($filearray as $key => $file) {
@@ -2201,7 +2221,7 @@ class Task extends CommonObjectLine
 			$task_static = new Task($this->db);
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->projet->task->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
 			if ($user->rights->projet->all->lire) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
@@ -2302,6 +2322,6 @@ class Task extends CommonObjectLine
 
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
-		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
+		return ($datetouse > 0 && ($datetouse < ($now - $conf->project->task->warning_delay)));
 	}
 }

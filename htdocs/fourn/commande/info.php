@@ -24,12 +24,13 @@
  *       \brief      Fiche commande
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -113,7 +114,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->info($object->id);
 }
 
-$title = $langs->trans("SupplierOrder").' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
+$title = $object->ref.' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
@@ -139,7 +140,7 @@ $morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
@@ -201,7 +202,7 @@ if ($permok) {
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
 	} else {

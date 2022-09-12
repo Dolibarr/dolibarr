@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -228,7 +228,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					unset($usertmp);
 				}
 
-				if (!empty($conf->multicompany->enabled)) {	// We must check entity (even if sync is not active)
+				if (isModEnabled('multicompany')) {	// We must check entity (even if sync is not active)
 					global $mc;
 
 					$usertmp = new User($db);
@@ -260,7 +260,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 ** 53 - Account inactive (manually locked out by administrator)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
-			if (is_resource($ldap->connection)) {    // If connection ok but bind ko
+			if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);

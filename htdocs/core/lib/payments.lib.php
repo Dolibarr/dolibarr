@@ -173,19 +173,20 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
  *
  * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
+ * @param	int		$amount		Amount of money to request for
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type, $ref)
+function showOnlinePaymentUrl($type, $ref, $amount = '9.99')
 {
 	global $langs;
 
 	// Load translation files required by the page
 	$langs->loadLangs(array('payment', 'stripe'));
 
-	$servicename = $langs->transnoentitiesnoconv('Online');
+	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercentminusx" value="'.$url.'">';
 	$out .= '<a class="" href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	$out .= '</div>';
@@ -199,11 +200,12 @@ function showOnlinePaymentUrl($type, $ref)
  * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'member' ...)
  * @param	string	$ref		Ref of object
  * @param	string	$label		Text or HTML tag to display, if empty it display the URL
+ * @param	int		$amount		Amount of money to request for
  * @return	string			Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = '9.99')
 {
-	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$url = getOnlinePaymentUrl(0, $type, $ref, $amount);
 	$label = $label ? $label : $url;
 	return '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$label.'</a>';
 }
@@ -215,7 +217,7 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '')
  * @param   int		$mode		      0=True url, 1=Url formated with colors
  * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
  * @param	string	$ref		      Ref of object
- * @param	int		$amount		      Amount (required and used for $type='free' only)
+ * @param	int		$amount		      Amount of money to request for
  * @param	string	$freetag	      Free tag (required and used for $type='free' only)
  * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string
@@ -318,7 +320,9 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
 		$newtype = 'member';
-		$out = $urltouse.'/public/payment/newpayment.php?source=member&ref='.($mode ? '<span style="color: #666666">' : '');
+		$out = $urltouse.'/public/payment/newpayment.php?source=member';
+		$out .= '&amount='.$amount;
+		$out .= '&ref='.($mode ? '<span style="color: #666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
 		}
@@ -389,7 +393,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 
@@ -478,7 +482,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 
 		// Add other message if VAT exists
-		if ($object->total_vat != 0 || $object->total_tva != 0) {
+		if (!empty($object->total_vat) || $object->total_tva != 0) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
 			if (!empty($conf->global->$parammessageform)) {
 				print $langs->transnoentities($conf->global->$parammessageform);

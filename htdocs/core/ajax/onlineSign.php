@@ -31,9 +31,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -53,12 +50,13 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 include '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
-$mode = GETPOST('mode', 'aZ09');
+$mode = GETPOST('mode', 'aZ09');	// 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
 $error = 0;
@@ -69,13 +67,11 @@ $type = $mode;
 // Check securitykey
 $securekeyseed = '';
 if ($type == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
 
@@ -89,6 +85,8 @@ if (!dol_verifyHash($securekeyseed.$type.$ref, $SECUREKEY, '0')) {
 /*
  * View
  */
+
+top_httphead();
 
 if ($action == "importSignature") {
 	if (!empty($signature) && $signature[0] == "image/png;base64") {
@@ -122,23 +120,70 @@ if ($action == "importSignature") {
 			}
 
 			if (!$error) {
-				$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('proposal');	// url to download the $object->last_main_doc
 
-				$pdf = pdf_getInstance();
-				$pdf->Open();
-				$pdf->AddPage();
-				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");		// original PDF
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
 
-				$tppl = $pdf->importPage(1);
-				$pdf->useTemplate($tppl);
-				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
-				$pdf->Close();
-				$pdf->Output($newpdffilename, "F");
+					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
+						$pdf = pdf_getInstance();
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
 
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
+						}
+
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						for ($i=1; $i<($pagecount+1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+						// TODO Get position of box from PDF template
+						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
+						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+						$wforimg = $s['w'] - 20 - $xforimgstart;
+
+						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+						//$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+			}
+
+			if (!$error) {
 				$db->begin();
-
-				// Index the new file and update the last_main_doc property of object.
-				$object->indexFile($newpdffilename, 1);
 
 				$online_sign_ip = getUserRemoteIP();
 				$online_sign_name = '';		// TODO Ask name on form to sign
@@ -164,6 +209,15 @@ if ($action == "importSignature") {
 					$db->commit();
 					$response = "success";
 					setEventMessages("PropalSigned", null, 'warnings');
+					if (method_exists($object, 'call_trigger')) {
+						//customer is not a user !?! so could we use same user as validation ?
+						$user = new User($db);
+						$user->fetch($object->user_valid_id);
+						$result = $object->call_trigger('PROPAL_CLOSE_SIGNED', $user);
+						if ($result < 0) {
+							$error++;
+						}
+					}
 				} else {
 					$db->rollback();
 					$error++;

@@ -36,6 +36,9 @@ if (empty($conf) || !is_object($conf)) {
 if (empty($module)) {
 	$module = 'ecm';
 }
+if (empty($nameforformuserfile)) {
+	$nameforformuserfile = '';
+}
 $paramwithoutsection = preg_replace('/&?section=(\d+)/', '', $param);
 
 $openeddir = '/'; // The root directory shown

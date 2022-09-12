@@ -25,6 +25,7 @@
  *  \brief      Page to list trips and expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
@@ -158,7 +159,7 @@ if ($resql) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';

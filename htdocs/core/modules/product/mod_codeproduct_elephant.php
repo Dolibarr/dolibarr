@@ -145,6 +145,8 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function getExample($langs, $objproduct = 0, $type = -1)
 	{
+		$exampleproduct = $exampleservice = '';
+
 		if ($type == 0 || $type == -1) {
 			$exampleproduct = $this->getNextValue($objproduct, 0);
 			if (!$exampleproduct) {

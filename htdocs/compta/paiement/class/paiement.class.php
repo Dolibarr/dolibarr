@@ -8,7 +8,7 @@
  * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  *
@@ -57,6 +57,7 @@ class Paiement extends CommonObject
 
 	public $facid;
 	public $datepaye;
+	public $date;		// same than $datepaye
 
 	/**
 	 * @deprecated
@@ -79,8 +80,8 @@ class Paiement extends CommonObject
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
 	public $author;
-	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
-	public $paiementcode; // Code of payment.
+	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	public $paiementcode; 	// Code of mode of payment.
 
 	/**
 	 * @var string Type of payment label
@@ -108,6 +109,16 @@ class Paiement extends CommonObject
 	 * @var string Id of external payment mode
 	 */
 	public $ext_payment_id;
+
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 	/**
 	 * @var string Name of external payment mode
@@ -142,6 +153,7 @@ class Paiement extends CommonObject
 	 * @var string payment external reference
 	 */
 	public $ref_ext;
+
 
 	/**
 	 *	Constructor
@@ -419,7 +431,8 @@ class Paiement extends CommonObject
 									}
 
 									if ($error) {
-										setEventMessages($discount->error, $discount->errors, 'errors');
+										$this->error = $discount->error;
+										$this->errors = $discount->errors;
 										$error++;
 									}
 								}
@@ -442,7 +455,7 @@ class Paiement extends CommonObject
 
 							$newlang = '';
 							$outputlangs = $langs;
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 								$invoice->fetch_thirdparty();
 								$newlang = $invoice->thirdparty->default_lang;
 							}
@@ -451,8 +464,8 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 
-							$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-							$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+							$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+							$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 							$ret = $invoice->fetch($facid); // Reload to get new records
@@ -460,7 +473,8 @@ class Paiement extends CommonObject
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 							if ($result < 0) {
-								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								$this->error = $invoice->error;
+								$this->errors = $invoice->errors;
 								$error++;
 							}
 						}
@@ -614,7 +628,7 @@ class Paiement extends CommonObject
 		$error = 0;
 		$bank_line_id = 0;
 
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			if ($accountid <= 0) {
 				$this->error = 'Bad value for parameter accountid='.$accountid;
 				dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
@@ -642,7 +656,7 @@ class Paiement extends CommonObject
 			}
 
 			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
-			if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) {
+			if (isModEnabled('multicurrency') && $conf->currency != $acc->currency_code) {
 				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
 				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
@@ -1151,7 +1165,7 @@ class Paiement extends CommonObject
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

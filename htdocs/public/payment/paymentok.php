@@ -50,6 +50,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -138,7 +139,7 @@ if (!empty($conf->stripe->enabled)) {
 
 // Security check
 if (empty($validpaymentmethod)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('No valid payment mode');
 }
 
 
@@ -369,6 +370,7 @@ if ($ispaymentok) {
 	}
 	if (empty($user->rights->facture)) {
 		$user->rights->facture = new stdClass();
+		$user->rights->facture->invoice_advance = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
 		$user->rights->adherent = new stdClass();
@@ -376,6 +378,7 @@ if ($ispaymentok) {
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
+	$user->rights->facture->invoice_advance->validate = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
 	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0) {
@@ -504,9 +507,13 @@ if ($ispaymentok) {
 					$datesubend = dol_time_plus_duree($datesubend, -1, 'd');
 				}
 
+				// Set output language
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
-				$label = 'Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
+				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
+				$label = $langs->trans("OnlineSubscriptionPaymentLine", $formatteddate, $paymentmethod, $ipaddress, $TRANSACTIONID);
 
 				// Payment informations
 				$accountid = 0;
@@ -533,11 +540,11 @@ if ($ispaymentok) {
 				$emetteur_banque = '';
 				// Define default choice for complementary actions
 				$option = '';
-				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'bankviainvoice';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled("banque")) {
 					$option = 'bankdirect';
-				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 					$option = 'invoiceonly';
 				}
 				if (empty($option)) {
@@ -693,9 +700,6 @@ if ($ispaymentok) {
 						// Send subscription email
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
-						// Set output language
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 						// Load traductions files required by page
 						$outputlangs->loadLangs(array("main", "members"));
 						// Get email content from template
@@ -849,7 +853,7 @@ if ($ispaymentok) {
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -927,7 +931,7 @@ if ($ispaymentok) {
 			}
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0 ) {
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
@@ -966,7 +970,7 @@ if ($ispaymentok) {
 							}
 						}
 
-						if (!$error && !empty($conf->banque->enabled)) {
+						if (!$error && isModEnabled("banque")) {
 							$bankaccountid = 0;
 							if ($paymentmethod == 'paybox') $bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 							elseif ($paymentmethod == 'paypal') $bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1051,8 +1055,10 @@ if ($ispaymentok) {
 				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
+				$totalpaid = $FinalPaymentAmt;
+
 				if ($currencyCodeType == $conf->currency) {
-					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
@@ -1078,11 +1084,13 @@ if ($ispaymentok) {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 
-						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->setPaid($don->id);
+						}
 					}
 				}
 
-				if (!$error && !empty($conf->banque->enabled)) {
+				if (!$error && isModEnabled("banque")) {
 					$bankaccountid = 0;
 					if ($paymentmethod == 'paybox') {
 						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1198,7 +1206,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1267,20 +1275,24 @@ if ($ispaymentok) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 							// Load traductions files required by page
-							$outputlangs->loadLangs(array("main", "members"));
+							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+							$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;	// Email to send for Event organization registration
 
-							if (!empty($labeltouse)) {
-								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+							if (!empty($idoftemplatetouse)) {
+								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 							}
 
-							if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
+							} else {
+								$subject = '['.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
+
 
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -1294,13 +1306,28 @@ if ($ispaymentok) {
 
 							$ishtml = dol_textishtml($texttosend); // May contain urls
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+							// Attach a file ?
+							$file = '';
+							$listofpaths = array();
+							$listofnames = array();
+							$listofmimes = array();
+							if (is_object($object)) {
+								$invoicediroutput = $conf->facture->dir_output;
+								$fileparams = dol_most_recent_file($invoicediroutput.'/'.$object->ref, preg_quote($object->ref, '/').'[^\-]+');
+								$file = $fileparams['fullname'];
+
+								$listofpaths = array($file);
+								$listofnames = array(basename($file));
+								$listofmimes = array(dol_mimetype($file));
+							}
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, $ishtml);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
 								dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 							} else {
-								dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+								dol_syslog("Failed to send EMail to ".$sendto.' - '.$mailfile->error, LOG_ERR, 0, '_payment');
 							}
 						}
 					}
@@ -1388,7 +1415,7 @@ if ($ispaymentok) {
 						}
 					}
 
-					if (!$error && !empty($conf->banque->enabled)) {
+					if (!$error && isModEnabled("banque")) {
 						$bankaccountid = 0;
 						if ($paymentmethod == 'paybox') {
 							$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
@@ -1452,18 +1479,22 @@ if ($ispaymentok) {
 										$outputlangs = new Translate('', $conf);
 										$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 										// Load traductions files required by page
-										$outputlangs->loadLangs(array("main", "members"));
+										$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-										if (!empty($labeltouse)) {
-											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+										$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH;	// Email sent after registration for a Booth
+
+										if (!empty($idoftemplatetouse)) {
+											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 										}
 
-										if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+										if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 											$subject = $arraydefaultmessage->topic;
 											$msg     = $arraydefaultmessage->content;
+										} else {
+											$subject = '['.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
+											$msg = $outputlangs->trans("OrganizationEventPaymentOfBoothWasReceived");
 										}
 
 										$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);

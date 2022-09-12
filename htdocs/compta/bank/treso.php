@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2009 Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
+/* Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2008-2009  Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com
  * Copyright (C) 2016       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
  *	\brief      Page to estimate future balance
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -57,11 +58,6 @@ $hookmanager->initHooks(array('banktreso', 'globalcard'));
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $societestatic = new Societe($db);
 $facturestatic = new Facture($db);
 $facturefournstatic = new FactureFournisseur($db);
@@ -85,6 +81,9 @@ if (GETPOST("account") || GETPOST("ref")) {
 		$_GET["account"] = $object->id;
 	}
 
+	$title = $object->ref.' - '.$langs->trans("PlannedTransactions");
+	$helpurl = "";
+	llxHeader('', $title, $helpurl);
 
 	// Onglets
 	$head = bank_prepare_head($object);
@@ -185,7 +184,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 
 	$solde = $object->solde(0);
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+	if (getDolGlobalInt('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 		$colspan = 6;
 	} else {
 		$colspan = 5;
@@ -199,7 +198,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+	if (getDolGlobalInt('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 		print '<td>'.$langs->trans("Entity").'</td>';
 	}
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -295,7 +294,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
-				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+				if (getDolGlobalString("MULTICOMPANY_INVOICE_SHARING_ENABLED")) {
 					if ($tmpobj->family == 'invoice') {
 						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";

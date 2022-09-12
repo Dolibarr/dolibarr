@@ -41,6 +41,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -83,8 +84,8 @@ if ($resultproject < 0) {
 }
 
 // Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (empty($conf->project->enabled)) {
+	httponly_accessforbidden('Module Project not enabled');
 }
 
 

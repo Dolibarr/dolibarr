@@ -11,7 +11,7 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 }
 
 // Add extra fields
-$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields";
+$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields";
 $sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
 //print $sql;
 $resql = $this->db->query($sql);

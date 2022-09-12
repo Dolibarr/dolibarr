@@ -24,6 +24,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -36,6 +37,8 @@ $langs->loadLangs(array('holiday', 'hrm'));
 
 // Security check
 $socid = 0;
+$id = GETPOST('id', 'int');
+
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
@@ -61,6 +64,11 @@ if (!$sortfield) {
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
+}
+
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
 }
 
 $hookmanager->initHooks(array('leavemovementlist'));
@@ -95,7 +103,7 @@ if (empty($reshook)) {
 		$search_employee = '';
 		$search_type = '';
 		$search_description = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

@@ -24,6 +24,7 @@
  *		\brief      Page des infos systeme de php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -177,6 +178,22 @@ print "</tr>";
 
 $functions = ["curl_init"];
 $name      = "Curl";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["easter_date"];
+$name      = "Calendar";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["simplexml_load_string"];
+$name      = "Xml";
 
 print "<tr>";
 print "<td>".$name."</td>";

@@ -24,6 +24,7 @@
  *      \brief      Page to list all receptions
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -166,6 +167,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if (empty($reshook)) {
+	// Mass actions
+	$objectclass = 'Reception';
+	$objectlabel = 'Receptions';
+	$permissiontoread = $user->rights->reception->lire;
+	$permissiontoadd = $user->rights->reception->creer;
+	$permissiontodelete = $user->rights->reception->supprimer;
+	$uploaddir = $conf->reception->multidir_output[$conf->entity];
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
 	if ($massaction == 'confirm_createbills') {
 		$receptions = GETPOST('toselect', 'array');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
@@ -631,6 +641,22 @@ if ($search_array_options) {
 	foreach ($search_array_options as $key => $val) {
 		$crit = $val;
 		$tmpkey = preg_replace('/search_options_/', '', $key);
+		if (is_array($val) && array_key_exists('start', $val) && array_key_exists('end', $val)) {
+			// date range from list filters is stored as array('start' => <timestamp>, 'end' => <timestamp>)
+			// start date
+			$param .= '&search_options_'.$tmpkey.'_startyear='.dol_print_date($val['start'], '%Y');
+			$param .= '&search_options_'.$tmpkey.'_startmonth='.dol_print_date($val['start'], '%m');
+			$param .= '&search_options_'.$tmpkey.'_startday='.dol_print_date($val['start'], '%d');
+			$param .= '&search_options_'.$tmpkey.'_starthour='.dol_print_date($val['start'], '%H');
+			$param .= '&search_options_'.$tmpkey.'_startmin='.dol_print_date($val['start'], '%M');
+			// end date
+			$param .= '&search_options_'.$tmpkey.'_endyear='.dol_print_date($val['end'], '%Y');
+			$param .= '&search_options_'.$tmpkey.'_endmonth='.dol_print_date($val['end'], '%m');
+			$param .= '&search_options_'.$tmpkey.'_endday='.dol_print_date($val['end'], '%d');
+			$param .= '&search_options_'.$tmpkey.'_endhour='.dol_print_date($val['end'], '%H');
+			$param .= '&search_options_'.$tmpkey.'_endmin='.dol_print_date($val['end'], '%M');
+			$val = '';
+		}
 		if ($val != '') {
 			$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
 		}
@@ -726,7 +752,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 
@@ -736,6 +762,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -824,13 +857,18 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre middle">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 }
@@ -882,7 +920,9 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['e.billed']['label'], $_SERVER["PHP_SELF"], "e.billed", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 $i = 0;
@@ -901,6 +941,19 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="center">';
+		if ($massactionbutton || $massaction) {
+			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="nowraponall">';
@@ -1060,16 +1113,18 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	print '<td class="center">';
-	if ($massactionbutton || $massaction) {
-		// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="center">';
+		if ($massactionbutton || $massaction) {
+			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

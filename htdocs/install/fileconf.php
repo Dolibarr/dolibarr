@@ -143,7 +143,7 @@ if (!empty($force_install_message)) {
 		<td class="label"><label for="main_dir"><b><?php print $langs->trans("WebPagesDirectory"); ?></b></label></td>
 <?php
 if (empty($dolibarr_main_document_root)) {
-	$dolibarr_main_document_root = GETPOSTISSET('main_dir', 'alpha') ? GETPOST('main_dir') : detect_dolibarr_main_document_root();
+	$dolibarr_main_document_root = GETPOSTISSET('main_dir') ? GETPOST('main_dir') : detect_dolibarr_main_document_root();
 }
 ?>
 		<td class="label">
@@ -178,7 +178,7 @@ if (!empty($force_install_noedit)) {
 			$dolibarr_main_data_root = @$force_install_main_data_root;
 		}
 		if (empty($dolibarr_main_data_root)) {
-			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir', 'alpha') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
+			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
 		?>
 		<td class="label">
@@ -207,7 +207,7 @@ if (!empty($force_install_noedit)) {
 	<!-- Root URL $dolibarr_main_url_root -->
 	<?php
 	if (empty($dolibarr_main_url_root)) {
-		$dolibarr_main_url_root = GETPOSTISSET('main_url', 'alpha') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
 	}
 	?>
 	<tr>
@@ -448,7 +448,10 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_database"
 				   name="db_create_database"
-				<?php if ($force_install_createdatabase) {
+				<?php
+				$checked = 0;
+				if ($force_install_createdatabase) {
+					$checked = 1;
 					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_createdatabase !== null) {
@@ -456,7 +459,8 @@ if (!empty($force_install_noedit)) {
 				} ?>
 			>
 		</td>
-		<td class="comment"><?php echo $langs->trans("CheckToCreateDatabase"); ?>
+		<td class="comment">
+		<?php echo $langs->trans("CheckToCreateDatabase"); ?>
 		</td>
 	</tr>
 
@@ -503,7 +507,10 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_user"
 				   name="db_create_user"
-				<?php if (!empty($force_install_createuser)) {
+				<?php
+				$checked = 0;
+				if (!empty($force_install_createuser)) {
+					$checked = 1;
 					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) {
@@ -511,7 +518,8 @@ if (!empty($force_install_noedit)) {
 				} ?>
 			>
 		</td>
-		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
+		<td class="comment">
+		<?php echo $langs->trans("CheckToCreateUser"); ?>
 		</td>
 	</tr>
 
@@ -613,35 +621,40 @@ jQuery(document).ready(function() {
 
 	});
 
-	function init_needroot()
-	{
-		/*alert(jQuery("#db_create_database").prop("checked")); */
-		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
-		{
-			jQuery(".hideroot").show();
-			<?php
-			if ($force_install_noedit == 0) { ?>
-				jQuery(".needroot").removeAttr('disabled');
-			<?php } ?>
-		}
-		else
-		{
-			jQuery(".hideroot").hide();
-			jQuery(".needroot").prop('disabled', true);
-		}
-	}
-
 	init_needroot();
 	jQuery("#db_create_database").click(function() {
+		console.log("click on db_create_database");
 		init_needroot();
 	});
 	jQuery("#db_create_user").click(function() {
+		console.log("click on db_create_user");
 		init_needroot();
 	});
 	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
 	jQuery("#db_pass").focus();
 	<?php } ?>
 });
+
+function init_needroot()
+{
+	console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
+	/*alert(jQuery("#db_create_database").prop("checked")); */
+	if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
+	{
+		console.log("init_needroot show root section");
+		jQuery(".hideroot").show();
+		<?php
+		if (empty($force_install_noedit)) { ?>
+			jQuery(".needroot").removeAttr('disabled');
+		<?php } ?>
+	}
+	else
+	{
+		console.log("init_needroot hide root section");
+		jQuery(".hideroot").hide();
+		jQuery(".needroot").prop('disabled', true);
+	}
+}
 
 function checkDatabaseName(databasename) {
 	if (databasename.match(/[;\.]/)) { return false; }
@@ -650,6 +663,8 @@ function checkDatabaseName(databasename) {
 
 function jscheckparam()
 {
+	console.log("Click on jscheckparam");
+
 	ok=true;
 
 	if (document.forminstall.main_dir.value == '')
@@ -687,12 +702,14 @@ function jscheckparam()
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
+		init_needroot();
 	}
 	// If create user asked
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
+		init_needroot();
 	}
 
 	return ok;

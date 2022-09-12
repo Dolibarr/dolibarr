@@ -22,6 +22,7 @@
  *	\brief      Setup page of module Contracts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -142,7 +143,7 @@ if ($action == 'updateMask') {
 	$value = GETPOST('activate_hideClosedServiceByDefault', 'alpha');
 	$res3 = dolibarr_set_const($db, "CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) {
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 > 0)) {
 		$error++;
 	}
 
@@ -445,10 +446,10 @@ print $form->textwithpicto($langs->trans("FreeLegalTextOnContracts"), $langs->tr
 print '<br>';
 $variablename = 'CONTRACT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td></tr>'."\n";
@@ -458,7 +459,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('CONTRACT_DRAFT_WATERMARK')).'">';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven">';

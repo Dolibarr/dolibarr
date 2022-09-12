@@ -27,6 +27,7 @@
  *	\brief      Management of direct debit order or credit tranfer of invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -111,8 +112,14 @@ if (empty($reshook)) {
 				$sourcetype = 'supplier_invoice';
 				$newtype = 'bank-transfer';
 			}
+			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			if (preg_match('/stripesepa/', $paymentservice)) {
+				$result = $object->demande_prelevement_stripe($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			} else {
+				$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			}
+
 			if ($result > 0) {
 				$db->commit();
 
@@ -236,16 +243,16 @@ llxHeader('', $title, $helpurl);
 if ($object->id > 0) {
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
-	//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+	//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
 	// We can also use bcadd to avoid pb with floating points
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
-	//$resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	//$resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	if ($object->paye) {
 		$resteapayer = 0;
@@ -281,8 +288,8 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	if ($type == 'bank-transfer') {
@@ -310,9 +317,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$num = $db->num_rows($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$numopen = $num;
 	} else {
 		dol_print_error($db);
@@ -349,12 +356,12 @@ if ($object->id > 0) {
 		}
 	}
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->facture->creer) {
+		if ($usercancreate) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -384,7 +391,7 @@ if ($object->id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam, 0, '', '');
 
@@ -395,12 +402,12 @@ if ($object->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="3">';
+	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td colspan="3">';
 	print '<span class="badgeneutral">';
 	print $object->getLibType();
 	print '</span>';
 	if ($object->module_source) {
-		print ' <span class="opacitymediumbycolor">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
+		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == $object::TYPE_REPLACEMENT) {
 		if ($type == 'bank-transfer') {
@@ -409,16 +416,16 @@ if ($object->id > 0) {
 			$facreplaced = new Facture($db);
 		}
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).'</span>';
 	}
-	if ($object->type == $object::TYPE_CREDIT_NOTE) {
+	if ($object->type == $object::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {
 		if ($type == 'bank-transfer') {
 			$facusing = new FactureFournisseur($db);
 		} else {
 			$facusing = new Facture($db);
 		}
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -433,20 +440,22 @@ if ($object->id > 0) {
 			$facavoir->fetch($facid);
 			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
+		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
+		print '</span>';
 	}
 	/*
-	if ($facidnext > 0)
-	{
+	if ($objectidnext > 0) {
 		$facthatreplace=new Facture($db);
-		$facthatreplace->fetch($facidnext);
-		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+		$facthatreplace->fetch($objectidnext);
+		print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 	}
 	*/
 	print '</td></tr>';
 
-	// Discounts
-	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+	// Relative and absolute discounts
+	print '<!-- Discounts -->'."\n";
+	print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="3">';
 
 	if ($type == 'bank-transfer') {
 		//$societe = new Fournisseur($db);
@@ -614,7 +623,7 @@ if ($object->id > 0) {
 
 	print '<table class="border centpercent tableforfield">';
 
-	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 		print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -667,7 +676,7 @@ if ($object->id > 0) {
 	// Total with tax
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
 	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
@@ -695,9 +704,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$obj = $db->fetch_object($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
 		if ($obj) {
 			$pending = $obj->amount;
 		}
@@ -710,7 +719,7 @@ if ($object->id > 0) {
 	 * Buttons
 	 */
 
-	print "\n<div class=\"tabsAction\">\n";
+	print "\n".'<div class="tabsAction">'."\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
 	$user_perms = $user->rights->prelevement->bons->creer;
@@ -734,6 +743,23 @@ if ($object->id > 0) {
 				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
+
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_BUTTON)) {
+					// TODO Replace this with a checkbox for each payment mode: "Send request to PaymentModeManager immediatly..."
+					print "<br>";
+					//add stripe sepa button
+					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
+					print '<form method="POST" action="">';
+					print '<input type="hidden" name="token" value="'.newToken().'" />';
+					print '<input type="hidden" name="id" value="'.$object->id.'" />';
+					print '<input type="hidden" name="type" value="'.$type.'" />';
+					print '<input type="hidden" name="action" value="new" />';
+					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
+					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
+					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
+					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+					print '</form>';
+				}
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$buttonlabel.'</a>';
 			}
@@ -752,13 +778,23 @@ if ($object->id > 0) {
 		}
 	}
 
-	print "</div><br>\n";
+	print "</div>\n";
 
 
 	if ($type == 'bank-transfer') {
-		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments").'</div><br>';
+		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments");
+		if (isModEnabled('stripe')) {
+			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
+		}
+		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
+		print '</div><br>';
 	} else {
-		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments").'</div><br>';
+		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments");
+		if (isModEnabled('stripe')) {
+			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
+		}
+		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
+		print '</div><br>';
 	}
 
 	/*
@@ -772,13 +808,13 @@ if ($object->id > 0) {
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td class="center">'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
+	print '<td>&nbsp;</td>';
 	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
-	print '<td>&nbsp;</td>';
-	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
@@ -797,17 +833,17 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
+	$resql = $db->query($sql);
 
 	$num = 0;
-	if ($result_sql) {
+	if ($resql) {
 		$i = 0;
 
 		$tmpuser = new User($db);
 
 		$num = $db->num_rows($result);
 		while ($i < $num) {
-			$obj = $db->fetch_object($result_sql);
+			$obj = $db->fetch_object($resql);
 
 			$tmpuser->id = $obj->user_id;
 			$tmpuser->login = $obj->login;
@@ -819,17 +855,27 @@ if ($object->id > 0) {
 
 			print '<tr class="oddeven">';
 
+			// Date
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 
+			// User
 			print '<td align="center">';
 			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
 			print '</td>';
 
-			print '<td class="center">'.price($obj->amount).'</td>';
-			print '<td align="center">-</td>';
-			print '<td>&nbsp;</td>';
+			// Amount
+			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
-			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
+			// Ref of SEPA request
+			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
+
+			print '<td>';
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=new&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("SendToStripe").'</a>';
+			}
+			print '</td>';
+
+			print '<td align="center">-</td>';
 
 			print '<td class="right">';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'&did='.$obj->rowid.'&type='.$type.'">';
@@ -840,7 +886,7 @@ if ($object->id > 0) {
 			$i++;
 		}
 
-		$db->free($result_sql);
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}

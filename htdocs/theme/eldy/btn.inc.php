@@ -147,9 +147,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-	background: var(--butactiondeletebg);
+	background: var(--butactiondeletebg) !important;
 	/* border: 1px solid #633; */
-	color: #633;
+	color: #633 !important;
 }
 
 .butActionDelete:hover {

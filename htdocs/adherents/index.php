@@ -27,19 +27,24 @@
  *       \brief      Home page of membership module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "members"));
+
+
 $hookmanager = new HookManager($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('membersindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -99,12 +104,12 @@ $sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 $sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 	while ($i < $num) {
-		$objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($resql);
 
 		$adhtype = new AdherentType($db);
 		$adhtype->id = $objp->rowid;
@@ -127,7 +132,7 @@ if ($result) {
 
 		$i++;
 	}
-	$db->free($result);
+	$db->free($resql);
 }
 
 $now = dol_now();
@@ -143,16 +148,16 @@ $sql .= " AND t.rowid = d.fk_adherent_type";
 $sql .= " GROUP BY d.fk_adherent_type";
 
 dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 	while ($i < $num) {
-		$objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($resql);
 		$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
 		$i++;
 	}
-	$db->free();
+	$db->free($resql);
 }
 
 /*

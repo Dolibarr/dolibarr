@@ -135,7 +135,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
 /*foreach($object->fields as $key => $val)
  {
  // If $val['visible']==0, then we never show the field
- if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+ if (!empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
  }*/
 // Definition of fields for list
 // Extra fields
@@ -308,7 +308,8 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
 				$object->fetch($taskid);
-				//var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;
+				//var_dump($object->progress);
+				//var_dump(GETPOST($taskid . 'progress', 'int')); exit;
 				if ($object->progress != GETPOST($taskid.'progress', 'int')) {
 					$object->progress = GETPOST($taskid.'progress', 'int');
 					$result = $object->update($user);
@@ -445,7 +446,7 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".
 $nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-$nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
+$nav .= ' <button type="submit" name="submitdateselect" value="x" class="nobordertransp button_search_x"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
 
@@ -543,7 +544,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
- if (! empty($conf->categorie->enabled))
+ if (!empty($conf->categorie->enabled))
  {
  require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
  $moreforfilter.='<div class="divsearchfield">';

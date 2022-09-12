@@ -131,6 +131,13 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var string The civilite code, not an integer
+	 * @deprecated
+	 * @see $civility_code
+	 */
+	public $civilite;
+
+	/**
 	 * @var string Address
 	 */
 	public $address;
@@ -180,6 +187,12 @@ class Contact extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+	/**
+	 * URL
+	 * @var string
+	 */
+	public $url;
 
 	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
@@ -315,6 +328,7 @@ class Contact extends CommonObject
 	 */
 	public $stcomm_picto;
 
+
 	/**
 	 *	Constructor
 	 *
@@ -330,7 +344,7 @@ class Contact extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->mailing->enabled)) {
+		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
 		// typical ['s.nom'] is used for third-parties
@@ -557,7 +571,6 @@ class Contact extends CommonObject
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
-		$this->setUpperOrLowerCase();
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		if (empty($this->statut)) {
 			$this->statut = 0;
@@ -565,6 +578,7 @@ class Contact extends CommonObject
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
 			$this->civility_code = $this->civility_id; // For backward compatibility
 		}
+		$this->setUpperOrLowerCase();
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
@@ -1461,13 +1475,6 @@ class Contact extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-				$hookmanager->initHooks(array('contactdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-				*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';

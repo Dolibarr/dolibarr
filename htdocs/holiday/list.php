@@ -25,6 +25,7 @@
  *		\brief      List of holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -59,29 +60,6 @@ $id = GETPOST('id', 'int');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-$result = restrictedArea($user, 'holiday', '', '');
-// If we are on the view of a specific user
-if ($id > 0) {
-	$canread = 0;
-	if ($id == $user->id) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->readall)) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
-		$canread = 1;
-	}
-	if (!$canread) {
-		accessforbidden();
-	}
-}
 
 $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -101,7 +79,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "cp.rowid";
+	$sortfield = "cp.ref";
 }
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -156,14 +134,35 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+
+// Security check
+$socid = 0;
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
 }
+
+if (empty($conf->holiday->enabled)) accessforbidden('Module not enabled');
+
+$result = restrictedArea($user, 'holiday', '', '');
+// If we are on the view of a specific user
+if ($id > 0) {
+	$canread = 0;
+	if ($id == $user->id) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
+
 
 
 /*
@@ -200,7 +199,7 @@ if (empty($reshook)) {
 		$search_valideur = "";
 		$search_status = "";
 		$search_type = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -211,9 +210,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Holiday';
 	$objectlabel = 'Holiday';
-	$permissiontoread = $user->rights->holiday->read;
-	$permissiontodelete = $user->rights->holiday->delete;
-	$permissiontoapprove = $user->rights->holiday->approve;
+	$permissiontoread = $user->hasRight('holiday', 'read');
+	$permissiontodelete = $user->hasRight('holiday', 'delete');
+	$permissiontoapprove = $user->hasRight('holiday', 'approve');
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -304,7 +303,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
 $sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
@@ -582,7 +581,7 @@ if ($resql) {
 
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-		if ($user->rights->holiday->readall) {
+		if ($user->hasRight('holiday', 'readall')) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
@@ -625,7 +624,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_debut']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
-		$formother->select_year($search_year_start, 'search_year_start', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_start, 'search_year_start', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -633,7 +632,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
-		$formother->select_year($search_year_end, 'search_year_end', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_end, 'search_year_end', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -654,7 +653,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
-		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
+		print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -662,7 +661,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.tms']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
-		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
+		print $formother->selectyear($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
 	}
 

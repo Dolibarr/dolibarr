@@ -115,7 +115,7 @@ class ImportCsv extends ModeleImports
 
 		$this->datatoimport = $datatoimport;
 		if (preg_match('/^societe_/', $datatoimport)) {
-			$this->thirpartyobject = new Societe($this->db);
+			$this->thirdpartyobject = new Societe($this->db);
 		}
 	}
 
@@ -393,6 +393,9 @@ class ImportCsv extends ModeleImports
 							$newval = $arrayrecord[($key - 1)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
 						}
 
+						//var_dump($newval);var_dump($val);
+						//var_dump($objimport->array_import_convertvalue[0][$val]);
+
 						// Make some tests on $newval
 
 						// Is it a required field ?
@@ -417,7 +420,7 @@ class ImportCsv extends ModeleImports
 									}
 
 									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
-									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+									//print 'Newval is now "'.$newval.'" and is type '.$isidorref."<br>\n";
 
 									if ($isidorref == 'ref') {    // If value into input import file is a ref, we apply the function defined into descriptor
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -432,6 +435,11 @@ class ImportCsv extends ModeleImports
 												break;
 											}
 											$classinstance = new $class($this->db);
+											if ($class == 'CGenericDic') {
+												$classinstance->element = $objimport->array_import_convertvalue[0][$val]['element'];
+												$classinstance->table_element = $objimport->array_import_convertvalue[0][$val]['table_element'];
+											}
+
 											// Try the fetch from code or ref
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
@@ -439,7 +447,7 @@ class ImportCsv extends ModeleImports
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												 $tmpchartofaccount = new AccountancySystem($this->db);
 												 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
-												 var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+												 //var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												 {
 												 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
@@ -462,9 +470,9 @@ class ImportCsv extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', num2Alpha($key - 1), $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
 												}
@@ -504,7 +512,7 @@ class ImportCsv extends ModeleImports
 												$newval = $classinstance->id;
 											} else {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} else {
 													$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
 												}
@@ -541,7 +549,7 @@ class ImportCsv extends ModeleImports
 											$newval = $scaleorid ? $scaleorid : 0;
 										} else {
 											if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+												$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 											} else {
 												$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
 											}
@@ -552,8 +560,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codeclient(0, 0);
-										$newval = $this->thirpartyobject->code_client;
+										$this->thirdpartyobject->get_codeclient(0, 0);
+										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
 									if (empty($newval)) {
@@ -561,8 +569,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
-										$newval = $this->thirpartyobject->code_fournisseur;
+										$newval = $this->thirdpartyobject->get_codefournisseur(0, 1);
+										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
 									if (empty($newval)) {
@@ -570,8 +578,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('customer');
-										$newval = $this->thirpartyobject->code_compta;
+										$this->thirdpartyobject->get_codecompta('customer');
+										$newval = $this->thirdpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {
@@ -579,8 +587,8 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirpartyobject->get_codecompta('supplier');
-										$newval = $this->thirpartyobject->code_compta_fournisseur;
+										$this->thirdpartyobject->get_codecompta('supplier');
+										$newval = $this->thirdpartyobject->code_compta_fournisseur;
 										if (empty($newval)) {
 											$arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
 										}
@@ -601,7 +609,7 @@ class ImportCsv extends ModeleImports
 											$modForNumber = new $classModForNumber;
 
 											$tmpobject = null;
-											// Set the object when we can
+											// Set the object with the date property when we can
 											if (!empty($objimport->array_import_convertvalue[0][$val]['classobject'])) {
 												$pathForObject = $objimport->array_import_convertvalue[0][$val]['pathobject'];
 												require_once DOL_DOCUMENT_ROOT.$pathForObject;
@@ -689,7 +697,7 @@ class ImportCsv extends ModeleImports
 										if (!empty($filter)) {
 											$tableforerror .= ':'.$filter;
 										}
-										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', $key, $newval, $field, $tableforerror);
+										$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, $field, $tableforerror);
 										$this->errors[$error]['type'] = 'FOREIGNKEY';
 										$errorforthistable++;
 										$error++;
@@ -697,11 +705,20 @@ class ImportCsv extends ModeleImports
 								} elseif (!preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
-									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
+									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', num2Alpha($key - 1), $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
 									$errorforthistable++;
 									$error++;
 								}
+							}
+
+							// Check HTML injection
+							$inj = testSqlAndScriptInject($newval, 0);
+							if ($inj) {
+								$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorHtmlInjectionForField', num2Alpha($key - 1), dol_trunc($newval, 100));
+								$this->errors[$error]['type'] = 'HTMLINJECTION';
+								$errorforthistable++;
+								$error++;
 							}
 
 							// Other tests
@@ -709,22 +726,41 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						$listfields[] = $fieldname;
-
-						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
-							$listvalues[] = ($newval == '0' ? $newval : "null");
-						} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
-							$listvalues[] = "''";
+						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+							if (!in_array("socialnetworks", $listfields)) {
+								$listfields[] = "socialnetworks";
+							}
+							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								$socialnetwork = explode("_", $fieldname)[1];
+								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
+									$json = new stdClass();
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = json_encode($json);
+								} else {
+									$jsondata = $listvalues[$socialkey];
+									$json = json_decode($jsondata);
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = json_encode($json);
+								}
+							}
 						} else {
-							$listvalues[] = "'".$this->db->escape($newval)."'";
+							$listfields[] = $fieldname;
+							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
+							if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
+								$listvalues[] = ($newval == '0' ? $newval : "null");
+							} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
+								$listvalues[] = "''";
+							} else {
+								$listvalues[] = "'".$this->db->escape($newval)."'";
+							}
 						}
 					}
 					$i++;
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
-				// We process here all the fields that were declared into the array ->import_fieldshidden_array of the descriptor file.
+				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
 				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
@@ -785,11 +821,18 @@ class ImportCsv extends ModeleImports
 						$updatedone = false;
 						$insertdone = false;
 
+						$is_table_category_link = false;
+						$fname = 'rowid';
+						if (strpos($tablename, '_categorie_') !== false) {
+							$is_table_category_link = true;
+							$fname='*';
+						}
+
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT rowid FROM ".$tablename;
+								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
@@ -797,18 +840,30 @@ class ImportCsv extends ModeleImports
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									$where[] = $key.' = '.$data[$key];
-									$filters[] = $col.' = '.$data[$key];
+									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+										$tmp = explode("_", $key);
+										$key = $tmp[0];
+										$socialnetwork = $tmp[1];
+										$jsondata = $data[$key];
+										$json = json_decode($jsondata);
+										$where[] = $key." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+										$filters[] = $col." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+									} else {
+										$where[] = $key.' = '.$data[$key];
+										$filters[] = $col.' = '.$data[$key];
+									}
 								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
-									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									$num_rows = $this->db->num_rows($resql);
+									if ($num_rows == 1) {
+										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} elseif ($resql->num_rows > 1) {
+									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
 										$this->errors[$error]['type'] = 'SQL';
 										$error++;
@@ -832,12 +887,12 @@ class ImportCsv extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= " WHERE ".$keyfield.' = '.((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
 									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									if ($this->db->num_rows($resql) == 1) {
 										// We have a row referencing this last foreign key, continue with UPDATE.
 									} else {
 										// No record found referencing this last foreign key,
@@ -853,6 +908,13 @@ class ImportCsv extends ModeleImports
 							}
 
 							if (!empty($lastinsertid)) {
+								// We db escape social network field because he isn't in field creation
+								if (in_array("socialnetworks", $listfields)) {
+									$socialkey = array_search("socialnetworks", $listfields);
+									$tmpsql =  $listvalues[$socialkey];
+									$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+								}
+
 								// Build SQL UPDATE request
 								$sqlstart = "UPDATE ".$tablename;
 
@@ -867,6 +929,10 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if ($is_table_category_link) {
+									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
 
 								$sql = $sqlstart.$sqlend;
 
@@ -886,6 +952,13 @@ class ImportCsv extends ModeleImports
 
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
+							// We db escape social network field because he isn't in field creation
+							if (in_array("socialnetworks", $listfields)) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								$tmpsql =  $listvalues[$socialkey];
+								$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+							}
+
 							// Build SQL INSERT request
 							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $listfields).", import_key";
 							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";

@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...或建立您自己的設定檔案<br>（手動選擇
 DemoFundation=管理基金會會員
 DemoFundation2=管理基金會會員與銀行帳戶
 DemoCompanyServiceOnly=公司或自由業者僅能銷售服務
-DemoCompanyShopWithCashDesk=用收銀台管理商店
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box
 DemoCompanyProductAndStocks=使用銷售點銷售產品的商店
 DemoCompanyManufacturing=公司製造產品
 DemoCompanyAll=有多項活動的公司（所有主要模組）
@@ -303,3 +303,25 @@ SelectTheTypeOfObjectToAnalyze=選擇一個項目以查看其統計資訊...
 ConfirmBtnCommonContent = 您確定要“%s”嗎？
 ConfirmBtnCommonTitle = 確認您的操作
 CloseDialog = 關閉
+Autofill = 自動填入
+
+# externalsite
+ExternalSiteSetup=設定連結到外部網站
+ExternalSiteURL=HTML iframe 內容的外部網站網址
+ExternalSiteModuleNotComplete=外部網站模組設定不正確。
+ExampleMyMenuEntry=我的選單條目
+
+# FTP
+FTPClientSetup=FTP或SFTP客戶端模組設定
+NewFTPClient=新的FTP / FTPS連線設定
+FTPArea=FTP / FTPS區域
+FTPAreaDesc=此畫面顯示FTP和SFTP伺服器的檢視。
+SetupOfFTPClientModuleNotComplete=FTP或SFTP的客戶端模組設定似乎不完整
+FTPFeatureNotSupportedByYourPHP=您的PHP不支援FTP或SFTP功能
+FailedToConnectToFTPServer=無法連接到伺服器（伺服器%s，連接埠%s）
+FailedToConnectToFTPServerWithCredentials=使用已定義的用戶名/密碼登錄伺服器失敗
+FTPFailedToRemoveFile=無法刪除文件<b>%s。</b>
+FTPFailedToRemoveDir=無法刪除資料夾<b>%s</b> ：檢查權限，並且確認資料夾內無檔案。
+FTPPassiveMode=被動模式
+ChooseAFTPEntryIntoMenu=從選單中選擇一個FTP/SFTP站台...
+FailedToGetFile=無法獲取檔案 %s

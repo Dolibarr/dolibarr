@@ -59,7 +59,7 @@ class box_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->contrat->lire);
+		$this->hidden = !($user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -83,8 +83,8 @@ class box_contracts extends ModeleBoxes
 			$thirdpartytmp = new Societe($this->db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-			$sql .= ", c.ref_customer, c.ref_supplier";
+			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.tms as date_modification, c.fin_validite, c.date_cloture,";
+			$sql .= " c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -97,7 +97,7 @@ class box_contracts extends ModeleBoxes
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
 			} else {
 				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
@@ -117,6 +117,7 @@ class box_contracts extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 
 					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->date_modification);
 					$dateterm = $this->db->jdate($objp->fin_validite);
 					$dateclose = $this->db->jdate($objp->date_cloture);
 					$late = '';
@@ -155,8 +156,8 @@ class box_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

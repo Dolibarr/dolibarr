@@ -47,11 +47,14 @@ create table llx_commande
   remise_percent			real      default 0,
   remise_absolue			real      default 0,
   remise					real      default 0,
+  
   total_tva                 double(24,8)     default 0,
-  localtax1					double(24,8)     default 0,	-- total localtax1 
-  localtax2					double(24,8)     default 0,	-- total localtax2
+  localtax1					double(24,8)     default 0,		-- total localtax1 
+  localtax2					double(24,8)     default 0,		-- total localtax2
+  revenuestamp              double(24,8)     DEFAULT 0,		-- amount total revenuestamp (usefull for proforma that must match invoice)
   total_ht					double(24,8)     default 0,
   total_ttc					double(24,8)     default 0,
+
   note_private				text,
   note_public				text,
   model_pdf					varchar(255),
@@ -63,6 +66,7 @@ create table llx_commande
   fk_account				integer,						-- bank account
   fk_currency				varchar(3),						-- currency code
   fk_cond_reglement			integer,						-- condition de reglement
+  deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
   fk_mode_reglement			integer,						-- mode de reglement
 
   date_livraison			datetime 	  default NULL,

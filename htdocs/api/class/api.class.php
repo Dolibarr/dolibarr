@@ -88,9 +88,9 @@ class DolibarrApi
 		// phpcs:enable
 		// TODO Use type detected in $object->fields
 		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
-			return checkVal($value, 'restricthtml');
+			return sanitizeVal($value, 'restricthtml');
 		} else {
-			return checkVal($value, 'alphanohtml');
+			return sanitizeVal($value, 'alphanohtml');
 		}
 	}
 
@@ -115,6 +115,8 @@ class DolibarrApi
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
+		unset($object->linkedObjectsFullLoaded);
+		//unset($object->lines[$i]->linked_objects);		// This is the array to create linked object during create
 
 		unset($object->fields);
 		unset($object->oldline);
@@ -139,6 +141,7 @@ class DolibarrApi
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
+		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
 		unset($object->timespent_old_duration);
 		unset($object->timespent_id);
@@ -160,8 +163,8 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
-		unset($object->labelStatus);
-		unset($object->labelStatusShort);
+		//unset($object->labelStatus);
+		//unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);

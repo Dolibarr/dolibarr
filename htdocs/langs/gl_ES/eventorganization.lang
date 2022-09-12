@@ -37,7 +37,8 @@ EventOrganization=Organización de eventos
 Settings=Configuracións
 EventOrganizationSetupPage = Páxina de configuración da Organización de Eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tarefas para crear automaticamente cando o proxecto é validado 
-EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada a Conferencia<br>Enviar Chamada a Stand<br>Recibir Chamadas para Conferencias<br>Recibir chamada a Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar recordatorio do evento aos relatores<br>Enviar recordatorio do evento ao anfitrión do stand<br>Enviar recordatorio do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip = Cando valida un evento organizado, pódense crear automaticamente algunhas tarefas no proxecto<br><br>Por exemplo<br>Enviar Chamada para Conferencias<br>Enviar Chamada para Stand<br>validar suxerencias para Conferencias<br>Validar aplicacións para Stand<br>Abrir subscricións a eventos para os participantes<br>Enviar lembranza do evento aos ponentes<br>Enviar lembranza do evento aos anfitrións do Stand<br>Enviar lembranza do evento aos asistentes
+EVENTORGANIZATION_TASK_LABELTooltip2=Manteña o campo baleiro se non precisa crear tarefas automaticamente.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoría para engadir a terceiros creada automaticamente cando alguén suxire unha conferencia 
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoría para engadir a terceiros creada automaticamente cando suxiren un stand 
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modelo de correo electrónico para enviar despois de recibir unha suxestión dunha conferencia.
@@ -59,6 +60,8 @@ ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
+ApplicantOrVisitor=Solicitante ou visitante
+Speaker=Ponente
 
 #
 # Template Mail
@@ -138,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrici�
 OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente 
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
+OrganizationEvenLabelName=Nome público da conferencia ou posto
 
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para unha conferencia 
@@ -165,3 +169,4 @@ EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é difer
 ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 NoPublicActionsAllowedForThisEvent=Non hai accións públicas abertas ao público para este evento 
+MaxNbOfAttendees=Número máximo de asistentes
