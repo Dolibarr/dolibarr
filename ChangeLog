@@ -53,14 +53,11 @@ NEW: Add column "Total HT" to products array on document creation card
 NEW: Add configuration for text color of button action
 NEW: Add entity filter in exports
 NEW: Show the event block on recurring invoices #20870
-NEW: Add filter "opportunity status" on statistics of projects.
 NEW: Add firstname, lastname and max number of attendees for module "Event Organization"
 NEW: Add margin info in proposal and order list
 NEW: Add massaction "Edit Extrafield" for Product
 NEW: Add more fields to detect duplicate during import of thirdparties
 NEW: Add option to foce delivery on email for purchase order receipt to yes
-NEW: Add param border table for md theme
-NEW: Add param color button action
 NEW: Add possibility to create contract from invoice
 NEW: Add possibility with constant MAIN_LOGIN_BADCHARUNAUTHORIZED to define bad character unauthorized into login name
 NEW: Add private and public notes on tax files.
@@ -70,12 +67,10 @@ NEW: allow cut&paste as real numeric value to excel
 NEW: A public form to send a message and create a lead is available
 NEW: automatically set totally received status in reception
 NEW: Auto set invoice paid when adding credit not and remain to pay is 0
-NEW: Can change value of AWP during the inventory
 NEW: Can enter price with tax for predefined products on purchase objects
 NEW: Can filter on a thirdparty on product statistics
 NEW: Can removed doc templates from setup page of thirdparty
 NEW: Can use ! to make a search that exclude a string
-NEW: Change in theme colors does not need to use the refresh button
 NEW: clean values and amount in FEC import
 NEW: const MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND for mailing mass action
 NEW: Contact filter project list
@@ -94,25 +89,26 @@ NEW: JS inventory autocalc input
 NEW: language support for more emailing target selectors
 NEW: leave requests: add field into type dictionary to block request if balance is negative
 NEW: Mass action "Close shipments"
-NEW: Module BOM - Add tabs for nets Bom
-NEW: Module BOM - Add the possibility to add sub-BOMs to BOM
+NEW: Module BOM - add tabs for nets Bom
+NEW: Module BOM - add the possibility to add sub-BOMs to BOM
 NEW: Module Recruitment - Add a public page with list of all open job positions.
 NEW: Module Recruitment - Add a tab with list of application on the jobposition file.
-NEW: More mode for THEME_TOPMENU_DISABLE_IMAGE (2, 3, ...)
 NEW: Add option to move checkbox column as first column on Thirdparty list (only few screens)
 NEW: payment conditions enabling semi-automatic deposit creation (Issue #18439)
 NEW: possibility to consume multiple batch
 NEW: Reverse movement product consumption
 NEW: Send email to the supplier order contact
 NEW: add permission to report time on timesheet
-NEW: Knowledge Management - Add status "Obsolete" to KM articles
+NEW: Knowledge Management - add status "Obsolete" to KM articles
 NEW: MRP - split consumption line on MO
-NEW: MRP - Display physical and virtual stock of the products when creating OF from a BOM
-NEW: MRP - Display product ref in "Object link" product tab for BOM
+NEW: MRP - display physical and virtual stock of the products when creating OF from a BOM
+NEW: MRP - display product ref in "Object link" product tab for BOM
+NEW: Projects - add filter "opportunity status" on statistics of projects.
 NEW: Proposals - option update prices on proposal cloning
 NEW: SEPA XML - option to place payment Type Info at Credit transfer Transaction level
 NEW: Stocks - stock filter in reassort lists
 NEW: Stocks - stock limit in stock export CSV
+NEW: Stocks - Inventory - can change value of AWP during the inventory
 NEW: Supplier order - Show ref supplier of reception in linked object block
 NEW: support user_modif in order
 NEW: Surveys - Show number of votes into the label of tab "Results" of a survey
@@ -122,6 +118,10 @@ NEW: TakePOS - show product reference
 NEW: TakePOS - add constant to hide categories
 NEW: TakePOS - add constant to show category description
 NEW: TakePOS - add constant to show only the products in stock
+NEW: Themes - add param color button action
+NEW: Themes - Change in theme colors does not need to use the refresh button
+NEW: Themes - more mode for THEME_TOPMENU_DISABLE_IMAGE (2, 3, ...)
+NEW: Themes - MD - add param border table for md theme
 NEW: Third-Parties - Add rules "customer accountancy code" is mandatory to validate invoice
 NEW: Third-Parties - Can set the parent company during the creation of thirdparty (action=add of societe/card.php)
 NEW: Tickets - create Third-party with contact if not found on public ticket
