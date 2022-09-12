@@ -733,6 +733,7 @@ class User extends CommonObject
 
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
+			'margin' => 'margins'
 		);
 
 		$rightsPath = $module;
@@ -753,7 +754,7 @@ class User extends CommonObject
 		//var_dump($module);
 		//var_dump($this->rights->$rightsPath);
 		//var_dump($conf->modules);
-		if (!in_array($module, $conf->modules)) {
+		if (!isModEnabled($module)) {
 			return 0;
 		}
 

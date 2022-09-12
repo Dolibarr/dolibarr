@@ -23,6 +23,7 @@
  *      \brief      Page de configuration du module securite
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -215,6 +216,8 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
+$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
+
 foreach ($arrayhandler as $key => $module) {
 	// Show modules according to features level
 	if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
@@ -225,15 +228,16 @@ foreach ($arrayhandler as $key => $module) {
 	}
 
 	if ($module->isEnabled()) {
-		print '<tr class="oddeven"><td width="100">';
+		print '<tr class="oddeven"><td>';
+		print img_picto('', $module->picto, 'class="width25 size15x"').' ';
 		print ucfirst($key);
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
-		print $langs->trans("MinLength").': '.$module->length;
+		print $langs->trans("MinLength").': <span class="opacitymedium">'.$module->length.'</span>';
 		print '</td>';
 
 		// Show example of numbering module
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		$tmp = $module->getExample();
 		if (preg_match('/^Error/', $tmp)) {
 			$langs->load("errors");
@@ -245,7 +249,7 @@ foreach ($arrayhandler as $key => $module) {
 		}
 		print '</td>'."\n";
 
-		print '<td width="100" align="center">';
+		print '<td class="center">';
 		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -266,7 +270,6 @@ print '</form>';
 //if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
 // Patter for Password Perso
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
-	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
@@ -345,7 +348,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '	}';
 
 	print '	function generatelink(){';
-	print '		return "security.php?action=updatepattern&pattern="+getStringArg();';
+	print '		return "security.php?action=updatepattern&token='.newToken().'&pattern="+getStringArg();';
 	print '	}';
 
 	print '	function valuePatternChange(){';
@@ -469,7 +472,9 @@ print '</tr>';
 
 
 print '</table>';
+
 print '</form>';
+
 print '<br>';
 
 if (GETPOST('info', 'int') > 0) {

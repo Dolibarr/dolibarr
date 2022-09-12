@@ -23,6 +23,7 @@
  *	\brief      Project card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -1291,7 +1292,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Accounting Report
 			/*
-			$accouting_module_activated = !empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled);
+			$accouting_module_activated = !empty($conf->comptabilite->enabled) || isModEnabled('accounting');
 			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
 				$start = dol_getdate((int) $object->date_start);
 				$end = dol_getdate((int) $object->date_end);

@@ -2310,3 +2310,4 @@ Images=Images
 MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
 ScriptIsEmpty=The script is empty
 ShowHideTheNRequests=Show/hide the %s SQL request(s)
+DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>

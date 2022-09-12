@@ -23,6 +23,7 @@
  *      \brief      Export page htpasswd of the membership file
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 

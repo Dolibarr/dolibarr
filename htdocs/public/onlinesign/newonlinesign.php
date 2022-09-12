@@ -45,6 +45,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -81,13 +82,6 @@ $ref = $REF = GETPOST("ref", 'alpha');
 if (empty($source)) {
 	$source = 'proposal';
 }
-
-if (!$action) {
-	if ($source && !$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	}
-}
 if (!empty($refusepropal)) {
 	$action = "refusepropal";
 }
@@ -123,15 +117,12 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 $creditor = $mysoc->name;
 
 $type = $source;
-if ($source == 'proposal') {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-	$object = new Propal($db);
-	$result= $object->fetch(0, $ref, '', $entity);
-} else {
-	accessforbidden('Bad value for source');
-	exit;
-}
 
+if (!$action) {
+	if ($source && !$ref) {
+		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
+	}
+}
 
 // Check securitykey
 $securekeyseed = '';
@@ -139,10 +130,16 @@ if ($source == 'proposal') {
 	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
-if (!dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
+}
+
+if ($source == 'proposal') {
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	$object = new Propal($db);
+	$result= $object->fetch(0, $ref, '', $entity);
+} else {
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
 
 
