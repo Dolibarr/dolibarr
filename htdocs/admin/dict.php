@@ -11,7 +11,7 @@
  * Copyright (C) 2011-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2022  Open-Dsi                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
  *		\brief      Page to administer data tables
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -54,13 +55,13 @@ $entity = GETPOST('entity', 'int');
 $code = GETPOST('code', 'alpha');
 
 $allowed = $user->admin;
-if ($id == 7 && !empty($user->rights->accounting->chartofaccount)) {
+if ($id == 7 && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Tax page allowed to manager of chart account
 }
-if ($id == 10 && !empty($user->rights->accounting->chartofaccount)) {
+if ($id == 10 && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Vat page allowed to manager of chart account
 }
-if ($id == 17 && !empty($user->rights->accounting->chartofaccount)) {
+if ($id == 17 && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Dictionary with type of expense report and accounting account allowed to manager of chart account
 }
 if (!$allowed) {
@@ -483,50 +484,50 @@ $tabrowid[44] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (!empty($conf->societe->enabled));
+$tabcond[1] = (isModEnabled("societe"));
 $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
-$tabcond[5] = (!empty($conf->societe->enabled) || !empty($conf->adherent->enabled));
+$tabcond[5] = (isModEnabled("societe") || isModEnabled('adherent'));
 $tabcond[6] = isModEnabled('agenda');
-$tabcond[7] = !empty($conf->tax->enabled);
-$tabcond[8] = !empty($conf->societe->enabled);
+$tabcond[7] = isModEnabled('tax');
+$tabcond[8] = isModEnabled("societe");
 $tabcond[9] = true;
 $tabcond[10] = true;
-$tabcond[11] = (!empty($conf->societe->enabled));
-$tabcond[12] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
-$tabcond[13] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled) || !empty($conf->supplier_order->enabled));
-$tabcond[14] = (!empty($conf->product->enabled) && (!empty($conf->ecotax->enabled) || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
+$tabcond[11] = (isModEnabled("societe"));
+$tabcond[12] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[13] = (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || !empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15] = true;
-$tabcond[16] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
-$tabcond[17] = (!empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled));
-$tabcond[18] = !empty($conf->expedition->enabled) || !empty($conf->reception->enabled);
-$tabcond[19] = !empty($conf->societe->enabled);
-$tabcond[20] = (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled);
-$tabcond[21] = !empty($conf->propal->enabled);
-$tabcond[22] = (!empty($conf->commande->enabled) || !empty($conf->propal->enabled));
+$tabcond[16] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
+$tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
+$tabcond[18] = isModEnabled("expedition") || isModEnabled("reception");
+$tabcond[19] = isModEnabled("societe");
+$tabcond[20] = (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order");
+$tabcond[21] = isModEnabled("propal");
+$tabcond[22] = (isModEnabled('commande') || isModEnabled("propal"));
 $tabcond[23] = true;
-$tabcond[24] = !empty($conf->resource->enabled);
-$tabcond[25] = !empty($conf->website->enabled);
-//$tabcond[26]= !empty($conf->product->enabled);
-$tabcond[27] = !empty($conf->societe->enabled);
-$tabcond[28] = !empty($conf->holiday->enabled);
-$tabcond[29] = !empty($conf->project->enabled);
-$tabcond[30] = !empty($conf->label->enabled);
-//$tabcond[31]= !empty($conf->accounting->enabled);
-$tabcond[32] = (!empty($conf->holiday->enabled) || !empty($conf->hrm->enabled));
-$tabcond[33] = !empty($conf->hrm->enabled);
-$tabcond[34] = !empty($conf->hrm->enabled);
-$tabcond[35] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[36] = !empty($conf->expensereport->enabled) && !empty($conf->global->MAIN_USE_EXPENSE_IK);
-$tabcond[37] = !empty($conf->product->enabled);
-$tabcond[38] = !empty($conf->socialnetworks->enabled);
-$tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
-$tabcond[41] = !empty($conf->intracommreport->enabled);
-$tabcond[42] = !empty($conf->product->enabled);
-$tabcond[43] = !empty($conf->product->enabled) && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
-$tabcond[44] = !empty($conf->asset->enabled);
+$tabcond[24] = isModEnabled('resource');
+$tabcond[25] = isModEnabled('website');
+//$tabcond[26]= isModEnabled("product");
+$tabcond[27] = isModEnabled("societe");
+$tabcond[28] = isModEnabled('holiday');
+$tabcond[29] = isModEnabled('project');
+$tabcond[30] = isModEnabled('label');
+//$tabcond[31]= isModEnabled('accounting');
+$tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
+$tabcond[33] = isModEnabled('hrm');
+$tabcond[34] = isModEnabled('hrm');
+$tabcond[35] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[36] = isModEnabled('expensereport') && !empty($conf->global->MAIN_USE_EXPENSE_IK);
+$tabcond[37] = isModEnabled("product");
+$tabcond[38] = isModEnabled('socialnetworks');
+$tabcond[39] = (isModEnabled("societe") && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[40] = (isModEnabled("societe") && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
+$tabcond[41] = isModEnabled('intracommreport');
+$tabcond[42] = isModEnabled("product");
+$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && $conf->global->MAIN_FEATURES_LEVEL >= 2;
+$tabcond[44] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
@@ -1028,10 +1029,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1048,10 +1052,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET active = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1068,10 +1075,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1088,10 +1098,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET favorite = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1108,10 +1121,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 1 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1128,10 +1144,13 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		if ($rowid) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		} elseif ($code) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET eec = 0 WHERE code = '".$db->escape(dol_escape_htmltag($code))."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 		}
 
 		$result = $db->query($sql);
@@ -1140,6 +1159,8 @@ if (empty($reshook)) {
 		}
 	}
 }
+
+
 /*
  * View
  */
@@ -2056,7 +2077,7 @@ if ($id > 0) {
 							} elseif (in_array($value, array('recuperableonly'))) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
-								if (!empty($conf->accounting->enabled)) {
+								if (isModEnabled('accounting')) {
 									require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 									$tmpaccountingaccount = new AccountingAccount($db);
 									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
@@ -2066,7 +2087,7 @@ if ($id > 0) {
 							} elseif ($value == 'fk_tva') {
 								foreach ($form->cache_vatrates as $key => $Tab) {
 									if ($form->cache_vatrates[$key]['rowid'] == $valuetoshow) {
-										$valuetoshow = $form->cache_vatrates[$key]['libtva'];
+										$valuetoshow = $form->cache_vatrates[$key]['label'];
 										break;
 									}
 								}
@@ -2465,7 +2486,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 			print '<td>';
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$fieldname = $value;
 				$accountancy_account = (!empty($obj->$fieldname) ? $obj->$fieldname : 0);
 				print $formaccounting->select_account($accountancy_account, '.'. $value, 1, '', 1, 1, 'maxwidth200 maxwidthonsmartphone');

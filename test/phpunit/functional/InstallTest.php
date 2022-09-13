@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016  Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
  *
  * Install functional test using PHPUnit's Selenium

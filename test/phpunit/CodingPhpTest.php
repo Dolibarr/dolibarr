@@ -198,7 +198,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				|| preg_match('/boxes\/box_/', $file['relativename'])
 				|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
 				|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
-				|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
+				|| in_array($file['name'], array('modules_boxes.php', 'TraceableDB.php'))) {
 				// Check into Class files
 				if (! in_array($file['name'], array(
 					'api.class.php',
@@ -245,6 +245,20 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					$this->assertTrue($ok, 'Found string "$this->db->" in '.$file['relativename']);
 					//exit;
 				}
+			}
+
+			// Check we don't miss top_httphead() into any ajax pages
+			if (preg_match('/ajax\//', $file['relativename'])) {
+				print "Analyze ajax page ".$file['relativename']."\n";
+				$ok=true;
+				$matches=array();
+				preg_match_all('/top_httphead/', $filecontent, $matches, PREG_SET_ORDER);
+				if (count($matches) == 0) {
+					$ok=false;
+				}
+				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+				$this->assertTrue($ok, 'Did not find top_httphead into the ajax page '.$file['relativename']);
+				//exit;
 			}
 
 			// Check if a var_dump has been forgotten
@@ -329,7 +343,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				//if ($reg[0] != 'db') $ok=false;
 			}
 			//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 			//exit;
 
 			// Check that forged sql string is using ' instead of " as string PHP quotes
@@ -463,8 +477,10 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			foreach ($matches as $key => $val) {
 				//var_dump($val);
 				if (!in_array($val[1], array(
-						"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'",
-						"'search_status'", '"mysqldump"', '"postgresqldump"', "'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'", '"MAIN_MAIL_SMTPS_PW"'))) {
+					"'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'", "'WEBSITE_LICENSE'",
+						'"mysqldump"', '"postgresqldump"',
+						"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'",
+						'"MAIN_MAIL_SMTPS_PW"', '"MAIN_MAIL_SMTPS_PW_EMAILING"', '"MAIN_MAIL_SMTPS_PW_TICKET"'))) {
 					$ok=false;
 					break;
 				}

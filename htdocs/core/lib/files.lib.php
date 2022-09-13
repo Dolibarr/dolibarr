@@ -54,10 +54,11 @@ function dol_basename($pathfile)
  *  @param	int			$nohook			Disable all hooks
  *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
  *  @param	string		$donotfollowsymlinks	Do not follow symbolic links
+ *  @param	string		$nbsecondsold	Only files older than $nbsecondsold
  *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  *  @see dol_dir_list_in_database()
  */
-function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0)
+function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
 {
 	global $db, $hookmanager;
 	global $object;
@@ -67,13 +68,14 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
 	}
 
-	$loaddate = ($mode == 1 || $mode == 2) ?true:false;
-	$loadsize = ($mode == 1 || $mode == 3) ?true:false;
-	$loadperm = ($mode == 1 || $mode == 4) ?true:false;
+	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold) ? true : false;
+	$loadsize = ($mode == 1 || $mode == 3) ?true : false;
+	$loadperm = ($mode == 1 || $mode == 4) ?true : false;
 
 	// Clean parameters
 	$path = preg_replace('/([\\/]+)$/i', '', $path);
 	$newpath = dol_osencode($path);
+	$now = dol_now();
 
 	$reshook = 0;
 	$file_list = array();
@@ -170,7 +172,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 						if ($recursive > 0) {
 							if (empty($donotfollowsymlinks) || !is_link($path."/".$file)) {
 								//var_dump('eee '. $path."/".$file. ' '.is_dir($path."/".$file).' '.is_link($path."/".$file));
-								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
+								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks, $nbsecondsold));
 							}
 						}
 					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {
@@ -183,18 +185,20 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 						}
 
 						if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into $path, only into $file
-							preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
-							$level1name = (isset($reg[1]) ? $reg[1] : '');
-							$file_list[] = array(
-								"name" => $file,
-								"path" => $path,
-								"level1name" => $level1name,
-								"relativename" => ($relativename ? $relativename.'/' : '').$file,
-								"fullname" => $path.'/'.$file,
-								"date" => $filedate,
-								"size" => $filesize,
-								"type" => 'file'
-							);
+							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
+								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
+								$level1name = (isset($reg[1]) ? $reg[1] : '');
+								$file_list[] = array(
+									"name" => $file,
+									"path" => $path,
+									"level1name" => $level1name,
+									"relativename" => ($relativename ? $relativename.'/' : '').$file,
+									"fullname" => $path.'/'.$file,
+									"date" => $filedate,
+									"size" => $filesize,
+									"type" => 'file'
+								);
+							}
 						}
 					}
 				}
@@ -318,7 +322,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 	if ($modulepart == 'produit' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 		global $object;
 		if (!empty($object->id)) {
-			if (!empty($conf->product->enabled)) {
+			if (isModEnabled("product")) {
 				$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
 				$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
@@ -1261,7 +1265,6 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 		$hookmanager->initHooks(array('fileslib'));
 
 		$parameters = array(
-			'GET' => $_GET,
 			'file' => $file,
 			'disableglob'=> $disableglob,
 			'nophperrors' => $nophperrors
@@ -2311,7 +2314,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 			 return 1;
 			 }
 			 else*/
-			//if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+			//if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
 			if (class_exists('ZipArchive')) {
 				$foundhandler = 1;
 
@@ -2421,7 +2424,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		return 'ErrorBadParameter';
 	}
 	if (empty($entity)) {
-		if (empty($conf->multicompany->enabled)) {
+		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
@@ -2921,9 +2924,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->produit->{$lire} || $fuser->rights->service->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->product->enabled)) {
+		if (isModEnabled("product")) {
 			$original_file = $conf->product->multidir_output[$entity].'/'.$original_file;
-		} elseif (!empty($conf->service->enabled)) {
+		} elseif (isModEnabled("service")) {
 			$original_file = $conf->service->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'product_batch' || $modulepart == 'produitlot') {
@@ -2934,7 +2937,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			$original_file = $conf->productbatch->multidir_output[$entity].'/'.$original_file;
 		}
 	} elseif ($modulepart == 'movement' || $modulepart == 'mouvement') {

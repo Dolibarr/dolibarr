@@ -448,20 +448,32 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 
 	$tmpplugin = 'select2';
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-          <script>
-        	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
-        		    dir: \'ltr\',
-        			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
+		<script>
+			$(document).ready(function () {
+				$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
+					dir: \'ltr\',
+					width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
-    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					matcher: function (params, data) {
+						if ($.trim(params.term) === "") {
+							return data;
+						}
+						keywords = (params.term).split(" ");
+						for (var i = 0; i < keywords.length; i++) {
+							if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1) {
+								return null;
+							}
+						}
+						return data;
+					},
+					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-					    //console.log($(data.element).attr("data-html"));
-					    if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
+						//console.log($(data.element).attr("data-html"));
+						if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
 						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
@@ -498,7 +510,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 				$.getJSON(url,
 						{
 							action: method,

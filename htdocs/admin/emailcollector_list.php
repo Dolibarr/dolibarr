@@ -21,6 +21,7 @@
  *      \brief      List page for emailcollector
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -142,7 +143,7 @@ $permissiontodelete = $user->admin;
 if (!$user->admin) {
 	accessforbidden();
 }
-if (empty($conf->emailcollector->enabled)) {
+if (!isModEnabled('emailcollector')) {
 	accessforbidden('Module not enabled');
 }
 

@@ -37,12 +37,12 @@ $langs->loadLangs(array("recruitment", "other"));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'recruitmentjobpositioncard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+//$lineid = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new RecruitmentJobPosition($db);
@@ -177,7 +177,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("PositionToBeFilled");
+$title = $object->ref." - ".$langs->trans('Card');
 $help_url = '';
 llxHeader('', $title, $help_url);
 

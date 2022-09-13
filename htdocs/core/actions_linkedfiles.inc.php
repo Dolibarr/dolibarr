@@ -41,8 +41,8 @@ if ((GETPOST('sendit', 'alpha')
 	|| ($action == 'confirm_deletefile' && $confirm == 'yes')
 	|| ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 	|| ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))) && empty($permissiontoadd)) {
-	dol_syslog('The file actions_linkedfiles.inc.php was included but paramater $permissiontoadd as not set before.');
-	print 'The file actions_linkedfiles.inc.php was included but paramater $permissiontoadd as not set before.';
+	dol_syslog('The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.');
+	print 'The file actions_linkedfiles.inc.php was included but parameter $permissiontoadd was not set before.';
 	die;
 }
 

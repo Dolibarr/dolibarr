@@ -37,10 +37,10 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
@@ -625,7 +625,7 @@ class Expedition extends CommonObject
 				$this->fetch_optionals();
 
 				// Fix Get multicurrency param for transmited
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					if (!empty($this->multicurrency_code)) {
 						$this->multicurrency_code = $this->thirdparty->multicurrency_code;
 					}
@@ -965,7 +965,7 @@ class Expedition extends CommonObject
 		}
 
 		// If product need a batch number, we should not have called this function but addline_batch instead.
-		if (!empty($conf->productbatch->enabled) && !empty($orderline->fk_product) && !empty($orderline->product_tobatch)) {
+		if (isModEnabled('productbatch') && !empty($orderline->fk_product) && !empty($orderline->product_tobatch)) {
 			$this->error = 'ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
 			return -4;
 		}
@@ -1291,7 +1291,7 @@ class Expedition extends CommonObject
 		}
 
 		// delete batch expedition line
-		if (!$error && $conf->productbatch->enabled) {
+		if (!$error && isModEnabled('productbatch')) {
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
@@ -1716,7 +1716,7 @@ class Expedition extends CommonObject
 				}
 
 				// Detail of batch
-				if (!empty($conf->productbatch->enabled) && $obj->line_id > 0 && $obj->product_tobatch > 0) {
+				if (isModEnabled('productbatch') && $obj->line_id > 0 && $obj->product_tobatch > 0) {
 					$newdetailbatch = $shipmentlinebatch->fetchAll($obj->line_id, $obj->fk_product);
 
 					if (is_array($newdetailbatch)) {
@@ -2901,7 +2901,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		// update lot
 
-		if (!empty($batch) && $conf->productbatch->enabled) {
+		if (!empty($batch) && isModEnabled('productbatch')) {
 			dol_syslog(get_class($this)."::update expedition batch id=$expedition_batch_id, batch_id=$batch_id, batch=$batch");
 
 			if (empty($batch_id) || empty($this->fk_product)) {

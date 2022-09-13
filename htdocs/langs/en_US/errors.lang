@@ -291,6 +291,9 @@ ErrorAjaxRequestFailed=Request failed
 ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
+ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
+ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account 
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

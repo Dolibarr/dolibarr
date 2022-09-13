@@ -25,6 +25,7 @@
  *  \brief      files linked to a ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -145,7 +146,7 @@ if ($object->id) {
 	}
 
 	// Thirdparty
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 		/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 			$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
@@ -159,7 +160,7 @@ if ($object->id) {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ticket->write) {

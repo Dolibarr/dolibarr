@@ -16,28 +16,26 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/list.php
- *       \brief      Page to display list of bookmarks
- *       \ingroup    bookmark
+ *    \file       htdocs/bookmarks/list.php
+ *    \ingroup    bookmark
+ *    \brief      Page to display list of bookmarks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-
-// Security check
-if (empty($user->rights->bookmark->lire)) {
-	restrictedArea($user, 'bookmarks');
-}
+$id = GETPOST("id", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
@@ -58,10 +56,13 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-$id = GETPOST("id", 'int');
-
+// Initialize Objects
 $object = new Bookmark($db);
 
+// Security check
+restrictedArea($user, 'bookmark');
+
+// Permissions
 $permissiontoread = !empty($user->rights->bookmark->lire);
 $permissiontoadd = !empty($user->rights->bookmark->creer);
 $permissiontodelete = !empty($user->rights->bookmark->supprimer);
@@ -80,6 +81,7 @@ if ($action == 'delete') {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
 
 
 /*
