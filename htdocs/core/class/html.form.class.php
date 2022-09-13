@@ -6634,7 +6634,7 @@ class Form
 		}
 
 		// Add a "Now" link
-		if ($conf->use_javascript_ajax && $addnowlink) {
+		if (!empty($conf->use_javascript_ajax) && $addnowlink) {
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
 			if ($addnowlink == 2) { // local computer time
