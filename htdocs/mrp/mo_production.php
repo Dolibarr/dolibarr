@@ -319,11 +319,10 @@ if (empty($reshook)) {
 						// Check warehouse is set if we should have to
 							if (GETPOSTISSET('idwarehousetoproduce-' . $line->id . '-' . $i)) {    // If there is a warehouse to set
 								if (!(GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i, 'int') > 0)) {    // If there is no warehouse set.
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
-								$error++;
+									$langs->load("errors");
+									setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+									$error++;
 								}
-
 								if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i, 'int'))) {
 									$langs->load("errors");
 									setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
