@@ -567,6 +567,7 @@ class BOM extends CommonObject
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
+	 * @param	string	$fk_unit				Unit
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '')
@@ -740,7 +741,9 @@ class BOM extends CommonObject
 			$this->line->efficiency = $efficiency;
 			$this->line->import_key = $import_key;
 			$this->line->position = $rankToUse;
-			if(!empty($fk_unit)) $this->line->fk_unit = $fk_unit;
+			if (!empty($fk_unit)) {
+				$this->line->fk_unit = $fk_unit;
+			}
 
 			$result = $this->line->update($user);
 
