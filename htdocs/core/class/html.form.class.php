@@ -8693,7 +8693,7 @@ class Form
 					'enabled'=>isModEnabled('expedition'),
 					'perms'=>1,
 					'label'=>'LinkToExpedition',
-					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."expedition as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('shipping').')'),
+					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, SUM(pd.subprice*ed.qty) as montantHT FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."expedition as t LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON t.rowid = ed.fk_expedition LEFT JOIN ".MAIN_DB_PREFIX."commandedet as pd ON pd.rowid = ed.fk_origin_line WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('shipping').')GROUP BY t.rowid'),
 				'order'=>array(
 					'enabled'=>isModEnabled('commande'),
 					'perms'=>1,
@@ -8825,7 +8825,7 @@ class Form
 							$form = new Form($this->db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
-						print '<span class="amount">'.price($objp->total_ht).'</span>';
+						print '<span class="amount">'.price($objp->montantHT).'</span>';
 						print '</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';
