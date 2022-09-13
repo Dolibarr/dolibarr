@@ -120,24 +120,10 @@ class ExpenseReportIk extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
 
-		/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
-	}
 
 
 	/**
