@@ -322,14 +322,14 @@ if (empty($reshook)) {
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
 								$error++;
-							}
+								}
 
-							if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i, 'int'))) {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
+								if (isModEnabled('productbatch') && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i, 'int'))) {
+									$langs->load("errors");
+									setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+									$error++;
+								}
 							}
-						}
 
 						$idstockmove = 0;
 							if (!$error && GETPOST('idwarehousetoproduce-' . $line->id . '-' . $i, 'int') > 0) {
