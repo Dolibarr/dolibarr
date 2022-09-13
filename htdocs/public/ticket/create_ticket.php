@@ -438,7 +438,7 @@ if (empty($reshook)) {
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
 							if ($mailfile->error || $mailfile->errors) {
-								setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+								setEventMessages($mailfile->error, !empty($mailfile->errors), 'errors');
 							} else {
 								$result = $mailfile->sendfile();
 							}
