@@ -398,7 +398,11 @@ Calculated=Calculated
 Formula=Formula
 
 ## Lettering
+LetteringAuto=Lettering auto
+LetteringManual=Lettering manual
 Unlettering=Unlettering
+UnletteringAuto=Unlettering auto
+UnletteringManual=Unlettering manual
 AccountancyNoLetteringModified=No lettering modified
 AccountancyOneLetteringModifiedSuccessfully=One lettering successfully modified
 AccountancyLetteringModifiedSuccessfully=%s lettering successfully modified
@@ -407,7 +411,8 @@ AccountancyOneUnletteringModifiedSuccessfully=One unlettering successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unlettering successfully modified
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unlettering confirmation
+ConfirmMassUnletteringAuto=Bulk auto unlettering confirmation
+ConfirmMassUnletteringManual=Bulk manual unlettering confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to Unletter the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?

@@ -398,7 +398,11 @@ Calculated=Calculé
 Formula=Formule
 
 ## Lettering
+LetteringAuto=Lettrage auto
+LetteringManual=Lettrage manuel
 Unlettering=Délettrage
+UnletteringAuto=Délettrage auto
+UnletteringManual=Délettrage manuel
 AccountancyNoLetteringModified=Aucun lettrage éffectué
 AccountancyOneLetteringModifiedSuccessfully=Un lettrage a été éffectué
 AccountancyLetteringModifiedSuccessfully=%s lettrages ont été éffectués
@@ -407,7 +411,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Un délettrage a été éffectué
 AccountancyUnletteringModifiedSuccessfully=%s délettrage ont été éffectués
 
 ## Confirm box
-ConfirmMassUnlettering=Confirmation de délettrage en masse
+ConfirmMassUnletteringAuto=Confirmation de délettrage auto en masse
+ConfirmMassUnletteringManual=Confirmation de délettrage manuel en masse
 ConfirmMassUnletteringQuestion=Êtes-vous sur de vouloir délettrer les %s enregistrement(s) sélectionné(s) ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cette action supprime l'écriture de la comptabilité (toutes les lignes opérations liées à une même écriture seront effacées). Êtes-vous sur de vouloir supprimer les %s enregistrement(s) sélectionné(s) ?
