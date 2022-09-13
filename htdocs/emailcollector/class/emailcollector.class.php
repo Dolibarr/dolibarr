@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.commande.class.php';  
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.facture.class.php';            // Supplier Invoice
 require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';                       // Project
 require_once DOL_DOCUMENT_ROOT .'/reception/class/reception.class.php';                  // Reception
-require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class.php';   // Recruiting 
+require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class.php';   // Recruiting
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
 require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
@@ -65,17 +65,17 @@ class EmailCollector extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'emailcollector';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'emailcollector_emailcollector';
-	
+
 	/**
 	 * @var int  Does emailcollector support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
-	
+
 	/**
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
@@ -95,7 +95,7 @@ class EmailCollector extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
-	
+
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
@@ -2879,7 +2879,7 @@ class EmailCollector extends CommonObject
 	 2.2.1 text/plain
 	 2.2.2 text/html
 	 */
-	
+
 	/**
 	 * Sub function for getpart(). Only called by createPartArray() and itself.
 	 *
