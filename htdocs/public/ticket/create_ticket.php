@@ -232,29 +232,34 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->db->begin();
-
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
 			$object->ip = getUserRemoteIP();
 
-			$sql = "SELECT COUNT(ref) as nb_tickets";
-			$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
-			$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$i++;
-					$obj = $db->fetch_object($resql);
-					$nb_post_ip = $obj->nb_tickets;
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+			// Calculate nb of post for IP
+			$nb_post_ip = 0;
+			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+				$sql = "SELECT COUNT(ref) as nb_tickets";
+				$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+				$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$i++;
+						$obj = $db->fetch_object($resql);
+						$nb_post_ip = $obj->nb_tickets;
+					}
 				}
 			}
-
+			
 			$object->track_id = generate_random_id(16);
 
+			$object->db->begin();
 
 			$object->subject = GETPOST("subject", "restricthtml");
 			$object->message = GETPOST("message", "restricthtml");
@@ -321,7 +326,7 @@ if (empty($reshook)) {
 
 			$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
-			if ($nb_post_ip >= getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000)) {
+			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
 				$errors = array($langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 				array_push($object->errors, array($langs->trans("AlreadyTooMuchPostOnThisIPAdress")));
