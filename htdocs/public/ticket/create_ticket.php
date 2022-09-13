@@ -256,7 +256,7 @@ if (empty($reshook)) {
 					}
 				}
 			}
-			
+
 			$object->track_id = generate_random_id(16);
 
 			$object->db->begin();
