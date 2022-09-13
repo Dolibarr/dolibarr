@@ -132,6 +132,7 @@ $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
+$optioncss = GETPOST('optioncss', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
@@ -196,7 +197,7 @@ $arrayfields = array(
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
@@ -204,8 +205,9 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	unset($arrayfields['t.lettering_code']);
 }
 
-$listofformat = AccountancyExport::getType();
-$formatexportset = $conf->global->ACCOUNTING_EXPORT_MODELCSV;
+$accountancyexport = new AccountancyExport($db);
+$listofformat = $accountancyexport->getType();
+$formatexportset = getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV');
 if (empty($listofformat[$formatexportset])) {
 	$formatexportset = 1;
 }
@@ -304,7 +306,7 @@ if (empty($reshook)) {
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 	}
 
 	// Must be after the remove filter action, before the export.
@@ -804,16 +806,18 @@ if ($action == 'export_file') {
 
 	$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
 
-	// If 0 or not set, we NOT check by default.
-	$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
-	$form_question['notifiedvalidationdate'] = array(
-		'name' => 'notifiedvalidationdate',
-		'type' => 'checkbox',
-		'label' => $langs->trans('NotifiedValidationDate'),
-		'value' => $checked,
-	);
+	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
+		// If 0 or not set, we NOT check by default.
+		$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
+		$form_question['notifiedvalidationdate'] = array(
+			'name' => 'notifiedvalidationdate',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedValidationDate', $langs->transnoentitiesnoconv("MenuAccountancyClosure")),
+			'value' => $checked,
+		);
 
-	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
+		$form_question['separator2'] = array('name' => 'separator2', 'type' => 'separator');
+	}
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
@@ -950,6 +954,8 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
+
+$moreforfilter = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook

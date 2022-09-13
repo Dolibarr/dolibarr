@@ -939,7 +939,7 @@ class FormMail extends Form
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
 				} else {
 					if (!isset($this->ckeditortoolbar)) {
-						$this->ckeditortoolbar = 'dolibarr_notes';
+						$this->ckeditortoolbar = 'dolibarr_mailings';
 					}
 
 					// Editor wysiwyg

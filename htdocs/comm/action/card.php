@@ -1840,12 +1840,21 @@ if ($id > 0) {
 	} else {
 		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
+		$formconfirm = '';
+
 		// Clone event
 		if ($action == 'clone') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
-
-			print $formconfirm;
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.GETPOST('id'), $langs->trans('ToClone'), $langs->trans('ConfirmCloneEvent', $object->label), 'confirm_clone', array(), 'yes', 1);
 		}
+
+		// Call Hook formConfirm
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+
+		// Print form confirm
+		print $formconfirm;
 
 		$linkback = '';
 		// Link to other agenda views

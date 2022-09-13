@@ -1169,7 +1169,6 @@ class Task extends CommonObject
 		$sql .= ", task_date_withhour";
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
-		$sql .= ", datec";
 		$sql .= ", note";
 		$sql .= ", datec";
 		$sql .= ") VALUES (";
@@ -1179,7 +1178,6 @@ class Task extends CommonObject
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
 		$sql .= ", ".$this->timespent_duration;
 		$sql .= ", ".$this->timespent_fk_user;
-		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
