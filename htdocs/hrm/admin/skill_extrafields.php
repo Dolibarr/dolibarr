@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/skill_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/skill_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm skills
  */
 
 // Load Dolibarr environment
@@ -48,6 +48,7 @@ $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_skill'; //Must be the $table_element of the class that manage extrafield
 
+// Security check
 if (!$user->admin) {
 	accessforbidden();
 }
