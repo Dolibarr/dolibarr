@@ -491,7 +491,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
-if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
+if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
 	$res = $socstat->fetch($socid);
 	if ($res > 0) {
