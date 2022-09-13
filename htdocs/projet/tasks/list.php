@@ -988,7 +988,7 @@ while ($i < min($num, $limit)) {
 		// Description
 		if (!empty($arrayfields['t.description']['checked'])) {
 			print '<td>';
-            print dolGetFirstLineOfText($object->description, 5);
+			print dolGetFirstLineOfText($object->description, 5);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
