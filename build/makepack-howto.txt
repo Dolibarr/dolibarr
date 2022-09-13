@@ -25,9 +25,9 @@ Prerequisites to build autoexe DoliWamp package:
 
 ***** Prerequisites For Windows *****
 
-Install Perl
+Install Perl.
 Install WampServer-3.2.*-64.exe
-isetup-5.5.8.exe
+Install isetup-5.5.8.exe
 
 
 ***** Actions to do a BETA *****

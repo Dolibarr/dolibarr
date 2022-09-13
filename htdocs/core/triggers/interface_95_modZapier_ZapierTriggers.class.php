@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -236,7 +236,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'ORDER_SUPPLIER_REFUSE':
 			// case 'ORDER_SUPPLIER_CANCEL':
 			// case 'ORDER_SUPPLIER_SENTBYMAIL':
-			// case 'ORDER_SUPPLIER_DISPATCH':
+			// case 'ORDER_SUPPLIER_RECEIVE':
 			// case 'LINEORDER_SUPPLIER_DISPATCH':
 			// case 'LINEORDER_SUPPLIER_CREATE':
 			// case 'LINEORDER_SUPPLIER_UPDATE':
@@ -396,7 +396,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'SHIPPING_DELETE':
 		}
 		if ($logtriggeraction) {
-			dol_syslog("Trigger '".$this->name."' for action '.$action.' launched by ".__FILE__." id=".$object->id);
+			dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__." id=".$object->id);
 		}
 		return 0;
 	}
@@ -404,14 +404,20 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 /**
  * Post webhook in zapier with object data
  *
- * @param string $url url provided by zapier
- * @param string $json data to send
+ * @param string 	$url 		Url provided by zapier
+ * @param string 	$json 		Data to send
  * @return void
  */
 function zapierPostWebhook($url, $json)
 {
 	$headers = array('Accept: application/json', 'Content-Type: application/json');
-	// TODO supprimer le webhook en cas de mauvaise réponse
+
+	// TODO disable wekhook if error ?
+
+	dol_syslog("Send message to Zapier with json size=".dol_strlen($json), LOG_DEBUG);
+	getURLContent($url, 'POSTALREADYFORMATED', $json, 1, $headers, array('http', 'https'), 0);
+
+	/*
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -420,8 +426,10 @@ function zapierPostWebhook($url, $json)
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
 	$output = curl_exec($ch);
 	curl_close($ch);
+	*/
 }
 
 /**

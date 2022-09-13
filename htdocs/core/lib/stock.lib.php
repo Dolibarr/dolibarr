@@ -54,7 +54,7 @@ function stock_prepare_head($object)
 	*/
 
 	/* Disabled because will never be implemented. Table always empty.
-	if (! empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
+	if (!empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
 	{
 		// Should not be enabled by defaut because does not work yet correctly because
 		// personnal stocks are not tagged into table llx_entrepot

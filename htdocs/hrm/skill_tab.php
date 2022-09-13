@@ -64,7 +64,9 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 	} elseif ($objecttype == "user") {
 		$object = new User($db);
 	}
-} else accessforbidden($langs->trans('ErrorBadObjectType'));
+} else {
+	accessforbidden('ErrorBadObjectType');
+}
 
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -259,7 +261,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');

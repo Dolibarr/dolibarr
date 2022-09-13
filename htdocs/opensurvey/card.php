@@ -18,15 +18,16 @@
  */
 
 /**
- *	\file       htdocs/opensurvey/card.php
- *	\ingroup    opensurvey
- *	\brief      Page to edit survey
+ *    \file       htdocs/opensurvey/card.php
+ *    \ingroup    opensurvey
+ *    \brief      Page to edit survey
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
@@ -36,7 +37,7 @@ if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
 
-// Initialisation des variables
+// Initialize Variables
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -46,6 +47,7 @@ if (GETPOST('id')) {
 	$numsondage = (string) GETPOST('id', 'alpha');
 }
 
+// Initialize objects
 $object = new Opensurveysondage($db);
 
 $result = $object->fetch(0, $numsondage);

@@ -25,6 +25,7 @@
  *  \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -87,10 +88,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->rights->adherent->creer;
+$canaddmember = $user->hasRight('adherent', 'creer');
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
-	$caneditfieldmember = $user->rights->adherent->creer;
+	$caneditfieldmember = $user->hasRight('adherent', 'creer');
 }
 
 $permissiontoadd = $canaddmember;
@@ -186,8 +187,8 @@ if ($id > 0) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'member';
-		$permissiontoadd = $user->rights->adherent->creer;
-		$permtoedit = $user->rights->adherent->creer;
+		$permissiontoadd = $user->hasRight('adherent', 'creer');
+		$permtoedit = $user->hasRight('adherent', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";

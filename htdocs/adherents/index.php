@@ -27,19 +27,24 @@
  *       \brief      Home page of membership module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "members"));
+
+
 $hookmanager = new HookManager($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('membersindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array("companies", "members"));
 
 // Security check
 $result = restrictedArea($user, 'adherent');

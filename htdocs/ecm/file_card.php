@@ -21,6 +21,7 @@
  *	\brief     	Card of a file for ECM module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -371,8 +372,8 @@ if (!empty($object->share)) {
 		}
 
 		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
-		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
-		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
+		//if (!empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
+		//elseif (!empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {

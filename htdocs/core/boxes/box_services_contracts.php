@@ -171,7 +171,7 @@ class box_services_contracts extends ModeleBoxes
 
 						// Add description in form
 						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							//$text .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							$description = ''; // Already added into main visible desc
 						}
 

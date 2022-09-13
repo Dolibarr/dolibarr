@@ -123,7 +123,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
-				if ($val['picto']) {
+				if (!empty($val['picto'])) {
 					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
 				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";

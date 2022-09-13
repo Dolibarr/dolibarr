@@ -24,6 +24,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -334,7 +335,7 @@ print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 
 print '</tr>';
 
 if ($num == 0) {
-	print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+	print '<tr><td colspan="11" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 } else {
 	while ($obj = $db->fetch_object($resql)) {
 		$user = new User($db);
