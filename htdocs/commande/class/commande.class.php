@@ -1073,7 +1073,7 @@ class Commande extends CommonOrder
 						return -1;
 					}
 					// Defined the new fk_parent_line
-					if ($result > 0) {
+					if ($result > 0 && $line->product_type == 9) {
 						$fk_parent_line = $result;
 					}
 				}
