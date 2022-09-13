@@ -6713,7 +6713,7 @@ class Form
 				}
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
-			if ($reset_scripts && empty($conf->dol_optimize_smallscreen)) {
+			if ($reset_scripts && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$retstring .= ' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="now" onClick="'.$reset_scripts.'">';
 				$retstring .= $langs->trans("Now");
 				$retstring .= '</button> ';
