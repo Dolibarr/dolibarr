@@ -131,7 +131,7 @@ if ($id > 0 && empty($object->id)) {
 	}
 }
 if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+	if (!($object->client > 0) || !$user->hasRight('societe', 'lire')) {
 		accessforbidden();
 	}
 }

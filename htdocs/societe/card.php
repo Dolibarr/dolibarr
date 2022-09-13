@@ -137,9 +137,9 @@ if (!empty($canvas)) {
 }
 
 // Permissions
-$permissiontoread 	= $user->rights->societe->lire;
+$permissiontoread 	= $user->hasRight('societe', 'lire');
 $permissiontoadd 	= $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
+$permissiontodelete = $user->hasRight('societe', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == 0);
 $permissionnote 	= $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink 	= $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -914,7 +914,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete third party
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('societe', 'supprimer')) {
 		$object->fetch($socid);
 		$object->oldcopy = clone $object;
 		$result = $object->delete($socid, $user);
@@ -3247,7 +3247,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
 
-				if ($user->rights->societe->supprimer) {
+				if ($user->hasRight('societe', 'supprimer')) {
 					$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
 					$buttonId = 'action-delete-no-ajax';
 					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
@@ -3277,7 +3277,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				 */
 				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
-				$genallowed = $user->rights->societe->lire;
+				$genallowed = $user->hasRight('societe', 'lire');
 				$delallowed = $user->rights->societe->creer;
 
 				print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);

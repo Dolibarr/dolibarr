@@ -1656,7 +1656,7 @@ class Ticket extends CommonObject
 				$sendtocc = '';
 				$deliveryreceipt = 0;
 				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $tmpmessage, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-				if ($mailfile->error || $mailfile->errors) {
+				if ($mailfile->error || !empty($mailfile->errors)) {
 					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				} else {
 					$result = $mailfile->sendfile();

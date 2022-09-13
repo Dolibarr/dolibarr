@@ -709,7 +709,7 @@ print '<br>';
 if (!empty($conn_id)) {
 	$disconnect = dol_ftp_close($conn_id);
 
-	if ($disconnect == false) {
+	if (!$disconnect) {
 		setEventMessages($langs->trans("ErrorFTPNodisconnect"), null, 'errors');
 	}
 }
