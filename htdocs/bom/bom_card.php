@@ -148,6 +148,7 @@ if (empty($reshook)) {
 	if ($action == 'addline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
+		$predef = '';
 
 		// Set if we used free entry or predefined product
 		$bom_child_id = (int) GETPOST('bom_id', 'int');
@@ -190,6 +191,17 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key]);
+			}
+		}
+
 		if (!$error) {
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
@@ -199,6 +211,7 @@ if (empty($reshook)) {
 			$bomline->qty_frozen = (int) $qty_frozen;
 			$bomline->disable_stock_change = (int) $disable_stock_change;
 			$bomline->efficiency = $efficiency;
+			$bomline->array_options = $array_options;
 
 			// Rang to use
 			$rangmax = $object->line_max(0);
@@ -223,7 +236,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Add line
+	// Update line
 	if ($action == 'updateline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
@@ -239,12 +252,24 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key]);
+			}
+		}
+
 		$bomline = new BOMLine($db);
 		$bomline->fetch($lineid);
 		$bomline->qty = $qty;
 		$bomline->qty_frozen = (int) $qty_frozen;
 		$bomline->disable_stock_change = (int) $disable_stock_change;
 		$bomline->efficiency = $efficiency;
+		$bomline->array_options = $array_options;
 
 		$result = $bomline->update($user);
 		if ($result <= 0) {
