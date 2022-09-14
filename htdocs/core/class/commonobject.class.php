@@ -3553,7 +3553,7 @@ abstract class CommonObject
 		}
 
 		$forcedroundingmode = $roundingadjust;
-		if ($forcedroundingmode == 'auto' && getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')) {
+		if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) {
 			$forcedroundingmode = getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND');
 		} elseif ($forcedroundingmode == 'auto') {
 			$forcedroundingmode = '0';
@@ -3686,10 +3686,10 @@ abstract class CommonObject
 							dol_print_error($this->db, 'Failed to update line');
 						}
 
-						$this->total_tva = (float) price2num($this->total_tva - $diff);
-						$this->total_ttc = (float) price2num($this->total_ttc - $diff);
-						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff);
-						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff);
+						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
+						$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
+						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
+						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
 					}
 				}
 
