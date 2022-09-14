@@ -891,8 +891,12 @@ class ImportXlsx extends ModeleImports
 										$socialnetwork = $tmp[1];
 										$jsondata = $data[$key];
 										$json = json_decode($jsondata);
-										$where[] = $key." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
-										$filters[] = $col." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
+										//var_dump($stringtosearch);
+										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
+										$where[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
 										$where[] = $key.' = '.$data[$key];
 										$filters[] = $col.' = '.$data[$key];
