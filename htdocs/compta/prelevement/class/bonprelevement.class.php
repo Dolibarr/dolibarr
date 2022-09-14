@@ -2175,7 +2175,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
-			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
+			fputs($this->file, 'INCORRECT EMETTEUR '.$this->raison_sociale.$CrLf);
+			$XML_SEPA_INFO = '';
 		}
 		return $XML_SEPA_INFO;
 	}
