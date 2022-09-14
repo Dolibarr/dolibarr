@@ -1732,7 +1732,7 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		$now = dol_now();
-		$send_email = GETPOST('send_email','int');
+		$send_email = GETPOST('send_email', 'int');
 
 		// Clean parameters
 		if (isset($this->fk_track_id)) {
@@ -1753,7 +1753,7 @@ class Ticket extends CommonObject
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
 		}
-		if ($send_email > 0){
+		if ($send_email > 0) {
 			$actioncomm->type_code = 'AC_EMAIL';
 		}
 		$actioncomm->socid = $this->socid;
