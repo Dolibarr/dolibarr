@@ -887,6 +887,9 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
+.cursorwait {
+	cursor: wait;
+}
 .backgroundblank {
 	background-color: #fff;
 }
