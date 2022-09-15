@@ -151,9 +151,14 @@ function bank_admin_prepare_head($object)
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
-
+	
 	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('bank_account');
+	$nbExtrafields=count($extrafields->attribute_label); 
+	if ($nbExtrafields >0)
+		$head[$h][1].= ' <span class="badge">'.$nbExtrafields.'</span>';
 	$head[$h][2] = 'attributes';
 	$h++;
 
