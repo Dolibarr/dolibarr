@@ -420,7 +420,7 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * 	@param string $unit_type weight,size,surface,volume,qty,time...
+	 * @param string $unit_type weight,size,surface,volume,qty,time...
 	 * @return int            <0 if KO, Id of code if OK
 	 */
 	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
