@@ -28,7 +28,10 @@
  */
 function donation_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('donation');
 
 	$h = 0;
 	$head = array();
@@ -46,6 +49,10 @@ function donation_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = is_countable($extrafields->attributes['donation']['label']) ? count($extrafields->attributes['donation']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
