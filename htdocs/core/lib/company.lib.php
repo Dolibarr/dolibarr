@@ -1155,7 +1155,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td></td>';
+		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1197,7 +1197,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td>'.$langs->trans("DolibarrLogin").'</td>';
+		print '<th class="wrapcolumntitle liste_titre">'.$langs->trans("DolibarrLogin").'</th>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
