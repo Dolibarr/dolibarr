@@ -794,10 +794,10 @@ class Lettering extends BookKeeping
 	/**
 	 * Get element ids grouped by link or element in common
 	 *
-	 * @param	array	&$link_by_element	List of payment ids by link key
-	 * @param	array	&$element_by_link	List of element ids by link key
+	 * @param	array	$link_by_element	List of payment ids by link key
+	 * @param	array	$element_by_link	List of element ids by link key
 	 * @param	string	$link_key			Link key (used for recursive function)
-	 * @param	array	&$current_group		Current group (used for recursive function)
+	 * @param	array	$current_group		Current group (used for recursive function)
 	 * @return	array						List of element ids grouped by link or element in common
 	 */
 	public function getGroupElements(&$link_by_element, &$element_by_link, $link_key = '', &$current_group = array())
