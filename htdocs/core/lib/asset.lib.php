@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018-2022  OpenDSI     <support@open-dsi.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,11 @@
  */
 function assetAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('asset');
+	$extrafields->fetch_name_optionals_label('assetmodel');
 
 	$langs->load("assets");
 
@@ -52,11 +57,19 @@ function assetAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/asset_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = is_countable($extrafields->attributes['asset']['label']) ? count($extrafields->attributes['asset']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'asset_extrafields';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/assetmodel_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
+	$nbExtrafields = is_countable($extrafields->attributes['assetmodel']['label']) ? count($extrafields->attributes['assetmodel']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'assetmodel_extrafields';
 	$h++;
 

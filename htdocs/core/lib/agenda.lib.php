@@ -20,8 +20,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/agenda.lib.php
- *  \brief		Set of function for the agenda module
+ * \file		htdocs/core/lib/agenda.lib.php
+ * \brief		Set of function for the agenda module
  */
 
 
@@ -314,7 +314,7 @@ function show_array_last_actions_done($max = 5)
 			print '<tr class="oddeven">';
 
 			$staticaction->type_code = $obj->code;
-			$staticaction->libelle = $obj->label;
+			$staticaction->label = $obj->label;
 			$staticaction->id = $obj->id;
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
