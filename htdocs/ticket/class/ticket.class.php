@@ -1727,7 +1727,7 @@ class Ticket extends CommonObject
 	 * @param boolean	 $send_email      Whether the message is sent by email
 	 * @return int						  <0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = FALSE)
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1753,7 +1753,7 @@ class Ticket extends CommonObject
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
 		}
-		if ($send_email){
+		if ($send_email) {
 			$actioncomm->type_code = 'AC_EMAIL';
 		}
 		$actioncomm->socid = $this->socid;
