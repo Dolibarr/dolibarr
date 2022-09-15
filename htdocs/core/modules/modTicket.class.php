@@ -122,8 +122,8 @@ class modTicket extends DolibarrModules
 
 
 		$this->tabs = array(
-			'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
-			'project:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
+			'thirdparty:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
+			'project:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
 		);
 
 		// Dictionaries

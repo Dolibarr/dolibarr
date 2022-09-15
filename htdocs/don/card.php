@@ -27,6 +27,7 @@
  *  \brief      Page of donation card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -351,9 +352,9 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
 		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-		if (! empty($newlang))
+		if (!empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($newlang);
@@ -382,7 +383,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -460,7 +461,7 @@ if ($action == 'create') {
 	print $form->selectyesno("public", $public_donation, 1);
 	print "</td></tr>\n";
 
-	if (empty($conf->societe->enabled) || empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (!isModEnabled('societe') || empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
 		print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
@@ -511,7 +512,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
 		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print "</td></tr>\n";
@@ -639,7 +640,7 @@ if (!empty($id) && $action == 'edit') {
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
@@ -700,7 +701,7 @@ if (!empty($id) && $action != 'edit') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->don->creer) {

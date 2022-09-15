@@ -24,6 +24,7 @@
  *  \brief      List of various payments
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -151,11 +152,11 @@ $arrayfields = array(
 	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
 	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
 	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
-	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>!empty($conf->project->enabled)),
+	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>isModEnabled('project')),
 	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("banque")),
 	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("banque")),
-	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>!empty($conf->accounting->enabled)),
-	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>!empty($conf->accounting->enabled)),
+	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>isModEnabled('accounting')),
+	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>isModEnabled('accounting')),
 	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
 	'credit'		=>array('label'=>"Credit", 'checked'=>1, 'position'=>510),
 );
@@ -190,7 +191,7 @@ $form = new Form($db);
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
-if ($arrayfields['bank']['checked'] && !empty($conf->accounting->enabled)) {
+if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
 	$accountingjournal = new AccountingJournal($db);
 }
 if ($arrayfields['ref']['checked']) {
@@ -418,7 +419,7 @@ if ($resql) {
 	// Payment type
 	if ($arrayfields['type']['checked']) {
 		print '<td class="liste_titre center">';
-		$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 
@@ -621,7 +622,7 @@ if ($resql) {
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);

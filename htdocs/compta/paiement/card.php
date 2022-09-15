@@ -27,6 +27,7 @@
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -119,8 +120,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 				$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 			}
 
-			$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-			$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+			$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+			$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 			$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 			$sql = 'SELECT f.rowid as facid';
@@ -425,7 +426,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -462,7 +463,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;

@@ -90,7 +90,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		if ($mode == 1) {
 			$out .= "hash('".$securekeyseed."' + '".$type."' + proposal_ref)";
 		} else {
-			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $object->entity), '0');
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
 		}
 		/*
 		if ($mode == 1) {
@@ -119,7 +119,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 	}
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+	if (!empty($out) && isModEnabled('multicompany')) {
 		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 	}
 

@@ -173,7 +173,7 @@ class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print 'Error: '.$soapclient->error_str;
 			print "\n<br>\n";

@@ -24,6 +24,7 @@
  *      \brief      Note card reception
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
@@ -51,7 +52,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
+	if ($typeobject == 'commande' && $object->$typeobject->id && isModEnabled('commande')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}

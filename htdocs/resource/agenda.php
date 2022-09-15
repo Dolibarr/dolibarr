@@ -28,6 +28,7 @@
  *  \brief      Page of resource events
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -135,7 +136,7 @@ if ($object->id > 0) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$type = $langs->trans('ResourceSingular');

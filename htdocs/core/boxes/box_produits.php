@@ -150,6 +150,11 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 					$productstatic->date_modification = $datem;
 
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+					if ($productstatic->isService()) {
+						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+					}
+
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
 						'text' => $productstatic->getNomUrl(1),
@@ -162,22 +167,24 @@ class box_produits extends ModeleBoxes
 					);
 					$price = '';
 					$price_base_type = '';
-					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
-						$price_base_type = $langs->trans($objp->price_base_type);
-						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-					} else {
-						//Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
-						$priceparser = new PriceParser($this->db);
-						$price_result = $priceparser->parseProduct($productstatic);
-						if ($price_result >= 0) {
-							if ($objp->price_base_type == 'HT') {
-								$price_base_type = $langs->trans("HT");
-							} else {
-								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
-								$price_base_type = $langs->trans("TTC");
+					if ($usercancreadprice) {
+						if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
+							$price_base_type = $langs->trans($objp->price_base_type);
+							$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+						} else {
+							//Parse the dynamic price
+							$productstatic->fetch($objp->rowid, '', '', 1);
+							$priceparser = new PriceParser($this->db);
+							$price_result = $priceparser->parseProduct($productstatic);
+							if ($price_result >= 0) {
+								if ($objp->price_base_type == 'HT') {
+									$price_base_type = $langs->trans("HT");
+								} else {
+									$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
+									$price_base_type = $langs->trans("TTC");
+								}
+								$price = price($price_result);
 							}
-							$price = price($price_result);
 						}
 					}
 					$this->info_box_contents[$line][] = array(

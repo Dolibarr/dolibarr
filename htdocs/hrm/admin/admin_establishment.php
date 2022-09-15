@@ -16,10 +16,12 @@
  */
 
 /**
- * \file 	htdocs/hrm/admin/admin_establishment.php
- * \ingroup HRM
- * \brief 	HRM Establishment module setup page
+ *    \file       htdocs/hrm/admin/admin_establishment.php
+ *    \ingroup    HRM
+ *    \brief      HRM Establishment module setup page
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -29,8 +31,9 @@ $langs->loadLangs(array('admin', 'hrm'));
 
 $error = 0;
 
+// Permissions
 $permissiontoread = $user->admin;
-$permissiontoadd = $user->admin;
+$permissiontoadd  = $user->admin;
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -53,10 +56,10 @@ if (empty($page) || $page == -1) {
 	$page = 0;
 }
 
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 
 /*

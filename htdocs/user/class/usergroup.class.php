@@ -195,7 +195,7 @@ class UserGroup extends CommonObject
 		$sql .= " ".$this->db->prefix()."usergroup_user as ug";
 		$sql .= " WHERE ug.fk_usergroup = g.rowid";
 		$sql .= " AND ug.fk_user = ".((int) $userid);
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND g.entity IS NOT NULL";
 		} else {
 			$sql .= " AND g.entity IN (0,".$conf->entity.")";
@@ -252,7 +252,7 @@ class UserGroup extends CommonObject
 		if (!empty($this->id)) {
 			$sql .= " AND ug.fk_usergroup = ".((int) $this->id);
 		}
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
 			$sql .= " AND u.entity IN (0,".$conf->entity.")";
@@ -839,7 +839,7 @@ class UserGroup extends CommonObject
 		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
 			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
 		}
-		//if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
+		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
 		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
 		}

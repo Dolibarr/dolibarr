@@ -194,7 +194,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
+		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";
@@ -257,7 +257,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";
@@ -320,7 +320,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
+		if (! $result || !empty($result['faultstring']) || $result['result']['result_code'] != 'OK') {
 			//var_dump($soapclient);
 			print 'Error: '.$soapclient->error_str;
 			print "\n<br>\n";

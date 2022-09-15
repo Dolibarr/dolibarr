@@ -23,6 +23,7 @@
  *       \brief      Page fiche LDAP groupe
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -46,7 +47,7 @@ $object->fetch($id);
 $object->getrights();
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 	accessforbidden();
 }
 

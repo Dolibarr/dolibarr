@@ -446,6 +446,7 @@ ErrorPaymentConditionsNotEligibleToDepositCreation=選択した支払い条件�
 PaymentTypeVIR=銀行振込
 PaymentTypeShortVIR=銀行振込
 PaymentTypePRE=口座振替の支払注文
+PaymentTypePREdetails=(アカウント *-%s)
 PaymentTypeShortPRE=デビット支払注文
 PaymentTypeLIQ=現金
 PaymentTypeShortLIQ=現金

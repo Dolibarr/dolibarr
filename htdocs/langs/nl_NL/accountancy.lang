@@ -48,8 +48,9 @@ CountriesNotInEEC=Landen buiten de EU
 CountriesInEECExceptMe=EU landen behalve %s
 CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
-ExportAccountingSourceDocHelp=Met deze tool kunt u de bron events (lijst in CSV en PDF) exporteren die zijn gebruikt om om uw boekhouding te genereren.
+ExportAccountingSourceDocHelp=Met deze tool kunt u de brongebeurtenissen zoeken en exporteren die worden gebruikt om uw boekhouding te genereren. <br>Het geëxporteerde ZIP-bestand bevat de lijsten met gevraagde items in CSV, evenals de bijgevoegde bestanden in hun oorspronkelijke formaat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Overzicht per grootboekrekening
 VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te reg
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standaard grootboekrekening voor storting door klant
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Accounting account by default to register supplier deposit
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten binnen de EU (gebruikt indien niet gedefinieerd in het productblad)
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken 
 
 ## Export
 NotifiedExportDate=Geëxporteerde regels markeren als geëxporteerd <span class="warning">(om een regel te wijzigen, moet u de hele transactie verwijderen en opnieuw in de boekhouding opnemen)</span>
-NotifiedValidationDate=Valideer en vergrendel de geëxporteerde items <span class="warning">(hetzelfde effect als de functie "Sluiting", wijziging en verwijdering van de regels is ZEKER niet mogelijk)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Datum validatie en vergrendelen
 ConfirmExportFile=Bevestiging van het genereren van het boekhoudkundige exportbestand ?
 ExportDraftJournal=Journaal exporteren

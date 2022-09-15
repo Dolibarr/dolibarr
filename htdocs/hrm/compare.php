@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021  Greg Rastklan <greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021  Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021  Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
 
- * \file        class/compare.php
+ * \file        htdocs/hrm/compare.php
  * \ingroup     hrm
  * \brief       This file compares skills of user groups
  *
@@ -33,22 +33,28 @@
  *
  */
 
+
+// Load Dolibarr environment
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm.lib.php';
 
-$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
-$permissiontoadd = 0;
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
 
+// Load translation files required by the page
 $langs->load('hrm');
 
+
+// Permissions
+$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
+$permissiontoadd = 0;
+
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
 
 
 /*

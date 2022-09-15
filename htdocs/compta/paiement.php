@@ -30,6 +30,7 @@
  *	\brief      Payment page for customers invoices
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -597,7 +598,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				print '<td>'.$arraytitle.'</td>';
 				print '<td class="center">'.$langs->trans('Date').'</td>';
 				print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					print '<td>'.$langs->trans('Currency').'</td>';
 					print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 					print '<td class="right">'.$multicurrencyalreadypayedlabel.'</td>';
@@ -640,7 +641,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 						$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
@@ -676,12 +677,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Currency
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 					}
 
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td class="right">';
 						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) {
 							print price($sign * $objp->multicurrency_total_ttc);
@@ -814,7 +815,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					// Print total
 					print '<tr class="liste_total">';
 					print '<td colspan="3" class="left">'.$langs->trans('TotalTTC').'</td>';
-					if (!empty($conf->multicurrency->enabled)) {
+					if (isModEnabled('multicurrency')) {
 						print '<td></td>';
 						print '<td></td>';
 						print '<td></td>';
@@ -858,10 +859,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			print '<br><div class="center">';
 			print '<input type="checkbox" checked name="closepaidinvoices"> '.$checkboxlabel;
-			/*if (! empty($conf->prelevement->enabled))
+			/*if (!empty($conf->prelevement->enabled))
 			{
 				$langs->load("withdrawals");
-				if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
+				if (!empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
 			}*/
 			print '<br><input type="submit" class="button" value="'.dol_escape_htmltag($buttontitle).'"><br><br>';
 			print '</div>';

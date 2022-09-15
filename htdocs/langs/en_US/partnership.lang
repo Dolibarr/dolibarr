@@ -28,6 +28,7 @@ PartnershipCheckBacklink=Partnership: Check referring backlink
 # Menu
 #
 NewPartnership=New Partnership
+NewPartnershipbyWeb= Your partnership was added successfully.
 ListOfPartnerships=List of partnership
 
 #

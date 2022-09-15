@@ -26,6 +26,7 @@
  *		\remarks	File similar to fourn/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
@@ -237,7 +238,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 /*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{

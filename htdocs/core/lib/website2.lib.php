@@ -309,7 +309,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 		$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 		$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-		$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+		$indexcontent .= 'if (!empty($_GET[\'pageref\']) || !empty($_GET[\'pagealiasalt\']) || !empty($_GET[\'pageid\'])) {'."\n";
 		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
@@ -341,7 +341,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 						$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 						$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 						$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once '".$relpath."/master.inc.php'; } // Load master if not already loaded\n";
-						$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+						$indexcontent .= 'if (!empty($_GET[\'pageref\']) || !empty($_GET[\'pagealiasalt\']) || !empty($_GET[\'pageid\'])) {'."\n";
 						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 						$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
@@ -533,6 +533,27 @@ function dolSaveReadme($file, $content)
 	return $result;
 }
 
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$file				Full path of filename to generate
+ * @param	string		$content			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveLicense($file, $content)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save LICENSE file into ".$file);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($file, $content);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
+
+	return $result;
+}
 
 /**
  * 	Show list of themes. Show all thumbs of themes/skins

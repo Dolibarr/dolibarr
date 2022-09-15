@@ -656,7 +656,7 @@ class Paiement extends CommonObject
 			}
 
 			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
-			if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) {
+			if (isModEnabled('multicurrency') && $conf->currency != $acc->currency_code) {
 				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
 				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
@@ -1165,7 +1165,7 @@ class Paiement extends CommonObject
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled('multicurrency')) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

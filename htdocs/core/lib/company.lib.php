@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -138,7 +138,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->project->enabled) && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -242,7 +242,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
+	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
@@ -281,7 +281,7 @@ function societe_prepare_head(Societe $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'core');
 
 	if ($user->socid == 0) {
 		// Notifications
@@ -392,11 +392,11 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
-	// Log
-	/*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;*/
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'remove');
 
@@ -781,11 +781,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	$i = -1;
 
-	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 

@@ -174,7 +174,7 @@ class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! empty($result['faultstring'])) {
+		if (!empty($result['faultstring'])) {
 			print $result['faultstring']."\n";
 			$result=0;
 		}
@@ -202,7 +202,7 @@ class WebservicesOtherTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $soapclient->error_str;
 			print "\n<br>\n";

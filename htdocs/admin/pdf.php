@@ -25,6 +25,7 @@
  *       \brief      Page to setup PDF options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -108,7 +109,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
 			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
@@ -471,7 +472,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width=
 // Use 2 languages into PDF
 
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (! empty($conf->global->MAIN_MULTILANGS))
+//if (!empty($conf->global->MAIN_MULTILANGS))
 	//{
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
 print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
@@ -486,7 +487,7 @@ print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" v
 print '</td></tr>';
 
 // Show project
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
 	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
 	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';

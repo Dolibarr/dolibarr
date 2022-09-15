@@ -862,7 +862,7 @@ class PaiementFourn extends Paiement
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

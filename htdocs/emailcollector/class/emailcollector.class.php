@@ -251,7 +251,7 @@ class EmailCollector extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -432,7 +432,7 @@ class EmailCollector extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		$this->password = dolDecrypt($this->password);
 
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -1478,22 +1478,38 @@ class EmailCollector extends CommonObject
 
 				$headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
+				$emailto = $this->decodeSMTPSubject($overview[0]->to);
+
 
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
+				$trackidfoundintorecipienttype = '';
+				$trackidfoundintorecipientid = 0;
+				$reg = array();
+				// See also later list of all supported tags...
+				if (preg_match('/\+(thi|ctc|use|mem|sub|proj|tas|con|tic|job|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
+					$trackidfoundintorecipienttype = $reg[1];
+					$trackidfoundintorecipientid = $reg[2];
+				} elseif (preg_match('/\+emailing-(\w+)@/', $emailto, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
+					$trackidfoundintorecipienttype = 'emailing';
+					$trackidfoundintorecipientid = $reg[1];
+				}
+
 				// If there is a filter on trackid
 				if ($searchfilterdoltrackid > 0) {
-					if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
-						$nbemailprocessed++;
-						dol_syslog(" Discarded - No header References found");
-						continue; // Exclude email
+					if (empty($trackidfoundintorecipienttype)) {
+						if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
+							$nbemailprocessed++;
+							dol_syslog(" Discarded - No suffix in email recipient and no Header References found matching signature of application so with a trackid");
+							continue; // Exclude email
+						}
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
-					if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
+					if (!empty($trackidfoundintorecipienttype) || (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Header References found and matching signature of application");
+						dol_syslog(" Discarded - Suffix found into email or Header References found and matching signature of application so with a trackid");
 						continue; // Exclude email
 					}
 				}
@@ -1705,13 +1721,19 @@ class EmailCollector extends CommonObject
 
 					foreach ($arrayofreferences as $reference) {
 						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
-						$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
-						if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
-							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+						if (!empty($trackidfoundintorecipienttype)) {
+							$resultsearchtrackid = -1;
+							$reg[1] = $trackidfoundintorecipienttype;
+							$reg[2] = $trackidfoundintorecipientid;
+						} else {
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
+							if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+								$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+							}
 						}
 
-						if ($resultsearchtrackid) {
-							// This is a Dolibarr reference of the server
+						if (!empty($resultsearchtrackid)) {
+							// We found a tracker (in recipient email or into a Reference matching the Dolibarr server)
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
