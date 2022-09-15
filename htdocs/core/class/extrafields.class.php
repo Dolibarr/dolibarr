@@ -1688,8 +1688,8 @@ class ExtraFields
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $langs->trans($obj->$field_toshow);
 							}
-							if ($translabel != $field_toshow) {
-								$value .= dol_trunc($translabel, 18).' ';
+							if ($translabel != $obj->$field_toshow) {
+								$value .= dol_trunc($translabel, 24).' ';
 							} else {
 								$value .= $obj->$field_toshow.' ';
 							}
