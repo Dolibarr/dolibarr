@@ -1059,7 +1059,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$param = "socid=".urlencode($object->id);
 	if ($search_rowid != '') {
-	    $param .= '&search_rowid='.urlencode($search_rowid);
+		$param .= '&search_rowid='.urlencode($search_rowid);
 	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
@@ -1090,7 +1090,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
 	if ($search_rowid) {
-	    $sql .= natural_search('t.rowid', $search_rowid);
+		$sql .= natural_search('t.rowid', $search_rowid);
 	}
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
