@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,7 +363,11 @@ function show_array_last_actions_done($max = 5)
  */
 function agenda_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('actioncomm');
+
 	$h = 0;
 	$head = array();
 
@@ -395,6 +400,10 @@ function agenda_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = is_countable($extrafields->attributes['actioncomm']['label']) ? count($extrafields->attributes['actioncomm']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
