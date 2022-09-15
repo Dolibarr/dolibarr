@@ -122,7 +122,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 {
 	global $conf;
 	if ($duration_unit == 's') {
-	    return $time + ($duration_value);
+		return $time + ($duration_value);
 	}
 	if ($duration_value == 0) {
 		return $time;
