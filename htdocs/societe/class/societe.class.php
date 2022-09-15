@@ -2658,11 +2658,16 @@ class Societe extends CommonObject
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
+		if (isset($this->client) && isset($this->fournisseur)) {
+			$label .= ' &nbsp; ';
+			$label .= $this->getTypeUrl(1);
+		}
 
 		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
 		if (!empty($this->name_alias)) {
 			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
+
 		if ($this->email) {
 			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
 		}
