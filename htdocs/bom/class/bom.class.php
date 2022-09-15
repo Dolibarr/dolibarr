@@ -1088,9 +1088,6 @@ class BOM extends CommonObject
 				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
-
-
-
 	}
 
 	/**
