@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var integer|string date of movement validated & lock
+	 */
+	public $date_validation;
+
+	/**
+	 * @var integer|string date of movement who are noticed like exported
+	 */
+	public $date_export;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
@@ -788,8 +798,7 @@ class BookKeeping extends CommonObject
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_export = $this->db->jdate($obj->date_export);
-				$this->date_validation = $this->db->jdate($obj->date_validated);
-				$this->date_validation = $this->db->jdate($obj->date_validation);
+				$this->date_validation = isset($obj->date_validated) ? $this->db->jdate($obj->date_validated) : '';
 			}
 			$this->db->free($resql);
 
