@@ -456,11 +456,22 @@ function societe_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('societe');
+	$nbExtrafields=count($extrafields->attribute_label); 
+	if ($nbExtrafields >0)
+		$head[$h][1].= ' <span class="badge">'.$nbExtrafields.'</span>';
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('socpeople');
+	$nbExtrafields=count($extrafields->attribute_label); 
+	if ($nbExtrafields >0)
+		$head[$h][1].= ' <span class="badge">'.$nbExtrafields.'</span>';
+
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
