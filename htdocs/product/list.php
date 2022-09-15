@@ -371,7 +371,9 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
 			if ($result > 0 && $product->id > 0) {
-				$product->setStatut($product->status ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tosell');
+				if ($product->setStatut($product->status ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tosell') < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
 			}
 		}
 	}
@@ -380,7 +382,9 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $product->fetch($toselectid);
 			if ($result > 0 && $product->id > 0) {
-				$product->setStatut($product->status_buy ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tobuy');
+				if ($product->setStatut($product->status_buy ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tobuy') < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
 			}
 		}
 	}
