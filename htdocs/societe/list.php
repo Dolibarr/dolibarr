@@ -1445,24 +1445,19 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		$savalias = $obj->name_alias;
-		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			$companystatic->name_alias = '';
-		}
 		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 		if ($contextpage == 'poslist') {
-			print $obj->name;
+			print dol_escape_htmltag($obj->name);
 		} else {
-			print $companystatic->getNomUrl(1, '', 100, 0, 1);
+			print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 		}
 		print "</td>\n";
-		$companystatic->name_alias = $savalias;
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 		print dol_escape_htmltag($companystatic->name_alias);
 		print "</td>\n";
 		if (!$i) {
@@ -1471,7 +1466,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Barcode
 	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->barcode).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->barcode).'">'.dol_escape_htmltag($obj->barcode).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
