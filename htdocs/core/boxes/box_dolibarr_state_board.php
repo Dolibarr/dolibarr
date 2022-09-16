@@ -114,8 +114,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 			$conditions = array(
 				'users' => $user->hasRight('user', 'user', 'lire'),
 				'members' => isModEnabled('adherent') && $user->rights->adherent->lire,
-				'customers' => isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-				'prospects' => isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
 				'suppliers' => ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->lire)
 								 || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
 								 || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)

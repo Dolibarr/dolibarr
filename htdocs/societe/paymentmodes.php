@@ -79,7 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
-$permissiontoread = $user->rights->societe->lire;
+$permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
@@ -435,6 +435,7 @@ if (empty($reshook)) {
 			$result = $companypaymentmode->delete($user);
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -458,8 +459,10 @@ if (empty($reshook)) {
 			}*/
 
 			$result = $companybankaccount->delete($user);
+
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -545,11 +548,11 @@ if (empty($reshook)) {
 				// Get the Stripe customer
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				// print json_encode($cu);
-				if (!$cu) {
+				if (empty($cu)) {
 					$error++;
-					setEventMessages($stripe->error, $stripe->errors, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorStripeCustomerNotFoundCreateFirst"), null, 'errors');
 				}
-
 				if (!$error) {
 					// Creation of Stripe SEPA + update of llx_societe_rib
 					$card = $stripe->sepaStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
@@ -1587,8 +1590,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
 				if (empty($rib->stripe_card_ref)) {
+					// Add link to create BAN on Stripe
 					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
-					print img_picto($langs->trans("CreateBAN"), 'stripe');
+					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
 					print '</a>';
 				}
 
@@ -1612,8 +1616,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				continue; // Already in previous list
 			}
 
-			$nbremote++;
-
 			$imgline = '';
 			if ($src->object == 'source' && $src->type == 'sepa_debit') {
 				$imgline = '<span class="fa fa-university fa-2x fa-fw"></span>';
@@ -1622,6 +1624,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			} else {
 				continue;
 			}
+
+			$nbremote++;
 
 			print '<tr class="oddeven">';
 			print '<td>';
@@ -1711,7 +1715,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if ($nbremote == 0 && $nblocal == 0) {
 			$colspan = 10;
-			if (!empty($conf->prelevement->enabled)) {
+			if (isModEnabled('prelevement')) {
 				$colspan += 3;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';

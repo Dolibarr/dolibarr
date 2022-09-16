@@ -5166,7 +5166,8 @@ class Form
                         	var inputok = '.json_encode($inputok).';	/* List of fields into form */
 							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
-                         	if (inputok.length>0) {
+
+                         	if (inputok.length > 0) {
                          		$.each(inputok, function(i, inputname) {
                          			var more = "";
 									var inputvalue;
@@ -5181,21 +5182,25 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-							if (pageyes.length > 0) {
+                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
+            				if (pageyes.length > 0) {
+								// The call to urljump can be slow, so we set the wait cursor
+								jQuery("html,body,#id-container").addClass("cursorwait");
 								var post = $.post(
 									pageyes,
 									options,
 									(data) => {$("body").html(data)}
 								);
+								console.log("after post");
 							}
-                            $(this).dialog("close");
+	                        $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
                         	var options = "token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
 							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
-                         	if (inputko.length>0) {
+                         	if (inputko.length > 0) {
                          		$.each(inputko, function(i, inputname) {
                          			var more = "";
                          			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
@@ -5204,12 +5209,15 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-							if (pageno.length > 0) {
+                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
+                         	//alert(urljump);
+            				if (pageno.length > 0) {
 								var post = $.post(
 									pageno,
 									options,
 									(data) => {$("body").html(data)}
 								);
+								console.log("after location.href");
 							}
                             $(this).dialog("close");
                         }
@@ -6638,7 +6646,7 @@ class Form
 		}
 
 		// Add a "Now" link
-		if ($conf->use_javascript_ajax && $addnowlink) {
+		if (!empty($conf->use_javascript_ajax) && $addnowlink) {
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
 			if ($addnowlink == 2) { // local computer time
@@ -6717,7 +6725,7 @@ class Form
 				}
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
-			if ($reset_scripts && empty($conf->dol_optimize_smallscreen)) {
+			if ($reset_scripts && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$retstring .= ' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="now" onClick="'.$reset_scripts.'">';
 				$retstring .= $langs->trans("Now");
 				$retstring .= '</button> ';
@@ -7863,7 +7871,7 @@ class Form
 	 * 	@return	string								HTML select string.
 	 *  @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
-	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = '', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
+	public static function selectarray($htmlname, $array, $id = '', $show_empty = 0, $key_in_label = 0, $value_as_key = 0, $moreparam = '', $translate = 0, $maxlen = 0, $disabled = 0, $sort = '', $morecss = 'minwidth75', $addjscombo = 1, $moreparamonempty = '', $disablebademail = 0, $nohtmlescape = 0)
 	{
 		global $conf, $langs;
 

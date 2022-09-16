@@ -22,6 +22,7 @@
  * \brief   Page called by the setupmail.php page to send agreements by email.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/datapolicy/class/datapolicy.class.php';

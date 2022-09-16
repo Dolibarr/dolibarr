@@ -40,6 +40,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -66,7 +67,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-//$user->rights->societe->lire = 0;$user->rights->fournisseur->lire = 0;
+//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
 //restrictedArea($user, 'societe', $id);
 
 if (in_array($field, array('status'))) {

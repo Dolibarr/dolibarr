@@ -27,9 +27,6 @@
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
@@ -37,6 +34,7 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
 

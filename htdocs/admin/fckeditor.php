@@ -24,6 +24,7 @@
  *  \brief      Activation page for the FCKeditor module in the other modules
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
@@ -65,7 +66,7 @@ $conditions = array(
 	'PRODUCTDESC' => (isModEnabled("product") || isModEnabled("service")),
 	'DETAILS' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande') || isModEnabled('supplier_proposal') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")),
 	'USERSIGN' => 1,
-	'MAILING' => !empty($conf->mailing->enabled),
+	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
 	'TICKET' => !empty($conf->ticket->enabled),
 );

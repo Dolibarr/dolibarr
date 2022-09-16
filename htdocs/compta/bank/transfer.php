@@ -27,7 +27,6 @@
  *    \brief      Page for entering a bank transfer
  */
 
-
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';

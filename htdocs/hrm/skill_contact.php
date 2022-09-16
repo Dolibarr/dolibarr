@@ -20,22 +20,25 @@
  */
 
 /**
- *  \file       skill_contact.php
- *  \ingroup    hrm
- *  \brief      Tab for contacts linked to Skill
+ *    \file       htdocs/hrm/skill_contact.php
+ *    \ingroup    hrm
+ *    \brief      Tab for contacts linked to Skill
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
-// Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies", "other", "mails"));
 
+// Load translation files required by the page
+$langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
+
+
+// Get Parameters
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -53,6 +56,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Permissions
 $permission = $user->rights->hrm->skill->write;
 
 // Security check (enable the most restrictive one)
@@ -65,8 +69,10 @@ $permission = $user->rights->hrm->skill->write;
 
 
 /*
- * Add a new contact
+ * Action
  */
+
+// Add a new contact
 
 if ($action == 'addcontact' && $permission) {
 	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));

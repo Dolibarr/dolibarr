@@ -1,6 +1,5 @@
 <?php
-
-/* Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -24,6 +23,7 @@
  * \brief   Datapolicy setup page to define email content end send email for end user agreement.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

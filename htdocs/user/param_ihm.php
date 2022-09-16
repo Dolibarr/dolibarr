@@ -23,6 +23,7 @@
  *       \brief      Page to show user setup for display
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -201,7 +202,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (isModEnabled("propal") || isModEnabled('commande') || !empty($conf->ficheinter->enabled) || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
-if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
+if (!empty($conf->comptabilite->enabled) || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
 }
 if (isModEnabled('adherent')) {

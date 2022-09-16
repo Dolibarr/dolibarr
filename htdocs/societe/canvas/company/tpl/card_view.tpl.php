@@ -263,7 +263,7 @@ for ($i = 1; $i <= 4; $i++) {
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
-<?php if ($user->rights->societe->supprimer) { ?>
+<?php if ($user->hasRight('societe', 'supprimer')) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
@@ -283,7 +283,7 @@ for ($i = 1; $i <= 4; $i++) {
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed = $user->rights->societe->lire;
+$genallowed = $user->hasRight('societe', 'lire');
 $delallowed = $user->rights->societe->creer;
 
 print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);

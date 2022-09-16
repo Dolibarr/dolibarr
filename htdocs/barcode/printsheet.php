@@ -29,6 +29,7 @@ if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -396,7 +397,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
 	print '</div>';
 }
 
-if (!empty($user->rights->societe->lire)) {
+if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';

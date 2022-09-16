@@ -21,6 +21,7 @@
  *      \brief      Page to setup DAV server
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
@@ -76,14 +77,14 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'webdav', '', -1, 'action');
+print dol_get_fiche_head($head, 'webdav', '', -1, '');
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
@@ -96,7 +97,7 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
@@ -119,19 +120,19 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td class="titlefieldmiddle">';
+		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$label .= ' <span class="opacitymedium">'.$langs->trans("Example").': '.$langs->trans("IPListExample").'</span>';
+			$tooltiphelp .= ' <span class="opacitymedium">'.$langs->trans("Example").': '.$langs->trans("IPListExample").'</span>';
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
-		print '</td><td>';
+		print '</td><td class="minwidth200">';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {

@@ -26,9 +26,6 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -42,6 +39,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require '../../core/modules/barcode/doc/tcpdfbarcode.modules.php';
 

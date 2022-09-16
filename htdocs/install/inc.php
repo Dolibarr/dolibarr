@@ -530,7 +530,7 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		print '<input type="hidden" name="selectlang" value="'.dol_escape_htmltag($setuplang).'">';
 	}
 
-	print '</form>'."\n";
+	print '</form><br>'."\n";
 
 	// If there is some logs in buffer to show
 	if (isset($conf->logbuffer) && count($conf->logbuffer)) {

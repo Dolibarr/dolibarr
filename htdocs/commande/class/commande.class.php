@@ -3662,7 +3662,10 @@ class Commande extends CommonOrder
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtext;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderSentShort').$billedtext;
-			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent").' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->date_livraison).$billedtext;
+			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent");
+			if (!empty($this->delivery_date)) {
+				$labelTooltip .= ' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->delivery_date, 'day').$billedtext;
+			}
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill');

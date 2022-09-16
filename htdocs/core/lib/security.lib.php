@@ -421,7 +421,7 @@ function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
+			if (!$user->hasRight('societe', 'lire') && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -831,7 +831,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -857,7 +857,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";

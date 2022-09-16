@@ -25,6 +25,7 @@
  *       \brief      Tab of a user group
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -448,7 +449,7 @@ if ($action == 'create') {
 						print '<tr class="oddeven">';
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-						if ($useringroup->admin && !$useringroup->entity) {
+						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 						} elseif ($useringroup->admin) {
 							print img_picto($langs->trans("Administrator"), 'star');
