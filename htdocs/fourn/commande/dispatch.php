@@ -221,6 +221,7 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 
 if ($action == 'dispatch' && $permissiontoreceive) {
 	$error = 0;
+	$notrigger = 0;
 
 	$db->begin();
 

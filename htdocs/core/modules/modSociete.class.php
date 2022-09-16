@@ -747,7 +747,7 @@ class modSociete extends DolibarrModules
 			's.fk_departement' => "StateCode",
 			's.fk_pays' => "CountryCode",
 			's.birthday' => "DateOfBirth",
-			's.poste' => "Role",
+			's.poste' => "PostOrFunction",
 			's.phone' => "Phone",
 			's.phone_perso' => "PhonePerso",
 			's.phone_mobile' => "PhoneMobile",

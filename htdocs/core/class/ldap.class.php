@@ -263,6 +263,7 @@ class Ldap
 						if ($this->result) {
 							$this->bind = $this->result;
 							$connected = 2;
+							$this->connectedServer = $host;
 							break;
 						} else {
 							$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -275,6 +276,7 @@ class Ldap
 							if ($this->result) {
 								$this->bind = $this->result;
 								$connected = 2;
+								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -287,6 +289,7 @@ class Ldap
 							if ($result) {
 								$this->bind = $this->result;
 								$connected = 1;
+								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -297,10 +300,8 @@ class Ldap
 
 				if (!$connected) {
 					$this->unbind();
-				} else {
-					$this->connectedServer = $host;
 				}
-			}
+			}	// End loop on each server
 		}
 
 		if ($connected) {
