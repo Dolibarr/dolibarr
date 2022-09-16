@@ -948,15 +948,15 @@ class EmailCollector extends CommonObject
 								}
 							}
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> found '.dol_escape_htmltag($object->array_options[preg_replace('/^options_/', '', $tmpproperty)]);
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag($object->array_options[preg_replace('/^options_/', '', $tmpproperty)]);
 							} else {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> found '.dol_escape_htmltag($object->$tmpproperty);
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag($object->$tmpproperty);
 							}
 						} else {
 							// Regex not found
 							$object->$tmpproperty = null;
 
-							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
+							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -2037,15 +2037,15 @@ class EmailCollector extends CommonObject
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
 												} else {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 												}
 											} else {
 												// Regex not found
@@ -2053,7 +2053,7 @@ class EmailCollector extends CommonObject
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
 
-												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Not found';
+												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
