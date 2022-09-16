@@ -146,6 +146,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
 	$emailcollectorfilter->status = 1;
+
 	$result = $emailcollectorfilter->create($user);
 
 	if ($result > 0) {

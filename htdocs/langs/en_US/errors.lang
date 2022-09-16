@@ -294,6 +294,7 @@ ErrorQuantityIsLimitedTo=Quantity is limited to %s
 ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
 ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account 
 ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character + 
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
