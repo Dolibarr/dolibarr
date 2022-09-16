@@ -120,7 +120,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -166,7 +166,7 @@ function dolDecrypt($chain, $key = '')
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
