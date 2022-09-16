@@ -238,7 +238,7 @@ if ($action == 'deleteoperation') {
 if ($action == 'collecttest') {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
-	$res = $object->doCollectOneCollector(2);
+	$res = $object->doCollectOneCollector(1);
 	if ($res > 0) {
 		$debuginfo = $object->debuginfo;
 		setEventMessages($object->lastresult, null, 'mesgs');
