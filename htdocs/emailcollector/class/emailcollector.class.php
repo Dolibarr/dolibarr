@@ -872,9 +872,10 @@ class EmailCollector extends CommonObject
 	 * @param	string	$messagetext	Body
 	 * @param	string	$subject		Subject
 	 * @param   string  $header         Header
+	 * @param	string	$operationslog	String with logs of operations done
 	 * @return	int						0=OK, Nb of error if error
 	 */
-	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header)
+	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header, &$operationslog)
 	{
 		$errorforthisaction = 0;
 
@@ -909,6 +910,7 @@ class EmailCollector extends CommonObject
 					$sourcefield = $regforregex[1];
 					$regexstring = $regforregex[2];
 				}
+
 				if (!empty($sourcefield) && !empty($regexstring)) {
 					if (strtolower($sourcefield) == 'body') {
 						$sourcestring = $messagetext;
@@ -930,7 +932,6 @@ class EmailCollector extends CommonObject
 
 						//var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
-							//var_dump($regforval[count($regforval)-1]);exit;
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
 							if (strtolower($sourcefield) == 'header') {
@@ -946,9 +947,16 @@ class EmailCollector extends CommonObject
 									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
 								}
 							}
+							if (preg_match('/^options_/', $tmpproperty)) {
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> found '.dol_escape_htmltag($object->array_options[preg_replace('/^options_/', '', $tmpproperty)]);
+							} else {
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> found '.dol_escape_htmltag($object->$tmpproperty);
+							}
 						} else {
 							// Regex not found
 							$object->$tmpproperty = null;
+
+							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.dol_escape_htmltag($sourcestring).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -986,6 +994,8 @@ class EmailCollector extends CommonObject
 						} else {
 							$object->$tmpproperty = $valuetouse;
 						}
+
+						$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into variable '.dol_escape_htmltag($tmpproperty);
 					}
 				} else {
 					$errorforthisaction++;
@@ -1479,7 +1489,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-
+				$operationslog .= '<br>Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -2027,15 +2037,15 @@ class EmailCollector extends CommonObject
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found idtouseforthirdparty='.$idtouseforthirdparty;
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found propertytooverwrite='.$propertytooverwrite;
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
 												} else {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
 
-													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found nametouseforthirdparty='.$nametouseforthirdparty;
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 												}
 											} else {
 												// Regex not found
@@ -2043,13 +2053,13 @@ class EmailCollector extends CommonObject
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
 
-												$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Not found';
+												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.dol_escape_htmltag($sourcestring).' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
-											$this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
+											$this->error = 'The extract rule to use to load thirdparty has an unknown source (must be HEADER, SUBJECT or BODY)';
 											$this->errors[] = $this->error;
 										}
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
@@ -2058,15 +2068,15 @@ class EmailCollector extends CommonObject
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property idtouseforthrdparty='.$idtouseforthirdparty;
+											$operationslog .= '<br>We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property emailtouseforthrdparty='.$emailtouseforthirdparty;
+											$operationslog .= '<br>We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
 										} else {
 											$nametouseforthirdparty = $reg[2];
 
-											$operationslog .= '<br>We set property nametouseforthirdparty='.$nametouseforthirdparty;
+											$operationslog .= '<br>We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -2102,7 +2112,7 @@ class EmailCollector extends CommonObject
 											$thirdpartystatic->email = ($emailtouseforthirdparty ? $emailtouseforthirdparty : $from);
 
 											// Overwrite values with values extracted from source email
-											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 											if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
 												$thirdpartystatic->code_client = 'auto';
@@ -2120,7 +2130,7 @@ class EmailCollector extends CommonObject
 													$this->error = $thirdpartystatic->error;
 													$this->errors = $thirdpartystatic->errors;
 												} else {
-													$operationslog .= '<br>Thirdparty created -> id = '.$thirdpartystatic->id;
+													$operationslog .= '<br>Thirdparty created -> id = '.dol_escape_htmltag($thirdpartystatic->id);
 												}
 											}
 										}
@@ -2197,7 +2207,7 @@ class EmailCollector extends CommonObject
 								//$actioncomm->extraparams = $extraparams;
 
 								// Overwrite values with values extracted from source email
-								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								//var_dump($fk_element_id);
 								//var_dump($fk_element_type);
@@ -2214,7 +2224,7 @@ class EmailCollector extends CommonObject
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
 									} else {
-										$operationslog .= '<br>Event created -> id='.$actioncomm->id;
+										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 									}
 								}
 							}
@@ -2433,7 +2443,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set project ref if not yet defined
 								if (empty($projecttocreate->ref)) {
@@ -2500,9 +2510,9 @@ class EmailCollector extends CommonObject
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
 
-												$operationslog .= '<br>Project created with attachments -> id='.$projecttocreate->id;
+												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag($projecttocreate->id);
 											} else {
-												$operationslog .= '<br>Project created without attachments -> id='.$projecttocreate->id;
+												$operationslog .= '<br>Project created without attachments -> id='.dol_escape_htmltag($projecttocreate->id);
 											}
 										}
 									}
@@ -2560,7 +2570,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set ticket ref if not yet defined
 								if (empty($tickettocreate->ref)) {
@@ -2626,9 +2636,9 @@ class EmailCollector extends CommonObject
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
 
-												$operationslog .= '<br>Ticket created with attachments -> id='.$tickettocreate->id;
+												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag($tickettocreate->id);
 											} else {
-												$operationslog .= '<br>Ticket created without attachments -> id='.$tickettocreate->id;
+												$operationslog .= '<br>Ticket created without attachments -> id='.dol_escape_htmltag($tickettocreate->id);
 											}
 										}
 									}
@@ -2670,7 +2680,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set candidature ref if not yet defined
 								/*if (empty($candidaturetocreate->ref))				We do not need this because we create object in draft status
@@ -2723,7 +2733,7 @@ class EmailCollector extends CommonObject
 										$this->errors = $candidaturetocreate->errors;
 									}
 
-									$operationslog .= '<br>Candidature created without attachments -> id='.$candidaturetocreate->id;
+									$operationslog .= '<br>Candidature created without attachments -> id='.dol_escape_htmltag($candidaturetocreate->id);
 								}
 							}
 						} elseif (substr($operation['type'], 0, 4) == 'hook') {
@@ -2845,7 +2855,7 @@ class EmailCollector extends CommonObject
 		$this->lastresult = $output;
 		$this->debuginfo .= 'IMAP search string used : '.$search;
 		if ($searchhead) {
-			$this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
+			$this->debuginfo .= '<br>Then search string into email header : '.dol_escape_htmltag($searchhead);
 		}
 		if ($operationslog) {
 			$this->debuginfo .= $operationslog;
