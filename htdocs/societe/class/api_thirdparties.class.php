@@ -132,7 +132,7 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -527,7 +527,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$result = $this->company->fetch($id);
@@ -848,7 +848,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingProposals($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -890,7 +890,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingOrder($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -931,7 +931,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingInvoices($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -972,7 +972,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSalesRepresentatives($id, $mode = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1015,7 +1015,7 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1439,7 +1439,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSocieteAccounts($id, $site = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1870,7 +1870,7 @@ class Thirdparties extends DolibarrApi
 	{
 		global $conf;
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login.'. No read permission on thirdparties.');
 		}
 

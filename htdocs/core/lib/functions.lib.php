@@ -1456,9 +1456,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 	// escape quotes and backslashes, newlines, etc.
 	if ($escapeonlyhtmltags) {
-		$tmp = htmlspecialchars_decode($stringtoescape, ENT_COMPAT);
+		$tmp = htmlspecialchars_decode((string) $stringtoescape, ENT_COMPAT);
 	} else {
-		$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');
+		$tmp = html_entity_decode((string) $stringtoescape, ENT_COMPAT, 'UTF-8');
 	}
 	if (!$keepb) {
 		$tmp = strtr($tmp, array("<b>"=>'', '</b>'=>''));
@@ -2272,7 +2272,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
+	if (isModEnabled('accounting') && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
 		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta();
@@ -7295,9 +7295,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (empty($exclude) || !in_array('user', $exclude)) {
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
-		$signature = $user->signature;
+		//var_dump($onlykey);
+		$emailsendersignature = $user->signature; //  dy default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
+		$usersignature = $user->signature;
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+			'__SENDEREMAIL_SIGNATURE__' => (string) ((empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
+			'__USER_SIGNATURE__' => (string) (($usersignature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
 		if (is_object($user)) {
@@ -7928,13 +7931,13 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		}
 	}
 
-	// Make substitition for array $substitutionarray
+	// Make substitution for array $substitutionarray
 	foreach ($substitutionarray as $key => $value) {
 		if (!isset($value)) {
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if ($key == '__USER_SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
+		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
 			$value = ''; // Protection
 		}
 
@@ -8540,10 +8543,11 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
+ * 	    @param	string	$filters	Filter on other fields
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
 {
 	global $cache_codes;
 
@@ -8564,6 +8568,9 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$sql .= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (".getEntity($tablename).")";
+	}
+	if ($filters) {
+		$sql .= $filters;
 	}
 
 	$resql = $db->query($sql);
@@ -9035,9 +9042,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
+ *  @param	string		$filterorigmodule	Filter on module origin. 'external' will show only external modules. 'core' only core modules. No filter by default.
  *	@return	void
  */
-function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
+function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add', $filterorigmodule = '')
 {
 	global $hookmanager, $db;
 
@@ -9057,15 +9065,29 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
+							if ($filterorigmodule) {	// If a filter of module origin has been requested
+								if (strpos($values[3], '@')) {	// This is an external module
+									if ($filterorigmodule != 'external') {
+										continue;
+									}
+								} else {	// This looks a core module
+									if ($filterorigmodule != 'core') {
+										continue;
+									}
+								}
+							}
 							$langs->load($values[3]);
 						}
 						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+							// If label is "SUBSTITUION_..."
 							$substitutionarray = array();
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
+							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
 							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
+
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
 								$classtoload = $labeltemp[1];
@@ -9085,7 +9107,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // deprecated
+				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {

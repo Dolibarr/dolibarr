@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/evaluation_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/evaluation_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm evaluation
  */
 
 // Load Dolibarr environment
@@ -44,10 +44,12 @@ foreach ($tmptype2label as $key => $val) {
 	$type2label[$key] = $langs->transnoentitiesnoconv($val);
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_evaluation'; //Must be the $table_element of the class that manage extrafield
 
+// Security Check
 if (!$user->admin) {
 	accessforbidden();
 }

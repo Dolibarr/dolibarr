@@ -58,7 +58,7 @@ if (isModEnabled('project')) {
 if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -2053,7 +2053,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company(!empty($societe->id) ? $societe->id : 0, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print img_picto('', 'company').$form->select_company(!empty($societe->id) ? $societe->id : 0, 'socid', 's.fournisseur=1', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
@@ -3337,7 +3337,7 @@ if ($action == 'create') {
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
 
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							$bankaccountstatic->account_number = $objp->account_number;
 
 							$accountingjournal = new AccountingJournal($db);

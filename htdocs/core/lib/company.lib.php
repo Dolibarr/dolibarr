@@ -242,7 +242,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
+	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
@@ -281,7 +281,7 @@ function societe_prepare_head(Societe $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'core');
 
 	if ($user->socid == 0) {
 		// Notifications
@@ -392,11 +392,11 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
-	// Log
-	/*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;*/
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'remove');
 

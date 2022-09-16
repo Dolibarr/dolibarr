@@ -4094,6 +4094,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
+		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
 		'/core/menus/smartphone/iphone_backoffice.php',
 		'/core/menus/smartphone/iphone_frontoffice.php',

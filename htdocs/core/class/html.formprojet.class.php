@@ -206,7 +206,7 @@ class FormProjets
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire)) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->hasRight('societe', 'lire')) {
 						// Do nothing
 					} else {
 						if ($discard_closed == 1 && $obj->fk_statut == 2 && $obj->rowid != $selected) { // We discard closed except if selected

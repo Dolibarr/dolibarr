@@ -21,9 +21,6 @@
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }

@@ -3819,7 +3819,17 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pagestatus = $objectpage->status;
 	} else {
 		$type_container = 'page';
+		$pageurl = '';
+		$pagealiasalt = '';
+		$pagetitle = '';
+		$pagedescription = '';
+		$pageimage = '';
+		$pagekeywords = '';
+		$pagelang = '';
+		$pageallowedinframes = 0;
+		$pagehtmlheader = '';
 		$pagedatecreation = dol_now();
+		$pagedatemodification = '';
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
 		$pageauthoralias = '';

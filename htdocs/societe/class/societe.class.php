@@ -1097,7 +1097,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (empty($error) && !empty($conf->mailing->enabled) && !empty($contact->email) && isset($no_email)) {
+		if (empty($error) && isModEnabled('mailing') && !empty($contact->email) && isset($no_email)) {
 			$result = $contact->setNoEmail($no_email);
 			if ($result < 0) {
 				$this->error = $contact->error;
@@ -2658,11 +2658,16 @@ class Societe extends CommonObject
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
+		if (isset($this->client) && isset($this->fournisseur)) {
+			$label .= ' &nbsp; ';
+			$label .= $this->getTypeUrl(1);
+		}
 
 		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
 		if (!empty($this->name_alias)) {
 			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
+
 		if ($this->email) {
 			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
 		}
@@ -2711,10 +2716,10 @@ class Societe extends CommonObject
 		if (!empty($this->code_fournisseur) && $this->fournisseur) {
 			$label2 .= '<br><b>'.$langs->trans('SupplierCode').':</b> '.$this->code_fournisseur;
 		}
-		if (!empty($conf->accounting->enabled) && ($this->client == 1 || $this->client == 3)) {
+		if (isModEnabled('accounting') && ($this->client == 1 || $this->client == 3)) {
 			$label2 .= '<br><b>'.$langs->trans('CustomerAccountancyCode').':</b> '.($this->code_compta ? $this->code_compta : $this->code_compta_client);
 		}
-		if (!empty($conf->accounting->enabled) && $this->fournisseur) {
+		if (isModEnabled('accounting') && $this->fournisseur) {
 			$label2 .= '<br><b>'.$langs->trans('SupplierAccountancyCode').':</b> '.$this->code_compta_fournisseur;
 		}
 		$label .= ($label2 ? '<br>'.$label2 : '').'</div>';

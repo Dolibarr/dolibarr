@@ -491,7 +491,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
-if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
+if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
 	$res = $socstat->fetch($socid);
 	if ($res > 0) {
@@ -685,7 +685,6 @@ if ($search_dateclose_end) {
 	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
 	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
 }
-
 // List of mass actions available
 $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),

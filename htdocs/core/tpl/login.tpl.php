@@ -137,9 +137,11 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
+<input type="hidden" name="backtopage" value="<?php echo GETPOST('backtopage'); ?>" />
 <!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />

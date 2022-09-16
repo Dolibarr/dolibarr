@@ -1445,6 +1445,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));

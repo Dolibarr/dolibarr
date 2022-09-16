@@ -131,8 +131,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Amount of payment already done, <0 and set ->error if KO
+	 *  @param 		int 		$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float|int						Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -148,17 +148,23 @@ abstract class CommonInvoice extends CommonObject
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 
 			$this->db->free($resql);
-			if ($multicurrency) {
-				$this->sumpayed_multicurrency = $obj->multicurrency_amount;
-				return $obj->multicurrency_amount;
+
+			if ($obj) {
+				if ($multicurrency) {
+					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					return (float) $obj->multicurrency_amount;
+				} else {
+					$this->sumpayed = $obj->amount;
+					return (float) $obj->amount;
+				}
 			} else {
-				$this->sumpayed = $obj->amount;
-				return $obj->amount;
+				return 0;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -513,25 +519,43 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return label of type of invoice
 	 *
-	 *	@return     string        Label of type of invoice
+	 *	@param		int			$withbadge		1=Add span for badge css, 2=Add span and show short label
+	 *	@return     string        				Label of type of invoice
 	 */
-	public function getLibType()
+	public function getLibType($withbadge = 0)
 	{
 		global $langs;
+
+		$labellong = "Unknown";
 		if ($this->type == CommonInvoice::TYPE_STANDARD) {
-			return $langs->trans("InvoiceStandard");
+			$labellong = "InvoiceStandard";
+			$labelshort = "InvoiceStandardShort";
 		} elseif ($this->type == CommonInvoice::TYPE_REPLACEMENT) {
-			return $langs->trans("InvoiceReplacement");
+			$labellong = "InvoiceReplacement";
+			$labelshort = "InvoiceReplacementShort";
 		} elseif ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) {
-			return $langs->trans("InvoiceAvoir");
+			$labellong = "InvoiceAvoir";
+			$labelshort = "CreditNote";
 		} elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) {
-			return $langs->trans("InvoiceDeposit");
+			$labellong = "InvoiceDeposit";
+			$labelshort = "Deposit";
 		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) {
-			return $langs->trans("InvoiceProForma"); // Not used.
+			$labellong = "InvoiceProForma"; // Not used.
+			$labelshort = "ProForma";
 		} elseif ($this->type == CommonInvoice::TYPE_SITUATION) {
-			return $langs->trans("InvoiceSituation");
+			$labellong = "InvoiceSituation";
+			$labelshort = "Situation";
 		}
-		return $langs->trans("Unknown");
+
+		$out = '';
+		if ($withbadge) {
+			$out .= '<span class="badgeneutral" title="'.dol_escape_htmltag($langs->trans($labellong)).'">';
+		}
+		$out .= $langs->trans($withbadge == 2 ? $labelshort : $labellong);
+		if ($withbadge) {
+			$out .= '</span>';
+		}
+		return $out;
 	}
 
 	/**
@@ -854,11 +878,11 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch(0, $this->socid);
 
-			$sql = 'SELECT count(*)';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-			$sql .= ' WHERE fk_facture = '.((int) $this->id);
-			$sql .= ' AND ext_payment_id IS NULL'; // To exclude record done for some online payments
-			$sql .= ' AND traite = 0';
+			$sql = "SELECT count(*)";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
+			$sql .= " WHERE fk_facture = ".((int) $this->id);
+			$sql .= " AND ext_payment_id IS NULL"; // To exclude record done for some online payments
+			$sql .= " AND traite = 0";
 
 			dol_syslog(get_class($this)."::demande_prelevement_stripe 1", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1025,38 +1049,6 @@ abstract class CommonInvoice extends CommonObject
 										$errorforinvoice++;
 										$this->errors[] = $errmsg;
 									}
-									// if (!$error && ($this->date < ($now - ($nbdaysbeforeendoftries * 24 * 3600)))                                 // We try until we reach $nbdaysbeforeendoftries
-									// 	&& ($this->date < ($now - (62 * 24 * 3600)) || $this->date > ($now - (60 * 24 * 3600)))     // or when we have 60 days
-									// 	&& ($this->date < ($now - (92 * 24 * 3600)) || $this->date > ($now - (90 * 24 * 3600)))     // or when we have 90 days
-									// 	&& empty($nocancelifpaymenterror)) {
-									// 	$errmsg = 'Payment try was canceled (invoice date is older than ' . $nbdaysbeforeendoftries . ' days and not 60 days old and not 90 days old) - You can still take payment from backoffice.';
-										// 	dol_syslog($errmsg, LOG_DEBUG);
-
-										// 	$error++;
-										// 	$errorforinvoice++;
-										// 	$this->errors[] = $errmsg;
-										// }
-										// if (!$error && empty($nocancelifpaymenterror)) {	// If we are not in a mode that ask to avoid cancelation, we cancel payment.
-										// 	// Test if last AC_PAYMENT_STRIPE_KO event is an old error lower than $nbhoursbetweentries hours.
-										// 	$recentfailedpayment = false;
-										// 	$sqlonevents = 'SELECT COUNT(*) as nb FROM ' . MAIN_DB_PREFIX . 'actioncomm WHERE fk_soc = ' . ((int) $thirdparty->id) . " AND code ='AC_PAYMENT_STRIPE_KO' AND datep > '" . $this->db->idate($now - ($nbhoursbetweentries * 3600)) . "'";
-										// 	$resqlonevents = $this->db->query($sqlonevents);
-										// 	if ($resqlonevents) {
-										// 		$obj = $this->db->fetch_object($resqlonevents);
-										// 		if ($obj && $obj->nb > 0) {
-										// 			$recentfailedpayment = true;
-										// 		}
-										// 	}
-
-										// 	if ($recentfailedpayment) {
-										// 		$errmsg = 'Payment try was canceled (recent payment, in last ' . $nbhoursbetweentries . ' hours, with error AC_PAYMENT_STRIPE_KO for this customer)';
-										// 		dol_syslog($errmsg, LOG_DEBUG);
-
-										// 		$error++;
-										// 		$errorforinvoice++;
-										// 		$this->errors[] = $errmsg;
-										// 	}
-										// }
 
 									if (!$error) {	// Payment was not canceled
 										//erics card or sepa ?
@@ -1107,15 +1099,17 @@ abstract class CommonInvoice extends CommonObject
 													$stripefailuremessage = $e->getMessage();
 												}
 											} else { // Using new SCA method
-												if ($sepaMode)
+												if ($sepaMode) {
 													dol_syslog("* Create payment on SEPA " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
-												else dol_syslog("* Create payment on card " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
+												} else {
+													dol_syslog("* Create payment on card " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
+												}
 
-														// Create payment intent and charge payment (confirmnow = true)
-														$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
+												// Create payment intent and charge payment (confirmnow = true)
+												$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
-														$charge = new stdClass();
-														//erics add processing sepa is like success ?
+												$charge = new stdClass();
+												//erics add processing sepa is like success ?
 												if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
 													$charge->status = 'ok';
 													$charge->id = $paymentintent->id;
@@ -1145,8 +1139,8 @@ abstract class CommonInvoice extends CommonObject
 													$stripefailuredeclinecode = $stripe->declinecode;
 												}
 
-														//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
-														//exit;
+												//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
+												//exit;
 											}
 
 											// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
@@ -1412,7 +1406,7 @@ abstract class CommonInvoice extends CommonObject
 									$extraparams = '';
 								}
 
-									// Send email + create action after
+								// Send email + create action after
 								if ($sendemailtocustomer && $labeltouse) {
 									dol_syslog("* Send email with result of payment - " . $labeltouse);
 
@@ -1558,8 +1552,8 @@ abstract class CommonInvoice extends CommonObject
 									$actioncomm->create($user);
 								}
 
-									$this->description = $description;
-									$this->postactionmessages = $postactionmessages;
+								$this->description = $description;
+								$this->postactionmessages = $postactionmessages;
 							} catch (Exception $e) {
 								$error++;
 								$errorforinvoice++;
@@ -1573,25 +1567,21 @@ abstract class CommonInvoice extends CommonObject
 							$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
 						}
 
-							//end copy
-							// print json_encode($stripecard);
-							// exit;
+						$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande(";
+						$sql .= "fk_facture, ";
+						$sql .= " amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)";
+						$sql .= " VALUES (".$this->id;
+						$sql .= ",".((float) price2num($amount));
+						$sql .= ",'".$this->db->idate($now)."'";
+						$sql .= ",".((int) $fuser->id);
+						$sql .= ",'".$this->db->escape($stripe_id)."'";
+						$sql .= ",'".$this->db->escape($stripe_uri)."'";
+						$sql .= ",'".$this->db->escape($sourcetype)."'";
+						$sql .= ",".$conf->entity;
+						$sql .= ")";
 
-							$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande(';
-							$sql .= 'fk_facture, ';
-							$sql .= ' amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)';
-							$sql .= ' VALUES ('.$this->id;
-							$sql .= ",'".price2num($amount)."'";
-							$sql .= ",'".$this->db->idate($now)."'";
-							$sql .= ",".$fuser->id;
-							$sql .= ",'".$this->db->escape($stripe_id)."'";
-							$sql .= ",'".$this->db->escape($stripe_uri)."'";
-							$sql .= ",'".$this->db->escape($sourcetype)."'";
-							$sql .= ",".$conf->entity;
-							$sql .= ")";
-
-							dol_syslog(get_class($this)."::demande_prelevement_stripe", LOG_DEBUG);
-							$resql = $this->db->query($sql);
+						dol_syslog(get_class($this)."::demande_prelevement_stripe", LOG_DEBUG);
+						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$this->error = $this->db->lasterror();
 							dol_syslog(get_class($this).'::demande_prelevement_stripe Erreur');
@@ -1614,7 +1604,7 @@ abstract class CommonInvoice extends CommonObject
 					if ($error) {
 						return -1;
 					}
-						return 1;
+					return 1;
 				} else {
 					$this->error = "A request already exists";
 					dol_syslog(get_class($this).'::demande_prelevement_stripe Impossible de creer une demande, demande deja en cours');

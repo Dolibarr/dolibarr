@@ -2101,7 +2101,7 @@ if ($action == 'create') {
 
 				if ($object->statut == 0 && $nbofservices) {
 					if ($user->rights->contrat->creer) {
-						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken(), '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
 						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $params);
@@ -2129,7 +2129,7 @@ if ($action == 'create') {
 				if (isModEnabled('facture') && $object->statut > 0) {
 					$langs->load("bills");
 					if ($user->rights->facture->creer) {
-						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id, '', true, $params);
+						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
 						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
 						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $params);
@@ -2138,14 +2138,14 @@ if ($action == 'create') {
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
 					if ($user->rights->contrat->activer) {
-						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=activate&token='.newToken(), '', true, $params);
 					} else {
 						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
 					if ($user->rights->contrat->desactiver) {
-						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close&amp;token='.newToken(), '', true, $params);
+						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', true, $params);
 					} else {
 						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
 					}
@@ -2169,7 +2169,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($user->rights->contrat->creer) {
-					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken(), '', true, $params);
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken(), '', true, $params);
 				}
 
 				// On peut supprimer entite si

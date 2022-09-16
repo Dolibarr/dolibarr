@@ -27,9 +27,6 @@
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }

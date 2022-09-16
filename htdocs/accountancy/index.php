@@ -44,7 +44,7 @@ if ($user->socid > 0) {
 if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 */

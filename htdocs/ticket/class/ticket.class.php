@@ -1059,6 +1059,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		// Delete all child tables
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
+			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ticket";
 			$sql .= " WHERE rowid=".((int) $this->id);
@@ -1641,7 +1654,7 @@ class Ticket extends CommonObject
 				$sendtocc = '';
 				$deliveryreceipt = 0;
 				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $tmpmessage, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-				if ($mailfile->error || $mailfile->errors) {
+				if ($mailfile->error || !empty($mailfile->errors)) {
 					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				} else {
 					$result = $mailfile->sendfile();

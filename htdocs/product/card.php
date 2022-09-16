@@ -55,6 +55,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -65,7 +66,7 @@ if (isModEnabled('facture')) {
 if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -558,6 +559,7 @@ if (empty($reshook)) {
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
+			$object->fk_default_workstation	 = GETPOST('fk_default_workstation');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ?GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ?GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
@@ -723,6 +725,7 @@ if (empty($reshook)) {
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				$object->fk_default_workstation   = GETPOST('fk_default_workstation');
 				// removed from update view so GETPOST always empty
 				/*
 				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
@@ -1203,7 +1206,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -1441,7 +1444,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-
 		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
 		$doleditor->Create();
 
@@ -1483,6 +1485,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 				print '<input name="desiredstock" type="hidden" value="0">';
 			}
+		}
+
+		if ($type == 1  && $conf->workstation->enabled) {
+				// Default workstation
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print '</td></tr>';
 		}
 
 		// Duration
@@ -1673,7 +1683,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border centpercent">';
 
 		if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				// Accountancy_code_sell
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
@@ -2024,6 +2034,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 				*/
 			}
+
+			if ($object->isService() && $conf->workstation->enabled) {
+				// Default workstation
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
+				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print '</td></tr>';
+			}
+
 			/*
 			else
 			{
@@ -2187,7 +2206,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 					print '<td>';
@@ -2388,7 +2407,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_sell)) {
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch('', $object->accountancy_code_sell, 1);
@@ -2405,7 +2424,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="nowrap">';
 					print $langs->trans("ProductAccountancySellIntraCode");
 					print '</td><td>';
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						if (!empty($object->accountancy_code_sell_intra)) {
 							$accountingaccount2 = new AccountingAccount($db);
 							$accountingaccount2->fetch('', $object->accountancy_code_sell_intra, 1);
@@ -2422,7 +2441,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellExportCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_sell_export)) {
 						$accountingaccount3 = new AccountingAccount($db);
 						$accountingaccount3->fetch('', $object->accountancy_code_sell_export, 1);
@@ -2438,7 +2457,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancyBuyCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_buy)) {
 						$accountingaccount4 = new AccountingAccount($db);
 						$accountingaccount4->fetch('', $object->accountancy_code_buy, 1);
@@ -2455,7 +2474,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td class="nowrap">';
 					print $langs->trans("ProductAccountancyBuyIntraCode");
 					print '</td><td>';
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						if (!empty($object->accountancy_code_buy_intra)) {
 							$accountingaccount5 = new AccountingAccount($db);
 							$accountingaccount5->fetch('', $object->accountancy_code_buy_intra, 1);
@@ -2472,7 +2491,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancyBuyExportCode");
 				print '</td><td>';
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					if (!empty($object->accountancy_code_buy_export)) {
 						$accountingaccount6 = new AccountingAccount($db);
 						$accountingaccount6->fetch('', $object->accountancy_code_buy_export, 1);
@@ -2502,6 +2521,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print (!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+				print '</td>';
+			}
+
+			if ($object->isService() && $conf->workstation->enabled) {
+				$workstation = new Workstation($db);
+				$res = $workstation->fetch($object->fk_default_workstation);
+
+				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
+				print (!empty($workstation->id) ? $workstation->getNomUrl(1) : '');
 				print '</td>';
 			}
 

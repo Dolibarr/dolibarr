@@ -335,7 +335,7 @@ print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 
 print '</tr>';
 
 if ($num == 0) {
-	print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+	print '<tr><td colspan="11" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 } else {
 	while ($obj = $db->fetch_object($resql)) {
 		$user = new User($db);

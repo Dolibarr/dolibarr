@@ -28,6 +28,8 @@ require '../main.inc.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
 
+$action = '';
+
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -120,11 +122,12 @@ print '<br>';
 
 // Add hook to add information
 $parameters = array();
+$object = new stdClass();
 $reshook = $hookmanager->executeHooks('addHomeSetup', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	// Show into other
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("SetupDescription5")."</span><br>";
+	//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("SetupDescription5")."</span><br>";
 	print '<br class="hideonsmartphone">';
 
 	// Show logo
