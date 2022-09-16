@@ -191,16 +191,17 @@ if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_a
 <?php
 // Define list of possible type transition
 $typewecanchangeinto = array(
-	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'select', 'password', 'text', 'html'),
+	'varchar'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select', 'password', 'text', 'html'),
 	'double'=>array('double', 'price'),
 	'price'=>array('double', 'price'),
 	'text'=>array('text', 'html'),
 	'html'=>array('text', 'html'),
 	'password'=>array('password', 'varchar'),
-	'mail'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'url'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'phone'=>array('varchar', 'phone', 'mail', 'url', 'select'),
-	'select'=>array('varchar', 'phone', 'mail', 'url', 'select'),
+	'mail'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'url'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'phone'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'ip'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
+	'select'=>array('varchar', 'phone', 'mail', 'url', 'ip', 'select'),
 	'date'=>array('date', 'datetime')
 );
 /* Disabled because text is text on several lines, when varchar is text on 1 line, we should not be able to convert
@@ -295,7 +296,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
-<?php if (!empty($conf->multicompany->enabled)) { ?>
+<?php if (isModEnabled('multicompany')) { ?>
 	<!-- Multicompany entity -->
 	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>

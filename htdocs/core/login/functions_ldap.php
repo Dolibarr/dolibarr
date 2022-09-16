@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -228,17 +228,19 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					unset($usertmp);
 				}
 
-				if (!empty($conf->multicompany->enabled)) {	// We must check entity (even if sync is not active)
+				if (isModEnabled('multicompany')) {	// We must check entity (even if sync is not active)
 					global $mc;
 
 					$usertmp = new User($db);
 					$usertmp->fetch('', $login);
-					$ret = $mc->checkRight($usertmp->id, $entitytotest);
-					if ($ret < 0) {
-						dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
-						$login = ''; // force authentication failure
+					if (is_object($mc)) {
+						$ret = $mc->checkRight($usertmp->id, $entitytotest);
+						if ($ret < 0) {
+							dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
+							$login = ''; // force authentication failure
+						}
+						unset($usertmp);
 					}
-					unset($usertmp);
 				}
 			}
 			if ($result == 1) {

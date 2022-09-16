@@ -23,6 +23,7 @@
  *  \brief      Card of accounting account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $error = 0;
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "accountancy", "compta"));
+$langs->loadLangs(array('accountancy', 'bills', 'compta'));
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -48,7 +49,7 @@ $label = GETPOST('label', 'alpha');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 

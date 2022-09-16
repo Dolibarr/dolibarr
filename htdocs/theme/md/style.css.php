@@ -973,6 +973,9 @@ textarea.centpercent {
 .nounderline {
 	text-decoration: none;
 }
+.nounderlineimp {
+	text-decoration: none !important;
+}
 .nopadding {
 	padding: 0;
 }
@@ -1042,6 +1045,9 @@ textarea.centpercent {
 }
 .cursormove {
 	cursor: move;
+}
+.cursorwait {
+	cursor: wait;
 }
 .cursornotallowed {
 	cursor: not-allowed;
@@ -1623,6 +1629,7 @@ tr.nobottom td {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
@@ -3506,6 +3513,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+}
+input.buttonlink {
+	color: var(--colortextlink);
+	background-color: transparent;
+	cursor: pointer;
+}
+input.buttonlink:hover {
+	text-decoration: underline;
 }
 input.buttonreset {
 	margin-top: 3px;

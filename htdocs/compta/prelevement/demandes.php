@@ -24,6 +24,7 @@
  *  \brief      Page to list bank transfer requests (debit order or payments of vendors)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modPrelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';

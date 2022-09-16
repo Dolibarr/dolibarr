@@ -456,7 +456,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (!empty($conf->project->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
+					if (isModEnabled('project') && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
 						$objecttmp->fetch_projet();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -763,10 +763,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+	//elseif (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
 	//	$newlang = $objecttmp->thirdparty->default_lang;
 	//}
 	if (!empty($newlang)) {
@@ -965,10 +965,10 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 							$newlang = $objecttmp->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -1116,13 +1116,13 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
 			}
 			if (!empty($newlang)) {

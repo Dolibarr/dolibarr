@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -407,7 +407,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
-if (! empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';

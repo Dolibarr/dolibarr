@@ -20,24 +20,24 @@
  */
 
 /**
- *  \file       skill_agenda.php
- *  \ingroup    hrm
- *  \brief      Tab of events on skill
+ *    \file       htdocs/hrm/skill_agenda.php
+ *    \ingroup    hrm
+ *    \brief      Tab of events on skill
  */
 
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -56,6 +56,7 @@ if (GETPOST('actioncode', 'array')) {
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Get Parameters for Pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -87,6 +88,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
 
@@ -133,7 +135,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 

@@ -204,7 +204,7 @@ class Partnership extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		// if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		// if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 		// 	$this->fields['entity']['enabled'] = 0;
 		// }
 
@@ -611,8 +611,8 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->partnership_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->partnership_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -735,8 +735,8 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->partnership_advance->accept))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->partnership_advance->accept))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -853,8 +853,8 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -905,8 +905,8 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -929,8 +929,8 @@ class Partnership extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->partnership_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;

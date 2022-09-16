@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Note: This tool can be included into a list page with :
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
@@ -1265,7 +1265,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if (! empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;

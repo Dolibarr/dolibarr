@@ -23,6 +23,7 @@
  * \brief       Setup page to configure oauth access to login information
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // This define $list and $supportedoauth2array

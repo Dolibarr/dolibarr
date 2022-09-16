@@ -27,6 +27,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -118,7 +119,7 @@ if ($year) {
 	$param .= '&year='.$year;
 }
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -129,7 +130,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "ptva.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "ptva.fk_bank", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
 	}
@@ -221,7 +222,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			// Chq number
 			print '<td>'.dol_escape_htmltag($obj->num_payment).'</td>';
 
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				// Bank transaction
 				print '<td>';
 				$accountlinestatic->id = $obj->fk_bank;
@@ -258,7 +259,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 		}

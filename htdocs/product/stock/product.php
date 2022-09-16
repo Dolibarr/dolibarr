@@ -31,6 +31,7 @@
  *	\brief      Page to list detailed stock of a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -39,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
 if (!empty($conf->project->enabled)) {
@@ -56,7 +57,7 @@ if (!empty($conf->variants->enabled)) {
 
 // Load translation files required by the page
 $langs->loadlangs(array('products', 'suppliers', 'orders', 'bills', 'stocks', 'sendings', 'margins'));
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
 
@@ -248,7 +249,7 @@ if ($action == "correct_stock" && !$cancel) {
 		$action = 'correction';
 	}
 
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$object = new Product($db);
 		$result = $object->fetch($id);
 
@@ -345,7 +346,7 @@ if ($action == "transfert_stock" && !$cancel) {
 		$error++;
 		$action = 'transfert';
 	}
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		$object = new Product($db);
 		$result = $object->fetch($id);
 
@@ -622,7 +623,7 @@ if ($id > 0 || $ref) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -761,7 +762,7 @@ if ($id > 0 || $ref) {
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
 			// Number of customer orders running
-			if (!empty($conf->commande->enabled)) {
+			if (isModEnabled('commande')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -776,7 +777,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from customer order already sent (partial shipping)
-			if (!empty($conf->expedition->enabled)) {
+			if (isModEnabled("expedition")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
 				if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
@@ -794,7 +795,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of supplier order running
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -810,7 +811,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -959,7 +960,7 @@ if (!$variants) {
 	print '<td></td>';
 	print '</tr>';
 
-	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
+	if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td class="minwidth200">';
 		if (!empty($conf->use_javascript_ajax)) {
@@ -1029,7 +1030,7 @@ if (!$variants) {
 			// Warehouse
 			print '<td colspan="4">';
 			print $entrepotstatic->getNomUrl(1);
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->productbatch->enabled) && $object->hasbatch()) {
+			if (!empty($conf->use_javascript_ajax) && isModEnabled('productbatch') && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
 				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
 				print '</a>';
@@ -1096,7 +1097,7 @@ if (!$variants) {
 			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
 			$totalvaluesell = $totalvaluesell + ($object->price * $obj->reel);
 			// Batch Detail
-			if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
+			if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 				$details = Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);
 				if ($details < 0) {
 					dol_print_error($db);

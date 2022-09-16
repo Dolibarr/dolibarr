@@ -13,18 +13,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
-use Luracast\Restler\RestException;
-
-require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 
 /**
  * \file    htdocs/zapier/class/api_zapier.class.php
  * \ingroup zapier
  * \brief   File for API management of hook.
  */
+
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
+
 
 /**
  * API class for zapier hook

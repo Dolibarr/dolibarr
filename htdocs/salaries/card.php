@@ -26,6 +26,7 @@
  *  \brief      Page of salaries payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -35,14 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 }
 
@@ -260,7 +261,7 @@ if ($action == 'add' && empty($cancel)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !empty($auto_create_paiement) && !$object->accountid > 0) {
+	if (isModEnabled("banque") && !empty($auto_create_paiement) && !$object->accountid > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
@@ -441,7 +442,7 @@ if ($action == "update_extras" && !empty($user->rights->salaries->read)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->project->enabled)) $formproject = new FormProjets($db);
+if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Card');
 $help_url = "";
@@ -559,7 +560,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
@@ -583,7 +584,7 @@ if ($action == 'create') {
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Bank
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="paddingrighonly"');
@@ -610,7 +611,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Number
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Number
 		print '<tr class="hide_if_no_auto_create_payment"><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -794,7 +795,7 @@ if ($id) {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
@@ -893,7 +894,7 @@ if ($id) {
 	print '</td></tr>';
 
 	// Default Bank Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('DefaultBankAccount');
@@ -922,7 +923,7 @@ if ($id) {
 	print '<div class="fichehalfright">';
 
 	$nbcols = 3;
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		$nbcols++;
 	}
 
@@ -956,7 +957,7 @@ if ($id) {
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -972,14 +973,14 @@ if ($id) {
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
 					$bankaccountstatic->number = $objp->banumber;
 					$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						$bankaccountstatic->account_number = $objp->account_number;
 
 						$accountingjournal = new AccountingJournal($db);
@@ -992,7 +993,7 @@ if ($id) {
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
 					print '</td>';
 				}
-				print '<td class="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right nowrap amountcard">'.price($objp->amount)."</td>\n";
 				print "</tr>";
 				$totalpaid += $objp->amount;
 				$i++;
@@ -1003,14 +1004,14 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right nowrap amountcard\">".price($totalpaid)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right nowrap amountcard\">".price($object->amount)."</td></tr>\n";
 
 		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
-		print '<td class="right'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
+		print '<td class="right nowrap'.($resteapayer ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 		print "</table>";
 		print '</div>';

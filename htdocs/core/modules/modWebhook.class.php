@@ -141,7 +141,7 @@ class modWebhook extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("webhook");
+		$this->langfiles = array();
 
 		// Prerequisites
 		$this->phpmin = array(5, 6); // Minimum version of PHP required by module

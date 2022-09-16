@@ -27,6 +27,7 @@
  *		\brief      Page d'administration/configuration du module Ldap
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -179,7 +180,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
 
-print $langs->trans("LDAPDescUsers").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescUsers").'</span><br>';
 print '<br>';
 
 

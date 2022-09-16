@@ -28,18 +28,21 @@
  *		\brief      Tab for HRM
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
-if (!empty($conf->holiday->enabled)) {
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('holiday')) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (!empty($conf->salaries->enabled)) {
+if (isModEnabled('salaries')) {
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 }
@@ -122,6 +125,10 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
+	$account->currency_code = trim(GETPOST("account_currency_code"));
+	$account->state_id = GETPOST("account_state_id", 'int');
+	$account->country_id = GETPOST("account_country_id", 'int');
+
 	$result = $account->create($user);
 
 	if (!$result) {
@@ -191,6 +198,10 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	$account->domiciliation   = GETPOST('domiciliation', 'alpha');
 	$account->proprio         = GETPOST('proprio', 'alpha');
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
+
+	$account->currency_code = trim(GETPOST("account_currency_code"));
+	$account->state_id = GETPOST("account_state_id", 'int');
+	$account->country_id = GETPOST("account_country_id", 'int');
 
 	$result = $account->update($user);
 
@@ -274,6 +285,7 @@ if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
  */
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $childids = $user->getAllChildIds(1);
 
@@ -285,14 +297,42 @@ llxHeader('', $title, $help_url);
 $head = user_prepare_head($object);
 
 if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	if ($conf->use_javascript_ajax) {
+		print "\n<script>";
+		print 'jQuery(document).ready(function () {
+					jQuery("#type").change(function() {
+						document.formbank.action.value="edit";
+						document.formbank.submit();
+					});
+					jQuery("#selectaccount_country_id").change(function() {
+						document.formbank.action.value="edit";
+						document.formbank.submit();
+					});
+				})';
+		print "</script>\n";
+	}
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 if ($id && $action == 'create' && $user->rights->user->user->creer) {
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	if ($conf->use_javascript_ajax) {
+		print "\n<script>";
+		print 'jQuery(document).ready(function () {
+					jQuery("#type").change(function() {
+						document.formbank.action.value="create";
+						document.formbank.submit();
+					});
+					jQuery("#selectaccount_country_id").change(function() {
+						document.formbank.action.value="create";
+						document.formbank.submit();
+					});
+				})';
+		print "</script>\n";
+	}
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" name="formbank" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
@@ -331,7 +371,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
@@ -361,7 +401,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print "</tr>\n";
 
 	// Expense report validator
-	if (!empty($conf->expensereport->enabled)) {
+	if (isModEnabled('expensereport')) {
 		print '<tr><td>';
 		$text = $langs->trans("ForceUserExpenseValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -377,7 +417,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Holiday request validator
-	if (!empty($conf->holiday->enabled)) {
+	if (isModEnabled('holiday')) {
 		print '<tr><td>';
 		$text = $langs->trans("ForceUserHolidayValidator");
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
@@ -407,7 +447,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	// Sensitive salary/value information
 	if ((empty($user->socid) && in_array($id, $childids))	// A user can always see salary/value information for its subordinates
 		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
-		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+		|| (isModEnabled('hrm') && !empty($user->rights->hrm->employee->read))) {
 		$langs->load("salaries");
 
 		// Salary
@@ -534,7 +574,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Accountancy code
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>'.$object->accountancy_code.'</td></tr>';
 	}
@@ -607,9 +647,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$salary->paye = $objp->paye;
 				$salary->amount = $objp->amount;
 
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->ref;
-				$payment_salary->datep = $db->jdate($objp->datep);
+				$payment_salary->id = !empty($objp->rowid) ? $objp->rowid : 0;
+				$payment_salary->ref = !empty($objp->ref) ? $objp->ref : "";
+				$payment_salary->datep = $db->jdate(!empty($objp->datep) ? $objp->datep : "");
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
@@ -635,7 +675,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest leave requests
-	if (!empty($conf->holiday->enabled) && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
+	if (isModEnabled('holiday') && ($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))) {
 		$holiday = new Holiday($db);
 
 		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
@@ -691,7 +731,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Latest expense report
-	if (!empty($conf->expensereport->enabled) &&
+	if (isModEnabled('expensereport') &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
 		) {
 		$exp = new ExpenseReport($db);
@@ -758,7 +798,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 		}
 	} else {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('AlreadyOneBankAccount'), 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -772,6 +812,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print_liste_field_titre("RIB");
 	print_liste_field_titre("IBAN");
 	print_liste_field_titre("BIC");
+	print_liste_field_titre("Currency");
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -806,7 +847,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $string;
 		print '</td>';
 		// IBAN
-		print '<td>'.$account->iban;
+		print '<td>'.getIbanHumanReadable($account);
 		if (!empty($account->iban)) {
 			if (!checkIbanForAccount($account)) {
 				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
@@ -821,6 +862,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			}
 		}
 		print '</td>';
+
+		// Currency
+		print '<td>'.$account->currency_code.'</td>';
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
@@ -863,6 +907,47 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
 	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+
+	// Currency
+	print '<tr><td class="fieldrequired">'.$langs->trans("Currency");
+	print '<input type="hidden" value="'.$account->currency_code.'">';
+	print '</td>';
+	print '<td class="maxwidth200onsmartphone">';
+	$selectedcode = $account->currency_code;
+	if (!$selectedcode) {
+		$selectedcode = $conf->currency;
+	}
+	print img_picto('', 'multicurrency', 'class="pictofixedwidth"');
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
+	print '</td></tr>';
+
+	// Country
+	$account->country_id = $account->country_id ? $account->country_id : $mysoc->country_id;
+	$selectedcode = $account->country_code;
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id");
+	} elseif (empty($selectedcode)) {
+		$selectedcode = $mysoc->country_code;
+	}
+	$account->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
+	print '<td class="maxwidth200onsmartphone">';
+	print img_picto('', 'country', 'class="pictofixedwidth"').$form->select_country($selectedcode, 'account_country_id');
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
+	print '</td></tr>';
+
+	// State
+	print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
+	if ($selectedcode) {
+		print img_picto('', 'state', 'class="pictofixedwidth"');
+		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $account->state_id, $selectedcode, 'account_state_id');
+	} else {
+		print $countrynotdefined;
+	}
+	print '</td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {

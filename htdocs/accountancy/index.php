@@ -23,6 +23,8 @@
  * \brief   Home accounting module
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -42,7 +44,7 @@ if ($user->socid > 0) {
 if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 */
@@ -212,7 +214,7 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 	print $s;
 	print "<br>\n";
 
-	if (isModEnabled('expensereport')|| isModEnabled('deplacement')) {
+	if (isModEnabled('expensereport') || isModEnabled('deplacement')) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);

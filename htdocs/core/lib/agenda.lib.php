@@ -104,7 +104,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		}
 	}
 
-	if (isModEnabled('societe') && !empty($user->rights->societe->lire)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
@@ -498,7 +498,7 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");

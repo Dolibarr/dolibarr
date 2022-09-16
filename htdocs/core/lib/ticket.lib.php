@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ function generate_random_id($car = 16)
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
 	global $user, $conf, $langs, $mysoc;
-
+	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
@@ -250,7 +250,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
 		print '<div class="backimagepublicticket">';
-		print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->TICKET_IMAGE_PUBLIC_INTERFACE.'">';
 		print '</div>';
 	}
 
@@ -440,7 +440,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 
 	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-	if (!empty($conf->mailing->enabled) && !empty($objcon->email)
+	if (isModEnabled('mailing') && !empty($objcon->email)
 		&& (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$langs->load("mails");
 
@@ -560,12 +560,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	// Set $out to sow events
 	$out = '';
 
-	if (empty($conf->agenda->enabled)) {
+	if (!isModEnabled('agenda')) {
 		$langs->loadLangs(array("admin", "errors"));
 		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
 
-	if (isModEnabled('agenda') || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
+	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -697,8 +697,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			//	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
 			//}
 
-			if ($user->rights->agenda->allactions->create ||
-				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
+			if (!empty($user->rights->agenda->allactions->create) ||
+				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
 				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 

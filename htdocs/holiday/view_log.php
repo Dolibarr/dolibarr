@@ -24,6 +24,7 @@
  *  \ingroup    holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Security check (access forbidden for external user too)
@@ -74,11 +75,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->readall) {
-	accessforbidden();
-}
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
@@ -92,12 +88,12 @@ $arrayfields = array();
 $arrayofmassactions = array();
 
 if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+	accessforbidden('Module not enabled');
+}
+
+// Si l'utilisateur n'a pas le droit de lire cette page
+if (!$user->rights->holiday->readall) {
+	accessforbidden();
 }
 
 

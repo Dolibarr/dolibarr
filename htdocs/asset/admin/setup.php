@@ -22,6 +22,7 @@
  * \brief   Asset setup page.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
@@ -524,13 +525,13 @@ if ($action == 'edit') {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
-				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+				if (isModEnabled("product") || isModEnabled("service")) {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} elseif ($val['type'] == 'accountancy_code') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 					$formaccounting = new FormAccounting($db);
 					print $formaccounting->select_account($selected, $constname, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
@@ -539,7 +540,7 @@ if ($action == 'edit') {
 				}
 			} elseif ($val['type'] == 'accountancy_category') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					print '<input type="text" name="' . $constname . '" list="pcg_type_datalist" value="' . $selected . '">';
 					// autosuggest from existing account types if found
 					print '<datalist id="pcg_type_datalist">';
@@ -636,7 +637,7 @@ if ($action == 'edit') {
 						setEventMessages(null, $object->errors, "errors");
 					}
 				} elseif ($val['type'] == 'accountancy_code') {
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch('', $conf->global->{$constname}, 1);

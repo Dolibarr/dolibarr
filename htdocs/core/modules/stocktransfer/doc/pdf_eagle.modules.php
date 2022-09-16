@@ -531,7 +531,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
 					// Lot / série
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
 					}
@@ -813,7 +813,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 			$pdf->MultiCell($this->posxlot - $this->posxdesc, 2, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
-		if (!empty($conf->productbatch->enabled) && $this->atLeastOneBatch) {
+		if (isModEnabled('productbatch') && $this->atLeastOneBatch) {
 			$pdf->line($this->posxlot - 1, $tab_top, $this->posxlot - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxlot, $tab_top + 1);

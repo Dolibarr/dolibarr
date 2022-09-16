@@ -25,6 +25,7 @@
  *       \brief      Page to setup PDF options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -102,7 +103,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled('propal')) {
 	print load_fiche_titre($langs->trans("Proposal"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';

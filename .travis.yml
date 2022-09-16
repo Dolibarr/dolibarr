@@ -54,11 +54,11 @@ jobs:
       env: DB=mysql
     - stage: PHP Dev
       if: type = push AND branch = develop
-      php: nightly 
+      php: nightly
       env: DB=mysql
     - stage: PHP Dev
       if: type = push AND branch = 15.0
-      php: nightly 
+      php: nightly
       env: DB=mysql
 
 notifications:
@@ -289,7 +289,7 @@ script:
       --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
       --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
       --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
-      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
+      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
   fi
   set +e
   echo

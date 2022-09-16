@@ -24,6 +24,7 @@
  *  \brief      Cron Jobs Card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -612,7 +613,7 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {

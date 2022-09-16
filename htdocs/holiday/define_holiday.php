@@ -26,6 +26,7 @@
  *		\brief      File that defines the balance of paid holiday of users.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
@@ -60,6 +61,17 @@ if (!$sortorder) {
 }
 
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('defineholidaylist'));
+$extrafields = new ExtraFields($db);
+
+$holiday = new Holiday($db);
+
+
+if (empty($conf->holiday->enabled)) {
+	accessforbidden('Module not enabled');
+}
+
 // Protection if external user
 if ($user->socid > 0) {
 	accessforbidden();
@@ -69,23 +81,6 @@ if ($user->socid > 0) {
 if (empty($user->rights->holiday->read)) {
 	accessforbidden();
 }
-
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('defineholidaylist'));
-$extrafields = new ExtraFields($db);
-
-$holiday = new Holiday($db);
-
-if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
-}
-
 
 
 /*
@@ -211,7 +206,6 @@ $userstatic = new User($db);
 $title = $langs->trans('CPTitreMenu');
 
 llxHeader('', $title);
-
 
 $typeleaves = $holiday->getTypes(1, 1);
 $result = $holiday->updateBalance(); // Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.

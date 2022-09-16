@@ -421,7 +421,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return $resultset->num_rows;
+		return isset($resultset->num_rows) ? $resultset->num_rows : 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -479,10 +479,22 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
+	 *  @deprecated
 	 */
 	public function escapeunderscore($stringtoencode)
 	{
 		return str_replace('_', '\_', (string) $stringtoencode);
+	}
+
+	/**
+	 *	Escape a string to insert data into a like
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeforlike($stringtoencode)
+	{
+		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
 	}
 
 	/**

@@ -18,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

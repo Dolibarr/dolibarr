@@ -17,9 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 }
@@ -39,6 +36,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late

@@ -36,14 +36,14 @@ $langs->loadLangs(array("recruitment", "other", "users"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'recruitmentcandidaturecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+//$lineid = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new RecruitmentCandidature($db);
@@ -257,10 +257,15 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("RecruitmentCandidature");
-$help_url = '';
-llxHeader('', $title, $help_url);
+if ($action == 'create') {
+	$title    = $langs->trans('NewCandidature');
+	$help_url = '';
+} else {
+	$title = $object->ref." - ".$langs->trans('Card');
+	$help_url = '';
+}
 
+llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
@@ -428,7 +433,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled))
+	 if (!empty($conf->project->enabled))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
@@ -448,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();
@@ -554,7 +559,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Contract refused / accepted
 			if ($object->status == $object::STATUS_CONTRACT_PROPOSED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=closeas">'.$langs->trans("Accept").' / '.$langs->trans("Decline").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=closeas&token='.newToken().'">'.$langs->trans("Accept").' / '.$langs->trans("Decline").'</a>';
 				}
 			}
 
@@ -581,7 +586,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				} elseif ($object->status == $object::STATUS_REFUSED || $object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_CONTRACT_REFUSED) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
@@ -650,6 +655,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$diroutput = $conf->recruitment->dir_output;
 	$trackid = 'recruitmentcandidature'.$object->id;
 	$inreplyto = $object->email_msgid;
+
+	$job = new RecruitmentJobPosition($db);
+	$job->fetch($object->fk_recruitmentjobposition);
+
+	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	$recruiter = new User($db);
+	$recruiter->fetch($job->fk_user_recruiter);
+
+	$recruitername = $recruiter->getFullName('');
+	$recruitermail = (!empty($job->email_recruiter) ? $job->email_recruiter : $recruiter->email);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

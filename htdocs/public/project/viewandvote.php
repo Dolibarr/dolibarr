@@ -41,6 +41,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -91,7 +92,7 @@ if ($resultproject < 0) {
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 

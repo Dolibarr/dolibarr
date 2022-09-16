@@ -7,7 +7,7 @@
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
- * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,13 +30,14 @@
  *	\ingroup    ficheinter
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -173,10 +174,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -198,10 +199,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -516,10 +517,10 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -612,10 +613,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -645,10 +646,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -665,10 +666,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -687,10 +688,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -784,10 +785,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$formcontract = new FormContract($db);
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -908,7 +909,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 
 			$langs->load("project");
@@ -998,7 +999,7 @@ if ($action == 'create') {
 
 			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
-			if (!empty($conf->multicurrency->enabled))
+			if (isModEnabled("multicurrency"))
 			{
 				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
 				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
@@ -1159,7 +1160,7 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ficheinter->creer) {
@@ -1233,7 +1234,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Contract
-	if (!empty($conf->contrat->enabled)) {
+	if (isModEnabled('contrat')) {
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
@@ -1645,7 +1646,7 @@ if ($action == 'create') {
 				}
 
 				// Proposal
-				if ($conf->service->enabled && !empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if ($conf->service->enabled && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->propal->creer) {

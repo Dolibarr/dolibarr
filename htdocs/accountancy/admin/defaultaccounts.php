@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -313,7 +313,7 @@ print $formaccounting->select_account(getDolGlobalString('ACCOUNTING_ACCOUNT_SUP
 print '</td>';
 print '</tr>';
 
-if (!empty($conf->societe->enabled) && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') != '-1') {
+if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') != '-1') {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnSupplierDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {

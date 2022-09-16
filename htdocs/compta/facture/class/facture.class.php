@@ -15,7 +15,7 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
  * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
@@ -47,10 +47,10 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -144,7 +144,8 @@ class Facture extends CommonInvoice
 	/**
 	 * @var string customer ref
 	 */
-	public $ref_client;
+	public $ref_client;		// deprecated; use ref_customer instead
+	public $ref_customer;
 
 	/**
 	 * @var int Ref Int
@@ -335,8 +336,8 @@ class Facture extends CommonInvoice
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'CurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>190),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>205),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>210),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>205),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>210),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>215),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'situation_cycle_ref' =>array('type'=>'smallint(6)', 'label'=>'Situation cycle ref', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>230),
@@ -348,12 +349,12 @@ class Facture extends CommonInvoice
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>260),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLabel', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>265),
 		'date_pointoftax' =>array('type'=>'date', 'label'=>'DatePointOfTax', 'enabled'=>'$conf->global->INVOICE_POINTOFTAX_DATE', 'visible'=>-1, 'position'=>270),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyID', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>275),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Currency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>280),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'CurrencyRate', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>291, 'isameasure'=>1),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>292, 'isameasure'=>1),
+		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyID', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>275),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Currency', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>280),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'CurrencyRate', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
+		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
+		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>291, 'isameasure'=>1),
+		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>292, 'isameasure'=>1),
 		'fk_fac_rec_source' =>array('type'=>'integer', 'label'=>'RecurringInvoiceSource', 'enabled'=>1, 'visible'=>-1, 'position'=>305),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>310),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>315),
@@ -598,10 +599,10 @@ class Facture extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
 			if (!empty($newlang)) {
@@ -1587,7 +1588,7 @@ class Facture extends CommonInvoice
 		$amountdeposit = array();
 		$descriptions = array();
 
-		if (! empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
+		if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
 			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
 
 			$TTotalByTva = array();
@@ -1596,8 +1597,8 @@ class Facture extends CommonInvoice
 					continue;
 				}
 				$TTotalByTva[$line->tva_tx] += $line->total_ttc;
-				$descriptions[$line->tva_tx] .= '<li>' . (! empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
-				$descriptions[$line->tva_tx] .= (! empty($line->product_label) ? $line->product_label . ' - ' : '');
+				$descriptions[$line->tva_tx] .= '<li>' . (!empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
+				$descriptions[$line->tva_tx] .= (!empty($line->product_label) ? $line->product_label . ' - ' : '');
 				$descriptions[$line->tva_tx] .= $langs->trans('Qty') . ' : ' . $line->qty;
 				$descriptions[$line->tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($line->total_ht) . '</li>';
 			}
@@ -1623,8 +1624,8 @@ class Facture extends CommonInvoice
 				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 				$tva_tx = $lines[$i]->tva_tx;
 				$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $origin->deposit_percent) / 100;
-				$descriptions[$tva_tx] .= '<li>' . (! empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
-				$descriptions[$tva_tx] .= (! empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_tx] .= '<li>' . (!empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
+				$descriptions[$tva_tx] .= (!empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
 				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
 				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
 			}
@@ -1644,7 +1645,7 @@ class Facture extends CommonInvoice
 			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
 
 			// Hidden conf
-			if (! empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
+			if (!empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && !empty($descriptions[$tva])) {
 				$descline .= '<ul>' . $descriptions[$tva] . '</ul>';
 			}
 
@@ -1739,7 +1740,7 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
-		if (! empty($autoValidateDeposit)) {
+		if (!empty($autoValidateDeposit)) {
 			$validateReturn = $deposit->validate($user, '', 0, $notrigger);
 
 			if ($validateReturn < 0) {
@@ -1820,21 +1821,10 @@ class Facture extends CommonInvoice
 
 		if ($user->rights->facture->lire) {
 			$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
-			if ($this->type == self::TYPE_REPLACEMENT) {
-				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
-			}
-			if ($this->type == self::TYPE_CREDIT_NOTE) {
-				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
-			}
-			if ($this->type == self::TYPE_DEPOSIT) {
-				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
-			}
-			if ($this->type == self::TYPE_SITUATION) {
-				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
-			}
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
 			}
+			$label .= ' &nbsp; '.$this->getLibType(1);
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
@@ -1985,8 +1975,9 @@ class Facture extends CommonInvoice
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
 
-				$this->ref = $obj->ref;
-				$this->ref_client = $obj->ref_client;
+				$this->ref					= $obj->ref;
+				$this->ref_client			= $obj->ref_client;
+				$this->ref_customer			= $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
 				$this->type					= $obj->type;
 				$this->date					= $this->db->jdate($obj->df);
@@ -5304,7 +5295,7 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
-	 * @return number or -1 if not available
+	 * @return float or -1 if not available
 	 */
 	public function getRetainedWarrantyAmount($rounding = -1)
 	{
