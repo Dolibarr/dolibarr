@@ -851,7 +851,7 @@ class EmailCollector extends CommonObject
 
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
-			$result = $emailcollector->doCollectOneCollector();
+			$result = $emailcollector->doCollectOneCollector(0);
 			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
@@ -1022,6 +1022,14 @@ class EmailCollector extends CommonObject
 		$this->error = '';
 		$this->debuginfo = '';
 
+		$search = '';
+		$searchhead = '';
+		$searchfilterdoltrackid = 0;
+		$searchfilternodoltrackid = 0;
+		$searchfilterisanswer = 0;
+		$searchfilterisnotanswer = 0;
+		$operationslog = '';
+
 		$now = dol_now();
 
 
@@ -1168,12 +1176,6 @@ class EmailCollector extends CommonObject
 
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
-			$search = '';
-			$searchhead = '';
-			$searchfilterdoltrackid = 0;
-			$searchfilternodoltrackid = 0;
-			$searchfilterisanswer = 0;
-			$searchfilterisnotanswer = 0;
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
@@ -1271,11 +1273,6 @@ class EmailCollector extends CommonObject
 			$search = var_export($criteria, true);
 		} else {
 			$search = 'UNDELETED'; // Seems not supported by some servers
-			$searchhead = '';
-			$searchfilterdoltrackid = 0;
-			$searchfilternodoltrackid = 0;
-			$searchfilterisanswer = 0;
-			$searchfilterisnotanswer = 0;
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
@@ -2029,16 +2026,24 @@ class EmailCollector extends CommonObject
 												// Overwrite param $tmpproperty
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found idtouseforthirdparty='.$idtouseforthirdparty;
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found propertytooverwrite='.$propertytooverwrite;
 												} else {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Found nametouseforthirdparty='.$nametouseforthirdparty;
 												}
 											} else {
 												// Regex not found
 												$idtouseforthirdparty = null;
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
+
+												$operationslog .= '<br>Regex /'.$regexstring.'/ms into '.$sourcestring.' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
@@ -2052,10 +2057,16 @@ class EmailCollector extends CommonObject
 										//else $object->$tmpproperty = $reg[1];
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property idtouseforthrdparty='.$idtouseforthirdparty;
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property emailtouseforthrdparty='.$emailtouseforthirdparty;
 										} else {
 											$nametouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property nametouseforthirdparty='.$nametouseforthirdparty;
 										}
 									} else {
 										$errorforactions++;
@@ -2108,6 +2119,8 @@ class EmailCollector extends CommonObject
 													$errorforactions++;
 													$this->error = $thirdpartystatic->error;
 													$this->errors = $thirdpartystatic->errors;
+												} else {
+													$operationslog .= '<br>Thirdparty created -> id = '.$thirdpartystatic->id;
 												}
 											}
 										}
@@ -2200,6 +2213,8 @@ class EmailCollector extends CommonObject
 									if ($result <= 0) {
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
+									} else {
+										$operationslog .= '<br>Event created -> id='.$actioncomm->id;
 									}
 								}
 							}
@@ -2364,8 +2379,12 @@ class EmailCollector extends CommonObject
 										}
 									}
 								}
+
+								$operationslog .= '<br>Save attachment files on disk';
 							} else {
 								$this->errors[] = 'no joined piece';
+
+								$operationslog .= '<br>No joinded files';
 							}
 						} elseif ($operation['type'] == 'project') {
 							// Create project / lead
@@ -2480,6 +2499,10 @@ class EmailCollector extends CommonObject
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
+
+												$operationslog .= '<br>Project created with attachments -> id='.$projecttocreate->id;
+											} else {
+												$operationslog .= '<br>Project created without attachments -> id='.$projecttocreate->id;
 											}
 										}
 									}
@@ -2602,6 +2625,10 @@ class EmailCollector extends CommonObject
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
+
+												$operationslog .= '<br>Ticket created with attachments -> id='.$tickettocreate->id;
+											} else {
+												$operationslog .= '<br>Ticket created without attachments -> id='.$tickettocreate->id;
 											}
 										}
 									}
@@ -2695,6 +2722,8 @@ class EmailCollector extends CommonObject
 										$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
 										$this->errors = $candidaturetocreate->errors;
 									}
+
+									$operationslog .= '<br>Candidature created without attachments -> id='.$candidaturetocreate->id;
 								}
 							}
 						} elseif (substr($operation['type'], 0, 4) == 'hook') {
@@ -2706,25 +2735,25 @@ class EmailCollector extends CommonObject
 							}
 
 							$parameters = array(
-							'connection'=>  $connection,
-							'imapemail'=>$imapemail,
-							'overview'=>$overview,
+								'connection'=>  $connection,
+								'imapemail'=>$imapemail,
+								'overview'=>$overview,
 
-							'from' => $from,
-							'fromtext' => $fromtext,
+								'from' => $from,
+								'fromtext' => $fromtext,
 
-							'actionparam'=>  $operation['actionparam'],
+								'actionparam'=>  $operation['actionparam'],
 
-							'thirdpartyid' => $thirdpartyid,
-							'objectid'=> $objectid,
-							'objectemail'=> $objectemail,
+								'thirdpartyid' => $thirdpartyid,
+								'objectid'=> $objectid,
+								'objectemail'=> $objectemail,
 
-							'messagetext'=>$messagetext,
-							'subject'=>$subject,
-							'header'=>$header,
-							'attachments'=>$attachments,
+								'messagetext'=>$messagetext,
+								'subject'=>$subject,
+								'header'=>$header,
+								'attachments'=>$attachments,
 							);
-							$reshook = $hookmanager->executeHooks('doColleimapctOneCollector', $parameters, $this, $operation['type']);
+							$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
 
 							if ($reshook < 0) {
 								$errorforthisaction++;
@@ -2732,9 +2761,11 @@ class EmailCollector extends CommonObject
 							}
 							if ($errorforthisaction) {
 								$errorforactions++;
+								$operationslog .= '<br>Hook doCollectImapOneCollector executed with error';
+							} else {
+								$operationslog .= '<br>Hook doCollectImapOneCollector executed without error';
 							}
 						}
-
 
 						if (!$errorforactions) {
 							$nbactiondoneforemail++;
@@ -2804,8 +2835,9 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
-			imap_expunge($connection); // To validate any move
-
+			if (empty($mode)) {
+				imap_expunge($connection); // To validate any move
+			}
 			imap_close($connection);
 		}
 
@@ -2814,6 +2846,9 @@ class EmailCollector extends CommonObject
 		$this->debuginfo .= 'IMAP search string used : '.$search;
 		if ($searchhead) {
 			$this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
+		}
+		if ($operationslog) {
+			$this->debuginfo .= $operationslog;
 		}
 
 		if (empty($error) && empty($mode)) {
