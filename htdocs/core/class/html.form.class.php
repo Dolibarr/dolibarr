@@ -5150,6 +5150,12 @@ class Form
 						},';
 			}
 
+			$jsforcursor = '';
+			if (empty($useajax)) {
+				$jsforcursor = '// The call to urljump can be slow, so we set the wait cursor'."\n";
+				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
+			}
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5180,8 +5186,7 @@ class Form
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
             				if (pageyes.length > 0) {
-								// The call to urljump can be slow, so we set the wait cursor
-								jQuery("html,body,#id-container").addClass("cursorwait");
+							'.$jsforcursor.'
 								var post = $.post(
 									pageyes,
 									options,
