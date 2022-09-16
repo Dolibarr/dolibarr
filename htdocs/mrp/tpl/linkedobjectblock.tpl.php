@@ -26,7 +26,7 @@ if (empty($conf) || !is_object($conf)) {
 
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
 
-global $user, $db;
+global $user, $db, $hookmanager;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
@@ -42,31 +42,35 @@ $ilink = 0;
 $mo_static = new Mo($db);
 $res = $mo_static->fetch($object->id);
 $TMoChilds = $mo_static->getMoChilds();
+$hookmanager->initHooks('LinesLinkedObjectBlock');
+$parameters = array();
+$reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
-foreach ($TMoChilds as $key => $objectlink) {
-	$ilink++;
+if (empty($reshook)) {
+	foreach ($TMoChilds as $key => $objectlink) {
+		$ilink++;
 
-	$trclass = 'oddeven';
+		$trclass = 'oddeven';
 
-	echo '<tr class="'.$trclass.'" >';
-	echo '<td class="linkedcol-element" >'.$langs->trans("ManufacturingOrder");
-	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+		echo '<tr class="' . $trclass . '" >';
+		echo '<td class="linkedcol-element" >' . $langs->trans("ManufacturingOrder");
+		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+			print '<a class="objectlinked_importbtn" href="' . $objectlink->getNomUrl(0, '', 0, 1) . '&amp;action=selectlines" data-element="' . $objectlink->element . '" data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a';
+		}
+		echo '</td>';
+		echo '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
+
+		echo '<td class="linkedcol-ref" align="center">';
+		//  $result = $product_static->fetch($objectlink->fk_product);
+		print '</td>';
+		echo '<td class="linkedcol-date" align="center">' . dol_print_date($objectlink->date_creation, 'day') . '</td>';
+		echo '<td class="linkedcol-amount right">-</td>';
+		echo '<td class="linkedcol-statut right">' . $objectlink->getLibStatut(3) . '</td>';
+		echo '<td class="linkedcol-action right">';
+		// For now, shipments must stay linked to order, so link is not deletable
+		echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $key . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
+		echo '</td>';
+		echo "</tr>\n";
 	}
-	echo '</td>';
-	echo '<td class="linkedcol-name nowraponall" >'.$objectlink->getNomUrl(1).'</td>';
-
-	echo '<td class="linkedcol-ref" align="center">';
-	//  $result = $product_static->fetch($objectlink->fk_product);
-	print '</td>';
-	echo '<td class="linkedcol-date" align="center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
-	echo '<td class="linkedcol-amount right">-</td>';
-	echo '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
-	echo '<td class="linkedcol-action right">';
-	// For now, shipments must stay linked to order, so link is not deletable
-	echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
-	echo '</td>';
-	echo "</tr>\n";
 }
-
 echo "<!-- END PHP TEMPLATE -->\n";
