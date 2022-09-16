@@ -49,7 +49,7 @@ function donation_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/don/admin/donation_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['don']['label']) ? count($extrafields->attributes['don']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['don']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}

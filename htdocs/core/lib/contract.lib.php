@@ -130,7 +130,7 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['contrat']['label']) ? count($extrafields->attributes['contrat']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['contrat']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
@@ -139,7 +139,7 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$nbExtrafields = is_countable($extrafields->attributes['contratdet']['label']) ? count($extrafields->attributes['contratdet']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['contratdet']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}

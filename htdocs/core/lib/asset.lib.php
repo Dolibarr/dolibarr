@@ -57,7 +57,7 @@ function assetAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/asset_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['asset']['count']);
+	$nbExtrafields = $extrafields->attributes['asset']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}

@@ -56,7 +56,7 @@ function hrmAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
 	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['hrm_evaluation']['label']) ? count($extrafields->attributes['hrm_evaluation']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
@@ -65,7 +65,7 @@ function hrmAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
 	$head[$h][1] = $langs->trans("JobsExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['hrm_job']['label']) ? count($extrafields->attributes['hrm_job']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['hrm_job']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
@@ -74,7 +74,7 @@ function hrmAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
 	$head[$h][1] = $langs->trans("SkillsExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['hrm_skill']['label']) ? count($extrafields->attributes['hrm_skill']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
