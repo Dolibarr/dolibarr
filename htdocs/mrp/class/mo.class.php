@@ -1129,10 +1129,10 @@ class Mo extends CommonObject
 			$subBom = new BOM($this->db);
 			$result  = $subBom->fetch($this->fk_bom);
 			$labelProd = '';
-			if ($result){
+			if ($result) {
 				$subProd = new Product($this->db);
 				$resSub = $subProd->fetch($subBom->fk_product);
-				if ($resSub){
+				if ($resSub) {
 					$labelProd = '</br>'.$langs->trans("Product").' : ' . $subProd->ref;
 				}
 			}
