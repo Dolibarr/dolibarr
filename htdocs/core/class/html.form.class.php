@@ -5198,6 +5198,7 @@ class Form
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
                          	//alert(urljump);
             				if (pageno.length > 0) {
+							'.$jsforcursor.'
 								location.href = urljump;
 								console.log("after location.href");
 							}
