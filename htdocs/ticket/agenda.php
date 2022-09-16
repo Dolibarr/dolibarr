@@ -83,7 +83,7 @@ if (!$action) {
 // Security check
 $id = GETPOST("id", 'int');
 if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'ticket', $id, '');
+$result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
@@ -164,11 +164,15 @@ if ($object->fk_user_create > 0) {
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(0);
-}
-if (!empty($object->origin_email)) {
+	$morehtmlref .= $fuser->getNomUrl(-1);
+} elseif (!empty($object->email_msgid)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+} elseif (!empty($object->origin_email)) {
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 }
 
 // Thirdparty

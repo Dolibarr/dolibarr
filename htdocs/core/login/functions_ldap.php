@@ -233,12 +233,14 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 					$usertmp = new User($db);
 					$usertmp->fetch('', $login);
-					$ret = $mc->checkRight($usertmp->id, $entitytotest);
-					if ($ret < 0) {
-						dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
-						$login = ''; // force authentication failure
+					if (is_object($mc)) {
+						$ret = $mc->checkRight($usertmp->id, $entitytotest);
+						if ($ret < 0) {
+							dol_syslog("functions_ldap::check_user_password_ldap Authentication KO entity '".$entitytotest."' not allowed for user id '".$usertmp->id."'", LOG_NOTICE);
+							$login = ''; // force authentication failure
+						}
+						unset($usertmp);
 					}
-					unset($usertmp);
 				}
 			}
 			if ($result == 1) {

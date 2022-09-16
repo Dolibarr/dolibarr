@@ -51,7 +51,7 @@ if (!$sortfield) {
 	$sortfield = "a.datep,a.id";
 }
 if (!$sortorder) {
-	$sortorder = "desc";
+	$sortorder = "DESC";
 }
 $offset = $limit * $page;
 $pageprev = $page - 1;

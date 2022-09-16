@@ -4886,7 +4886,7 @@ class Form
 	 *     @param 	string		$action      	   	Action
 	 *	   @param	array		$formquestion	   	An array with forms complementary inputs
 	 * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-	 * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box
 	 *     @return 	void
@@ -5151,8 +5151,10 @@ class Form
 			}
 
 			$jsforcursor = '';
+			if ($useajax == 1) {
 				$jsforcursor = '// The call to urljump can be slow, so we set the wait cursor'."\n";
 				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
+			}
 
 			$formconfirm .= '
                     resizable: false,
@@ -5212,6 +5214,7 @@ class Form
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
                          	//alert(urljump);
             				if (pageno.length > 0) {
+							'.$jsforcursor.'
 								var post = $.post(
 									pageno,
 									options,

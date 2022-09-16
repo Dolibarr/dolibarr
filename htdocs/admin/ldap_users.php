@@ -180,7 +180,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
 
-print $langs->trans("LDAPDescUsers").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescUsers").'</span><br>';
 print '<br>';
 
 
