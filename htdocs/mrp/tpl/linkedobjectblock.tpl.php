@@ -43,7 +43,7 @@ $mo_static = new Mo($db);
 $res = $mo_static->fetch($object->id);
 $TMoChilds = $mo_static->getMoChilds();
 $hookmanager->initHooks('LinesLinkedObjectBlock');
-$parameters = array();
+$parameters = ('TMoChilds' => $TMoChilds);
 $reshook = $hookmanager->executeHooks('LinesLinkedObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (empty($reshook)) {
