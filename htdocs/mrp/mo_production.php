@@ -68,7 +68,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
-$isStockServiceHandling = (getDolGlobalString("STOCK_SUPPORTS_SERVICES") == 1) ? 1 : 0;
+$isStockServiceHandling = getDolGlobalInt("STOCK_SUPPORTS_SERVICES");
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) {
