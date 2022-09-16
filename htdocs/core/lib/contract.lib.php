@@ -111,8 +111,8 @@ function contract_admin_prepare_head()
 	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label('contract');
-	$extrafields->fetch_name_optionals_label('contractdet');
+	$extrafields->fetch_name_optionals_label('contrat');
+	$extrafields->fetch_name_optionals_label('contratdet');
 
 	$h = 0;
 	$head = array();
@@ -130,7 +130,7 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['contract']['label']) ? count($extrafields->attributes['contract']['label']) : 0;
+	$nbExtrafields = is_countable($extrafields->attributes['contrat']['label']) ? count($extrafields->attributes['contrat']['label']) : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
@@ -139,7 +139,7 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$nbExtrafields = is_countable($extrafields->attributes['contractdet']['label']) ? count($extrafields->attributes['contractdet']['label']) : 0;
+	$nbExtrafields = is_countable($extrafields->attributes['contratdet']['label']) ? count($extrafields->attributes['contratdet']['label']) : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}

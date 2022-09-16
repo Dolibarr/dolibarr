@@ -33,7 +33,7 @@ function assetAdminPrepareHead()
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('asset');
-	$extrafields->fetch_name_optionals_label('assetmodel');
+	$extrafields->fetch_name_optionals_label('asset_model');
 
 	$langs->load("assets");
 
@@ -66,7 +66,7 @@ function assetAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/assetmodel_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
-	$nbExtrafields = is_countable($extrafields->attributes['assetmodel']['label']) ? count($extrafields->attributes['assetmodel']['label']) : 0;
+	$nbExtrafields = is_countable($extrafields->attributes['asset_model']['label']) ? count($extrafields->attributes['asset_model']['label']) : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
