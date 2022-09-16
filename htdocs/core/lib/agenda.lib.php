@@ -400,7 +400,7 @@ function agenda_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['actioncomm']['label']) ? count($extrafields->attributes['actioncomm']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['actioncomm']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
