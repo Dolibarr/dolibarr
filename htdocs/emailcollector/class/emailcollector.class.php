@@ -948,9 +948,9 @@ class EmailCollector extends CommonObject
 								}
 							}
 							if (preg_match('/^options_/', $tmpproperty)) {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag($object->array_options[preg_replace('/^options_/', '', $tmpproperty)]);
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
 							} else {
-								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag($object->$tmpproperty);
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
 							}
 						} else {
 							// Regex not found
