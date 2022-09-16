@@ -2081,6 +2081,7 @@ MailboxTargetDirectory=Mailbox target directory
 EmailcollectorOperations=Operations to do by collector
 EmailcollectorOperationsDesc=Operations are executed from top to bottom order
 MaxEmailCollectPerCollect=Max number of emails collected per collect
+TestCollectNow=Test collect
 CollectNow=Collect now
 ConfirmCloneEmailCollector=Are you sure you want to clone the Email collector %s?
 DateLastCollectResult=Date of latest collect try
