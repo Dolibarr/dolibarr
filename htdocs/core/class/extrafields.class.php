@@ -851,6 +851,7 @@ class ExtraFields
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$count = 0;
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
 					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
@@ -890,10 +891,12 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
+					$count++;
 				}
 			}
 			if ($elementtype) {
 				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {
 			$this->error = $this->db->lasterror();

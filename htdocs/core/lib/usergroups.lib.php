@@ -272,7 +272,7 @@ function user_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
-	$nbExtrafields = is_countable($extrafields->attributes['user']['label']) ? count($extrafields->attributes['user']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['user']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
@@ -281,7 +281,7 @@ function user_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
-	$nbExtrafields = is_countable($extrafields->attributes['usergroup']['label']) ? count($extrafields->attributes['usergroup']['label']) : 0;
+	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
 	}
