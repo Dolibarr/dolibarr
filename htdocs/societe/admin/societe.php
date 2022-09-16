@@ -911,7 +911,7 @@ print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("EnableParentContact").'</td>';
 print '<td>&nbsp;</td>';
 print '<td class="center">';
-if (!empty($conf->global->SOCIETE_ENABLE_PARENT_CONTACT)) {
+if (getDolGlobalInt('SOCIETE_ENABLE_PARENT_CONTACT')) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenableParentContact&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
