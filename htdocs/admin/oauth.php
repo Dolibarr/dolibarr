@@ -36,7 +36,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'oauth'));
+$langs->loadLangs(array('admin', 'oauth', 'modulebuilder'));
 
 // Security check
 if (!$user->admin) {
@@ -130,7 +130,7 @@ foreach ($list as $key) {
 }
 print '</select>';
 print ajax_combobox('provider');
-print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'">';
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^\S+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
 print '</form>';
 
