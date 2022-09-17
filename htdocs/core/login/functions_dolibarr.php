@@ -124,7 +124,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($passok) {
 					$login = $obj->login;
 				} else {
-					sleep(2); // Anti brut force protection
+					sleep(1); // Anti brut force protection
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
 
 					// Load translation files required by the page
