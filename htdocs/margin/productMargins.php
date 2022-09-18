@@ -73,7 +73,6 @@ if (!$sortfield) {
 }
 
 $startdate = $enddate = '';
-
 if (GETPOST('startdatemonth')) {
 	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'),  GETPOST('startdateday', 'int'),  GETPOST('startdateyear', 'int'));
 }
@@ -150,7 +149,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin"></span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
