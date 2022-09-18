@@ -24,7 +24,6 @@
  * \brief       Setup page to configure oauth access api
  */
 
-use Sabre\VObject\Component\Available;
 
 // Load Dolibarr environment
 require '../main.inc.php';
