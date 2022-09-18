@@ -167,7 +167,6 @@ $i = 0;
 // Define $listinsetup
 foreach ($conf->global as $key => $val) {
 	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
-		print '<script>console.log("'.$key.'" + " => " + "'.$val.'" );</script>';
 		$provider = preg_replace('/_ID$/', '', $key);
 		$listinsetup[] = array(
 			$provider.'_NAME',
