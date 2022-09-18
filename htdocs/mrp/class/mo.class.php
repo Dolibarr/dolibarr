@@ -1585,7 +1585,7 @@ class Mo extends CommonObject
 	{
 		global  $langs;
 
-		$uCost =  (!empty($tmpProduct->cost_price)) ? $tmpProduct->cost_price : $tmpProduct->pmp;
+		$uCost = (!empty(price2num($tmpProduct->cost_price))) ? price2num($tmpProduct->cost_price) : price2num($tmpProduct->pmp);
 		if (empty($uCost)) {
 			$productFournisseur = new ProductFournisseur($this->db);
 			if (is_a($productFournisseur, 'ProductFournisseur')) {
