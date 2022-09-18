@@ -166,6 +166,10 @@ if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 
+if ($object->status == $object::STATUS_DRAFT && ((isModEnabled('product') && $user->hasRight('produit', 'creer')) || (isModEnabled('service') && $user->hasRight('service', 'creer')))) {
+	print '<td class="addproduct"></td>';
+}
+
 print '<td class="linecoldelete" style="width: 10px"></td>';
 
 print '<td class="linecolmove" style="width: 10px"></td>';
