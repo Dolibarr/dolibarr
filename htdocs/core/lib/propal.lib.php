@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de fonctions de base pour le module propal
- *	\ingroup    propal
+ * \file       htdocs/core/lib/propal.lib.php
+ * \brief      Ensemble de fonctions de base pour le module propal
+ * \ingroup    propal
  */
 
 /**
