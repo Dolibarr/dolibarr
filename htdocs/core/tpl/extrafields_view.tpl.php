@@ -101,7 +101,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		if ($action == 'edit_extras') {
 			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
-			$value = (!empty($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
+			$value = (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);
 		}
 
