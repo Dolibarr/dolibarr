@@ -20,9 +20,9 @@
  */
 
 /**
- *    \file       position_card.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view position
+ *    \file       htdocs/hrm/position_card.php
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view job position
  */
 
 
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 //dol_include_once('/hrm/position.php');
 
+// Get Parameters
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -50,6 +51,7 @@ if ($res < 0) {
 	dol_print_error($db, $object->error);
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->hrm->all->delete;
