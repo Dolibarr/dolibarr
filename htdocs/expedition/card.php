@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
@@ -214,13 +214,13 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$object->note = GETPOST('note', 'alpha');
-		$object->origin				= $origin;
+		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
-		$object->weight				= GETPOST('weight', 'int') == '' ? "NULL" : GETPOST('weight', 'int');
-		$object->sizeH				= GETPOST('sizeH', 'int') == '' ? "NULL" : GETPOST('sizeH', 'int');
-		$object->sizeW				= GETPOST('sizeW', 'int') == '' ? "NULL" : GETPOST('sizeW', 'int');
-		$object->sizeS				= GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
+		$object->weight = GETPOST('weight', 'int') == '' ? "NULL" : GETPOST('weight', 'int');
+		$object->sizeH = GETPOST('sizeH', 'int') == '' ? "NULL" : GETPOST('sizeH', 'int');
+		$object->sizeW = GETPOST('sizeW', 'int') == '' ? "NULL" : GETPOST('sizeW', 'int');
+		$object->sizeS = GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -233,8 +233,8 @@ if (empty($reshook)) {
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planed
-		$object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-		$object->shipping_method_id		= GETPOST('shipping_method_id', 'int');
+		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
+		$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -265,7 +265,7 @@ if (empty($reshook)) {
 					$qty .= '_'.$j;
 					while (GETPOSTISSET($batch)) {
 						// save line of detail into sub_qty
-						$sub_qty[$j]['q'] = GETPOST($qty, 'int'); // the qty we want to move for this stock record
+						$sub_qty[$j]['q'] = price2num(GETPOST($qty, 'alpha'), 'MS'); // the qty we want to move for this stock record
 						$sub_qty[$j]['id_batch'] = GETPOST($batch, 'int'); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
@@ -481,7 +481,7 @@ if (empty($reshook)) {
 		//		setEventMessages($object->error, $object->errors, 'errors');
 		//	}
 		//}
-	} elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer) {
+	} elseif ($action == 'setdate_livraison' && !empty($user->rights->expedition->creer)) {
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
