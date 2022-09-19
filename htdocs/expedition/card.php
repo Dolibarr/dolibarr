@@ -1408,7 +1408,7 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input '.$tooltip.' class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {
