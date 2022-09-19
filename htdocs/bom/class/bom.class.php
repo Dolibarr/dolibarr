@@ -1028,9 +1028,19 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
+		global $hookmanager;
+
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
+
+		$parameters=array();
+		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
 
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
