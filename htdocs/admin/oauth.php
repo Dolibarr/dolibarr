@@ -284,8 +284,8 @@ if (count($listinsetup) > 0) {
 				print '<td>'.$langs->trans("Scopes").'</td>';
 				print '<td>';
 				foreach ($scopestodispay as $scope => $val) {
-					print '<input type="checkbox" name="'.$key[4].'[]" value="'.$scope.'"'.($val ? ' checked' : '').'>';
-					print '<label style="margin-right: 10px" for="'.$key[4].'">'.$scope.'</label>';
+					print '<input type="checkbox" id="'.$keyforprovider.$scope.'" name="'.$key[4].'[]" value="'.$scope.'"'.($val ? ' checked' : '').'>';
+					print '<label style="margin-right: 10px" for="'.$keyforprovider.$scope.'">'.$scope.'</label>';
 				}
 				print '</td></tr>';
 			}

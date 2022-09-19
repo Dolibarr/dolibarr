@@ -34,5 +34,5 @@ OAUTH_ID=ID OAuth
 OAUTH_SECRET=Code secret OAuth
 OAuthProviderAdded=Fournisseur OAuth ajouté
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=Une entrée OAuth pour ce fournisseur et ce libellé existe déjà
-ScopeUndefined=Portée non définie (voir onglet précédent)
+ScopeUndefined=Permissions (Scopes) non définies (voir onglet précédent)
 Scopes=Portées
