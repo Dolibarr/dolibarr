@@ -108,7 +108,11 @@ function contract_prepare_head(Contrat $object)
  */
 function contract_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('contrat');
+	$extrafields->fetch_name_optionals_label('contratdet');
 
 	$h = 0;
 	$head = array();
@@ -126,11 +130,19 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['contrat']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['contratdet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
