@@ -178,7 +178,6 @@ if (count($listinsetup) > 0) {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
 
 	$i = 0;
 
@@ -205,10 +204,12 @@ if (count($listinsetup) > 0) {
 
 		$i++;
 
-		// Api Name
+		print '<table class="noborder centpercent">';
+
+		// OAUTH service name
 		$label = $langs->trans($keyforsupportedoauth2array);
 		print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
-		print '<td>';
+		print '<td class="titlefieldcreate">';
 		print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
 		if ($label == $keyforsupportedoauth2array) {
 			print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
@@ -295,9 +296,12 @@ if (count($listinsetup) > 0) {
 			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
 			print '</td></tr>';
 		}
+
+		print '</table>'."\n";
+
+		print '<br>';
 	}
 
-	print '</table>'."\n";
 	print '</div>';
 
 	print $form->buttonsSaveCancel("Modify", '');
