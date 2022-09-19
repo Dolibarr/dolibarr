@@ -4812,7 +4812,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 		$sql.= " ORDER BY pa.rang";
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.$parents, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.implode(',', $parents), LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
