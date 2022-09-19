@@ -23,6 +23,7 @@
  * \brief       Setup page to configure oauth access api
  */
 
+
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -84,7 +85,12 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_SCOPE')) {
-				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', GETPOST($constvalue.'_SCOPE'), 'chaine', 0, '', $conf->entity)) {
+				$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			} else {
+				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', '', 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -263,13 +269,31 @@ if (count($listinsetup) > 0) {
 				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
 				print '</td></tr>';
 			} else {
+				$availablescopes = array_flip(explode(',', $supportedoauth2array[$keyforsupportedoauth2array]['availablescopes']));
+				$currentscopes = explode(',', getDolGlobalString($key[4]));
+				$scopestodispay = array();
+				foreach ($availablescopes as $keyscope => $valscope) {
+					if (in_array($keyscope, $currentscopes)) {
+						$scopestodispay[$keyscope] = 1;
+					} else {
+						$scopestodispay[$keyscope] = 0;
+					}
+				}
+				// Api Scope
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("Scopes").'</td>';
 				print '<td>';
-				//print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
-				print $supportedoauth2array[$keyforsupportedoauth2array]['defaultscope'];
+				foreach ($scopestodispay as $scope => $val) {
+					print '<input type="checkbox" name="'.$key[4].'[]" value="'.$scope.'"'.($val ? ' checked' : '').'>';
+					print '<label style="margin-right: 10px" for="'.$key[4].'">'.$scope.'</label>';
+				}
 				print '</td></tr>';
 			}
+		} else {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
+			print '</td></tr>';
 		}
 	}
 

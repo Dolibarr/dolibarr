@@ -37,3 +37,4 @@ OAuthProviderAdded=OAuth provider added
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists
 URLOfServiceForAuthorization=URL provided by OAuth service for authentication
 Scopes=Scopes
+ScopeUndefined=Scope undefined (see previous tab)
