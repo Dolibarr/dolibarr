@@ -1205,8 +1205,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs, $form;
-		$out = '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
+		global $conf, $langs;
+		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
 			$out .= yn($this->withdeliveryreceipt);
@@ -1227,7 +1227,8 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
-			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			//$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			$out .= '<input type="checkbox" id="deliveryreceipt" name="deliveryreceipt" value="1"'.((GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt) ? ' checked="checked"' : '').'>';
 		}
 		$out .= "</td></tr>\n";
 		return $out;
