@@ -228,6 +228,26 @@ if (count($listinsetup) > 0) {
 		print '</td>';
 		print '</tr>';
 
+		if ($supported) {
+			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
+			print '</td></tr>';
+
+			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+				print '<tr class="oddeven value">';
+				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
+				print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
+			print '</td></tr>';
+		}
+		
 		// Api Id
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
