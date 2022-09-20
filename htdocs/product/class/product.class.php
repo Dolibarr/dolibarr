@@ -2926,7 +2926,6 @@ class Product extends CommonObject
 	{
 		// phpcs:enable
 		global $conf, $user, $hookmanager;
-
 		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
 		$sql .= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
@@ -3000,6 +2999,8 @@ class Product extends CommonObject
 
 					$this->stats_commande['qty'] -= $adeduire;
 				} else {
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 					//For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
 					$sql = 'SELECT sum(fd.qty) as count FROM '.MAIN_DB_PREFIX.'facturedet fd ';
