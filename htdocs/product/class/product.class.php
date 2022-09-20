@@ -4454,6 +4454,8 @@ class Product extends CommonObject
 				$type = (!empty($desc_pere[2]) ? $desc_pere[2] : '');
 				$label = (!empty($desc_pere[3]) ? $desc_pere[3] : '');
 				$incdec = (!empty($desc_pere[4]) ? $desc_pere[4] : 0);
+				$ref = (!empty($desc_pere[5]) ? $desc_pere[5] : '');
+				$fullpath = $compl_path . $ref . (!empty($label) ? ' - ' . $label : '');
 
 				if ($multiply < 1) {
 					$multiply = 1;
@@ -4477,8 +4479,8 @@ class Product extends CommonObject
 					'nb_total'=>$nb * $multiply, // Nb of units for all nb of product
 					'stock'=>$tmpproduct->stock_reel, // Stock
 					'stock_alert'=>$tmpproduct->seuil_stock_alerte, // Stock alert
-					'label'=>$label,
-					'fullpath'=>$compl_path.$label, // Label
+					'label'=>$label, // Label
+					'fullpath' => $fullpath, // Full path
 					'type'=>$type, // Nb of units that compose parent product
 					'desiredstock'=>$tmpproduct->desiredstock,
 					'level'=>$level,
@@ -4489,7 +4491,7 @@ class Product extends CommonObject
 				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs'])) {
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
+					$this->fetch_prod_arbo($desc_pere['childs'], $fullpath . ' -> ', $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
 				}
 			}
 		}
