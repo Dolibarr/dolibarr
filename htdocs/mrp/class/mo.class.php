@@ -1127,16 +1127,18 @@ class Mo extends CommonObject
 			}
 			$labelProd = '';
 			if ($this->fk_bom > 0){
-			$subBom = new BOM($this->db);
-			$result  = $subBom->fetch($this->fk_bom);
-			if ($result){
-				$subProd = new Product($this->db);
-				$resSub = $subProd->fetch($subBom->fk_product);
-				if ($resSub){
-						$labelProd = '<br>'.$langs->trans("Product").' : ' . $subProd->ref;
+				require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+				$subBom = new BOM($this->db);
+				$result  = $subBom->fetch($this->fk_bom);
+				if ($result) {
+					$subProd = new Product($this->db);
+					$resSub = $subProd->fetch($subBom->fk_product);
+					if ($resSub) {
+							$labelProd = '<br>'.$langs->trans("Product").' : ' . $subProd->ref;
 					}
 				}
 			}
+
 
 			$title  = dol_escape_htmltag($label, 1);
 			$title .= $labelProd;
