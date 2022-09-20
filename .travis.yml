@@ -31,7 +31,6 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   phpenv rehash
-  phpenv config-add mysqli
   echo
 
 addons:
@@ -53,6 +52,7 @@ addons:
     - php5.6
     - php5.6-pgsql
     - php5.6-mysqli
+    - php5.6-xml
 
 env:
   global:
