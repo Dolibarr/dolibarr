@@ -1125,15 +1125,16 @@ class Mo extends CommonObject
 				$label = $langs->trans("ShowMo");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-
-			$subBom = new BOM($this->db);
-			$result  = $subBom->fetch($this->fk_bom);
 			$labelProd = '';
-			if ($result){
-				$subProd = new Product($this->db);
-				$resSub = $subProd->fetch($subBom->fk_product);
-				if ($resSub){
-					$labelProd = '</br>'.$langs->trans("Product").' : ' . $subProd->ref;
+			if ($this->fk_bom > 0){
+				$subBom = new BOM($this->db);
+				$result  = $subBom->fetch($this->fk_bom);
+				if ($result){
+					$subProd = new Product($this->db);
+					$resSub = $subProd->fetch($subBom->fk_product);
+					if ($resSub){
+						$labelProd = '<br>'.$langs->trans("Product").' : ' . $subProd->ref;
+					}
 				}
 			}
 
