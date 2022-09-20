@@ -31,7 +31,6 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   phpenv rehash
-  phpenv config-add mysqli
   echo
 
 addons:
@@ -48,7 +47,11 @@ addons:
     - apache2
     # We need pgloader for import mysql database into pgsql
     - pgloader
-
+    - php
+    - php-pgsql
+    - php-mysqli
+    - php-xml
+    
 env:
   global:
   # Set to true for very verbose output
@@ -478,7 +481,7 @@ after_script:
   #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
   echo "After script - Output last lines of apache error.log"
-  ls /var/log/apache2
+  sudo ls /var/log/apache2
   sudo tail -n 50 /var/log/apache2/travis_error_log
 
 after_success:
@@ -497,7 +500,7 @@ after_failure:
   done
   # Show Apache log file
   echo "Debugging informations for file apache error.log"
-  sudo cat /var/log/apache2/travis_error_log
+  sudo tail -n 50 /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
