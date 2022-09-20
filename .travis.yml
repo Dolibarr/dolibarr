@@ -51,9 +51,11 @@ addons:
     - php7.1-pgsql
     - php7.1-mysqli
     - php7.1-xml
+    - php7.1-intl
     - php8.1-pgsql
     - php8.1-mysqli
     - php8.1-xml
+    - php8.1-intl
     
 env:
   global:

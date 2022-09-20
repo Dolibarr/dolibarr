@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -166,6 +167,30 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
+	/**
+	 * testDolClone
+	 *
+	 * @return void
+	 */
+	public function testDolClone()
+	{
+		$newproduct1 = new Product($this->savdb);
+
+		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
+		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+
+		$newproductcloned1 = dol_clone($newproduct1);
+
+		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
+		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
+
+		//print __METHOD__." newproductcloned1->db must be null\n";
+		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
+	}
 
 	/**
 	 * testNum2Alpha
