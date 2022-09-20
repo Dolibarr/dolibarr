@@ -456,8 +456,8 @@ class Reception extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				$file = $conf->reception->dir_output."/".get_exdir($this->id, 2, 0, 0, $this, 'reception')."/".$this->id.".pdf";
-				$this->pdf_filename = $file;
+				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
+				//$this->pdf_filename = $file;
 
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
@@ -1177,6 +1177,8 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($this->db);
 
 				$line->fetch($obj->rowid);
+
+				// TODO Remove or keep this ?
 				$line->fetch_product();
 
 				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';

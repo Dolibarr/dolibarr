@@ -160,6 +160,8 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
+		unset($object->statutshorts);
+		unset($object->statutshort);
 		unset($object->labelStatus);
 		unset($object->labelStatusShort);
 
@@ -181,6 +183,7 @@ class DolibarrApi
 		unset($object->picto);
 
 		unset($object->fieldsforcombobox);
+		unset($object->regeximgext);
 
 		unset($object->skip_update_total);
 		unset($object->context);
@@ -256,6 +259,11 @@ class DolibarrApi
 		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
+
+		if (!empty($object->product) && is_object($object->product)) {
+			$this->_cleanObjectDatas($object->product);
+		}
+
 		return $object;
 	}
 
