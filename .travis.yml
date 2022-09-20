@@ -30,7 +30,7 @@ addons:
     # Let's install Apache with.
     - apache2
     # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
-    - libapache2-mod-fastcgi
+    #- libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
@@ -71,6 +71,7 @@ notifications:
     on_success: change
     on_failure: always
     use_notice: true
+
 
 before_install:
 - |
@@ -240,6 +241,10 @@ before_script:
 
 
   - echo "Setting up Apache + FPM"
+  # setup link for php legacy
+  - sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
+  # install apache web server
+  - sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
@@ -247,10 +252,11 @@ before_script:
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
-  - sudo a2enmod rewrite actions fastcgi alias
+  - sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  # start php-fpm
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
   # configure apache virtual hosts
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
