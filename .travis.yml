@@ -4,8 +4,8 @@
 
 # We use dist: xenial to have php 5.6+ available
 os: linux
-dist: xenial
-#dist: bionic
+#dist: xenial
+dist: bionic
 
 language: php
 
@@ -20,7 +20,7 @@ services:
 
 addons:
   # Force postgresql to 9.4 (the oldest availablable on xenial)
-  postgresql: '9.4'
+  postgresql: '10'
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql with a name available in http://apt.postgresql.org/pub/repos/apt/
@@ -74,6 +74,8 @@ notifications:
 
 before_install:
 - |
+  echo "Add ondrej PPA"
+  add-apt-repository -y ppa:ondrej/php
   echo "Disabling Xdebug for composer"
   export PHP_VERSION_NAME=$(phpenv version-name)
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
