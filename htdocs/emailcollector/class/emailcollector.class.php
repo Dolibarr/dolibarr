@@ -16,37 +16,38 @@
  */
 
 /**
- * \file        emailcollector/class/emailcollector.class.php
- * \ingroup     emailcollector
- * \brief       This file is a CRUD class file for EmailCollector (Create/Read/Update/Delete)
+ *    \file        htdocs/emailcollector/class/emailcollector.class.php
+ *    \ingroup     emailcollector
+ *    \brief       This file is a CRUD class file for EmailCollector (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php'; // customer proposal
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php'; // customer order
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php'; // Shipment
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // supplier invoice
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
-require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
-require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php'; // reception
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
-//require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
-//require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse repor
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+
+require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
+require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Customer Order
+require_once DOL_DOCUMENT_ROOT .'/compta/facture/class/facture.class.php';               // Customer Invoice
+require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';                      // Contact / Address
+require_once DOL_DOCUMENT_ROOT .'/expedition/class/expedition.class.php';                // Shipping / Delivery
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.commande.class.php';           // Supplier Order
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.facture.class.php';            // Supplier Invoice
+require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';                       // Project
+require_once DOL_DOCUMENT_ROOT .'/reception/class/reception.class.php';                  // Reception
+require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class.php';   // Recruiting
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
+require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
+require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+//require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
+//require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
 
 // use Webklex\PHPIMAP;
-require DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
-use Webklex\PHPIMAP\ClientManager;
+require DOL_DOCUMENT_ROOT .'/includes/webklex/php-imap/vendor/autoload.php';
 
+use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
@@ -64,14 +65,17 @@ class EmailCollector extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'emailcollector';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'emailcollector_emailcollector';
+
 	/**
 	 * @var int  Does emailcollector support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
@@ -91,6 +95,7 @@ class EmailCollector extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
+
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
@@ -205,7 +210,6 @@ class EmailCollector extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
-
 
 	public $host;
 	public $port;
@@ -1747,61 +1751,61 @@ class EmailCollector extends CommonObject
 
 							$objectid = $reg[2];
 							// See also list into interface_50_modAgenda_ActionsAuto
-							if ($reg[1] == 'thi') {
+							if ($reg[1] == 'thi') {   // Third-party
 								$objectemail = new Societe($this->db);
 							}
-							if ($reg[1] == 'ctc') {
+							if ($reg[1] == 'ctc') {   // Contact
 								$objectemail = new Contact($this->db);
 							}
-							if ($reg[1] == 'inv') { // customer invoices
+							if ($reg[1] == 'inv') {   // Customer Invoice
 								$objectemail = new Facture($this->db);
 							}
-							if ($reg[1] == 'sinv') { // supplier invoices
+							if ($reg[1] == 'sinv') {   // Supplier Invoice
 								$objectemail = new FactureFournisseur($this->db);
 							}
-							if ($reg[1] == 'pro') { // customer proposals
+							if ($reg[1] == 'pro') {   // Customer Proposal
 								$objectemail = new Propal($this->db);
 							}
-							if ($reg[1] == 'ord') { // customer orders
+							if ($reg[1] == 'ord') {   // Customer Order
 								$objectemail = new Commande($this->db);
 							}
-							if ($reg[1] == 'shi') { // shipments
+							if ($reg[1] == 'shi') {   // Shipment
 								$objectemail = new Expedition($this->db);
 							}
-							if ($reg[1] == 'spro') { // supplier proposal
+							if ($reg[1] == 'spro') {   // Supplier Proposal
 								$objectemail = new SupplierProposal($this->db);
 							}
-							if ($reg[1] == 'sord') { // supplier order
+							if ($reg[1] == 'sord') {   // Supplier Order
 								$objectemail = new CommandeFournisseur($this->db);
 							}
-							if ($reg[1] == 'rec') { // Reception
+							if ($reg[1] == 'rec') {   // Reception
 								$objectemail = new Reception($this->db);
 							}
-							if ($reg[1] == 'proj') {
+							if ($reg[1] == 'proj') {   // Project
 								$objectemail = new Project($this->db);
 							}
-							if ($reg[1] == 'tas') {
+							if ($reg[1] == 'tas') {   // Task
 								$objectemail = new Task($this->db);
 							}
-							if ($reg[1] == 'con') {
+							if ($reg[1] == 'con') {   // Contact
 								$objectemail = new Contact($this->db);
 							}
-							if ($reg[1] == 'use') {
+							if ($reg[1] == 'use') {   // User
 								$objectemail = new User($this->db);
 							}
-							if ($reg[1] == 'tic') {
+							if ($reg[1] == 'tic') {   // Ticket
 								$objectemail = new Ticket($this->db);
 							}
-							if ($reg[1] == 'recruitmentcandidature') {
+							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
 								$objectemail = new RecruitmentCandidature($this->db);
 							}
-							if ($reg[1] == 'mem') {
+							if ($reg[1] == 'mem') {   // Member
 								$objectemail = new Adherent($this->db);
 							}
-							/*if ($reg[1] == 'leav') {
+							/*if ($reg[1] == 'leav') {   // Leave / Holiday
 								$objectemail = new Holiday($db);
 							}
-							if ($reg[1] == 'exp') {
+							if ($reg[1] == 'exp') {   // ExpenseReport
 								$objectemail = new ExpenseReport($db);
 							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
@@ -2241,42 +2245,42 @@ class EmailCollector extends CommonObject
 								}
 								$arrayobject = array(
 								'propale' => array('table' => 'propal',
-								'fields' => array('ref'),
-								'class' => 'comm/propal/class/propal.class.php',
-								'object' => 'Propal'),
+									'fields' => array('ref'),
+									'class' => 'comm/propal/class/propal.class.php',
+									'object' => 'Propal'),
 								'holiday' => array('table' => 'holiday',
-								'fields' => array('ref'),
-								'class' => 'holiday/class/holiday.class.php',
-								'object' => 'Holiday'),
+									'fields' => array('ref'),
+									'class' => 'holiday/class/holiday.class.php',
+									'object' => 'Holiday'),
 								'expensereport' => array('table' => 'expensereport',
-								'fields' => array('ref'),
-								'class' => 'expensereport/class/expensereport.class.php',
-								'object' => 'ExpenseReport'),
+									'fields' => array('ref'),
+									'class' => 'expensereport/class/expensereport.class.php',
+									'object' => 'ExpenseReport'),
 								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentjobposition',
-								'fields' => array('ref'),
-								'class' => 'recruitment/class/recruitmentjobposition.class.php',
-								'object' => 'RecruitmentJobPosition'),
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentjobposition.class.php',
+									'object' => 'RecruitmentJobPosition'),
 								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentcandidature',
-								'fields' => array('ref'),
-								'class' => 'recruitment/class/recruitmentcandidature.class.php',
-								'object' => ' RecruitmentCandidature'),
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentcandidature.class.php',
+									'object' => ' RecruitmentCandidature'),
 								'societe' => array('table' => 'societe',
 									'fields' => array('code_client', 'code_fournisseur'),
 									'class' => 'societe/class/societe.class.php',
 									'object' => 'Societe'),
-									'commande' => array('table' => 'commande',
+								'commande' => array('table' => 'commande',
 									'fields' => array('ref'),
 									'class' => 'commande/class/commande.class.php',
 									'object' => 'Commande'),
-									'expedition' => array('table' => 'expedition',
+								'expedition' => array('table' => 'expedition',
 									'fields' => array('ref'),
 									'class' => 'expedition/class/expedition.class.php',
 									'object' => 'Expedition'),
-									'contract' => array('table' => 'contrat',
+								'contract' => array('table' => 'contrat',
 									'fields' => array('ref'),
 									'class' => 'contrat/class/contrat.class.php',
 									'object' => 'Contrat'),
-									'fichinter' => array('table' => 'fichinter',
+								'fichinter' => array('table' => 'fichinter',
 									'fields' => array('ref'),
 									'class' => 'fichinter/class/fichinter.class.php',
 									'object' => 'Fichinter'),
@@ -2284,51 +2288,51 @@ class EmailCollector extends CommonObject
 									'fields' => array('ref'),
 									'class' => 'ticket/class/ticket.class.php',
 									'object' => ' Ticket'),
-									'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
+								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
 									'fields' => array('ref'),
 									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
 									'object' => 'KnowledgeRecord'),
-									'supplier_proposal' => array('table' => 'supplier_proposal',
+								'supplier_proposal' => array('table' => 'supplier_proposal',
 									'fields' => array('ref'),
 									'class' => 'supplier_proposal/class/supplier_proposal.class.php',
 									'object' => 'SupplierProposal'),
-									'fournisseur/commande' => array('table' => 'commande_fournisseur',
+								'fournisseur/commande' => array('table' => 'commande_fournisseur',
 									'fields' => array('ref', 'ref_supplier'),
 									'class' => 'fourn/class/fournisseur.commande.class.php',
 									'object' => 'SupplierProposal'),
-									'facture' => array('table' => 'facture',
+								'facture' => array('table' => 'facture',
 									'fields' => array('ref'),
 									'class' => 'compta/facture/class/facture.class.php',
 									'object' => 'Facture'),
-									'fournisseur/facture' => array('table' => 'facture_fourn',
+								'fournisseur/facture' => array('table' => 'facture_fourn',
 									'fields' => array('ref', ref_client),
 									'class' => 'fourn/class/fournisseur.facture.class.php',
 									'object' => 'FactureFournisseur'),
-									'produit' => array('table' => 'product',
+								'produit' => array('table' => 'product',
 									'fields' => array('ref'),
 									'class' => 'product/class/product.class.php',
 									'object' => 'Product'),
-									'productlot' => array('table' => 'product_lot',
+								'productlot' => array('table' => 'product_lot',
 									'fields' => array('batch'),
 									'class' => 'product/stock/class/productlot.class.php',
 									'object' => 'Productlot'),
-									'projet' => array('table' => 'projet',
+								'projet' => array('table' => 'projet',
 									'fields' => array('ref'),
 									'class' => 'projet/class/projet.class.php',
 									'object' => 'Project'),
-									'projet_task' => array('table' => 'projet_task',
+								'projet_task' => array('table' => 'projet_task',
 									'fields' => array('ref'),
 									'class' => 'projet/class/task.class.php',
 									'object' => 'Task'),
-									'ressource' => array('table' => 'resource',
+								'ressource' => array('table' => 'resource',
 									'fields' => array('ref'),
 									'class' => 'ressource/class/dolressource.class.php',
 									'object' => 'Dolresource'),
-									'bom' => array('table' => 'bom_bom',
+								'bom' => array('table' => 'bom_bom',
 									'fields' => array('ref'),
 									'class' => 'bom/class/bom.class.php',
 									'object' => 'BOM'),
-									'mrp' => array('table' => 'mrp_mo',
+								'mrp' => array('table' => 'mrp_mo',
 									'fields' => array('ref'),
 									'class' => 'mrp/class/mo.class.php',
 									'object' => 'Mo'),
@@ -2932,6 +2936,7 @@ class EmailCollector extends CommonObject
 	 2.2.1 text/plain
 	 2.2.2 text/html
 	 */
+
 	/**
 	 * Sub function for getpart(). Only called by createPartArray() and itself.
 	 *
@@ -3050,10 +3055,10 @@ class EmailCollector extends CommonObject
 	/**
 	 * Converts a string from one encoding to another.
 	 *
-	 * @param string $string		String to convert
-	 * @param string $fromEncoding	String encoding
-	 * @param string $toEncoding	String return encoding
-	 * @return string 				Converted string if conversion was successful, or the original string if not
+	 * @param  string 	$string			String to convert
+	 * @param  string 	$fromEncoding	String encoding
+	 * @param  string 	$toEncoding		String return encoding
+	 * @return string 					Converted string if conversion was successful, or the original string if not
 	 * @throws Exception
 	 */
 	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')

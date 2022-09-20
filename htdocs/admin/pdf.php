@@ -291,16 +291,16 @@ print $formadmin->select_paper_format($selected, 'MAIN_PDF_FORMAT');
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_LEFT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_LEFT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_LEFT) ? 10 : $conf->global->MAIN_PDF_MARGIN_LEFT).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_LEFT" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_RIGHT").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_RIGHT" value="'.(empty($conf->global->MAIN_PDF_MARGIN_RIGHT) ? 10 : $conf->global->MAIN_PDF_MARGIN_RIGHT).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_RIGHT" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_TOP").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_TOP" value="'.(empty($conf->global->MAIN_PDF_MARGIN_TOP) ? 10 : $conf->global->MAIN_PDF_MARGIN_TOP).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_TOP" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10).'">';
 print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_MARGIN_BOTTOM").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.(empty($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? 10 : $conf->global->MAIN_PDF_MARGIN_BOTTOM).'">';
+print '<input type="text" class="maxwidth50" name="MAIN_PDF_MARGIN_BOTTOM" value="'.getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10).'">';
 print '</td></tr>';
 
 print '</table>';
