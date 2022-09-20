@@ -2888,8 +2888,8 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 /**
  *	Format profIDs according to country
  *
- *	@param	string	$profID			value of profID to format
- *	@param	string	$profIDtype		type of profID to format (ProfId1, ProfId2, ProfId3, ProfId4, ProfId5, ProfId6 or VATIntra)
+ *	@param	string	$profID			Value of profID to format
+ *	@param	string	$profIDtype		Type of profID to format ('1', '2', '3', '4', '5', '6' or 'VAT')
  *	@param	string	$countrycode	Country code to use for formatting
  *	@param	int		$addcpButton	Add button to copy to clipboard (1 => show only on hoover ; 2 => always display )
  * 	@param	string	$separ			Separation between numbers for a better visibility example : xxx xxx xxx xxxxx
@@ -2899,7 +2899,9 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 {
 	global $mysoc;
 
-	if (empty($profID) || empty($profIDtype))	return '';
+	if (empty($profID) || empty($profIDtype)) {
+		return '';
+	}
 	if (empty($countrycode))	$countrycode = $mysoc->country_code;
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
@@ -2908,10 +2910,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		// France
 		if ($id == 1 && dol_strlen($newProfID) == 9)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
 		if ($id == 2 && dol_strlen($newProfID) == 14)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
-		if ($profIDtype == 'VATIntra' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
 	}
 	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
-	else	$ret = $newProfID;
+	else $ret = $newProfID;
 	return $ret;
 }
 
@@ -6952,6 +6954,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		if ($onlykey) {
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
+			$substitutionarray['__LABEL__'] = '__LABEL__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
@@ -7032,6 +7035,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		} else {
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
+			$substitutionarray['__LABEL__'] = (isset($object->label) ? $object->label : (isset($object->title) ? $object->title : null));
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);

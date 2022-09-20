@@ -528,6 +528,43 @@ if ($id > 0 || $ref) {
 							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
+					print '<script type="text/javascript">
+					$(document).ready(function () {
+						$("#search_id_fourn").change(load_vat)
+						console.log("Requesting default VAT rate for the supplier...")
+					});
+					function load_vat() {
+						// get soc id
+						let socid = $("#id_fourn")[0].value
+	
+						// load available VAT rates
+						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
+						//Make GET request with params 
+						let options = "";
+						options += "id=" + socid
+						options += "&htmlname=tva_tx"
+						options += "&action=default" // not defined in vatrates.php, default behavior.
+	
+						var get = $.getJSON(
+							vat_url,
+							options,
+							(data) => {
+								rate_options = $.parseHTML(data.value)
+								rate_options.forEach(opt => {
+									if (opt.selected) {
+										replaceVATWithSupplierValue(opt.value)
+										return
+									}
+								})
+							}
+						);
+	
+					}
+					function replaceVATWithSupplierValue(vat_rate) {
+						console.log("Default VAT rate for the supplier: " + vat_rate + "%")
+						$("[name=\'tva_tx\']")[0].value = vat_rate;
+					}
+				</script>';
 				}
 				print '</td></tr>';
 

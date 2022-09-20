@@ -779,7 +779,7 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("INVOICE_CHECK_POSTERIOR_DATE", $arrval, $conf->global->INVOICE_CHECK_POSTERIOR_DATE);
 	print '</td>';
 	print '<td class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 }
 print '</td></tr>';

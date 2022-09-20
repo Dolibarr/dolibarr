@@ -383,15 +383,18 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		if (is_numeric($fromcompany->capital) && $fromcompany->capital > 0)	$line1 .= ($line1 ? ' - ' : '').$langs->transnoentities('CapitalOf', price($fromcompany->capital, 0, $langs, 0, 0, 0, $conf->currency));
+		else																$line1 .= ($line1 ? ' - ' : '').$langs->transnoentities('CapitalOf', $fromcompany->capital).' '.$langs->transnoentities('Currency'.$conf->currency);
 	}
+	// Second line of company infos
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
 		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
+		$tmpID	= dol_print_profids($langs->convToOutputCharset($fromcompany->idprof1), '1', $fromcompany->country_code);
+		$line2	.= ($line2 ? ' - ' : '').$field.' : '.$tmpID;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2) {
@@ -399,18 +402,18 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
+		$tmpID	= dol_print_profids($langs->convToOutputCharset($fromcompany->idprof2), '2', $fromcompany->country_code);
+		$line2	.= ($line2 ? ' - ' : '').$field.' : '.$tmpID;
 	}
 
-	// Second line of company infos
-	$line2 = "";
 	// Prof Id 3
 	if ($fromcompany->idprof3) {
 		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
+		$tmpID	= dol_print_profids($langs->convToOutputCharset($fromcompany->idprof3), '3', $fromcompany->country_code);
+		$line2	.= ($line2 ? ' - ' : '').$field.' : '.$tmpID;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4) {
@@ -418,11 +421,13 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
+		$tmpID	= dol_print_profids($langs->convToOutputCharset($fromcompany->idprof4), '4', $fromcompany->country_code);
+		$line2	.= ($line2 ? ' - ' : '').$field.' : '.$tmpID;
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '') {
-		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+		$tmpID	= dol_print_profids($langs->convToOutputCharset($fromcompany->tva_intra), 'VAT', $fromcompany->country_code);
+		$line2	.= ($line2 ? ' - ' : '').$langs->transnoentities('VATIntraShort').' : '.$tmpID;
 	}
 
 	print '<br>';
@@ -450,14 +455,12 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 	}
 
-	print '<font style="font-size: 10px;"><br><hr>'."\n";
-	print $fromcompany->name.'<br>';
-	print $line1;
-	if (strlen($line1.$line2) > 50) {
-		print '<br>';
-	} else {
-		print ' - ';
-	}
-	print $line2;
-	print '</font></div>'."\n";
+    print '	</div>
+			<div  class = "center" style = "font-size: 14px; position: fixed; bottom: 0px; width: 100%; z-index: -1;">
+				<br><hr>';
+    print '		<b>'.$fromcompany->name.'</b>
+				<br>'.(!empty($line1) ? $line1.'<br>' : '');
+    print $line2.'<br>.&nbsp;';
+    print '	</div>';
 }
+

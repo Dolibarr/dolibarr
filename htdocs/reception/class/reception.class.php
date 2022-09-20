@@ -850,6 +850,21 @@ class Reception extends CommonObject
 			}
 		}
 
+		// Check batch is set
+		$product = new Product($this->db);
+		$product->fetch($fk_product);
+		if (!empty($conf->productbatch->enabled)) {
+			$langs->load("errors");
+			if (!empty($product->status_batch) && empty($batch)) {
+				$this->errors[] = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+				return -1;
+			} elseif (empty($product->status_batch) && !empty($batch)) {
+				$this->errors[] = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
+				return -1;
+			}
+		}
+		unset ($product);
+
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
