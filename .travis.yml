@@ -448,8 +448,8 @@ script:
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set -e
+  # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log and apache error.log file.
+  set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
   echo "Phpunit return code = $phpunitresult"
@@ -461,6 +461,9 @@ after_script:
   ls $TRAVIS_BUILD_DIR/documents
   #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  echo "After script - Output last lines of apache error.log"
+  ls /var/log/apache2
+  sudo tail -n 50 /var/log/apache2/travis_error_log
 
 after_success:
 - |
@@ -469,14 +472,14 @@ after_success:
 after_failure:
 - |
   echo Failure detected, so we show samples of log to help diagnose
-  # This part of code is executed only if previous command that fails are enclosed with set +e
-  # Upgrade log files
+  # This part of code is executed only if the command that fails are enclosed with set +e
+  # Show upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
     echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
-  # Apache log file
+  # Show Apache log file
   echo "Debugging informations for file apache error.log"
   sudo cat /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
