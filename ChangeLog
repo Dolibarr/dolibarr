@@ -9,8 +9,8 @@ English Dolibarr ChangeLog
 For users:
 ---------------
 
-NEW: PHP 8.1 compatibility:
-     Warning!! Application works correctly with PHP8 and 8.1 but you will experience a lot of PHP warnings into the PHP server
+NEW: PHP 8.0 compatibility (with mysql):
+     Warning!! Application works correctly with PHP 8.0 but you will experience a lot of PHP warnings into the PHP server
      log files (depending on your PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
