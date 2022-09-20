@@ -4670,9 +4670,10 @@ class Product extends CommonObject
 	 * @param  int $id             		Id of product to search childs of
 	 * @param  int $firstlevelonly 		Return only direct child
 	 * @param  int $level          		Level of recursing call (start to 1)
+	 * @param  array $parents   	    Array of all parents of $id
 	 * @return array                    Return array(prodid=>array(0=prodid, 1=>qty, 2=>product type, 3=>label, 4=>incdec, 5=>product ref)
 	 */
-	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
+	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1, $parents = array())
 	{
 		global $alreadyfound;
 
@@ -4688,7 +4689,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_pere = ".((int) $id);
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.$parents, LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
@@ -4703,18 +4704,23 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res)) {
 				if (!empty($alreadyfound[$rec['rowid']])) {
-					// determine if child product was already found and it's a virtual product (has Children)
-					$children_nb = 0;
-					$child_product_id = $rec['rowid'];
-					if ($child_product_id > 0) {
-						$child_product = new self($this->db);
-						if ($child_product->fetch($child_product_id) > 0) {
-							$children_nb = $child_product->hasChildren();
+					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
+					if (in_array($rec['id'], $parents)) {
+						continue; // We discard this child if it is already found at a higher level in tree in the same branch.
+					} else {
+						// determine if child product was already found and it's a virtual product (has Children)
+						$children_nb = 0;
+						$child_product_id = $rec['rowid'];
+						if ($child_product_id > 0) {
+							$child_product = new self($this->db);
+							if ($child_product->fetch($child_product_id) > 0) {
+								$children_nb = $child_product->hasChildren();
+							}
 						}
-					}
-					if ($children_nb != 0) { // security limit
-						dol_syslog(get_class($this) . '::getChildsArbo the product id=' . $rec['rowid'] . ' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
-						continue;
+						if ($children_nb != 0) { // security limit
+							dol_syslog(get_class($this) . '::getChildsArbo the product id=' . $rec['rowid'] . ' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
+							continue;
+						}
 					}
 				}
 				$alreadyfound[$rec['rowid']] = 1;
@@ -4729,7 +4735,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1);
+					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, array_push($parents, $rec['rowid']));
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 					}
