@@ -4886,7 +4886,7 @@ class Form
 	 *     @param 	string		$action      	   	Action
 	 *	   @param	array		$formquestion	   	An array with forms complementary inputs
 	 * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-	 * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box
 	 *     @return 	void
@@ -4919,7 +4919,7 @@ class Form
 	 *													'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'select', 'multiselect', 'morecss',
 	 *                                                  'other', 'onecolumn' or 'hidden'...
 	 * 	   @param  	int|string		$selectedchoice  	'' or 'no', or 'yes' or '1', 1, '0' or 0
-	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
@@ -5150,6 +5150,12 @@ class Form
 						},';
 			}
 
+			$jsforcursor = '';
+			if ($useajax == 1) {
+				$jsforcursor = '// The call to urljump can be slow, so we set the wait cursor'."\n";
+				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
+			}
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5180,14 +5186,14 @@ class Form
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
             				if (pageyes.length > 0) {
-								// The call to urljump can be slow, so we set the wait cursor
-								jQuery("html,body,#id-container").addClass("cursorwait");
+							'.$jsforcursor.'
 								var post = $.post(
 									pageyes,
 									options,
-									(data) => {$("body").html(data)}
+									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
 								);
-								console.log("after post");
+
+								console.log("after post ok");
 							}
 	                        $(this).dialog("close");
                         },
@@ -5208,12 +5214,13 @@ class Form
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
                          	//alert(urljump);
             				if (pageno.length > 0) {
+							'.$jsforcursor.'
 								var post = $.post(
 									pageno,
 									options,
-									(data) => {$("body").html(data)}
+									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
 								);
-								console.log("after location.href");
+								console.log("after post ko");
 							}
                             $(this).dialog("close");
                         }
