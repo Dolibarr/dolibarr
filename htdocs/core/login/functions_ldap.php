@@ -122,7 +122,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
 					$ldap->unbind();
-					sleep(1);
+					sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 					$langs->load('ldap');
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
@@ -245,7 +245,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			}
 			if ($result == 1) {
 				dol_syslog("functions_ldap::check_user_password_ldap Authentication KO bad user/password for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'other'));
@@ -267,7 +267,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 			}
-			sleep(1); // Anti brut force protection
+			sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 			// Load translation files required by the page
 			$langs->loadLangs(array('main', 'other', 'errors'));
