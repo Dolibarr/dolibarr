@@ -285,12 +285,13 @@ if (empty($reshook)) {
 
 					$totalqty += $subtotalqty;
 				} else {
-					// No detail were provided for lots, so if a qty was provided, we can show an error.
+					// No detail were provided for lots, so if a qty was provided, we can throw an error.
 					if (GETPOST($qty)) {
 						// We try to set an amount
 						// Case we dont use the list of available qty for each warehouse/lot
 						// GUI does not allow this yet
-						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse"), null, 'errors');
+						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse").' ('.$langs->trans("Line").' '.GETPOST($idl, 'int').')', null, 'errors');
+						$error++;
 					}
 				}
 			} elseif (GETPOSTISSET($stockLocation)) {
@@ -328,7 +329,7 @@ if (empty($reshook)) {
 
 		//var_dump($batch_line[2]);
 
-		if ($totalqty > 0) {		// There is at least one thing to ship
+		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -388,7 +389,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
-		} else {
+		} elseif (!$error) {
 			$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
 			if (!empty($conf->stock->enabled)) {
 				$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
@@ -1120,12 +1121,15 @@ if ($action == 'create') {
 						$type = 1;
 					}
 
-					print '<!-- line '.$line->id.' for product -->'."\n";
-					print '<tr class="oddeven">'."\n";
+					print '<!-- line for order line '.$line->id.' -->'."\n";
+					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
-						$product->fetch($line->fk_product);
+						$res = $product->fetch($line->fk_product);
+						if ($res < 0) {
+							dol_print_error($db, $product->error, $product->errors);
+						}
 						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 						//var_dump($product->stock_warehouse[1]);
 

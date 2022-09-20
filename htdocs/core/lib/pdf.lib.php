@@ -1644,7 +1644,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		//print $libelleproduitservice;
 	}
 
+	// Show information for lot
 	if ($dbatch) {
+		// $object is a shipment.
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+		$tmpwarehouse = new Entrepot($db);
+		$tmpproductbatch = new Productbatch($db);
+
 		$format = 'day';
 		foreach ($dbatch as $detail) {
 			$dte = array();
@@ -1658,7 +1668,23 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
 			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+
+			// Add also info of planned warehouse for lot
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+				if ($resproductbatch > 0) {
+					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
+					if ($reswarehouse > 0) {
+						$dte[] = $tmpwarehouse->ref;
+					}
+				}
+			}
+
 			$libelleproduitservice .= "__N__  ".implode(" - ", $dte);
+		}
+	} else {
+		if (getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
+			// TODO Show warehouse for shipment line without batch
 		}
 	}
 
