@@ -538,7 +538,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
 					if (!empty($targetcontact->address)) {
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact));
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
 					} else {
 						$companytouseforaddress = $targetcompany;
 
@@ -548,7 +548,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 							$companytouseforaddress = $targetcontact->thirdparty;
 						}
 
-						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
 					}
 					// Country
 					if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
@@ -595,7 +595,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			} else {
 				if (is_object($targetcompany)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
 					// Country
 					if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) {
 						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
