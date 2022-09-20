@@ -53,8 +53,10 @@ $errors = array();
 if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	if (GETPOST('value')) {
 		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', DOL_MAIN_URL_ROOT.'/public/ticket', 'chaine', 0, '', $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -137,8 +139,8 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	$url_interface = GETPOST('TICKET_URL_PUBLIC_INTERFACE', 'alpha');
 	if (!empty($url_interface)) {
 		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
-	} else {
-		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
+	} elseif ($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
+		$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', DOL_MAIN_URL_ROOT.'/public/ticket', 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
