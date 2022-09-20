@@ -61,7 +61,7 @@ jobs:
   include:
     - stage: PHP 7.0-7.4
       if: type = push
-      php: '7.0'
+      php: '7.1'
       env: DB=postgresql
     - stage: PHP 7.0-7.4
       if: type = pull_request OR type = push
