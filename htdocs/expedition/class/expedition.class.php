@@ -217,11 +217,11 @@ class Expedition extends CommonObject
 		$this->statuts[2]  = 'StatusSendingProcessed';
 
 		// List of short language codes for status
-		$this->statutshorts = array();
-		$this->statutshorts[-1] = 'StatusSendingCanceledShort';
-		$this->statutshorts[0]  = 'StatusSendingDraftShort';
-		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
-		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+		$this->statuts_short = array();
+		$this->statuts_short[-1] = 'StatusSendingCanceledShort';
+		$this->statuts_short[0]  = 'StatusSendingDraftShort';
+		$this->statuts_short[1]  = 'StatusSendingValidatedShort';
+		$this->statuts_short[2]  = 'StatusSendingProcessedShort';
 	}
 
 	/**
@@ -1884,7 +1884,7 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {

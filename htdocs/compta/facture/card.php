@@ -1251,7 +1251,7 @@ if (empty($reshook)) {
 							$object->lines[] = $line; // insert new line in current object
 
 							// Defined the new fk_parent_line
-							if ($result > 0) {
+							if ($result > 0 && $line->product_type == 9) {
 								$fk_parent_line = $result;
 							}
 						}
@@ -1772,7 +1772,7 @@ if (empty($reshook)) {
 										}
 
 										// Defined the new fk_parent_line
-										if ($result > 0) {
+										if ($result > 0 && $lines[$i]->product_type == 9) {
 											$fk_parent_line = $result;
 										}
 									}
