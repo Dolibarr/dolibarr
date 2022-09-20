@@ -3574,7 +3574,7 @@ abstract class CommonObject
 				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
 				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
 				$sql .= " WHERE rowid = ".((int) $this->id);
-				
+
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 
