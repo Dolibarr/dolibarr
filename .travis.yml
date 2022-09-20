@@ -48,9 +48,12 @@ addons:
     # We need pgloader for import mysql database into pgsql
     - pgloader
     - php
-    - php-pgsql
-    - php-mysqli
-    - php-xml
+    - php7.1-pgsql
+    - php7.1-mysqli
+    - php7.1-xml
+    - php8.1-pgsql
+    - php8.1-mysqli
+    - php8.1-xml
     
 env:
   global:
