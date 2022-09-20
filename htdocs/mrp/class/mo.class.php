@@ -1129,8 +1129,8 @@ class Mo extends CommonObject
 			if ($this->fk_bom > 0){
 				require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 				$subBom = new BOM($this->db);
-				$result  = $subBom->fetch($this->fk_bom);
-				if ($result) {
+				$resSubbom  = $subBom->fetch($this->fk_bom);
+				if ($resSubbom) {
 					$subProd = new Product($this->db);
 					$resSub = $subProd->fetch($subBom->fk_product);
 					if ($resSub) {
