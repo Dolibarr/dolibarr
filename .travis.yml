@@ -21,11 +21,17 @@ services:
 
 before_install:
 - |
+  echo "Add ondrej PPA"
+  sudo add-apt-repository -y ppa:ondrej/php
+  sudo apt-get update
   echo "Disabling Xdebug for composer"
   export PHP_VERSION_NAME=$(phpenv version-name)
   echo $PHP_VERSION_NAME
+  ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
+  phpenv rehash
+  phpenv config-add mysqli
   echo
 
 addons:
@@ -46,6 +52,7 @@ addons:
     - pgloader
     - php5.6
     - php5.6-pgsql
+    - php5.6-mysqli
 
 env:
   global:
