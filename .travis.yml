@@ -21,9 +21,6 @@ services:
 
 before_install:
 - |
-  echo "Add ondrej PPA"
-  sudo add-apt-repository -y ppa:ondrej/php
-  sudo apt-get update
   echo "Disabling Xdebug for composer"
   export PHP_VERSION_NAME=$(phpenv version-name)
   echo $PHP_VERSION_NAME
@@ -47,6 +44,8 @@ addons:
     #- libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
+    - php5.6
+    - php5.6-pgsql
 
 env:
   global:
