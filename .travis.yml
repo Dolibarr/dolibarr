@@ -123,7 +123,7 @@ install:
   fi
   # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      composer -n require --ignore-platform-reqs phpunit/phpunit ^7 \
+      composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
