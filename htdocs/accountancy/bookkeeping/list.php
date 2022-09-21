@@ -653,21 +653,28 @@ if (!empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumew too much memory on large export. Replace this with the query($sql) and loop on each line to export them.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
+	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		// Export files
+		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
+
+		$mimetype = $accountancyexport->getMimeType($formatexportset);
+
+		top_httphead($mimetype, 1);
+
+		// Output data on screen
 		$accountancyexport->export($object->lines, $formatexportset);
 
 		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
 		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
 
 		if (!empty($accountancyexport->errors)) {
-			setEventMessages('', $accountancyexport->errors, 'errors');
+			dol_print_error('', '', $accountancyexport->errors);
 		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 			// Specify as export : update field date_export or date_validated
 			$error = 0;
@@ -701,11 +708,10 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 			if (!$error) {
 				$db->commit();
-				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExportedOrValidated"), null, 'mesgs');
 			} else {
 				$error++;
 				$db->rollback();
-				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"), null, 'errors');
+				dol_print_error('', $langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"));
 			}
 		}
 		exit;
