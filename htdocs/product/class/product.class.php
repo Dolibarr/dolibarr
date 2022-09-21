@@ -5255,7 +5255,7 @@ class Product extends CommonObject
 	 * @param  string $origin_element Origin element type
 	 * @param  int    $origin_id      Origin id of element
 	 * @param  int	  $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
-	 * @param  array  $extrafields	  Array of extrafields
+	 * @param  Extrafields $extrafields	  Array of extrafields
 	 * @return int                    <0 if KO, >0 if OK
 	 */
 	public function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null)
@@ -5924,7 +5924,8 @@ class Product extends CommonObject
 		$this->tosell = 1;
 		$this->tobuy = 1;
 		$this->tobatch = 0;
-		$this->note = 'This is a comment (private)';
+		$this->note_private = 'This is a comment (private)';
+		$this->note_public = 'This is a comment (public)';
 		$this->date_creation = $now;
 		$this->date_modification = $now;
 
