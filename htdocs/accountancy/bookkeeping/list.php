@@ -867,8 +867,8 @@ if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.urlencode($optioncss).'">';
 }
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
-print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (count($filter)) {
