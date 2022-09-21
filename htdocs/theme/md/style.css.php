@@ -1046,6 +1046,9 @@ textarea.centpercent {
 .cursormove {
 	cursor: move;
 }
+.cursorwait {
+	cursor: wait;
+}
 .cursornotallowed {
 	cursor: not-allowed;
 }

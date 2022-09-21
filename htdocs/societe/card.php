@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -342,6 +342,7 @@ if (empty($reshook)) {
 				if (!$error) {
 					//We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
 					}
 				}

@@ -17,8 +17,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/stock.lib.php
- *		\brief      Library file with function for stock module
+ * \file       htdocs/core/lib/stock.lib.php
+ * \brief      Library file with function for stock module
  */
 
 /**
@@ -88,7 +88,12 @@ function stock_prepare_head($object)
  */
 function stock_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('entrepot');
+	$extrafields->fetch_name_optionals_label('stock_mouvement');
+	$extrafields->fetch_name_optionals_label('inventory');
 
 	$h = 0;
 	$head = array();
@@ -106,16 +111,28 @@ function stock_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_mouvement_extrafields.php';
 	$head[$h][1] = $langs->trans("StockMouvementExtraFields");
+	$nbExtrafields = $extrafields->attributes['stock_mouvement']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'stockMouvementAttributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/inventory_extrafields.php';
 	$head[$h][1] = $langs->trans("InventoryExtraFields");
+	$nbExtrafields = $extrafields->attributes['inventory']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'inventoryAttributes';
 	$h++;
 

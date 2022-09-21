@@ -822,7 +822,7 @@ class FormMail extends Form
 							$out .= '<br></div>';
 						}
 					} elseif (empty($this->withmaindocfile)) {
-						$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+						//$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 					}
 					if ($this->withfile == 2) {
 						$maxfilesizearray = getMaxFileSizeArray();
@@ -831,13 +831,13 @@ class FormMail extends Form
 							$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 						}
 						// Can add other files
-						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) {
+						if (empty($conf->global->FROM_MAIL_DONT_USE_INPUT_FILE_MULTIPLE)) {
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
 						} else {
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input type="submit" class="button small" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -947,10 +947,13 @@ class FormMail extends Form
 				}
 
 				$out .= '<tr>';
-				$out .= '<td class="tdtop">';
+				$out .= '<td colspan="2">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
 				$out .= '</td>';
-				$out .= '<td>';
+				$out .= '</tr>';
+
+				$out .= '<tr>';
+				$out .= '<td colspan="2">';
 				if ($this->withbodyreadonly) {
 					$out .= nl2br($defaultmessage);
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
@@ -1202,8 +1205,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs, $form;
-		$out = '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
+		global $conf, $langs;
+		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
 			$out .= yn($this->withdeliveryreceipt);
@@ -1224,7 +1227,8 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
-			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			//$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			$out .= '<input type="checkbox" id="deliveryreceipt" name="deliveryreceipt" value="1"'.((GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt) ? ' checked="checked"' : '').'>';
 		}
 		$out .= "</td></tr>\n";
 		return $out;

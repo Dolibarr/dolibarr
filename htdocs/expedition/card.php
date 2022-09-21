@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
@@ -214,13 +214,13 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$object->note = GETPOST('note', 'alpha');
-		$object->origin				= $origin;
+		$object->origin = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
-		$object->weight				= GETPOST('weight', 'int') == '' ? "NULL" : GETPOST('weight', 'int');
-		$object->sizeH				= GETPOST('sizeH', 'int') == '' ? "NULL" : GETPOST('sizeH', 'int');
-		$object->sizeW				= GETPOST('sizeW', 'int') == '' ? "NULL" : GETPOST('sizeW', 'int');
-		$object->sizeS				= GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
+		$object->weight = GETPOST('weight', 'int') == '' ? "NULL" : GETPOST('weight', 'int');
+		$object->sizeH = GETPOST('sizeH', 'int') == '' ? "NULL" : GETPOST('sizeH', 'int');
+		$object->sizeW = GETPOST('sizeW', 'int') == '' ? "NULL" : GETPOST('sizeW', 'int');
+		$object->sizeS = GETPOST('sizeS', 'int') == '' ? "NULL" : GETPOST('sizeS', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -233,8 +233,8 @@ if (empty($reshook)) {
 		$object->ref_customer = GETPOST('ref_customer', 'alpha');
 		$object->model_pdf = GETPOST('model');
 		$object->date_delivery = $date_delivery; // Date delivery planed
-		$object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-		$object->shipping_method_id		= GETPOST('shipping_method_id', 'int');
+		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
+		$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -265,7 +265,7 @@ if (empty($reshook)) {
 					$qty .= '_'.$j;
 					while (GETPOSTISSET($batch)) {
 						// save line of detail into sub_qty
-						$sub_qty[$j]['q'] = GETPOST($qty, 'int'); // the qty we want to move for this stock record
+						$sub_qty[$j]['q'] = price2num(GETPOST($qty, 'alpha'), 'MS'); // the qty we want to move for this stock record
 						$sub_qty[$j]['id_batch'] = GETPOST($batch, 'int'); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
@@ -285,12 +285,13 @@ if (empty($reshook)) {
 
 					$totalqty += $subtotalqty;
 				} else {
-					// No detail were provided for lots, so if a qty was provided, we can show an error.
+					// No detail were provided for lots, so if a qty was provided, we can throw an error.
 					if (GETPOST($qty)) {
 						// We try to set an amount
 						// Case we dont use the list of available qty for each warehouse/lot
 						// GUI does not allow this yet
-						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse"), null, 'errors');
+						setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse").' ('.$langs->trans("Line").' '.GETPOST($idl, 'int').')', null, 'errors');
+						$error++;
 					}
 				}
 			} elseif (GETPOSTISSET($stockLocation)) {
@@ -328,7 +329,7 @@ if (empty($reshook)) {
 
 		//var_dump($batch_line[2]);
 
-		if ($totalqty > 0) {		// There is at least one thing to ship
+		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {
@@ -388,7 +389,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 			}
-		} else {
+		} elseif (!$error) {
 			$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
 			if (!empty($conf->stock->enabled)) {
 				$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
@@ -481,7 +482,7 @@ if (empty($reshook)) {
 		//		setEventMessages($object->error, $object->errors, 'errors');
 		//	}
 		//}
-	} elseif ($action == 'setdate_livraison' && $user->rights->expedition->creer) {
+	} elseif ($action == 'setdate_livraison' && !empty($user->rights->expedition->creer)) {
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -1120,12 +1121,15 @@ if ($action == 'create') {
 						$type = 1;
 					}
 
-					print '<!-- line '.$line->id.' for product -->'."\n";
-					print '<tr class="oddeven">'."\n";
+					print '<!-- line for order line '.$line->id.' -->'."\n";
+					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
-						$product->fetch($line->fk_product);
+						$res = $product->fetch($line->fk_product);
+						if ($res < 0) {
+							dol_print_error($db, $product->error, $product->errors);
+						}
 						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
 						//var_dump($product->stock_warehouse[1]);
 
@@ -1408,7 +1412,7 @@ if ($action == 'create') {
 											$deliverableQty = GETPOST($inputName, 'int');
 										}
 
-										print '<input '.$tooltip.' name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input '.$tooltip.' class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (!empty($conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS)) {

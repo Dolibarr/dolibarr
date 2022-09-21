@@ -345,6 +345,7 @@ class Project extends CommonObject
 			$this->fields['accept_booth_suggestions']['enabled'] = 0;
 			$this->fields['price_registration']['enabled'] = 0;
 			$this->fields['price_booth']['enabled'] = 0;
+			$this->fields['max_attendees']['enabled'] = 0;
 		}
 	}
 
