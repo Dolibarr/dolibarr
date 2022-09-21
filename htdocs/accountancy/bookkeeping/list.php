@@ -689,21 +689,28 @@ if (!empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
-	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumew too much memory on large export. Replace this with the query($sql) and loop on each line to export them.
+	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
+	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-		// Export files
+		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
+
+		$mimetype = $accountancyexport->getMimeType($formatexportset);
+
+		top_httphead($mimetype, 1);
+
+		// Output data on screen
 		$accountancyexport->export($object->lines, $formatexportset);
 
 		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
 		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
 
 		if (!empty($accountancyexport->errors)) {
-			setEventMessages('', $accountancyexport->errors, 'errors');
+			dol_print_error('', '', $accountancyexport->errors);
 		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
 			// Specify as export : update field date_export or date_validated
 			$error = 0;
@@ -737,11 +744,10 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 			if (!$error) {
 				$db->commit();
-				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExportedOrValidated"), null, 'mesgs');
 			} else {
 				$error++;
 				$db->rollback();
-				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"), null, 'errors');
+				dol_print_error('', $langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"));
 			}
 		}
 		exit;
@@ -897,8 +903,8 @@ if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.urlencode($optioncss).'">';
 }
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="sortfield" value="'.urlencode($sortfield).'">';
-print '<input type="hidden" name="sortorder" value="'.urlencode($sortorder).'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (count($filter)) {
@@ -919,7 +925,7 @@ if (empty($reshook)) {
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
 	if (!empty($user->rights->accounting->mouvements->export)) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
 	}
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
@@ -1021,14 +1027,14 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', $langs->trans('to'), 'maxwidth250', 'subledgeraccount');
 		print '</div>';
 	} else {
-		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.$search_accountancy_aux_code.'">';
+		print '<input type="text" class="maxwidth75" name="search_accountancy_aux_code" value="'.dol_escape_htmltag($search_accountancy_aux_code).'">';
 	}
 	print '</td>';
 }
 // Label operation
 if (!empty($arrayfields['t.label_operation']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" size="7" class="flat" name="search_mvt_label" value="'.$search_mvt_label.'"/>';
+	print '<input type="text" size="7" class="flat" name="search_mvt_label" value="'.dol_escape_htmltag($search_mvt_label).'"/>';
 	print '</td>';
 }
 // Debit
@@ -1046,7 +1052,7 @@ if (!empty($arrayfields['t.credit']['checked'])) {
 // Lettering code
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
+	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.dol_escape_htmltag($search_lettering_code).'"/>';
 	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
 	print '</td>';
 }
@@ -1154,10 +1160,10 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER['PHP_SELF'], "t.tms", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['t.date_export']['checked'])) {
-	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export,t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['t.date_validated']['checked'])) {
-	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated,t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['t.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER["PHP_SELF"], "t.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
