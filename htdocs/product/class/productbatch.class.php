@@ -136,7 +136,6 @@ class Productbatch extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product_stock,";
 		$sql .= " t.sellby as oldsellby,";
@@ -148,8 +147,8 @@ class Productbatch extends CommonObject
 		$sql .= " w.fk_product,";
 		$sql .= " pl.eatby,";
 		$sql .= " pl.sellby";
-
-		$sql .= " FROM ".$this->db->prefix()."product_batch as t INNER JOIN ".$this->db->prefix()."product_stock w on t.fk_product_stock = w.rowid";
+		$sql .= " FROM ".$this->db->prefix()."product_batch as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock w on t.fk_product_stock = w.rowid";	// llx_product_stock is a parent table so this link does NOT generate duplicate record
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 

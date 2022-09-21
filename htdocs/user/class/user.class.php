@@ -546,7 +546,7 @@ class User extends CommonObject
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
 				$this->personal_email = $obj->personal_email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->job = $obj->job;
 				$this->signature = $obj->signature;
 				$this->admin		= $obj->admin;
@@ -744,6 +744,9 @@ class User extends CommonObject
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
 		if (!empty($tmp[1])) {
+			if (strpos($module, '@') !== false) {
+				$module = $tmp[1];
+			}
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];

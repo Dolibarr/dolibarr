@@ -198,15 +198,15 @@ if ($action=='downfield' || $action=='upfield')
 	}
 }
 */
-if ($action == 'builddoc') {
-	// Build import file
-	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
-	if ($result < 0) {
-		setEventMessages($objimport->error, $objimport->errors, 'errors');
-	} else {
-		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
-	}
-}
+// if ($action == 'builddoc') {
+// 	// Build import file
+// 	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
+// 	if ($result < 0) {
+// 		setEventMessages($objimport->error, $objimport->errors, 'errors');
+// 	} else {
+// 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
+// 	}
+// }
 
 if ($action == 'deleteprof') {
 	if (GETPOST("id", 'int')) {

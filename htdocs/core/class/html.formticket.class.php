@@ -73,6 +73,8 @@ class FormTicket
 	public $withfile;
 	public $withfilereadonly;
 
+	public $backtopage;
+
 	public $ispublic; // To show information or not into public form
 
 	public $withtitletopic;
@@ -1363,6 +1365,7 @@ class FormTicket
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
+		print '<input type="hidden" name="backtopage" value="'.$this->backtopage.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}

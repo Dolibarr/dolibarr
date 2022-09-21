@@ -1844,7 +1844,7 @@ class Societe extends CommonObject
 				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
 
 				$this->email = $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;

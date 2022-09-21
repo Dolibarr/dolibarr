@@ -149,11 +149,11 @@ class Reception extends CommonObject
 		$this->statuts[2]  = 'StatusReceptionProcessed';
 
 		// List of short language codes for status
-		$this->statutshorts = array();
-		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
-		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
-		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
-		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
+		$this->statuts_short = array();
+		$this->statuts_short[-1] = 'StatusReceptionCanceledShort';
+		$this->statuts_short[0]  = 'StatusReceptionDraftShort';
+		$this->statuts_short[1]  = 'StatusReceptionValidatedShort';
+		$this->statuts_short[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -456,8 +456,8 @@ class Reception extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				$file = $conf->reception->dir_output."/".get_exdir($this->id, 2, 0, 0, $this, 'reception')."/".$this->id.".pdf";
-				$this->pdf_filename = $file;
+				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
+				//$this->pdf_filename = $file;
 
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
@@ -1177,6 +1177,8 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($this->db);
 
 				$line->fetch($obj->rowid);
+
+				// TODO Remove or keep this ?
 				$line->fetch_product();
 
 				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
@@ -1304,7 +1306,7 @@ class Reception extends CommonObject
 		global $langs;
 
 		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {

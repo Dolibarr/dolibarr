@@ -923,6 +923,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
+	$search_rowid   = GETPOST("search_rowid", 'int');
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -971,6 +972,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>1, 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
@@ -1012,6 +1014,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_rowid = '';
 		$search_status = '';
 		$search_name = '';
 		$search_roles = array();
@@ -1055,6 +1058,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print "\n".'<table class="tagtable liste">'."\n";
 
 	$param = "socid=".urlencode($object->id);
+	if ($search_rowid != '') {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
 	}
@@ -1083,6 +1089,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	if ($search_rowid) {
+		$sql .= natural_search('t.rowid', $search_rowid);
+	}
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1146,7 +1155,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td></td>';
+		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1188,7 +1197,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td>'.$langs->trans("DolibarrLogin").'</td>';
+		print '<th class="wrapcolumntitle liste_titre">'.$langs->trans("DolibarrLogin").'</th>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;

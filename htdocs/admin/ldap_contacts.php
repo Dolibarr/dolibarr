@@ -143,7 +143,7 @@ if (!function_exists("ldap_connect")) {
 print dol_get_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
 
 
-print $langs->trans("LDAPDescContact").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';

@@ -23,29 +23,17 @@
  */
 
 
-$shortscopegoogle = 'userinfo_email,userinfo_profile';
-$shortscopegoogle .= ',openid,email,profile';	// For openid connect
-if (!empty($conf->printing->enabled)) {
-	$shortscopegoogle .= ',cloud_print';
-}
-if (!empty($conf->global->OAUTH_GOOGLE_GSUITE)) {
-	$shortscopegoogle .= ',admin_directory_user';
-}
-if (!empty($conf->global->OAUTH_GOOGLE_GMAIL)) {
-	$shortscopegoogle.=',gmail_full';
-}
-
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array = array(
-	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'defaultscope'=>$shortscopegoogle),
+	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full'),
 );
 if (!empty($conf->stripe->enabled)) {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'defaultscope'=>'read_write');
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'defaultscope'=>'read_write');
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
 }
-$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers', 'defaultscope'=>'user,public_repo');
+$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers', 'availablescopes'=>'user,public_repo');
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-	$supportedoauth2array['OAUTH_OTHER_NAME'] = array('callbackfile' => 'generic', 'picto' => 'generic', 'urlforapp' => 'OAUTH_OTHER_DESC', 'name'=>'Other', 'urlforcredentials'=>'', 'defaultscope'=>'ToComplete');
+	$supportedoauth2array['OAUTH_OTHER_NAME'] = array('callbackfile' => 'generic', 'picto' => 'generic', 'urlforapp' => 'OAUTH_OTHER_DESC', 'name'=>'Other', 'urlforcredentials'=>'', 'availablescopes'=>'Standard');
 }
 
 
