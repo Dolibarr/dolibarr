@@ -107,10 +107,14 @@ $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle,f.ref_sup
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_supplier_general,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
+	$sql .= " s.accountancy_code_customer_general,";
 	$sql .= " s.code_compta as code_compta,";
+	$sql .= " s.accountancy_code_supplier_general,";
 	$sql .= " s.code_compta_fournisseur,";
 }
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -178,6 +182,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
+		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $cptfour;
 		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
 
 		$compta_prod = $obj->compte;
@@ -242,6 +247,7 @@ if ($result) {
 				'id' => $obj->socid,
 				'name' => $obj->name,
 				'code_fournisseur' => $obj->code_fournisseur,
+				'accountancy_code_supplier_general' => $accountancy_code_supplier_general,
 				'code_compta_fournisseur' => $compta_soc
 			);
 
@@ -294,7 +300,7 @@ if ($action == 'writebookkeeping') {
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->accountancy_code_supplier_general = $tabcompany[$key]['accountancy_code_supplier_customer'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
@@ -348,7 +354,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 
-				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+				$bookkeeping->numero_compte = $tabcompany[$key]['accountancy_code_supplier_general'];
 				$bookkeeping->label_compte = $accountingaccountsupplier->label;
 
 				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("SubledgerAccount");
@@ -626,9 +632,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
-		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
@@ -664,7 +669,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 				print '"'.$val["refsologest"].'"'.$sep;
 				print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
 				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-				print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER).'"'.$sep;
+				print '"'.length_accountg($companystatic->accountancy_code_supplier_general).'"'.$sep;
 				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 				print '"'.$langs->trans("Thirdparty").'"'.$sep;
 				print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.$langs->trans("Thirdparty").'"'.$sep;
@@ -837,9 +842,8 @@ if (empty($action) || $action == 'view') {
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
-		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
