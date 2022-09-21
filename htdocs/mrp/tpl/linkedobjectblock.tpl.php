@@ -63,8 +63,25 @@ foreach ($TMoChilds as $key => $objectlink) {
 	echo '<td class="linkedcol-amount right">-</td>';
 	echo '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';
 	echo '<td class="linkedcol-action right">';
-	// For now, shipments must stay linked to order, so link is not deletable
-	echo '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a>';
+
+	// we want to make the link via element_element for delete action
+	$sql = ' Select rowid from ' . MAIN_DB_PREFIX . 'element_element';
+	$sql .= ' WHERE  fk_source = '. $object->id . ' and fk_target = ' . $key;
+
+	$resql = $db->query($sql);
+	$k = 0;
+	if ($resql){
+		$obj = $db->fetch_object($resql);
+		if ($obj->rowid && $obj->rowid > 0 ) $k = $obj->rowid;
+	}
+
+	echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
+	echo '</td>';
+	echo "</tr>\n";
+}
+
+echo "<!-- END PHP TEMPLATE -->\n";
+
 	echo '</td>';
 	echo "</tr>\n";
 }
