@@ -439,6 +439,7 @@ Unique=Unique
 Boolean=Boolean (one checkbox)
 ExtrafieldPhone = Phone
 ExtrafieldPrice = Price
+ExtrafieldPriceWithCurrency=Price with currency
 ExtrafieldMail = Email
 ExtrafieldUrl = Url
 ExtrafieldIP = IP
