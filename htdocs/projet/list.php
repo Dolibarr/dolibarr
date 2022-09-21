@@ -849,7 +849,7 @@ $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 //$includeonly = 'hierarchyme';
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
@@ -861,7 +861,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
-if ($user->rights->user->user->lire) {
+if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');

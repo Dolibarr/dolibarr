@@ -471,7 +471,7 @@ if ($resql) {
 
 		print dol_get_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
-		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+		dol_banner_tab($fuser, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 			print '<div class="underbanner clearboth"></div>';

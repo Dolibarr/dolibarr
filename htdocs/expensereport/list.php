@@ -467,7 +467,7 @@ if ($resql) {
 
 		print dol_get_fiche_head($head, 'expensereport', $title, -1, 'user');
 
-		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+		dol_banner_tab($fuser, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 		print dol_get_fiche_end();
 
