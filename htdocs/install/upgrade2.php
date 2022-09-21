@@ -455,7 +455,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '8.0.9');
 			$beforeversionarray = explode('.', '9.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				migrate_user_photospath();
+				//migrate_user_photospath();
 			}
 
 			// Scripts for 11.0
@@ -480,6 +480,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '15.0.9');
 			$beforeversionarray = explode('.', '16.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_user_photospath();
 				migrate_user_photospath2();
 			}
 		}
