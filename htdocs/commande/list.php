@@ -2069,11 +2069,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ht';
 			}
-			if (isset($totalarray['val']['c.total_ht'])) {
-				$totalarray['val']['c.total_ht'] += $obj->total_ht;
-			} else {
-				$totalarray['val']['c.total_ht'] = $obj->total_ht;
-			}
+			isset($totalarray['val']['c.total_ht'])?$totalarray['val']['c.total_ht'] += $obj->total_ht:$totalarray['val']['c.total_ht'] = $obj->total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {
@@ -2084,7 +2080,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_tva';
 			}
-			$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			isset($totalarray['val']['c.total_tva'])?$totalarray['val']['c.total_tva'] += $obj->total_tva:$totalarray['val']['c.total_tva'] = $obj->total_tva;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['c.total_ttc']['checked'])) {
@@ -2095,7 +2091,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			}
-			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			isset($totalarray['val']['c.total_ttc'])?$totalarray['val']['c.total_ttc'] += $obj->total_ttc:$totalarray['val']['c.total_ttc'] = $obj->total_ttc;
 		}
 
 		// Currency
@@ -2228,7 +2224,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 			}
-			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+			isset($totalarray['val']['total_margin'])?$totalarray['val']['total_margin'] += $marginInfo['total_margin']:$totalarray['val']['total_margin'] = $marginInfo['total_margin'];
 		}
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {

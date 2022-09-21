@@ -2059,7 +2059,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				}
-				$totalarray['val']['f.total_ht'] += $obj->total_ht;
+				isset($totalarray['val']['f.total_ht'])?$totalarray['val']['f.total_ht'] += $obj->total_ht:$totalarray['val']['f.total_ht'] = $obj->total_ht;
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.total_tva']['checked'])) {
@@ -2070,7 +2070,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
 				}
-				$totalarray['val']['f.total_tva'] += $obj->total_tva;
+				isset($totalarray['val']['f.total_tva'])?$totalarray['val']['f.total_tva'] += $obj->total_tva:$totalarray['val']['f.total_tva'] = $obj->total_tva;
 			}
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked'])) {
@@ -2081,7 +2081,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax1';
 				}
-				$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
+				isset($totalarray['val']['f.total_localtax1'])?$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1:$totalarray['val']['f.total_localtax1'] = $obj->total_localtax1;
 			}
 			// Amount LocalTax2
 			if (!empty($arrayfields['f.total_localtax2']['checked'])) {
@@ -2092,7 +2092,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax2';
 				}
-				$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
+				isset($totalarray['val']['f.total_localtax2'])?$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2:$totalarray['val']['f.total_localtax2'] = $obj->total_localtax2;
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
@@ -2103,7 +2103,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
 				}
-				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
+				isset($totalarray['val']['f.total_ttc'])?$totalarray['val']['f.total_ttc'] += $obj->total_ttc:$totalarray['val']['f.total_ttc'] = $obj->total_ttc;
 			}
 
 			$userstatic->id = $obj->fk_user_author;
@@ -2193,7 +2193,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
 				}
-				$totalarray['val']['totalam'] += $totalpay;
+				isset($totalarray['val']['totalam'])?$totalarray['val']['totalam'] += $totalpay:$totalarray['val']['totalam'] = $totalpay;
 			}
 
 			// Pending amount
@@ -2207,7 +2207,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
 				}
-				$totalarray['val']['rtp'] += $remaintopay;
+				isset($totalarray['val']['rtp'])?$totalarray['val']['rtp'] += $remaintopay:$totalarray['val']['rtp'] = $remaintopay;
 			}
 
 
@@ -2288,7 +2288,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
 				}
-				$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+				isset($totalarray['val']['total_margin'])?$totalarray['val']['total_margin'] += $marginInfo['total_margin']:$totalarray['val']['total_margin'] = $marginInfo['total_margin'];
 			}
 			// Total margin rate
 			if (!empty($arrayfields['total_margin_rate']['checked'])) {
