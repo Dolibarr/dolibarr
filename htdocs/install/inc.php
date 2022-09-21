@@ -319,7 +319,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->port = trim($dolibarr_main_db_port);
 	$conf->db->name = trim($dolibarr_main_db_name);
 	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = trim($dolibarr_main_db_pass);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
