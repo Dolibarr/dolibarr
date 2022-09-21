@@ -22,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/compta/prelevement/class/bonprelevement.class.php
- *      \ingroup    prelevement
- *      \brief      File of withdrawal receipts class
+ * \file       htdocs/compta/prelevement/class/bonprelevement.class.php
+ * \ingroup    prelevement
+ * \brief      File of withdrawal receipts class
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -760,14 +760,14 @@ class BonPrelevement extends CommonObject
 
 		$error = 0;
 
-		$datetimeprev = time();
+		$datetimeprev = dol_now('gmt');
 		//Choice the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
 
-		$month = date("%m", $datetimeprev);
-		$year = date("%Y", $datetimeprev);
+		$month = dol_print_date("%m", $datetimeprev, 'gmt');
+		$year = dol_print_date("%Y", $datetimeprev, 'gmt');
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
