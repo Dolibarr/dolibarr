@@ -82,7 +82,7 @@ if (empty($account->userid)) {
 
 // Define value to know what current user can do on users
 $canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
+$canreaduser = (!empty($user->admin) || $user->hasRight('user', 'user', 'lire') || $user->rights->hrm->read_personal_information->read);
 $permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
@@ -346,7 +346,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
@@ -354,7 +354,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -895,7 +895,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 	//print '<div class="fichecenter">';
 
