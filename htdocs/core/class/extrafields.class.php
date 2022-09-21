@@ -1099,7 +1099,7 @@ class ExtraFields
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
 			if (!empty($value)) {
-				// $value in memory is a php numeric, we format it into user number format.
+				// $value in memory is a php string like '10.01:USD'
 				$pricetmp = explode(':', $value);
 				$currency = !empty($pricetmp[1]) ? $pricetmp[1] : $conf->currency;
 				$value = price($pricetmp[0]);
@@ -1644,7 +1644,7 @@ class ExtraFields
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
 			if (!empty($value)) {
-				// $value in memory is a php numeric, we format it into user number format.
+				// $value in memory is a php string like '0.01:EUR'
 				$pricetmp = explode(':', $value);
 				$currency = !empty($pricetmp[1]) ? $pricetmp[1] : $conf->currency;
 				$value = $pricetmp[0];
