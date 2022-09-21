@@ -504,7 +504,7 @@ class FormOther
 			$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 
-		if (empty($user->rights->user->user->lire)) {
+		if (!$user->hasRight('user', 'user', 'lire')) {
 			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
@@ -517,7 +517,7 @@ class FormOther
 		}
 
 		// Add existing sales representatives of thirdparty of external user
-		if (empty($user->rights->user->user->lire) && $user->socid) {
+		if (!$user->hasRight('user', 'user', 'lire') && $user->socid) {
 			$sql_usr .= " UNION ";
 			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".$this->db->prefix()."user as u2, ".$this->db->prefix()."societe_commerciaux as sc";

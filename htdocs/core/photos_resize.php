@@ -75,7 +75,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
-	if (empty($user->rights->user->user->lire)) {
+	if (!$user->hasRight('user', 'user', 'lire')) {
 		accessforbidden();
 	}
 	$accessallowed = 1;

@@ -82,7 +82,7 @@ class box_birthdays extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire) {
+		if ($user->hasRight('user', 'user', 'lire')) {
 			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, 'birth' as typea, u.email, u.statut as status";
