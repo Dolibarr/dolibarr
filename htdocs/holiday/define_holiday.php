@@ -46,6 +46,9 @@ $search_supervisor = GETPOST('search_supervisor', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$confirm = GETPOST('confirm', 'alpha');
+
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -113,14 +116,13 @@ if (empty($reshook)) {
 	}
 
 	// Mass actions
-	/*
-	$objectclass='Skeleton';
-	$objectlabel='Skeleton';
-	$permissiontoread = $user->rights->skeleton->read;
-	$permissiontodelete = $user->rights->skeleton->delete;
-	$uploaddir = $conf->skeleton->dir_output;
+	$objectclass = 'Holiday';
+	$objectlabel = 'Holiday';
+	$permissiontoread = $user->hasRight('holiday', 'read');
+	$permissiontodelete = $user->hasRight('holiday', 'delete');
+	$permissiontoapprove = $user->hasRight('holiday', 'approve');
+	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	*/
 
 	// Si il y a une action de mise à jour
 	if ($action == 'update' && GETPOSTISSET('update_cp')) {
@@ -213,6 +215,17 @@ if ($result < 0) {
 	setEventMessages($holiday->error, $holiday->errors, 'errors');
 }
 
+// List of mass actions available
+$arrayofmassactions = array(
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+);
+if ($user->hasRight("holiday", "approve")) {
+	$arrayofmassactions['preincreaseholiday'] = img_picto('', 'add', 'class="pictofixedwidth"').$langs->trans("IncreaseHolidays");
+}
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -226,7 +239,10 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
+$title = $langs->trans("MenuConfCP");
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, '', '', 'title_hrm', 0, '', '', $limit, 0, 0, 1);
+
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
@@ -298,6 +314,7 @@ if (count($typeleaves) == 0) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 
 	// Action column
 	print '<td class="liste_titre maxwidthsearch center">';
@@ -320,11 +337,19 @@ if (count($typeleaves) == 0) {
 	}
 	print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('');
+
+	if ($massactionbutton) {
+		$selectedfields = $form->showCheckAddButtons('checkforselect', 1);
+	}
+
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print '</tr>';
 
 	$usersupervisor = new User($db);
 
 	foreach ($listUsers as $users) {
+		$arrayofselected = is_array($toselect) ? $toselect : array();
+
 		// If user has not permission to edit/read all, we must see only subordinates
 		if (empty($user->rights->holiday->readall)) {
 			if (($users['rowid'] != $user->id) && (!in_array($users['rowid'], $userchilds))) {
@@ -389,11 +414,21 @@ if (count($typeleaves) == 0) {
 		print '</td>';
 
 		// Button modify
-		print '<td>';
+		print '<td class="center">';
 		if (!empty($user->rights->holiday->define_holiday)) {	// Allowed to set the balance of any user
 			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
+		print '<td class="nowrap center">';
+
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($userstatic->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$userstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$userstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
 		print '</tr>';
 
 		$i++;

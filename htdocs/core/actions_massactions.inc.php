@@ -1507,6 +1507,57 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove) {
+	$db->begin();
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	$typeholiday = GETPOST('typeholiday', 'alpha');
+	$nbdaysholidays = GETPOST('nbdaysholidays', 'double');
+
+	if ($nbdaysholidays <= 0) {
+		setEventMessages($langs->trans("WrongAmount"), "", 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		foreach ($toselect as $toselectid) {
+			$balancecpuser = $objecttmp->getCPforUser($toselectid, $typeholiday);
+			if (!empty($balancecpuser)) {
+				$newnbdaysholidays = $nbdaysholidays + $balancecpuser;
+			} else {
+				$newnbdaysholidays = $nbdaysholidays;
+			}
+			$result = $holiday->addLogCP($user->id, $toselectid, $langs->transnoentitiesnoconv('ManualUpdate'), $newnbdaysholidays, $typeholiday);
+			if ($result <= 0) {
+				setEventMessages($holiday->error, $holiday->errors, 'errors');
+				$error++;
+				break;
+			}
+
+			$objecttmp->updateSoldeCP($toselectid, $newnbdaysholidays, $typeholiday);
+			if ($result > 0) {
+				$nbok++;
+			} else {
+				setEventMessages("", $langs->trans("ErrorUpdatingUsersCP"), 'errors');
+				$error++;
+				break;
+			}
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("HolidayRecordsIncreased", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("HolidayRecordIncreased"), null, 'mesgs');
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 $parameters['toselect'] = $toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
