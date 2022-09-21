@@ -20,6 +20,7 @@
  *  \brief      	Page to show info of an establishment
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -147,7 +148,7 @@ if ($object->id > 0) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (!empty($conf->project->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';

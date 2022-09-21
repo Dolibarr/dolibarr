@@ -851,6 +851,7 @@ class ExtraFields
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$count = 0;
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
 					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
@@ -890,10 +891,12 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
+					$count++;
 				}
 			}
 			if ($elementtype) {
 				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1688,8 +1691,8 @@ class ExtraFields
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $langs->trans($obj->$field_toshow);
 							}
-							if ($translabel != $field_toshow) {
-								$value .= dol_trunc($translabel, 18).' ';
+							if ($translabel != $obj->$field_toshow) {
+								$value .= dol_trunc($translabel, 24).' ';
 							} else {
 								$value .= $obj->$field_toshow.' ';
 							}
@@ -1881,36 +1884,27 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
+		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-		} else {
-			$type = $this->attribute_type[$key];
 		}
 
 		$cssstring = '';
 
-		if ($type == 'date') {
+		if (in_array($type, array('date', 'datetime'))) {
 			$cssstring = "center";
-		} elseif ($type == 'datetime') {
-			$cssstring = "center";
-		} elseif ($type == 'int') {
+		} elseif (in_array($type, array('int', 'price', 'double'))) {
 			$cssstring = "right";
-		} elseif ($type == 'price') {
-			$cssstring = "right";
-		} elseif ($type == 'double') {
-			$cssstring = "right";
-		} elseif ($type == 'boolean') {
+		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip'))) {
 			$cssstring = "center";
-		} elseif ($type == 'radio') {
-			$cssstring = "center";
-		} elseif ($type == 'checkbox') {
-			$cssstring = "center";
-		} elseif ($type == 'price') {
-			$cssstring = "right";
 		}
 
 		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
 			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		} else {
+			if (in_array($type, array('ip'))) {
+				$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+			}
 		}
 
 		return $cssstring;

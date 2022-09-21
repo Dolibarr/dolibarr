@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
-	 * @deprecated
+	 * @deprecated use status
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -217,7 +218,9 @@ class Ticket extends CommonObject
 	 */
 	public $oldcopy;
 
-
+	/**
+	 * @var array array of TicketsLine
+	 */
 	public $lines;
 
 
@@ -1056,6 +1059,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		// Delete all child tables
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
+			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ticket";
 			$sql .= " WHERE rowid=".((int) $this->id);
@@ -1638,7 +1654,7 @@ class Ticket extends CommonObject
 				$sendtocc = '';
 				$deliveryreceipt = 0;
 				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $tmpmessage, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-				if ($mailfile->error || $mailfile->errors) {
+				if ($mailfile->error || !empty($mailfile->errors)) {
 					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				} else {
 					$result = $mailfile->sendfile();
@@ -1708,9 +1724,10 @@ class Ticket extends CommonObject
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
+	 * @param boolean	 $send_email      Whether the message is sent by email
 	 * @return int						  <0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1735,6 +1752,9 @@ class Ticket extends CommonObject
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
+		if ($send_email) {
+			$actioncomm->type_code = 'AC_EMAIL';
 		}
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
@@ -2520,7 +2540,7 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
-			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames);
+			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email);
 			if ($id <= 0) {
 				$error++;
 				$this->error = $object->error;
@@ -3013,7 +3033,7 @@ class TicketsLine
 {
 	/**
 	 * @var int ID
-	 * @deprecated
+	 * @deprecated use id
 	 */
 	public $rowid;
 

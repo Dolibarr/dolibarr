@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
@@ -33,6 +32,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';

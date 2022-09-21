@@ -319,7 +319,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->port = trim($dolibarr_main_db_port);
 	$conf->db->name = trim($dolibarr_main_db_name);
 	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = trim($dolibarr_main_db_pass);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -530,7 +530,7 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		print '<input type="hidden" name="selectlang" value="'.dol_escape_htmltag($setuplang).'">';
 	}
 
-	print '</form>'."\n";
+	print '</form><br>'."\n";
 
 	// If there is some logs in buffer to show
 	if (isset($conf->logbuffer) && count($conf->logbuffer)) {

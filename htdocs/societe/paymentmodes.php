@@ -79,7 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
-$permissiontoread = $user->rights->societe->lire;
+$permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
@@ -174,6 +174,12 @@ if (empty($reshook)) {
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 			}
+
+			if (GETPOST('stripe_card_ref', 'alpha') && GETPOST('stripe_card_ref', 'alpha') != $companypaymentmode->stripe_card_ref) {
+				// If we set a stripe value that is different than previous one, we also set the stripe account
+				$companypaymentmode->stripe_account = $stripecu.'@'.$site_account;
+			}
+			$companybankaccount->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$result = $companybankaccount->update($user);
 			if (!$result) {
@@ -416,6 +422,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_deletecard' && GETPOST('confirm', 'alpha') == 'yes') {
 		$companypaymentmode = new CompanyPaymentMode($db);
 		if ($companypaymentmode->fetch($ribid ? $ribid : $id)) {
+			// TODO This is currently done at bottom of page instead of asking confirm
 			/*if ($companypaymentmode->stripe_card_ref && preg_match('/pm_/', $companypaymentmode->stripe_card_ref))
 			{
 				$payment_method = \Stripe\PaymentMethod::retrieve($companypaymentmode->stripe_card_ref);
@@ -428,6 +435,7 @@ if (empty($reshook)) {
 			$result = $companypaymentmode->delete($user);
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -440,9 +448,21 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && GETPOST('confirm', 'alpha') == 'yes') {
 		$companybankaccount = new CompanyBankAccount($db);
 		if ($companybankaccount->fetch($ribid ? $ribid : $id)) {
+			// TODO This is currently done at bottom of page instead of asking confirm
+			/*if ($companypaymentmode->stripe_card_ref && preg_match('/pm_/', $companypaymentmode->stripe_card_ref))
+			{
+				$payment_method = \Stripe\PaymentMethod::retrieve($companypaymentmode->stripe_card_ref);
+				if ($payment_method)
+				{
+					$payment_method->detach();
+				}
+			}*/
+
 			$result = $companybankaccount->delete($user);
+
 			if ($result > 0) {
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
+
 				header('Location: '.$url);
 				exit;
 			} else {
@@ -505,7 +525,7 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					// Creation of Stripe card + update of societe_account
+					// Creation of Stripe card + update of llx_societe_rib
 					// Note that with the new Stripe API, option to create a card is no more available, instead an error message will be returned to
 					// ask to create the crdit card from Stripe backoffice.
 					$card = $stripe->cardStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
@@ -517,35 +537,30 @@ if (empty($reshook)) {
 			}
 		}
 		if ($action == 'syncsepatostripe') {
-			$companybankaccount->fetch(GETPOST('bankid', 'int'));
-			// print "stripe account = " . json_encode($stripe->getStripeAccount($service));
-			// print json_encode($companybankaccount);
-			// print "fetch id = " . json_encode($socid);
-
-			$companypaymentmode = new CompanyPaymentMode($db);
-			$companypaymentmode->fetch(null, null, $socid);
-			// print json_encode($companypaymentmode);
+			$companypaymentmode = new CompanyPaymentMode($db);	// Get record in llx_societe_rib
+			$companypaymentmode->fetch($id);
 
 			if ($companypaymentmode->type != 'ban') {
 				$error++;
-				setEventMessages('ThisPaymentModeIsNotSepa', null, 'errors');
+				$langs->load("errors");
+				setEventMessages('ThisPaymentModeIsNotABan', null, 'errors');
 			} else {
 				// Get the Stripe customer
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				// print json_encode($cu);
-				if (!$cu) {
+				if (empty($cu)) {
 					$error++;
-					setEventMessages($stripe->error, $stripe->errors, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorStripeCustomerNotFoundCreateFirst"), null, 'errors');
 				}
-
 				if (!$error) {
-					// Creation of Stripe SEPA + update of societe_account
+					// Creation of Stripe SEPA + update of llx_societe_rib
 					$card = $stripe->sepaStripe($cu, $companypaymentmode, $stripeacc, $servicestatus, 1);
 					if (!$card) {
 						$error++;
 						setEventMessages($stripe->error, $stripe->errors, 'errors');
 					} else {
-						setEventMessages("", array("SEPA on Stripe", "SEPA IBAN is now linked to the Stripe customer account !"));
+						setEventMessages("", array("Bank Account on Stripe", "BAN is now linked to the Stripe customer account !"));
 					}
 				}
 			}
@@ -681,6 +696,37 @@ if (empty($reshook)) {
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		} elseif ($action == 'deletecard' && $source) {
+			try {
+				if (preg_match('/pm_/', $source)) {
+					$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+					if ($payment_method) {
+						$payment_method->detach();
+					}
+				} else {
+					$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+					$card = $cu->sources->retrieve("$source");
+					if ($card) {
+						// $card->detach();  Does not work with card_, only with src_
+						if (method_exists($card, 'detach')) {
+							$card->detach();
+							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
+							$sql .= " SET stripe_card_ref = null";
+							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+							$resql = $db->query($sql);
+						} else {
+							$card->delete();
+						}
+					}
+				}
+
+				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
+				header('Location: '.$url);
+				exit;
+			} catch (Exception $e) {
+				$error++;
+				setEventMessages($e->getMessage(), null, 'errors');
+			}
+		} elseif ($action == 'delete' && $source) {
 			try {
 				if (preg_match('/pm_/', $source)) {
 					$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
@@ -863,7 +909,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
 				print img_picto($langs->trans("CreateCustomerOnStripe"), 'stripe');
-				print '<input type="submit" class="buttonreset nomargintop nomarginbottom noborderbottom nopaddingtopimp nopaddingbottomimp" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '<input type="submit" class="buttonlink nomargintop nomarginbottom noborderbottom nopaddingtopimp nopaddingbottomimp" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
 			}
 			print '</td></tr>';
@@ -938,70 +984,75 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	print '<br>';
 
-	// List of Stripe payment modes
-	if (!(empty($conf->stripe->enabled)) && $object->client) {
+	$showcardpaymentmode = 0;
+	if (isModEnabled('stripe')) {
+		$showcardpaymentmode++;
+	}
+
+	// Get list of remote payment modes
+	$listofsources = array();
+
+	if (is_object($stripe)) {
+		try {
+			$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+			if (!empty($customerstripe->id)) {
+				// When using the Charge API architecture
+				if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
+					$listofsources = $customerstripe->sources->data;
+				} else {
+					$service = 'StripeTest';
+					$servicestatus = 0;
+					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+						$service = 'StripeLive';
+						$servicestatus = 1;
+					}
+
+					// Force to use the correct API key
+					global $stripearrayofkeysbyenv;
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+
+					try {
+						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+							$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+							$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"));
+						} else {
+							$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+							$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"), array("stripe_account" => $stripeacc));
+						}
+
+						if ($paymentmethodobjsA->data != null && $paymentmethodobjsB->data != null) {
+							$listofsources = array_merge((array) $paymentmethodobjsA->data, (array) $paymentmethodobjsB->data);
+						} elseif ($paymentmethodobjsB->data != null) {
+							$listofsources = $paymentmethodobjsB->data;
+						} else {
+							$listofsources = $paymentmethodobjsA->data;
+						}
+					} catch (Exception $e) {
+						$error++;
+						setEventMessages($e->getMessage(), null, 'errors');
+					}
+				}
+			}
+		} catch (Exception $e) {
+			dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
+		}
+	}
+
+
+	// List of Card payment modes
+	if ($showcardpaymentmode && $object->client) {
 		$morehtmlright = '';
 		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
+		print load_fiche_titre($langs->trans('CreditCard').($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'fa-credit-card');
 
-		$listofsources = array();
-		if (is_object($stripe)) {
-			try {
-				$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-				if (!empty($customerstripe->id)) {
-					// When using the Charge API architecture
-					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
-						$listofsources = $customerstripe->sources->data;
-					} else {
-						$service = 'StripeTest';
-						$servicestatus = 0;
-						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-							$service = 'StripeLive';
-							$servicestatus = 1;
-						}
-
-						// Force to use the correct API key
-						global $stripearrayofkeysbyenv;
-						\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
-
-						try {
-							if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
-								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"));
-							} else {
-								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
-								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"), array("stripe_account" => $stripeacc));
-							}
-
-							if ($paymentmethodobjsA->data != null && $paymentmethodobjsB->data != null) {
-								$listofsources = array_merge((array) $paymentmethodobjsA->data, (array) $paymentmethodobjsB->data);
-							} elseif ($paymentmethodobjsB->data != null) {
-								$listofsources = $paymentmethodobjsB->data;
-							} else {
-								$listofsources = $paymentmethodobjsA->data;
-							}
-						} catch (Exception $e) {
-							$error++;
-							setEventMessages($e->getMessage(), null, 'errors');
-						}
-					}
-				}
-			} catch (Exception $e) {
-				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
-			}
-		}
-
-		print '<!-- List of stripe payments -->'."\n";
+		print '<!-- List of card payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
-		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
-			print '<td>'.$langs->trans('LocalID').'</td>';
-		}
 		print '<td>'.$langs->trans('Label').'</td>';
-		print '<td>'.$langs->trans('StripeID').'</td>';
+		print '<td>'.$langs->trans('StripeID').'</td>';	// external system ID
 		print '<td>'.$langs->trans('Type').'</td>';
 		print '<td>'.$langs->trans('Informations').'</td>';
 		print '<td></td>';
@@ -1018,7 +1069,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		$nbremote = 0;
 		$nblocal = 0;
-		$arrayofstripecard = array();
+		$arrayofremotecard = array();
 
 		// Show local sources
 		if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
@@ -1042,18 +1093,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						if ($obj) {
 							$companypaymentmodetemp->fetch($obj->rowid);
 
-							$arrayofstripecard[$companypaymentmodetemp->stripe_card_ref] = $companypaymentmodetemp->stripe_card_ref;
+							$arrayofremotecard[$companypaymentmodetemp->stripe_card_ref] = $companypaymentmodetemp->stripe_card_ref;
 
-							print '<tr class="oddeven">';
-							print '<td>';
-							print $companypaymentmodetemp->id;
-							print '</td>';
+							print '<tr class="oddeven" data-rowid="'.((int) $companypaymentmodetemp->id).'">';
+							// Label
 							print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companypaymentmodetemp->label).'">';
 							print dol_escape_htmltag($companypaymentmodetemp->label);
 							print '</td>';
-							print '<td>';
-							print $companypaymentmodetemp->stripe_card_ref;
-							if ($companypaymentmodetemp->stripe_card_ref) {
+							// External card ID
+							print '<td class="tdoverflowmax150">';
+							if (!empty($companypaymentmodetemp->stripe_card_ref)) {
 								$connect = '';
 								if (!empty($stripeacc)) {
 									$connect = $stripeacc.'/';
@@ -1062,12 +1111,15 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								if ($servicestatus) {
 									$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a>';
+								print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Customer and Publishable key = '.$companypaymentmodetemp->stripe_account, 'globe').'</a> ';
 							}
+							print $companypaymentmodetemp->stripe_card_ref;
 							print '</td>';
+							// Type
 							print '<td>';
 							print img_credit_card($companypaymentmodetemp->type);
 							print '</td>';
+							// Information (Owner, ...)
 							print '<td>';
 							if ($companypaymentmodetemp->proprio) {
 								print '<span class="opacitymedium">'.$companypaymentmodetemp->proprio.'</span><br>';
@@ -1121,7 +1173,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard&token='.newToken().'">';
 								print img_picto($langs->trans("Modify"), 'edit');
 								print '</a>';
-								print '&nbsp;';
 								print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard&token='.newToken().'">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
@@ -1140,24 +1191,31 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		// Show remote sources (not already shown as local source)
 		if (is_array($listofsources) && count($listofsources)) {
 			foreach ($listofsources as $src) {
-				if (!empty($arrayofstripecard[$src->id])) {
+				if (!empty($arrayofremotecard[$src->id])) {
 					continue; // Already in previous list
 				}
 
 				$nbremote++;
 
-				print '<tr class="oddeven">';
-				// Local ID
-				if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
-					print '<td>';
-					print '</td>';
+				$imgline = '';
+				if ($src->object == 'card') {
+					$imgline = img_credit_card($src->brand);
+				} elseif ($src->object == 'source' && $src->type == 'card') {
+					$imgline = img_credit_card($src->card->brand);
+				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
+					$imgline = img_credit_card($src->card->brand);
+				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
+					continue;
+				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
+					continue;
 				}
+
+				print '<tr class="oddeven">';
 				print '<td>';
 				print '</td>';
 				// Src ID
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				$connect = '';
-				print $src->id;
 				if (!empty($stripeacc)) {
 					$connect = $stripeacc.'/';
 				}
@@ -1167,21 +1225,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					//$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
 					$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$src->id;
 				}
-				print " <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a>";
+				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a> ";
+				print $src->id;
 				print '</td>';
-				// Img of credit card
+				// Img
 				print '<td>';
-				if ($src->object == 'card') {
-					print img_credit_card($src->brand);
-				} elseif ($src->object == 'source' && $src->type == 'card') {
-					print img_credit_card($src->card->brand);
-				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
-					print '<span class="fa fa-university fa-2x fa-fw"></span>';
-				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
-					print img_credit_card($src->card->brand);
-				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
-					print '<span class="fa fa-university fa-2x fa-fw"></span>';
-				}
+				print $imgline;
 				print'</td>';
 				// Information
 				print '<td valign="middle">';
@@ -1256,18 +1305,20 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print $langs->trans("Remote");
 				//if ($src->cvc_check == 'fail') print ' - CVC check fail';
 				print '</td>';
+
 				print '<td>';
 				//var_dump($src);
-				print '';
 				print '</td>';
+
 				// Fields from hook
 				$parameters = array('arrayfields'=>array(), 'stripesource'=>$src, 'linetype'=>'stripecardremoteonly');
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
+
 				// Action column
 				print '<td class="right nowraponall">';
 				if ($permissiontoaddupdatepaymentinformation) {
-					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard&token='.newToken().'">';
+					print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard&token='.newToken().'">';
 					print img_picto($langs->trans("Delete"), 'delete');
 					print '</a>';
 				}
@@ -1286,7 +1337,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<br>';
 	}
 
-	// List of Stripe payment modes
+	// List of Stripe connect accounts
 	if (!empty($conf->stripe->enabled) && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc)) {
 		print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
 		$balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
@@ -1337,16 +1388,20 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
 	}
 
-
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
+	$nblocal = 0; $nbremote = 0;
+	$arrayofremoteban = array();
+
 	$rib_list = $object->get_all_rib();
+
 	if (is_array($rib_list)) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("LabelRIB");
+		print_liste_field_titre("Label");
+		print_liste_field_titre("StripeID");		// external system ID
 		print_liste_field_titre("Bank");
 		print_liste_field_titre("RIB");
 		print_liste_field_titre("IBAN");
@@ -1356,17 +1411,43 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print_liste_field_titre("DateRUM");
 			print_liste_field_titre("WithdrawMode");
 		}
-		print_liste_field_titre("DefaultRIB", '', '', '', '', '', '', '', 'center ');
+		print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
 		print_liste_field_titre('', '', '', '', '', '', '', '', 'center ');
+		// Fields from hook
+		$parameters = array('arrayfields'=>array(), 'linetype'=>'stripebantitle');
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 		print "</tr>\n";
 
+		// List of local BAN
 		foreach ($rib_list as $rib) {
+			$arrayofremoteban[$rib->stripe_card_ref] = $rib->stripe_card_ref;
+
+			$nblocal++;
+
 			print '<tr class="oddeven">';
 			// Label
-			print '<td>'.$rib->label.'</td>';
+			print '<td>'.dol_escape_htmltag($rib->label).'</td>';
+			// Stripe ID
+			print '<td class="tdoverflowmax150">';
+			if ($rib->stripe_card_ref) {
+				$connect = '';
+				if (!empty($stripeacc)) {
+					$connect = $stripeacc.'/';
+				}
+				//$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+				$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$rib->stripe_card_ref;
+				if ($servicestatus) {
+					//$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+					$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$rib->stripe_card_ref;
+				}
+				print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a> ";
+			}
+			print $rib->stripe_card_ref;
+			print '</td>';
 			// Bank name
-			print '<td>'.$rib->bank.'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->bank).'">'.dol_escape_htmltag($rib->bank).'</td>';
 			// Account number
 			print '<td>';
 			$string = '';
@@ -1398,7 +1479,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $string;
 			print '</td>';
 			// IBAN
-			print '<td>'.$rib->iban;
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">'.dol_escape_htmltag($rib->iban);
 			if (!empty($rib->iban)) {
 				if (!checkIbanForAccount($rib)) {
 					print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
@@ -1417,7 +1498,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (!empty($conf->prelevement->enabled)) {
 				// RUM
 				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
-				print '<td>'.$rib->rum.'</td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->rum).'">'.dol_escape_htmltag($rib->rum).'</td>';
 
 				print '<td>'.dol_print_date($rib->date_rum, 'day').'</td>';
 
@@ -1467,7 +1548,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$allowgenifempty = 0;
 
 				// Language code (if multilang)
-				if ($conf->global->MAIN_MULTILANGS) {
+				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();
@@ -1500,12 +1581,20 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $out;
 			print '</td>';
 
+			// Fields from hook
+			$parameters = array('arrayfields'=>array(), 'stripe_card_ref'=>$rib->stripe_card_ref, 'stripe_account'=>$rib->stripe_account, 'linetype'=>'stripeban');
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
 			// Edit/Delete
 			print '<td class="right nowraponall">';
 			if ($permissiontoaddupdatepaymentinformation) {
-				print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
-				print img_picto($langs->trans("CreateBAN"), 'stripe');
-				print '</a>';
+				if (empty($rib->stripe_card_ref)) {
+					// Add link to create BAN on Stripe
+					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
+					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
+					print '</a>';
+				}
 
 				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
@@ -1520,10 +1609,114 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</tr>';
 		}
 
-		if (count($rib_list) == 0) {
-			$colspan = 9;
+
+		// List of remote BAN (if not already added as local)
+		foreach ($listofsources as $src) {
+			if (!empty($arrayofremoteban[$src->id])) {
+				continue; // Already in previous list
+			}
+
+			$imgline = '';
+			if ($src->object == 'source' && $src->type == 'sepa_debit') {
+				$imgline = '<span class="fa fa-university fa-2x fa-fw"></span>';
+			} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
+				$imgline = '<span class="fa fa-university fa-2x fa-fw"></span>';
+			} else {
+				continue;
+			}
+
+			$nbremote++;
+
+			print '<tr class="oddeven">';
+			print '<td>';
+			print '</td>';
+			// Src ID
+			print '<td class="tdoverflowmax150">';
+			$connect = '';
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
+			//$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
+			$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$src->id;
+			if ($servicestatus) {
+				//$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
+				$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$src->id;
+			}
+			print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a> ";
+			print $src->id;
+			print '</td>';
+			// Bank
+			print '<td>';
+			print'</td>';
+			// Account number
+			print '<td valign="middle">';
+			print '</td>';
+			// IBAN
+			print '<td valign="middle">';
+			//var_dump($src);
+			print '</td>';
+			// BIC
+			print '<td valign="middle">';
+			//var_dump($src);
+			print '</td>';
+
 			if (!empty($conf->prelevement->enabled)) {
-				$colspan += 2;
+				// RUM
+				print '<td valign="middle">';
+				//var_dump($src);
+				print '</td>';
+				// Date
+				print '<td valign="middle">';
+				//var_dump($src);
+				print '</td>';
+				// Mode mandate
+				print '<td valign="middle">';
+				//var_dump($src);
+				print '</td>';
+			}
+
+			// Default
+			print '<td class="center" width="50">';
+			if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
+				(!empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id)) {
+					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault&token='.newToken().'">';
+					print img_picto($langs->trans("Default"), 'off');
+					print '</a>';
+			} else {
+				print img_picto($langs->trans("Default"), 'on');
+			}
+			print '</td>';
+			/*
+			print '<td>';
+			print $langs->trans("Remote");
+			//if ($src->cvc_check == 'fail') print ' - CVC check fail';
+			print '</td>';
+			*/
+
+			print '<td>';
+			print '</td>';
+
+			// Fields from hook
+			$parameters = array('arrayfields'=>array(), 'stripe_card_ref'=>$rib->stripe_card_ref, 'stripe_account'=>$rib->stripe_account, 'linetype'=>'stripebanremoteonly');
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
+			// Action column
+			print '<td class="right nowraponall">';
+			if ($permissiontoaddupdatepaymentinformation) {
+				print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=delete&token='.newToken().'">';
+				print img_picto($langs->trans("Delete"), 'delete');
+				print '</a>';
+			}
+			print '</td>';
+
+			print '</tr>';
+		}
+
+		if ($nbremote == 0 && $nblocal == 0) {
+			$colspan = 10;
+			if (isModEnabled('prelevement')) {
+				$colspan += 3;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 		}
@@ -1603,10 +1796,12 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 
 	print '<div class="underbanner clearboth"></div>';
 
+	print '<br>';
+
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
@@ -1702,6 +1897,9 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print $form->selectarray("frstrecur", $tblArraychoice, dol_escape_htmltag(GETPOST('frstrecur', 'alpha') ?GETPOST('frstrecur', 'alpha') : $companybankaccount->frstrecur), 0);
 		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("StripeID")." ('src_....')</td>";
+		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.$companypaymentmode->stripe_card_ref.'"></td></tr>';
+
 		print '</table>';
 		print '</div>';
 	}
@@ -1720,9 +1918,12 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-	print '<div class="fichecenter">';
+	print '<div class="nofichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
@@ -1766,9 +1967,12 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<div class="nofichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
@@ -1858,6 +2062,9 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print $form->selectarray("frstrecur", $tblArraychoice, (GETPOSTISSET('frstrecur') ? GETPOST('frstrecur') : 'FRST'), 0);
 		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("StripeID")." ('src_....')</td>";
+		print '<td><input class="minwidth300" type="text" name="stripe_card_ref" value="'.GETPOST('stripe_card_ref', 'alpha').'"></td></tr>';
+
 		print '</table>';
 	}
 
@@ -1881,6 +2088,9 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<div class="nofichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';

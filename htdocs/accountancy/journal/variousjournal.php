@@ -21,6 +21,7 @@
  * \brief		Page of a journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -51,7 +52,7 @@ if ($result > 0) {
 } elseif ($result < 0) {
 	dol_print_error('', $object->error, $object->errors);
 } elseif ($result == 0) {
-	accessforbidden($langs->trans('ErrorRecordNotFound'));
+	accessforbidden('ErrorRecordNotFound');
 }
 
 $hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));

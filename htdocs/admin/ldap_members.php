@@ -26,6 +26,7 @@
  *		\brief      Page d'administration/configuration du module Ldap adherent
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -190,7 +191,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
 
 
-print $langs->trans("LDAPDescMembers").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembers").'</span><br>';
 print '<br>';
 
 print '<table class="noborder centpercent">';

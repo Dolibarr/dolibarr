@@ -10,7 +10,7 @@
  * Copyright (C) 2015		Abbes Bahfir			<bafbes@gmail.com>
  * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2018-2020	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
@@ -34,6 +34,7 @@
  *       \brief      List of suppliers invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -192,18 +193,18 @@ $arrayfields = array(
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1", 'position'=>95),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1", 'position'=>100),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>115),
-	'u.login'=>array('label'=>"Author", 'checked'=>1),
-	'dynamount_payed'=>array('label'=>"Paid", 'checked'=>0),
-	'rtp'=>array('label'=>"Rest", 'checked'=>0),
-	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)), // Not enabled by default because slow
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'dynamount_payed'=>array('label'=>"Paid", 'checked'=>0, 'position'=>116),
+	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>117),
+	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
+	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>500),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>501),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -649,7 +650,7 @@ if (!$search_all) {
 		}
 	}
 	// Add GroupBy from hooks
-	$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+	$parameters = array('all' => $search_all, 'fieldstosearchall' => $fieldstosearchall);
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
@@ -682,7 +683,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->facid;
 
@@ -1045,13 +1046,13 @@ if ($resql) {
 	// Condition of payment
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre left">';
-		$form->select_conditions_paiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
+		print $form->getSelectConditionsPaiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
 		print '</td>';
 	}
 	// Payment mode
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 20, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 20, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ht']['checked'])) {
@@ -1291,6 +1292,14 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield']=0;
+		$totalarray['val'] = array();
+		$totalarray['val']['f.total_ht']=0;
+		$totalarray['val']['f.total_vat']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_localtax1']=0;
+		$totalarray['val']['f.total_ttc']=0;
+
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

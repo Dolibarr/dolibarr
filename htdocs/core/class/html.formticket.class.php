@@ -73,10 +73,13 @@ class FormTicket
 	public $withfile;
 	public $withfilereadonly;
 
+	public $backtopage;
+
 	public $ispublic; // To show information or not into public form
 
 	public $withtitletopic;
 	public $withtopicreadonly;
+	public $withreadid;
 	public $withcompany; // affiche liste déroulante company
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -416,7 +419,7 @@ class FormTicket
 		$toolbarname = 'dolibarr_notes';
 		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
-			print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
+			print '<div class="warning">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'))).'</div>';
 		}
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$uselocalbrowser = true;
@@ -622,7 +625,7 @@ class FormTicket
 		}
 
 		if ($subelement != 'project') {
-			if (!empty($conf->project->enabled) && !$this->ispublic) {
+			if (isModEnabled('project') && !$this->ispublic) {
 				$formproject = new FormProjets($this->db);
 				print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
 				print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
@@ -752,7 +755,7 @@ class FormTicket
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
@@ -864,7 +867,7 @@ class FormTicket
 				}
 			}
 			print '</select>';
-			if ($user->admin && !$noadmininfo) {
+			if (isset($user->admin) && $user->admin && !$noadmininfo) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
 
@@ -1199,7 +1202,7 @@ class FormTicket
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) {
+		if (isset($user->admin) && $user->admin && !$noadmininfo) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 
@@ -1362,6 +1365,7 @@ class FormTicket
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
+		print '<input type="hidden" name="backtopage" value="'.$this->backtopage.'">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}

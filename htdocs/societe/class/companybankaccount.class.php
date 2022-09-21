@@ -47,6 +47,9 @@ class CompanyBankAccount extends Account
 	public $rum;
 	public $date_rum;
 
+	public $stripe_card_ref;	// ID of BAN into an external payment system
+	public $stripe_account;		// Account of the external payment system
+
 	/**
 	 * Date creation record (datec)
 	 *
@@ -187,6 +190,8 @@ class CompanyBankAccount extends Account
 		} else {
 			$sql .= ",label = NULL";
 		}
+		$sql .= ",stripe_card_ref = '".$this->db->escape($this->stripe_card_ref)."'";
+		$sql .= ",stripe_account = '".$this->db->escape($this->stripe_account)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
@@ -232,7 +237,8 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
+		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum,";
+		$sql .= " stripe_card_ref, stripe_account";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -274,6 +280,8 @@ class CompanyBankAccount extends Account
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
 				$this->date_rum        = $this->db->jdate($obj->date_rum);
+				$this->stripe_card_ref = $obj->stripe_card_ref;
+				$this->stripe_account  = $obj->stripe_account;
 			}
 			$this->db->free($resql);
 

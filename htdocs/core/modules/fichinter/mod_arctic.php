@@ -84,7 +84,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString("FICHINTER_ARTIC_MASK").'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
@@ -130,7 +130,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We define the search criteria of the counter
-		$mask = $conf->global->FICHINTER_ARTIC_MASK;
+		$mask = getDolGlobalString("FICHINTER_ARTIC_MASK");
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

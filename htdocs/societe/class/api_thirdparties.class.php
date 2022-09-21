@@ -132,7 +132,7 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -230,6 +230,9 @@ class Thirdparties extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$soc_static = new Societe($this->db);
 				if ($soc_static->fetch($obj->rowid)) {
+					if (isModEnabled('mailing')) {
+						$soc_static->getNoEmail();
+					}
 					$obj_ret[] = $this->_cleanObjectDatas($soc_static);
 				}
 				$i++;
@@ -262,6 +265,9 @@ class Thirdparties extends DolibarrApi
 		}
 		if ($this->company->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating thirdparty', array_merge(array($this->company->error), $this->company->errors));
+		}
+		if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
+			$this->company->setNoEmail($this->company->no_email);
 		}
 
 		return $this->company->id;
@@ -296,7 +302,11 @@ class Thirdparties extends DolibarrApi
 			$this->company->$field = $value;
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update')) {
+		if (isModEnabled('mailing') && !empty($this->company->email) && isset($this->company->no_email)) {
+			$this->company->setNoEmail($this->company->no_email);
+		}
+
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1)) {
 			return $this->get($id);
 		}
 
@@ -517,7 +527,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->supprimer) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'supprimer')) {
 			throw new RestException(401);
 		}
 		$result = $this->company->fetch($id);
@@ -838,7 +848,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingProposals($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -880,7 +890,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingOrder($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -921,7 +931,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getOutStandingInvoices($id, $mode = 'customer')
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -962,7 +972,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSalesRepresentatives($id, $mode = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1005,7 +1015,7 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1429,7 +1439,7 @@ class Thirdparties extends DolibarrApi
 	 */
 	public function getSocieteAccounts($id, $site = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -1860,7 +1870,7 @@ class Thirdparties extends DolibarrApi
 	{
 		global $conf;
 
-		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login.'. No read permission on thirdparties.');
 		}
 
@@ -1875,6 +1885,9 @@ class Thirdparties extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login.' on this thirdparty');
+		}
+		if (isModEnabled('mailing')) {
+			$this->company->getNoEmail();
 		}
 
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

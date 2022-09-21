@@ -170,6 +170,16 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var integer|string date of movement validated & lock
+	 */
+	public $date_validation;
+
+	/**
+	 * @var integer|string date of movement who are noticed like exported
+	 */
+	public $date_export;
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
@@ -788,8 +798,7 @@ class BookKeeping extends CommonObject
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_export = $this->db->jdate($obj->date_export);
-				$this->date_validation = $this->db->jdate($obj->date_validated);
-				$this->date_validation = $this->db->jdate($obj->date_validation);
+				$this->date_validation = isset($obj->date_validated) ? $this->db->jdate($obj->date_validated) : '';
 			}
 			$this->db->free($resql);
 
@@ -1123,14 +1132,13 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 		Sort Order
+	 * @param 	string 	$sortfield 		Sort field
+	 * @param 	int 	$limit 			offset limit
+	 * @param 	int 	$offset 		offset limit
+	 * @param 	array 	$filter 		filter array
+	 * @param 	string 	$filtermode 	filter mode (AND or OR)
+	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -1151,7 +1159,7 @@ class BookKeeping extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=' || $key == 't.doc_date>' || $key == 't.doc_date<') {
 					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key."'".$this->db->escape($value)."'";

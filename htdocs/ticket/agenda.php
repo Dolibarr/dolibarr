@@ -41,12 +41,12 @@ $track_id = GETPOST('track_id', 'alpha', 3);
 $socid    = GETPOST('socid', 'int');
 $action   = GETPOST('action', 'aZ09');
 
-$limit     = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$page  = is_numeric($page) ? $page : 0;
-$page  = $page == -1 ? 0 : $page;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
 if (!$sortfield) {
 	$sortfield = "a.datep,a.id";
 }
@@ -83,14 +83,14 @@ if (!$action) {
 // Security check
 $id = GETPOST("id", 'int');
 if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'ticket', $id, '');
+$result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 	accessforbidden();
 }
 
@@ -146,7 +146,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -164,11 +164,15 @@ if ($object->fk_user_create > 0) {
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(0);
-}
-if (!empty($object->origin_email)) {
+	$morehtmlref .= $fuser->getNomUrl(-1);
+} elseif (!empty($object->email_msgid)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+} elseif (!empty($object->origin_email)) {
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 }
 
 // Thirdparty
@@ -244,12 +248,12 @@ if (!empty($object->id)) {
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
 
 	// Show link to add a message (if read and not closed)
-	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
 	$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
 	$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 	// Show link to add event (if read and not closed)
-	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
 	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 

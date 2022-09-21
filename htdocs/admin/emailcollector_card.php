@@ -22,6 +22,7 @@
  *		\brief      Page to create/edit/view emailcollector
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -145,6 +146,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
 	$emailcollectorfilter->status = 1;
+
 	$result = $emailcollectorfilter->create($user);
 
 	if ($result > 0) {
@@ -234,10 +236,25 @@ if ($action == 'deleteoperation') {
 	}
 }
 
+if ($action == 'collecttest') {
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollectOneCollector(1);
+	if ($res > 0) {
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->lastresult, null, 'mesgs');
+	} else {
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
 if ($action == 'confirm_collect') {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
-	$res = $object->doCollectOneCollector();
+	$res = $object->doCollectOneCollector(0);
 	if ($res > 0) {
 		$debuginfo = $object->debuginfo;
 		setEventMessages($object->lastresult, null, 'mesgs');
@@ -783,6 +800,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
 
 			// Collect now
+			print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collecttest&token='.newToken().'">'.$langs->trans("TestCollectNow").'</a></div>';
+
 			if (count($object->actions) > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collect&token='.newToken().'">'.$langs->trans("CollectNow").'</a></div>';
 			} else {

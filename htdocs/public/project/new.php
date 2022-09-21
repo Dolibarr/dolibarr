@@ -50,6 +50,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
@@ -82,7 +83,7 @@ $user->loadDefaultValues();
 
 // Security check
 if (empty($conf->project->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Project not enabled');
 }
 
 
@@ -423,7 +424,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("FormForNewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 

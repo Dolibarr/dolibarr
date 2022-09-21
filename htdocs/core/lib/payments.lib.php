@@ -471,7 +471,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 
 	print '<div class="center paddingleft paddingright">'."\n";
 	if ($addformmessage) {
-		print '<!-- object = '.$object->element.' -->';
+		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
 		print '<br>';
 
 		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
@@ -482,7 +482,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 
 		// Add other message if VAT exists
-		if ($object->total_vat != 0 || $object->total_tva != 0) {
+		if (!empty($object->total_vat) || !empty($object->total_tva)) {
 			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
 			if (!empty($conf->global->$parammessageform)) {
 				print $langs->transnoentities($conf->global->$parammessageform);

@@ -25,6 +25,7 @@
  * \brief 		List operation of ledger ordered by account number
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -394,8 +395,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
-	$permissiontoread = $user->rights->societe->lire;
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->hasRight('societe', 'lire');
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';

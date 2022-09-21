@@ -21,9 +21,9 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/project.lib.php
- *		\brief      Functions used by project module
- *      \ingroup    project
+ * \file       htdocs/core/lib/project.lib.php
+ * \brief      Functions used by project module
+ * \ingroup    project
  */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -186,7 +186,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('tax')) {
 				$nbElements += $project->getElementCount('chargesociales', 'chargesociales');
 			}
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
 			if (!empty($conf->stock->enabled)) {
@@ -487,11 +487,14 @@ function project_timesheet_prepare_head($mode, $fuser = null)
  */
 function project_admin_prepare_head()
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('projet');
+	$extrafields->fetch_name_optionals_label('projet_task');
 
 	$h = 0;
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project.php";
 	$head[$h][1] = $langs->trans("Projects");
@@ -502,11 +505,19 @@ function project_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFieldsProject");
+	$nbExtrafields = $extrafields->attributes['projet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_task';
 	$h++;
 

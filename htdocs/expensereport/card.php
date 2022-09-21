@@ -26,6 +26,7 @@
  *  \brief      	Page for trip and expense report card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -44,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -1697,7 +1698,7 @@ if ($action == 'create') {
 			 // Thirdparty
 			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 			 // Project
-			 if (!empty($conf->project->enabled))
+			 if (isModEnabled('project'))
 			 {
 			 $langs->load("projects");
 			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -1989,7 +1990,7 @@ if ($action == 'create') {
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
 
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							$bankaccountstatic->account_number = $objp->account_number;
 
 							$accountingjournal = new AccountingJournal($db);
@@ -2064,7 +2065,7 @@ if ($action == 'create') {
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
 				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
@@ -2109,7 +2110,7 @@ if ($action == 'create') {
 						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td class="center dateproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
@@ -2121,7 +2122,7 @@ if ($action == 'create') {
 						}
 
 						$titlealt = '';
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 							$accountingaccount = new AccountingAccount($db);
 							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
@@ -2270,7 +2271,7 @@ if ($action == 'create') {
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							$colspan++;
 						}
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2345,7 +2346,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Select project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td>';
 							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 							print '</td>';
@@ -2418,7 +2419,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					$colspan++;
 				}
 				if ($action != 'editline') {
@@ -2495,7 +2496,7 @@ if ($action == 'create') {
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
 				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
@@ -2524,7 +2525,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Select project
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="inputproject">';
 					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';

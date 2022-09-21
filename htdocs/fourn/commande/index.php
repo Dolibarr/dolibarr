@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019		Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,22 @@
  */
 
 /**
- *	 \file	   htdocs/fourn/commande/index.php
- *	 \ingroup	commande fournisseur
- *	 \brief	  Home page of supplier's orders area
+ *    \file	      htdocs/fourn/commande/index.php
+ *    \ingroup    commande fournisseur
+ *    \brief      Home page of supplier's orders area
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array("suppliers", "orders"));
+
 
 // Security check
 $orderid = GETPOST('orderid');
@@ -42,8 +49,6 @@ $hookmanager = new HookManager($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('orderssuppliersindex'));
 
-// Load translation files required by the page
-$langs->loadLangs(array("suppliers", "orders"));
 
 
 /*

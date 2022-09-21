@@ -97,7 +97,6 @@ ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field 
 ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorsOnXLines=%s errors found
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
-ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field "%s"
 ErrorNumRefModel=A reference exists into database (%s) and is not compatible with this numbering rule. Remove record or renamed reference to activate this module.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this vendor
 ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created because of too-low quantities
@@ -292,7 +291,10 @@ ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is man
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
 ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
- 
+ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account 
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character + 
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.

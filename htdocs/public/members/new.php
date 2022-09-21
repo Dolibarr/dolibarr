@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,12 +86,11 @@ $langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
 if (empty($conf->adherent->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-	print $langs->trans("Auto subscription form for public visitors has not been enabled");
-	exit;
+	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -478,7 +478,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewSubscriptionDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 
@@ -575,7 +575,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 
 	// EMail
-	print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+	print '<tr><td>'.$langs->trans("Email").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? ' <span style="color:red;">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
 	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 
@@ -586,11 +586,11 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '<tr><td>'.$langs->trans("PasswordRetype").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
 	}
 
-	// Gender  // TODO:  add diverse gender
+	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
-	print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
+	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 
 	// Address
@@ -636,7 +636,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
-	print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
+	print $form->selectDate(!empty($birthday) ? $birthday : "", 'birth', 0, 0, 1, "newmember", 1, 0);
 	print '</td></tr>'."\n";
 
 	// Photo
@@ -770,10 +770,14 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	foreach ($measuringUnits->records as $lines)
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy";
+	$publiccounters = $conf->global->MEMBER_COUNTERS_ARE_PUBLIC;
+
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
-	$sql .= " AND d.statut=1";
+	$sql .= " AND d.statut=1 GROUP BY d.rowid";
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -789,6 +793,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		if ($publiccounters) print '<th class="center">'.$langs->trans("Members").'</th>';
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
 
@@ -803,7 +808,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
-			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));
+			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
@@ -828,6 +833,8 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
+			$membercount = $objp->membercount>0? $objp->membercount: "–";
+			if ($publiccounters) print '<td class="center">'.$membercount.'</td>';
 			print '<td class="center"><button class="button button-save reposition" name="typeid" type="submit" name="submit" value="'.$objp->rowid.'">'.$langs->trans("GetMembershipButtonLabel").'</button></td>';
 			print "</tr>";
 			$i++;

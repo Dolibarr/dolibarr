@@ -32,6 +32,7 @@
  *       \brief      Page to show customer card of a third party
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -78,7 +79,7 @@ if (isModEnabled("expedition")) {
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 }
 if (!empty($conf->ficheinter->enabled)) {
@@ -130,7 +131,7 @@ if ($id > 0 && empty($object->id)) {
 	}
 }
 if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+	if (!($object->client > 0) || !$user->hasRight('societe', 'lire')) {
 		accessforbidden();
 	}
 }

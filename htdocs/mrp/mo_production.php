@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -667,8 +667,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
-			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : dol_print_date(dol_now(), 'dayhourlog');
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
 			print '<div class="opacitymedium hideonsmartphone paddingbottom">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';
@@ -1028,6 +1027,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$disable = 'disabled';
 						}
 
+						// input hidden with fk_product of line
+						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
+
 						// Qty
 						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
 
@@ -1071,7 +1073,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print ' '.img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.((int) $line->id).', \''.dol_escape_js($type).'\', \'qtymissingconsume\')"');
 								print '</td>';
 								print '<td align="right" class="splitall">';
-								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall')) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+								if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 								print '</td>';
 							}
 							print '</td>';

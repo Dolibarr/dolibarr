@@ -470,6 +470,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -1164,7 +1165,17 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
+		$tmpsavdb = null;
+		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $object->db;
+			unset($object->db);		// Such property can not be serialized when PgSql/Connection
+		}
+
 		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
+
+		if ($tmpsavdb) {
+			$object->db = $tmpsavdb;
+		}
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -1443,7 +1454,7 @@ function dol_escape_json($stringtoescape)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes to tag.
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
@@ -1456,9 +1467,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 	// escape quotes and backslashes, newlines, etc.
 	if ($escapeonlyhtmltags) {
-		$tmp = htmlspecialchars_decode($stringtoescape, ENT_COMPAT);
+		$tmp = htmlspecialchars_decode((string) $stringtoescape, ENT_COMPAT);
 	} else {
-		$tmp = html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');
+		$tmp = html_entity_decode((string) $stringtoescape, ENT_COMPAT, 'UTF-8');
 	}
 	if (!$keepb) {
 		$tmp = strtr($tmp, array("<b>"=>'', '</b>'=>''));
@@ -1471,7 +1482,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
-		// TODO Does not works yet when there is attributes to tag
+		// TODO Does not works yet when there is attributes into tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
@@ -1577,7 +1588,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  *  @param  int			$level					Log level
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_NOTICE=5, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	int			$ident					1=Increase ident of 1 (after log), -1=Decrease ident of 1 (before log)
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
  *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
@@ -2272,7 +2283,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
+	if (isModEnabled('accounting') && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
 		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta();
@@ -3723,6 +3734,8 @@ function isValidMXRecord($domain)
 			return 0;
 		}
 	}
+
+	// function idn_to_ascii or checkdnsrr does not exists
 	return -1;
 }
 
@@ -3974,7 +3987,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring','rss',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -4955,8 +4968,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 	}
 
-	// Return a http error code if possible
+	// Return a http header with error code if possible
 	if (!headers_sent()) {
+		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
+			top_httphead();
+		}
 		http_response_code(500);
 	}
 
@@ -5118,8 +5134,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
-		$tmptooltip = explode(':', $tooltip);
+		// You can also use 'TranslationString:keyfortooltiponclick' for a tooltip on click.
+		if (preg_match('/:\w+$/', $tooltip)) {
+			$tmptooltip = explode(':', $tooltip);
+		} else {
+			$tmptooltip = array($tooltip);
+		}
 		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
 	} else {
 		$out .= $langs->trans($name);
@@ -7290,9 +7310,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (empty($exclude) || !in_array('user', $exclude)) {
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
-		$signature = $user->signature;
+		//var_dump($onlykey);
+		$emailsendersignature = $user->signature; //  dy default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
+		$usersignature = $user->signature;
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+			'__SENDEREMAIL_SIGNATURE__' => (string) ((empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
+			'__USER_SIGNATURE__' => (string) (($usersignature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
 		if (is_object($user)) {
@@ -7398,7 +7421,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (!empty($conf->project->enabled)) {		// Most objects
+			if (isModEnabled('project')) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
@@ -7923,13 +7946,13 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		}
 	}
 
-	// Make substitition for array $substitutionarray
+	// Make substitution for array $substitutionarray
 	foreach ($substitutionarray as $key => $value) {
 		if (!isset($value)) {
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if ($key == '__USER_SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
+		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
 			$value = ''; // Protection
 		}
 
@@ -8535,10 +8558,11 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
+ * 	    @param	string	$filters	Filter on other fields
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
 {
 	global $cache_codes;
 
@@ -8559,6 +8583,9 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$sql .= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (".getEntity($tablename).")";
+	}
+	if ($filters) {
+		$sql .= $filters;
 	}
 
 	$resql = $db->query($sql);
@@ -9030,9 +9057,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
+ *  @param	string		$filterorigmodule	Filter on module origin. 'external' will show only external modules. 'core' only core modules. No filter by default.
  *	@return	void
  */
-function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
+function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add', $filterorigmodule = '')
 {
 	global $hookmanager, $db;
 
@@ -9052,15 +9080,29 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
+							if ($filterorigmodule) {	// If a filter of module origin has been requested
+								if (strpos($values[3], '@')) {	// This is an external module
+									if ($filterorigmodule != 'external') {
+										continue;
+									}
+								} else {	// This looks a core module
+									if ($filterorigmodule != 'core') {
+										continue;
+									}
+								}
+							}
 							$langs->load($values[3]);
 						}
 						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+							// If label is "SUBSTITUION_..."
 							$substitutionarray = array();
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
+							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
 							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
+
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
 								$classtoload = $labeltemp[1];
@@ -9080,7 +9122,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // deprecated
+				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {

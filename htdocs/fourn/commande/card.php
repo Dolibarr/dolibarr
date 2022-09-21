@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
@@ -28,28 +28,31 @@
  */
 
 /**
- *	\file		htdocs/fourn/commande/card.php
- *	\ingroup	supplier, order
- *	\brief		Card supplier order
+ *    \file       htdocs/fourn/commande/card.php
+ *    \ingroup    supplier, order
+ *    \brief      Card supplier order
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 if (isModEnabled('supplier_proposal')) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
 if (isModEnabled("product")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -59,29 +62,33 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+
+// Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
 
+
+// Get Parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action 		= GETPOST('action', 'alpha');
-$confirm		= GETPOST('confirm', 'alpha');
+$action      = GETPOST('action', 'alpha');
+$confirm     = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid     = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
-$cancel         = GETPOST('cancel', 'alpha');
-$lineid         = GETPOST('lineid', 'int');
-$origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
-$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$cancel    = GETPOST('cancel', 'alpha');
+$lineid    = GETPOST('lineid', 'int');
+$origin    = GETPOST('origin', 'alpha');
+$originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
-//PDF
+// PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
@@ -160,7 +167,7 @@ $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatede
 
 // Project permission
 $caneditproject = false;
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$caneditproject = empty($conf->global->SUPPLIER_ORDER_FORBID_EDIT_PROJECT) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && preg_match('/^[\(]?PROV/i', $object->ref));
 }
 
@@ -405,7 +412,16 @@ if (empty($reshook)) {
 	}
 
 	// Add a product line
-	if ($action == 'addline' && $usercancreate) {
+	if ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') && $usercancreate) {
+		// Define vat_rate
+		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+		}
+	} elseif ($action == 'addline' && $usercancreate) {
 		$db->begin();
 
 		$langs->load('errors');
@@ -1535,7 +1551,7 @@ $form = new	Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $productstatic = new Product($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1616,7 +1632,7 @@ if ($action == 'create') {
 
 		$datedelivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : (!empty($objectsrc->delivery_date) ? $objectsrc->delivery_date : ''));
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (!empty($objectsrc->multicurrency_code)) {
 				$currency_code = $objectsrc->multicurrency_code;
 			}
@@ -1634,7 +1650,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
 		$mode_reglement_id 	= !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
 
-		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) {
+		if (isModEnabled("multicurrency") && !empty($societe->multicurrency_code)) {
 			$currency_code = $societe->multicurrency_code;
 		}
 
@@ -1682,7 +1698,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
@@ -1720,7 +1736,7 @@ if ($action == 'create') {
 
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Payment mode
@@ -1750,7 +1766,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		$langs->load('projects');
@@ -1772,7 +1788,7 @@ if ($action == 'create') {
 	}
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled("multicurrency")) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -1819,7 +1835,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc).'</td></tr>';
@@ -2038,7 +2054,7 @@ if ($action == 'create') {
 	}
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
@@ -2165,7 +2181,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled("multicurrency")) {
 		// Multicurrency code
 		print '<tr>';
 		print '<td>';

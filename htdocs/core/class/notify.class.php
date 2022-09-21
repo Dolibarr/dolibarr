@@ -456,7 +456,7 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->cid;
+						$trackid = 'ctc'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
 						$trackid = 'use'.$obj->cid;

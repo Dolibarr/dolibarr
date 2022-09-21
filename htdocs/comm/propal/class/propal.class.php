@@ -7,7 +7,7 @@
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2010-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -297,7 +297,7 @@ class Propal extends CommonObject
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>40),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>23),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>24),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>24),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'datep' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
@@ -322,8 +322,8 @@ class Propal extends CommonObject
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
 		'deposit_percent' =>array('type'=>'varchar(63)', 'label'=>'DepositPercent', 'enabled'=>1, 'visible'=>-1, 'position'=>161),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>170),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>175),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>170),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>175),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'PDFTemplate', 'enabled'=>1, 'visible'=>0, 'position'=>180),
 		'date_livraison' =>array('type'=>'date', 'label'=>'DateDeliveryPlanned', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_shipping_method' =>array('type'=>'integer', 'label'=>'ShippingMethod', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
@@ -335,11 +335,11 @@ class Propal extends CommonObject
 		'fk_incoterms' =>array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>220),
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLabel', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>225),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyID', 'enabled'=>1, 'visible'=>-1, 'position'=>230),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCurrency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>235),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>240, 'isameasure'=>1),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>245, 'isameasure'=>1),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>250, 'isameasure'=>1),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>255, 'isameasure'=>1),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCurrency', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>235),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>240, 'isameasure'=>1),
+		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>245, 'isameasure'=>1),
+		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>250, 'isameasure'=>1),
+		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>255, 'isameasure'=>1),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>260),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
@@ -384,7 +384,7 @@ class Propal extends CommonObject
 		$this->socid = $socid;
 		$this->id = $propalid;
 
-		$this->duree_validite = ((int) $conf->global->PROPALE_VALIDITY_DURATION);
+		$this->duree_validite = getDolGlobalInt('PROPALE_VALIDITY_DURATION', 0);
 	}
 
 
@@ -1262,7 +1262,7 @@ class Propal extends CommonObject
 							break;
 						}
 						// Defined the new fk_parent_line
-						if ($result > 0) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -1364,7 +1364,7 @@ class Propal extends CommonObject
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
 				$object->fk_delivery_address = '';
 
-				/*if (!empty($conf->project->enabled))
+				/*if (isModEnabled('project'))
 				{
 					$project = new Project($db);
 					if ($this->fk_project > 0 && $project->fetch($this->fk_project)) {

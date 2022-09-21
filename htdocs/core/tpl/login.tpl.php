@@ -33,10 +33,8 @@ if (empty($conf) || !is_object($conf)) {
 // DDOS protection
 $size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
 if ($size > 10000) {
-	http_response_code(413);
 	$langs->loadLangs(array("errors", "install"));
-	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
-	exit;
+	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -139,9 +137,11 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
+<input type="hidden" name="backtopage" value="<?php echo GETPOST('backtopage'); ?>" />
 <!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />

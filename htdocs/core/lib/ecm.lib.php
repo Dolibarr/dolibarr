@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  */
 
 /**
- *  \file       htdocs/core/lib/ecm.lib.php
- *  \brief      Ensemble de fonctions de base pour le module ecm
- *  \ingroup    ecm
+ * \file       htdocs/core/lib/ecm.lib.php
+ * \brief      Ensemble de fonctions de base pour le module ecm
+ * \ingroup    ecm
  */
 
 
@@ -160,7 +161,12 @@ function ecm_prepare_head_fm($object)
  */
 function ecm_admin_prepare_head()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ecm_files');
+	$extrafields->fetch_name_optionals_label('ecm_directories');
+
 	$langs->load("ecm");
 
 	$h = 0;
@@ -173,11 +179,19 @@ function ecm_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_files_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
+	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ecm_directories_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
+	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_ecm_directories';
 	$h++;
 

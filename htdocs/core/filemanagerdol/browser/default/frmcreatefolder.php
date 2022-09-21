@@ -21,6 +21,7 @@
 
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
+// Load Dolibarr environment
 require '../../../../main.inc.php';
 
 $langs->load("ecm");

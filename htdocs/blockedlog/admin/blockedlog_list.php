@@ -527,7 +527,7 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// ID
-			print '<td>'.$block->id.'</td>';
+			print '<td>'.dol_escape_htmltag($block->id).'</td>';
 
 			// Date
 			print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
@@ -535,11 +535,11 @@ if (is_array($blocks)) {
 			// User
 			print '<td>';
 			//print $block->getUser()
-			print $block->user_fullname;
+			print dol_escape_htmltag($block->user_fullname);
 			print '</td>';
 
 			// Action
-			print '<td>'.$langs->trans('log'.$block->action).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($langs->trans('log'.$block->action)).'">'.$langs->trans('log'.$block->action).'</td>';
 
 			// Ref
 			print '<td class="nowraponall">';

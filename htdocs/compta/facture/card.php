@@ -1251,7 +1251,7 @@ if (empty($reshook)) {
 							$object->lines[] = $line; // insert new line in current object
 
 							// Defined the new fk_parent_line
-							if ($result > 0) {
+							if ($result > 0 && $line->product_type == 9) {
 								$fk_parent_line = $result;
 							}
 						}
@@ -1772,7 +1772,7 @@ if (empty($reshook)) {
 										}
 
 										// Defined the new fk_parent_line
-										if ($result > 0) {
+										if ($result > 0 && $lines[$i]->product_type == 9) {
 											$fk_parent_line = $result;
 										}
 									}
@@ -2268,6 +2268,7 @@ if (empty($reshook)) {
 				$desc = $product_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
+
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 
@@ -2275,6 +2276,8 @@ if (empty($reshook)) {
 					$price_base_type = 'TTC';
 				}
 			}
+
+			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
@@ -3189,7 +3192,7 @@ if ($action == 'create') {
 	} else {
 		print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
 		print '<td colspan="2">';
-		print img_picto('', 'company').$form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print img_picto('', 'company').$form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		// Option to reload page to retrieve customer informations.
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
@@ -3667,7 +3670,7 @@ if ($action == 'create') {
 
 	// Payment term
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
-	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
+	print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 
@@ -3699,7 +3702,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
 			}
 		}
-		$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 		print '</td></tr>';
 
 		print '<script type="text/javascript">
@@ -4407,9 +4410,7 @@ if ($action == 'create') {
 
 	// Type
 	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td class="valuefield fieldname_type">';
-	print '<span class="badgeneutral">';
-	print $object->getLibType();
-	print '</span>';
+	print $object->getLibType(2);
 	if ($object->module_source) {
 		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.ucfirst($object->module_source).' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
@@ -4725,7 +4726,7 @@ if ($action == 'create') {
 				$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
 				$retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-				$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+				print $form->getSelectConditionsPaiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
 				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {

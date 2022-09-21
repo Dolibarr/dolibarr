@@ -120,7 +120,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -166,7 +166,7 @@ function dolDecrypt($chain, $key = '')
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -329,11 +329,11 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string		$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string		$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int			$isdraft		1=The object with id=$objectid is a draft
- *  @param	int			$mode			Mode (0=default, 1=return with not die)
+ *  @param	int			$mode			Mode (0=default, 1=return without dieing)
  * 	@return	int							If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
-function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
+function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
 	global $db, $conf;
 	global $hookmanager;
@@ -421,7 +421,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
+			if (!$user->hasRight('societe', 'lire') && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -831,7 +831,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -857,7 +857,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -876,7 +876,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -897,7 +897,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;
@@ -1016,8 +1016,35 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	return true;
 }
 
+
 /**
- *	Show a message to say access is forbidden and stop program
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes only HTTP header.
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message					Force error message
+ *	@param	int			$http_response_code			HTTP response code
+ *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	void
+ *  @see accessforbidden()
+ */
+function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+{
+	top_httphead();
+	http_response_code($http_response_code);
+
+	if ($stringalreadysanitized) {
+		print $message;
+	} else {
+		print htmlentities($message);
+	}
+
+	exit(1);
+}
+
+/**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes HTTP and HTML header and footer (except if $printheader and $printfooter is  0, use this case inside an already started page).
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
@@ -1026,10 +1053,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
  *  @param  array|null  $params         	More parameters provided to hook
  *  @return	void
+ *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
@@ -1046,10 +1075,10 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	print '<div class="error">';
-	if (!$message) {
+	if (empty($message)) {
 		print $langs->trans("ErrorForbidden");
 	} else {
-		print $message;
+		print $langs->trans($message);
 	}
 	print '</div>';
 	print '<br>';
@@ -1077,6 +1106,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
 	}
+
 	exit(0);
 }
 

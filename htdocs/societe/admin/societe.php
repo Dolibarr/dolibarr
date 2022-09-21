@@ -26,6 +26,7 @@
  *	\brief      Third party module setup page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -753,7 +754,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';

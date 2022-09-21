@@ -1644,7 +1644,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		//print $libelleproduitservice;
 	}
 
+	// Show information for lot
 	if ($dbatch) {
+		// $object is a shipment.
+		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
+		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
+
+		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+		$tmpwarehouse = new Entrepot($db);
+		$tmpproductbatch = new Productbatch($db);
+
 		$format = 'day';
 		foreach ($dbatch as $detail) {
 			$dte = array();
@@ -1658,7 +1668,23 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
 			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+
+			// Add also info of planned warehouse for lot
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+				if ($resproductbatch > 0) {
+					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
+					if ($reswarehouse > 0) {
+						$dte[] = $tmpwarehouse->ref;
+					}
+				}
+			}
+
 			$libelleproduitservice .= "__N__  ".implode(" - ", $dte);
+		}
+	} else {
+		if (getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
+			// TODO Show warehouse for shipment line without batch
 		}
 	}
 
@@ -1868,7 +1894,7 @@ function pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails = 0)
 	}
 	if (empty($reshook)) {
 		if (empty($hidedetails) || $hidedetails > 1) {
-			$subprice = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
+			$subprice = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_subprice : $object->lines[$i]->subprice);
 			$result .= price($sign * $subprice, 0, $outputlangs);
 		}
 	}
@@ -2253,7 +2279,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 		if ($object->lines[$i]->special_code == 3) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
-			$total_ht = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
+			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
 			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;
@@ -2309,7 +2335,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 		if ($object->lines[$i]->special_code == 3) {
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
-			$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
+			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
 			if ($object->lines[$i]->situation_percent > 0) {
 				// TODO Remove this. The total should be saved correctly in database instead of being modified here.
 				$prev_progress = 0;

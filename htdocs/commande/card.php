@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2019	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador      	<csalvador@gpcsolutions.fr>
@@ -13,7 +13,7 @@
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022	    Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022	    Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
  *   \brief     Page to show customer order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -52,7 +53,7 @@ if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -434,7 +435,7 @@ if (empty($reshook)) {
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -1569,7 +1570,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
 $formmargin = new FormMargin($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -1664,7 +1665,7 @@ if ($action == 'create' && $usercancreate) {
 				$date_delivery = (!empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 			}
 
-			if (!empty($conf->multicurrency->enabled)) {
+			if (isModEnabled("multicurrency")) {
 				if (!empty($objectsrc->multicurrency_code)) {
 					$currency_code = $objectsrc->multicurrency_code;
 				}
@@ -1692,7 +1693,7 @@ if ($action == 'create' && $usercancreate) {
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER) ?-1 : '';
 
-		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) {
+		if (isModEnabled("multicurrency") && !empty($soc->multicurrency_code)) {
 			$currency_code = $soc->multicurrency_code;
 		}
 
@@ -1750,7 +1751,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</td>';
 	} else {
 		print '<td>';
-		print img_picto('', 'company').$form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'company').$form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
@@ -1813,13 +1814,13 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -1854,7 +1855,7 @@ if ($action == 'create' && $usercancreate) {
 	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td>';
@@ -1913,7 +1914,7 @@ if ($action == 'create' && $usercancreate) {
 	print "</td></tr>";
 
 	// Multicurrency
-	if (!empty($conf->multicurrency->enabled)) {
+	if (isModEnabled("multicurrency")) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey("Currency", 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -1992,7 +1993,7 @@ if ($action == 'create' && $usercancreate) {
 
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($objectsrc->total_ttc)."</td></tr>";
 
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountHT').'</td><td>'.price($objectsrc->multicurrency_total_ht).'</td></tr>';
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountVAT').'</td><td>'.price($objectsrc->multicurrency_total_tva)."</td></tr>";
 			print '<tr><td>'.$langs->trans('MulticurrencyAmountTTC').'</td><td>'.price($objectsrc->multicurrency_total_ttc)."</td></tr>";
@@ -2105,109 +2106,112 @@ if ($action == 'create' && $usercancreate) {
 			}
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
+			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
+				// This is a hidden option:
+				// Suggestion to create invoice during order validation is not enabled by default.
+				// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
+				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
+				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
+					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-			if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
-				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$object->fetchObjectLinked();
 
-				$object->fetchObjectLinked();
+					$eligibleForDepositGeneration = true;
 
-				$eligibleForDepositGeneration = true;
-
-				if (array_key_exists('facture', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['facture'] as $invoice) {
-						if ($invoice->type == Facture::TYPE_DEPOSIT) {
-							$eligibleForDepositGeneration = false;
-							break;
+					if (array_key_exists('facture', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['facture'] as $invoice) {
+							if ($invoice->type == Facture::TYPE_DEPOSIT) {
+								$eligibleForDepositGeneration = false;
+								break;
+							}
 						}
 					}
-				}
 
-				if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['propal'] as $proposal) {
-						$proposal->fetchObjectLinked();
+					if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['propal'] as $proposal) {
+							$proposal->fetchObjectLinked();
 
-						if (array_key_exists('facture', $proposal->linkedObjects)) {
-							foreach ($proposal->linkedObjects['facture'] as $invoice) {
-								if ($invoice->type == Facture::TYPE_DEPOSIT) {
-									$eligibleForDepositGeneration = false;
-									break 2;
+							if (array_key_exists('facture', $proposal->linkedObjects)) {
+								foreach ($proposal->linkedObjects['facture'] as $invoice) {
+									if ($invoice->type == Facture::TYPE_DEPOSIT) {
+										$eligibleForDepositGeneration = false;
+										break 2;
+									}
 								}
 							}
 						}
 					}
-				}
 
+					if ($eligibleForDepositGeneration) {
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => '',
+							'name' => 'generate_deposit',
+							'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+						);
 
-				if ($eligibleForDepositGeneration) {
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => '',
-						'name' => 'generate_deposit',
-						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
-					);
-
-					$formquestion[] = array(
-						'type' => 'date',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'datef',
-						'label' => $langs->trans('DateInvoice'),
-						'value' => dol_now(),
-						'datenow' => true
-					);
-
-					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 						$formquestion[] = array(
 							'type' => 'date',
 							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-							'name' => 'date_pointoftax',
-							'label' => $langs->trans('DatePointOfTax'),
+							'name' => 'datef',
+							'label' => $langs->trans('DateInvoice'),
 							'value' => dol_now(),
 							'datenow' => true
 						);
-					}
 
-					ob_start();
-					$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
-					$paymentTermsSelect = ob_get_clean();
+						if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+							$formquestion[] = array(
+								'type' => 'date',
+								'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+								'name' => 'date_pointoftax',
+								'label' => $langs->trans('DatePointOfTax'),
+								'value' => dol_now(),
+								'datenow' => true
+							);
+						}
 
-					$formquestion[] = array(
-						'type' => 'other',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'cond_reglement_id',
-						'label' => $langs->trans('PaymentTerm'),
-						'value' => $paymentTermsSelect
-					);
 
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => 'showonlyifgeneratedeposit',
-						'name' => 'validate_generated_deposit',
-						'label' => $langs->trans('ValidateGeneratedDeposit')
-					);
+						$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 
-					$formquestion[] = array(
-						'type' => 'onecolumn',
-						'value' => '
-							<script>
-								$(document).ready(function() {
-									$("[name=generate_deposit]").change(function () {
-										let $self = $(this);
-										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+						$formquestion[] = array(
+							'type' => 'other',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'cond_reglement_id',
+							'label' => $langs->trans('PaymentTerm'),
+							'value' => $paymentTermsSelect
+						);
 
-										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
-											$target.show();
-										} else {
-											$target.hide();
-										}
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => 'showonlyifgeneratedeposit',
+							'name' => 'validate_generated_deposit',
+							'label' => $langs->trans('ValidateGeneratedDeposit')
+						);
 
-										return true;
+						$formquestion[] = array(
+							'type' => 'onecolumn',
+							'value' => '
+								<script>
+									$(document).ready(function() {
+										$("[name=generate_deposit]").change(function () {
+											let $self = $(this);
+											let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+											if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+												$target.show();
+											} else {
+												$target.hide();
+											}
+
+											return true;
+										});
 									});
-								});
-							</script>
-						'
-					);
+								</script>
+							'
+						);
+					}
 				}
 			}
 
@@ -2327,7 +2331,7 @@ if ($action == 'create' && $usercancreate) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($usercancreate) {
@@ -2535,7 +2539,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</td></tr>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			// Multicurrency code
 			print '<tr>';
 			print '<td>';
@@ -2646,7 +2650,7 @@ if ($action == 'create' && $usercancreate) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
 			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 			print '<td class="valuefield nowrap right amountcard">'.price($object->multicurrency_total_ht, '', $langs, 0, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';

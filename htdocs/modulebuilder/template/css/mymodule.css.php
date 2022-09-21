@@ -21,15 +21,13 @@
  * \brief   CSS file for module MyModule.
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled. Language code is found on url.
+//if (!defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
+//if (!defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled. Language code is found on url.
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
+//if (!defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
+//if (!defined('NOCSRFCHECK'))   define('NOCSRFCHECK', 1);		// Should be disable only for special situation
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }

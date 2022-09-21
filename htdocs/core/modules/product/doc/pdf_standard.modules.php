@@ -97,10 +97,10 @@ class pdf_standard extends ModelePDFProduct
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 		$this->option_multilang = 1; // Available in several languages
@@ -421,7 +421,7 @@ class pdf_standard extends ModelePDFProduct
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
+					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
 
 					$localtax1ligne=$object->lines[$i]->total_localtax1;

@@ -174,8 +174,8 @@ $checkedtypetiers = 0;
 $arrayfields = array(
 	'c.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'c.ref_client'=>array('label'=>"RefCustomerOrder", 'checked'=>-1, 'position'=>10),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>20),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>25),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>-1, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>20),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>25),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1, 'position'=>31),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>35),
@@ -192,11 +192,11 @@ $arrayfields = array(
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>80),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
-	'c.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>90),
-	'c.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>95),
-	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
-	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
-	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
+	'c.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1), 'position'=>90),
+	'c.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1), 'position'=>95),
+	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1), 'position'=>100),
+	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1), 'position'=>105),
+	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
@@ -792,7 +792,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
@@ -1507,13 +1507,13 @@ if ($resql) {
 	// Payment term
 	if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+		print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 		print '</td>';
 	}
 	// Payment mode
 	if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
+		print $form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1, '', 1);
 		print '</td>';
 	}
 	// Channel
@@ -1862,8 +1862,10 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
+	$savnbfield = $totalarray['nbfield'];
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
-	$last_num = min($num, $limit);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
@@ -1877,6 +1879,7 @@ if ($resql) {
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->alias;
 		$companystatic->client = $obj->client;
+		$companystatic->fournisseur = $obj->fournisseur;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
 		$companystatic->phone = $obj->phone;
@@ -1893,7 +1896,6 @@ if ($resql) {
 		$generic_commande->statut = $obj->fk_statut;
 		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
-		$generic_commande->date_livraison = $db->jdate($obj->date_delivery); // deprecated
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;
 		$generic_commande->total_ht = $obj->total_ht;
@@ -1978,7 +1980,7 @@ if ($resql) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
@@ -2314,7 +2316,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 			}
-			if ($i >= $last_num - 1) {
+			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {
