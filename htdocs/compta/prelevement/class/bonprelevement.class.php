@@ -1746,8 +1746,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, date("%d%m", $this->date_echeance));
-		fputs($this->file, substr(date("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date("%d%m", $this->date_echeance, 'gmt'));
+		fputs($this->file, substr(dol_print_date("%y", $this->date_echeance, 'gmt'), 1));
 
 		// Raison Sociale Destinataire C2
 
@@ -1972,8 +1972,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, date("%d%m", $this->date_echeance));
-		fputs($this->file, substr(date("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date("%d%m", $this->date_echeance, 'gmt'));
+		fputs($this->file, substr(dol_print_date("%y", $this->date_echeance, 'gmt'), 1));
 
 		// Raison Sociale C2
 
