@@ -80,9 +80,3 @@ foreach ($TMoChilds as $key => $objectlink) {
 }
 
 echo "<!-- END PHP TEMPLATE -->\n";
-
-	echo '</td>';
-	echo "</tr>\n";
-}
-
-echo "<!-- END PHP TEMPLATE -->\n";
