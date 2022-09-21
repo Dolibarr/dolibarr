@@ -70,11 +70,10 @@ foreach ($TMoChilds as $key => $objectlink) {
 
 	$resql = $db->query($sql);
 	$k = 0;
-	if ($resql){
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj->rowid && $obj->rowid > 0 ) $k = $obj->rowid;
 	}
-
 	echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&token=' . newToken() . '&dellinkid=' . $k . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a>';
 	echo '</td>';
 	echo "</tr>\n";
