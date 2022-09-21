@@ -7,6 +7,8 @@ English Dolibarr ChangeLog
 For users:
 ---------------
 
+NEW Minimal PHP version is now PHP 7.0 instead of PHP 5.6
+
 ...
 
 
@@ -28,7 +30,7 @@ Following changes may create regressions for some external modules, but were nec
 For users:
 ---------------
 
-NEW: PHP 8.0 and 8.1 compatibility (with mysql):
+NEW: PHP 8.0 and 8.1 compatibility:
      Warning!! Application works correctly with PHP 8.0 and 8.1 but you will experience a lot of PHP warnings into the PHP server
      log files (depending on your PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
