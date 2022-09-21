@@ -66,7 +66,7 @@ foreach ($TMoChilds as $key => $objectlink) {
 
 	// we want to make the link via element_element for delete action
 	$sql = ' Select rowid from ' . MAIN_DB_PREFIX . 'element_element';
-	$sql .= ' WHERE  fk_source = '. $object->id . ' and fk_target = ' . $key;
+	$sql .= ' WHERE  fk_source = '. (int) $object->id . ' and fk_target = "' . $key .'"';
 
 	$resql = $db->query($sql);
 	$k = 0;
