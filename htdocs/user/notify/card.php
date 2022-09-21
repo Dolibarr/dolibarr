@@ -67,7 +67,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->getrights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+$permissiontoadd = (($object->id == $user->id) || $user->hasRight('user', 'user', 'lire'));
 
 // Security check
 if ($user->socid) {
@@ -159,7 +159,7 @@ if ($result > 0) {
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
 
