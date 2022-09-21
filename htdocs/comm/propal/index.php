@@ -119,7 +119,7 @@ if (isModEnabled("propal")) {
 				$companystatic->name = $obj->name;
 				$companystatic->client = $obj->client;
 				$companystatic->code_client = $obj->code_client;
-				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->code_fournisseur = isset($obj->code_fournisseur)?$obj->code_fournisseur:'';
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->entity = $obj->entity;
 				$companystatic->email = $obj->email;
