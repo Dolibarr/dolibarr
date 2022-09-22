@@ -1341,7 +1341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 								// Already consumed
 								print '<td></td>';
- '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
+								 '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
 
 
 								// Qty
@@ -1432,7 +1432,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}
 							} else {
 								print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
-
 							}
 							print '</td>';
 
