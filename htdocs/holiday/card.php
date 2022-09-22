@@ -439,7 +439,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action validate (+ send email for approval)
+	// Action validate (+ send email for approval to the expected approver)
 	if ($action == 'confirm_send') {
 		$object->fetch($id);
 
@@ -1408,7 +1408,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateValidCP').'</td>';
-					print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
+					print '<td>'.dol_print_date($object->date_approval, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
 					print '</tr>';
 				}
 				if ($object->statut == Holiday::STATUS_CANCELED) {
