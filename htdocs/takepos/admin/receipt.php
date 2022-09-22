@@ -39,6 +39,7 @@ if (!$user->admin) {
 
 $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 
+
 /*
  * Actions
  */
@@ -68,7 +69,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 } elseif (GETPOST('action', 'alpha') == 'setmethod') {
 	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// TakePOS connector require ReceiptPrinter module
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !isModEnabled('receiptprinter')) {
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && !isModEnabled('receiptprinter')) {
 		activateModule("modReceiptPrinter");
 	}
 }
@@ -106,7 +107,7 @@ print $langs->trans('Browser');
 print '<td>';
 print $langs->trans('BrowserMethodDescription');
 print '</td><td class="right">';
-if ($conf->global->TAKEPOS_PRINT_METHOD == "browser") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser") {
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -144,14 +145,14 @@ print "TakePOS Connector";
 print '<td>';
 print $langs->trans('TakeposConnectorMethodDescription');
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	print '<br>';
 	print $langs->trans("URL")." / ".$langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank" rel="noopener noreferrer external">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 	print ' <input type="text" class="minwidth200" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.getDolGlobalString('TAKEPOS_PRINT_SERVER').'">';
 }
 
 print '</td><td class="right">';
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -174,10 +175,9 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('TicketVatGrouped');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser" || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -190,7 +190,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 	print '</td><td>';
 	$variablename = 'TAKEPOS_HEADER';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -203,7 +203,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Footer"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 	print '</td><td>';
 	$variablename = 'TAKEPOS_FOOTER';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -213,7 +213,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	print "</td></tr>\n";
 
 	print '<tr class="oddeven"><td><label for="receipt_name">'.$langs->trans("ReceiptName").'</label></td><td>';
-	print '<input name="TAKEPOS_RECEIPT_NAME" id="TAKEPOS_RECEIPT_NAME" class="minwidth200" value="'.(!empty($conf->global->TAKEPOS_RECEIPT_NAME) ? $conf->global->TAKEPOS_RECEIPT_NAME : '').'">';
+	print '<input name="TAKEPOS_RECEIPT_NAME" id="TAKEPOS_RECEIPT_NAME" class="minwidth200" value="'.getDolGlobalString('TAKEPOS_RECEIPT_NAME').'">';
 	print '</td></tr>';
 
 	// Customer information
@@ -254,7 +254,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_v
 	print "</td></tr>\n";
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('CustomerDisplay');
 	print '<td colspan="2">';
@@ -268,7 +268,7 @@ print $langs->trans('PrintWithoutDetailsButton');
 print '<td colspan="2">';
 print ajax_constantonoff('TAKEPOS_PRINT_WITHOUT_DETAILS', array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
-if (!empty($conf->global->TAKEPOS_PRINT_WITHOUT_DETAILS)) {
+if (getDolGlobalString('TAKEPOS_PRINT_WITHOUT_DETAILS')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('PrintWithoutDetailsLabelDefault');
 	print '<td colspan="2">';
