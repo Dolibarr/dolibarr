@@ -515,7 +515,7 @@ PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third
 PageUrlForDefaultValuesList=<br>Example:<br>For the page that lists third parties, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/" so use a path like <strong>mymodule/mypagelist.php</strong> and not custom/mymodule/mypagelist.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Also note that overwritting default values for form creation works only for pages that were correctly designed (so with parameter action=create or presend...)
 EnableDefaultValues=Enable customization of default values
-EnableOverwriteTranslation=Enable usage of overwritten translation
+EnableOverwriteTranslation=Allow customization of translations
 GoIntoTranslationMenuToChangeThis=A translation has been found for the key with this code. To change this value, you must edit it from Home-Setup-translation.
 WarningSettingSortOrder=Warning, setting a default sort order may result in a technical error when going on the list page if field is an unknown field. If you experience such an error, come back to this page to remove the default sort order and restore default behavior.
 Field=Field
