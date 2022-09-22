@@ -103,7 +103,7 @@ function contact_prepare_head(Contact $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -146,6 +146,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;*/
+
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 

@@ -80,7 +80,7 @@ function member_prepare_head(Adherent $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'core');
 
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
@@ -122,6 +122,8 @@ function member_prepare_head(Adherent $object)
 		$head[$h][2] = 'agenda';
 		$h++;
 	}
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'remove');
 

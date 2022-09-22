@@ -244,7 +244,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project');
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'core');
 
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -320,6 +320,8 @@ function project_prepare_head(Project $project, $moreparam = '')
 	$head[$h][2] = 'agenda';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'remove');
 
 	return $head;
@@ -381,7 +383,7 @@ function task_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -424,6 +426,8 @@ function task_prepare_head($object)
 		$head[$h][2] = 'task_comment';
 		$h++;
 	}
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'remove');
 

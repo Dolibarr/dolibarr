@@ -83,7 +83,7 @@ function facturefourn_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -119,6 +119,8 @@ function facturefourn_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'remove');
 
@@ -189,7 +191,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -229,7 +231,11 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 	}
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order', 'remove');
+
 	return $head;
 }
 

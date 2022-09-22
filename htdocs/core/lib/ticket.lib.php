@@ -102,7 +102,7 @@ function ticket_prepare_head($object)
 		$h++;
 	}
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'core');
 
 	// Attached files
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -139,6 +139,9 @@ function ticket_prepare_head($object)
 	}
 	$head[$h][2] = 'tabTicketLogs';
 	$h++;
+
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 

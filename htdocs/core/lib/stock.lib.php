@@ -69,12 +69,14 @@ function stock_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'add', 'core');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
 
