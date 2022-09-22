@@ -49,7 +49,7 @@ function ticketAdminPrepareHead()
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
 	$nbExtrafields = $extrafields->attributes['ticket']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;

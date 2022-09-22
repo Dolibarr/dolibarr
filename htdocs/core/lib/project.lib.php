@@ -511,7 +511,7 @@ function project_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsProject");
 	$nbExtrafields = $extrafields->attributes['projet']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -520,7 +520,7 @@ function project_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
 	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes_task';
 	$h++;

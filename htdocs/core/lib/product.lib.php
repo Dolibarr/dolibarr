@@ -314,7 +314,7 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -323,7 +323,7 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'supplierAttributes';
 	$h++;

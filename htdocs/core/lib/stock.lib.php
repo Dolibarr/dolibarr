@@ -115,7 +115,7 @@ function stock_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -124,7 +124,7 @@ function stock_admin_prepare_head()
 	$head[$h][1] = $langs->trans("StockMouvementExtraFields");
 	$nbExtrafields = $extrafields->attributes['stock_mouvement']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'stockMouvementAttributes';
 	$h++;
@@ -133,7 +133,7 @@ function stock_admin_prepare_head()
 	$head[$h][1] = $langs->trans("InventoryExtraFields");
 	$nbExtrafields = $extrafields->attributes['inventory']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'inventoryAttributes';
 	$h++;

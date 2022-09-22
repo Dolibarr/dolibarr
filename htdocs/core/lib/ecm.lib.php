@@ -181,7 +181,7 @@ function ecm_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmFiles");
 	$nbExtrafields = $extrafields->attributes['ecm_files']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes_ecm_files';
 	$h++;
@@ -190,7 +190,7 @@ function ecm_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsEcmDirectories");
 	$nbExtrafields = $extrafields->attributes['ecm_directories']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes_ecm_directories';
 	$h++;
