@@ -6,9 +6,9 @@ build:
         analysis:
             tests:
                 override:
-                    - php-scrutinizer-run
-                    idle_timeout: 500
-          
+                    - command: php-scrutinizer-run
+                      idle_timeout: 500
+
 imports:
     - javascript
     - php
