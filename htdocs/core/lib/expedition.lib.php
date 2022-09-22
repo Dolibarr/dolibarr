@@ -79,11 +79,12 @@ function expedition_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
+	/*
 	$head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'general';
 	$h++;
-
+	*/
 
 	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
@@ -107,12 +108,10 @@ function expedition_admin_prepare_head()
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
-		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
-		$head[$h][1] = $langs->trans("Receivings");
-		$head[$h][2] = 'receivings';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
+	$head[$h][1] = $langs->trans("Receivings");
+	$head[$h][2] = 'receivings';
+	$h++;
 
 	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/delivery_extrafields.php';

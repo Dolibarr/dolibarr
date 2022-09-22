@@ -198,15 +198,15 @@ if ($action=='downfield' || $action=='upfield')
 	}
 }
 */
-if ($action == 'builddoc') {
-	// Build import file
-	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
-	if ($result < 0) {
-		setEventMessages($objimport->error, $objimport->errors, 'errors');
-	} else {
-		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
-	}
-}
+// if ($action == 'builddoc') {
+// 	// Build import file
+// 	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
+// 	if ($result < 0) {
+// 		setEventMessages($objimport->error, $objimport->errors, 'errors');
+// 	} else {
+// 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
+// 	}
+// }
 
 if ($action == 'deleteprof') {
 	if (GETPOST("id", 'int')) {
@@ -235,6 +235,7 @@ if ($action == 'add_import_model') {
 		$result = $objimport->create($user);
 		if ($result >= 0) {
 			setEventMessages($langs->trans("ImportModelSaved", $objimport->model_name), null, 'mesgs');
+			$import_name = '';
 		} else {
 			$langs->load("errors");
 			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -1286,7 +1287,7 @@ if ($step == 4 && $datatoimport) {
 	print '</td></tr>';
 
 	// Lines for remark
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Remark").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Note").'</td></tr>';
 	print '<tr><td colspan="2"><div id="div-mandatory-target-fields-not-mapped"></div></td></tr>';
 
 	print '</table>';
@@ -1470,8 +1471,8 @@ if ($step == 4 && $datatoimport) {
 		print '</tr>';
 
 		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
-		if (is_object($objimport) && !empty($objimport->model_name)) {
-			$nameofimportprofile = $objimport->model_name;
+		if (GETPOST('import_name')) {	// If we have submited a form, we take value used fot the update try
+			$nameofimportprofile = $import_name;
 		}
 
 		print '<tr class="oddeven">';
@@ -1966,9 +1967,9 @@ if ($step == 5 && $datatoimport) {
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("NowClickToRunTheImport", $langs->transnoentitiesnoconv("RunImportFile")).'</span><br>';
-		if (empty($nboferrors)) {
+		/*if (empty($nboferrors)) {
 			print $langs->trans("DataLoadedWithId", $importid).'<br>';
-		}
+		}*/
 		print '</div>';
 
 		print '<br>';

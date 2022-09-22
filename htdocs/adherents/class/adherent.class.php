@@ -1405,7 +1405,7 @@ class Adherent extends CommonObject
 				$this->email = $obj->email;
 				$this->url = $obj->url;
 
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->photo = $obj->photo;
 				$this->statut = $obj->statut;

@@ -643,7 +643,7 @@ function showWebsiteTemplates(Website $website)
 
 								print '<br>';
 								print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-								print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
+								print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
 								print '</div>';
 
 								$i++;

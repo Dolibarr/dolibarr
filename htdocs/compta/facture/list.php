@@ -1273,15 +1273,15 @@ if ($resql) {
 		print '<td class="liste_titre maxwidthonsmartphone">';
 		$listtype = array(
 			Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-			Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
-			Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 			Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+			Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+			Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
 		);
 		if (!empty($conf->global->INVOICE_USE_SITUATION)) {
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 		}
 		//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
-		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		print '</td>';
 	}
 	// Date invoice
@@ -1734,8 +1734,11 @@ if ($resql) {
 		$total_ht = 0;
 		$total_margin = 0;
 
-		$last_num = min($num, $limit);
-		while ($i < $last_num) {
+		$savnbfield = $totalarray['nbfield'];
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($resql);
 
 			$datelimit = $db->jdate($obj->datelimite);
@@ -1752,7 +1755,8 @@ if ($resql) {
 			$facturestatic->multicurrency_total_ht = $obj->multicurrency_total_ht;
 			$facturestatic->multicurrency_total_tva = $obj->multicurrency_total_vat;
 			$facturestatic->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
-			$facturestatic->statut = $obj->fk_statut;
+			$facturestatic->statut = $obj->fk_statut;	// deprecated
+			$facturestatic->status = $obj->fk_statut;
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
@@ -1764,6 +1768,7 @@ if ($resql) {
 
 			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
+
 			if (!empty($conf->global->INVOICE_USE_SITUATION) && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 				$facturestatic->retained_warranty = $obj->retained_warranty;
 				$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
@@ -1899,7 +1904,7 @@ if ($resql) {
 			// Type
 			if (!empty($arrayfields['f.type']['checked'])) {
 				print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
-				print $facturestatic->getLibType();
+				print $facturestatic->getLibType(2);
 				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2340,7 +2345,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 				}
-				if ($i >= $last_num - 1) {
+				if ($i >= $imaxinloop - 1) {
 					if (!empty($total_ht)) {
 						$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 					} else {

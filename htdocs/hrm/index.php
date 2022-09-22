@@ -21,9 +21,9 @@
  */
 
 /**
- *   	\file       htdocs/hrm/index.php
- *		\ingroup    hrm
- *		\brief      Home page for HRM area.
+ *    \file       htdocs/hrm/index.php
+ *    \ingroup    hrm
+ *    \brief      Home page for HRM area.
  */
 
 
@@ -32,10 +32,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 if (isModEnabled('deplacement')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';

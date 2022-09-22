@@ -114,7 +114,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'member', 'class="fa-fw paddingright pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "members") ? 0 : 1),
-		'loadLangs' => array(),
+		'loadLangs' => array("members"),
 		'submenus' => array(),
 	);
 
@@ -170,7 +170,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'product', 'class="fa-fw paddingright pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "products") ? 0 : 1),
-		'loadLangs' => array("products"),
+		'loadLangs' => array("products", "stocks"),
 		'submenus' => array(),
 	);
 
@@ -379,7 +379,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'hrm', 'class="fa-fw paddingright pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
-		'loadLangs' => array("holiday"),
+		'loadLangs' => array("hrm", "holiday"),
 		'submenus' => array(),
 	);
 
@@ -410,7 +410,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'ticket', 'class="fa-fw paddingright pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "ticket") ? 0 : 1),
-		'loadLangs' => array("other"),
+		'loadLangs' => array("ticket", "knowledgemanagement"),
 		'submenus' => array(),
 	);
 

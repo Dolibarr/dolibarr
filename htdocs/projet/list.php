@@ -71,8 +71,8 @@ if (!$user->rights->projet->lire) {
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "aZ09comma");
-$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
@@ -229,7 +229,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -356,13 +357,22 @@ if (empty($reshook)) {
  * View
  */
 
-$companystatic = new Societe($db);
 $form = new Form($db);
+
+$companystatic = new Societe($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-$title = $langs->trans("Projects");
+$title = $langs->trans("LeadsOrProjects");
+if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	$title = $langs->trans("Projects");
+}
+if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+	$title = $langs->trans("Leads");
+}
+$morejs = array();
+$morecss = array();
 
 
 // Get list of project id allowed to user (in a string list separated by comma)
@@ -1190,8 +1200,12 @@ $totalarray = array(
 	'nbfield' => 0,
 	'val' => array(),
 );
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
 	$object->id = $obj->id;
 	$object->user_author_id = $obj->fk_user_creat;
@@ -1648,14 +1662,26 @@ while ($i < min($num, $limit)) {
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 $db->free($resql);
 
-$parameters = array('sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>\n";
 print '</div>';
+
 print "</form>\n";
 
 // End of page

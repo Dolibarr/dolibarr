@@ -470,6 +470,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -1164,7 +1165,17 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
+		$tmpsavdb = null;
+		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $object->db;
+			unset($object->db);		// Such property can not be serialized when PgSql/Connection
+		}
+
 		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
+
+		if ($tmpsavdb) {
+			$object->db = $tmpsavdb;
+		}
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -3723,6 +3734,8 @@ function isValidMXRecord($domain)
 			return 0;
 		}
 	}
+
+	// function idn_to_ascii or checkdnsrr does not exists
 	return -1;
 }
 
@@ -4957,7 +4970,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 
 	// Return a http header with error code if possible
 	if (!headers_sent()) {
-		top_httphead();
+		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
+			top_httphead();
+		}
 		http_response_code(500);
 	}
 
@@ -9042,9 +9057,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
+ *  @param	string		$filterorigmodule	Filter on module origin. 'external' will show only external modules. 'core' only core modules. No filter by default.
  *	@return	void
  */
-function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
+function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add', $filterorigmodule = '')
 {
 	global $hookmanager, $db;
 
@@ -9064,15 +9080,29 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
+							if ($filterorigmodule) {	// If a filter of module origin has been requested
+								if (strpos($values[3], '@')) {	// This is an external module
+									if ($filterorigmodule != 'external') {
+										continue;
+									}
+								} else {	// This looks a core module
+									if ($filterorigmodule != 'core') {
+										continue;
+									}
+								}
+							}
 							$langs->load($values[3]);
 						}
 						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+							// If label is "SUBSTITUION_..."
 							$substitutionarray = array();
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
+							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
 							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
+
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
 								$classtoload = $labeltemp[1];
@@ -9092,7 +9122,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // deprecated
+				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {

@@ -250,7 +250,11 @@ function group_prepare_head($object)
  */
 function user_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('user');
+	$extrafields->fetch_name_optionals_label('usergroup');
 
 	$langs->load("users");
 	$h = 0;
@@ -268,11 +272,19 @@ function user_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
+	$nbExtrafields = $extrafields->attributes['user']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/user/admin/group_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
+	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_group';
 	$h++;
 
@@ -1099,8 +1111,8 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 
-	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND)) {
+	// Use MAIN_OPTIMIZEFORCOLORBLIND
+	if ($foruserprofile) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';

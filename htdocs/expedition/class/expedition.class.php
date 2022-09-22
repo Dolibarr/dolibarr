@@ -217,11 +217,11 @@ class Expedition extends CommonObject
 		$this->statuts[2]  = 'StatusSendingProcessed';
 
 		// List of short language codes for status
-		$this->statutshorts = array();
-		$this->statutshorts[-1] = 'StatusSendingCanceledShort';
-		$this->statutshorts[0]  = 'StatusSendingDraftShort';
-		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
-		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+		$this->statuts_short = array();
+		$this->statuts_short[-1] = 'StatusSendingCanceledShort';
+		$this->statuts_short[0]  = 'StatusSendingDraftShort';
+		$this->statuts_short[1]  = 'StatusSendingValidatedShort';
+		$this->statuts_short[2]  = 'StatusSendingProcessedShort';
 	}
 
 	/**
@@ -771,7 +771,7 @@ class Expedition extends CommonObject
 						// line with batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						// Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
+						// Note: ->fk_origin_stock = id into table llx_product_batch (may be renamed into llx_product_stock_batch in another version)
 						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, '', 1);
 						if ($result < 0) {
 							$error++;
@@ -965,8 +965,9 @@ class Expedition extends CommonObject
 		}
 
 		// If product need a batch number, we should not have called this function but addline_batch instead.
+		// If this happen, we may have a bug in card.php page
 		if (isModEnabled('productbatch') && !empty($orderline->fk_product) && !empty($orderline->product_tobatch)) {
-			$this->error = 'ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH';
+			$this->error = 'ADDLINE_WAS_CALLED_INSTEAD_OF_ADDLINEBATCH '.$orderline->id.' '.$orderline->fk_product;	//
 			return -4;
 		}
 
@@ -1883,7 +1884,7 @@ class Expedition extends CommonObject
 		global $langs;
 
 		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
@@ -2498,11 +2499,27 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $table_element = 'expeditiondet';
 
+
+	/**
+	 * Id of the line. Duplicate of $id.
+	 *
+	 * @var int
+	 * @deprecated
+	 */
+	public $line_id;	// deprecated
+
 	/**
 	 * @deprecated
 	 * @see $fk_origin_line
 	 */
 	public $origin_line_id;
+
+	/**
+	 * Code of object line that is origin of the shipment line.
+	 *
+	 * @var string
+	 */
+	public $fk_origin;			// Example: 'orderline'
 
 	/**
 	 * @var int ID
@@ -2533,7 +2550,15 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var int Id of product
 	 */
 	public $fk_product;
+
+	// detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
+	// We can use this to know warehouse planned to be used for each lot.
 	public $detail_batch;
+
+	// detail of warehouses and qty
+	// We can use this to know warehouse when there is no lot.
+	public $details_entrepot;
+
 
 	/**
 	 * @var int Id of warehouse

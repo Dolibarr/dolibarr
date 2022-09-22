@@ -75,8 +75,8 @@ create table llx_user
   idpers2			   varchar(128),
   idpers3			   varchar(128),
   
-  note_public		          text,
-  note_private                    text          DEFAULT NULL,
+  note_public		      text,
+  note_private            text          DEFAULT NULL,
   model_pdf               varchar(255)  DEFAULT NULL,
   datelastlogin           datetime,
   datepreviouslogin       datetime,

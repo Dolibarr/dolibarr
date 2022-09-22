@@ -18,9 +18,9 @@
  */
 
 /**
- *	\file       htdocs/core/lib/propal.lib.php
- *	\brief      Ensemble de fonctions de base pour le module propal
- *	\ingroup    propal
+ * \file       htdocs/core/lib/propal.lib.php
+ * \brief      Ensemble de fonctions de base pour le module propal
+ * \ingroup    propal
  */
 
 /**
@@ -122,7 +122,11 @@ function propal_prepare_head($object)
  */
 function propal_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('propal');
+	$extrafields->fetch_name_optionals_label('propaldet');
 
 	$h = 0;
 	$head = array();
@@ -140,11 +144,19 @@ function propal_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['propal']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 

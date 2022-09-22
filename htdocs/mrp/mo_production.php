@@ -722,8 +722,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
-			//$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $object->ref.'_'.dol_print_date(dol_now(), 'dayhourlog');
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : dol_print_date(dol_now(), 'dayhourlog');
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
 			print '<div class="opacitymedium hideonsmartphone paddingbottom">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';
@@ -1339,8 +1338,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print dol_print_date($line2['date'], 'dayhour', 'tzuserrel');
 								print '</td>';
 
+
 								// Already consumed
 								print '<td></td>';
+ '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-'.$line->id.'-'.$i.'" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'" '.$disable.'></td>';
+
 
 								// Qty
 								print '<td class="right">'.$line2['qty'].'</td>';
@@ -1420,6 +1422,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 							// Warehouse
 							print '<td>';
+
 							if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 								if (empty($line->disable_stock_change)) {
 										$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i, 'int') : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
@@ -1429,6 +1432,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								}
 							} else {
 								print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+
 							}
 							print '</td>';
 

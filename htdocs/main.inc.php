@@ -518,7 +518,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'file_manager'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'edit', 'file_manager', 'presend', 'presend_addmessage'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -526,12 +526,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
-			'install',
+			'freezone', 'install',
 			'reopen'
 		);
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
+		// We also match for value with just a simple string that must match
 		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
