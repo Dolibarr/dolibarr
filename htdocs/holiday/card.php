@@ -1150,7 +1150,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$result = $object->fetch($id, $ref);
 
 			$approverexpected = new User($db);
-			$approverexpected->fetch($object->fk_validator);
+			$approverexpected->fetch($object->fk_validator);	// Use that should be the approver
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1364,21 +1364,23 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '</td>';
 					print '<td>';
 					if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
-						$approverdone = new User($db);
-						$approverdone->fetch($object->fk_user_valid);
-						print $approverdone->getNomUrl(-1);
+						if ($object->fk_user_approve > 0) {
+							$approverdone = new User($db);
+							$approverdone->fetch($object->fk_user_approve);
+							print $approverdone->getNomUrl(-1);
+						}
 					} else {
 						print $approverexpected->getNomUrl(-1);
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';	// Will be approved by
 					print '<td>';
 					$include_users = $object->fetch_users_approver_holiday();
 					if (!in_array($object->fk_validator, $include_users)) {  // Add the current validator to the list to not lose it when editing.
