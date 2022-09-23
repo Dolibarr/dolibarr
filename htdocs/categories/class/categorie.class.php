@@ -636,23 +636,30 @@ class Categorie extends CommonObject
 		}
 
 		$arraydelete = array(
-			'categorie_product' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
-			'categorie_societe' => 'fk_categorie',
-			'categorie_member' => 'fk_categorie',
-			'categorie_contact' => 'fk_categorie',
-			'categorie_user' => 'fk_categorie',
-			'categorie_project' => 'fk_categorie',
 			'categorie_account' => 'fk_categorie',
-			'categorie_website_page' => 'fk_categorie',
-			'categorie_warehouse' => 'fk_categorie',
 			'categorie_actioncomm' => 'fk_categorie',
-			'categorie_ticket' => 'fk_categorie',
+			'categorie_contact' => 'fk_categorie',
+			'categorie_fournisseur' => 'fk_categorie',
+			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
+			'categorie_member' => 'fk_categorie',
+			'categorie_user' => 'fk_categorie',
+			'categorie_product' => 'fk_categorie',
+			'categorie_project' => 'fk_categorie',
+			'categorie_societe' => 'fk_categorie',
+			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
+			'categorie_warehouse' => 'fk_categorie',
+			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
 			'bank_class' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
 		foreach ($arraydelete as $key => $value) {
+			if (is_array($value)) {
+				if (empty($value['enabled'])) {
+					continue;
+				}
+				$value = $value['field'];
+			}
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
 			$sql .= " WHERE ".$value." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
