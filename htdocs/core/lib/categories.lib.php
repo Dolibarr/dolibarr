@@ -99,7 +99,7 @@ function categoriesadmin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
 	$nbExtrafields = $extrafields->attributes['categorie']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes_categories';
 	$h++;
