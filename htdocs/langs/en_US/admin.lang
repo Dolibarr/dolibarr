@@ -2319,3 +2319,5 @@ CssOnList=Css on list pages
 HelpCssOnEditDesc=The Css used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
 HelpCssOnViewDesc=The Css used when viewing the field.
 HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "tdoverflowmax200"
+RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions 
+MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
