@@ -259,7 +259,7 @@ class modAccounting extends DolibarrModules
 		$this->export_icon[$r] = 'accounting';
 		$this->export_permission[$r] = array(array("accounting", "chartofaccount"));
 		$this->export_fields_array[$r] = array('ac.rowid'=>'ChartofaccountsId', 'ac.pcg_version'=>'Chartofaccounts', 'aa.rowid'=>'ID', 'aa.account_number'=>"AccountAccounting", 'aa.label'=>"Label", 'aa2.account_number'=>"Accountparent", 'aa.pcg_type'=>"Pcgtype", 'aa.active'=>'Status');
-		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa2.account_number'=>"List:accounting_account:account_number", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
+		$this->export_TypeFields_array[$r] = array('ac.rowid'=>'List:accounting_system:pcg_version', 'ac.pcg_version'=>'Text', 'aa.rowid'=>'Numeric', 'aa.account_number'=>"Text", 'aa.label'=>"Text", 'aa2.account_number'=>"Text", 'aa.pcg_type'=>'Text', 'aa.active'=>'Status');
 		$this->export_entities_array[$r] = array('ac.rowid'=>"Accounting", 'ac.pcg_version'=>"Accounting", 'aa.rowid'=>'Accounting', 'aa.account_number'=>"Accounting", 'aa.label'=>"Accounting", 'aa2.account_number'=>"Accounting", 'aa.pcg_type'=>"Accounting", 'aa_active'=>"Accounting");
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
