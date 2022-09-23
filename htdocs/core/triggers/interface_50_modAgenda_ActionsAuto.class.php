@@ -731,7 +731,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid = 0;
-			if ( isset($object->fk_soc) && $object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY') {
