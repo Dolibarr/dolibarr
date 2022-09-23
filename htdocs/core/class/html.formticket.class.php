@@ -20,13 +20,14 @@
  */
 
 /**
- *       \file       htdocs/core/class/html.formticket.class.php
- *       \ingroup    ticket
- *       \brief      File of class to generate the form for creating a new ticket.
+ *    \file       htdocs/core/class/html.formticket.class.php
+ *    \ingroup    ticket
+ *    \brief      File of class to generate the form for creating a new ticket.
  */
-require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formprojet.class.php";
+
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 
 if (!class_exists('FormCompany')) {
 	include DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -35,8 +36,8 @@ if (!class_exists('FormCompany')) {
 /**
  * Class to generate the form for creating a new ticket.
  * Usage: 	$formticket = new FormTicket($db)
- * 			$formticket->proprietes=1 ou chaine ou tableau de valeurs
- * 			$formticket->show_form() affiche le formulaire
+ * 			$formticket->proprietes = 1 or string or array of values
+ * 			$formticket->show_form()  shows the form
  *
  * @package Ticket
  */
@@ -64,8 +65,8 @@ class FormTicket
 
 	public $withtopic;
 	public $withemail;
+
 	/**
-	 *
 	 * @var int $withsubstit Show substitution array
 	 */
 	public $withsubstit;
@@ -75,19 +76,19 @@ class FormTicket
 
 	public $backtopage;
 
-	public $ispublic; // To show information or not into public form
+	public $ispublic;  // to show information or not into public form
 
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
-	public $withcompany; // affiche liste déroulante company
+	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
 	public $withnotifytiersatcreate;
-	public $withusercreate; // Show name of creating user in form
+	public $withusercreate;  // to show name of creating user in form
 	public $withcreatereadonly;
 
-	public $withref; // Show ref field
+	public $withref;  // to show ref field
 
 	public $withcancel;
 
@@ -132,7 +133,7 @@ class FormTicket
 		$this->withcreatereadonly = 1;
 		$this->withemail = 0;
 		$this->withref = 0;
-		$this->withextrafields = 0; // Show extrafields or not
+		$this->withextrafields = 0;  // to show extrafields or not
 		//$this->withtopicreadonly=0;
 	}
 
@@ -316,12 +317,12 @@ class FormTicket
 			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2"><input name="'.$subelement.'id" value="'.GETPOST('originid').'" type="hidden" />'.$objectsrc->getNomUrl(1).'</td></tr>';
 		}
 
-		// Type
+		// Type of Ticket
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
 		$this->selectTypesTickets((GETPOST('type_code', 'alpha') ? GETPOST('type_code', 'alpha') : $this->type_code), 'type_code', '', 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
-		// Group
+		// Group => Category
 		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
 		$filter = '';
 		if ($public) {
@@ -330,7 +331,7 @@ class FormTicket
 		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 1, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
-		// Severity
+		// Severity => Priority
 		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
@@ -339,7 +340,7 @@ class FormTicket
 		if ($this->withtitletopic) {
 			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
 
-			// Réponse à un ticket : affichage du titre du thread en readonly
+			// Answer to a ticket : display of the thread title in readonly
 			if ($this->withtopicreadonly) {
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 				print '</td></tr>';
@@ -669,14 +670,14 @@ class FormTicket
 	/**
 	 *      Return html list of tickets type
 	 *
-	 *      @param  string $selected    Id du type pre-selectionne
-	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
-	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    $empty       1=peut etre vide, 0 sinon
-	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
-	 *      @param  int    $maxlength   Max length of label
-	 *      @param	string	$morecss	More CSS
+	 *      @param  string  $selected    Id du type pre-selectionne
+	 *      @param  string  $htmlname    Nom de la zone select
+	 *      @param  string  $filtertype  To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *      @param  int     $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+	 *      @param  int     $empty       1=peut etre vide, 0 sinon
+	 *      @param  int     $noadmininfo 0=Add admin info, 1=Disable admin info
+	 *      @param  int     $maxlength   Max length of label
+	 *      @param  string  $morecss     More CSS
 	 *      @return void
 	 */
 	public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
@@ -707,7 +708,7 @@ class FormTicket
 					continue;
 				}
 
-				// We discard empty line if showempty is on because an empty line has already been output.
+				// If 'showempty' is enabled we discard empty line because an empty line has already been output.
 				if ($empty && empty($arraytypes['code'])) {
 					continue;
 				}
@@ -728,7 +729,7 @@ class FormTicket
 					print '<option value="'.$id.'"';
 				}
 
-				// Si selected est text, on compare avec code, sinon avec id
+				// If text is selected, we compare with code, otherwise with id
 				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
@@ -765,16 +766,16 @@ class FormTicket
 	/**
 	 *      Return html list of ticket anaytic codes
 	 *
-	 *      @param  string 		$selected   		Id categorie pre-selectionnée
+	 *      @param  string 		$selected   		Id pre-selected category
 	 *      @param  string 		$htmlname   		Name of select component
 	 *      @param  string 		$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
-	 *      @param  int    		$format     		0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    		$empty      		1=peut etre vide, 0 sinon
-	 *      @param  int    		$noadmininfo		0=Add admin info, 1=Disable admin info
+	 *      @param  int    		$format     		0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
+	 *      @param  int    		$empty      		1 = can be empty, 0 = or not
+	 *      @param  int    		$noadmininfo		0 = ddd admin info, 1 = disable admin info
 	 *      @param  int    		$maxlength  		Max length of label
 	 *      @param	string		$morecss			More CSS
 	 * 		@param	int 		$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
-	 * 		@param	Translate	$outputlangs		Output lnaguage
+	 * 		@param	Translate	$outputlangs		Output language
 	 *      @return void
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0, $outputlangs = null)
@@ -834,7 +835,7 @@ class FormTicket
 						print '<option value="'.$id.'"';
 					}
 
-					// Si selected est text, on compare avec code, sinon avec id
+					// If selected is text, we compare with code, otherwise with id
 					if (preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
 						print ' selected="selected"';
 					} elseif ($selected == $id) {
@@ -894,6 +895,7 @@ class FormTicket
 					}
 				}
 			}
+			
 			$arrayidused = array();
 			$arrayidusedconcat = array();
 			$arraycodenotparent = array();
@@ -1069,7 +1071,7 @@ class FormTicket
 
 					console.log("We select a new value into combo child_id="+child_id);
 
-					/* Hide all selected box that are child of the one modified */
+					// Hide all selected box that are child of the one modified 
 					$(".groupticketchild").each(function(){
 						if ($(this).attr("child_id") > child_id) {
 							console.log("hide child_id="+$(this).attr("child_id"));
@@ -1078,7 +1080,7 @@ class FormTicket
 						}
 					})
 
-					/* Now we enable the next combo */
+					// Now we enable the next combo 
 					$("#'.$htmlname.'_child_'.$levelid.'").val("");
 					if (!arraynotparents.includes($(this).val()) && $("#'.$htmlname.'_child_'.$levelid.' option").length > 1) {
 						console.log($("#'.$htmlname.'_child_'.$levelid.' option").length);
@@ -1108,16 +1110,16 @@ class FormTicket
 	}
 
 	/**
-	 *      Return html list of ticket severitys
+	 *      Return html list of ticket severitys (priorities)
 	 *
-	 *      @param  string $selected    Id severity pre-selectionnée
-	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on field type in llx_c_ticket_severity (array('code'=>xx,'label'=>zz))
-	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    $empty       1=peut etre vide, 0 sinon
-	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
-	 *      @param  int    $maxlength   Max length of label
-	 *      @param	string	$morecss	More CSS
+	 *      @param  string  $selected    Id severity pre-selected
+	 *      @param  string  $htmlname    Name of the select area
+	 *      @param  string  $filtertype  To filter on field type in llx_c_ticket_severity (array('code'=>xx,'label'=>zz))
+	 *      @param  int     $format      0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
+	 *      @param  int     $empty       1 = can be empty, 0 = or not
+	 *      @param  int     $noadmininfo 0 = add admin info, 1 = disable admin info
+	 *      @param  int     $maxlength   Max length of label
+	 *      @param  string  $morecss     More CSS
 	 *      @return void
 	 */
 	public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
@@ -1169,7 +1171,7 @@ class FormTicket
 					print '<option value="'.$id.'"';
 				}
 
-				// Si selected est text, on compare avec code, sinon avec id
+				// If text is selected, we compare with code, otherwise with id
 				if (preg_match('/[a-z]/i', $selected) && $selected == $arrayseverities['code']) {
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
@@ -1426,7 +1428,7 @@ class FormTicket
 			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
-			// Destinataires
+			// Recipients / adressed-to
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
