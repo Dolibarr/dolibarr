@@ -2164,7 +2164,7 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
-			if ($result >= 0 && $error == 0) {
+			if ($error == 0) {
 				$this->db->commit();
 				return 1;
 			} else {
