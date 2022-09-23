@@ -873,7 +873,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->creer) {
+if (isModEnabled('category') && $user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->societe->creer) {
