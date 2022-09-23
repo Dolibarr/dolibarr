@@ -895,7 +895,7 @@ class FormTicket
 					}
 				}
 			}
-			
+
 			$arrayidused = array();
 			$arrayidusedconcat = array();
 			$arraycodenotparent = array();
