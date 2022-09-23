@@ -611,7 +611,7 @@ if ($user->rights->adherent->creer) {
 if ($user->rights->adherent->supprimer) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->societe->creer) {
+if (isModEnabled('category') && $user->rights->adherent->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
