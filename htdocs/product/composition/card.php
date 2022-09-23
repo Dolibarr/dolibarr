@@ -330,13 +330,13 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
-				print '<td>'.$productstatic->label.'</td>';
-				print '<td>'.$value['qty'].'</td>';
+				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
+				print '<td>'.dol_escape_htmltag($value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {
 			print '<tr class="oddeven">';
-			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 		print '</table>';
@@ -571,7 +571,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			print '<tr class="oddeven">';
-			print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 
