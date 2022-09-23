@@ -80,7 +80,10 @@ function categories_prepare_head(Categorie $object, $type)
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");
 
@@ -94,6 +97,10 @@ function categoriesadmin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
+	$nbExtrafields = $extrafields->attributes['categorie']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_categories';
 	$h++;
 

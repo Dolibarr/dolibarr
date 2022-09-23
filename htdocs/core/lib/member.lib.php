@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Functions for module members
+ * \file       htdocs/core/lib/member.lib.php
+ * \brief      Functions for module members
  */
 
 /**
@@ -184,7 +184,11 @@ function member_type_prepare_head(AdherentType $object)
  */
 function member_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('adherent');
+	$extrafields->fetch_name_optionals_label('adherent_type');
 
 	$h = 0;
 	$head = array();
@@ -207,11 +211,19 @@ function member_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
+	$nbExtrafields = $extrafields->attributes['adherent']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
+	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_type';
 	$h++;
 
