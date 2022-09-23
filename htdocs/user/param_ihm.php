@@ -320,7 +320,7 @@ if ($action == 'edit') {
 	print '> <label for="check_AGENDA_DEFAULT_VIEW">'.$langs->trans("UsePersonalValue").'</label></td>';
 	print '<td>'."\n";
 	$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-	print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $object->conf->AGENDA_DEFAULT_VIEW, 0, 0, 0, '');
+	print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, (isset($object->conf->AGENDA_DEFAULT_VIEW) ? $object->conf->AGENDA_DEFAULT_VIEW : ''), 0, 0, 0, '');
 	print '</td></tr>'."\n";
 
 	// Max size of lists

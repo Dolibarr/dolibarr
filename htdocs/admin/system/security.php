@@ -357,7 +357,7 @@ print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
-	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transcountrynoentities("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
+	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

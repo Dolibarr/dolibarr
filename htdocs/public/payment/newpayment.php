@@ -1469,6 +1469,7 @@ if ($source == 'contractline') {
 if ($source == 'member' || $source == 'membersubscription') {
 	$newsource = 'member';
 
+	$tag="";
 	$found = true;
 	$langs->load("members");
 

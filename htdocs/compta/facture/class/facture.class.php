@@ -1780,7 +1780,7 @@ class Facture extends CommonInvoice
 			$url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
 		}
 
-		if (!$user->rights->facture->lire) {
+		if (!$user->hasRight("facture", "read")) {
 			$option = 'nolink';
 		}
 
@@ -1811,7 +1811,7 @@ class Facture extends CommonInvoice
 		}
 		$label = '';
 
-		if ($user->rights->facture->lire) {
+		if ($user->hasRight("facture", "read")) {
 			$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("Invoice").'</u>';
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
@@ -1847,7 +1847,7 @@ class Facture extends CommonInvoice
 		}
 
 		$linkclose = ($target ? ' target="'.$target.'"' : '');
-		if (empty($notooltip) && $user->rights->facture->lire) {
+		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Invoice");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
