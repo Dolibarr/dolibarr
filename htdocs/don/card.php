@@ -182,8 +182,6 @@ if (empty($reshook)) {
 			$object->date = $donation_date;
 			$object->public = $public_donation;
 			$object->fk_project = (int) GETPOST("fk_project", 'int');
-			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 			// Fill array 'array_options' with data from add form
