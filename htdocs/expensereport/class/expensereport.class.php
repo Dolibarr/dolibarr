@@ -2069,6 +2069,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			$this->db->begin();
 
+			$error = 0;
 			$type = 0; // TODO What if type is service ?
 
 			// We don't know seller and buyer for expense reports
@@ -2152,10 +2153,13 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-			$error = 0;
-			$result = $this->line->update($user);
 
-			if ($result > 0 && !$notrigger) {
+			$result = $this->line->update($user);
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && !$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
 				if ($result < 0) {
@@ -2164,7 +2168,7 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
-			if ($result > 0 && $error == 0) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
