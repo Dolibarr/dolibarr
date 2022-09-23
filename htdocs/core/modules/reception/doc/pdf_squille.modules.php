@@ -482,11 +482,11 @@ class pdf_squille extends ModelePdfReception
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt = '';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->weight) {
-						$weighttxt = round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->product->weight_units);
+						$weighttxt = round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->product->weight_units, 1);
 					}
 					$voltxt = '';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->volume) {
-						$voltxt = round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units ? $object->lines[$i]->product->volume_units : 0);
+						$voltxt = round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units ? $object->lines[$i]->product->volume_units : 0, 1);
 					}
 
 					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, 0, 0, false, true, 'C');
@@ -664,16 +664,16 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		if ($totalWeight != '') {
-			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
+			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
 		}
 		if ($totalVolume != '') {
-			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
+			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if ($object->trueWeight) {
-			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs, -1, 'no', 1);
 		}
 		if ($object->trueVolume) {
-			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs, -1, 'no', 1);
 		}
 
 		$pdf->SetFillColor(255, 255, 255);
