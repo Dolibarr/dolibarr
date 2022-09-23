@@ -701,12 +701,6 @@ class Societe extends CommonObject
 	public $ref;
 
 	/**
-	 * @var string Internal ref
-	 * @deprecated
-	 */
-	public $ref_int;
-
-	/**
 	 * External user reference.
 	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to build.
 	 * @var string

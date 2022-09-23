@@ -58,7 +58,7 @@ function hrmAdminPrepareHead()
 	$head[$h][1] = $langs->trans("EvaluationsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_evaluation']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'evaluationsAttributes';
 	$h++;
@@ -67,7 +67,7 @@ function hrmAdminPrepareHead()
 	$head[$h][1] = $langs->trans("JobsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_job']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'jobsAttributes';
 	$h++;
@@ -76,7 +76,7 @@ function hrmAdminPrepareHead()
 	$head[$h][1] = $langs->trans("SkillsExtraFields");
 	$nbExtrafields = $extrafields->attributes['hrm_skill']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'skillsAttributes';
 	$h++;

@@ -439,7 +439,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Date approve
-	if (!empty($object->date_approve)) {
+	if (!empty($object->date_approve) || !empty($object->date_approval)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -449,7 +449,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
 			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}

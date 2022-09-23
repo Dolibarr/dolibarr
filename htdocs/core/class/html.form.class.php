@@ -5156,6 +5156,8 @@ class Form
 				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
 			}
 
+			$postconfirmas = 'GET';
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5184,15 +5186,19 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
-            				if (pageyes.length > 0) {
-							'.$jsforcursor.'
-								var post = $.post(
+                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
+            				if (pageyes.length > 0) {';
+			if ($postconfirmas == 'GET') {
+				$formconfirm .= 'location.href = urljump;';
+			} else {
+				$formconfirm .= $jsforcursor;
+				$formconfirm .= 'var post = $.post(
 									pageyes,
 									options,
 									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
-								);
-
+								);';
+			}
+			$formconfirm .= '
 								console.log("after post ok");
 							}
 	                        $(this).dialog("close");
@@ -5211,15 +5217,20 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
+                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
                          	//alert(urljump);
-            				if (pageno.length > 0) {
-							'.$jsforcursor.'
-								var post = $.post(
+            				if (pageno.length > 0) {';
+			if ($postconfirmas == 'GET') {
+				$formconfirm .= 'location.href = urljump;';
+			} else {
+				$formconfirm .= $jsforcursor;
+				$formconfirm .= 'var post = $.post(
 									pageno,
 									options,
 									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
-								);
+								);';
+			}
+			$formconfirm .= '
 								console.log("after post ko");
 							}
                             $(this).dialog("close");
