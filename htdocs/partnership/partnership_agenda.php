@@ -37,6 +37,7 @@ $langs->loadLangs(array("partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');

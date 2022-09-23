@@ -2583,6 +2583,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_USER, null, null, null, null, 1);
 				$c = new Categorie($db);
 				$cats = $c->containing($object->id, Categorie::TYPE_USER);
+				$arrayselected = array();
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
