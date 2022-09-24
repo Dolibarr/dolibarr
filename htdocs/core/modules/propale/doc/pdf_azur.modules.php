@@ -793,7 +793,7 @@ class pdf_azur extends ModelePDFPropales
 							// Find the desire PDF
 							$filetomerge = new Propalmergepdfproduct($this->db);
 
-							if (!empty($conf->global->MAIN_MULTILANGS)) {
+							if (getDolGlobalInt('MAIN_MULTILANGS')) {
 								$filetomerge->fetch_by_product($line->fk_product, $outputlangs->defaultlang);
 							} else {
 								$filetomerge->fetch_by_product($line->fk_product);
