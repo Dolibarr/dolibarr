@@ -808,7 +808,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$objp = $db->fetch_object($resql);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) { // If multilang is enabled
+		if (getDolGlobalInt('MAIN_MULTILANGS')) { // If multilang is enabled
 			// TODO Use a cache here
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
