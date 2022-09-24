@@ -1388,6 +1388,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
+			$objecttmp->fetch_thirdparty(); //load lang from thirdparty
 			$outputlangs = $langs;
 			$newlang = '';
 
