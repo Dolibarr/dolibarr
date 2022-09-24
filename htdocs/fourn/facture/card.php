@@ -1941,7 +1941,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx');
+		print img_picto('', 'company').$form->select_company($societe->id, 'socid', '(s.fournisseur = 1 and s.status = 1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
