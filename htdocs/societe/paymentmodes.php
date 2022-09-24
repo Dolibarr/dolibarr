@@ -1548,7 +1548,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$allowgenifempty = 0;
 
 				// Language code (if multilang)
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();
