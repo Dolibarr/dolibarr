@@ -679,7 +679,7 @@ if ($id > 0 || !empty($ref)) {
 					// Product label
 					if ($objp->fk_product > 0) {
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$object->fetch_thirdparty();
 
 							$prod = new Product($db);
