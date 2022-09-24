@@ -179,7 +179,7 @@ $fieldstosearchall = array(
 
 );
 // multilang
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	$fieldstosearchall['pl.label'] = 'ProductLabelTranslated';
 	$fieldstosearchall['pl.description'] = 'ProductDescriptionTranslated';
 	$fieldstosearchall['pl.note'] = 'ProductNoteTranslated';
@@ -444,7 +444,7 @@ if (!empty($searchCategoryProductList) || !empty($catid)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
 }
 
@@ -1309,7 +1309,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $obj->rowid);

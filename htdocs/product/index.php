@@ -347,7 +347,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				}
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product = ".((int) $objp->rowid);
