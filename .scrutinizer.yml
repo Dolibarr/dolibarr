@@ -7,7 +7,7 @@ build:
             tests:
                 override:
                     - command: php-scrutinizer-run
-                      idle_timeout: 500
+                      idle_timeout: 8000
 
 imports:
     - javascript
