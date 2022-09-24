@@ -1332,7 +1332,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'lang') {
 			print '<td>';
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$selectedlang = GETPOSTISSET('langcode') ?GETPOST('langcode', 'aZ09') : $langs->defaultlang;
 				if ($context == 'edit') {
 					$selectedlang = $obj->{$value};

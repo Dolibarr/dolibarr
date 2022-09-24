@@ -256,7 +256,7 @@ if (empty($reshook)) {
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			// Define output language
 			$outputlangs = $langs;
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$outputlangs = new Translate("", $conf);
 				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
@@ -281,10 +281,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -326,8 +326,8 @@ if (empty($reshook)) {
 			} elseif (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -347,8 +347,8 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang))	$newlang = $object->thirdparty->default_lang;
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -647,10 +647,10 @@ if (empty($reshook)) {
 						if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
-							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
 							}
 							if (!empty($newlang)) {
@@ -746,7 +746,7 @@ if (empty($reshook)) {
 						$ret = $deposit->fetch($deposit->id); // Reload to get new records
 						$outputlangs = $langs;
 
-						if (!empty($conf->global->MAIN_MULTILANGS)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang($deposit->thirdparty->default_lang);
 							$outputlangs->load('products');
@@ -877,7 +877,7 @@ if (empty($reshook)) {
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			// Define output language
 			$outputlangs = $langs;
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$outputlangs = new Translate("", $conf);
 				$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 				$outputlangs->setDefaultLang($newlang);
@@ -1133,7 +1133,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1167,7 +1167,7 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -1268,7 +1268,7 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						// Define output language
 						$outputlangs = $langs;
-						if (!empty($conf->global->MAIN_MULTILANGS)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
 							$outputlangs = new Translate("", $conf);
 							$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 							$outputlangs->setDefaultLang($newlang);
@@ -1442,7 +1442,7 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					// Define output language
 					$outputlangs = $langs;
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						$outputlangs = new Translate("", $conf);
 						$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $object->thirdparty->default_lang);
 						$outputlangs->setDefaultLang($newlang);
