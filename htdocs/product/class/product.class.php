@@ -1203,7 +1203,7 @@ class Product extends CommonObject
 				$this->id = $id;
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
 						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
@@ -2495,7 +2495,7 @@ class Product extends CommonObject
 				$this->fetch_optionals();
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($ignore_lang_load)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($ignore_lang_load)) {
 					$this->getMultiLangs();
 				}
 

@@ -583,7 +583,7 @@ if (!$user->admin) {
 	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
 	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
-if (empty($conf->global->MAIN_MULTILANGS)) {
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
 }
 if ($search_label) {
@@ -706,7 +706,7 @@ if ($action == 'add') {
 			$valuetoshow = $langs->trans("Owner");
 		}
 		if ($fieldlist[$field] == 'lang') {
-			$valuetoshow = (empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language"));
+			$valuetoshow = (!getDolGlobalInt('MAIN_MULTILANGS') ? '&nbsp;' : $langs->trans("Language"));
 		}
 		if ($fieldlist[$field] == 'type') {
 			$valuetoshow = $langs->trans("Type");
@@ -1332,7 +1332,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'lang') {
 			print '<td>';
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$selectedlang = GETPOSTISSET('langcode') ?GETPOST('langcode', 'aZ09') : $langs->defaultlang;
 				if ($context == 'edit') {
 					$selectedlang = $obj->{$value};
