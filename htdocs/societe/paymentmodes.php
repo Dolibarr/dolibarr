@@ -138,6 +138,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			$error++;
 		}
+		$companybankaccount->fetch($id);
 		if ($companybankaccount->needIBAN() == 1) {
 			if (!GETPOST('iban')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
@@ -151,7 +152,6 @@ if (empty($reshook)) {
 			}
 		}
 
-		$companybankaccount->fetch($id);
 		if (!$error) {
 			$companybankaccount->socid           = $object->id;
 
