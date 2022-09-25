@@ -213,8 +213,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-if ((empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (empty($conf->supplier_invoice->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (!isModEnabled('supplier_invoice') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
 if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
