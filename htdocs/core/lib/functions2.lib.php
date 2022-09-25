@@ -416,7 +416,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_approve)) {
+		if (!empty($object->user_approve) && is_object($object->user_approve)) {
 			if ($object->user_approve->id) {
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -439,7 +439,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Date approve
-	if (!empty($object->date_approve)) {
+	if (!empty($object->date_approve) || !empty($object->date_approval)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -449,7 +449,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
 			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
@@ -508,7 +508,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User signature
-	if (!empty($object->user_signature)) {
+	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -526,7 +526,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature);
+			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -563,7 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing)) {
+	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
 		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
 			$object->user_closing = $object->user_cloture;
 		}
@@ -584,7 +584,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing);
+			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -624,7 +624,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User conciliate
-	if (!empty($object->user_rappro)) {
+	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -642,7 +642,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro);
+			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -2655,7 +2655,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
 

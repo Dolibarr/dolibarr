@@ -141,7 +141,7 @@ class MailmanSpip
 			$list,
 			$object->email,
 			$object->pass,
-			$conf->global->ADHERENT_MAILMAN_ADMINPW
+			$conf->global->ADHERENT_MAILMAN_ADMIN_PASSWORD
 		);
 
 		$curl_url = str_replace($patterns, $replace, $url);

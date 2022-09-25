@@ -23,6 +23,7 @@
  * \brief 	Page to show product attribute
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require 'class/ProductAttribute.class.php';
 require 'class/ProductAttributeValue.class.php';

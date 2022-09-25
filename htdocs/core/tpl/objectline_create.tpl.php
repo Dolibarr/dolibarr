@@ -48,6 +48,7 @@ if (!isset($dateSelector)) {
 	global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 }
 global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+
 if (!isset($dateSelector)) {
 	$dateSelector = 1; // For backward compatibility
 } elseif (empty($dateSelector)) {
@@ -64,13 +65,13 @@ if (empty($inputalsopricewithtax)) {
 }
 // Define colspan for the button 'Add'
 $colspan = 3; // Columns: total ht + col edit + col delete
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	$colspan++; //Add column for Total (currency) if required
 }
 if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 	$colspan++;
 }
 
@@ -118,7 +119,7 @@ if ($nolinesbefore) {
 		?>
 		<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 		<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
-		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
+		<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
 			<td class="linecoluht_currency right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 		<?php } ?>
 		<?php if (!empty($inputalsopricewithtax)) { ?>
@@ -192,7 +193,7 @@ if ($nolinesbefore) {
 			// Free line
 			echo '<span class="prod_entry_mode_free">';
 			// Show radio free line
-			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
@@ -218,7 +219,7 @@ if ($nolinesbefore) {
 			echo '</span>';
 		}
 		// Predefined product/service
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			if ($forceall >= 0 && $freelines) {
 				echo '<br><span class="prod_entry_mode_predef paddingtop">';
 			} else {
@@ -229,17 +230,17 @@ if ($nolinesbefore) {
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
 				if (empty($senderissupplier)) {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
+					} elseif ((empty($conf->product->enabled) && isModEnabled("service")) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
 						$labelforradio = $langs->trans('PredefinedServicesToSell');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
 					}
 				} else {
-					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && empty($conf->service->enabled)) {
 						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+					} elseif (empty($conf->product->enabled) && isModEnabled("service")) {
 						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
@@ -335,7 +336,7 @@ if ($nolinesbefore) {
 				print $hookmanager->resPrint;
 			}
 		}
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			echo '<br>';
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
@@ -355,7 +356,7 @@ if ($nolinesbefore) {
 		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
-		if (!empty($conf->service->enabled) && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
+		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
 			if (!empty($conf->global->INVOICE_REC_DATE_TO_YES)) {
@@ -398,7 +399,7 @@ if ($nolinesbefore) {
 	</td>
 
 	<?php
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		?>
 		<td class="nobottom linecoluht_currency right">
@@ -445,7 +446,7 @@ if ($nolinesbefore) {
 			?>
 			<td class="nobottom margininfos linecolmargin right">
 				<!-- For predef product -->
-				<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
+				<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 					<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp maxwidth150" style="display: none;"></select>
 				<?php } ?>
 				<!-- For free product -->
@@ -470,7 +471,7 @@ if ($nolinesbefore) {
 </tr>
 
 <?php
-if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0') {	// We show date field if required
+if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0') {	// We show date field if required
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 		print '<td></td>';
@@ -734,7 +735,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?> },
 					function(data) {
-						console.log("Load unit price end, we got value "+data.price_ht);
+						console.log("Load unit price end, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 
 						$('#date_start').removeAttr('type');
 						$('#date_end').removeAttr('type');
@@ -755,10 +756,14 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
 
-						jQuery("#price_ht").val(data.price_ht);
+						if (<?php echo (int) $inputalsopricewithtax; ?> == 1 && data.pricebasetype == 'TTC') {
+							jQuery("#price_ttc").val(data.price_ttc);
+						} else {
+							jQuery("#price_ht").val(data.price_ht);
+						}
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
-							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
+							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
 							} else { ?>

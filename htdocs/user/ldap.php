@@ -22,6 +22,7 @@
  *      \brief      Page fiche LDAP utilisateur
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -89,12 +90,15 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader();
+$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+$title = $person_name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url);
 
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-print dol_get_fiche_head($head, 'ldap', $title, 0, 'user');
+print dol_get_fiche_head($head, 'ldap', $title, -1, 'user');
 
 $linkback = '';
 
@@ -107,7 +111,7 @@ dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $use
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';

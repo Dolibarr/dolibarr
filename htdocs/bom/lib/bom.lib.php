@@ -134,6 +134,8 @@ function bomPrepareHead($object)
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom');
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom', 'remove');
+
 	return $head;
 }
 

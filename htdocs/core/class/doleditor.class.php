@@ -68,7 +68,7 @@ class DolEditor
 	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
 	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
 	 */
-	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = 1, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
 	{
 		global $conf, $langs;
 
@@ -152,7 +152,7 @@ class DolEditor
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
-			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled)) {
+			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && isModEnabled('fckeditor')) {
 				if (!defined('REQUIRE_CKEDITOR')) {
 					define('REQUIRE_CKEDITOR', '1');
 				}
@@ -163,7 +163,7 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-				$pluginstodisable = 'elementspath,save,flash';
+				$pluginstodisable = 'elementspath,save,flash,div';
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}

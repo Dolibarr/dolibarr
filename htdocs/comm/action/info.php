@@ -22,13 +22,14 @@
  *		\brief      Page des informations d'une action
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -86,7 +87,7 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 //$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	$morehtmlref .= $langs->trans('Project').': ';

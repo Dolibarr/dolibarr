@@ -1,7 +1,38 @@
 ----- Dolibarr Makepack How To -----
 This documentation describe steps to build a BETA or RELEASE versions
-of Dolibarr. There is a chapter for BETA version and a chapter for 
-RELEASE version.
+of Dolibarr. There is a chapter for BETA version and a chapter for RELEASE version.
+
+
+***** Prerequisites For Linux *****
+
+Prerequisites to build tgz, debian and rpm packages:
+> apt-get install perl tar dpkg dpatch p7zip-full rpm zip php-cli
+
+Prerequisites to build autoexe DoliWamp package from Linux (solution seems broken since Ubuntu 20.04):
+> apt-get install wine q4wine
+> Launch "wine cmd" to check a drive Z: pointing to / exists.
+> Install InnoSetup
+   For example by running isetup-5.5.8.exe (https://www.jrsoftware.org)  https://files.jrsoftware.org/is/5/
+> Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB
+   For example by running wampserver3.2.6_x64.exe (https://www.wampserver.com). 
+   See file build/exe/doliwamp.iss to know the doliwamp version currently setup.
+> Add path to ISCC into PATH windows var:
+  Launch wine cmd, then regedit and add entry int HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH
+> To build manually the .exe from Windows (running from makepack-dolibarr.pl script is however recommanded), 
+  open file build/exe/doliwamp.iss and click on button "Compile".
+  The .exe file will be build into directory build.
+
+
+***** Prerequisites For Windows *****
+
+Prerequisites to build autoexe DoliWamp package from Windows:
+
+Install Perl for Windwos (https://strawberryperl.com/)
+Install isetup-5.5.8.exe (https://www.jrsoftware.org)
+Install WampServer-3.2.*-64.exe (Apache 2.4.51, PHP 7.3.33, MariaDB 10.6.5 for example. Version must match the values found into doliwamp.iss)
+Install GIT for Windows (https://git-scm.com/)
+Install Dolibarr verions:   git clone https://github.com/dolibarr/dolibarr
+
 
 ***** Actions to do a BETA *****
 This files describe steps made by Dolibarr packaging team to make a 

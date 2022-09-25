@@ -24,6 +24,7 @@
  *      \brief      Page d'affichage des infos d'une proposition commerciale
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
@@ -48,18 +49,15 @@ $result = restrictedArea($user, 'supplier_proposal', $id);
 /*
  *	View
  */
-
 $form = new Form($db);
-
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Info');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $object = new SupplierProposal($db);
 $object->fetch($id);
 $object->fetch_thirdparty();
-
 $object->info($object->id);
+
+$title = $object->ref." - ".$langs->trans('Info');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 
 $head = supplier_proposal_prepare_head($object);

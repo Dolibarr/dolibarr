@@ -26,6 +26,7 @@
  *       \brief      Management page of documents attached to a business proposal
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
@@ -90,7 +91,7 @@ if ($object->id > 0) {
  * View
  */
 
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Documents');
+$title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 

@@ -12,7 +12,7 @@ OpenEtablishment=Abrir establecemento
 CloseEtablishment=Pechar establecemento
 # Dictionary
 DictionaryPublicHolidays=Permisos- Días Festivos
-DictionaryDepartment=RRHH - Listaxe Departamentos
+DictionaryDepartment=HRM - Unidade Organizativa
 DictionaryFunction=RRHH - Postos de traballo
 # Module
 Employees=Empregados
@@ -70,9 +70,9 @@ RequiredSkills=Competencias precisas para este traballo
 UserRank=Rango de usuario 
 SkillList=Listaxe de competencias
 SaveRank=Gardar rango 
-knowHow=Coñecemento
-HowToBe=Como ser 
-knowledge=Coñecemento 
+TypeKnowHow=Coñecemento
+TypeHowToBe=Como ser 
+TypeKnowledge=Coñecemento 
 AbandonmentComment=Comentario de abandono 
 DateLastEval=Data da última avaliación
 NoEval=Non se fixo ningunha avaliación para este empregado 
@@ -88,3 +88,5 @@ DeleteSkill = Competencia eliminada
 SkillsExtraFields=Atributos adicionais (Competencias)
 JobsExtraFields=Atributos adicionais (Postos)
 EvaluationsExtraFields=Atributos adicionais (avaliacións)
+NeedBusinessTravels=Precisa viaxes de negocios
+NoDescription=Sen descrición

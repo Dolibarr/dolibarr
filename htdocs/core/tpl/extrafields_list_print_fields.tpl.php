@@ -67,7 +67,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
 					}
-					if (is_numeric($obj->$tmpkey)) {
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
+						if (!isset($totalarray['totalizable'][$key]['total'])) {
+							$totalarray['totalizable'][$key]['total'] = 0;
+						}
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}

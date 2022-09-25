@@ -64,7 +64,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>!empty($user->rights->stock->lire), 'module'=>'product|service|stock');
+		$tmpentry = array('enabled'=>((isModEnabled("product") || isModEnabled("service")) && !empty($conf->stock->enabled)), 'perms'=>!empty($user->rights->stock->lire), 'module'=>'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -126,7 +126,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$price_base_type = '';
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);

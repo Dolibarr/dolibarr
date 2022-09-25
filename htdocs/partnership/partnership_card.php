@@ -42,7 +42,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'partnershipcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Partnership($db);
@@ -83,8 +83,8 @@ $managedfor 			= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
-if ($object->id > 0 && $object->fk_member > 0 && $managedfor != 'member') accessforbidden();
-if ($object->id > 0 && $object->fk_soc > 0 && $managedfor != 'thirdparty') accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
 
 /*
@@ -129,10 +129,10 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -161,10 +161,10 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -406,7 +406,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->project->enabled)) {
+	 if (!empty($conf->project->enabled)) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
@@ -424,7 +424,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();
@@ -434,6 +434,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }*/
 	$morehtmlref .= '</div>';
+	if (!isset($npfilter)) {
+		$npfilter = "";
+	}
 
 	if ($managedfor == 'member') $npfilter .= " AND te.fk_member > 0 "; else $npfilter .= " AND te.fk_soc > 0 ";
 	$object->next_prev_filter = $npfilter;

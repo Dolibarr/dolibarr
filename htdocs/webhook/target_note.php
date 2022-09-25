@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2022      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,81 +17,33 @@
  */
 
 /**
- *  \file       target_note.php
- *  \ingroup    webhook
- *  \brief      Tab for notes on Target
+ *    \file       htdocs/webhook/target_note.php
+ *    \ingroup    webhook
+ *    \brief      Tab for notes on Target
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
-
 // Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
-
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "companies"));
+$langs->loadLangs(array('companies'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 // Initialize technical objects
 $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('targetnote', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -101,7 +53,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->webhook->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-
+// Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
@@ -120,8 +72,9 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('webhook') || !$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -144,7 +97,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
+//$help_url='EN:Webhooks|FR:Webhooks_FR|ES:Webhooks_ES';
 $help_url = '';
 $title = $langs->trans('Target').' - '.$langs->trans("Notes");
 llxHeader('', $title, $help_url);
@@ -168,7 +121,7 @@ if ($id > 0 || !empty($ref)) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->projet->enabled))
+	 if (!empty($conf->projet->enabled))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -189,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();

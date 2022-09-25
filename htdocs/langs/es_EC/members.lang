@@ -16,7 +16,6 @@ MembersListResiliated=Lista de miembros terminados
 MembersListQualified=Lista de miembros calificados
 MenuMembersToValidate=Miembros del draft
 MenuMembersResiliated=Miembros terminados
-MemberId=Identificación de miembro
 MemberTypeId=ID del tipo de miembro
 MemberTypeLabel=Etiqueta del tipo de miembro
 MemberStatusDraft=Proyecto (necesita ser validado)

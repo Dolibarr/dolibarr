@@ -28,6 +28,7 @@ if (!defined('NOSTYLECHECK')) {
 	define('NOSTYLECHECK', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -220,6 +221,7 @@ if (empty($reshook)) {
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
+						$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
 						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($obj->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("MailUnsubcribe").'</a>';
 						$substitutionarray['__UNSUBSCRIBE_URL__'] = DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid;
@@ -258,7 +260,7 @@ if (empty($reshook)) {
 							}
 						}
 						if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((!empty($conf->multicompany->enabled)) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
+							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
 						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
@@ -475,7 +477,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$trackid = 'emailingtest';
+			$trackid = 'emailing-test';
 			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing');
 
 			$result = $mailfile->sendfile();
@@ -801,13 +803,20 @@ if ($action == 'create') {
 				// MAILING_NO_USING_PHPMAIL may be defined or not.
 				// MAILING_LIMIT_SENDBYWEB is always defined to something != 0 (-1=forbidden).
 				// MAILING_LIMIT_SENDBYCLI may be defined ot not (-1=forbidden, 0 or undefined=no limit).
+				// MAILING_LIMIT_SENDBYDAY may be defined ot not (0 or undefined=no limit).
 				if (!empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail') {
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
 					// You ensure that every user is using its own SMTP server when using the mass emailing module.
 					$linktoadminemailbefore = '<a href="'.DOL_URL_ROOT.'/admin/mails_emailing.php">';
 					$linktoadminemailend = '</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
-					setEventMessages($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), null, 'warnings');
+					$messagetoshow = $langs->trans("MailSendSetupIs2", '{s1}', '{s2}', '{s3}', '{s4}');
+					$messagetoshow = str_replace('{s1}', $linktoadminemailbefore, $messagetoshow);
+					$messagetoshow = str_replace('{s2}', $linktoadminemailend, $messagetoshow);
+					$messagetoshow = str_replace('{s3}', $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $messagetoshow);
+					$messagetoshow = str_replace('{s4}', $listofmethods['smtps'], $messagetoshow);
+					setEventMessages($messagetoshow, null, 'warnings');
+
 					if (!empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) {
 						setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					}
@@ -836,14 +845,21 @@ if ($action == 'create') {
 					}
 
 					$text = '';
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0) {
-						$text .= $langs->trans("MailingNeedCommand");
-						$text .= '<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
+
+					if (isset($conf->global->MAILING_LIMIT_SENDBYDAY) && $conf->global->MAILING_LIMIT_SENDBYDAY >= 0) {
+						$text .= $langs->trans('WarningLimitSendByDay', $conf->global->MAILING_LIMIT_SENDBYDAY);
 						$text .= '<br><br>';
 					}
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
 					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 330, 600);
+
+					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0) {
+						$text .= '<br><br>';
+						$text .= $langs->trans("MailingNeedCommand");
+						$text .= '<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
+					}
+
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 330, 600, 0, $langs->trans("Confirm"), $langs->trans("Cancel"));
 				}
 			}
 
@@ -966,7 +982,7 @@ if ($action == 'create') {
 				}
 
 				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer) {
-					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
+					if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';

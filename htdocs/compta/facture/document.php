@@ -27,6 +27,7 @@
  *	\brief      Page for attached files on invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -92,21 +93,24 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
+$form = new Form($db);
+
 if (empty($object->id)) {
-	llxHeader();
-	$langs->load('errors');
-	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
-	llxFooter();
-	exit;
+	$title = $langs->trans('Documents');
+} else {
+	$title = $object->ref." - ".$langs->trans('Documents');
 }
-
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
-
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);
 
-$form = new Form($db);
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+
+	llxFooter();
+	exit;
+}
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
@@ -138,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {

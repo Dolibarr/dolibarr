@@ -9,12 +9,13 @@ HasAccessToken=Беше генериран и съхранен токен в л�
 NewTokenStored=Токенът е получен и съхранен
 ToCheckDeleteTokenOnProvider=Кликнете тук, за да проверите / изтриете разрешение, съхранено от %s OAuth доставчик
 TokenDeleted=Токенът е изтрит
-RequestAccess=Кликнете тук, за да заявите / подновите достъпа и да получите нов токен, който да запазите
+RequestAccess=Click here to request/renew access and receive a new token
 DeleteAccess=Кликнете тук, за да изтриете токенът
 UseTheFollowingUrlAsRedirectURI=Използвайте следния URL адрес като URI за пренасочване, когато създавате идентификационни данни през вашият доставчик на OAuth:
-ListOfSupportedOauthProviders=Въведете идентификационните данни, предоставени от вашият OAuth2 доставчик. Тук са изброени поддържаните OAuth2 доставчици. Тези услуги могат да бъдат използвани от други модули, които се нуждаят от OAuth2 удостоверяване.
-OAuthSetupForLogin=Страница за генериране на OAuth токен
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Вижте предишния раздел
+OAuthProvider=OAuth provider
 OAuthIDSecret=OAuth ID и Secret
 TOKEN_REFRESH=Налично е опресняване на токен
 TOKEN_EXPIRED=Токенът е изтекъл
@@ -23,10 +24,13 @@ TOKEN_DELETE=Изтриване на съхранен токен
 OAUTH_GOOGLE_NAME=OAuth услуга на Google
 OAUTH_GOOGLE_ID=OAuth Google идентификатор
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Отидете на <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">тази страница</a> след това 'Удостоверения', за да създадете OAuth удостоверения
 OAUTH_GITHUB_NAME=OAuth услуга на GitHub
 OAUTH_GITHUB_ID=OAuth GitHub идентификатор
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Отидете на <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">тази страница</a> след това 'Регистриране на ново приложение', за да създадете OAuth удостоверения
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe тест
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

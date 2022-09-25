@@ -26,11 +26,17 @@
  *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
+// Load Dolibarr environment
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
+
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
@@ -46,11 +52,11 @@ if ($socid > 0) {
 }
 
 // Sort & Order fields
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$optioncss = GETPOST('optioncss', 'alpha');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield 	= GETPOST('sortfield', 'aZ09comma');
+$sortorder 	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -78,12 +84,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$year = '';
 	$month = '';
 }
+
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id", 'az09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
-// Load translation files required by the page
-$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
@@ -162,16 +167,16 @@ if ($object->client) {
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
 	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
@@ -199,10 +204,10 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
+	if ((isModEnabled('fournisseur') && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 	if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
@@ -361,7 +366,8 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
+		// We test both case description is correctly saved of was save after dol_escape_htmltag().
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_escape_htmltag($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}
@@ -529,7 +535,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
@@ -644,9 +650,9 @@ if ($sql_select) {
 		// Show range
 		$prodreftxt .= get_date_range($objp->date_start, $objp->date_end);
 		// Add description in form
-		if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
 		{
-			$prodreftxt .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+			$prodreftxt .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 		}
 		*/
 		print '</td>';

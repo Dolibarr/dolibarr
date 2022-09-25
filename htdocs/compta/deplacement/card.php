@@ -25,11 +25,12 @@
  *  \brief      Page to show a trip card
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -422,7 +423,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load('projects');
 				print '<tr>';
 				print '<td>';

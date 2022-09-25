@@ -25,6 +25,7 @@
  *  \brief      Page to list replenishment orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -217,13 +218,13 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
 	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
@@ -322,7 +323,7 @@ if ($resql) {
 
 			// Company
 			$href = DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid;
-			print '<td><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name).'"><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
 
 			// Author
 			$userstatic->id = $obj->fk_user_author;

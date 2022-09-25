@@ -35,10 +35,10 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobjectline.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -70,12 +70,6 @@ class Reception extends CommonObject
 
 	public $socid;
 	public $ref_supplier;
-
-	/**
-	 * @var int		Ref int
-	 * @deprecated
-	 */
-	public $ref_int;
 
 	public $brouillon;
 	public $entrepot_id;
@@ -149,11 +143,11 @@ class Reception extends CommonObject
 		$this->statuts[2]  = 'StatusReceptionProcessed';
 
 		// List of short language codes for status
-		$this->statutshorts = array();
-		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
-		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
-		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
-		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
+		$this->statuts_short = array();
+		$this->statuts_short[-1] = 'StatusReceptionCanceledShort';
+		$this->statuts_short[0]  = 'StatusReceptionDraftShort';
+		$this->statuts_short[1]  = 'StatusReceptionValidatedShort';
+		$this->statuts_short[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -365,13 +359,10 @@ class Reception extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-	 * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
+	public function fetch($id, $ref = '', $ref_ext = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext)) {
 			return -1;
@@ -397,9 +388,6 @@ class Reception extends CommonObject
 		}
 		if ($ref_ext) {
 			$sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-		}
-		if ($notused) {
-			$sql .= " AND e.ref_int='".$this->db->escape($notused)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -456,8 +444,8 @@ class Reception extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				$file = $conf->reception->dir_output."/".get_exdir($this->id, 2, 0, 0, $this, 'reception')."/".$this->id.".pdf";
-				$this->pdf_filename = $file;
+				//$file = $conf->reception->dir_output."/".get_exdir(0, 0, 0, 1, $this, 'reception')."/".$this->id.".pdf";
+				//$this->pdf_filename = $file;
 
 				// Tracking url
 				$this->getUrlTrackingStatus($obj->tracking_number);
@@ -846,6 +834,21 @@ class Reception extends CommonObject
 			}
 		}
 
+		// Check batch is set
+		$product = new Product($this->db);
+		$product->fetch($fk_product);
+		if (isModEnabled('productbatch')) {
+			$langs->load("errors");
+			if (!empty($product->status_batch) && empty($batch)) {
+				$this->error = $langs->trans('ErrorProductNeedBatchNumber', $product->ref);
+				return -1;
+			} elseif (empty($product->status_batch) && !empty($batch)) {
+				$this->error = $langs->trans('ErrorProductDoesNotNeedBatchNumber', $product->ref);
+				return -1;
+			}
+		}
+		unset($product);
+
 		// extrafields
 		$line->array_options = $supplierorderline->array_options;
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) {
@@ -864,6 +867,7 @@ class Reception extends CommonObject
 		$line->status = 1;
 		$line->cost_price = $cost_price;
 		$line->fk_reception = $this->id;
+
 		$this->lines[$num] = $line;
 
 		return $num;
@@ -1161,9 +1165,11 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($this->db);
 
 				$line->fetch($obj->rowid);
+
+				// TODO Remove or keep this ?
 				$line->fetch_product();
 
-				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
+				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$sql_commfourndet .= ' ORDER BY rang';
@@ -1181,6 +1187,9 @@ class Reception extends CommonObject
 					$line->remise_percent = $obj->remise_percent;
 					$line->label = !empty($obj->label) ? $obj->label : $line->product->label;
 					$line->ref_supplier = $obj->ref;
+					$line->total_ht = $obj->total_ht;
+					$line->total_ttc = $obj->total_ttc;
+					$line->total_tva = $obj->total_tva;
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
@@ -1288,7 +1297,7 @@ class Reception extends CommonObject
 		global $langs;
 
 		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statutshorts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {

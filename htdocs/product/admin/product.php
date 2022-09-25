@@ -30,6 +30,7 @@
  *  \brief      Setup page of product module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -338,7 +339,7 @@ foreach ($dirproduct as $dirroot) {
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
@@ -556,7 +557,7 @@ print '</tr>';
 // Rule for price
 
 print '<tr class="oddeven">';
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	print '<td>'.$langs->trans("PricingRule").'</td>';
 } else {
 	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
@@ -596,9 +597,10 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+// Use conditionnement in buying
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
 	print '<td align="right">';
 	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
 	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
@@ -714,7 +716,7 @@ print '</tr>';
 */
 
 // View product description in thirdparty language
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';

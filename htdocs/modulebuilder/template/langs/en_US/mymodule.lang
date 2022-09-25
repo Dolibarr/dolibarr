@@ -44,6 +44,7 @@ MyModuleAboutPage = MyModule about page
 #
 # Sample page
 #
+MyModuleArea = Home MyModule
 MyPageName = My page name
 
 #

@@ -379,7 +379,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			$message = dol_nl2br($message);
 		}
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
-		$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+		$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
@@ -387,10 +387,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$trackid = 'tic'.$object->id;
 
+		$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
+
 		if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-			$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 			$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message_customer, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', $trackid, '', 'ticket');
 		if ($mailfile->error) {

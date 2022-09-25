@@ -21,6 +21,7 @@
  *	\brief      Setup page of module MRP
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -465,7 +466,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_MRP_MO_DRAFT_WATERMARK
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftMOs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="MRP_MO_DRAFT_WATERMARK" value="'.$conf->global->MRP_MO_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="MRP_MO_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('MRP_MO_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

@@ -24,14 +24,15 @@
  *  \brief      Loan card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -244,7 +245,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -274,7 +275,7 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth300" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'" autofocus="autofocus"></td></tr>';
 
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
@@ -309,7 +310,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="'.dol_escape_htmltag(GETPOST("insurance_amount")).'" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
 		// Projet associe
@@ -341,7 +342,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Accountancy
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
@@ -424,7 +425,7 @@ if ($id > 0) {
 		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, $user->rights->loan->write, 'string', '', null, null, '', 1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->loadLangs(array("projects"));
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->loan->write) {
@@ -473,7 +474,7 @@ if ($id > 0) {
 			print '<input name="capital" size="10" value="'.$object->capital.'"></td></tr>';
 			print '</td></tr>';
 		} else {
-			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td><span class="amount">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Insurance
@@ -482,7 +483,7 @@ if ($id > 0) {
 			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
 			print '</td></tr>';
 		} else {
-			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td><span class="amount">'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</span></td></tr>';
 		}
 
 		// Date start
@@ -532,7 +533,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
@@ -543,7 +544,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_capital, 1);
 
@@ -563,7 +564,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
@@ -574,7 +575,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_insurance, 1);
 
@@ -594,7 +595,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
 			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
@@ -605,7 +606,7 @@ if ($id > 0) {
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $object->account_interest, 1);
 

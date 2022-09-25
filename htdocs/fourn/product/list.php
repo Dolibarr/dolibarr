@@ -21,18 +21,24 @@
  */
 
 /**
- *		\file       htdocs/fourn/product/list.php
- *		\ingroup    produit
- *		\brief      Page to list supplier products and services
+ *    \file       htdocs/fourn/product/list.php
+ *    \ingroup    product
+ *    \brief      Page to list supplier products and services
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
-$langs->loadLangs(array("products", "suppliers"));
 
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers'));
+
+
+// Get Parameters
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
@@ -72,7 +78,8 @@ if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) 
 	accessforbidden();
 }
 
-$permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'));
+// Permissions
+$permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 
 /*
@@ -110,6 +117,7 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 }
+
 
 /*
  * View

@@ -26,6 +26,7 @@
  *	\brief      Fiche d'information sur une proposition commerciale
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
@@ -72,10 +73,6 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequest')." - ".$langs->trans('Notes');
-$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
-llxHeader('', $title, $help_url);
-
 $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
@@ -87,6 +84,10 @@ if ($id > 0 || !empty($ref)) {
 
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
+
+		$title = $object->ref." - ".$langs->trans('Notes');
+		$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+		llxHeader('', $title, $help_url);
 
 		$societe = new Societe($db);
 		if ($societe->fetch($object->socid)) {

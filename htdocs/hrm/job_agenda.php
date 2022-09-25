@@ -20,24 +20,24 @@
  */
 
 /**
- *  \file       job_agenda.php
- *  \ingroup    hrm
- *  \brief      Tab of events on Job
+ *    \file       htdocs/hrm/job_agenda.php
+ *    \ingroup    hrm
+ *    \brief      Tab of events on Job
  */
 
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -87,8 +87,9 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -133,7 +134,7 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'EN:Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 

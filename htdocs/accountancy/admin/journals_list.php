@@ -26,6 +26,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -45,7 +46,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -123,7 +124,7 @@ $tabrowid[35] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[35] = !empty($conf->accounting->enabled);
+$tabcond[35] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();

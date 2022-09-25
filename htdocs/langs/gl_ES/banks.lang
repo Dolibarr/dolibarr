@@ -185,3 +185,4 @@ AlreadyOneBankAccount=Xa foi definida unha conta bancaria
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Transferencia SEPA: "Tipo de pagamento" no nivel "Transferencia de crédito".
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Cando se xera un ficheiro XML SEPA para pagamento por transferencia, agora pódese colocar a sección "PaymentTypeInformation" dentro da sección "CreditTransferTransactionInformation" (en lugar da sección "Pagamento"). Recomendamos encarecidamente que non se marque esta opción para colocar PaymentTypeInformation a nivel de pagamento, xa que todos os bancos non a aceptarán necesariamente o nivel de CreditTransferTransactionInformation. Poñase en contacto co seu banco antes de colocar PaymentTypeInformation no nivel CreditTransferTransactionInformation.
 ToCreateRelatedRecordIntoBank=Para crear un rexistro bancario relacionado que falta
+BanklineExtraFields=Campos extra da liña bancaria

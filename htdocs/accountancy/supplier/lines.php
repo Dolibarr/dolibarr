@@ -89,7 +89,7 @@ if (!$sortorder) {
 $formaccounting = new FormAccounting($db);
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
