@@ -94,7 +94,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+	if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -115,7 +115,7 @@ function product_prepare_head($object)
 	}
 
 	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
-		if (!empty($conf->stock->enabled) && $user->rights->stock->lire) {
+		if (isModEnabled('stock') && $user->rights->stock->lire) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
@@ -547,7 +547,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (!empty($conf->bom->enabled) && $user->rights->bom->read) {
+	if (isModEnabled('bom') && $user->rights->bom->read) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {

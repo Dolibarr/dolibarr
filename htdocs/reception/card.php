@@ -752,7 +752,7 @@ if ($action == 'create') {
 			$author = new User($db);
 			$author->fetch($objectsrc->user_author_id);
 
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$entrepot = new Entrepot($db);
 			}
 
@@ -1039,7 +1039,7 @@ if ($action == 'create') {
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
 				print '</td>';
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 				}
 				if (isModEnabled('productbatch')) {
@@ -1173,7 +1173,7 @@ if ($action == 'create') {
 
 
 				$warehouseObject = null;
-				if (!empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if (isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					print '<!-- Case warehouse already known or product not a predefined product -->';
 
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
@@ -1200,7 +1200,7 @@ if ($action == 'create') {
 					}
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="left">';
 						if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {   // Type of product need stock change ?
 							// Show warehouse combo list
@@ -1323,7 +1323,7 @@ if ($action == 'create') {
 
 			$text = $langs->trans("ConfirmValidateReception", $numref);
 
-			if (!empty($conf->notification->enabled)) {
+			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
@@ -1686,7 +1686,7 @@ if ($action == 'create') {
 		}
 		if ($action == 'editline') {
 			$editColspan = 3;
-			if (empty($conf->stock->enabled)) {
+			if (!isModEnabled('stock')) {
 				$editColspan--;
 			}
 			if (empty($conf->productbatch->enabled)) {
@@ -1698,7 +1698,7 @@ if ($action == 'create') {
 			} else {
 				print $langs->trans("QtyReceived").' - ';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print $langs->trans("WarehouseSource").' - ';
 			}
 			if (isModEnabled('productbatch')) {
@@ -1718,7 +1718,7 @@ if ($action == 'create') {
 			} else {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
@@ -1889,7 +1889,7 @@ if ($action == 'create') {
 								print ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
-								if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
+								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
 									$warehousestatic->fetch($receptionline_var['warehouse']);
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
@@ -1904,7 +1904,7 @@ if ($action == 'create') {
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
 				print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					if ($lines[$i]->fk_product > 0) {
 						print '<!-- case edit 1 -->';
 						print '<tr>';
@@ -1944,7 +1944,7 @@ if ($action == 'create') {
 				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					if ($lines[$i]->fk_entrepot > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->fk_entrepot);

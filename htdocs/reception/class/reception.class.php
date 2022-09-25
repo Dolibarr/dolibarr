@@ -546,7 +546,7 @@ class Reception extends CommonObject
 		}
 
 		// If stock increment is done on reception (recommanded choice)
-		if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$langs->load("agenda");
@@ -824,7 +824,7 @@ class Reception extends CommonObject
 		}
 
 		$fk_product = 0;
-		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product)) {
+		if (isModEnabled('stock') && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 
 			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS)) {
@@ -1554,7 +1554,7 @@ class Reception extends CommonObject
 
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1719,7 +1719,7 @@ class Reception extends CommonObject
 			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$numref = $this->ref;
 				$langs->load("agenda");
@@ -1851,7 +1851,7 @@ class Reception extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");

@@ -370,7 +370,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel minwidth400', 'value' => '')				// Field to complete private note (not replace)
 		);
 
-		// if (!empty($conf->notification->enabled)) {
+		// if (isModEnabled('notification')) {
 		// 	require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 		// 	$notify = new Notify($db);
 		// 	$formquestion = array_merge($formquestion, array(

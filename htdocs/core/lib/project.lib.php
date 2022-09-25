@@ -127,7 +127,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || isModEnabled('contrat')
-		|| !empty($conf->ficheinter->enabled) || isModEnabled('agenda') || isModEnabled('deplacement') || !empty($conf->stock->enabled)) {
+		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -135,7 +135,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
 		} else {
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
 			}
 			if (isModEnabled("propal")) {
@@ -162,7 +162,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('contrat')) {
 				$nbElements += $project->getElementCount('contract', 'contrat');
 			}
-			if (!empty($conf->ficheinter->enabled)) {
+			if (isModEnabled('ficheinter')) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
 			if (isModEnabled("expedition")) {
@@ -177,7 +177,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('expensereport')) {
 				$nbElements += $project->getElementCount('expensereport', 'expensereport');
 			}
-			if (!empty($conf->don->enabled)) {
+			if (isModEnabled('don')) {
 				$nbElements += $project->getElementCount('donation', 'don');
 			}
 			if (!empty($conf->loan->enabled)) {
@@ -189,7 +189,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('project')) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
 			if (!empty($conf->salaries->enabled)) {

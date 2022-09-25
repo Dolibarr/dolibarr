@@ -91,7 +91,7 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
-	if (!empty($conf->don->enabled) && $user->rights->don->lire) {
+	if (isModEnabled('don') && $user->rights->don->lire) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
 

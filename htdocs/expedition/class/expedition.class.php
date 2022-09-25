@@ -707,7 +707,7 @@ class Expedition extends CommonObject
 		}
 
 		// If stock increment is done on sending (recommanded choice)
-		if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$langs->load("agenda");
@@ -913,7 +913,7 @@ class Expedition extends CommonObject
 		$line->rang = $orderline->rang;
 		$line->product_type = $orderline->product_type;
 
-		if (!empty($conf->stock->enabled) && !empty($orderline->fk_product)) {
+		if (isModEnabled('stock') && !empty($orderline->fk_product)) {
 			$fk_product = $orderline->fk_product;
 
 			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS)) {
@@ -2150,7 +2150,7 @@ class Expedition extends CommonObject
 			$this->status = self::STATUS_CLOSED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -2327,7 +2327,7 @@ class Expedition extends CommonObject
 			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");

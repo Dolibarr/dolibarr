@@ -352,7 +352,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 		$rowspan++; $sectionauto[] = array('position'=>130, 'level'=>1, 'module'=>'project', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
 		$rowspan++; $sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
-	if (!empty($conf->ficheinter->enabled)) {
+	if (isModEnabled('ficheinter')) {
 		$langs->load("interventions");
 		$rowspan++; $sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
