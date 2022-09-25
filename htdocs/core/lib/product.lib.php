@@ -94,7 +94,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+	if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
