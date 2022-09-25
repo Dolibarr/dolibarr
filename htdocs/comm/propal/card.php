@@ -64,7 +64,7 @@ $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'pro
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 
@@ -2737,7 +2737,7 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		$formmargin->displayMarginInfos($object);
 	}
 
