@@ -211,7 +211,7 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('agenda')) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
-if (!empty($conf->ticket->enabled)) {
+if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
 }
 

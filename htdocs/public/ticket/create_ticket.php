@@ -91,7 +91,7 @@ if (!empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) 
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if (empty($conf->ticket->enabled)) {
+if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 
