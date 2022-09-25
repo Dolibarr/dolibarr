@@ -892,6 +892,7 @@ class BookKeeping extends CommonObject
 		// Affichage par compte comptable
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' AND t.subledger_account != ""';
 			$sql .= ' ORDER BY t.subledger_account ASC';
 		} else {
 			$sql .= ' ORDER BY t.numero_compte ASC';
