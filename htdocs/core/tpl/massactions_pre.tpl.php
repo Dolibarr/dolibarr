@@ -283,29 +283,6 @@ if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }
 
-if ($massaction == 'preincreaseholiday') {
-	$langs->load("holiday", "hrm");
-	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-	$staticholiday = new Holiday($db);
-	$arraytypeholidays = $staticholiday->getTypes(1, 1);
-	$formquestion[] = array();
-	$labeltypes = array();
-	foreach ($typeleaves as $key => $val) {
-		$labeltypes[$val['id']] = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-	}
-	$formquestion [] = array( 'type' => 'other',
-		'name' => 'typeofholiday',
-		'label' => $langs->trans("Type"),
-		'value' => $form->selectarray('typeholiday', $labeltypes, GETPOST('typeholiday', 'alpha'), 1)
-	);
-	$formquestion [] = array( 'type' => 'other',
-		'name' => 'nbdaysholydays',
-		'label' => $langs->trans("NumberDayAddMass"),
-		'value' => '<input name="nbdaysholidays"  id="nbdaysholidays" value="'.GETPOST('nbdaysholidays', 'int').'">'
-	);
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassIncreaseHoliday"), $langs->trans("ConfirmMassIncreaseHolidayQuestion", count($toselect)), "increaseholiday", $formquestion, 1, 0, 200, 500, 1);
-}
-
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,

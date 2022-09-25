@@ -124,7 +124,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	// Si il y a une action de mise à jour
+	// If there is an update action
 	if ($action == 'update' && GETPOSTISSET('update_cp')) {
 		$error = 0;
 		$nbok = 0;
@@ -244,6 +244,29 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorde
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if ($massaction == 'preincreaseholiday') {
+	$langs->load("holiday", "hrm");
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$staticholiday = new Holiday($db);
+	$arraytypeholidays = $staticholiday->getTypes(1, 1);
+	$formquestion[] = array();
+	$labeltypes = array();
+	foreach ($typeleaves as $key => $val) {
+		$labeltypes[$val['id']] = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
+	}
+	$formquestion [] = array( 'type' => 'other',
+		'name' => 'typeofholiday',
+		'label' => $langs->trans("Type"),
+		'value' => $form->selectarray('typeholiday', $labeltypes, GETPOST('typeholiday', 'alpha'), 1)
+	);
+	$formquestion [] = array( 'type' => 'other',
+		'name' => 'nbdaysholydays',
+		'label' => $langs->trans("NumberDayAddMass"),
+		'value' => '<input name="nbdaysholidays" class="maxwidth75" id="nbdaysholidays" value="'.GETPOST('nbdaysholidays', 'int').'">'
+	);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassIncreaseHoliday"), $langs->trans("ConfirmMassIncreaseHolidayQuestion", count($toselect)), "increaseholiday", $formquestion, 1, 0, 200, 500, 1);
+}
+
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
 if ($lastUpdate) {
@@ -298,11 +321,13 @@ if (count($typeleaves) == 0) {
 	print '<tr class="liste_titre_filter">';
 
 	// User
-	print '<td class="liste_titre"><input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'"></td>';
+	print '<td class="liste_titre">';
+	print '<input type="text" name="search_name" value="'.dol_escape_htmltag($search_name).'" class="maxwidth100">';
+	print '</td>';
 
 	// Supervisor
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
 	print '</td>';
 
 	// Type of leave request
