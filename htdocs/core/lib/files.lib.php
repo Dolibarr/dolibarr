@@ -2948,7 +2948,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if (($fuser->rights->stock->{$lire} || $fuser->rights->stock->movement->{$lire} || $fuser->rights->stock->mouvement->{$lire}) || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 		}
 	} elseif ($modulepart == 'contract' && !empty($conf->contrat->multidir_output[$entity])) {
@@ -2992,10 +2992,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for import module
 		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
-	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_temp)) {
-			// Wrapping for recruitment module
-		$accessallowed = $user->rights->$modulepart->recruitmentjobposition->read;
-		$original_file = $conf->recruitment->dir_output .'/'. $original_file;
+	} elseif ($modulepart == 'recruitment' && !empty($conf->recruitment->dir_output)) {
+		// Wrapping for recruitment module
+		$accessallowed = $user->rights->recruitment->recruitmentjobposition->read;
+		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
 		$accessallowed = 1;

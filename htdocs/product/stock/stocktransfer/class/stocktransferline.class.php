@@ -232,7 +232,6 @@ class StockTransferLine extends CommonObjectLine
 
 		// Reset some properties
 		unset($object->id);
-		unset($object->fk_user_creat);
 		unset($object->import_key);
 
 

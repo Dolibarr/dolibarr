@@ -26,9 +26,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -110,7 +107,7 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.$facid.'&email='; ?>" + $("#email"). val(),
 	});
 	parent.$.colorbox.close();
 }

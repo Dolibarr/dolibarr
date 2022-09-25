@@ -427,7 +427,7 @@ if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 
-if ($user->rights->knowledgemanagement->knowledgerecord->write) {
+if (isModEnabled('category') && $user->rights->knowledgemanagement->knowledgerecord->write) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 

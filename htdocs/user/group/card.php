@@ -449,7 +449,7 @@ if ($action == 'create') {
 						print '<tr class="oddeven">';
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-						if ($useringroup->admin && !$useringroup->entity) {
+						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 						} elseif ($useringroup->admin) {
 							print img_picto($langs->trans("Administrator"), 'star');

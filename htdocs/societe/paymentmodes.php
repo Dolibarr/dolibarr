@@ -79,7 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
-$permissiontoread = $user->rights->societe->lire;
+$permissiontoread = $user->hasRight('societe', 'lire');
 $permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
@@ -138,6 +138,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			$error++;
 		}
+		$companybankaccount->fetch($id);
 		if ($companybankaccount->needIBAN() == 1) {
 			if (!GETPOST('iban')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
@@ -151,7 +152,6 @@ if (empty($reshook)) {
 			}
 		}
 
-		$companybankaccount->fetch($id);
 		if (!$error) {
 			$companybankaccount->socid           = $object->id;
 
@@ -1548,7 +1548,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$allowgenifempty = 0;
 
 				// Language code (if multilang)
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();

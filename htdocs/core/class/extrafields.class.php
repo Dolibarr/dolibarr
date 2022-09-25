@@ -80,6 +80,7 @@ class ExtraFields
 		'datetime'=>'DateAndTime',
 		'boolean'=>'Boolean',
 		'price'=>'ExtrafieldPrice',
+		'pricecy'=>'ExtrafieldPriceWithCurrency',
 		'phone'=>'ExtrafieldPhone',
 		'mail'=>'ExtrafieldMail',
 		'url'=>'ExtrafieldUrl',
@@ -113,7 +114,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price', 'pricecy', 'phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -182,7 +183,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','phone','mail','password','url','select','checkbox', ...)
+	 *  @param	int		$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datehour','price','pricecy','phone','mail','password','url','select','checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int		$unique				Is field unique or not
@@ -217,6 +218,9 @@ class ExtraFields
 			} elseif ($type == 'price') {
 				$typedb = 'double';
 				$lengthdb = '24,8';
+			} elseif ($type == 'pricecy') {
+				$typedb = 'varchar';
+				$lengthdb = '64';
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
@@ -567,6 +571,9 @@ class ExtraFields
 			} elseif ($type == 'price') {
 				$typedb = 'double';
 				$lengthdb = '24,8';
+			} elseif ($type == 'pricecy') {
+				$typedb = 'varchar';
+				$lengthdb = '64';
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
@@ -851,6 +858,7 @@ class ExtraFields
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$count = 0;
 			if ($this->db->num_rows($resql)) {
 				while ($tab = $this->db->fetch_object($resql)) {
 					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
@@ -890,10 +898,12 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
+					$count++;
 				}
 			}
 			if ($elementtype) {
 				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+				$this->attributes[$elementtype]['count'] = $count;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -1086,6 +1096,16 @@ class ExtraFields
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
+		} elseif ($type == 'pricecy') {
+			$currency = $conf->currency;
+			if (!empty($value)) {
+				// $value in memory is a php string like '10.01:USD'
+				$pricetmp = explode(':', $value);
+				$currency = !empty($pricetmp[1]) ? $pricetmp[1] : $conf->currency;
+				$value = price($pricetmp[0]);
+			}
+			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
+			$out .= $form->selectCurrency($currency, $keyprefix.$key.$keysuffix.'currency_id');
 		} elseif ($type == 'double') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
@@ -1621,6 +1641,17 @@ class ExtraFields
 			if ($value || $value == '0') {
 				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$langs->getCurrencySymbol($conf->currency);
 			}
+		} elseif ($type == 'pricecy') {
+			$currency = $conf->currency;
+			if (!empty($value)) {
+				// $value in memory is a php string like '0.01:EUR'
+				$pricetmp = explode(':', $value);
+				$currency = !empty($pricetmp[1]) ? $pricetmp[1] : $conf->currency;
+				$value = $pricetmp[0];
+			}
+			if ($value || $value == '0') {
+				$value = price($value, 0, $langs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
 			if (($pos = strpos($valstr, "|")) !== false) {
@@ -1688,8 +1719,8 @@ class ExtraFields
 							if (!empty($obj->$field_toshow)) {
 								$translabel = $langs->trans($obj->$field_toshow);
 							}
-							if ($translabel != $field_toshow) {
-								$value .= dol_trunc($translabel, 18).' ';
+							if ($translabel != $obj->$field_toshow) {
+								$value .= dol_trunc($translabel, 24).' ';
 							} else {
 								$value .= $obj->$field_toshow.' ';
 							}
@@ -2092,6 +2123,8 @@ class ExtraFields
 				} elseif (in_array($key_type, array('price', 'double'))) {
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
+				} elseif (in_array($key_type, array('pricecy', 'double'))) {
+					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, array('text'))) {

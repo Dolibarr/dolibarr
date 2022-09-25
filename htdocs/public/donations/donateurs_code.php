@@ -25,9 +25,6 @@
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
@@ -60,7 +57,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
-if (empty($conf->don->enabled)) {
+if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
 }
 

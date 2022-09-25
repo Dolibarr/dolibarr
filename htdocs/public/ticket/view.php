@@ -73,7 +73,7 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new ActionsTicket($db);
 
-if (empty($conf->ticket->enabled)) {
+if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 

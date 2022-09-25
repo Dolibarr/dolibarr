@@ -117,7 +117,7 @@ if (!function_exists("ldap_connect")) {
 print dol_get_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
 
 
-print $langs->trans("LDAPDescGroups").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescGroups").'</span><br>';
 print '<br>';
 
 

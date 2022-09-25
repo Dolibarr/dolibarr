@@ -70,5 +70,7 @@ function recruitmentAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'recruitment');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'recruitment', 'remove');
+
 	return $head;
 }

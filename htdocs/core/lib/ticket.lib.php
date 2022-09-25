@@ -18,9 +18,9 @@
  */
 
 /**
- *    \file       core/lib/ticket.lib.php
- *    \ingroup    ticket
- *    \brief        This file is a library for Ticket module
+ * \file       core/lib/ticket.lib.php
+ * \ingroup    ticket
+ * \brief      This file is a library for Ticket module
  */
 
 /**
@@ -30,7 +30,10 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");
 
@@ -44,6 +47,10 @@ function ticketAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ticket_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
+	$nbExtrafields = $extrafields->attributes['ticket']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -95,7 +102,7 @@ function ticket_prepare_head($object)
 		$h++;
 	}
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'core');
 
 	// Attached files
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -132,6 +139,9 @@ function ticket_prepare_head($object)
 	}
 	$head[$h][2] = 'tabTicketLogs';
 	$h++;
+
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 

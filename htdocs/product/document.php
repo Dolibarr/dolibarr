@@ -154,14 +154,14 @@ if ($action == 'filemerge' && $permissiontoadd) {
 
 		$filetomerge_file_array = GETPOST('filetoadd');
 
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
 		}
 
 		// Delete all file already associated
 		$filetomerge = new Propalmergepdfproduct($db);
 
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$result = $filetomerge->delete_by_product($user, $object->id, $lang_id);
 		} else {
 			$result = $filetomerge->delete_by_product($user, $object->id);
@@ -176,7 +176,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 				$filetomerge->fk_product = $object->id;
 				$filetomerge->file_name = $filetomerge_file;
 
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$filetomerge->lang = $lang_id;
 				}
 
@@ -271,7 +271,7 @@ if ($object->id) {
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
 		$filetomerge = new Propalmergepdfproduct($db);
 
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
 			$result = $filetomerge->fetch_by_product($object->id, $lang_id);
 		} else {
@@ -305,7 +305,7 @@ if ($object->id) {
 			print  '<table class="noborder">';
 
 			// Get language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$langs->load("languages");
 
 				print  '<tr class="liste_titre"><td>';
@@ -316,7 +316,7 @@ if ($object->id) {
 
 				print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					print  '<input type="submit" class="button" name="refresh" value="'.$langs->trans('Refresh').'">';
 				}
 
@@ -328,7 +328,7 @@ if ($object->id) {
 					$checked = '';
 					$filename = $filetoadd['name'];
 
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						if (array_key_exists($filetoadd['name'].'_'.$default_lang, $filetomerge->lines)) {
 							$filename = $filetoadd['name'].' - '.$langs->trans('Language_'.$default_lang);
 							$checked = ' checked ';

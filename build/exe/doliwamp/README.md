@@ -9,3 +9,5 @@ The build of .exe files need to have some windows executable files already insta
 
 If you have technical knowledge in web administration and plan to share your server instance (Apache, Mysql or PHP) with other projects than Dolibarr or want to use Dolibarr other components (PostgreSQL), you should not use this assistant and make a manual installation of Dolibarr on your existing server by downloading the standard package (.tgz or .zip file).
 
+
+!!! See file ../makepack-howto.txt
