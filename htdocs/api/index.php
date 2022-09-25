@@ -237,7 +237,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 					// Defined if module is enabled
 					$enabled = true;
-					if (empty($conf->$modulenameforenabled->enabled)) {
+					if (!isModEnabled($modulenameforenabled)) {
 						$enabled = false;
 					}
 
