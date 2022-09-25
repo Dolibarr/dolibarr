@@ -19,7 +19,7 @@
 /**
  *    \file       htdocs/bom/bom_card.php
  *    \ingroup    bom
- *    \brief      Page to create/edit/view BOM
+ *    \brief      Page to create/edit/view Bill Of Material
  */
 
 // Load Dolibarr environment
@@ -34,17 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
-global $filtertype;
-
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$id      = GETPOST('id', 'int');
+$lineid  = GETPOST('lineid', 'int');
+$ref     = GETPOST('ref', 'alpha');
+$action  = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel  = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomcard'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$backtopage  = GETPOST('backtopage', 'alpha');
+
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -56,6 +55,7 @@ $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomcard', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -86,6 +86,7 @@ if ($object->id > 0) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
+// Permissions
 $permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
