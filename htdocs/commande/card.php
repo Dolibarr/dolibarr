@@ -1866,7 +1866,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -2113,7 +2113,7 @@ if ($action == 'create' && $usercancreate) {
 				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-				if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
+				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 					$object->fetchObjectLinked();
@@ -2610,7 +2610,7 @@ if ($action == 'create' && $usercancreate) {
 		// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("IncotermLabel", 'incoterm', '', $object, $editenable);
@@ -2697,7 +2697,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</table>';
 
 		// Margin Infos
-		if (!empty($conf->margin->enabled)) {
+		if (isModEnabled('margin')) {
 			$formmargin->displayMarginInfos($object);
 		}
 
@@ -2809,7 +2809,7 @@ if ($action == 'create' && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 				// Create event
-				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
+				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
 				{
 					// Add hidden condition because this is not a
 					// "workflow" action so should appears somewhere else on
@@ -2937,7 +2937,7 @@ if ($action == 'create' && $usercancreate) {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 			// Show online payment link
-			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 			if (!empty($conf->global->ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER)) {
 				$useonlinepayment = 0;
 			}
