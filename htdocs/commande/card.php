@@ -58,7 +58,7 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
@@ -66,10 +66,10 @@ if (!empty($conf->variants->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
 
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 if (isModEnabled('productbatch')) {
@@ -603,7 +603,7 @@ if (empty($reshook)) {
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) {
@@ -724,7 +724,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
@@ -1242,7 +1242,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1262,7 +1262,7 @@ if (empty($reshook)) {
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
-					&& !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)
+					&& isModEnabled('facture') && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1336,7 +1336,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1384,7 +1384,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1705,7 +1705,7 @@ if ($action == 'create' && $usercancreate) {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 		}
@@ -1838,7 +1838,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Warehouse
-	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
@@ -2077,7 +2077,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2231,7 +2231,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmUnvalidateOrder', $object->ref);
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2270,7 +2270,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2483,7 +2483,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
