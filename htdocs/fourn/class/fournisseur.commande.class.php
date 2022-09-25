@@ -2382,7 +2382,7 @@ class CommandeFournisseur extends CommonOrder
 		dol_syslog(get_class($this)."::Livraison");
 
 		$usercanreceive = 0;
-		if (empty($conf->reception->enabled)) {
+		if (!isModEnabled('reception')) {
 			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
 		} else {
 			$usercanreceive = $user->rights->reception->creer;
