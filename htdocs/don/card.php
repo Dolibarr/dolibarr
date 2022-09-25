@@ -914,7 +914,7 @@ if (!empty($id) && $action != 'edit') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link
-	$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
 	if ($useonlinepayment) { //$object->statut != Facture::STATUS_DRAFT &&
 		print '<br><!-- Link to pay -->'."\n";
