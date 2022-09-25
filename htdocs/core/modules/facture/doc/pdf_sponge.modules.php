@@ -506,7 +506,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$this->tab_top -= 2;
