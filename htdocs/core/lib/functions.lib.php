@@ -8558,7 +8558,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
- * 	    @param	string	$filters	Filter on other fields
+ *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */

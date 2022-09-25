@@ -1110,7 +1110,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$db->begin();
-
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
@@ -1127,6 +1126,10 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+				$objecttmp->fetch_thirdparty();
+				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
