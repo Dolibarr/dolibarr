@@ -467,7 +467,7 @@ print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" val
 print '</td></tr>'."\n";
 
 // Barcode
-if (isModEnabled('barcode') {
+if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
