@@ -547,7 +547,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (!empty($conf->bom->enabled) && $user->rights->bom->read) {
+	if (isModEnabled('bom') && $user->rights->bom->read) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {

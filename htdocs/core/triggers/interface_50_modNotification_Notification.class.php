@@ -66,7 +66,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->notification) || empty($conf->notification->enabled)) {
+		if (empty($conf->notification) || !isModEnabled('notification')) {
 			return 0; // Module not active, we do nothing
 		}
 
