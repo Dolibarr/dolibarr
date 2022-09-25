@@ -77,7 +77,7 @@ if (!empty($conf->bom->enabled)) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'other'));
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	$langs->load("stocks");
 }
 if (isModEnabled('facture')) {
@@ -1457,7 +1457,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if ($type != 1 && !empty($conf->stock->enabled)) {
+		if ($type != 1 && isModEnabled('stock')) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -2017,7 +2017,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Stock
-			if ($object->isProduct() && !empty($conf->stock->enabled)) {
+			if ($object->isProduct() && isModEnabled('stock')) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -2515,7 +2515,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Default warehouse
-			if ($object->isProduct() && !empty($conf->stock->enabled)) {
+			if ($object->isProduct() && isModEnabled('stock')) {
 				$warehouse = new Entrepot($db);
 				$warehouse->fetch($object->fk_default_warehouse);
 

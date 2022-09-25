@@ -369,7 +369,7 @@ if ($id > 0 || !empty($ref)) {
 		// Min customer price
 		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
 		// Stock
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
 		// Qty in kit
@@ -444,7 +444,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
 
@@ -493,7 +493,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>&nbsp;</td>';
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
 
@@ -549,7 +549,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			// Stock
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
@@ -566,7 +566,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</tr>'."\n";
 		} else {
 			$colspan = 10;
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$colspan++;
 			}
 
