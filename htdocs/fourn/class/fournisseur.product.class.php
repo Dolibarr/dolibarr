@@ -738,7 +738,7 @@ class ProductFournisseur extends Product
 					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
 
-				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && !empty($prodfourn->fk_supplier_price_expression)) {
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
@@ -844,7 +844,7 @@ class ProductFournisseur extends Product
 					$fourn_unitprice = $record["unitprice"];
 					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
 
-					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
+					if (isModEnabled('dynamicprices') && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
 						$prod_supplier->id = $prodid;
