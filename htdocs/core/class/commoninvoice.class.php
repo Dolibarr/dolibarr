@@ -1276,7 +1276,7 @@ abstract class CommonInvoice extends CommonObject
 													dol_syslog("The payment has been created for invoice id " . $this->id);
 												}
 
-												if (!$errorforinvoice && !empty($conf->banque->enabled)) {
+												if (!$errorforinvoice && isModEnabled('banque')) {
 													dol_syslog('* Add payment to bank');
 
 													$bankaccountid = 0;
