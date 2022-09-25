@@ -570,7 +570,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// MO
-	if (!empty($conf->mrp->enabled) && !empty($user->rights->mrp->read)) {
+	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {
