@@ -95,7 +95,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
 //Show/hide child products
-if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 	$show_childproducts = GETPOST('search_show_childproducts');
 } else {
 	$show_childproducts = '';
@@ -419,7 +419,7 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid prod_comb_id';
 }
 // Add fields from extrafields
@@ -448,7 +448,7 @@ if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -469,7 +469,7 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 	}
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= " AND pac.rowid IS NULL";
 }
 
@@ -580,7 +580,7 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', p.fk_unit, cu.label';
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid';
 }
 // Add fields from extrafields
@@ -837,7 +837,7 @@ if ($resql) {
 	}
 
 	//Show/hide child products. Hidden by default
-	if (!empty($conf->variants->enabled) && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+	if (isModEnabled('variants') && !empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<input type="checkbox" id="search_show_childproducts" name="search_show_childproducts"'.($show_childproducts ? 'checked="checked"' : '').'>';
 		$moreforfilter .= ' <label for="search_show_childproducts">'.$langs->trans('ShowChildProducts').'</label>';
