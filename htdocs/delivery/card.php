@@ -41,7 +41,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (!empty($conf->expedition_bon->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (isModEnabled('project')) {
@@ -104,7 +104,7 @@ if ($action == 'add') {
 	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+	if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
 	}
 
@@ -491,7 +491,7 @@ if ($action == 'create') {
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+			if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);

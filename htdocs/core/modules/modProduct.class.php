@@ -214,7 +214,7 @@ class modProduct extends DolibarrModules
 		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice") || !empty($conf->margin->enabled)) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('e.ref'=>'DefaultWarehouse', 'p.tobatch'=>'ManageLotSerial', 'p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 		}
 		if (isModEnabled('barcode')) {
@@ -252,7 +252,7 @@ class modProduct extends DolibarrModules
 			'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('e.ref'=>'Text', 'p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 		}
 		if (isModEnabled('barcode')) {
@@ -271,7 +271,7 @@ class modProduct extends DolibarrModules
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array("group_concat(cat.label)"=>'category'));
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
 		if (isModEnabled('barcode')) {
@@ -286,7 +286,7 @@ class modProduct extends DolibarrModules
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
 			$this->export_dependencies_array[$r] = array('category'=>'p.rowid');
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'product', 'p.pmp'=>'product'));
 		}
 		if (isModEnabled('barcode')) {
@@ -316,7 +316,7 @@ class modProduct extends DolibarrModules
 		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		}
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = p.fk_default_warehouse';
 		}
 		$this->export_sql_end[$r] .= ' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
@@ -409,7 +409,7 @@ class modProduct extends DolibarrModules
 				'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC", 'p.tva_tx'=>'VATRate', 'p.tosell'=>"OnSell",
 				'p.tobuy'=>"OnBuy", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 			);
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 			}
 			if (isModEnabled('barcode')) {
@@ -425,7 +425,7 @@ class modProduct extends DolibarrModules
 				'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
 				'p.datec'=>'Date', 'p.tms'=>'Date'
 			);
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 			}
 			if (isModEnabled('barcode')) {
@@ -441,7 +441,7 @@ class modProduct extends DolibarrModules
 				'p.price_base_type'=>"virtualproduct", 'p.price'=>"virtualproduct", 'p.price_ttc'=>"virtualproduct", 'p.tva_tx'=>"virtualproduct",
 				'p.tosell'=>"virtualproduct", 'p.tobuy'=>"virtualproduct", 'p.datec'=>"virtualproduct", 'p.tms'=>"virtualproduct"
 			);
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.stock'=>'virtualproduct', 'p.seuil_stock_alerte'=>'virtualproduct', 'p.desiredstock'=>'virtualproduct', 'p.pmp'=>'virtualproduct'));
 			}
 			if (isModEnabled('barcode')) {
@@ -601,7 +601,7 @@ class modProduct extends DolibarrModules
 			'p.recuperableonly' => '^[0|1]$',
 		);
 
-		if (!empty($conf->stock->enabled)) {//if Stock module enabled
+		if (isModEnabled('stock')) {//if Stock module enabled
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				'p.fk_default_warehouse'=>'DefaultWarehouse',
 				'p.tobatch'=>'ManageLotSerial',
@@ -710,7 +710,7 @@ class modProduct extends DolibarrModules
 			'p.finished' => '0 (raw material) / 1 (finished goods), matches field "code" in dictionary table "'.MAIN_DB_PREFIX.'c_product_nature"'
 		);
 		//clauses copied from import_fields_array
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			$import_sample = array_merge($import_sample, array(
 				'p.tobatch'=>"0 (don't use) / 1 (use batch) / 2 (use serial number)",
 				'p.seuil_stock_alerte' => '',
