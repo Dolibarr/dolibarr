@@ -952,14 +952,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			var discount = parseFloat($('option:selected', this).attr('data-discount'));
 			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
 
-			var tva_tx = $('option:selected', this).data('tvatx'); /* FIX21543 */
+			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with autocomplete
 
 			console.log("We find supplier price :"+up+" qty: "+qty+" tva_tx="+tva_tx+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
 
 			jQuery("#price_ht").val(up);
-			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
 
-			$('#tva_tx option').val(tva_tx); /* FIX21543 */
+			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
+			$('#tva_tx option').val(tva_tx);
 
 			if (jQuery("#qty").val() < qty)	{
 				jQuery("#qty").val(qty);
