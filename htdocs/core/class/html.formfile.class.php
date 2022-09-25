@@ -1782,6 +1782,8 @@ class FormFile
 
 					$result = 0;
 					if (is_object($object_instance)) {
+						$object_instance->id = 0;
+						$object_instance->ref = '';
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
