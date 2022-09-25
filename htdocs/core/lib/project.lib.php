@@ -177,7 +177,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('expensereport')) {
 				$nbElements += $project->getElementCount('expensereport', 'expensereport');
 			}
-			if (!empty($conf->don->enabled)) {
+			if (isModEnabled('don')) {
 				$nbElements += $project->getElementCount('donation', 'don');
 			}
 			if (!empty($conf->loan->enabled)) {
