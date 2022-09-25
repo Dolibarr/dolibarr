@@ -2209,7 +2209,7 @@ if ($action == 'create') {
 			}
 		}
 
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$formquestion = array_merge($formquestion, array(
@@ -2248,7 +2248,7 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans('ConfirmValidateProp', $numref);
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
