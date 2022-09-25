@@ -3550,7 +3550,7 @@ abstract class CommonObject
 			if (!empty($conf->global->$MODULE)) {
 				$modsactivated = explode(',', $conf->global->$MODULE);
 				foreach ($modsactivated as $mod) {
-					if ($conf->$mod->enabled) {
+					if (!isModEnabled($mod->enabled) {
 						return 1; // update was disabled by specific setup
 					}
 				}
@@ -4883,7 +4883,7 @@ abstract class CommonObject
 
 		// Define usemargins
 		$usemargins = 0;
-		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
 		}
 
