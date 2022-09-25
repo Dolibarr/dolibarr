@@ -433,7 +433,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			// Auto link contract
-			if (!empty($conf->contract->enabled) && !empty($conf->ticket->enabled) && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -463,7 +463,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 			// Automatically create intervention
-			if (isModEnabled('ficheinter') && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
 				$fichinter->fk_project = $projectid;

@@ -75,7 +75,7 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(!empty($conf->ticket->enabled) && isModEnabled('ficheinter')),
+		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
 		'picto'=>'ticket'
 	),
 
@@ -174,13 +174,13 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
 		'position' => 75,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
 		'position' => 76,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 );

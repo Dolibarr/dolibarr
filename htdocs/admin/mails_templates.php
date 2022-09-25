@@ -222,7 +222,7 @@ if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->facture->
 if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
-if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
+if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
 if (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire)) {
