@@ -279,10 +279,10 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id')) {
 				$newlang = GETPOST('lang_id');
 			}
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -527,10 +527,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -611,10 +611,10 @@ if (empty($reshook)) {
 		if (empty($error) && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -666,10 +666,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -756,10 +756,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -1963,10 +1963,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($object->lines)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2181,7 +2181,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -2216,7 +2216,7 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -2339,10 +2339,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -2598,10 +2598,10 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -4119,7 +4119,7 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans('ConfirmValidateBill', $numref);
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';

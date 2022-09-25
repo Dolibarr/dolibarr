@@ -199,10 +199,10 @@ if (isModEnabled('holiday') || isModEnabled('expensereport')) {
 if (isModEnabled("product") || isModEnabled("service")) {
 	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
 }
-if (isModEnabled("propal") || isModEnabled('commande') || !empty($conf->ficheinter->enabled) || isModEnabled('contrat')) {
+if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
 	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
 }
-if (!empty($conf->comptabilite->enabled) || isModEnabled('accounting')) {
+if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
 	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
 }
 if (isModEnabled('adherent')) {
@@ -211,7 +211,7 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('agenda')) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
-if (!empty($conf->ticket->enabled)) {
+if (isModEnabled('ticket')) {
 	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
 }
 

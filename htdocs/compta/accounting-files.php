@@ -601,7 +601,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 print '<br>';
 
 // Project filter
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('projet')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";

@@ -174,10 +174,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -199,10 +199,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -311,7 +311,7 @@ if (empty($reshook)) {
 										$prod->id = $lines[$i]->fk_product;
 
 										// Define output language
-										if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+										if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 											$prod->getMultiLangs();
 											// We show if duration is present on service (so we get it)
 											$prod->fetch($lines[$i]->fk_product);
@@ -517,10 +517,10 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -613,10 +613,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -646,10 +646,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -666,10 +666,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -688,10 +688,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {

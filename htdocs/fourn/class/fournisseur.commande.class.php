@@ -1097,7 +1097,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				// If stock is incremented on validate order, we must increment it
-				if (!$error && $movetoapprovestatus && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+				if (!$error && $movetoapprovestatus && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 
@@ -2085,7 +2085,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			// If module stock is enabled and the stock increase is done on purchase order dispatching
-			if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			if (!$error && $entrepot > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 				$mouv = new MouvementStock($this->db);
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)

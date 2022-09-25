@@ -1420,7 +1420,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if ($idprod) {
 		$prodser->fetch($idprod);
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (!empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation

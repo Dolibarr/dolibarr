@@ -107,7 +107,7 @@ function user_prepare_head(User $object)
 	}
 
 	// Notifications
-	if ($user->socid == 0 && !empty($conf->notification->enabled)) {
+	if ($user->socid == 0 && isModEnabled('notification')) {
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";

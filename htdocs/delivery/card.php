@@ -41,7 +41,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (!empty($conf->expedition_bon->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (isModEnabled('project')) {
@@ -104,7 +104,7 @@ if ($action == 'add') {
 	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+	if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
 	}
 
@@ -143,10 +143,10 @@ if ($action == 'add') {
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -491,7 +491,7 @@ if ($action == 'create') {
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+			if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);
@@ -547,7 +547,7 @@ if ($action == 'create') {
 						$product->fetch($object->lines[$i]->fk_product);
 
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
 							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {

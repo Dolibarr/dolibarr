@@ -7404,7 +7404,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			// add variables subtitutions ticket
-			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
+			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket')) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
 				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';

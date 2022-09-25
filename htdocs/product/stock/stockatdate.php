@@ -488,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
-		/*if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (getDolGlobalInt('MAIN_MULTILANGS'))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';

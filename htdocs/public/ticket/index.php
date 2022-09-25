@@ -59,7 +59,7 @@ $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $suffix = "";
 
-if (empty($conf->ticket->enabled)) {
+if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 

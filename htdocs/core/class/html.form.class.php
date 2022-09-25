@@ -2313,7 +2313,7 @@ class Form
 			}
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (!empty($conf->variants->enabled) && is_array($selected_combinations)) {
+			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
 				// when a parent of variant has been selected.
 				$out .= '
@@ -2562,7 +2562,7 @@ class Form
 		}
 
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= ", pl.label as label_translated";
 			$sql .= ", pl.description as description_translated";
 			$selectFields .= ", label_translated";
@@ -2605,7 +2605,7 @@ class Form
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_lang as pl ON pl.fk_product = p.rowid ";
 			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -2671,7 +2671,7 @@ class Form
 					$sql .= " AND ";
 				}
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
 				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -2679,7 +2679,7 @@ class Form
 				}
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION)) {
 					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						$sql .= " OR pl.description LIKE '".$this->db->escape($prefix.$crit)."%'";
 					}
 				}
@@ -2885,7 +2885,7 @@ class Form
 		$outrefcust = empty($objp->custref) ? '' : $objp->custref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$outlabel_translated = $objp->label_translated;
 			$outdesc_translated = $objp->description_translated;
 		}
@@ -2944,7 +2944,7 @@ class Form
 		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0) {
 			$opt .= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqup="'.$objp->price_by_qty_unitprice.'" data-pbqbase="'.$objp->price_by_qty_price_base_type.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 			if (!empty($user->rights->stock->lire)) {
 				if ($objp->stock > 0) {
 					$opt .= ' class="product_line_stock_ok"';
@@ -3101,7 +3101,7 @@ class Form
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
 
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 			if (!empty($user->rights->stock->lire)) {
 				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
@@ -3486,7 +3486,7 @@ class Form
 					}
 				}
 
-				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+				if (isModEnabled('stock') && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
@@ -8614,7 +8614,7 @@ class Form
 					}
 				} elseif ($objecttype == 'ficheinter') {
 					$tplpath = 'fichinter';
-					if (empty($conf->ficheinter->enabled)) {
+					if (!isModEnabled('ficheinter')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'invoice_supplier') {

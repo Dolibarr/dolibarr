@@ -129,10 +129,10 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -161,10 +161,10 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -370,7 +370,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel minwidth400', 'value' => '')				// Field to complete private note (not replace)
 		);
 
-		// if (!empty($conf->notification->enabled)) {
+		// if (isModEnabled('notification')) {
 		// 	require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 		// 	$notify = new Notify($db);
 		// 	$formquestion = array_merge($formquestion, array(

@@ -294,7 +294,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
 	if ($action == 'close') {
 		$text = $langs->trans('ConfirmCloseKM', $object->ref);
-		/*if (!empty($conf->notification->enabled))
+		/*if (isModEnabled('notification'))
 		 {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);
@@ -319,7 +319,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
 	if ($action == 'reopen') {
 		$text = $langs->trans('ConfirmReopenKM', $object->ref);
-		/*if (!empty($conf->notification->enabled))
+		/*if (isModEnabled('notification'))
 		 {
 		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 		 $notify = new Notify($db);

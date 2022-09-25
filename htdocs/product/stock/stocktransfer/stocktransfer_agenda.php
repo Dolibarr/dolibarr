@@ -116,7 +116,7 @@ if ($object->id > 0) {
 	$help_url = '';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (isModEnabled('notification')) $langs->load("mails");
 	$head = stocktransferPrepareHead($object);
 
 

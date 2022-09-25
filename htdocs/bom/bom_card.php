@@ -353,7 +353,7 @@ if (empty($reshook)) {
 			}
 
 			$text = $langs->trans('ConfirmValidateBom', $numref);
-			/*if (! empty($conf->notification->enabled))
+			/*if (isModEnabled('notification'))
 			{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -362,7 +362,7 @@ if (empty($reshook)) {
 			}*/
 
 			$formquestion = array();
-			if (!empty($conf->bom->enabled)) {
+			if (isModEnabled('bom')) {
 				$langs->load("mrp");
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
@@ -381,7 +381,7 @@ if (empty($reshook)) {
 		// Confirmation of closing
 		if ($action == 'close') {
 			$text = $langs->trans('ConfirmCloseBom', $object->ref);
-			/*if (! empty($conf->notification->enabled))
+			/*if (isModEnabled('notification'))
 			{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -390,7 +390,7 @@ if (empty($reshook)) {
 			}*/
 
 			$formquestion = array();
-			if (!empty($conf->bom->enabled)) {
+			if (isModEnabled('bom')) {
 				$langs->load("mrp");
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
@@ -409,7 +409,7 @@ if (empty($reshook)) {
 		// Confirmation of reopen
 		if ($action == 'reopen') {
 			$text = $langs->trans('ConfirmReopenBom', $object->ref);
-			/*if (! empty($conf->notification->enabled))
+			/*if (isModEnabled('notification'))
 			 {
 			 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			 $notify = new Notify($db);
@@ -418,7 +418,7 @@ if (empty($reshook)) {
 			 }*/
 
 			$formquestion = array();
-			if (!empty($conf->bom->enabled)) {
+			if (isModEnabled('bom')) {
 				$langs->load("mrp");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$forcecombo = 0;

@@ -1203,7 +1203,7 @@ class Product extends CommonObject
 				$this->id = $id;
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if ($this->setMultiLangs($user) < 0) {
 						$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 						return -2;
@@ -1279,7 +1279,7 @@ class Product extends CommonObject
 				}
 
 				if (!$error) {
-					if (!empty($conf->variants->enabled)) {
+					if (isModEnabled('variants')) {
 						include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
 						$comb = new ProductCombination($this->db);
@@ -2495,7 +2495,7 @@ class Product extends CommonObject
 				$this->fetch_optionals();
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($ignore_lang_load)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($ignore_lang_load)) {
 					$this->getMultiLangs();
 				}
 
@@ -4762,7 +4762,7 @@ class Product extends CommonObject
 	public function isVariant()
 	{
 		global $conf;
-		if (!empty($conf->variants->enabled)) {
+		if (isModEnabled('variants')) {
 			$sql = "SELECT rowid FROM ".$this->db->prefix()."product_attribute_combination WHERE fk_product_child = ".((int) $this->id)." AND entity IN (".getEntity('product').")";
 
 			$query = $this->db->query($sql);

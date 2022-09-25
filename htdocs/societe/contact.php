@@ -56,7 +56,7 @@ if (isModEnabled('categorie')) {
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load("incoterm");
 }
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 

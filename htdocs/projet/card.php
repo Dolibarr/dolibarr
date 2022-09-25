@@ -1276,7 +1276,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if (empty($reshook)) {
 		if ($action != "edit" && $action != 'presend') {
 			// Create event
-			/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
+			/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 				// "workflow" action so should appears somewhere else on
 				// page.
 			{
@@ -1292,7 +1292,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Accounting Report
 			/*
-			$accouting_module_activated = !empty($conf->comptabilite->enabled) || isModEnabled('accounting');
+			$accouting_module_activated = isModEnabled('comptabilite') || isModEnabled('accounting');
 			if ($accouting_module_activated && $object->statut != Project::STATUS_DRAFT) {
 				$start = dol_getdate((int) $object->date_start);
 				$end = dol_getdate((int) $object->date_end);
@@ -1369,7 +1369,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("suppliers");
 					print dolGetButtonAction('', $langs->trans('AddSupplierInvoice'), 'default', DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+				if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
 					$langs->load("interventions");
 					print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
@@ -1381,7 +1381,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("trips");
 					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->don->enabled) && $user->rights->don->creer) {
+				if (isModEnabled('don') && $user->rights->don->creer) {
 					$langs->load("donations");
 					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

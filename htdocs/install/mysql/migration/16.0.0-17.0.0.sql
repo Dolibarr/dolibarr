@@ -177,3 +177,4 @@ ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk
 
 ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie) REFERENCES llx_categorie(rowid);
 
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PROJECT_SENTBYMAIL','Project sent by mail','Executed when a project is sent by email','project',144);

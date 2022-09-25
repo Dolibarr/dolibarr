@@ -120,10 +120,10 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -350,8 +350,8 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang='';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (!empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);

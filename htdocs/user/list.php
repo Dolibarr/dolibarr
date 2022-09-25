@@ -667,7 +667,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse
-if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
