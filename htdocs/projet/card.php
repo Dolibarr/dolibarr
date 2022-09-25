@@ -1381,7 +1381,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("trips");
 					print dolGetButtonAction('', $langs->trans('AddTrip'), 'default', DOL_URL_ROOT.'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}
-				if (!empty($conf->don->enabled) && $user->rights->don->creer) {
+				if (isModEnabled('don') && $user->rights->don->creer) {
 					$langs->load("donations");
 					print dolGetButtonAction('', $langs->trans('AddDonation'), 'default', DOL_URL_ROOT.'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '', 1, array('isDropDown' => true));
 				}

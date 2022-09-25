@@ -77,7 +77,7 @@ if (isModEnabled('expensereport')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
 if (!empty($conf->loan->enabled)) {
@@ -123,7 +123,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('expensereport')) {
 	$langs->load("trips");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
 if (!empty($conf->loan->enabled)) {
