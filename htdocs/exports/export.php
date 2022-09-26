@@ -20,11 +20,13 @@
  */
 
 /**
- *       \file       htdocs/exports/export.php
- *       \ingroup    export
- *       \brief      Pages of export Wizard
+ *    \file       htdocs/exports/export.php
+ *    \ingroup    export
+ *    \brief      Pages of export Wizard
  */
 
+
+// Load Dolibarr environment
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -33,51 +35,52 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank', 'bills'));
+$langs->loadlangs(array('admin', 'bank', 'bills', 'companies', 'exports', 'other', 'products', 'projects', 'suppliers', 'users'));
 
-// Everybody should be able to go on this page
+// Everybody should be able to go on this page 
 //if (! $user->admin)
 //  accessforbidden();
 
 // Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
-	'invoice'      => 'bill',
-	'invoice_line' => 'bill',
-	'order'        => 'order',
-	'order_line'   => 'order',
-	'propal'       => 'propal',
-	'propal_line'  => 'propal',
-	'intervention' => 'intervention',
-	'inter_line'   => 'intervention',
-	'member'       => 'user',
-	'member_type'  => 'group',
-	'subscription' => 'payment',
-	'payment'      => 'payment',
-	'tax'          => 'generic',
-	'tax_type'     => 'generic',
-	'other'        => 'generic',
-	'account'      => 'account',
-	'product'      => 'product',
-	'virtualproduct'=>'product',
-	'subproduct'   => 'product',
-	'product_supplier_ref'      => 'product',
-	'stock'        => 'stock',
-	'warehouse'    => 'stock',
-	'batch'        => 'stock',
-	'stockbatch'   => 'stock',
-	'category'     => 'category',
-	'shipment'     => 'sending',
-	'shipment_line'=> 'sending',
-	'reception'=> 'sending',
-	'reception_line'=> 'sending',
-	'expensereport'=> 'trip',
-	'expensereport_line'=> 'trip',
-	'holiday'      => 'holiday',
-	'contract_line' => 'contract',
-	'translation'  => 'generic',
-	'bomm'         => 'bom',
-	'bomline'      => 'bom'
-);
+	'account' 				=> 'account',
+	'batch' 				=> 'stock',
+	'bom' 					=> 'bom',
+	'bomline' 				=> 'bom'
+	'category' 				=> 'category',
+	'contract' 				=> 'contract',
+	'contract_line' 		=> 'contract',
+	'expensereport' 		=> 'trip',
+	'expensereport_line'	=> 'trip',
+	'holiday' 				=> 'holiday',
+	'intervention' 			=> 'intervention',
+	'inter_line' 			=> 'intervention',
+	'invoice' 				=> 'bill',
+	'invoice_line' 			=> 'bill',
+	'member' 				=> 'user',
+	'member_type' 			=> 'group',
+	'order' 				=> 'order',
+	'order_line' 			=> 'order',
+	'other' 				=> 'generic',
+	'payment' 				=> 'payment',
+	'product' 				=> 'product',
+	 'product_supplier_ref' => 'product',
+	 'subproduct' 			=> 'product',
+	 'virtualproduct' 		=> 'product',
+	'propal' 				=> 'propal',
+	'propal_line' 			=> 'propal',
+	'reception' 			=> 'sending',
+	'reception_line' 		=> 'sending',
+	'shipment' 				=> 'sending',
+	'shipment_line' 		=> 'sending',
+	'stock' 				=> 'stock',
+	'stockbatch' 			=> 'stock',
+	'subscription' 			=> 'payment',
+	'tax' 					=> 'generic',
+	'tax_type' 				=> 'generic',
+	'translation' 			=> 'generic',
+	'warehouse' 			=> 'stock',
+	);
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytolang = array(
