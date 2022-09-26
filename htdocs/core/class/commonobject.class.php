@@ -3529,10 +3529,11 @@ abstract class CommonObject
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
 						}
-								$this->total_tva -= $diff;
-								$this->total_ttc -= $diff;
-								$total_tva_by_vats[$obj->vatrate] -= $diff;
-								$total_ttc_by_vats[$obj->vatrate] -= $diff;
+
+						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
+						$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
+						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
+						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
 					}
 				}
 
@@ -3559,9 +3560,16 @@ abstract class CommonObject
 				}
 			}
 
+			// Clean total
+			$this->total_ht = (float) price2num($this->total_ht);
+			$this->total_tva = (float) price2num($this->total_tva);
+			$this->total_localtax1 = (float) price2num($this->total_localtax1);
+			$this->total_localtax2 = (float) price2num($this->total_localtax2);
+			$this->total_ttc = (float) price2num($this->total_ttc);
+
 			$this->db->free($resql);
 
-			// Now update global field total_ht, total_ttc, total_tva, total_localtax1, total_localtax2, multicurrency_total_*
+			// Now update global fields total_ht, total_ttc, total_tva, total_localtax1, total_localtax2, multicurrency_total_*
 			$fieldht = 'total_ht';
 			$fieldtva = 'tva';
 			$fieldlocaltax1 = 'localtax1';
@@ -3592,11 +3600,11 @@ abstract class CommonObject
 
 			if (empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.' SET';
-				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht)).",";
-				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva)).",";
-				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1)).",";
-				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2)).",";
-				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc));
+				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
+				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
+				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
+				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
+				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc, 'MT', 1));
 				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
 				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
 				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
