@@ -766,8 +766,8 @@ class BonPrelevement extends CommonObject
 			$datetimeprev = $executiondate;
 		}
 
-		$month = dol_print_date("%m", $datetimeprev, 'gmt');
-		$year = dol_print_date("%Y", $datetimeprev, 'gmt');
+		$month = dol_print_date($datetimeprev, "%m", 'gmt');
+		$year = dol_print_date($datetimeprev, "%Y", 'gmt');
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
