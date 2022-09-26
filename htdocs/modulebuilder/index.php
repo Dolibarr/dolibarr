@@ -913,6 +913,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 		 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 		 *  'noteditable' says if field is not editable (1 or 0)
+		 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 		 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 		 *  'index' if we want an index in database.
 		 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
@@ -933,7 +934,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 'rowid'          =>array('type'=>'integer',        'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		 'ref'            =>array('type'=>'varchar(128)',   'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
 		 'entity'         =>array('type'=>'integer',        'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
-		 'label'          =>array('type'=>'varchar(255)',   'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+		 'label'          =>array('type'=>'varchar(255)',   'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'alwayseditable'=>'1'),
 		 'amount'         =>array('type'=>'double(24,8)',   'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
 		 'fk_soc'         =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirdparty'),
 		 'description'    =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
@@ -1386,14 +1387,19 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	if (!$error) {
 		// Edit the class file to write properties
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask);
-		if (is_numeric($object) && $object < 0) {
+
+		if (is_numeric($object) && $object <= 0) {
+			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
+			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
 	}
 	if (!$error) {
 		// Edit sql with new properties
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, '', $object);
-		if ($result < 0) {
+
+		if ($result <= 0) {
+			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null);
 			$error++;
 		}
 	}
@@ -1503,6 +1509,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			'csslist'=>GETPOST('propcsslist', 'alpha'),
 			'default'=>GETPOST('propdefault', 'restricthtml'),
 			'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
+			'alwayseditable'=>intval(GETPOST('propalwayseditable', 'int')),
 			'validate' => GETPOST('propvalidate', 'int')
 			);
 
@@ -1528,6 +1535,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
 
 		if (is_numeric($object) && $object <= 0) {
+			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
+			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
 	}
@@ -1537,6 +1546,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
 
 		if ($result <= 0) {
+			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
 			$error++;
 		}
 	}
@@ -1568,7 +1578,10 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey) {
 	// Edit the class file to write properties
 	if (!$error) {
 		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, array(), $propertykey);
+
 		if (is_numeric($object) && $object <= 0) {
+			$pathoffiletoeditsrc = $destdir.'/class/'.strtolower($objectname).'.class.php';
+			setEventMessages($langs->trans('ErrorFailToCreateFile', $pathoffiletoeditsrc), null, 'errors');
 			$error++;
 		}
 	}
@@ -1576,7 +1589,9 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey) {
 	// Edit sql with new properties
 	if (!$error) {
 		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
+
 		if ($result <= 0) {
+			setEventMessages($langs->trans('ErrorFailToCreateFile', '.sql'), null, 'errors');
 			$error++;
 		}
 	}
@@ -2911,6 +2926,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("NotEditable").'</th>';
+							print '<th class="center">'.$langs->trans("AlwaysEditable").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
@@ -2944,6 +2960,7 @@ if ($module == 'initmodule') {
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propnoteditable" value="'.dol_escape_htmltag(GETPOST('propnoteditable', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propalwayseditable" value="'.dol_escape_htmltag(GETPOST('propalwayseditable', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="center maxwidth50" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
 								print '<td class="center"><input type="text" class="maxwidth50" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
@@ -2986,6 +3003,7 @@ if ($module == 'initmodule') {
 									$propenabled = $propval['enabled'];
 									$propvisible = $propval['visible'];
 									$propnoteditable = !empty($propval['noteditable'])?$propval['noteditable']:0;
+									$propalwayseditable = !empty($propval['alwayseditable'])?$propval['alwayseditable']:0;
 									$propsearchall = !empty($propval['searchall'])?$propval['searchall']:0;
 									$propisameasure = !empty($propval['isameasure'])?$propval['isameasure']:0;
 									$propcss = !empty($propval['css'])?$propval['css']:'';
@@ -3042,6 +3060,9 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propalwayseditable" size="2" value="'.dol_escape_htmltag($propalwayseditable).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
@@ -3108,6 +3129,9 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="center">';
 										print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propalwayseditable ? dol_escape_htmltag($propalwayseditable) : '';
 										print '</td>';
 										print '<td class="center">';
 										print $propsearchall ? '1' : '';
