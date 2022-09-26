@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadlangs(array('admin', 'bank', 'bills', 'companies', 'exports', 'other', 'products', 'projects', 'suppliers', 'users'));
 
-// Everybody should be able to go on this page 
+// Everybody should be able to go on this page
 //if (! $user->admin)
 //  accessforbidden();
 
