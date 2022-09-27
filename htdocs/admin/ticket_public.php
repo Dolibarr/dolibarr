@@ -181,14 +181,6 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 					$error++;
 					$errors[] = $db->lasterror();
 				}
-
-				// enable captcha by default
-				// TODO Add a visible option in this setup page for this
-				$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_TICKET', 1, 'chaine', 0, '', $conf->entity);
-				if (!($res > 0)) {
-					$error++;
-					$errors[] = $db->lasterror();
-				}
 			}
 		}
 	}
@@ -270,6 +262,30 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<td class="left">';
 	print '</td>';
 	print '<td class="center width75">';
+	print '</td>';
+	print '</tr>';
+
+	// Enable Captcha code
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("TicketUseCaptchaCode").'</td>';
+	print '<td class="left">';
+	if (function_exists("imagecreatefrompng")) {
+		if (!empty($conf->use_javascript_ajax)) {
+			print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA_TICKET');
+		} else {
+			if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA_TICKET)) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			} else {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA_TICKET&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			}
+		}
+	} else {
+		$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
+		print $desc;
+	}
+	print '</td>';
+	print '<td class="center width75">';
+	print $form->textwithpicto('', $langs->trans("TicketUseCaptchaCodeHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 
