@@ -202,10 +202,10 @@ foreach ($dirsrootforscan as $dirread) {
 	}
 	$textforlistofdirs .= '<strong class="wordbreakimp">'.$dirread.'</strong>';
 	if ($dirread == DOL_DOCUMENT_ROOT) {
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			$textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MAIN_FEATURES_LEVEL"));
 		}
-		if (!empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT)) {
+		if (getDolGlobalString('MODULEBUILDER_ADD_DOCUMENT_ROOT')) {
 			$textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MODULEBUILDER_ADD_DOCUMENT_ROOT"));
 		}
 	}
@@ -317,7 +317,6 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.key.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.key.sql');
-		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
 
 		dol_delete_dir($destdir.'/class', 1);
@@ -1187,7 +1186,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 			'sql/llx_mymodule_myobject_extrafields.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
 			//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
-			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
 			//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php',
 		);
@@ -1670,7 +1668,6 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
 			'sql/llx_mymodule_myobject_extrafields.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
-			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
 			'class/api_myobject.class.php'=>'class/api_'.strtolower($module).'.class.php',
 			'core/modules/mymodule/mod_myobject_advanced.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
@@ -1949,7 +1946,7 @@ if ($message) {
 }
 
 //print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
-$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc3", count($listofmodules)).'</span>', $langs->trans("ModuleBuilderDesc4", $FILEFLAG).'<br>'.$textforlistofdirs).'</div>';
+$infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('', $langs->trans("ModuleBuilderDesc3", count($listofmodules)).'<br><br>'.$langs->trans("ModuleBuilderDesc4", $FILEFLAG).'<br>'.$textforlistofdirs).'</div>';
 
 
 // Load module descriptor
@@ -2028,8 +2025,10 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	}
 
 	$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
-	if (!empty($conf->global->$const_name)) {	// If module is already activated
-		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod'.$module.$param.'">';
+
+	// Define $linktoenabledisable to show after module title
+	if (isModEnabled($modulelowercase)) {	// If module is already activated
+		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&token='.newToken().'&value=mod'.$module.$param.'">';
 		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 		$linktoenabledisable .= '</a>';
 
@@ -2089,7 +2088,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 }
 
 $head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
-$head[$h][1] = $langs->trans("DangerZone");
+$head[$h][1] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
@@ -2578,7 +2577,7 @@ if ($module == 'initmodule') {
 
 			if ($h > 1) {
 				$head3[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread ? '@'.$dirread : '').'&tabobj=deleteobject';
-				$head3[$h][1] = $langs->trans("DangerZone");
+				$head3[$h][1] =img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("DangerZone");
 				$head3[$h][2] = 'deleteobject';
 				$h++;
 			}
@@ -2796,9 +2795,12 @@ if ($module == 'initmodule') {
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForObjLib").' : <strong class="wordbreak">'.(dol_is_file($realpathtoobjlib) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtoobjlib).(dol_is_file($realpathtoobjlib) ? '' : '</strike>').'</strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoobjlib).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
-						print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.(dol_is_file($realpathtopicto) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtopicto).(dol_is_file($realpathtopicto) ? '' : '</strike>').'</strong>';
-						//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-						print '<br>';
+						// Image
+						if (dol_is_file($realpathtopicto)) {
+							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.(dol_is_file($realpathtopicto) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtopicto).(dol_is_file($realpathtopicto) ? '' : '</strike>').'</strong>';
+							//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+							print '<br>';
+						}
 
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFile").' : <strong class="wordbreak">'.(dol_is_file($realpathtosql) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtosql).(dol_is_file($realpathtosql) ? '' : '</strike>').'</strong>';
