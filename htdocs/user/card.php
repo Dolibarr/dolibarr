@@ -1000,18 +1000,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td>';
 	$valuetoshow = '';
 	if (preg_match('/ldap/', $dolibarr_main_authentication)) {
-		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("PasswordOfUserInLDAP");
+		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("PasswordOfUserInLDAP").' (hidden)';
 	}
 	if (preg_match('/http/', $dolibarr_main_authentication)) {
-		$valuetoshow .= ($valuetoshow ? ', ' : '').$langs->trans("HTTPBasicPassword");
+		$valuetoshow .= ($valuetoshow ? ' + ' : '').$langs->trans("HTTPBasicPassword");
 	}
 	if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
 		if (!empty($ldap_pass)) {	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
-			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
+			$valuetoshow .= ($valuetoshow ? ' + ' : '').'<input type="hidden" name="password" value="'.dol_escape_htmltag($ldap_pass).'">'; // Dolibarr password is preffiled with LDAP known password
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		} else {
 			// We do not use a field password but a field text to show new password to use.
-			$valuetoshow .= ($valuetoshow ? ', ' : '').'<input maxsize="32" type="text" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
+			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input maxsize="32" type="text" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password">';
 		}
 	}
 

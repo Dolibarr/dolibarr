@@ -1283,9 +1283,9 @@ if ($resql) {
 	if ($massaction == 'createbills') {
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-		print '<table class="noborder" width="100%" >';
+		print '<table class="noborder centpercent">';
 		print '<tr>';
-		print '<td class="titlefield">';
+		print '<td>';
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
@@ -1320,12 +1320,11 @@ if ($resql) {
 		print '</tr>';
 		print '</table>';
 
-		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
 		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
-		print '<br>';
+		print '<br><br>';
 	}
 
 	if ($sall) {

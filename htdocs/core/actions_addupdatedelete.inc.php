@@ -300,8 +300,34 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 	}
 }
 
+// Action to update one modulebuilder field
+$reg = array();
+if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
+	$object->fetch(GETPOST('id', 'int'));
+
+	$keyforfield = $reg[1];
+	if (property_exists($object, $keyforfield)) {
+		if (!empty($object->fields[$keyforfield]) && in_array($object->fields[$keyforfield]['type'], array('date', 'datetime', 'timestamp'))) {
+			$object->$keyforfield = dol_mktime(GETPOST($keyforfield.'hour'), GETPOST($keyforfield.'min'), GETPOST($keyforfield.'sec'), GETPOST($keyforfield.'month'), GETPOST($keyforfield.'day'), GETPOST($keyforfield.'year'));
+		} else {
+			$object->$keyforfield = GETPOST($keyforfield);
+		}
+
+		$result = $object->update($user);
+
+		if ($result > 0) {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit'.$reg[1];
+		}
+	}
+}
+
 // Action to update one extrafield
-if ($action == "update_extras" && !empty($permissiontoadd)) {
+if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
 	$attributekey = GETPOST('attribute', 'alpha');

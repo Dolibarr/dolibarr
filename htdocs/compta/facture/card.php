@@ -4453,7 +4453,7 @@ if ($action == 'create') {
 		if ($result > 0) {
 			print ' <span class="opacitymediumbycolor paddingleft">';
 			$s = $langs->trans("CreditNoteConvertedIntoDiscount", '{s1}', '{s2}');
-			$s = str_replace('{s1}', $object->getLibType(1), $s);
+			$s = str_replace('{s1}', $object->getLibType(0), $s);
 			$s = str_replace('{s2}', $discount->getNomUrl(1, 'discount'), $s);
 			print $s;
 			print '</span><br>';

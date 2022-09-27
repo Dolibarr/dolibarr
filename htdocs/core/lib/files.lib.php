@@ -2970,7 +2970,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->resource->dir_output.'/'.$original_file;
-	} elseif ($modulepart == 'remisecheque' && !empty($conf->bank->dir_output)) {
+	} elseif (($modulepart == 'remisecheque' || $modulepart == 'chequereceipt') && !empty($conf->bank->dir_output)) {
 		// Wrapping pour les remises de cheques
 		if ($fuser->rights->banque->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;

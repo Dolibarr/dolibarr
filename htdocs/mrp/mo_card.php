@@ -136,7 +136,7 @@ if (empty($reshook)) {
 	}
 	$triggermodname = 'MRP_MO_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	//Create MO with Childs
+	// Create MO with Childs
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -165,7 +165,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.$moline->fk_mo, 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.((int) $moline->fk_mo), 1));
 		exit;
 	}
 
