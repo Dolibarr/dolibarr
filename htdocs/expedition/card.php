@@ -1318,7 +1318,12 @@ if ($action == 'create') {
 					}
 
 					$warehouseObject = null;
-					if (count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+					// determine if product has children (no stock movement)
+					$has_children = false;
+					if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $product->hasChildren() > 0) {
+						$has_children = true;
+					}
+					if ((count($warehousePicking) == 1 || !($line->fk_product > 0) || empty($conf->stock->enabled)) && $has_children === false) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 						print '<!-- Case warehouse already known or product not a predefined product -->';
 						//ship from preselected location
 						$stock = + (isset($product->stock_warehouse[$warehouse_id]->real) ? $product->stock_warehouse[$warehouse_id]->real : 0); // Convert to number
@@ -1491,11 +1496,6 @@ if ($action == 'create') {
 
 							$subj = 0;
 							$out_js_line_list = array();
-							// determine if product has children (no stock movement)
-							$has_children = false;
-							if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $product->hasChildren() > 0) {
-								$has_children = true;
-							}
 
 							if ($has_children === false) {
 								print '<input name="idl' . $indiceAsked . '" type="hidden" value="' . $line->id . '">';
@@ -1716,7 +1716,7 @@ if ($action == 'create') {
 															'line' => $subj,
 															'fk_product' => $component_product_id,
 															'qty' => $component_qty_need,
-															'fk_entrepot' => 0,
+															'fk_entrepot' => (GETPOST('entrepot_id', 'int') > 0 ? GETPOST('entrepot_id', 'int') : $component_product->fk_default_warehouse),
 														);
 														$subj++;
 													} else {
