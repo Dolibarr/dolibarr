@@ -163,10 +163,9 @@ $form = new Form($db);
 if ($action == 'delete') {
 	$formquestion = array();
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?provider='.GETPOST('provider').'&label='.GETPOST('label'), $langs->trans('OAuthServiceConfirmDeleteTitle'), $langs->trans('OAuthServiceConfirmDeleteMessage'), 'confirm_delete', $formquestion, 0, 1, 220);
+	print $formconfirm;
 }
 
-// Print form confirm
-print $formconfirm;
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
