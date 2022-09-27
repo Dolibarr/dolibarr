@@ -2206,11 +2206,21 @@ if ($action == 'create') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show online signature link
+			$useonlinesignature = 1;
+
+			if ($object->statut != Contrat::STATUS_DRAFT && $useonlinesignature) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
+			}
+
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
 			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
