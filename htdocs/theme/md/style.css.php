@@ -2547,6 +2547,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	text-decoration: none;
 	cursor: not-allowed;
 }
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
+	cursor: not-allowed;
+}
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	font-weight: normal;
