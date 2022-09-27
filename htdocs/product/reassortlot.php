@@ -608,7 +608,7 @@ while ($i < $imaxinloop) {
 	$objp = $db->fetch_object($resql);
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+	if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";

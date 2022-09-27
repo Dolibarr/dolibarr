@@ -401,7 +401,7 @@ class FormMail extends Form
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($this->param['langsmodels'])) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->param['langsmodels'])) {
 				$newlang = $this->param['langsmodels'];
 			}
 			if (!empty($newlang)) {
@@ -1634,7 +1634,7 @@ class FormMail extends Form
 					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
-					if (!empty($conf->don->enabled)) {
+					if (isModEnabled('don')) {
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
 					if (isModEnabled('facture')) {
@@ -1651,7 +1651,7 @@ class FormMail extends Form
 					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
-					if (!empty($conf->don->enabled)) {
+					if (isModEnabled('don')) {
 						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 					}
 					if (isModEnabled('facture')) {

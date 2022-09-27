@@ -37,6 +37,7 @@ $langs->loadLangs(array("partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -129,7 +130,7 @@ if ($object->id > 0) {
 	$help_url = '';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = partnershipPrepareHead($object);

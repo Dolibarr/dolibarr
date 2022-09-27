@@ -1320,11 +1320,18 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
+
+		$parameters=array();
+		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
 
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1369,7 +1376,7 @@ class BOM extends CommonObject
 					$unit = measuringUnitString($line->fk_unit, '', '', 1);
 					$qty = convertDurationtoHour($line->qty, $unit);
 
-					if ($conf->workstation->enabled && !empty($tmpproduct->fk_default_workstation)) {
+					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
 						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 

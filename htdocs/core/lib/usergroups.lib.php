@@ -107,7 +107,7 @@ function user_prepare_head(User $object)
 	}
 
 	// Notifications
-	if ($user->socid == 0 && !empty($conf->notification->enabled)) {
+	if ($user->socid == 0 && isModEnabled('notification')) {
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
@@ -274,7 +274,7 @@ function user_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Users").")";
 	$nbExtrafields = $extrafields->attributes['user']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -283,7 +283,7 @@ function user_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("Groups").")";
 	$nbExtrafields = $extrafields->attributes['usergroup']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes_group';
 	$h++;
@@ -1075,10 +1075,10 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td colspan="'.($colspan - 1).'">';
 		//print ajax_constantonoff("MAIN_OPTIMIZEFORTEXTBROWSER", array(), null, 0, 0, 1, 0);
 		if ($edit) {
-			print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
+			print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', (isset($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER) ? $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER : 0), 1);
 		} else {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				print yn($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER);
+				print yn(isset($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER) ? $fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER : 0);
 			} else {
 				print yn(1);
 				if (empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -1128,7 +1128,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		);
 
 		if ($edit) {
-			print $form->selectArray('MAIN_OPTIMIZEFORCOLORBLIND', $colorBlindOptions, $fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND, 0);
+			print $form->selectArray('MAIN_OPTIMIZEFORCOLORBLIND', $colorBlindOptions, (isset($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? $fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND : 0), 0);
 		} else {
 			if (!empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND) && isset($colorBlindOptions[$fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND])) {
 				print $colorBlindOptions[$fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND];

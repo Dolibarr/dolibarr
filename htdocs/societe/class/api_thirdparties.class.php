@@ -1366,8 +1366,8 @@ class Thirdparties extends DolibarrApi
 		$outputlangs = $langs;
 		$newlang = '';
 
-		//if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		//if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			if (isset($this->company->thirdparty->default_lang)) {
 				$newlang = $this->company->thirdparty->default_lang; // for proposal, order, invoice, ...
 			} elseif (isset($this->company->default_lang)) {

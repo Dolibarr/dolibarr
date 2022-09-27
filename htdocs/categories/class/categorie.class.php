@@ -384,7 +384,7 @@ class Categorie extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$this->getMultiLangs();
 				}
 
@@ -636,23 +636,30 @@ class Categorie extends CommonObject
 		}
 
 		$arraydelete = array(
-			'categorie_product' => 'fk_categorie',
-			'categorie_fournisseur' => 'fk_categorie',
-			'categorie_societe' => 'fk_categorie',
-			'categorie_member' => 'fk_categorie',
-			'categorie_contact' => 'fk_categorie',
-			'categorie_user' => 'fk_categorie',
-			'categorie_project' => 'fk_categorie',
 			'categorie_account' => 'fk_categorie',
-			'categorie_website_page' => 'fk_categorie',
-			'categorie_warehouse' => 'fk_categorie',
 			'categorie_actioncomm' => 'fk_categorie',
-			'categorie_ticket' => 'fk_categorie',
+			'categorie_contact' => 'fk_categorie',
+			'categorie_fournisseur' => 'fk_categorie',
+			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
+			'categorie_member' => 'fk_categorie',
+			'categorie_user' => 'fk_categorie',
+			'categorie_product' => 'fk_categorie',
+			'categorie_project' => 'fk_categorie',
+			'categorie_societe' => 'fk_categorie',
+			'categorie_ticket' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('ticket')),
+			'categorie_warehouse' => 'fk_categorie',
+			'categorie_website_page' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('website')),
 			'bank_class' => 'fk_categ',
 			'categorie_lang' => 'fk_category',
 			'categorie' => 'rowid',
 		);
 		foreach ($arraydelete as $key => $value) {
+			if (is_array($value)) {
+				if (empty($value['enabled'])) {
+					continue;
+				}
+				$value = $value['field'];
+			}
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX.$key;
 			$sql .= " WHERE ".$value." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
@@ -993,7 +1000,7 @@ class Categorie extends CommonObject
 					$categories[$i]['array_options'] = $category_static->array_options;
 
 					// multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS) && isset($category_static->multilangs)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && isset($category_static->multilangs)) {
 						$categories[$i]['multilangs'] = $category_static->multilangs;
 					}
 				}
@@ -1121,11 +1128,11 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";

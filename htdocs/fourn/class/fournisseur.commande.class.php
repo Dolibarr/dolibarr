@@ -751,7 +751,7 @@ class CommandeFournisseur extends CommonOrder
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 
-		if (empty($this->statuts) || empty($this->statutshort)) {
+		if (empty($this->statuts) || empty($this->statuts_short)) {
 			$langs->load('orders');
 
 			$this->statuts[0] = 'StatusSupplierOrderDraft';
@@ -769,15 +769,15 @@ class CommandeFournisseur extends CommonOrder
 			$this->statuts[9] = 'StatusSupplierOrderRefused';
 
 			// List of language codes for status
-			$this->statutshort[0] = 'StatusSupplierOrderDraftShort';
-			$this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
-			$this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
-			$this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
-			$this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
-			$this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
-			$this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
-			$this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
-			$this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
+			$this->statuts_short[0] = 'StatusSupplierOrderDraftShort';
+			$this->statuts_short[1] = 'StatusSupplierOrderValidatedShort';
+			$this->statuts_short[2] = 'StatusSupplierOrderApprovedShort';
+			$this->statuts_short[3] = 'StatusSupplierOrderOnProcessShort';
+			$this->statuts_short[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+			$this->statuts_short[5] = 'StatusSupplierOrderReceivedAllShort';
+			$this->statuts_short[6] = 'StatusSupplierOrderCanceledShort';
+			$this->statuts_short[7] = 'StatusSupplierOrderCanceledShort';
+			$this->statuts_short[9] = 'StatusSupplierOrderRefusedShort';
 		}
 
 		$statustrans = array(
@@ -806,7 +806,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
-		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
+		$statusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
 		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -1097,7 +1097,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				// If stock is incremented on validate order, we must increment it
-				if (!$error && $movetoapprovestatus && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+				if (!$error && $movetoapprovestatus && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 
@@ -2085,7 +2085,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			// If module stock is enabled and the stock increase is done on purchase order dispatching
-			if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			if (!$error && $entrepot > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 				$mouv = new MouvementStock($this->db);
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
@@ -2094,9 +2094,9 @@ class CommandeFournisseur extends CommonOrder
 
 					// Method change if qty < 0
 					if (!empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN) && $qty < 0) {
-						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch);
+						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
 					} else {
-						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, $inventorycode);
+						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);
 					}
 
 					if ($result < 0) {
@@ -2382,7 +2382,7 @@ class CommandeFournisseur extends CommonOrder
 		dol_syslog(get_class($this)."::Livraison");
 
 		$usercanreceive = 0;
-		if (empty($conf->reception->enabled)) {
+		if (!isModEnabled('reception')) {
 			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
 		} else {
 			$usercanreceive = $user->rights->reception->creer;

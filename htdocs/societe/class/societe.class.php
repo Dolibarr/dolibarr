@@ -701,12 +701,6 @@ class Societe extends CommonObject
 	public $ref;
 
 	/**
-	 * @var string Internal ref
-	 * @deprecated
-	 */
-	public $ref_int;
-
-	/**
 	 * External user reference.
 	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to build.
 	 * @var string
@@ -1844,7 +1838,7 @@ class Societe extends CommonObject
 				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
 
 				$this->email = $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;

@@ -114,7 +114,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'groups', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescGroups").'</span><br>';

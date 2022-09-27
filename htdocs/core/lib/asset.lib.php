@@ -68,7 +68,7 @@ function assetAdminPrepareHead()
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
 	$nbExtrafields = $extrafields->attributes['asset_model']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'assetmodel_extrafields';
 	$h++;

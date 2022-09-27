@@ -1068,7 +1068,7 @@ class Contact extends CommonObject
 				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;

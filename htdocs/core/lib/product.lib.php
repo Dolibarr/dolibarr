@@ -74,7 +74,7 @@ function product_prepare_head($object)
 	}
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
@@ -94,7 +94,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+	if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -115,7 +115,7 @@ function product_prepare_head($object)
 	}
 
 	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
-		if (!empty($conf->stock->enabled) && $user->rights->stock->lire) {
+		if (isModEnabled('stock') && $user->rights->stock->lire) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
@@ -153,7 +153,7 @@ function product_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'add', 'core');
 
 	// Notes
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -201,8 +201,6 @@ function product_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
-
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
@@ -212,6 +210,10 @@ function product_prepare_head($object)
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'add', 'external');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product', 'remove');
 
 	return $head;
 }
@@ -312,7 +314,7 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['product']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -321,7 +323,7 @@ function product_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'supplierAttributes';
 	$h++;
@@ -545,7 +547,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (!empty($conf->bom->enabled) && $user->rights->bom->read) {
+	if (isModEnabled('bom') && $user->rights->bom->read) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {

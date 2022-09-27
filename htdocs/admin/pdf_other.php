@@ -104,7 +104,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
-	print load_fiche_titre($langs->trans("Proposal"), '', '');
+	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
@@ -127,7 +127,7 @@ if (isModEnabled('propal')) {
 
 
 if (isModEnabled('facture')) {
-	print load_fiche_titre($langs->trans("Invoices"), '', '');
+	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
@@ -169,6 +169,42 @@ if (isModEnabled('facture')) {
 	print '</table>';
 	print '</div>';
 }
+
+
+
+if (isModEnabled('reception')) {
+	print load_fiche_titre($langs->trans("Receptions"), '', 'reception');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("RECEPTION_PDF_HIDE_ORDERED");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('RECEPTION_PDF_HIDE_ORDERED');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("RECEPTION_PDF_HIDE_ORDERED", $arrval, $conf->global->RECEPTION_PDF_HIDE_ORDERED);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT", $arrval, $conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT);
+	}
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+
 
 print '<br><div class="center">';
 print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
