@@ -377,6 +377,13 @@ if ($mode == 'setup' && $user->admin) {
 			print '</tr>';
 		}
 
+		// Scopes
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("Scopes").'</td>';
+		print '<td colspan="2">';
+		$currentscopes = getDolGlobalString($key[4]);
+		print $currentscopes;
+		print '</td></tr>';
 		print '</table>';
 		print '</div>';
 

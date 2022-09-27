@@ -85,7 +85,11 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_SCOPE')) {
-				$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				if (is_array(GETPOST($constvalue.'_SCOPE'))) {
+					$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				} else {
+					$scopestring = GETPOST($constvalue.'_SCOPE');
+				}
 				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
