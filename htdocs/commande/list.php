@@ -1283,9 +1283,9 @@ if ($resql) {
 	if ($massaction == 'createbills') {
 		print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-		print '<table class="noborder" width="100%" >';
+		print '<table class="noborder centpercent">';
 		print '<tr>';
-		print '<td class="titlefield">';
+		print '<td>';
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
