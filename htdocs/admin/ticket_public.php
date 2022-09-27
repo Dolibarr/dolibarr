@@ -150,44 +150,45 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 		$error++;
 		$errors[] = $db->lasterror();
 	}
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 			$errors[] = $db->lasterror();
 		}
-	}
-} elseif (preg_match('/set_(.*)/', $action, $reg)) {
-	$code = $reg[1];
-	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
-	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-		$errors[] = $db->lasterror();
-	}
+	} else {
+		$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+			$errors[] = $db->lasterror();
+		}
 
-	if (!$error) {
-		if ($code == 'TICKET_EMAIL_MUST_EXISTS') {
-			$res = dolibarr_del_const($db, 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST', $conf->entity);
-			if (!($res > 0)) {
-				$error++;
-				$errors[] = $db->lasterror();
-			}
-		} elseif ($code == 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST') {
-			$res = dolibarr_del_const($db, 'TICKET_EMAIL_MUST_EXISTS', $conf->entity);
-			if (!($res > 0)) {
-				$error++;
-				$errors[] = $db->lasterror();
-			}
+		if (!$error) {
+			if ($code == 'TICKET_EMAIL_MUST_EXISTS') {
+				$res = dolibarr_del_const($db, 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST', $conf->entity);
+				if (!($res > 0)) {
+					$error++;
+					$errors[] = $db->lasterror();
+				}
+			} elseif ($code == 'TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST') {
+				$res = dolibarr_del_const($db, 'TICKET_EMAIL_MUST_EXISTS', $conf->entity);
+				if (!($res > 0)) {
+					$error++;
+					$errors[] = $db->lasterror();
+				}
 
-			// enable captcha by default
-			// TODO Add a visible option in this setup page for this
-			$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_TICKET', 1, 'chaine', 0, '', $conf->entity);
-			if (!($res > 0)) {
-				$error++;
-				$errors[] = $db->lasterror();
+				// enable captcha by default
+				// TODO Add a visible option in this setup page for this
+				$res = dolibarr_set_const($db, 'MAIN_SECURITY_ENABLECAPTCHA_TICKET', 1, 'chaine', 0, '', $conf->entity);
+				if (!($res > 0)) {
+					$error++;
+					$errors[] = $db->lasterror();
+				}
 			}
 		}
 	}
@@ -276,9 +277,9 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailMustExist").'</td>';
 	print '<td class="left">';
 	if (empty(getDolGlobalInt('TICKET_EMAIL_MUST_EXISTS'))) {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_EMAIL_MUST_EXISTS">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_EMAIL_MUST_EXISTS">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_EMAIL_MUST_EXISTS&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
 	}
 	print '</td>';
 	print '<td class="center width75">';
@@ -290,9 +291,9 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketCreateThirdPartyWithContactIfNotExist").'</td>';
 	print '<td class="left">';
 	if (empty(getDolGlobalInt('TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST'))) {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
 	} else {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
+		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST&token='.newToken().'">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
 	}
 	print '</td>';
 	print '<td class="center width75">';
