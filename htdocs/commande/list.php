@@ -1293,7 +1293,8 @@ if ($resql) {
 		print '<td>';
 		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 			print $form->selectyesno('validate_invoices', 0, 1, 1);
-			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
+			$langs->load("errors");
+			print ' ('.$langs->trans("WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal").')';
 		} else {
 			print $form->selectyesno('validate_invoices', 0, 1);
 		}
