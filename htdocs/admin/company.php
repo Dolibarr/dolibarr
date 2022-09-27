@@ -107,7 +107,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
 
 	$arrayofimages = array('logo', 'logo_squarred');
-
+	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
@@ -115,7 +115,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			break;
 		}
 
-		if ($_FILES[$varforimage]["tmp_name"]) {
+		// Remove to check file size to large
+		/*if ($_FILES[$varforimage]["tmp_name"]) {*/
 			$reg = array();
 			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
@@ -165,6 +166,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 						$langs->load("errors");
 						$tmparray = explode(':', $result);
 						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+					} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
+						$error++;
+						setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
 					} else {
 						$error++;
 						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
@@ -175,7 +179,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 				}
 			}
-		}
+		/*}*/
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
