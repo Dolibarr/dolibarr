@@ -115,7 +115,7 @@ if ($action == 'confirm_delete') {
 
 	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
 
-	if (getDolGlobalString($globalkey.'_ID') && getDolGlobalString($globalkey.'_SECRET')) {
+	if (getDolGlobalString($globalkey.'_ID') && getDolGlobalString($globalkey.'_SECRET')) { // If ID and secret exist, we delete first the token
 		$backtourl = DOL_URL_ROOT.'/admin/oauth.php?action=delete_entry&provider='.$provider.'&label='.$label.'&token='.newToken();
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
@@ -145,10 +145,10 @@ if ($action == 'delete_entry') {
 	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
 
 	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity) ||  !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
-		setEventMessage("Error in entry deletion", 'errors');
+		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
 		$error++;
 	} else {
-		setEventMessage("Entry deleted", 'mesgs');
+		setEventMessages($langs->trans("EntryDeleted"), null);
 	}
 }
 
@@ -162,7 +162,7 @@ $form = new Form($db);
 // Confirmation of action process
 if ($action == 'delete') {
 	$formquestion = array();
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?provider='.GETPOST('provider').'&label='.GETPOST('label'), $langs->trans('OAuthServiceConfirmDelete'), $langs->trans('OAuthServiceConfirmDelete'), 'confirm_delete', $formquestion, 0, 1, 220);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?provider='.GETPOST('provider').'&label='.GETPOST('label'), $langs->trans('OAuthServiceConfirmDeleteTitle'), $langs->trans('OAuthServiceConfirmDeleteMessage'), 'confirm_delete', $formquestion, 0, 1, 220);
 }
 
 // Print form confirm
