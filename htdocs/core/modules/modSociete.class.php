@@ -464,7 +464,7 @@ class modSociete extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'societe_extrafields'
 		); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
-			's.nom' => "Name*",
+			's.nom' => "ThirdPartyName*",
 			's.name_alias' => "AliasNameShort",
 			's.parent' => "ParentCompany",
 			's.status' => "Status*",
@@ -685,7 +685,7 @@ class modSociete extends DolibarrModules
 			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.nom' => 'Name',
+			's.nom' => 'ThirdPartyName',
 			's.zip' => 'Zip',
 			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',
