@@ -144,7 +144,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		// Get entities
 		$entity = getEntity('proposalnumber', 1, $propal);
 
-		$date = $propal->date ?? dol_now();
+		$date = empty($propal->date) ? dol_now() : $propal->date;
 
 		$numFinal = get_next_value($db, $mask, 'propal', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 
