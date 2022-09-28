@@ -76,7 +76,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire)) {
+if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -919,7 +919,7 @@ END;
 
 			print "</div>\n";
 
-			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
+			if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 				$param = '';
 				if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 					$param .= '&contextpage='.urlencode($contextpage);

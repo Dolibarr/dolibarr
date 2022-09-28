@@ -836,7 +836,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$label = '';
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
