@@ -614,7 +614,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.newToken().'&output=file&file='.urlencode($filename).$param.'"';
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&output=file&file='.urlencode($filename).$param.'"';
 	if (empty($TData)) {
 		print " disabled";
 	}
