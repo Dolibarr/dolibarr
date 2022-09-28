@@ -472,7 +472,7 @@ class AccountingJournal extends CommonObject
 		// Compatibility with Mysql 5.7
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
-		} else if ($in_bookkeeping == 'notyet') {
+		} elseif ($in_bookkeeping == 'notyet') {
 			$sql .= " AND NOT EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		}
 		$sql .= " AND ad.ref != ''"; // not reversal lines
