@@ -27,6 +27,7 @@
  *	\brief      Page to describe a delivery receipt
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
@@ -40,7 +41,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 if (!empty($conf->expedition_bon->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (isModEnabled('project')) {
@@ -103,7 +104,7 @@ if ($action == 'add') {
 	$object->commande_id   = GETPOST("commande_id", 'int');
 	$object->fk_incoterms  = GETPOST('incoterm_id', 'int');
 
-	if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+	if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 		$expedition->entrepot_id = GETPOST('entrepot_id', 'int');
 	}
 
@@ -142,10 +143,10 @@ if ($action == 'add') {
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $object->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -259,9 +260,10 @@ llxHeader('', $title, 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if ($action == 'create') {    // Create. Seems to no be used
-} else // View
-{
+if ($action == 'create') {
+	// Create. Seems to no be used
+} else {
+	// View
 	if ($object->id > 0) {
 		// Origin of a 'livraison' (delivery receipt) is ALWAYS 'expedition' (shipment).
 		// However, origin of shipment in future may differs (commande, proposal, ...)
@@ -323,7 +325,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			$morehtmlref = '<div class="refidno">';
 			// Ref customer shipment
 			$morehtmlref .= $form->editfieldkey("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', 0, 1);
-			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
@@ -489,7 +491,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			print '<td colspan="3">'.$object->getLibStatut(4)."</td>\n";
 			print '</tr>';*/
 
-			if (!$conf->expedition_bon->enabled && !empty($conf->stock->enabled)) {
+			if (!$conf->expedition_bon->enabled && isModEnabled('stock')) {
 				// Entrepot
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);
@@ -545,7 +547,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 						$product->fetch($object->lines[$i]->fk_product);
 
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
 							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {

@@ -1,18 +1,14 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bank | Bar
 FinancialAccount=Finanzkonto
-BankAccount=Bankkonto
 BankAccounts=Kontenübersicht
 BankAccountsAndGateways=Bankkonten | Schnittstellen
 AccountRef=Konto-Referenz
-AccountLabel=Kontobezeichnung
 CashAccount=Kasse
 CashAccounts=Kassen
 BankBalanceBefore=Bilanz vor
 BankBalanceAfter=Bilanz nach
 AllTime=Vom start
-Reconciliation=Zahlungsabgleich
-RIB=Kontonummer
 SwiftValid=BIC/SWIFT gültig
 SwiftNotValid=BIC/SWIFT ungültig
 IbanValid=BAN gültig
@@ -44,8 +40,6 @@ Conciliated=Ausgeglichen
 BankLineConciliated=Transaktion mit Bankbeleg ausgeglichen
 SupplierInvoicePayment=Lieferantenzahlung
 MenuBankInternalTransfer=Kontoübertrag
-TransferFrom=Von
-TransferTo=An
 CheckTransmitter=Absender
 ValidateCheckReceipt=Chequebeleg genehmigen?
 DeleteCheckReceipt=Chequebeleg löschen?

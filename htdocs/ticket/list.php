@@ -25,6 +25,7 @@
  *    \brief    List page for tickets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -490,7 +491,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
-if ($socid && !$projectid && !$project_ref && $user->rights->societe->lire) {
+if ($socid && !$projectid && !$project_ref && $user->hasRight('societe', 'lire')) {
 	$socstat = new Societe($db);
 	$res = $socstat->fetch($socid);
 	if ($res > 0) {
@@ -684,7 +685,6 @@ if ($search_dateclose_end) {
 	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
 	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
 }
-
 // List of mass actions available
 $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
@@ -814,19 +814,19 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre center'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth100'));
+			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', (!empty($val['css']) ? $val['css'] : 'maxwidth100'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();

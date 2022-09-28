@@ -24,6 +24,7 @@
  *	\brief		Workflows setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -74,7 +75,7 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
 		'picto'=>'ticket'
 	),
 
@@ -132,7 +133,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -140,7 +141,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -173,13 +174,13 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
 		'position' => 75,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
 		'position' => 76,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 );

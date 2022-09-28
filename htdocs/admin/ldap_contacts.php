@@ -26,6 +26,7 @@
  *  \brief      Page d'administration/configuration du module Ldap
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -139,10 +140,10 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'contacts', '', -1);
 
 
-print $langs->trans("LDAPDescContact").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';

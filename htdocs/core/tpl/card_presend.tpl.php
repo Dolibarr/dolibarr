@@ -63,7 +63,7 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
@@ -156,6 +156,22 @@ if ($action == 'presend') {
 		$formmail->fromtype = 'special';
 	}
 
+	// Set the default "From"
+	$defaultfrom = '';
+	if (GETPOSTISSET('fromtype')) {
+		$defaultfrom = GETPOST('fromtype');
+	} else {
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('getDefaultFromEmail', $parameters, $formmail);
+		if (empty($reshook)) {
+			$defaultfrom = $formmail->fromtype;
+		}
+		if (!empty($hookmanager->resArray['defaultfrom'])) {
+			$defaultfrom = $hookmanager->resArray['defaultfrom'];
+		}
+	}
+	$formmail->fromtype = $defaultfrom;
+
 	$formmail->trackid = empty($trackid) ? '' : $trackid;
 	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
@@ -212,11 +228,33 @@ if ($action == 'presend') {
 	}
 
 	// Make substitution in email content
-	if ($object) {
+	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
 		$formmail->setSubstitFromObject($object, $langs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+
+	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
+	if ($formmail->fromtype) {
+		$reg = array();
+		if (preg_match('/user/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = $user->signature;
+		} elseif (preg_match('/company/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = '';
+		} elseif (preg_match('/senderprofile_(\d+)/', $formmail->fromtype, $reg)) {
+			$sql = "SELECT rowid, label, email, signature FROM ".$db->prefix()."c_email_senderprofile";
+			$sql .= " WHERE rowid = ".((int) $reg[1]);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$emailsendersignature = $obj->signature;
+				}
+			}
+		}
+	}
+	$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $emailsendersignature;
+
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';

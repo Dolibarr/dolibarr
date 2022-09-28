@@ -238,7 +238,6 @@ class modFacture extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_ext' => 'ExternalRef',
-			'f.ref_int' => 'ExternalRef',
 			'f.ref_client' => 'CutomerRef',
 			'f.type' => 'Type*',
 			'f.fk_soc' => 'Customer*',
@@ -292,7 +291,6 @@ class modFacture extends DolibarrModules
 		$import_sample = array(
 			'f.ref' => '(PROV0001)',
 			'f.ref_ext' => '',
-			'f.ref_int' => '',
 			'f.ref_client' => '',
 			'f.type' => '0',
 			'f.fk_soc' => '80LIMIT',

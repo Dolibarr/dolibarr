@@ -21,6 +21,7 @@
  *	\brief     	Card of a file for ECM module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -341,7 +342,7 @@ $rellink .= '&file='.urlencode($filepath);
 $fulllink = $urlwithroot.$rellink;
 print img_picto('', 'globe').' ';
 if ($action != 'edit') {
-	print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 } else {
 	print $fulllink;
 }

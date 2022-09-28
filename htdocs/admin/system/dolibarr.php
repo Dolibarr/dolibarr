@@ -22,6 +22,7 @@
  *  \brief      Page to show Dolibarr information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -410,7 +411,7 @@ foreach ($configfileparameters as $key => $value) {
 			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
 				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			} elseif ($newkey == 'dolibarr_main_document_root_alt') {
-				$tmparray = explode(',', ${$newkey});
+				$tmparray = explode(',', $dolibarr_main_document_root_alt);
 				$i = 0;
 				foreach ($tmparray as $value2) {
 					if ($i > 0) {
@@ -428,7 +429,7 @@ foreach ($configfileparameters as $key => $value) {
 				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.${$newkey}.' -->';
+					print '<!-- '.$dolibarr_main_instance_unique_id.' -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
 				} else {
 					print '**********';

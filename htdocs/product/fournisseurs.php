@@ -32,6 +32,7 @@
  *  \brief      Page of tab suppliers for products
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -312,7 +313,7 @@ if (empty($reshook)) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '') {
+					if (isModEnabled('dynamicprices') && $price_expression !== '') {
 						//Check the expression validity by parsing it
 						$priceparser = new PriceParser($db);
 						$object->fk_supplier_price_expression = $price_expression;
@@ -322,7 +323,7 @@ if (empty($reshook)) {
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (!$error && !empty($conf->dynamicprices->enabled)) {
+					if (!$error && isModEnabled('dynamicprices')) {
 						//Set the price expression for this supplier price
 						$ret = $object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0) {
@@ -514,15 +515,15 @@ if ($id > 0 || $ref) {
 					function load_vat() {
 						// get soc id
 						let socid = $("#id_fourn")[0].value
-	
+
 						// load available VAT rates
 						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
-						//Make GET request with params 
+						//Make GET request with params
 						let options = "";
 						options += "id=" + socid
 						options += "&htmlname=tva_tx"
 						options += "&action=default" // not defined in vatrates.php, default behavior.
-	
+
 						var get = $.getJSON(
 							vat_url,
 							options,
@@ -536,7 +537,7 @@ if ($id > 0 || $ref) {
 								})
 							}
 						);
-	
+
 					}
 					function replaceVATWithSupplierValue(vat_rate) {
 						console.log("Default VAT rate for the supplier: " + vat_rate + "%")
@@ -550,9 +551,9 @@ if ($id > 0 || $ref) {
 				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td>';
 				if ($rowid) {
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="128" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="128" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -634,7 +635,7 @@ if ($id > 0 || $ref) {
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
 
-				if (!empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
@@ -802,7 +803,7 @@ END;
 
 				// Option to define a transport cost on supplier price
 				if (!empty($conf->global->PRODUCT_CHARGES)) {
-					if (!empty($conf->margin->enabled)) {
+					if (isModEnabled('margin')) {
 						print '<tr>';
 						print '<td>'.$langs->trans("Charges").'</td>';
 						print '<td><input class="flat width75" name="charges" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';

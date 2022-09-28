@@ -43,6 +43,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -78,8 +79,8 @@ $object = new Ticket($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
-if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (!isModEnabled('ticket')) {
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 

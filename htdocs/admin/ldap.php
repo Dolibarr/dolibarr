@@ -26,6 +26,7 @@
  *      \brief      Page to setup module LDAP
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
@@ -138,7 +139,7 @@ $formldap = new FormLdap($db);
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print dol_get_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'ldap', '', -1);
 
 print '<table class="noborder centpercent">';
 
@@ -244,7 +245,8 @@ print '</td><td class="maxwidthhalf"><span class="opacitymedium">'.$langs->trans
 // Pass
 print '<!-- LDAP_ADMIN_PASS -->';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPPassword").'</td><td>';
-print '<input class="minwidth150" type="password" name="pass" value="'.dol_escape_htmltag($conf->global->LDAP_ADMIN_PASS).'">';
+print '<input class="minwidth150" type="password" name="pass" value="'.dol_escape_htmltag(getDolGlobalString('LDAP_ADMIN_PASS')).'">';
+print showValueWithClipboardCPButton(getDolGlobalString('LDAP_ADMIN_PASS'), 0, '&nbsp;');
 print '</td><td><span class="opacitymedium">'.$langs->trans('Password').' (ex: secret)</span></td></tr>';
 
 print '</table>';

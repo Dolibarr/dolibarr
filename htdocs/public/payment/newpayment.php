@@ -56,6 +56,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -911,14 +912,14 @@ print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
 if (!empty($conf->paypal->enabled)) {
-	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
-	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
+	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
+	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
 }
 if (!empty($conf->paybox->enabled)) {
-	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
+	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
 if (!empty($conf->stripe->enabled)) {
-	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
+	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
@@ -1468,6 +1469,7 @@ if ($source == 'contractline') {
 if ($source == 'member' || $source == 'membersubscription') {
 	$newsource = 'member';
 
+	$tag="";
 	$found = true;
 	$langs->load("members");
 

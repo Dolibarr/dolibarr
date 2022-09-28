@@ -119,7 +119,7 @@ class box_produits extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -150,9 +150,9 @@ class box_produits extends ModeleBoxes
 					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 					$productstatic->date_modification = $datem;
 
-					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
 					if ($productstatic->isService()) {
-						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+						$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
 					}
 
 					$this->info_box_contents[$line][] = array(

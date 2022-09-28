@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -24,6 +23,8 @@
  * \brief       Setup page to configure oauth access api
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
@@ -36,7 +37,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'oauth'));
+$langs->loadLangs(array('admin', 'oauth', 'modulebuilder'));
 
 // Security check
 if (!$user->admin) {
@@ -84,7 +85,12 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_SCOPE')) {
-				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', GETPOST($constvalue.'_SCOPE'), 'chaine', 0, '', $conf->entity)) {
+				$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			} else {
+				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', '', 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
 			}
@@ -110,7 +116,7 @@ $form = new Form($db);
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 
@@ -140,22 +146,16 @@ foreach ($list as $key) {
 }
 print '</select>';
 print ajax_combobox('provider');
-print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'">';
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^\S+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
+
+print '<br>';
+print '<br>';
+
+print dol_get_fiche_end();
+
 print '</form>';
 
-print '<br>';
-print '<br>';
-
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="update">';
-
-print '<div class="div-table-responsive">';
-print '<table class="noborder centpercent">';
-
-$i = 0;
 
 // Define $listinsetup
 foreach ($conf->global as $key => $val) {
@@ -171,111 +171,143 @@ foreach ($conf->global as $key => $val) {
 	}
 }
 
-// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
-foreach ($listinsetup as $key) {
-	$supported = 0;
-	$keyforsupportedoauth2array = $key[0];						// May be OAUTH_GOOGLE_NAME or OAUTH_GOOGLE_xxx_NAME
-	$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
-	$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
-	if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
-		$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
-	} else {
-		$keyforprovider = '';
-	}
-	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
-	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-	if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
-		$supported = 1;
-	}
-	if (!$supported) {
-		continue; // show only supported
-	}
+if (count($listinsetup) > 0) {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
 
-	$i++;
+	print '<div class="div-table-responsive-no-min">';
 
-	// Api Name
-	$label = $langs->trans($keyforsupportedoauth2array);
-	print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
-	print '<td>';
-	print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
-	if ($label == $keyforsupportedoauth2array) {
-		print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
-	} else {
-		print $label;
-	}
-	if ($keyforprovider) {
-		print ' (<b>'.$keyforprovider.'</b>)';
-	} else {
-		print ' (<b>'.$langs->trans("NoName").'</b>)';
-	}
-	print '</td>';
-	print '<td>';
-	if (!empty($supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials'])) {
-		print $langs->trans("OAUTH_URL_FOR_CREDENTIAL", $supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials']);
-	}
-	print '</td>';
-	print '</tr>';
+	$i = 0;
 
-	if ($supported) {
-		$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
-		print '<tr class="oddeven value">';
-		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-		print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
-		print '</td></tr>';
-
-		if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
-			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
-			print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
-			print '</td></tr>';
+	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
+	foreach ($listinsetup as $key) {
+		$supported = 0;
+		$keyforsupportedoauth2array = $key[0];						// May be OAUTH_GOOGLE_NAME or OAUTH_GOOGLE_xxx_NAME
+		$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
+		$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+		if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+			$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+		} else {
+			$keyforprovider = '';
 		}
-	} else {
-		print '<tr class="oddeven value">';
-		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-		print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
-		print '</td></tr>';
-	}
+		$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+		$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-	// Api Id
-	print '<tr class="oddeven value">';
-	print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
-	print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.getDolGlobalString($key[1]).'">';
-	print '</td></tr>';
+		if (in_array($keyforsupportedoauth2array, array_keys($supportedoauth2array))) {
+			$supported = 1;
+		}
+		if (!$supported) {
+			continue; // show only supported
+		}
 
-	// Api Secret
-	print '<tr class="oddeven value">';
-	print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
-	print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
-	print '</td></tr>';
+		$i++;
 
-	// TODO Move this into token generation
-	if ($supported) {
-		if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+		print '<table class="noborder centpercent">';
+
+		// OAUTH service name
+		$label = $langs->trans($keyforsupportedoauth2array);
+		print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
+		print '<td class="titlefieldcreate">';
+		print img_picto('', $supportedoauth2array[$keyforsupportedoauth2array]['picto'], 'class="pictofixedwidth"');
+		if ($label == $keyforsupportedoauth2array) {
+			print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+		} else {
+			print $label;
+		}
+		if ($keyforprovider) {
+			print ' (<b>'.$keyforprovider.'</b>)';
+		} else {
+			print ' (<b>'.$langs->trans("NoName").'</b>)';
+		}
+		print '</td>';
+		print '<td>';
+		if (!empty($supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials'])) {
+			print $langs->trans("OAUTH_URL_FOR_CREDENTIAL", $supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials']);
+		}
+		print '</td>';
+		print '</tr>';
+
+		if ($supported) {
+			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("Scopes").'</td>';
-			print '<td>';
-			print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
 			print '</td></tr>';
+
+			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+				print '<tr class="oddeven value">';
+				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
+				print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
+				print '</td></tr>';
+			}
 		} else {
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("Scopes").'</td>';
-			print '<td>';
-			//print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
-			print $supportedoauth2array[$keyforsupportedoauth2array]['defaultscope'];
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
 			print '</td></tr>';
 		}
+
+		// Api Id
+		print '<tr class="oddeven value">';
+		print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
+		print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.getDolGlobalString($key[1]).'">';
+		print '</td></tr>';
+
+		// Api Secret
+		print '<tr class="oddeven value">';
+		print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
+		print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
+		print '</td></tr>';
+
+		// TODO Move this into token generation
+		if ($supported) {
+			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+				print '<tr class="oddeven value">';
+				print '<td>'.$langs->trans("Scopes").'</td>';
+				print '<td>';
+				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
+				print '</td></tr>';
+			} else {
+				$availablescopes = array_flip(explode(',', $supportedoauth2array[$keyforsupportedoauth2array]['availablescopes']));
+				$currentscopes = explode(',', getDolGlobalString($key[4]));
+				$scopestodispay = array();
+				foreach ($availablescopes as $keyscope => $valscope) {
+					if (in_array($keyscope, $currentscopes)) {
+						$scopestodispay[$keyscope] = 1;
+					} else {
+						$scopestodispay[$keyscope] = 0;
+					}
+				}
+				// Api Scope
+				print '<tr class="oddeven value">';
+				print '<td>'.$langs->trans("Scopes").'</td>';
+				print '<td>';
+				foreach ($scopestodispay as $scope => $val) {
+					print '<input type="checkbox" id="'.$keyforprovider.$scope.'" name="'.$key[4].'[]" value="'.$scope.'"'.($val ? ' checked' : '').'>';
+					print '<label style="margin-right: 10px" for="'.$keyforprovider.$scope.'">'.$scope.'</label>';
+				}
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven value">';
+			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
+			print '</td></tr>';
+		}
+
+		print '</table>'."\n";
+
+		print '<br>';
 	}
+
+	print '</div>';
+
+	print $form->buttonsSaveCancel("Modify", '');
+
+	print '</form>';
 }
-
-print '</table>'."\n";
-print '</div>';
-
-print dol_get_fiche_end();
-
-print $form->buttonsSaveCancel("Modify", '');
-
-print '</form>';
 
 // End of page
 llxFooter();

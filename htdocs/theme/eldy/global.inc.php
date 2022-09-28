@@ -714,6 +714,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.maxquatrevingtpercent {
+	max-width: 80%;
+}
 .soixantepercent {
 	width: 60%;
 }
@@ -896,6 +899,9 @@ textarea.centpercent {
 }
 .cursornotallowed {
 	cursor: not-allowed;
+}
+.cursorwait {
+	cursor: wait;
 }
 .backgroundblank {
 	background-color: #fff;

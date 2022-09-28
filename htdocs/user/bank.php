@@ -28,6 +28,7 @@
  *		\brief      Tab for HRM
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
@@ -573,7 +574,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Accountancy code
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>'.$object->accountancy_code.'</td></tr>';
 	}
@@ -646,9 +647,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 				$salary->paye = $objp->paye;
 				$salary->amount = $objp->amount;
 
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->ref;
-				$payment_salary->datep = $db->jdate($objp->datep);
+				$payment_salary->id = !empty($objp->rowid) ? $objp->rowid : 0;
+				$payment_salary->ref = !empty($objp->ref) ? $objp->ref : "";
+				$payment_salary->datep = $db->jdate(!empty($objp->datep) ? $objp->datep : "");
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';

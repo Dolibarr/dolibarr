@@ -37,6 +37,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-shield-alt';
+
 	/**
 	 * Minimum length (text visible by end user)
 	 *

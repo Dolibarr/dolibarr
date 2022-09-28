@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -457,7 +457,6 @@ function cleanObjectDatas($toclean)
 
 	unset($toclean->ref_previous);
 	unset($toclean->ref_next);
-	unset($toclean->ref_int);
 
 	unset($toclean->projet); // Should be fk_project
 	unset($toclean->project); // Should be fk_project

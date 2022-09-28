@@ -24,6 +24,7 @@
  *		\brief      File of main public page for member module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -58,6 +59,7 @@ if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
 	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
 	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
@@ -65,6 +67,7 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "MEMBER_COUNTERS_ARE_PUBLIC", $publiccounters, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
@@ -234,6 +237,13 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $langs->trans("CanEditAmount");
 	print '</td><td>';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
+	print "</td></tr>\n";
+
+	// SHow counter of validated members publicly
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("MemberCountersArePublic");
+	print '</td><td>';
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", (!empty($conf->global->MEMBER_COUNTERS_ARE_PUBLIC) ? $conf->global->MEMBER_COUNTERS_ARE_PUBLIC : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page

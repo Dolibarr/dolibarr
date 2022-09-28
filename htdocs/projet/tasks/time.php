@@ -27,6 +27,7 @@
  *	\brief		Page to add new time spent on a task
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -1059,7 +1060,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
-		if ( !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+		if ( isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
 			$langs->load("interventions");
 			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
 		}

@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 abstract class ModeleGenPassword
 {
+	public $picto = 'generic';
+
 	/**
 	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
 	 *

@@ -25,6 +25,7 @@
 
 if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';

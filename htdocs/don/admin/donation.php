@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -169,7 +169,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 
 $dir = "../../core/modules/dons/";
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -335,7 +335,7 @@ print '<td>';
 $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="'.$conf->global->DONATION_ACCOUNTINGACCOUNT.'">';

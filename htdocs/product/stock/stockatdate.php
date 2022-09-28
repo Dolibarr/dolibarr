@@ -26,6 +26,7 @@
  *  \brief      Page to list stocks at a given date
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -487,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
-		/*if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (getDolGlobalInt('MAIN_MULTILANGS'))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';

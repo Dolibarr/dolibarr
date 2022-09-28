@@ -518,7 +518,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'file_manager'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -526,12 +526,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
-			'install',
+			'freezone', 'install',
 			'reopen'
 		);
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
+		// We also match for value with just a simple string that must match
 		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
@@ -547,12 +548,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	) {
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
+			top_httphead();
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
-				die;
 			} else {
 				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
@@ -567,8 +568,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 					}
 					print " into setup).\n";
 				}
-				die;
 			}
+			die;
 		}
 	}
 
@@ -851,12 +852,16 @@ if (!defined('NOLOGIN')) {
 			// No data to test login, so we show the login page.
 			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_INFO);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
+				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
+				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
+				// report a message to ask to login when search ajax component is used after a timeout.
+				//top_httphead();
 				return 'ERROR_NOT_LOGGED';
 			} else {
 				if ($_SERVER["HTTP_USER_AGENT"] == 'securitytest') {
 					http_response_code(401); // It makes easier to understand if session was broken during security tests
 				}
-				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));
+				dol_loginfunction($langs, $conf, (!empty($mysoc) ? $mysoc : ''));	// This include http headers
 			}
 			exit;
 		}
@@ -1242,8 +1247,7 @@ if (!defined('NOLOGIN')) {
 		// If not active, we refuse the user
 		$langs->loadLangs(array("errors", "other"));
 		dol_syslog("Authentication KO as login is disabled", LOG_NOTICE);
-		accessforbidden($langs->trans("ErrorLoginDisabled"));
-		exit;
+		accessforbidden("ErrorLoginDisabled");
 	}
 
 	// Load permissions
@@ -1442,6 +1446,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 		$contentsecuritypolicy = getDolGlobalString('MAIN_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 		}
 		$hookmanager->initHooks(array("main"));
@@ -2598,7 +2603,7 @@ function top_menu_bookmark()
 	$html = '';
 
 	// Define $bookmarks
-	if (empty($conf->bookmark->enabled) || empty($user->rights->bookmark->lire)) {
+	if (!isModEnabled('bookmark') || empty($user->rights->bookmark->lire)) {
 		return $html;
 	}
 
@@ -3299,7 +3304,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Wrapper to add log when clicking on download or preview
-		if (!empty($conf->blockedlog->enabled) && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
+		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
 			if (in_array($object->element, array('facture'))) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>

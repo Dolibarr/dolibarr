@@ -32,6 +32,7 @@ if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -600,7 +601,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 print '<br>';
 
 // Project filter
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('projet')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";

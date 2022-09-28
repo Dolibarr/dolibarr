@@ -546,7 +546,7 @@ class User extends CommonObject
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
 				$this->personal_email = $obj->personal_email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->job = $obj->job;
 				$this->signature = $obj->signature;
 				$this->admin		= $obj->admin;
@@ -708,10 +708,10 @@ class User extends CommonObject
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
-			'member' => 'adherent',	// We must check $user->rights->adherent...
+			'member' => 'adherent',
 			'mo' => 'mrp',
 			'order' => 'commande',
-			//'product' => 'produit',	// We must check $user->rights->produit...
+			'produit' => 'product',
 			'project' => 'projet',
 			'propale' => 'propal',
 			'shipping' => 'expedition',
@@ -720,6 +720,7 @@ class User extends CommonObject
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
+			'order_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
@@ -733,6 +734,7 @@ class User extends CommonObject
 
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
+			'margin' => 'margins'
 		);
 
 		$rightsPath = $module;
@@ -743,14 +745,20 @@ class User extends CommonObject
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
 		if (!empty($tmp[1])) {
+			if (strpos($module, '@') !== false) {
+				$module = $tmp[1];
+			}
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];
 		}
 
+		// In $conf->modules, we have 'accounting', 'product', 'facture', ...
+		// In $user->rights, we have 'accounting', 'produit', 'facture', ...
 		//var_dump($module);
-		//var_dump($this->rights->$module);
-		if (!in_array($module, $conf->modules)) {
+		//var_dump($this->rights->$rightsPath);
+		//var_dump($conf->modules);
+		if (!isModEnabled($module)) {
 			return 0;
 		}
 
@@ -764,7 +772,7 @@ class User extends CommonObject
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
 		}
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
+
 		//var_dump($this->rights);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
 			return 0;

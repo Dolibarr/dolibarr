@@ -34,6 +34,7 @@
  *       \brief      List of suppliers invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -192,9 +193,8 @@ $arrayfields = array(
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax1_assuj == "1", 'position'=>95),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>$mysoc->localtax2_assuj == "1", 'position'=>100),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>115),
-	'u.login'=>array('label'=>"Author", 'checked'=>1),
-	'dynamount_payed'=>array('label'=>"Paid", 'checked'=>0),
-	'rtp'=>array('label'=>"Rest", 'checked'=>0),
+	'dynamount_payed'=>array('label'=>"Paid", 'checked'=>0, 'position'=>116),
+	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>117),
 	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
@@ -202,8 +202,9 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>500),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>501),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -212,8 +213,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-if ((empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
-	|| (empty($conf->supplier_invoice->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
+if ((!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (!isModEnabled('supplier_invoice') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
 if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
@@ -838,7 +839,7 @@ if ($resql) {
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
-	if (!empty($conf->paymentbybanktransfer->enabled) && !empty($user->rights->paymentbybanktransfer->create)) {
+	if (isModEnabled('paymentbybanktransfer') && !empty($user->rights->paymentbybanktransfer->create)) {
 		$langs->load('withdrawals');
 		$arrayofmassactions['banktransfertrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 	}
@@ -1045,13 +1046,13 @@ if ($resql) {
 	// Condition of payment
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre left">';
-		$form->select_conditions_paiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
+		print $form->getSelectConditionsPaiements($search_paymentcond, 'search_paymentcond', -1, 1, 1, 'maxwidth100');
 		print '</td>';
 	}
 	// Payment mode
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre left">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 20, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 20, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.total_ht']['checked'])) {
@@ -1509,7 +1510,7 @@ if ($resql) {
 
 			// Payment condition
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td class="tdoverflowmax125">';
+				print '<td class="tdoverflowmax100">';
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 1);
 				print '</td>';
 				if (!$i) {
@@ -1518,7 +1519,7 @@ if ($resql) {
 			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td class="tdoverflowmax125">';
+				print '<td class="tdoverflowmax100">';
 				$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 				print '</td>';
 				if (!$i) {

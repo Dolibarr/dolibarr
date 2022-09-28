@@ -76,6 +76,8 @@ if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
 }
+header('X-Frame-Options: SAMEORIGIN');
+
 
 $res = 0;
 if (!$res && file_exists("../main.inc.php")) {
@@ -235,7 +237,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 					// Defined if module is enabled
 					$enabled = true;
-					if (empty($conf->$modulenameforenabled->enabled)) {
+					if (!isModEnabled($modulenameforenabled)) {
 						$enabled = false;
 					}
 

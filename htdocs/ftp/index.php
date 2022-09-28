@@ -23,6 +23,7 @@
  *  \brief      Main page for FTP section area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -316,7 +317,7 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $file, $newsection);
+		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
 
 
 		if ($result) {
@@ -708,7 +709,7 @@ print '<br>';
 if (!empty($conn_id)) {
 	$disconnect = dol_ftp_close($conn_id);
 
-	if ($disconnect == false) {
+	if (!$disconnect) {
 		setEventMessages($langs->trans("ErrorFTPNodisconnect"), null, 'errors');
 	}
 }

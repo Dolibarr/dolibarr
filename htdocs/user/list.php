@@ -25,6 +25,7 @@
  *      \brief      Page of users
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (isModEnabled('categorie')) {
@@ -587,7 +588,7 @@ if ($permissiontoadd) {
 if ($permissiontoadd) {
 	$arrayofmassactions['reactivate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Reactivate");
 }
-if ($permissiontoadd) {
+if (isModEnabled('category') && $permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -666,7 +667,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse
-if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';

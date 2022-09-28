@@ -35,6 +35,7 @@
  *   \brief     Page to show customer order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -57,7 +58,7 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
@@ -65,10 +66,10 @@ if (!empty($conf->variants->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
 
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 if (isModEnabled('productbatch')) {
@@ -227,10 +228,10 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -434,7 +435,7 @@ if (empty($reshook)) {
 								}
 
 								// Defined the new fk_parent_line
-								if ($result > 0) {
+								if ($result > 0 && $lines[$i]->product_type == 9) {
 									$fk_parent_line = $result;
 								}
 							}
@@ -590,7 +591,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = GETPOST('lang_id', 'alpha');
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -602,7 +603,7 @@ if (empty($reshook)) {
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) {
@@ -723,7 +724,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
@@ -874,7 +875,7 @@ if (empty($reshook)) {
 				$desc = '';
 
 				// Define output language
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -908,7 +909,7 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code))) {
 					$tmptxt = '(';
 					// Define output language
-					if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
@@ -1007,7 +1008,7 @@ if (empty($reshook)) {
 						// Define output language
 						$outputlangs = $langs;
 						$newlang = GETPOST('lang_id', 'alpha');
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -1182,10 +1183,10 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1241,7 +1242,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1261,7 +1262,7 @@ if (empty($reshook)) {
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
-					&& !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)
+					&& isModEnabled('facture') && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -1335,7 +1336,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1350,10 +1351,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1383,7 +1384,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -1704,7 +1705,7 @@ if ($action == 'create' && $usercancreate) {
 	if ($soc->fk_warehouse > 0) {
 		$warehouse_id = $soc->fk_warehouse;
 	}
-	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 			$warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 		}
@@ -1750,7 +1751,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</td>';
 	} else {
 		print '<td>';
-		print img_picto('', 'company').$form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'company').$form->select_company('', 'socid', '((s.client = 1 OR s.client = 2 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
 			print '<script type="text/javascript">
@@ -1813,13 +1814,13 @@ if ($action == 'create' && $usercancreate) {
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'payment', 'class="pictofixedwidth"');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
+	print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+	print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -1837,7 +1838,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Warehouse
-	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
@@ -1865,7 +1866,7 @@ if ($action == 'create' && $usercancreate) {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -2061,7 +2062,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
-			if (!empty($conf->notification->enabled)) {
+			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
@@ -2076,7 +2077,7 @@ if ($action == 'create' && $usercancreate) {
 			}
 
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2105,109 +2106,112 @@ if ($action == 'create' && $usercancreate) {
 			}
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
+			if (getDolGlobalInt('SALE_ORDER_SUGGEST_DOWN_PAYMENT_INVOICE_CREATION')) {
+				// This is a hidden option:
+				// Suggestion to create invoice during order validation is not enabled by default.
+				// Such choice should be managed by the workflow module and trigger. This option generates conflicts with some setup.
+				// It may also break step of creating an order when invoicing must be done from proposals and not from orders
+				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)) {
+					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
-			if (!empty($deposit_percent_from_payment_terms) && !empty($conf->facture->enabled) && !empty($user->rights->facture->creer)) {
-				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+					$object->fetchObjectLinked();
 
-				$object->fetchObjectLinked();
+					$eligibleForDepositGeneration = true;
 
-				$eligibleForDepositGeneration = true;
-
-				if (array_key_exists('facture', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['facture'] as $invoice) {
-						if ($invoice->type == Facture::TYPE_DEPOSIT) {
-							$eligibleForDepositGeneration = false;
-							break;
+					if (array_key_exists('facture', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['facture'] as $invoice) {
+							if ($invoice->type == Facture::TYPE_DEPOSIT) {
+								$eligibleForDepositGeneration = false;
+								break;
+							}
 						}
 					}
-				}
 
-				if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
-					foreach ($object->linkedObjects['propal'] as $proposal) {
-						$proposal->fetchObjectLinked();
+					if ($eligibleForDepositGeneration && array_key_exists('propal', $object->linkedObjects)) {
+						foreach ($object->linkedObjects['propal'] as $proposal) {
+							$proposal->fetchObjectLinked();
 
-						if (array_key_exists('facture', $proposal->linkedObjects)) {
-							foreach ($proposal->linkedObjects['facture'] as $invoice) {
-								if ($invoice->type == Facture::TYPE_DEPOSIT) {
-									$eligibleForDepositGeneration = false;
-									break 2;
+							if (array_key_exists('facture', $proposal->linkedObjects)) {
+								foreach ($proposal->linkedObjects['facture'] as $invoice) {
+									if ($invoice->type == Facture::TYPE_DEPOSIT) {
+										$eligibleForDepositGeneration = false;
+										break 2;
+									}
 								}
 							}
 						}
 					}
-				}
 
+					if ($eligibleForDepositGeneration) {
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => '',
+							'name' => 'generate_deposit',
+							'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+						);
 
-				if ($eligibleForDepositGeneration) {
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => '',
-						'name' => 'generate_deposit',
-						'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
-					);
-
-					$formquestion[] = array(
-						'type' => 'date',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'datef',
-						'label' => $langs->trans('DateInvoice'),
-						'value' => dol_now(),
-						'datenow' => true
-					);
-
-					if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
 						$formquestion[] = array(
 							'type' => 'date',
 							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-							'name' => 'date_pointoftax',
-							'label' => $langs->trans('DatePointOfTax'),
+							'name' => 'datef',
+							'label' => $langs->trans('DateInvoice'),
 							'value' => dol_now(),
 							'datenow' => true
 						);
-					}
 
-					ob_start();
-					$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
-					$paymentTermsSelect = ob_get_clean();
+						if (!empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+							$formquestion[] = array(
+								'type' => 'date',
+								'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+								'name' => 'date_pointoftax',
+								'label' => $langs->trans('DatePointOfTax'),
+								'value' => dol_now(),
+								'datenow' => true
+							);
+						}
 
-					$formquestion[] = array(
-						'type' => 'other',
-						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
-						'name' => 'cond_reglement_id',
-						'label' => $langs->trans('PaymentTerm'),
-						'value' => $paymentTermsSelect
-					);
 
-					$formquestion[] = array(
-						'type' => 'checkbox',
-						'tdclass' => 'showonlyifgeneratedeposit',
-						'name' => 'validate_generated_deposit',
-						'label' => $langs->trans('ValidateGeneratedDeposit')
-					);
+						$paymentTermsSelect = $form->getSelectConditionsPaiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
 
-					$formquestion[] = array(
-						'type' => 'onecolumn',
-						'value' => '
-							<script>
-								$(document).ready(function() {
-									$("[name=generate_deposit]").change(function () {
-										let $self = $(this);
-										let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+						$formquestion[] = array(
+							'type' => 'other',
+							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+							'name' => 'cond_reglement_id',
+							'label' => $langs->trans('PaymentTerm'),
+							'value' => $paymentTermsSelect
+						);
 
-										if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
-											$target.show();
-										} else {
-											$target.hide();
-										}
+						$formquestion[] = array(
+							'type' => 'checkbox',
+							'tdclass' => 'showonlyifgeneratedeposit',
+							'name' => 'validate_generated_deposit',
+							'label' => $langs->trans('ValidateGeneratedDeposit')
+						);
 
-										return true;
+						$formquestion[] = array(
+							'type' => 'onecolumn',
+							'value' => '
+								<script>
+									$(document).ready(function() {
+										$("[name=generate_deposit]").change(function () {
+											let $self = $(this);
+											let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+											if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+												$target.show();
+											} else {
+												$target.hide();
+											}
+
+											return true;
+										});
 									});
-								});
-							</script>
-						'
-					);
+								</script>
+							'
+						);
+					}
 				}
 			}
 
@@ -2227,7 +2231,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmUnvalidateOrder', $object->ref);
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2266,7 +2270,7 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
 			$formquestion = array();
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change) {
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -2320,7 +2324,7 @@ if ($action == 'create' && $usercancreate) {
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
 		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1, 'customer');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
@@ -2479,7 +2483,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
@@ -2606,7 +2610,7 @@ if ($action == 'create' && $usercancreate) {
 		// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			$editenable = $usercancreate;
 			print $form->editfieldkey("IncotermLabel", 'incoterm', '', $object, $editenable);
@@ -2693,7 +2697,7 @@ if ($action == 'create' && $usercancreate) {
 		print '</table>';
 
 		// Margin Infos
-		if (!empty($conf->margin->enabled)) {
+		if (isModEnabled('margin')) {
 			$formmargin->displayMarginInfos($object);
 		}
 
@@ -2805,7 +2809,7 @@ if ($action == 'create' && $usercancreate) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=modif&amp;token='.newToken().'&amp;id='.$object->id, '');
 				}
 				// Create event
-				/*if ($conf->agenda->enabled && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
+				/*if (isModEnabled('agenda') && !empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
 				{
 					// Add hidden condition because this is not a
 					// "workflow" action so should appears somewhere else on
@@ -2823,7 +2827,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create intervention
-				if (!empty($conf->ficheinter->enabled)) {
+				if (isModEnabled('ficheinter')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
@@ -2933,7 +2937,7 @@ if ($action == 'create' && $usercancreate) {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 
 			// Show online payment link
-			$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+			$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 			if (!empty($conf->global->ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER)) {
 				$useonlinepayment = 0;
 			}

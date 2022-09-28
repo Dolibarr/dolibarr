@@ -20,6 +20,7 @@
  *  \brief      	Page to show an establishment
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -60,7 +61,7 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (empty($conf->hrm->enabled)) accessforbidden();
+if (!isModEnabled('hrm')) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 
 
@@ -254,7 +255,7 @@ if ($action == 'create') {
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit') {
+if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = establishment_prepare_head($object);

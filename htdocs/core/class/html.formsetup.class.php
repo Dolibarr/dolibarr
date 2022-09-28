@@ -758,6 +758,8 @@ class FormSetupItem
 				$val = GETPOST($this->confKey, 'array');
 				if ($val && is_array($val)) {
 					$val_const = implode(',', $val);
+				} else {
+					$val_const = '';
 				}
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');

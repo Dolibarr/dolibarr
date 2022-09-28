@@ -192,6 +192,7 @@ DownloadPackageFromWebSite=Lade das gefundene Paket herunter (zum Beispiel von d
 UnpackPackageInDolibarrRoot=Entpacke das Archiv in dein aktuelles Dolibarr Verzeichnis: <b>%s</b>.
 SetupIsReadyForUse=Modulinstallation abgeschlossen. Aktiviere und konfiguriere nun das Modul im Menu "<a href="%s">%s</a>".
 InfDirExample=<br>Dann deklariere in <strong>conf.php</strong><br> $dolibarr_main_url_root_alt='/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>\n"#" heisst, die Variablen sind auskommentiert und werden nicht berücksichtigt.\nEntferne einfach "#", um die Variablen scharf zu schalten.
+CurrentVersion=Aktuelle dolibarr-Version
 CallUpdatePage=Zur Aktualisierung der Daten und der Datenbankstruktur gehst du zur Seite %s.
 UpdateServerOffline=Update-Server offline
 WithCounter=Zähler verwalten
@@ -255,6 +256,7 @@ SetAsDefault=Als Standard definieren
 InstalledInto=Installiert im Verzeichnis %s
 BarcodeInitForThirdparties=Barcode Init. für alle Partner
 BarcodeInitForProductsOrServices=Alle Strichcodes für Produkte oder Services initialisieren oder zurücksetzen
+InitEmptyBarCode=Init value for the %s empty barcodes
 EraseAllCurrentBarCode=Alle aktuellen Barcode-Werte löschen
 ConfirmEraseAllCurrentBarCode=Wirklich alle aktuellen Barcode-Werte löschen?
 AllBarcodeReset=Alle Barcode-Werte wurden entfernt
@@ -593,6 +595,7 @@ MailToSendProposal=Angebote Kunde
 MailToSendOrder=Kundenbestellungen
 MailToSendIntervention=Arbeitseinsätze
 MailToSendReception=Lieferungen
+MailToExpenseReport=Spesenrapporte
 ModelModulesProduct=Vorlage für Produktdokumente
 SeeSubstitutionVars=Siehe * für eine Liste der Verfügbaren Variablen
 AddRemoveTabs=Tab hinzufügen oder entfernen
@@ -626,7 +629,7 @@ NewEmailCollector=Neuer E-Mail - Sammeldienst
 EMailHost=IMAP Server Host
 EmailCollectorConfirmCollectTitle=E-Mail - Sammeldienst Bestätigung
 NoNewEmailToProcess=Ich habe keinen neuen E-Mails (die zu den Filtern passen) abzuarbeiten.
-OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 ResourceSetup=Modul Ressourcen einrichten
 UseSearchToSelectResource=Zeige eine Suchmaske für Ressourcen, statt eine Drop-down - Liste
 DisabledResourceLinkUser=Verknüpfungsmöglichkeit zwischen Ressource und Benutzer unterbinden.

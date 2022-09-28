@@ -29,6 +29,7 @@
  *		\brief      Page of project referrers
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -36,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (isModEnabled("propal")) {
@@ -61,7 +62,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled("expedition")) {
@@ -76,14 +77,14 @@ if (isModEnabled('expensereport')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
 if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
 if (isModEnabled('tax')) {
@@ -113,7 +114,7 @@ if (isModEnabled('commande')) {
 if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions");
 }
 if (isModEnabled('deplacement')) {
@@ -122,7 +123,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('expensereport')) {
 	$langs->load("trips");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
 if (!empty($conf->loan->enabled)) {
@@ -715,7 +716,7 @@ if (!$showdatefilter) {
 
 $langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
 
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	$langs->load('stocks');
 }
 

@@ -78,7 +78,7 @@ $search_phone_pro = GETPOST("search_phone_pro", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
 $search_fax = GETPOST("search_fax", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
-if (!empty($conf->mailing->enabled)) {
+if (isModEnabled('mailing')) {
 	$search_no_email = GETPOSTISSET("search_no_email") ? GETPOST("search_no_email", 'int') : -1;
 } else {
 	$search_no_email = -1;
@@ -218,7 +218,7 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 $arrayfields['unsubscribed'] = array(
 		'label'=>'No_Email',
 		'checked'=>0,
-		'enabled'=>(!empty($conf->mailing->enabled)),
+		'enabled'=>(isModEnabled('mailing')),
 		'position'=>111);
 
 if (isModEnabled('socialnetworks')) {
@@ -312,8 +312,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Contact';
 	$objectlabel = 'Contact';
-	$permissiontoread = $user->rights->societe->lire;
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->hasRight('societe', 'lire');
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -385,7 +385,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
-if (!empty($conf->mailing->enabled)) {
+if (isModEnabled('mailing')) {
 	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) as unsubscribed";
 }
 // Add fields from hooks
@@ -690,10 +690,10 @@ $arrayofmassactions = array(
 //    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) {
+if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->societe->creer) {
+if (isModEnabled('category') && $user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -938,7 +938,7 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status);
+	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75');
 	print '</td>';
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
@@ -1099,7 +1099,7 @@ while ($i < min($num, $limit)) {
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50">';
-		print $obj->rowid;
+		print dol_escape_htmltag($obj->rowid);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1107,7 +1107,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Name
 	if (!empty($arrayfields['p.lastname']['checked'])) {
-		print '<td class="middle tdoverflowmax200">';
+		print '<td class="middle tdoverflowmax150">';
 		print $contactstatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -1116,35 +1116,35 @@ while ($i < min($num, $limit)) {
 	}
 	// Firstname
 	if (!empty($arrayfields['p.firstname']['checked'])) {
-		print '<td class="tdoverflowmax200">'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Job position
 	if (!empty($arrayfields['p.poste']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$obj->poste.'</td>';
+		print '<td class="tdoverflowmax100">'.dol_escape_htmltag($obj->poste).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Address
 	if (!empty($arrayfields['p.address']['checked'])) {
-		print '<td>'.$obj->address.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Zip
 	if (!empty($arrayfields['p.zip']['checked'])) {
-		print '<td>'.$obj->zip.'</td>';
+		print '<td>'.dol_escape_htmltag($obj->zip).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Town
 	if (!empty($arrayfields['p.town']['checked'])) {
-		print '<td>'.$obj->town.'</td>';
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1165,7 +1165,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center">';
 		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1222,7 +1222,7 @@ while ($i < min($num, $limit)) {
 	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
+				print '<td class="tdoverflowmax100">'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1291,7 +1291,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['p.datec']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1300,7 +1300,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['p.tms']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {

@@ -26,6 +26,7 @@ if (!defined('NOSTYLECHECK')) {
 	define('NOSTYLECHECK', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';

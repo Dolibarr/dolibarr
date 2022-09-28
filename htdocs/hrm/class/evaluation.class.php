@@ -20,9 +20,9 @@
  */
 
 /**
- * \file        class/evaluation.class.php
- * \ingroup     hrm
- * \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
+ *    \file        htdocs/hrm/class/evaluation.class.php
+ *    \ingroup     hrm
+ *    \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file

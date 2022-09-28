@@ -249,7 +249,7 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && $object->no_email == -1 && !empty($object->email)) {
+		if (isModEnabled('mailing') && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && $object->no_email == -1 && !empty($object->email)) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'create';
@@ -290,7 +290,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (empty($error) && !empty($conf->mailing->enabled) && !empty($object->email)) {
+		if (empty($error) && isModEnabled('mailing') && !empty($object->email)) {
 			// Add mass emailing flag into table mailing_unsubscribe
 			$result = $object->setNoEmail($object->no_email);
 			if ($result < 0) {
@@ -342,7 +342,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 		}
 
-		if (!empty($conf->mailing->enabled) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
+		if (isModEnabled('mailing') && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2 && GETPOST("no_email", "int") == -1 && !empty(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL))) {
 			$error++;
 			$errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email"));
 			$action = 'edit';
@@ -830,7 +830,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Unsubscribe
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 					print '$(document).ready(function () {
@@ -884,7 +884,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			//Default language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 				print '</td>';
@@ -1101,7 +1101,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td>';
 			print img_picto('', 'object_email');
 			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
 				print '<td>'.$object->getNbOfEMailings().'</td>';
@@ -1111,7 +1111,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Unsubscribe
-			if (!empty($conf->mailing->enabled)) {
+			if (isModEnabled('mailing')) {
 				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 
@@ -1171,7 +1171,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			//Default language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 				print '</td>';
@@ -1376,14 +1376,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
 		// Email
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$langs->load("mails");
 			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
 		}
 
 		// Unsubscribe opt-out
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$result = $object->getNoEmail();
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1398,7 +1398,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Default language
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
 			//$s=picto_from_langcode($object->default_lang);

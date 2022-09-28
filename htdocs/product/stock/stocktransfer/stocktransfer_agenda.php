@@ -22,6 +22,7 @@
  *  \brief      Page of StockTransfer events
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -115,7 +116,7 @@ if ($object->id > 0) {
 	$help_url = '';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (isModEnabled('notification')) $langs->load("mails");
 	$head = stocktransferPrepareHead($object);
 
 

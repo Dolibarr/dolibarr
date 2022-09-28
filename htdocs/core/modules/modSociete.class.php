@@ -413,7 +413,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"company",
 			's.entity'=>'company',
 		); // We define here only fields that use another picto
-		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+		if (!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
@@ -747,7 +747,7 @@ class modSociete extends DolibarrModules
 			's.fk_departement' => "StateCode",
 			's.fk_pays' => "CountryCode",
 			's.birthday' => "DateOfBirth",
-			's.poste' => "Role",
+			's.poste' => "PostOrFunction",
 			's.phone' => "Phone",
 			's.phone_perso' => "PhonePerso",
 			's.phone_mobile' => "PhoneMobile",

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'companies', 'orders', 'propal'));
+$langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
 
 
 if (GETPOST('actioncode', 'array')) {
@@ -121,7 +121,7 @@ if ($socid > 0) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

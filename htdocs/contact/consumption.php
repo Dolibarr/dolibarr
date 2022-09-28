@@ -170,7 +170,7 @@ if ($object->thirdparty->client) {
 	}
 }
 
-if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
+if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
@@ -497,7 +497,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 

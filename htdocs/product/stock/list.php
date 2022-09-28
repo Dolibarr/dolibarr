@@ -25,6 +25,7 @@
  *      \brief      Page with warehouse and stock value
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
@@ -382,7 +383,7 @@ $arrayofmassactions = array(
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
-if ($user->rights->stock->creer) {
+if (isModEnabled('category') && $user->rights->stock->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);

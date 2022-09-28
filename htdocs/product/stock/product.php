@@ -31,6 +31,7 @@
  *	\brief      Page to list detailed stock of a product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -47,7 +48,7 @@ if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
