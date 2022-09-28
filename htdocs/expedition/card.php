@@ -1146,7 +1146,7 @@ if ($action == 'create') {
 			while ($i < $numAsked) {
 				print 'var qtyRemainToSend = jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val();';
 				print 'jQuery("#qtyl'.$i.'").val(qtyRemainToSend);'."\n";
-				//print 'jQuery("#qtyl'.$i.'_0").val(qtyRemainToSend);'."\n";
+				print 'jQuery("#qtyl'.$i.'_0").val(qtyRemainToSend);'."\n";
 				if (isModEnabled('productbatch')) {
 					print 'jQuery("#qtyl'.$i.'_'.$i.'").val(qtyRemainToSend);'."\n";
 				}
@@ -1495,7 +1495,11 @@ if ($action == 'create') {
 						// ship from multiple locations
 						if (empty($conf->productbatch->enabled) || !$product->hasbatch()) {
 							print '<!-- Case warehouse not already known and product does not need lot -->';
-							print '<td></td><td></td><td></td></tr>' . "\n"; // end line and start a new one for each warehouse
+							print '<td></td>';
+							if (!empty($conf->stock->enabled)) {
+								print '<td></td><td></td>';
+							}
+							print '</tr>' . "\n"; // end line and start a new one for each warehouse
 
 							$subj = 0;
 							$out_js_line_list = array();
