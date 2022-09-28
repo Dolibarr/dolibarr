@@ -771,6 +771,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
 		$sql .= " f.fk_user_creat as fk_user_creation,";
+		$sql .= " f.fk_user_author as fk_user_author,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
