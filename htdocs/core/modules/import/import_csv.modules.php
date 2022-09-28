@@ -726,7 +726,7 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
 							}
@@ -840,7 +840,7 @@ class ImportCsv extends ModeleImports
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
 										$tmp = explode("_", $key);
 										$key = $tmp[0];
 										$socialnetwork = $tmp[1];
