@@ -24,7 +24,7 @@ FinancialCommitment=Finanční závazek
 InterestAmount=Zájem
 CapitalRemain=Zůstatek kapitálu
 TermPaidAllreadyPaid = Tento termín je již zaplacen
-CantUseScheduleWithLoanStartedToPaid = Nelze použít plánovač pro půjčku se zaplacením
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Pokud používáte plán, nemůžete změnit zájem
 # Admin
 ConfigLoan=Konfigurace modulu úvěru

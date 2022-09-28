@@ -22,6 +22,7 @@
  * \brief   Asset setup page.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
@@ -519,29 +520,18 @@ if ($action == 'edit') {
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
-				if (!empty($conf->use_javascript_ajax)) {
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
-                        $("#generate_token'.$constname.'").click(function() {
-                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-                		      action: \'getrandompassword\',
-                		      generic: true
-    				        },
-    				        function(token) {
-    					       $("#'.$constname.'").val(token);
-            				});
-                         });
-                    });';
-					print '</script>';
-				}
+
+				// Add button to autosuggest a key
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
-				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+				if (isModEnabled("product") || isModEnabled("service")) {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} elseif ($val['type'] == 'accountancy_code') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 					$formaccounting = new FormAccounting($db);
 					print $formaccounting->select_account($selected, $constname, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
@@ -550,7 +540,7 @@ if ($action == 'edit') {
 				}
 			} elseif ($val['type'] == 'accountancy_category') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					print '<input type="text" name="' . $constname . '" list="pcg_type_datalist" value="' . $selected . '">';
 					// autosuggest from existing account types if found
 					print '<datalist id="pcg_type_datalist">';
@@ -647,7 +637,7 @@ if ($action == 'edit') {
 						setEventMessages(null, $object->errors, "errors");
 					}
 				} elseif ($val['type'] == 'accountancy_code') {
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch('', $conf->global->{$constname}, 1);

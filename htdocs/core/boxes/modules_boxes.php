@@ -259,7 +259,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
 					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
 					$label = $head['text'];
-					//if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+					//if (!empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
 					if (!empty($head['graph'])) {
 						$label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
 					}
@@ -326,7 +326,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 							}
 
 							$maxlength = $MAXLENGTHBOX;
-							if (!empty($contents[$i][$j]['maxlength'])) {
+							if (isset($contents[$i][$j]['maxlength'])) {
 								$maxlength = $contents[$i][$j]['maxlength'];
 							}
 

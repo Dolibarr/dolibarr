@@ -22,6 +22,7 @@
  * \brief       Page to show a fiscal year
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
@@ -299,7 +300,7 @@ if ($action == 'create') {
 			/*
 			 * Action bar
 			 */
-			if (!empty($user->rights->accounting->fiscalyear->write)) {
+			if ($user->hasRight('accounting', 'fiscalyear', 'write')) {
 				print '<div class="tabsAction">';
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';

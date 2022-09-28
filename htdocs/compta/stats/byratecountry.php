@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
  *		\brief      VAT by rate
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -54,7 +56,9 @@ if (empty($year)) {
 }
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
+
 // Quarter
+$q = '';
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
@@ -155,10 +159,12 @@ foreach ($listofparams as $param) {
 
 llxHeader('', $langs->trans("TurnoverReport"), '', '', 0, 0, '', '', $morequerystring);
 
-
+$exportlink="";
+$namelink="";
 //print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
+$fsearch = '';
 $fsearch .= '  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch .= '  <input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
@@ -198,14 +204,17 @@ if ($nextquarter < 4) {
 	$nextquarter = 1;
 	$nextyear++;
 }
-$description .= $fsearch;
+$description = $fsearch;
 $builddate = dol_now();
 
+if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
+}
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
-	$description .= $langs->trans("RulesVATDueProducts");
+	$description .= '<br>'.$langs->trans("RulesVATDueProducts");
 }
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
-	$description .= $langs->trans("RulesVATInProducts");
+	$description .= '<br>'.$langs->trans("RulesVATInProducts");
 }
 if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
@@ -215,9 +224,6 @@ if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
 }
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
-}
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
-	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 
 // Customers invoices
@@ -229,9 +235,6 @@ $amountcust = $langs->trans("AmountHT");
 $elementsup = $langs->trans("SuppliersInvoices");
 $productsup = $productcust;
 $amountsup = $amountcust;
-$namesup = $namecust;
-
-
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
 if ($modecompta == "BOOKKEEPING") {
@@ -247,7 +250,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
-	$description = $langs->trans("RulesCADue");
+	$description .= '<br>'.$langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
@@ -260,7 +263,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
-	$description = $langs->trans("RulesCAIn");
+	$description .= $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
@@ -280,7 +283,7 @@ $description .= '  <input type="hidden" name="modecompta" value="'.$modecompta.'
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 

@@ -45,6 +45,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -60,6 +61,7 @@ global $dolibarr_main_url_root;
 
 // Init vars
 $errmsg = '';
+$errors = array();
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -90,6 +92,7 @@ if ($type == 'conf') {
 	if ($resultproject < 0) {
 		$error++;
 		$errmsg .= $project->error;
+		$errors = array_merge($errors, $project->errors);
 	}
 }
 
@@ -99,6 +102,7 @@ if ($type == 'global') {
 	if ($resultproject < 0) {
 		$error++;
 		$errmsg .= $project->error;
+		$errors = array_merge($errors, $project->errors);
 	} else {
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet";
 		$sql .= " WHERE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee = ".((int) $project->id);
@@ -135,7 +139,7 @@ $user->loadDefaultValues();
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
@@ -279,6 +283,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if ($resultconfattendee < 0) {
 				$error++;
 				$errmsg .= $confattendee->error;
+				$errors = array_merge($errors, $confattendee->errors);
 			}
 		}
 
@@ -403,6 +408,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// If an error was found
 			$error++;
 			$errmsg .= $thirdparty->error;
+			$errors = array_merge($errors, $thirdparty->errors);
 		} elseif ($resultfetchthirdparty == 0) {	// No thirdparty found + a payment is expected
 			// Creation of a new thirdparty
 			if (!empty($societe)) {
@@ -441,6 +447,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if ($readythirdparty < 0) {
 				$error++;
 				$errmsg .= $thirdparty->error;
+				$errors = array_merge($errors, $thirdparty->errors);
 			} else {
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
@@ -472,6 +479,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
+				$errors = array_merge($errors, $productforinvoicerow->errors);
 			} else {
 				$facture = new Facture($db);
 				if (empty($confattendee->fk_invoice)) {
@@ -668,7 +676,7 @@ if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 
 print '<br>';
 
-dol_htmloutput_errors($errmsg);
+dol_htmloutput_errors($errmsg, $errors);
 
 if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS_CONFIRMED) || (!empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	if (empty($maxattendees) || $currentnbofattendees < $maxattendees) {

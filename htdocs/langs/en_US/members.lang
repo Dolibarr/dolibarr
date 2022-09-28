@@ -15,6 +15,7 @@ ErrorMemberIsAlreadyLinkedToThisThirdParty=Another member (name: <b>%s</b>, logi
 ErrorUserPermissionAllowsToLinksToItselfOnly=For security reasons, you must be granted permissions to edit all users to be able to link a member to a user that is not yours.
 SetLinkToUser=Link to a Dolibarr user
 SetLinkToThirdParty=Link to a Dolibarr third party
+MemberCountersArePublic=Counters of valid members are public
 MembersCards=Generation of cards for members
 MembersList=List of members
 MembersListToValid=List of draft members (to be validated)

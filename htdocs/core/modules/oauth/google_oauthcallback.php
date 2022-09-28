@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
  *      \brief      Page to get oauth callback
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
@@ -88,10 +89,13 @@ if ($state) {
 	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
 	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
-if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
-	exit;
+
+if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	header('Location: '.$backtourl);
+	exit();
 }
+
 //var_dump($requestedpermissionsarray);exit;
 
 

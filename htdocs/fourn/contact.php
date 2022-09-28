@@ -23,6 +23,7 @@
  *		\brief      Liste des contacts fournisseurs
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 $langs->load("companies");

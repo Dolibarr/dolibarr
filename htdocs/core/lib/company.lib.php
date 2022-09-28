@@ -128,7 +128,7 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
@@ -138,7 +138,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->project->enabled) && (!empty($user->rights->projet->lire))) {
+	if (isModEnabled('project') && (!empty($user->rights->projet->lire))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -179,7 +179,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+	if ((isModEnabled('commande') || isModEnabled('propal') || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -242,7 +242,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && (!empty($user->rights->societe->lire))) {
+	if (isModEnabled('website') && (!empty($conf->global->WEBSITE_USE_WEBSITE_ACCOUNTS)) && ($user->hasRight('societe', 'lire'))) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode($object->id);
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
@@ -281,7 +281,7 @@ function societe_prepare_head(Societe $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'core');
 
 	if ($user->socid == 0) {
 		// Notifications
@@ -392,11 +392,11 @@ function societe_prepare_head(Societe $object)
 	$head[$h][2] = 'agenda';
 	$h++;
 
-	// Log
-	/*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;*/
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'remove');
 
@@ -781,11 +781,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	$i = -1;
 
-	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -896,14 +896,15 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 /**
  * 		Show html area for list of contacts
  *
- *		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Database handler
- * 		@param	Societe		$object		Third party object
- *      @param  string		$backtopage	Url to go once contact is created
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Societe		$object			Third party object
+ *      @param  string		$backtopage		Url to go once contact is created
+ *      @param	int			$showuserlogin 	1=Show also user login if it exists
  *      @return	int
  */
-function show_contacts($conf, $langs, $db, $object, $backtopage = '')
+function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserlogin = 0)
 {
 	global $user, $conf, $extrafields, $hookmanager;
 	global $contextpage;
@@ -922,6 +923,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		$search_status = 1; // always display active customer first
 	}
 
+	$search_rowid   = GETPOST("search_rowid", 'int');
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -970,6 +972,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>1, 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
@@ -1011,6 +1014,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_rowid = '';
 		$search_status = '';
 		$search_name = '';
 		$search_roles = array();
@@ -1054,6 +1058,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	print "\n".'<table class="tagtable liste">'."\n";
 
 	$param = "socid=".urlencode($object->id);
+	if ($search_rowid != '') {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
 	}
@@ -1082,6 +1089,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	if ($search_rowid) {
+		$sql .= natural_search('t.rowid', $search_rowid);
+	}
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1137,12 +1147,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			if (in_array($key, array('statut'))) {
 				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
 			} elseif (in_array($key, array('role'))) {
-				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
+				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles, 'minwidth200 maxwidth300');
 			} else {
 				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
+	}
+	if ($showuserlogin) {
+		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1182,6 +1195,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		if (!empty($arrayfields['sc.'.$key]['checked'])) {
 			print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
 		}
+	}
+	if ($showuserlogin) {
+		print '<th class="wrapcolumntitle liste_titre">'.$langs->trans("DolibarrLogin").'</th>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1279,6 +1295,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			// Status
 			if (!empty($arrayfields['t.statut']['checked'])) {
 				print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
+			}
+
+			if ($showuserlogin) {
+				print '<td>';
+				$tmpuser= new User($db);
+				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
+				if ($resfetch > 0) {
+					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+				}
+				print '</td>';
 			}
 
 			// Extra fields
