@@ -464,7 +464,7 @@ class modSociete extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'societe_extrafields'
 		); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
-			's.nom' => "Name*",
+			's.nom' => "ThirdPartyName*",
 			's.name_alias' => "AliasNameShort",
 			's.parent' => "ParentCompany",
 			's.status' => "Status*",
@@ -685,7 +685,7 @@ class modSociete extends DolibarrModules
 			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.nom' => 'Name',
+			's.nom' => 'ThirdPartyName',
 			's.zip' => 'Zip',
 			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',
@@ -724,7 +724,7 @@ class modSociete extends DolibarrModules
 			$i++;
 		}
 
-		// Import list of contacts/additional addresses and attributes
+		// Import list of contacts/addresses of thirparties and attributes
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportDataset_company_2';
@@ -767,7 +767,7 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -794,7 +794,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryStateCode'
+				'dict' => 'DictionaryCanton'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
