@@ -1910,8 +1910,8 @@ if ($step == 5 && $datatoimport) {
 			print '<br>';
 			print '<div class="info">';
 			print '<div class=""><b>'.$langs->trans("ResultOfSimulationNoError").'</b></div>';
-			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
+			print $langs->trans("NbInsertSim", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdateSim", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
 			print '</div>';
 			print '<br>';
 		} else {
