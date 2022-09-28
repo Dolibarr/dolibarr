@@ -1900,7 +1900,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht';
 			}
-			$totalarray['val']['p.total_ht'] += $obj->total_ht;
+			if (empty($totalarray['val']['p.total_ht'])) {
+				$totalarray['val']['p.total_ht'] = $obj->total_ht;
+			} else {
+				$totalarray['val']['p.total_ht'] += $obj->total_ht;
+			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.total_tva']['checked'])) {
@@ -1911,7 +1915,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_tva';
 			}
-			$totalarray['val']['p.total_tva'] += $obj->total_tva;
+			if (empty($totalarray['val']['p.total_tva'])) {
+				$totalarray['val']['p.total_tva'] = $obj->total_tva;
+			} else {
+				$totalarray['val']['p.total_tva'] += $obj->total_tva;
+			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['p.total_ttc']['checked'])) {
@@ -1922,7 +1930,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ttc';
 			}
-			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
+			if (empty($totalarray['val']['p.total_ttc'])) {
+				$totalarray['val']['p.total_ttc'] = $obj->total_ttc;
+			} else {
+				$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
+			}
 		}
 		// Amount invoiced HT
 		if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
@@ -1933,7 +1945,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
 			}
-			$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
+			if (empty($totalarray['val']['p.total_ht_invoiced'])) {
+				$totalarray['val']['p.total_ht_invoiced'] = $totalInvoicedHT;
+			} else {
+				$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
+			}
 		}
 		// Amount invoiced TTC
 		if (!empty($arrayfields['p.total_invoiced']['checked'])) {
@@ -1944,7 +1960,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
 			}
-			$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+			if (empty($totalarray['val']['p.total_invoiced'])) {
+				$totalarray['val']['p.total_invoiced'] = $totalInvoicedTTC;
+			} else {
+				$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+			}
 		}
 		// Currency
 		if (!empty($arrayfields['p.multicurrency_code']['checked'])) {

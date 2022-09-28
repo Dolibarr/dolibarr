@@ -62,7 +62,7 @@ function product_prepare_head($object)
 
 	if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 		if ((((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->lire)
-		|| (isModEnabled('margin') && $user->rights->margin->liretous)
+		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 		) {
 			if ($usercancreadprice) {
 				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;

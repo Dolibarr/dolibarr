@@ -211,7 +211,21 @@ class Form
 
 		// Check parameters
 		if (empty($typeofdata)) {
-			return 'ErrorBadParameter';
+			return 'ErrorBadParameter typeofdata is empty';
+		}
+		// Clean paramater $typeofdata
+		if ($typeofdata == 'datetime') {
+			$typeofdata = 'dayhour';
+		}
+		$reg = array();
+		if (preg_match('/^(\w+)\((\d+)\)$/', $typeofdata, $reg)) {
+			if ($reg[1] == 'varchar') {
+				$typeofdata = 'string';
+			} elseif ($reg[1] == 'int') {
+				$typeofdata = 'numeric';
+			} else {
+				return 'ErrorBadParameter '.$typeofdata;
+			}
 		}
 
 		// When option to edit inline is activated
