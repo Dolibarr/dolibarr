@@ -245,8 +245,8 @@ if ($object->id > 0) {
 			print $form->editfieldkey("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->rights->societe->creer);
 			print '</td><td>';
 			print $form->editfieldval("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->rights->societe->creer);
-			$accountingaccountbydefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . ")";
-			print !empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $accountingaccountbydefault : '';
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . ")";
+			print !empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $accountingAccountByDefault : '';
 			print '</td>';
 			print '</tr>';
 		}

@@ -364,14 +364,17 @@ if ($object->id > 0) {
 		}
 		print '</td></tr>';
 
-		print '<tr>';
-		print '<td>';
-		print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', $object->accountancy_code_customer_general, $object, $user->rights->societe->creer);
-		print '</td><td>';
-		print $form->editfieldval("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', $object->accountancy_code_customer_general, $object, $user->rights->societe->creer);
-		$accountingAccountByDefault = ' ('. $langs("AccountingAccountByDefaultShort") . ': ' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . ')';
-		print isset($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $accountingAccountByDefault : '';
-		print '</td>';
+		if (!empty($conf->accounting->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->rights->societe->creer);
+			print '</td><td>';
+			print $form->editfieldval("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->rights->societe->creer);
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . ")";
+			print isset($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $accountingAccountByDefault : '';
+			print '</td>';
+		}
 
 		print '<tr>';
 		print '<td>';

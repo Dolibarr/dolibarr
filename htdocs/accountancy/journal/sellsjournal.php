@@ -326,7 +326,7 @@ if ($action == 'writebookkeeping') {
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_customer_general = $tabcompany[$key]['accountancy_code_customer_customer'];
+		$companystatic->accountancy_code_customer_general = $tabcompany[$key]['accountancy_code_customer_general'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->client = 3;
@@ -362,7 +362,7 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Warranty
-		if (!$errorforline) {
+		if (!$errorforline || (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0)) {
 			foreach ($tabwarranty[$key] as $k => $mt) {
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
@@ -426,7 +426,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
 				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
 
-				$bookkeeping->numero_compte = $tabcompany[$key]['accountancy_code_customer_general'];
+				$bookkeeping->numero_compte = !empty($tabcompany[$key]['accountancy_code_customer_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
 				$bookkeeping->label_compte = $accountingaccountcustomer->label;
 
 				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("SubledgerAccount");
@@ -692,22 +692,24 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		}
 
 		// Warranty
-		foreach ($tabwarranty[$key] as $k => $mt) {
-			//if ($mt) {
-			print '"'.$key.'"'.$sep;
-			print '"'.$date.'"'.$sep;
-			print '"'.$val["ref"].'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
-			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY).'"'.$sep;
-			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
-			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
-			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
-			print '"'.$journal.'"';
-			print "\n";
-			//}
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				//if ($mt) {
+				print '"'.$key.'"'.$sep;
+				print '"'.$date.'"'.$sep;
+				print '"'.$val["ref"].'"'.$sep;
+				print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+				print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY).'"'.$sep;
+				print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+				print '"'.$langs->trans("Thirdparty").'"'.$sep;
+				print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+				print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+				print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+				print '"'.$journal.'"';
+				print "\n";
+				//}
+			}
 		}
 
 		// Third party
@@ -935,33 +937,35 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Warranty
-		foreach ($tabwarranty[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<!-- Thirdparty -->";
-			print "<td>".$date."</td>";
-			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			// Account
-			print "<td>";
-			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				print '<tr class="oddeven">';
+				print "<!-- Thirdparty -->";
+				print "<td>".$date."</td>";
+				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				// Account
+				print "<td>";
+				$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				// Subledger account
+				print "<td>";
+				$accountoshow = length_accounta($k);
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				} else {
+					print $accountoshow;
+				}
+				print '</td>';
+				print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
+				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
+				print "</tr>";
 			}
-			print '</td>';
-			// Subledger account
-			print "<td>";
-			$accountoshow = length_accounta($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			} else {
-				print $accountoshow;
-			}
-			print '</td>';
-			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
-			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
-			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
-			print "</tr>";
 		}
 
 		// Third party
@@ -972,7 +976,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
+			$accountoshow = length_accountg($companystatic->accountancy_code_customer_general);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
 			} else {
