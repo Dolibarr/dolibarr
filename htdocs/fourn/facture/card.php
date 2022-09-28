@@ -2050,10 +2050,9 @@ if ($action == 'create') {
 				$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
-
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '';
+		
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
+		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
