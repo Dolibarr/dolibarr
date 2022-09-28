@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -445,8 +446,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (is_array($list) && !empty($list)) {
 						$number_contracts_found = count($list);
 						if ($number_contracts_found == 1) {
-							$contractid = $list[0]->id;
-							$object->setContract($contractid);
+							foreach ($list as $linked_contract) {
+								$object->setContract($linked_contract->id);
+							}
 							break;
 						} elseif ($number_contracts_found > 1) {
 							foreach ($list as $linked_contract) {
