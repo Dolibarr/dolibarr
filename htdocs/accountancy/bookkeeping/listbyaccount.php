@@ -401,7 +401,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && !$user->hasRight('accounting', 'mouvements', 'supprimer')) {
+	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
