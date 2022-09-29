@@ -423,7 +423,11 @@ if ($source == 'proposal') {
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
 		print img_mime($object->last_main_doc, '');
-		print $langs->trans("DownloadDocument").'</a>';
+		if ($message == "signed") {
+			print $langs->trans("DownloadSignedDocument").'</a>';
+		} else {
+			print $langs->trans("DownloadDocument").'</a>';
+		}
 	}
 
 
