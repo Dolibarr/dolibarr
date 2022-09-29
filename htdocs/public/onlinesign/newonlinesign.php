@@ -79,7 +79,6 @@ $suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 
-
 if (empty($source)) {
 	$source = 'proposal';
 }
