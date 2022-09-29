@@ -2207,11 +2207,10 @@ if ($action == 'create') {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link
-			$useonlinesignature = 1;
-
-			if ($object->statut != Contrat::STATUS_DRAFT && $useonlinesignature) {
+			if ($object->statut != Contrat::STATUS_DRAFT && $conf->global->CONTRACT_ALLOW_ONLINESIGN) {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+
 				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
 			}
 
