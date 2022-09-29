@@ -2757,7 +2757,7 @@ class Ticket extends CommonObject
 									if ($result) {
 										// update last_msg_sent date
 										$object->date_last_msg_sent = dol_now();
-										$object->update($user);
+										$object->update($user); // FIXME this update override the initial message
 									}
 								}
 							}
