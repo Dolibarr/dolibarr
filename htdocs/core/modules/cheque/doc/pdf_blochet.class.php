@@ -407,7 +407,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	{
 		global $conf;
 
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 
 		// Line of free text
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
