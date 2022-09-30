@@ -944,16 +944,17 @@ while ($i < $imaxinloop) {
 	$event_more_class = '';
 	$event_start_date_style = '';
 	$event_start_date_time = $actionstatic->datep;
-	if ($obj->fulldayevent == 1) {
-		$today_start_date_time = $today_start_time;
-	} else {
-		$today_start_date_time = $now;
-	}
-	if ($event_start_date_time > $today_start_date_time) {
+	if ($event_start_date_time > $now) {
 		// future event
 		$event_more_class = 'event-future';
 		$event_start_date_color = $conf->global->AGENDA_EVENT_FUTURE_COLOR;
 	} else {
+		if ($obj->fulldayevent == 1) {
+			$today_start_date_time = $today_start_time;
+		} else {
+			$today_start_date_time = $now;
+		}
+
 		// check event end date
 		$event_end_date_time = $db->jdate($obj->dp2);
 		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
