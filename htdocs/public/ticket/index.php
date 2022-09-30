@@ -49,7 +49,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
@@ -57,7 +56,6 @@ $langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$suffix = "";
 
 if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
@@ -94,7 +92,7 @@ print '</div>';
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+htmlPrintOnlineTicketFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 

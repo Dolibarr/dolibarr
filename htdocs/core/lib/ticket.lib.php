@@ -983,3 +983,35 @@ function getTicketActionCommEcmList($object)
 
 	return $documents;
 }
+
+/**
+ * Show footer of ticket in HTML pages
+ *
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
+ */
+function htmlPrintOnlineTicketFooter($fromcompany, $langs)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+	$lineList = htmlPrintOnlineCompanyFooter($fromcompany, $langs);
+	$line1 = $lineList[0];
+	$line2 = $lineList[1];
+
+	print '<!-- htmlPrintOnlineTicketFooter -->'."\n";
+
+	print '<br>';
+
+	print '<div class="center paddingleft paddingright">'."\n";
+	print '<span style="font-size: 10px;"><br><hr>'."\n";
+	print $fromcompany->name.'<br>';
+	print $line1;
+	if (strlen($line1.$line2) > 50) {
+		print '<br>';
+	} else {
+		print ' - ';
+	}
+	print $line2;
+	print '</span></div>'."\n";
+}
