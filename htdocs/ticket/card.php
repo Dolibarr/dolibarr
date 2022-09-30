@@ -437,7 +437,8 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	// Action to add an action (not a message)
+	// Action to add an action (not a message).
+	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $user->rights->ticket->read) {
 		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
 
@@ -594,7 +595,6 @@ if (empty($reshook)) {
 			exit();
 		}
 	} elseif ($action == "set_message" && $user->rights->ticket->manage) {
-		// altairis: manage cancel button
 		if (!GETPOST('cancel')) {
 			$object->fetch('', '', GETPOST('track_id', 'alpha'));
 			$oldvalue_message = $object->message;
@@ -689,7 +689,7 @@ if (empty($reshook)) {
 	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-
+//var_dump($action);exit;
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
 	$paramname = 'id';
@@ -736,6 +736,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
+	$formticket->trackid = 'tic'.$object->id;
 
 	$formticket->withcancel = 1;
 
@@ -862,9 +863,6 @@ if ($action == 'create' || $action == 'presend') {
 
 				print dol_get_fiche_head($head, 'ticket', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
 
-				/*
-				 *   Projet synthese pour rappel
-				 */
 				print '<table class="border centpercent">';
 
 				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -1156,6 +1154,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
+		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -1507,6 +1506,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->track_id = $object->track_id;
 			$formticket->ref = $object->ref;
 			$formticket->id = $object->id;
+			$formticket->trackid = 'tic'.$object->id;
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
