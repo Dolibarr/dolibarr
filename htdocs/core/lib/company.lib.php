@@ -1957,6 +1957,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= "</tr>\n";
 			$i++;
 		}
+		if (empty($histo)) {
+			$colspan = 9;
+			$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		}
+
 		$out .= "</table>\n";
 		$out .= "</div>\n";
 

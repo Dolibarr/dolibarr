@@ -878,6 +878,10 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		}
 
 		$out .= "</ul>\n";
+
+		if (empty($histo)) {
+			$out .= '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		}
 	}
 
 	if ($noprint) {
