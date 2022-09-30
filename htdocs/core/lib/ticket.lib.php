@@ -86,7 +86,7 @@ function ticket_prepare_head($object)
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?action=view&track_id='.$object->track_id;
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?track_id='.$object->track_id;
 	$head[$h][1] = $langs->trans("Ticket");
 	$head[$h][2] = 'tabTicket';
 	$h++;

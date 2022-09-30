@@ -1737,7 +1737,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth200');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';
