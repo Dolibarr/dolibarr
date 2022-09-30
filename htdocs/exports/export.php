@@ -79,7 +79,7 @@ $entitytoicon = array(
 	'tax' 					=> 'generic',
 	'tax_type' 				=> 'generic',
 	'translation' 			=> 'generic',
-	'warehouse' 			=> 'stock',
+	'warehouse' 			=> 'stock'
 	);
 
 // Translation code, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
