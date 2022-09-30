@@ -518,7 +518,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'file_manager'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -526,12 +526,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		$arrayofactiontoforcetokencheck = array(
 			'activate',
 			'doprev', 'donext', 'dvprev', 'dvnext',
-			'install',
+			'freezone', 'install',
 			'reopen'
 		);
 		if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 			$sensitiveget = true;
 		}
+		// We also match for value with just a simple string that must match
 		if (preg_match('/^(add|classify|close|confirm|copy|del|disable|enable|remove|set|unset|update|save)/', GETPOST('action', 'aZ09'))) {
 			$sensitiveget = true;
 		}
@@ -849,7 +850,7 @@ if (!defined('NOLOGIN')) {
 		// End test login / passwords
 		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
 			// No data to test login, so we show the login page.
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_INFO);
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
 				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
 				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
@@ -2602,7 +2603,7 @@ function top_menu_bookmark()
 	$html = '';
 
 	// Define $bookmarks
-	if (empty($conf->bookmark->enabled) || empty($user->rights->bookmark->lire)) {
+	if (!isModEnabled('bookmark') || empty($user->rights->bookmark->lire)) {
 		return $html;
 	}
 
@@ -3303,7 +3304,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Wrapper to add log when clicking on download or preview
-		if (!empty($conf->blockedlog->enabled) && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
+		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
 			if (in_array($object->element, array('facture'))) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>

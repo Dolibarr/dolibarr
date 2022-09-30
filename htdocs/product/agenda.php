@@ -144,7 +144,7 @@ if ($id > 0 || $ref) {
 	}
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$type = $langs->trans('Product');

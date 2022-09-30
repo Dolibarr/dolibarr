@@ -110,7 +110,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

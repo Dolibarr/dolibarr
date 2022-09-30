@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -433,7 +434,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			// Auto link contract
-			if (!empty($conf->contract->enabled) && !empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -445,8 +446,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (is_array($list) && !empty($list)) {
 						$number_contracts_found = count($list);
 						if ($number_contracts_found == 1) {
-							$contractid = $list[0]->id;
-							$object->setContract($contractid);
+							foreach ($list as $linked_contract) {
+								$object->setContract($linked_contract->id);
+							}
 							break;
 						} elseif ($number_contracts_found > 1) {
 							foreach ($list as $linked_contract) {
@@ -463,7 +465,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 			// Automatically create intervention
-			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
 				$fichinter->fk_project = $projectid;

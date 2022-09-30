@@ -7,11 +7,15 @@ English Dolibarr ChangeLog
 For users:
 ---------------
 
+NEW Minimal PHP version is now PHP 7.0 instead of PHP 5.6
+
 ...
 
 
 For developers or integrators:
 ------------------------------
+
+NEW Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 
 ...
 
@@ -23,13 +27,14 @@ Following changes may create regressions for some external modules, but were nec
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 
 
+
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
 
 For users:
 ---------------
 
-NEW: PHP 8.1 compatibility:
-     Warning!! Application works correctly with PHP8 and 8.1 but you will experience a lot of PHP warnings into the PHP server
+NEW: PHP 8.0 and 8.1 compatibility:
+     Warning!! Application works correctly with PHP 8.0 and 8.1 but you will experience a lot of PHP warnings into the PHP server
      log files (depending on your PHP setup). Removal of all PHP warnings on server side is planned for v17.
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
@@ -47,28 +52,24 @@ NEW: ACE Editor is restored at same cursor position after a save.
 NEW: Add "addMoreActionsButtons" hook to subscription form
 NEW: Add an option in GUI to show a Quick add button into top menu bar
 NEW: Add a workflow to auto link contract on a ticket
-NEW: Add column date of Signature on proposal list
 NEW: Add column template invoice in invoice list
 NEW: Add column "Total HT" to products array on document creation card
 NEW: Add configuration for text color of button action
-NEW: Add entity filter in exports
 NEW: Show the event block on recurring invoices #20870
 NEW: Add firstname, lastname and max number of attendees for module "Event Organization"
 NEW: Add margin info in proposal and order list
-NEW: Add massaction "Edit Extrafield" for Product
 NEW: Add more fields to detect duplicate during import of thirdparties
 NEW: Add option to foce delivery on email for purchase order receipt to yes
 NEW: Add possibility to create contract from invoice
 NEW: Add possibility with constant MAIN_LOGIN_BADCHARUNAUTHORIZED to define bad character unauthorized into login name
-NEW: Add private and public notes on tax files.
+NEW: Add private and public notes on tax files
 NEW: Add substitutions "user numbers"
-NEW: allow a ticket to be automatically marked as read when created from backend.
 NEW: allow cut&paste as real numeric value to excel
 NEW: A public form to send a message and create a lead is available
 NEW: automatically set totally received status in reception
 NEW: Auto set invoice paid when adding credit not and remain to pay is 0
+NEW: Backup tool has an "lowmemory" option for mysqldump on large database
 NEW: Can enter price with tax for predefined products on purchase objects
-NEW: Can filter on a thirdparty on product statistics
 NEW: Can removed doc templates from setup page of thirdparty
 NEW: Can use ! to make a search that exclude a string
 NEW: clean values and amount in FEC import
@@ -84,12 +85,13 @@ NEW: Dictionaries - Availibility dictionnary has a new column unit and number
 NEW: Display errors in a message box after generating documents
 NEW: Enhance the import. Can use 'auto' for the ref (import of orders)
 NEW: Events on Proposal to Return to Draft
+NEW: Exports - add entity filter in exports
 NEW: Page to list expense report payments
 NEW: JS inventory autocalc input
 NEW: language support for more emailing target selectors
 NEW: leave requests: add field into type dictionary to block request if balance is negative
 NEW: Mass action "Close shipments"
-NEW: Module BOM - add tabs for nets Bom
+NEW: Module BOM - add tabs for nets BOM
 NEW: Module BOM - add the possibility to add sub-BOMs to BOM
 NEW: Module Recruitment - Add a public page with list of all open job positions.
 NEW: Module Recruitment - Add a tab with list of application on the jobposition file.
@@ -103,14 +105,18 @@ NEW: Knowledge Management - add status "Obsolete" to KM articles
 NEW: MRP - split consumption line on MO
 NEW: MRP - display physical and virtual stock of the products when creating OF from a BOM
 NEW: MRP - display product ref in "Object link" product tab for BOM
+NEW: Orders - support user_modif in order
+NEW: Products - add massaction "Edit Extrafield" for Product
+NEW: Products - List - add thumbnail field in product list
+NEW: Products - Statistics - can filter on a thirdparty
 NEW: Projects - add filter "opportunity status" on statistics of projects.
 NEW: Proposals - option update prices on proposal cloning
+NEW: Proposals - List - add column date of Signature on proposal list
 NEW: SEPA XML - option to place payment Type Info at Credit transfer Transaction level
 NEW: Stocks - stock filter in reassort lists
 NEW: Stocks - stock limit in stock export CSV
 NEW: Stocks - Inventory - can change value of AWP during the inventory
 NEW: Supplier order - Show ref supplier of reception in linked object block
-NEW: support user_modif in order
 NEW: Surveys - Show number of votes into the label of tab "Results" of a survey
 NEW: TakePOS - barcode rule to insert product in TakePOS
 NEW: TakePOS - pagination on search results
@@ -120,19 +126,18 @@ NEW: TakePOS - add constant to show category description
 NEW: TakePOS - add constant to show only the products in stock
 NEW: Themes - add param color button action
 NEW: Themes - Change in theme colors does not need to use the refresh button
-NEW: Themes - more mode for THEME_TOPMENU_DISABLE_IMAGE (2, 3, ...)
+NEW: Themes - more modes for THEME_TOPMENU_DISABLE_IMAGE (2, 3, ...)
 NEW: Themes - MD - add param border table for md theme
-NEW: Third-Parties - Add rules "customer accountancy code" is mandatory to validate invoice
-NEW: Third-Parties - Can set the parent company during the creation of thirdparty (action=add of societe/card.php)
+NEW: Third-Parties - add rules "customer accountancy code" is mandatory to validate invoice
+NEW: Third-Parties - can set the parent company during the creation of thirdparty (action=add of societe/card.php)
+NEW: Tickets - allow a Ticket to be automatically marked as read when created from backend
 NEW: Tickets - create Third-party with contact if not found on public ticket
 NEW: Tickets - option to default check "notify tier at creation"
 NEW: Tickets - Trigger: allow to automatically send messages on new tickets
 NEW: Tickets - optional display warning icons on ticket list
 NEW: Websites Module - supports now the multicompany module
 NEW: Websites Module - on redirect of page in website module, GET parameters are kept.
-NEW: The backup tools has an "lowmemory" option for mysqldump on large database
 NEW: The 'reposition' class works on ajax constantonoff that make redirects
-NEW: thumbnail field in product list
 NEW: total mark rate in list
 NEW: uncheck "send message" by default on a ticket when private messages has been checked
 NEW: VAT Report by month - Show detail by rate and also by code
@@ -140,8 +145,8 @@ NEW: Added MMK currency (Myanmar Kyat)
 NEW: On a form to send an email, we show all emails of contacts of object
 
  Modules state
-NEW: Module Partnership Management
-NEW: Module Event Organization Management
+NEW: Module Partnership Management - stable
+NEW: Module Event Organization Management - stable
 
 
 For developers or integrators:

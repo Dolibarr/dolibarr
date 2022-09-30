@@ -138,6 +138,7 @@ if (empty($reshook)) {
 			$action = 'edit';
 			$error++;
 		}
+		$companybankaccount->fetch($id);
 		if ($companybankaccount->needIBAN() == 1) {
 			if (!GETPOST('iban')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
@@ -151,7 +152,6 @@ if (empty($reshook)) {
 			}
 		}
 
-		$companybankaccount->fetch($id);
 		if (!$error) {
 			$companybankaccount->socid           = $object->id;
 
@@ -1548,7 +1548,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				$allowgenifempty = 0;
 
 				// Language code (if multilang)
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 					$formadmin = new FormAdmin($db);
 					$defaultlang = $langs->getDefaultLang();

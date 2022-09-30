@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ if (isModEnabled('categorie')) {
 if (!empty($conf->incoterm->enabled)) {
 	$langs->load("incoterm");
 }
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 if (isModEnabled('accounting')) {
@@ -342,6 +342,7 @@ if (empty($reshook)) {
 				if (!$error) {
 					//We finally remove the old thirdparty
 					if ($soc_origin->delete($soc_origin->id, $user) < 1) {
+						setEventMessages($soc_origin->error, $soc_origin->errors, 'errors');
 						$error++;
 					}
 				}
@@ -1803,7 +1804,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 			print '</td>';
@@ -2553,7 +2554,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Default language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
 				print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
 				print '</td>';
@@ -2966,7 +2967,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+		if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
@@ -3070,7 +3071,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Default language
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
 			//$s=picto_from_langcode($object->default_lang);
@@ -3284,7 +3285,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Subsidiaries list
-			if (!empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 

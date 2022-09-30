@@ -18,9 +18,9 @@
  */
 
 /**
- *    \file       core/lib/ticket.lib.php
- *    \ingroup    ticket
- *    \brief        This file is a library for Ticket module
+ * \file       core/lib/ticket.lib.php
+ * \ingroup    ticket
+ * \brief      This file is a library for Ticket module
  */
 
 /**
@@ -30,7 +30,10 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");
 
@@ -44,6 +47,10 @@ function ticketAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ticket_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
+	$nbExtrafields = $extrafields->attributes['ticket']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -79,7 +86,7 @@ function ticket_prepare_head($object)
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?action=view&track_id='.$object->track_id;
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?track_id='.$object->track_id;
 	$head[$h][1] = $langs->trans("Ticket");
 	$head[$h][2] = 'tabTicket';
 	$h++;
@@ -95,7 +102,7 @@ function ticket_prepare_head($object)
 		$h++;
 	}
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'core');
 
 	// Attached files
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -132,6 +139,9 @@ function ticket_prepare_head($object)
 	}
 	$head[$h][2] = 'tabTicketLogs';
 	$h++;
+
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 
@@ -654,6 +664,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 		$actualCycleDate = false;
 
+		// Loop on each event to show it
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
@@ -692,14 +703,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= $actionstatic->getNomUrl(1, -1, 'valignmiddle').' ';
 			}
 
-			//if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
-			//{
-			//	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
-			//}
-
 			if (!empty($user->rights->agenda->allactions->create) ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 
 			$out .= '</span>';
@@ -870,7 +876,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 			$i++;
 		}
+
 		$out .= "</ul>\n";
+
+		if (empty($histo)) {
+			$out .= '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		}
 	}
 
 	if ($noprint) {

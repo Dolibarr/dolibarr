@@ -57,7 +57,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
-if (empty($conf->don->enabled)) {
+if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
 }
 

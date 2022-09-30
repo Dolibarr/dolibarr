@@ -76,7 +76,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire)) {
+if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -313,7 +313,7 @@ if (empty($reshook)) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '') {
+					if (isModEnabled('dynamicprices') && $price_expression !== '') {
 						//Check the expression validity by parsing it
 						$priceparser = new PriceParser($db);
 						$object->fk_supplier_price_expression = $price_expression;
@@ -323,7 +323,7 @@ if (empty($reshook)) {
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (!$error && !empty($conf->dynamicprices->enabled)) {
+					if (!$error && isModEnabled('dynamicprices')) {
 						//Set the price expression for this supplier price
 						$ret = $object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0) {
@@ -551,9 +551,9 @@ if ($id > 0 || $ref) {
 				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td>';
 				if ($rowid) {
 					print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
-					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.$object->ref_supplier.'">';
+					print '<input class="flat width150" maxlength="128" name="ref_fourn" value="'.$object->ref_supplier.'">';
 				} else {
-					print '<input class="flat width150" maxlength="30" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
+					print '<input class="flat width150" maxlength="128" name="ref_fourn" value="'.(GETPOST("ref_fourn") ? GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
 				print '</tr>';
@@ -635,7 +635,7 @@ if ($id > 0 || $ref) {
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
 
-				if (!empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
@@ -803,7 +803,7 @@ END;
 
 				// Option to define a transport cost on supplier price
 				if (!empty($conf->global->PRODUCT_CHARGES)) {
-					if (!empty($conf->margin->enabled)) {
+					if (isModEnabled('margin')) {
 						print '<tr>';
 						print '<td>'.$langs->trans("Charges").'</td>';
 						print '<td><input class="flat width75" name="charges" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
@@ -919,7 +919,7 @@ END;
 
 			print "</div>\n";
 
-			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
+			if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 				$param = '';
 				if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 					$param .= '&contextpage='.urlencode($contextpage);

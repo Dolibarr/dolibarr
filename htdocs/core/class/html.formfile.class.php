@@ -179,7 +179,7 @@ class FormFile
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 				if ($perm) {
-					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Security");
+					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
 					$langs->load('other');
 					$out .= ' ';
 					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1);
@@ -728,7 +728,7 @@ class FormFile
 			}
 
 			// Language code (if multilang)
-			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
+			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && getDolGlobalInt('MAIN_MULTILANGS') && !$forcenomultilang && (!empty($modellist) || $showempty)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 				$formadmin = new FormAdmin($this->db);
 				$defaultlang = ($codelang && $codelang != 'auto') ? $codelang : $langs->getDefaultLang();
@@ -1782,6 +1782,8 @@ class FormFile
 
 					$result = 0;
 					if (is_object($object_instance)) {
+						$object_instance->id = 0;
+						$object_instance->ref = '';
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {

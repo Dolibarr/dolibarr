@@ -110,7 +110,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +123,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +136,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,7 +152,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -552,6 +552,15 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			}
 			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
+			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
 			// Test we don't have @var array(
 			$ok=true;

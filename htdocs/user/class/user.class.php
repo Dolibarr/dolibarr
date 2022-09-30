@@ -546,7 +546,7 @@ class User extends CommonObject
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
 				$this->personal_email = $obj->personal_email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->job = $obj->job;
 				$this->signature = $obj->signature;
 				$this->admin		= $obj->admin;
@@ -720,6 +720,7 @@ class User extends CommonObject
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
+			'order_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
@@ -744,6 +745,9 @@ class User extends CommonObject
 		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
 		$tmp = explode('@', $rightsPath, 2);
 		if (!empty($tmp[1])) {
+			if (strpos($module, '@') !== false) {
+				$module = $tmp[1];
+			}
 			$rightsPath = $tmp[1];
 			$permlevel2 = $permlevel1;
 			$permlevel1 = $tmp[0];

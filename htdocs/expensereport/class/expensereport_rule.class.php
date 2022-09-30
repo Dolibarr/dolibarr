@@ -172,6 +172,19 @@ class ExpenseReportRule extends CommonObject
 
 
 	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		$this->lines = array();
+
+		$result = $this->fetchLinesCommon();
+		return $result;
+	}
+
+	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies

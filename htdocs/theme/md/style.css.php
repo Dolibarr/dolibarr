@@ -872,6 +872,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.maxquatrevingtpercent {
+	max-width: 80%;
+}
 .soixantepercent {
 	width: 60%;
 }
@@ -2560,6 +2563,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none;
+	cursor: not-allowed;
+}
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 

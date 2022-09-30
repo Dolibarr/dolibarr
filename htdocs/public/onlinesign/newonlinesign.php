@@ -166,7 +166,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
 		if (method_exists($object, 'call_trigger')) {
-			//customer is not a user !?! so could we use same user as validation ?
+			// Online customer is not a user, so we use the use that validates the documents
 			$user = new User($db);
 			$user->fetch($object->user_valid_id);
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
@@ -426,6 +426,7 @@ if ($action == "dosign" && empty($cancel)) {
 					dataType: "text",
 					data: {
 						"action" : "importSignature",
+						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
