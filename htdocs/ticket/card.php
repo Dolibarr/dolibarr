@@ -371,7 +371,7 @@ if (empty($reshook)) {
 		if ($object->markAsRead($user) > 0) {
 			setEventMessages($langs->trans('TicketMarkedAsRead'), null, 'mesgs');
 
-			header("Location: card.php?track_id=".$object->track_id."&action=view");
+			header("Location: card.php?track_id=".$object->track_id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -429,7 +429,7 @@ if (empty($reshook)) {
 
 
 			setEventMessages($langs->trans('TicketAssigned'), null, 'mesgs');
-			header("Location: card.php?track_id=".$object->track_id."&action=view");
+			header("Location: card.php?track_id=".$object->track_id);
 			exit;
 		} else {
 			array_push($object->errors, $object->error);
@@ -449,7 +449,7 @@ if (empty($reshook)) {
 					$url = 'card.php?track_id='.urlencode($object->track_id);
 				}
 			} else {
-				$url = 'card.php?action=view&track_id='.urlencode($object->track_id);
+				$url = 'card.php?track_id='.urlencode($object->track_id);
 			}
 
 			header("Location: ".$url);
@@ -466,7 +466,7 @@ if (empty($reshook)) {
 		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
-			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
+			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 		} else {
 			$action = '';
@@ -484,7 +484,7 @@ if (empty($reshook)) {
 
 			setEventMessages('<div class="confirm">'.$langs->trans('TicketMarkedAsClosed').'</div>', null, 'mesgs');
 
-			$url = 'card.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
+			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -510,7 +510,7 @@ if (empty($reshook)) {
 	if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
-			$url = 'card.php?action=view&track_id='.GETPOST('track_id', 'alpha');
+			$url = 'card.php?track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
 			exit();
 		}
@@ -520,7 +520,7 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setProgression(GETPOST('progress', 'alpha'));
 
-			$url = 'card.php?action=view&track_id='.$object->track_id;
+			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
 		}
@@ -530,7 +530,7 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$result = $object->setCategories(GETPOST('categories', 'array'));
 
-			$url = 'card.php?action=view&track_id='.$object->track_id;
+			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
 		}
@@ -568,7 +568,7 @@ if (empty($reshook)) {
 					// Log action in ticket logs table
 					//$log_action = $langs->trans('TicketLogReopen');
 
-					$url = 'card.php?action=view&track_id='.$object->track_id;
+					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
 					exit();
 				} else {
@@ -581,7 +581,7 @@ if (empty($reshook)) {
 		// Categorisation dans projet
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setProject($projectid);
-			$url = 'card.php?action=view&track_id='.$object->track_id;
+			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
 		}
@@ -589,7 +589,7 @@ if (empty($reshook)) {
 		// Categorisation dans contrat
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			$object->setContract(GETPOST('contractid', 'int'));
-			$url = 'card.php?action=view&track_id='.$object->track_id;
+			$url = 'card.php?track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
 		}
@@ -627,7 +627,7 @@ if (empty($reshook)) {
 				// Log action in ticket logs table
 				$log_action = $langs->trans('TicketLogStatusChanged', $langs->transnoentities($object->statuts_short[$old_status]), $langs->transnoentities($object->statuts_short[$new_status]));
 
-				$url = 'card.php?action=view&track_id='.$object->track_id;
+				$url = 'card.php?track_id='.$object->track_id;
 				header("Location: ".$url);
 				exit();
 			} else {
@@ -1073,7 +1073,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
 		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
-			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.$object->track_id.'&action=view&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
+			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.$object->track_id.'&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
@@ -1219,7 +1219,7 @@ if ($action == 'create' || $action == 'presend') {
 		} else {
 			//    Button to edit Properties
 			if (isset($object->status) && $object->status < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
-				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&action=view&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
+				print ' <a class="editfielda" href="card.php?track_id='.$object->track_id.'&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
 		print '</td>';
