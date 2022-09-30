@@ -1501,6 +1501,8 @@ if ($action == 'create' || $action == 'presend') {
 
 			print '<div>';
 
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';
