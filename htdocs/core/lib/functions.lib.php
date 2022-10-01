@@ -10461,14 +10461,14 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    $actionType default, delete, danger
- * @param string    $url        the url for link
- * @param string    $id         attribute id of button
- * @param int       $userRight  user action right
+ * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string    	$actionType 'default', 'delete', 'danger'
+ * @param string    	$url        Url for link
+ * @param string    	$id         Attribute id of button
+ * @param int|boolean	$userRight  User action right
  * // phpcs:disable
- * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                          'attr' => [ // to add or override button attributes
  *                          'xxxxx' => '', // your xxxxx attribute you want
  *                          'class' => '', // to add more css class to the button class attribute
@@ -10485,7 +10485,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          ],
  *                          ]
  * // phpcs:enable
- * @return string               html button
+ * @return string               	html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -10517,6 +10517,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
+		$attr['title'] = $langs->trans('NotEnoughPermissions');
 	}
 
 	if (!empty($id)) {
