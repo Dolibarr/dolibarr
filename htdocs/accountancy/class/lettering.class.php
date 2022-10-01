@@ -518,18 +518,18 @@ class Lettering extends BookKeeping
 		// Get all bookkeeping lines
 		$sql = "SELECT DISTINCT ab.doc_type, ab.fk_doc";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-		if (!empty($bookkeeping_ids)) {
-			// Get all bookkeeping lines of piece number
-			$sql .= " LEFT JOIN (";
-			$sql .= "   SELECT DISTINCT piece_num";
-			$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-			$sql .= "   WHERE entity IN (" . getEntity('accountancy') . ")";
-			$sql .= "   AND rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
-			$sql .= " ) AS pn ON pn.piece_num = ab.piece_num";
-		}
 		$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " AND ab.fk_doc > 0";
-		if (!empty($bookkeeping_ids)) $sql .= " AND pn.piece_num IS NOT NULL";
+		if (!empty($bookkeeping_ids)) {
+			// Get all bookkeeping lines of piece number
+			$sql .= " AND EXISTS (";
+			$sql .= "  SELECT rowid";
+			$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS pn";
+			$sql .= "  WHERE pn.entity IN (" . getEntity('accountancy') . ")";
+			$sql .= "  AND pn.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
+			$sql .= "  AND pn.piece_num = ab.piece_num";
+			$sql .= " )";
+		}
 		if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 		dol_syslog(__METHOD__ . " - Get all bookkeeping lines", LOG_DEBUG);
@@ -583,28 +583,27 @@ class Lettering extends BookKeeping
 				// Get all bookkeeping lines linked
 				$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.debit, ab.credit, ab.lettering_code";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				if (!empty($bank_ids)) {
-					$sql .= " LEFT JOIN (";
-					$sql .= "   SELECT DISTINCT ab.piece_num";
-					$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-					$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-					$sql .= "   AND ab.doc_type = 'bank'";
-					$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
-					$sql .= " ) AS bpn ON bpn.piece_num = ab.piece_num";
-				}
-				$sql .= " LEFT JOIN (";
-				$sql .= "   SELECT DISTINCT ab.piece_num";
-				$sql .= "   FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-				$sql .= "   WHERE ab.entity IN (" . getEntity('accountancy') . ")";
-				$sql .= "   AND ab.doc_type = '" . $this->db->escape($doc_type) . "'";
-				$sql .= "   AND ab.fk_doc IN (" . $this->db->sanitize(implode(',', $doc_ids)) . ")";
-				$sql .= " ) AS dpn ON dpn.piece_num = ab.piece_num";
 				$sql .= " WHERE ab.entity IN (" . getEntity('accountancy') . ")";
 				$sql .= " AND (";
 				if (!empty($bank_ids)) {
-					$sql .= "bpn.piece_num IS NOT NULL OR ";
+					$sql .= " EXISTS (";
+					$sql .= "  SELECT bpn.rowid";
+					$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS bpn";
+					$sql .= "  WHERE bpn.entity IN (" . getEntity('accountancy') . ")";
+					$sql .= "  AND bpn.doc_type = 'bank'";
+					$sql .= "  AND bpn.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
+					$sql .= "  AND bpn ON bpn.piece_num = ab.piece_num";
+					$sql .= " ) OR ";
 				}
-				$sql .= "dpn.piece_num IS NOT NULL)";
+				$sql .= " EXISTS (";
+				$sql .= "  SELECT dpn.rowid";
+				$sql .= "  FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS dpn";
+				$sql .= "  WHERE dpn.entity IN (" . getEntity('accountancy') . ")";
+				$sql .= "  AND dpn.doc_type = '" . $this->db->escape($doc_type) . "'";
+				$sql .= "  AND dpn.fk_doc IN (" . $this->db->sanitize(implode(',', $doc_ids)) . ")";
+				$sql .= "  AND dpn.piece_num = ab.piece_num";
+				$sql .= " )";
+				$sql .= ")";
 				if ($only_has_subledger_account) $sql .= " AND ab.subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Get all bookkeeping lines linked", LOG_DEBUG);
