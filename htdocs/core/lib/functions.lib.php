@@ -10511,6 +10511,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
+		$attr['title'] = $label;
 		$attr['aria-label'] = $label;
 	}
 
@@ -10523,7 +10524,6 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (!empty($id)) {
 		$attr['id'] = $id;
 	}
-
 
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
