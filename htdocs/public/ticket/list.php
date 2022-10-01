@@ -43,6 +43,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -78,8 +79,8 @@ $object = new Ticket($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
-if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (!isModEnabled('ticket')) {
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 
@@ -227,7 +228,7 @@ if ($action == "view_ticketlist") {
 
 		$filter = array();
 		$param = '&action=view_ticketlist';
-		if (!empty($entity) && !empty($conf->multicompany->enabled)) {
+		if (!empty($entity) && isModEnabled('multicompany')) {
 			$param .= '&entity='.$entity;
 		}
 
@@ -248,7 +249,7 @@ if ($action == "view_ticketlist") {
 			't.fk_user_create' => array('label' => $langs->trans("Author"), 'checked' => 1),
 			't.fk_user_assign' => array('label' => $langs->trans("AssignedTo"), 'checked' => 0),
 
-			//'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
+			//'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(isModEnabled('multicompany') && empty($conf->multicompany->transverse_mode))),
 			//'t.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 			//'t.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 2)
 			//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -407,7 +408,7 @@ if ($action == "view_ticketlist") {
 				print_barre_liste($langs->trans('TicketList'), $page, '/public/ticket/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
-				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -694,7 +695,7 @@ if ($action == "view_ticketlist") {
 				print '</table>';
 				print '</form>';
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" style="display:none;">';
+				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';
@@ -725,7 +726,7 @@ if ($action == "view_ticketlist") {
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
+	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticketlist">';
 	//print '<input type="hidden" name="search_fk_status" value="non_closed">';

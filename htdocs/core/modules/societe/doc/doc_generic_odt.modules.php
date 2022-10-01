@@ -44,9 +44,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 
 	/**
@@ -256,7 +256,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME)) {
-					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)) . '-' . $newfiletmp;
 					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
@@ -264,11 +264,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				$object->builddoc_filename = $filename; // For triggers
 				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
@@ -279,8 +279,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
 				if (!is_writable($conf->societe->multidir_temp[$object->entity])) {
-					$this->error = "Failed to write in temp directory ".$conf->societe->multidir_temp[$object->entity];
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->societe->multidir_temp[$object->entity]);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 

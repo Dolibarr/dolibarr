@@ -137,7 +137,6 @@ class printing_printgcp extends PrintingDriver
 				$this->errors[] = $e->getMessage();
 				$token_ok = false;
 			}
-			//var_dump($this->errors);exit;
 
 			$expire = false;
 			// Is token expired or will token expire in the next 30 seconds
@@ -333,6 +332,7 @@ class printing_printgcp extends PrintingDriver
 		}
 		$fileprint .= '/'.$file;
 		$mimetype = dol_mimetype($fileprint);
+		$printer_id = '';
 		// select printer uri for module order, propal,...
 		$sql = "SELECT rowid, printer_id, copy FROM ".MAIN_DB_PREFIX."printing WHERE module='".$this->db->escape($module)."' AND driver='printgcp' AND userid=".((int) $user->id);
 		$result = $this->db->query($sql);

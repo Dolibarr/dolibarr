@@ -108,57 +108,62 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string Last result from end job execution
+	 * @var string 			Last result from end job execution
 	 */
 	public $lastresult;
 
 	/**
-	 * @var string Last output from end job execution
+	 * @var string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
 	/**
-	 * @var string Unit frequency of job execution
+	 * @var string 			Unit frequency of job execution
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int Frequency of job execution
+	 * @var int 			Frequency of job execution
 	 */
 	public $frequency;
 
 	/**
-	 * @var int Status
+	 * @var int 			Status
 	 */
 	public $status;
 
 	/**
-	 * @var int Is job processing
+	 * @var int 			Is job running ?
 	 */
 	public $processing;
 
 	/**
-	 * @var int ID
+	 * @var int 			The job current PID
+	 */
+	public $pid;
+
+	/**
+	 * @var int 			User ID of creation
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int ID
+	 * @var int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
 	/**
-	 * @var int Number of run job execution
+	 * @var int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int Maximum run job execution
+	 * @var int 			Maximum run job execution
 	 */
 	public $maxrun;
 
 	/**
-	 * @var string Libname
+	 * @var string 			Libname
 	 */
 	public $libname;
 
@@ -422,6 +427,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.frequency,";
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
+		$sql .= " t.pid,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -470,6 +476,7 @@ class Cronjob extends CommonObject
 				$this->frequency = $obj->frequency;
 				$this->status = $obj->status;
 				$this->processing = $obj->processing;
+				$this->pid = $obj->pid;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note_private = $obj->note_private;
@@ -530,6 +537,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.frequency,";
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
+		$sql .= " t.pid,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -606,6 +614,7 @@ class Cronjob extends CommonObject
 					$line->frequency = $obj->frequency;
 					$line->status = $obj->status;
 					$line->processing = $obj->processing;
+					$line->pid = $obj->pid;
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->fk_user_mod = $obj->fk_user_mod;
 					$line->note_private = $obj->note_private;
@@ -708,6 +717,10 @@ class Cronjob extends CommonObject
 			$this->processing = 0;
 		}
 
+		if (empty($this->pid)) {
+			$this->pid = null;
+		}
+
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datenextrun) == 0) {
@@ -773,6 +786,7 @@ class Cronjob extends CommonObject
 		$sql .= " frequency=".(isset($this->frequency) ? $this->frequency : "null").",";
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
+		$sql .= " pid=".(isset($this->pid) ? $this->pid : "null").",";
 		$sql .= " fk_user_mod=".$user->id.",";
 		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
@@ -925,6 +939,7 @@ class Cronjob extends CommonObject
 		$this->frequency = '';
 		$this->status = 0;
 		$this->processing = 0;
+		$this->pid = null;
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
@@ -1125,6 +1140,7 @@ class Cronjob extends CommonObject
 		$this->lastoutput = '';
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
+		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
 		$this->nbrun = $this->nbrun + 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
@@ -1316,6 +1332,7 @@ class Cronjob extends CommonObject
 
 		$this->datelastresult = dol_now();
 		$this->processing = 0;
+		$this->pid = null;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1496,10 +1513,12 @@ class Cronjobline
 	public $datenextrun = '';
 	public $dateend = '';
 	public $datestart = '';
+	public $datelastresult = '';
 	public $lastresult = '';
 	public $lastoutput;
 	public $unitfrequency;
 	public $frequency;
+	public $processing;
 
 	/**
 	 * @var int Status
@@ -1517,8 +1536,10 @@ class Cronjobline
 	public $fk_user_mod;
 
 	public $note;
+	public $note_private;
 	public $nbrun;
 	public $libname;
+	public $test;
 
 	/**
 	 *  Constructor

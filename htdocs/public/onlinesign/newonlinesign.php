@@ -45,6 +45,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -53,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -80,13 +81,6 @@ $ref = $REF = GETPOST("ref", 'alpha');
 
 if (empty($source)) {
 	$source = 'proposal';
-}
-
-if (!$action) {
-	if ($source && !$ref) {
-		print $langs->trans('ErrorBadParameters')." - ref missing";
-		exit;
-	}
 }
 if (!empty($refusepropal)) {
 	$action = "refusepropal";
@@ -123,26 +117,29 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 $creditor = $mysoc->name;
 
 $type = $source;
+
+if (!$action) {
+	if ($source && !$ref) {
+		httponly_accessforbidden($langs->trans('ErrorBadParameters')." - ref missing", 400, 1);
+	}
+}
+
+// Check securitykey
+$securekeyseed = '';
+if ($source == 'proposal') {
+	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
+}
+
+if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $entity : ''), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403, 1);
+}
+
 if ($source == 'proposal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
 	$result= $object->fetch(0, $ref, '', $entity);
 } else {
-	accessforbidden('Bad value for source');
-	exit;
-}
-
-
-// Check securitykey
-$securekeyseed = '';
-if ($source == 'proposal') {
-	$securekeyseed = $conf->global->PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN;
-}
-
-if (!dol_verifyHash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source", 400, 1);
 }
 
 
@@ -169,7 +166,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 		$message = 'refused';
 		setEventMessages("PropalRefused", null, 'warnings');
 		if (method_exists($object, 'call_trigger')) {
-			//customer is not a user !?! so could we use same user as validation ?
+			// Online customer is not a user, so we use the use that validates the documents
 			$user = new User($db);
 			$user->fetch($object->user_valid_id);
 			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED', $user);
@@ -202,7 +199,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 if ($action == 'refusepropal') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).($conf->multicompany->enabled?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
@@ -429,6 +426,7 @@ if ($action == "dosign" && empty($cancel)) {
 					dataType: "text",
 					data: {
 						"action" : "importSignature",
+						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
@@ -438,7 +436,7 @@ if ($action == "dosign" && empty($cancel)) {
 					success: function(response) {
 						if(response == "success"){
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).($conf->multicompany->enabled?'&entity='.$entity:'').'");
+							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany')?'&entity='.$entity:'').'");
 						}else{
 							console.error(response);
 						}

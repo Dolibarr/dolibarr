@@ -23,6 +23,7 @@
  *		\brief      Page des informations d'une facture
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -65,7 +66,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid
 
 $form = new Form($db);
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
+$title = $object->ref." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);

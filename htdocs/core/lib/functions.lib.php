@@ -14,7 +14,7 @@
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
- * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2019-2022  Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
@@ -432,8 +432,8 @@ function GETPOSTISSET($paramname)
  * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
  *
  * @param 	string	$paramname		Name or parameter to test
- *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
- * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ * @param	int		$method			Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
  */
 function GETPOSTISARRAY($paramname, $method = 0)
 {
@@ -470,6 +470,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -955,6 +956,14 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 				$out = preg_replace('/&apos;/i', "&#39;", $out);
 			} while ($oldstringtoclean != $out);
+
+			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+			$reg = array();
+			preg_match_all('/(<img|url\()/i', $out, $reg);
+			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+				return 'TooManyLinksIntoHTMLString';
+			}
+
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -1156,7 +1165,17 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
+		$tmpsavdb = null;
+		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $object->db;
+			unset($object->db);		// Such property can not be serialized when PgSql/Connection
+		}
+
 		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
+
+		if ($tmpsavdb) {
+			$object->db = $tmpsavdb;
+		}
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -1435,7 +1454,7 @@ function dol_escape_json($stringtoescape)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Keep b tags, 0=remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes to tag.
+ *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape. TODO Does not works yet when there is attributes into tag.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_nospecial(), dol_string_unaccent()
@@ -1463,7 +1482,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		return htmlspecialchars($tmp, ENT_COMPAT, 'UTF-8');
 	} else {
 		// Escape tags to keep
-		// TODO Does not works yet when there is attributes to tag
+		// TODO Does not works yet when there is attributes into tag
 		$tmparrayoftags = array();
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
@@ -1569,7 +1588,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  *  @param  int			$level					Log level
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_NOTICE=5, LOG_INFO=6, LOG_DEBUG=7
- *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
+ *  @param	int			$ident					1=Increase ident of 1 (after log), -1=Decrease ident of 1 (before log)
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
  *  @param	array|null	$logcontext				If defined, an array with extra informations (can be used by some log handlers)
@@ -1685,7 +1704,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Url to open
+ *	@param  string	$url				Relative Url to open
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1694,6 +1713,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
+	global $conf;
+
 	if (strpos($url, '?') > 0) {
 		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
@@ -1717,44 +1738,50 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
-	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
-	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
-	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
-	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
-	$out .= '<!-- Add js code to open dialog popup on dialog -->';
-	$out .= '<script type="text/javascript">
-				jQuery(document).ready(function () {
-					jQuery(".button_'.$name.'").click(function () {
-						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
-						var $tmpdialog = $(\'#idfordialog'.$name.'\');
-						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
-						$tmpdialog.dialog({
-							autoOpen: false,
-						 	modal: true,
-						 	height: (window.innerHeight - 150),
-						 	width: \'80%\',
-						 	title: \''.dol_escape_js($label).'\',
-							open: function (event, ui) {
-								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
-       						},
-							close: function (event, ui) {
-								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
-								if (returnedid != "" && returnedid != "div for returned id") {
-									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	if (empty($conf->use_javascript_ajax)) {
+		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
+	}
+	$out .= '>'.$buttonstring.'</a>';
+	if (!empty($conf->use_javascript_ajax)) {
+		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
+		$out .= '<!-- Add js code to open dialog popup on dialog -->';
+		$out .= '<script type="text/javascript">
+					jQuery(document).ready(function () {
+						jQuery(".button_'.$name.'").click(function () {
+							console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+							var $tmpdialog = $(\'#idfordialog'.$name.'\');
+							$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+							$tmpdialog.dialog({
+								autoOpen: false,
+							 	modal: true,
+							 	height: (window.innerHeight - 150),
+							 	width: \'80%\',
+							 	title: \''.dol_escape_js($label).'\',
+								open: function (event, ui) {
+									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+	       						},
+								close: function (event, ui) {
+									returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+									returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
+									if (returnedid != "" && returnedid != "div for returned id") {
+										jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+									}
+									if (returnedlabel != "" && returnedlabel != "div for returned label") {
+										jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+									}
 								}
-								if (returnedlabel != "" && returnedlabel != "div for returned label") {
-									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
-								}
-							}
-						});
+							});
 
-						$tmpdialog.dialog(\'open\');
+							$tmpdialog.dialog(\'open\');
+						});
 					});
-				});
-			</script>';
+				</script>';
+	}
 	return $out;
 }
 
@@ -2256,7 +2283,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	// Add if object was dispatched "into accountancy"
-	if (!empty($conf->accounting->enabled) && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
+	if (isModEnabled('accounting') && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
 		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta();
@@ -2960,7 +2987,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
-		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+		if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_EMAIL';
 			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
@@ -3066,7 +3093,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$htmllink .= '?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Chat").' '.$value).'">';
 			$htmllink .= '<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
 			$htmllink .= '</a>';
-			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
+			if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
 				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
@@ -3345,6 +3372,17 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			//ex: +61_A_BCDE_FGHI
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 4).$separ.substr($newphone, 8, 4);
 		}
+	} elseif (strtoupper($countrycode) == "LU") {
+		// Luxembourg
+		if (dol_strlen($phone) == 10) {// fixe 6 chiffres +352_AA_BB_CC
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2);
+		} elseif (dol_strlen($phone) == 11) {// fixe 7 chiffres +352_AA_BB_CC_D
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 1);
+		} elseif (dol_strlen($phone) == 12) {// fixe 8 chiffres +352_AA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {// mobile +352_AAA_BB_CC_DD
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 3).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2).$separ.substr($newphone, 11, 2);
+		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
@@ -3391,7 +3429,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 
-		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
 			$type = 'AC_TEL';
 			$link = '';
@@ -3696,6 +3734,8 @@ function isValidMXRecord($domain)
 			return 0;
 		}
 	}
+
+	// function idn_to_ascii or checkdnsrr does not exists
 	return -1;
 }
 
@@ -3878,15 +3918,18 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
 			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fontawesome_', '', $pictowithouttext);
 			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+
 			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
 			if (!empty($pictowithouttextarray[1])) {
-				$fakey      = 'fa-'.$pictowithouttextarray[1];
-				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
-				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
-				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+				// Syntax is 'fontawesome_fakey_faprefix_facolor_fasize' or 'fa-fakey_faprefix_facolor_fasize'
+				$fakey      = 'fa-'.$pictowithouttextarray[0];
+				$fa         = empty($pictowithouttextarray[1]) ? 'fa' : $pictowithouttextarray[1];
+				$facolor    = empty($pictowithouttextarray[2]) ? '' : $pictowithouttextarray[2];
+				$fasize     = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
 			} else {
 				$fakey      = 'fa-'.$pictowithouttext;
 				$fa         = 'fa';
@@ -3934,7 +3977,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3944,7 +3987,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring','rss',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -3986,7 +4029,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'currency'=>'dollar-sign', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature', 'proposal'=>'file-signature',
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
@@ -4068,7 +4111,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project',
-				'propal'=>'infobox-propal', 'private'=>'infobox-project',
+				'propal'=>'infobox-propal', 'proposal'=>'infobox-propal','private'=>'infobox-project',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -4925,8 +4968,11 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		$out .= "<br>\n";
 	}
 
-	// Return a http error code if possible
+	// Return a http header with error code if possible
 	if (!headers_sent()) {
+		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
+			top_httphead();
+		}
 		http_response_code(500);
 	}
 
@@ -5088,8 +5134,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
-		$tmptooltip = explode(':', $tooltip);
+		// You can also use 'TranslationString:keyfortooltiponclick' for a tooltip on click.
+		if (preg_match('/:\w+$/', $tooltip)) {
+			$tmptooltip = explode(':', $tooltip);
+		} else {
+			$tmptooltip = array($tooltip);
+		}
 		$out .= $form->textwithpicto($langs->trans($name), $langs->trans($tmptooltip[0]), 1, 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_'.str_replace('.', '_', $field).'_'.$tmptooltip[1]));
 	} else {
 		$out .= $langs->trans($name);
@@ -6803,11 +6853,12 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
 				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
 					//var_dump($attrs->item($ii));
-					if (! empty($attrs->item($ii)->name)) {
-						// Delete attribute if not into allowed_attributes
+					if (!empty($attrs->item($ii)->name)) {
 						if (! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+							// Delete attribute if not into allowed_attributes
 							$els->item($i)->removeAttribute($attrs->item($ii)->name);
 						} elseif (in_array($attrs->item($ii)->name, array('style'))) {
+							// If attribute is 'style'
 							$valuetoclean = $attrs->item($ii)->value;
 
 							if (isset($valuetoclean)) {
@@ -6816,10 +6867,14 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 									$valuetoclean = preg_replace('/\/\*.*\*\//m', '', $valuetoclean);	// clean css comments
 									$valuetoclean = preg_replace('/position\s*:\s*[a-z]+/mi', '', $valuetoclean);
 									if ($els->item($i)->tagName == 'a') {	// more paranoiac cleaning for clickable tags.
-										$valuetoclean = preg_replace('/display\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/z-index\s*://m', '', $valuetoclean);
-										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*://m', '', $valuetoclean);
+										$valuetoclean = preg_replace('/display\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/z-index\s*:/mi', '', $valuetoclean);
+										$valuetoclean = preg_replace('/\s+(top|left|right|bottom)\s*:/mi', '', $valuetoclean);
 									}
+
+									// We do not allow logout|passwordforgotten.php and action= into the content of a "style" tag
+									$valuetoclean = preg_replace('/(logout|passwordforgotten)\.php/mi', '', $valuetoclean);
+									$valuetoclean = preg_replace('/action=/mi', '', $valuetoclean);
 								} while ($oldvaluetoclean != $valuetoclean);
 							}
 
@@ -7255,9 +7310,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (empty($exclude) || !in_array('user', $exclude)) {
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
-		$signature = $user->signature;
+		//var_dump($onlykey);
+		$emailsendersignature = $user->signature; //  dy default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
+		$usersignature = $user->signature;
 		$substitutionarray = array_merge($substitutionarray, array(
-			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+			'__SENDEREMAIL_SIGNATURE__' => (string) ((empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),
+			'__USER_SIGNATURE__' => (string) (($usersignature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($usersignature), 30) : $usersignature) : '')
 		));
 
 		if (is_object($user)) {
@@ -7307,13 +7365,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__ID__'] = '__ID__';
 			$substitutionarray['__REF__'] = '__REF__';
 			$substitutionarray['__NEWREF__'] = '__NEWREF__';
+			$substitutionarray['__LABEL__'] = '__LABEL__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
 			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			if (!empty($conf->societe->enabled)) {	// Most objects are concerned
+			if (isModEnabled("societe")) {	// Most objects are concerned
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
@@ -7335,7 +7394,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';
 			}
-			if (!empty($conf->adherent->enabled) && (!is_object($object) || $object->element == 'adherent')) {
+			if (isModEnabled('adherent') && (!is_object($object) || $object->element == 'adherent')) {
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
@@ -7345,7 +7404,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			// add variables subtitutions ticket
-			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
+			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket')) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
 				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
@@ -7357,23 +7416,26 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
+			if (isModEnabled('recruitment') && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
 			}
-			if (!empty($conf->project->enabled)) {		// Most objects
+			if (isModEnabled('project')) {		// Most objects
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
 				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
-			if (!empty($conf->contrat->enabled) && (!is_object($object) || $object->element == 'contract')) {
+			if (isModEnabled('contrat') && (!is_object($object) || $object->element == 'contract')) {
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+			}
+			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
+				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
@@ -7389,11 +7451,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = 'Direct download url of a contract';
 			$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = 'Direct download url of a supplier proposal';
 
-			if (!empty($conf->expedition->enabled) && (!is_object($object) || $object->element == 'shipping')) {
+			if (isModEnabled("expedition") && (!is_object($object) || $object->element == 'shipping')) {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = 'Shipping tracking number';
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = 'Shipping tracking url';
 			}
-			if (!empty($conf->reception->enabled) && (!is_object($object) || $object->element == 'reception')) {
+			if (isModEnabled("reception") && (!is_object($object) || $object->element == 'reception')) {
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = 'Shippin tracking number of shipment';
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = 'Shipping tracking url';
 			}
@@ -7401,6 +7463,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__NEWREF__'] = $object->newref;
+			$substitutionarray['__LABEL__'] = (isset($object->label) ? $object->label : (isset($object->title) ? $object->title : null));
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
@@ -7773,7 +7836,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		));
 	}
 
-	if (!empty($conf->multicompany->enabled)) {
+	if (isModEnabled('multicompany')) {
 		$substitutionarray = array_merge($substitutionarray, array('__ENTITY_ID__' => $conf->entity));
 	}
 	if (empty($exclude) || !in_array('system', $exclude)) {
@@ -7838,7 +7901,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				if (! $msgishtml) {
 					$valueishtml = dol_textishtml($value, 1);
-					var_dump("valueishtml=".$valueishtml);
+					//var_dump("valueishtml=".$valueishtml);
 
 					if ($valueishtml) {
 						$text = dol_htmlentitiesbr($text);
@@ -7883,13 +7946,13 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 		}
 	}
 
-	// Make substitition for array $substitutionarray
+	// Make substitution for array $substitutionarray
 	foreach ($substitutionarray as $key => $value) {
 		if (!isset($value)) {
 			continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 		}
 
-		if ($key == '__USER_SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
+		if (($key == '__USER_SIGNATURE__' || $key == '__SENDEREMAIL_SIGNATURE__') && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) {
 			$value = ''; // Protection
 		}
 
@@ -8495,10 +8558,11 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
+ *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
-function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0)
+function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid = 'id', $entityfilter = 0, $filters = '')
 {
 	global $cache_codes;
 
@@ -8519,6 +8583,9 @@ function dol_getIdFromCode($db, $key, $tablename, $fieldkey = 'code', $fieldid =
 	$sql .= " WHERE ".$fieldkey." = '".$db->escape($key)."'";
 	if (!empty($entityfilter)) {
 		$sql .= " AND entity IN (".getEntity($tablename).")";
+	}
+	if ($filters) {
+		$sql .= $filters;
 	}
 
 	$resql = $db->query($sql);
@@ -8600,7 +8667,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8990,9 +9057,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
+ *  @param	string		$filterorigmodule	Filter on module origin: 'external' will show only external modules. 'core' only core modules. No filter (default) will add both.
  *	@return	void
  */
-function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
+function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add', $filterorigmodule = '')
 {
 	global $hookmanager, $db;
 
@@ -9009,19 +9077,32 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 					if ($values[0] != $type) {
 						continue;
 					}
-					//var_dump(verifCond($values[4]));
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
+							if ($filterorigmodule) {	// If a filter of module origin has been requested
+								if (strpos($values[3], '@')) {	// This is an external module
+									if ($filterorigmodule != 'external') {
+										continue;
+									}
+								} else {	// This looks a core module
+									if ($filterorigmodule != 'core') {
+										continue;
+									}
+								}
+							}
 							$langs->load($values[3]);
 						}
 						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+							// If label is "SUBSTITUION_..."
 							$substitutionarray = array();
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
+							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
 							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
+
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
 								$classtoload = $labeltemp[1];
@@ -9041,7 +9122,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // deprecated
+				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {
@@ -9129,6 +9210,7 @@ function printCommonFooter($zone = 'private')
 
 		print "\n";
 		if (!empty($conf->use_javascript_ajax)) {
+			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and madatory fields, tuning info, ... -->\n";
 			print '<script>'."\n";
 			print 'jQuery(document).ready(function() {'."\n";
 
@@ -9343,16 +9425,16 @@ function dol_set_focus($selector)
 /**
  * Return getmypid() or random PID when function is disabled
  * Some web hosts disable this php function for security reasons
- * and sometimes we can't redeclare function
+ * and sometimes we can't redeclare function.
  *
  * @return	int
  */
 function dol_getmypid()
 {
 	if (!function_exists('getmypid')) {
-		return mt_rand(1, 32768);
+		return mt_rand(99900000, 99965535);
 	} else {
-		return getmypid();
+		return getmypid();	// May be a number on 64 bits (depending on OS)
 	}
 }
 
@@ -10379,8 +10461,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label of button without HTML : use in alt attribute for accessibility $html is not empty
- * @param string    $html       optional : content with html
+ * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
  * @param string    $actionType default, delete, danger
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
@@ -10399,29 +10481,34 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
  *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
  *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
+ * 						    'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
  *                          ],
  *                          ]
  * // phpcs:enable
  * @return string               html button
  */
-function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
+function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
 	global $hookmanager, $action, $object, $langs;
 
-	$class = 'butAction';
-	if ($actionType == 'danger' || $actionType == 'delete') {
-		$class = 'butActionDelete';
-		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+	//var_dump($params);
+	if (!empty($params['isDropdown']))
+		$class = "dropdown-item";
+	else {
+		$class = 'butAction';
+		if ($actionType == 'danger' || $actionType == 'delete') {
+			$class = 'butActionDelete';
+			if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		}
 	}
-
 	$attr = array(
 		'class' => $class,
 		'href' => empty($url) ? '' : $url,
 		'title' => $label
 	);
 
-	if (empty($html)) {
-		$html = $label;
+	if (empty($text)) {
+		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
@@ -10500,7 +10587,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		'attr' => $attr,
 		'tag' => $tag,
 		'label' => $label,
-		'html' => $html,
+		'html' => $text,
 		'actionType' => $actionType,
 		'url' => $url,
 		'id' => $id,
@@ -10512,7 +10599,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	if (empty($reshook)) {
-		return '<' . $tag . ' ' . $compiledAttributes . '>' . $html . '</' . $tag . '>';
+		if (dol_textishtml($text)) {	// If content already HTML encoded
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . $text . '</' . $tag . '>';
+		} else {
+			return '<' . $tag . ' ' . $compiledAttributes . '>' . dol_escape_htmltag($text) . '</' . $tag . '>';
+		}
 	} else {
 		return $hookmanager->resPrint;
 	}
@@ -10555,7 +10646,7 @@ function getFieldErrorIcon($fieldValidationErrorMsg)
  * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param int       $status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param int       $status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use param $helpText as tooltip help
  * @param array     $params     various params for future : recommended rather than adding more function arguments
  * @return string               html button
  */
@@ -10569,7 +10660,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	}
 
 	$class = 'btnTitle';
-	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots'))) {
+	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots', 'fa fa-paper-plane'))) {
 		$class .= ' btnTitlePlus';
 	}
 	$useclassfortooltip = 1;

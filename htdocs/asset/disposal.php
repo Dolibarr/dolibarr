@@ -22,6 +22,7 @@
  *  \brief      Card with disposal info on Asset
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
@@ -57,7 +58,7 @@ $permissiontoadd = $user->rights->asset->write; // Used by the include of action
 if ($user->socid > 0) accessforbidden();
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
+if (!isModEnabled('asset')) accessforbidden();
 if (!isset($object->disposal_date) || $object->disposal_date === "") accessforbidden();
 
 

@@ -27,14 +27,20 @@
  *  \brief      Page to list all members of foundation
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("members", "companies"));
 
+
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -42,6 +48,8 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 
+
+// Search fields
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -63,6 +71,7 @@ $search_email = GETPOST("search_email", 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $search_filter = GETPOST("search_filter", 'alpha');
 $search_status = GETPOST("search_status", 'intcomma');
+$search_morphy = GETPOST("search_morphy", 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $catid        = GETPOST("catid", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -223,7 +232,7 @@ if (empty($reshook)) {
 	}
 
 	// Close
-	if ($massaction == 'close' && $user->rights->adherent->creer) {
+	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbclose = 0;
@@ -253,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($massaction == 'createexternaluser' && $user->rights->adherent->creer && $user->rights->user->user->creer) {
+	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbcreated = 0;
@@ -293,7 +302,7 @@ if (empty($reshook)) {
 	$objectlabel = 'Members';
 	$permissiontoread = $user->rights->adherent->lire;
 	$permissiontodelete = $user->rights->adherent->supprimer;
-	$permissiontoadd = $user->rights->adherent->creer;
+	$permissiontoadd = $user->hasRight('adherent', 'creer');
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -381,6 +390,9 @@ if ($search_filter == 'outofdate') {
 if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
+}
+if ($search_morphy != '') {
+	$sql .= natural_search("d.morphy", $search_morphy);
 }
 if ($search_ref) {
 	$sql .= natural_search("d.ref", $search_ref);
@@ -605,16 +617,16 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->creer) {
+if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
 if ($user->rights->adherent->supprimer) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->societe->creer) {
+if (isModEnabled('category') && $user->rights->adherent->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
+if ($user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -623,7 +635,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->adherent->creer) {
+if ($user->hasRight('adherent', 'creer')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
@@ -655,7 +667,7 @@ if ($sall) {
 
 // Filter on categories
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
@@ -675,7 +687,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -685,7 +697,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Line for filters fields
 print '<tr class="liste_titre_filter">';
-
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 // Line numbering
 if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -725,6 +743,11 @@ if (!empty($arrayfields['d.login']['checked'])) {
 }
 if (!empty($arrayfields['d.morphy']['checked'])) {
 	print '<td class="liste_titre left">';
+	$arraymorphy = array('mor'=>$langs->trans("Moral"), 'phy'=>$langs->trans("Physical"));
+	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1);
+	print '</td>';
+}
+if (!empty($arrayfields['t.libelle']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {
@@ -961,6 +984,19 @@ while ($i < min($num, $limit)) {
 	$memberstatic->company = $companyname;
 
 	print '<tr class="oddeven">';
+
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 		print '<td class="center" data-key="id">'.$obj->rowid.'</td>';

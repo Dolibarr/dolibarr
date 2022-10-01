@@ -20,9 +20,9 @@
  */
 
 /**
- * \file        class/evaluation.class.php
- * \ingroup     hrm
- * \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
+ *    \file        htdocs/hrm/class/evaluation.class.php
+ *    \ingroup     hrm
+ *    \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -189,7 +189,7 @@ class Evaluation extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 

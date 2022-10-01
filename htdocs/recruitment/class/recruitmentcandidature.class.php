@@ -50,7 +50,7 @@ class RecruitmentCandidature extends CommonObject
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -122,6 +122,7 @@ class RecruitmentCandidature extends CommonObject
 		'phone' => array('type'=>'phone', 'label'=>'Phone', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1, 'picto'=>'phone', 'csslist'=>'tdoverflowmax150'),
 		'date_birth' => array('type'=>'date', 'label'=>'DateOfBirth', 'enabled'=>'1', 'position'=>70, 'visible'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
+		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		//'fk_recruitment_origin' => array('type'=>'integer:CRecruitmentOrigin:recruitment/class/crecruitmentorigin.class.php', 'label'=>'Origin', 'enabled'=>'1', 'position'=>45, 'visible'=>1, 'index'=>1),
 		'remuneration_requested' => array('type'=>'integer', 'label'=>'RequestedRemuneration', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'visible'=>-1,),
 		'remuneration_proposed' => array('type'=>'integer', 'label'=>'ProposedRemuneration', 'enabled'=>'1', 'position'=>81, 'notnull'=>0, 'visible'=>-1,),
@@ -149,6 +150,7 @@ class RecruitmentCandidature extends CommonObject
 	public $phone;
 	public $date_birth;
 	public $email_msgid;
+	public $email_date;
 	public $remuneration_requested;
 	public $remuneration_proposed;
 	public $fk_recruitment_origin;
@@ -172,7 +174,7 @@ class RecruitmentCandidature extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -494,8 +496,8 @@ class RecruitmentCandidature extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitmentcandidature->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitmentcandidature->recruitmentcandidature_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitmentcandidature->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitmentcandidature->recruitmentcandidature_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -612,8 +614,8 @@ class RecruitmentCandidature extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -636,8 +638,8 @@ class RecruitmentCandidature extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -660,8 +662,8 @@ class RecruitmentCandidature extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -823,6 +825,9 @@ class RecruitmentCandidature extends CommonObject
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		}
+		if ($status == self::STATUS_CONTRACT_SIGNED) {
 			$statusType = 'status6';
 		}
 		if ($status == self::STATUS_REFUSED) {

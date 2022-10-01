@@ -31,9 +31,6 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -59,7 +56,7 @@ $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
-$mode = GETPOST('mode', 'aZ09');
+$mode = GETPOST('mode', 'aZ09');	// 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
 $error = 0;
@@ -73,10 +70,8 @@ if ($type == 'proposal') {
 	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
-if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
 
@@ -90,6 +85,8 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(empty($conf-
 /*
  * View
  */
+
+top_httphead();
 
 if ($action == "importSignature") {
 	if (!empty($signature) && $signature[0] == "image/png;base64") {

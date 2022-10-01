@@ -141,8 +141,8 @@ class pdf_standardlabel extends CommonStickerGenerator
 				$widthtouse = $maxwidthtouse;
 				$heighttouse = round($widthtouse / $imgratio);
 			} else {
-				$heightouse = $maxheighttouse;
-				$widthtouse = round($heightouse * $imgratio);
+				$heighttouse = $maxheighttouse;
+				$widthtouse = round($heighttouse * $imgratio);
 			}
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;

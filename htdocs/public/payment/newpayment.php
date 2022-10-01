@@ -56,6 +56,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -618,9 +619,9 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 
 				// Create the VAT record in Stripe
 				/* We don't know country of customer, so we can't create tax
-				if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+				if (!empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
 				{
-					if (! empty($vatcleaned))
+					if (!empty($vatcleaned))
 					{
 						$isineec=isInEEC($object);
 						if ($object->country_code && $isineec)
@@ -911,14 +912,14 @@ print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
 if (!empty($conf->paypal->enabled)) {
-	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
-	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
+	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
+	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
 }
 if (!empty($conf->paybox->enabled)) {
-	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
+	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
 if (!empty($conf->stripe->enabled)) {
-	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
+	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
@@ -1468,6 +1469,7 @@ if ($source == 'contractline') {
 if ($source == 'member' || $source == 'membersubscription') {
 	$newsource = 'member';
 
+	$tag="";
 	$found = true;
 	$langs->load("members");
 
@@ -1500,7 +1502,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$amount = $adht->amount;
 		}
 
-		$amount = price2num($amount, 'MT');
+		$amount = max(0, price2num($amount, 'MT'));
 	}
 
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1596,7 +1598,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 				print '</td><td class="CTableRow2">';
 				print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
 				print "</td></tr>\n";
-			} elseif ($action == dopayment) {
+			} elseif ($action == 'dopayment') {
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewMemberType");
 				print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 				print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
@@ -1611,57 +1613,23 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	// Amount
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	if (empty($amount)) {
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ' ('.$langs->trans("ToComplete");
-		}
-		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
-		}
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ')';
-		}
+	// This place no longer allows amount edition
+	if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
+		print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
-	$valtoshow = '';
-	if (empty($amount) || !is_numeric($amount)) {
-		$valtoshow = price2num(GETPOST("newamount", 'alpha'), 'MT');
-		// force default subscription amount to value defined into constant...
-		if (empty($valtoshow)) {
-			if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			} else {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			}
-		}
+	if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $amount) {
+		$amount = max(0, $conf->global->MEMBER_MIN_AMOUNT, $amount);
 	}
-	if (empty($amount) || !is_numeric($amount)) {
-		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-		}
-		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
-		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled="disabled">';
-			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-		} else {
-			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
-		}
-		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	} else {
-		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-			$amount = $valtoshow;
-		}
-		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
-		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
-		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+	print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
+	$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $adht->caneditamount;
+	$minimumamount = empty($conf->global->MEMBER_MIN_AMOUNT)? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount > $amount);
+	if (!$caneditamount && $minimumamount > $amount) {
+		print ' '. $langs->trans("AmountIsLowerToMinimumNotice", price($adht->amount, 1, $langs, 1, -1, -1, $currency));
 	}
+
+	print '<input type="hidden" name="amount" value="'.$amount.'">';
+	print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -2261,7 +2229,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1 = use intent (default value)
 		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 = use payment
 
-		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
+		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || !empty($paymentintent))
 		//{
 		print '
         <table id="dolpaymenttable" summary="Payment form" class="center centpercent">

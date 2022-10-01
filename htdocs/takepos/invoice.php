@@ -18,18 +18,16 @@
  */
 
 /**
- *	\file       htdocs/takepos/invoice.php
- *	\ingroup    takepos
- *	\brief      Page to generate section with list of lines
+ *    \file       htdocs/takepos/invoice.php
+ *    \ingroup    takepos
+ *    \brief      Page to generate section with list of lines
  */
 
-// if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIREDB'))        define('NOREQUIREDB', '1');        // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
-// if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
+// if (! defined('NOREQUIREUSER')) 		define('NOREQUIREUSER', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB')) 		define('NOREQUIREDB', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC')) 		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN')) 		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -43,16 +41,16 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../main.inc.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager->initHooks(array('takeposinvoice'));
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-global $mysoc;
+$hookmanager->initHooks(array('takeposinvoice'));
 
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
@@ -69,11 +67,6 @@ if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 	accessforbidden();
 }
 
-
-/*
- * View
- */
-
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "") {
@@ -84,23 +77,8 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 			exit;
 		}
 	}
-	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-	}
-	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-	$arrayofcss = array(
-	'/takepos/css/pos.css.php',
-	'/takepos/js/jquery.colorbox-min.js'
-	);
-	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
-	$disablejs = 0;
-	$disablehead = 0;
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 }
+
 
 /**
  * Abort invoice creationg with a given error message
@@ -205,7 +183,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled('banque')) {
+		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("banque")) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -544,7 +522,7 @@ if (empty($reshook)) {
 
 		$idoflineadded = 0;
 		// Group if enabled. Skip group if line already sent to the printer
-		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT) && $line->special_code != "4") {
+		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
@@ -562,13 +540,41 @@ if (empty($reshook)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
+			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'locatax1_tx' => $localtax1_tx, 'locatax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
+
+			/* setup of margin calculation */
+			if (isset($conf->global->MARGIN_TYPE)) {
+				if ($conf->global->MARGIN_TYPE == 'pmp' && !empty($prod->pmp)) {
+					$line['fk_fournprice'] = null;
+					$line['pa_ht'] = $prod->pmp;
+				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && !empty($prod->cost_price)) {
+					$line['fk_fournprice'] = null;
+					$line['pa_ht'] = $prod->cost_price;
+				} else {
+					// default is fournprice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					$pf = new ProductFournisseur($db);
+					if ($pf->find_min_price_product_fournisseur($idproduct, $qty) > 0) {
+						$line['fk_fournprice'] = $pf->product_fourn_price_id;
+						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
+						if ($pf->fourn_charges > 0)
+							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
+					}
+				}
+			}
+
 			// complete line by hook
-			$parameters = array('prod' => $prod);
-			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);
+			$parameters = array('prod' => $prod, 'line' => $line);
+			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 			if (empty($reshook)) {
-				$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', $array_options, 100, '', null, 0);
+				if (!empty($hookmanager->resArray)) {
+					$line = $hookmanager->resArray;
+				}
+
+				$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
 			}
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
@@ -927,7 +933,31 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
+// llxHeader
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	}
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array(
+		'/takepos/css/pos.css.php',
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
+	$disablejs = 0;
+	$disablehead = 0;
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+	print '<body>'."\n";
+} else {
+	top_httphead('text/html', 1);
+}
+
 ?>
+<!-- invoice.php -->
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
@@ -1050,7 +1080,7 @@ function SendTicket(id)
 
 function PrintBox(id, action) {
 	console.log("Open box before printing");
-	$.colorbox({href:"printbox.php?facid="+id+"&action="+action, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 }
 
 function Print(id, gift){
@@ -1073,7 +1103,7 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -1087,7 +1117,7 @@ function DolibarrTakeposPrinting(id) {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
 }
 
@@ -1660,3 +1690,9 @@ if ($action == "search") {
 }
 
 print '</div>';
+
+// llxFooter
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	print '</body></html>';
+}
+

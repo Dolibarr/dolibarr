@@ -29,7 +29,7 @@ function verify_iban($iban,$machine_format_only=false) {
  # Check regex
  if(preg_match($regex,$iban)) {
   # Regex passed, check checksum
-  if(!iban_verify_checksum($iban)) {
+  if(!iban_verify_checksum($iban)) { 
    return false;
   }
  }
@@ -56,9 +56,9 @@ function iban_to_machine_format($iban) {
 
 # Convert an IBAN to human format. To do this, we
 # simply insert spaces right now, as per the ECBS
-# (European Committee for Banking Standards)
+# (European Committee for Banking Standards) 
 # recommendations available at:
-# http://www.europeanpaymentscouncil.eu/knowledge_bank_download.cfm?file=ECBS%20standard%20implementation%20guidelines%20SIG203V3.2.pdf
+# http://www.europeanpaymentscouncil.eu/knowledge_bank_download.cfm?file=ECBS%20standard%20implementation%20guidelines%20SIG203V3.2.pdf 
 function iban_to_human_format($iban) {
  # Remove all spaces
  $iban = str_replace(' ','',$iban);
@@ -71,15 +71,15 @@ function iban_to_human_format($iban) {
 # asterisk, except for the final four characters, and then
 # return in human format, ie.
 #  HU69107000246667654851100005 -> HU** **** **** **** **** **** 0005
-#
+# 
 # We avoid the checksum as it may be used to infer the rest
 # of the IBAN in cases where the country has few valid banks
 # and branches, or other information about the account such
 # as bank, branch, or date issued is known (where a sequential
 # issuance scheme is in use).
-#
-# Note that output of this function should be presented with
-# other information to a user, such as the date last used or
+# 
+# Note that output of this function should be presented with 
+# other information to a user, such as the date last used or 
 # the date added to their account, in order to better facilitate
 # unambiguous relative identification.
 function iban_to_obfuscated_format($iban) {
@@ -439,10 +439,10 @@ function iban_country_get_is_eu_member($iban_country) {
 #   - turkish TL/TK thing
 #   - norway NO gets dropped due to mis-identification with "No." for number (ie. if no country code try prepending NO)
 function iban_mistranscription_suggestions($incorrect_iban) {
-
+ 
  # remove funky characters
  $incorrect_iban = iban_to_machine_format($incorrect_iban);
-
+ 
  # abort on ridiculous length input (but be liberal)
  $length = strlen($incorrect_iban);
  if($length<5 || $length>34) { return array('(supplied iban length insane)'); }
@@ -663,7 +663,7 @@ function _iban_nationalchecksum_set($iban,$nationalchecksum) {
  return $fixed_iban;
 }
 
-# Currently unused but may be useful for Norway.
+# Currently unused but may be useful for Norway. 
 # ISO7064 MOD11-2
 # Adapted from https://gist.github.com/andreCatita/5714353 by Andrew Catita
 function _iso7064_mod112_catita($input) {
@@ -678,7 +678,7 @@ function _iso7064_mod112_catita($input) {
  return $result;
 }
 
-# Currently unused but may be useful for Norway.
+# Currently unused but may be useful for Norway. 
 # ISO 7064:1983.MOD 11-2
 # by goseaside@sina.com
 function _iso7064_mod112_goseaside($vString) {
@@ -688,10 +688,10 @@ function _iso7064_mod112_goseaside($vString) {
  $i_size = strlen($vString);
  $bModify = '?' == substr($vString, -1);
  $i_size1 = $bModify ? $i_size : $i_size + 1;
- for ($i = 1; $i <= $i_size; $i++) {
+ for ($i = 1; $i <= $i_size; $i++) { 
   $i1 = $vString[$i - 1] * 1;
   $w1 = $wi[($i_size1 - $i) % 10];
-  $sigma += ($i1 * $w1) % 11;
+  $sigma += ($i1 * $w1) % 11; 
  }
  if($bModify) return str_replace('?', $hash_map[($sigma % 11)], $vString);
  else return $hash_map[($sigma % 11)];
@@ -714,13 +714,13 @@ function _iso7064_mod97_10($str) {
 }
 
 # Implement the national checksum for a Belgium (BE) IBAN
-#  (Credit: @gaetan-be)
+#  (Credit: @gaetan-be, fixed by @Olympic1)
 function _iban_nationalchecksum_implementation_be($iban,$mode) {
  if($mode != 'set' && $mode != 'find' && $mode != 'verify') { return ''; } # blank value on return to distinguish from correct execution
  $nationalchecksum = iban_get_nationalchecksum_part($iban);
- $account = iban_get_account_part($iban);
- $account_less_checksum = substr($account,strlen($account)-2);
- $expected_nationalchecksum = $account_less_checksum % 97;
+ $bban = iban_get_bban_part($iban);
+ $bban_less_checksum = substr($bban, 0, -strlen($nationalchecksum));
+ $expected_nationalchecksum = $bban_less_checksum % 97;
  if($mode=='find') {
   return $expected_nationalchecksum;
  }
@@ -776,8 +776,8 @@ function _iban_nationalchecksum_implementation_es($iban,$mode) {
 function _iban_nationalchecksum_implementation_fr_letters2numbers_helper($bban) {
  $allNumbers = "";
  $conversion = array(
-                     "A" => 1, "B" => 2, "C" => 3, "D" => 4, "E" => 5, "F" => 6, "G" => 7, "H" => 8, "I" => 9,
-                     "J" => 1, "K" => 2, "L" => 3, "M" => 4, "N" => 5, "O" => 6, "P" => 7, "Q" => 8, "R" => 9,
+                     "A" => 1, "B" => 2, "C" => 3, "D" => 4, "E" => 5, "F" => 6, "G" => 7, "H" => 8, "I" => 9, 
+                     "J" => 1, "K" => 2, "L" => 3, "M" => 4, "N" => 5, "O" => 6, "P" => 7, "Q" => 8, "R" => 9, 
                      "S" => 2, "T" => 3, "U" => 4, "V" => 5, "W" => 6, "X" => 7, "Y" => 8, "Z" => 9
                     );
  for ($i=0; $i < strlen($bban); $i++) {
@@ -852,7 +852,7 @@ function _iban_nationalchecksum_implementation_mc($iban,$mode) {
 }
 
 # Implement the national checksum for a France (FR) IBAN
-#  (Credit: @gaetan-be, http://www.credit-card.be/BankAccount/ValidationRules.htm#FR_Validation and
+#  (Credit: @gaetan-be, http://www.credit-card.be/BankAccount/ValidationRules.htm#FR_Validation and 
 #           https://docs.oracle.com/cd/E18727_01/doc.121/e13483/T359831T498954.htm)
 function _iban_nationalchecksum_implementation_fr($iban,$mode) {
  if($mode != 'set' && $mode != 'find' && $mode != 'verify') { return ''; } # blank value on return to distinguish from correct execution
@@ -1100,7 +1100,7 @@ function _iban_nationalchecksum_implementation_pt($iban,$mode) {
 }
 
 # Implement the national checksum for an Serbia (RS) IBAN
-#  (NOTE: Reverse engineered, including bank 'Narodna banka Srbije' (908) exception. For two
+#  (NOTE: Reverse engineered, including bank 'Narodna banka Srbije' (908) exception. For two 
 #         separately published and legitimate looking IBANs from that bank, there appears to
 #         be a +97 offset on the checksum, so we simply ignore all checksums for this bank.)
 function _iban_nationalchecksum_implementation_rs($iban,$mode) {
@@ -1118,7 +1118,7 @@ function _iban_nationalchecksum_implementation_rs($iban,$mode) {
 function _iban_nationalchecksum_implementation_si($iban,$mode) {
  $bank = iban_get_bank_part($iban);
  # Bank of Slovenia does not use the legacy checksum scheme.
- #  Accounts in this namespace appear to be the central bank
+ #  Accounts in this namespace appear to be the central bank 
  #  accounts for licensed local banks.
  if($bank == '01') {
   return '';
@@ -1277,7 +1277,7 @@ function _iban_nationalchecksum_implementation_sm($iban,$mode) {
 
 # Italian (and San Marino's) checksum
 # (Credit: Translated by Francesco Zanoni from http://community.visual-basic.it/lucianob/archive/2004/12/26/2464.aspx)
-# (Source: European Commettee of Banking Standards' Register of European Account Numbers (TR201 V3.23 — FEBRUARY 2007),
+# (Source: European Commettee of Banking Standards' Register of European Account Numbers (TR201 V3.23 — FEBRUARY 2007), 
 #          available at URL http://www.cnb.cz/cs/platebni_styk/iban/download/TR201.pdf)
 function _italian($input)
 {

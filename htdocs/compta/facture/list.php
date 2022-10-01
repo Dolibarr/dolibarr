@@ -35,6 +35,7 @@
  *	\brief      List of customer invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -215,8 +216,8 @@ $arrayfields = array(
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
-	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>40),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->project->enabled) ? 0 : 1), 'position'=>41),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>40),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>41),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
@@ -1230,7 +1231,7 @@ if ($resql) {
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
@@ -1242,6 +1243,15 @@ if ($resql) {
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
+
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		// Action column
+		print '<td class="liste_titre center actioncolumn">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 		print '<td class="liste_titre">';
 		print '</td>';
@@ -1263,15 +1273,15 @@ if ($resql) {
 		print '<td class="liste_titre maxwidthonsmartphone">';
 		$listtype = array(
 			Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
-			Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
-			Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 			Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+			Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+			Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
 		);
 		if (!empty($conf->global->INVOICE_USE_SITUATION)) {
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
 		}
 		//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
-		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		print '</td>';
 	}
 	// Date invoice
@@ -1356,13 +1366,13 @@ if ($resql) {
 	// Payment mode
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10);
+		print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10, 1, '', 1);
 		print '</td>';
 	}
 	// Payment terms
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_paymentterms, 'search_paymentterms', -1, 1, 1);
+		print $form->getSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 1);
 		print '</td>';
 	}
 	// Module source
@@ -1529,13 +1539,20 @@ if ($resql) {
 		print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="middle">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print '</td>';
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="liste_titre center actioncolumn">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	}
+
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 		print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1686,7 +1703,10 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	}
+
 	print "</tr>\n";
 
 	$projectstatic = new Project($db);
@@ -1714,8 +1734,11 @@ if ($resql) {
 		$total_ht = 0;
 		$total_margin = 0;
 
-		$last_num = min($num, $limit);
-		while ($i < $last_num) {
+		$savnbfield = $totalarray['nbfield'];
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($resql);
 
 			$datelimit = $db->jdate($obj->datelimite);
@@ -1732,7 +1755,8 @@ if ($resql) {
 			$facturestatic->multicurrency_total_ht = $obj->multicurrency_total_ht;
 			$facturestatic->multicurrency_total_tva = $obj->multicurrency_total_vat;
 			$facturestatic->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
-			$facturestatic->statut = $obj->fk_statut;
+			$facturestatic->statut = $obj->fk_statut;	// deprecated
+			$facturestatic->status = $obj->fk_statut;
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
@@ -1744,6 +1768,7 @@ if ($resql) {
 
 			$facturestatic->note_public = $obj->note_public;
 			$facturestatic->note_private = $obj->note_private;
+
 			if (!empty($conf->global->INVOICE_USE_SITUATION) && !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 				$facturestatic->retained_warranty = $obj->retained_warranty;
 				$facturestatic->retained_warranty_date_limit = $obj->retained_warranty_date_limit;
@@ -1820,6 +1845,20 @@ if ($resql) {
 			}
 			print '>';
 
+
+			// Action column
+			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				print '<td class="nowrap" align="center">';
+				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					$selected = 0;
+					if (in_array($obj->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				}
+				print '</td>';
+			}
+
 			// No
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 				print '<td>'.(($offset * $limit) + $i).'</td>';
@@ -1865,7 +1904,7 @@ if ($resql) {
 			// Type
 			if (!empty($arrayfields['f.type']['checked'])) {
 				print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
-				print $facturestatic->getLibType();
+				print $facturestatic->getLibType(2);
 				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2052,7 +2091,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2306,7 +2345,7 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 				}
-				if ($i >= $last_num - 1) {
+				if ($i >= $imaxinloop - 1) {
 					if (!empty($total_ht)) {
 						$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 					} else {
@@ -2394,19 +2433,21 @@ if ($resql) {
 			}
 
 			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-			print '<td class="nowrap" align="center">';
-			if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->id, $arrayofselected)) {
-					$selected = 1;
+
+			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				print '<td class="nowrap" align="center">';
+				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					$selected = 0;
+					if (in_array($obj->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
-				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '</td>';
 			}
-			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-
 			print "</tr>\n";
 
 			$i++;

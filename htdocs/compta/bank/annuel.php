@@ -24,6 +24,7 @@
  *		\brief       Page to report input-output of a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -61,10 +62,6 @@ if (!$year_start) {
  * View
  */
 
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 // Get account informations
@@ -81,6 +78,10 @@ if (!empty($ref)) {
 $annee = '';
 $totentrees = array();
 $totsorties = array();
+
+$title = $object->ref.' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 // Ce rapport de tresorerie est base sur llx_bank (car doit inclure les transactions sans facture)
 // plutot que sur llx_paiement + llx_paiementfourn
@@ -192,6 +193,9 @@ for ($mois = 1; $mois < 13; $mois++) {
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 	for ($annee = $year_start; $annee <= $year_end; $annee++) {
+		$totsorties[$annee] = 0;
+		$totentrees[$annee] = 0;
+
 		$case = sprintf("%04s-%02s", $annee, $mois);
 
 		print '<td class="right" width="10%">&nbsp;';

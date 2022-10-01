@@ -248,7 +248,7 @@ if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0 && empty($conf-
 	}
 }
 
-if (!empty($conf->accounting->enabled) && $line->fk_accounting_account > 0) {
+if (isModEnabled('accounting') && $line->fk_accounting_account > 0) {
 	$accountingaccount = new AccountingAccount($this->db);
 	$accountingaccount->fetch($line->fk_accounting_account);
 	print '<div class="clearboth"></div><br><span class="opacitymedium">'.$langs->trans('AccountingAffectation').' : </span>'.$accountingaccount->getNomUrl(0, 1, 1);
@@ -280,17 +280,17 @@ print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')'
 //print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
 ?></td>
 
-	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
+	<td class="linecoluht nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
 
-<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
-	<td class="linecoluht_currency nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
+<?php if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) { ?>
+	<td class="linecoluht_currency nowraponall right"><?php $coldisplay++; ?><?php print price($sign * $line->multicurrency_subprice); ?></td>
 <?php }
 
 if ($inputalsopricewithtax) { ?>
-	<td class="linecoluttc nowrap right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ? price($sign * $line->pu_ttc) : price($sign * $line->subprice)); ?></td>
+	<td class="linecoluttc nowraponall right"><?php $coldisplay++; ?><?php print (isset($line->pu_ttc) ? price($sign * $line->pu_ttc) : price($sign * $line->subprice)); ?></td>
 <?php } ?>
 
-	<td class="linecolqty nowrap right"><?php $coldisplay++; ?>
+	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 	// I comment this because it shows info even when not required
@@ -378,7 +378,7 @@ if ($line->special_code == 3) { ?>
 		print '</span>';
 	}
 	print '</td>';
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		print '<td class="linecolutotalht_currency nowrap right">'.price($sign * $line->multicurrency_total_ht).'</td>';
 		$coldisplay++;
 	}
@@ -397,7 +397,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		}
 	}
 
-	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
 		if (!empty($product_static->accountancy_code_buy) ||

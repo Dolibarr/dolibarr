@@ -63,7 +63,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.5 = array(5, 5)
 	 */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -131,10 +131,10 @@ class pdf_eagle extends ModelePdfStockTransfer
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 
@@ -531,7 +531,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
 					// Lot / série
-					if (!empty($conf->productbatch->enabled)) {
+					if (isModEnabled('productbatch')) {
 						$pdf->SetXY($this->posxlot, $curY);
 						$pdf->MultiCell(($this->posxweightvol - $this->posxlot), 3, $object->lines[$i]->batch, '', 'C');
 					}
@@ -813,7 +813,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 			$pdf->MultiCell($this->posxlot - $this->posxdesc, 2, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
-		if (!empty($conf->productbatch->enabled) && $this->atLeastOneBatch) {
+		if (isModEnabled('productbatch') && $this->atLeastOneBatch) {
 			$pdf->line($this->posxlot - 1, $tab_top, $this->posxlot - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxlot, $tab_top + 1);
@@ -944,20 +944,20 @@ class pdf_eagle extends ModelePdfStockTransfer
 		}
 
 		// Show barcode
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$posx = 105;
 		} else {
 			$posx = $this->marge_gauche + 3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
 			//$pdf->Image($logo,10, 5, 0, 24);

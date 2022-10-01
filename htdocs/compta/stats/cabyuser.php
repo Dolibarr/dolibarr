@@ -25,6 +25,7 @@
  *      \brief       Page reporting Salesover by user
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -497,7 +498,7 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('propal') && $key > 0) {
+		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('commande') && $key > 0) {

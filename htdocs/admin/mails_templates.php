@@ -33,6 +33,7 @@
  *		\brief      Page to administer emails templates
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -45,10 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langsArray=array("errors", "admin", "mails", "languages");
 
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langsArray[]='members';
 }
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langsArray[]='eventorganization';
 }
 
@@ -179,58 +180,58 @@ $elementList = array();
 $elementList['all'] = '-- '.dol_escape_htmltag($langs->trans("All")).' --';
 $elementList['none'] = '-- '.dol_escape_htmltag($langs->trans("None")).' --';
 $elementList['user'] = img_picto('', 'user', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToUser'));
-if (!empty($conf->adherent->enabled) && !empty($user->rights->adherent->lire)) {
+if (isModEnabled('adherent') && !empty($user->rights->adherent->lire)) {
 	$elementList['member'] = img_picto('', 'object_member', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToMember'));
 }
-if (!empty($conf->recruitment->enabled) && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
+if (isModEnabled('recruitment') && !empty($user->rights->recruitment->recruitmentjobposition->read)) {
 	$elementList['recruitmentcandidature_send'] = img_picto('', 'recruitmentcandidature', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('RecruitmentCandidatures'));
 }
-if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
+if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
-if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {
+if (isModEnabled("propal") && !empty($user->rights->propal->lire)) {
 	$elementList['propal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendProposal'));
 }
-if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
+if (isModEnabled('commande') && !empty($user->rights->commande->lire)) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
 if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
-if (!empty($conf->reception->enabled)) {
+if (isModEnabled("reception")) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
 }
-if (!empty($conf->supplier_proposal->enabled)) {
+if (isModEnabled('supplier_proposal')) {
 	$elementList['supplier_proposal_send'] = img_picto('', 'propal', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierRequestForQuotation'));
 }
-if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->commande->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire))) {
+if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->commande->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire))) {
 	$elementList['order_supplier_send'] = img_picto('', 'order', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierOrder'));
 }
-if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
+if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
 	$elementList['invoice_supplier_send'] = img_picto('', 'bill', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendSupplierInvoice'));
 }
-if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
+if (isModEnabled('contrat') && !empty($user->rights->contrat->lire)) {
 	$elementList['contract'] = img_picto('', 'contract', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendContract'));
 }
-if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
+if (isModEnabled('ticket') && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
-if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+if (isModEnabled('expensereport') && !empty($user->rights->expensereport->lire)) {
 	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToExpenseReport'));
 }
 if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
-if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
+if (isModEnabled('eventorganization') && !empty($user->rights->eventorganization->read)) {
 	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
@@ -582,7 +583,7 @@ if (!$user->admin) {
 	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
 	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
-if (empty($conf->global->MAIN_MULTILANGS)) {
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
 }
 if ($search_label) {
@@ -705,7 +706,7 @@ if ($action == 'add') {
 			$valuetoshow = $langs->trans("Owner");
 		}
 		if ($fieldlist[$field] == 'lang') {
-			$valuetoshow = (empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language"));
+			$valuetoshow = (!getDolGlobalInt('MAIN_MULTILANGS') ? '&nbsp;' : $langs->trans("Language"));
 		}
 		if ($fieldlist[$field] == 'type') {
 			$valuetoshow = $langs->trans("Type");
@@ -823,7 +824,7 @@ if ($action == 'add') {
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="'.(isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1').'">';
 		} else {
-			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
+			// print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(!empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 			$okforextended = true;
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
@@ -1110,7 +1111,7 @@ if ($num) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						print '</td>';
@@ -1331,7 +1332,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'lang') {
 			print '<td>';
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$selectedlang = GETPOSTISSET('langcode') ?GETPOST('langcode', 'aZ09') : $langs->defaultlang;
 				if ($context == 'edit') {
 					$selectedlang = $obj->{$value};

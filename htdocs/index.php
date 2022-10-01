@@ -114,7 +114,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
@@ -122,7 +122,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	if (is_writable($conffile)) {
 		$langs->load("errors");
 		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
@@ -176,7 +176,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (isModEnabled('propal')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propale', 'lire')) {
+	if (isModEnabled('propal') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -235,7 +235,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -255,19 +255,19 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	// Number of cheque to send
 	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
 		}
-		if (!empty($conf->paymentbybanktransfer->enabled)) {
+		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
 		}
 	}
 

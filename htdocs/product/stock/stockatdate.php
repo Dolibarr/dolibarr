@@ -26,6 +26,7 @@
  *  \brief      Page to list stocks at a given date
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -487,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
-		/*if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (getDolGlobalInt('MAIN_MULTILANGS'))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
@@ -520,13 +521,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0); // This call also ->load_virtual_stock()
-
-			//$result = $prod->load_stats_reception(0, '4');
-			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
-			//print $prod->stats_reception['qty'];
-
-			$stock = '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday);
+			$stock = $prod->stock_theorique;
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 			$virtualstock = $prod->stock_theorique;
 		} else {
 			if ($fk_warehouse > 0) {

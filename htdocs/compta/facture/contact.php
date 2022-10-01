@@ -25,6 +25,7 @@
  *       \brief      Onglet de gestion des contacts des factures
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -100,7 +101,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
  * View
  */
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('ContactsAddresses');
+$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 

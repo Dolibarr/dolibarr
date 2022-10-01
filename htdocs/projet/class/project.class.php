@@ -345,6 +345,7 @@ class Project extends CommonObject
 			$this->fields['accept_booth_suggestions']['enabled'] = 0;
 			$this->fields['price_registration']['enabled'] = 0;
 			$this->fields['price_booth']['enabled'] = 0;
+			$this->fields['max_attendees']['enabled'] = 0;
 		}
 	}
 
@@ -2053,7 +2054,6 @@ class Project extends CommonObject
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
@@ -2069,10 +2069,14 @@ class Project extends CommonObject
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
 		//$socid=$user->socid;
 
-		$projectsListId = null;
-		if (empty($user->rights->projet->all->lire)) {
-			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
-		}
+		$response = new WorkboardResponse();
+		$response->warning_delay = $conf->project->warning_delay / 60 / 60 / 24;
+		$response->label = $langs->trans("OpenedProjects");
+		$response->labelShort = $langs->trans("Opened");
+		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->img = img_object('', "projectpub");
+		$response->nbtodo = 0;
+		$response->nbtodolate = 0;
 
 		$sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
 		$sql .= " FROM (".MAIN_DB_PREFIX."projet as p";
@@ -2082,9 +2086,19 @@ class Project extends CommonObject
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= " WHERE p.fk_statut = 1";
 		$sql .= " AND p.entity IN (".getEntity('project').')';
-		if (!empty($projectsListId)) {
+
+
+		$projectsListId = null;
+		if (!$user->rights->projet->all->lire) {
+			$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
+			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
+			if (empty($projectsListId)) {
+				return $response;
+			}
+
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
+
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
@@ -2095,16 +2109,6 @@ class Project extends CommonObject
 		if ($resql) {
 			$project_static = new Project($this->db);
 
-			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->project->warning_delay / 60 / 60 / 24;
-			$response->label = $langs->trans("OpenedProjects");
-			$response->labelShort = $langs->trans("Opened");
-			if ($user->rights->projet->all->lire) {
-				$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
-			} else {
-				$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
-			}
-			$response->img = img_object('', "projectpub");
 
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -2120,12 +2124,11 @@ class Project extends CommonObject
 			}
 
 			return $response;
-		} else {
-			$this->error = $this->db->error();
-			return -1;
 		}
-	}
 
+		$this->error = $this->db->error();
+		return -1;
+	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.

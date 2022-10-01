@@ -157,6 +157,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][1] = $langs->trans("BanklineExtraFields");
+	$head[$h][2] = 'bankline_extrafields';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 
@@ -288,6 +293,24 @@ function checkIbanForAccount(Account $account)
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Returns the iban human readable
+ *
+ * @param Account $account Account object
+ * @return string
+ */
+function getIbanHumanReadable(Account $account)
+{
+	if ($account->getCountryCode() == 'FR') {
+		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$iban = new PHP_IBAN\IBAN($ibantoprint);
+		return $iban->HumanFormat();
+	}
+
+	return $account->iban;
 }
 
 /**
