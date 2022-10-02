@@ -874,7 +874,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		$propal_qty_requirement = (!empty($conf->global->PROPAL_ENABLE_NEGATIVE_QTY) ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
+		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$price_min = 0;
