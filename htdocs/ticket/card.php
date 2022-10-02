@@ -689,7 +689,7 @@ if (empty($reshook)) {
 	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-//var_dump($action);exit;
+	//var_dump($action);exit;
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
 	$paramname = 'id';

@@ -109,8 +109,8 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 } elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
-	$shownb = $tmparray['shownb'];
-	$showtot = $tmparray['showtot'];
+	$shownb = empty($tmparray['shownb']) ? 0 : $tmparray['shownb'];
+	$showtot = empty($tmparray['showtot']) ? 0 : $tmparray['showtot'];
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;

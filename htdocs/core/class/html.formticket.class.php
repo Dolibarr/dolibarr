@@ -1298,7 +1298,7 @@ class FormTicket
 		} else {
 			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
 		}
-//var_dump($keytoavoidconflict);
+		//var_dump($keytoavoidconflict);
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
@@ -1306,8 +1306,8 @@ class FormTicket
 				}
 			}
 		}
-//var_dump($_SESSION);
-//var_dump($_SESSION["listofpaths".$keytoavoidconflict]);
+		//var_dump($_SESSION);
+		//var_dump($_SESSION["listofpaths".$keytoavoidconflict]);
 		if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
 			$listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
 		}
