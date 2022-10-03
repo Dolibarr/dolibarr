@@ -111,8 +111,6 @@ class AdvanceTargetingMailing extends CommonObject
 		global $langs;
 		$langs->load('customers');
 
-
-
 		$this->db = $db;
 
 		$this->select_target_type = array(
@@ -129,6 +127,8 @@ class AdvanceTargetingMailing extends CommonObject
 			foreach ($customerStatic->cacheprospectstatus as $dataProspectSt) {
 				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
 			}
+		} else {
+			$this->type_statuscommprospect = array();
 		}
 	}
 
