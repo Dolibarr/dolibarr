@@ -256,7 +256,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$userstatic = new User($db);
 $formactions = new FormActions($db);
 
 $nav = '';
@@ -843,6 +842,7 @@ if ($resql) {
 
 		// cache of user list (owners)
 		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+			$userstatic = new User($db);
 			$res = $userstatic->fetch($obj->fk_user_action);
 			if ($res > 0) {
 				$cache_user_list[$obj->fk_user_action] = $userstatic;
@@ -904,6 +904,7 @@ if ($resql) {
 		if (!empty($arrayfields['owner']['checked'])) {
 			print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
 			if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+				$userstatic = new User($db);
 				$res = $userstatic->fetch($obj->fk_user_action);
 				if ($res > 0) {
 					$cache_user_list[$obj->fk_user_action] = $userstatic;
