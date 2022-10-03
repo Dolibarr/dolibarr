@@ -27,10 +27,7 @@
  *		\brief      Page to list actions
  */
 
-if (!defined("NOREDIRECTBYMAINTOLOGIN")) {
-	define('NOREDIRECTBYMAINTOLOGIN', 1);
-}
-
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -397,7 +394,7 @@ $arrayofmassactions = array(
 if ($user->rights->agenda->allactions->delete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->agenda->myactions->create) {
+if (isModEnabled('category') && $user->rights->agenda->myactions->create) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -829,7 +826,7 @@ if (!empty($arrayfields['a.note']['checked'])) {
 	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;

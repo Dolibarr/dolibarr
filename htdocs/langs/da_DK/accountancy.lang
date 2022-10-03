@@ -184,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskabskonto for at registrere abonnem
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Regnskabskonto er som standard for at registrere kundeindbetaling
 UseAuxiliaryAccountOnCustomerDeposit=Gem kundekonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, forbliver individuel konto for forudbetalingslinjer tomme)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Regnskabskonto som standard for at registrere leverandørindskud
+UseAuxiliaryAccountOnSupplierDeposit=Gem leverandørkonto som individuel konto i hovedbog for linjer med forudbetalinger (hvis den er deaktiveret, vil individuel konto for forudbetalingslinjer forblive tom)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskabskonto som standard for de købte produkter (bruges hvis ikke defineret i produktarket)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskabskonto som standard for de købte produkter i EØF (brugt, hvis ikke defineret i produktarket)
@@ -222,7 +224,7 @@ ByPersonalizedAccountGroups=Efter brugerdefinerede grupper
 ByYear=År
 NotMatch=Ikke angivet
 DeleteMvt=Slet nogle linjer fra regnskabet
-DelMonth=Måned at slette
+DelMonth=Måned der skal slettes
 DelYear=År, der skal slettes
 DelJournal=Kladde, der skal slettes
 ConfirmDeleteMvt=Dette vil slette alle linjer i regnskabet for året/måneden og/eller for en bestemt kladde (mindst et kriterium er påkrævet). Du bliver nødt til at genbruge funktionen '%s' for at få den slettede post tilbage i hovedbogen.
@@ -280,7 +282,7 @@ DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
 
 Closure=Årlig lukning
-DescClosure=Se her antallet af bevægelser pr. måned, som endnu ikke er valideret og låst
+DescClosure=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
 OverviewOfMovementsNotValidated=Oversigt over bevægelser, der ikke er valideret og låst
 AllMovementsWereRecordedAsValidated=Alle bevægelser blev registreret som validerede og låste
 NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevægelser kunne registreres som validerede og låste
@@ -411,7 +413,7 @@ AccountancyUnletteringModifiedSuccessfully=%s afstemning blev ændret med succes
 ConfirmMassUnlettering=Bekræftelse af masseafstemning
 ConfirmMassUnletteringQuestion=Er du sikker på, at du vil afstemme de  %s valgte post(er)?
 ConfirmMassDeleteBookkeepingWriting=Bekræftelse på massesletning
-ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaktionen fra regnskabet (alle linjer relateret til den samme transaktion vil blive slettet) Er du sikker på, at du vil slette de(n) %s valgte post(er)?
+ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaktionen fra regnskabet (alle linjer relateret til den samme transaktion vil blive slettet) Er du sikker på, at du vil slette de %s valgte post(er)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Visse obligatoriske trin i opsætningen blev ikke udført. Gør venligst dette

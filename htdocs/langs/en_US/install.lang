@@ -51,7 +51,6 @@ DatabaseName=Database name
 DatabasePrefix=Database table prefix
 DatabasePrefixDescription=Database table prefix. If empty, defaults to llx_.
 AdminLogin=User account for the Dolibarr database owner.
-PasswordAgain=Retype password confirmation
 AdminPassword=Password for Dolibarr database owner.
 CreateDatabase=Create database
 CreateUser=Create user account or grant user account permission on the Dolibarr database

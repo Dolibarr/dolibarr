@@ -23,10 +23,12 @@
  *      \brief      Fiche de notes sur un utilisateur Dolibarr
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+// Get parameters
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'usernote'; // To manage different context of search
@@ -42,6 +44,9 @@ $object->getrights();
 if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {
 	accessforbidden();
 }
+
+// Permissions
+$permissionnote = $user->hasRight("user", "self", "write"); // Used by the include of actions_setnotes.inc.php
 
 // Security check
 $socid = 0;
@@ -59,37 +64,23 @@ $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
 /*
  * Actions
  */
-
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
 if (empty($reshook)) {
-	if ($action == 'update' && $user->hasRight("user", "user", "write") && !GETPOST("cancel")) {
-		$db->begin();
-
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5));
-		if ($res < 0) {
-			$mesg = '<div class="error">'.$adh->error.'</div>';
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 }
 
 
 /*
  * View
  */
-$form = new Form($db);
 
-$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
-$title = $person_name." - ".$langs->trans('Notes');
-$help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader();
+
+$form = new Form($db);
 
 if ($id) {
 	$head = user_prepare_head($object);
@@ -127,7 +118,7 @@ if ($id) {
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
@@ -138,46 +129,20 @@ if ($id) {
 	}
 	print '</tr>';
 
-	$editenabled = (($action == 'edit') && !empty($user->hasRight("user", "user", "write")));
-
-	// Note
-	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td class="'.($editenabled ? '' : 'sensiblehtmlcontent').'">';
-	if ($editenabled) {
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-		// Editeur wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_8, '90%');
-		$doleditor->Create();
-	} else {
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
-	}
-	print "</td></tr>";
-
 	print "</table>";
+
 	print '</div>';
 
+
+	//print '<br>';
+
+	//print '<div class="underbanner clearboth"></div>';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
 	print dol_get_fiche_end();
-
-	if ($action == 'edit') {
-		print $form->buttonsSaveCancel();
-	}
-
-
-	/*
-	 * Actions
-	 */
-
-	print '<div class="tabsAction">';
-
-	if ($user->hasRight("user", "user", "write") && $action != 'edit') {
-		print '<a class="butAction" href="note.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify')."</a>";
-	}
-
-	print "</div>";
-
-	print "</form>\n";
+} else {
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 }
 
 // End of page

@@ -48,7 +48,7 @@ CountriesNotInEEC=Landen buiten de EU
 CountriesInEECExceptMe=EU landen behalve %s
 CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
-ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=Met deze tool kunt u de brongebeurtenissen zoeken en exporteren die worden gebruikt om uw boekhouding te genereren. <br>Het geëxporteerde ZIP-bestand bevat de lijsten met gevraagde items in CSV, evenals de bijgevoegde bestanden in hun oorspronkelijke formaat (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Overzicht per grootboekrekening
@@ -184,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te reg
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standaard grootboekrekening voor storting door klant
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Accounting account by default to register supplier deposit
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten binnen de EU (gebruikt indien niet gedefinieerd in het productblad)
@@ -272,7 +274,7 @@ DescVentilDoneCustomer=Bekijk hier de lijst met factuurregels en hun grootboekre
 DescVentilTodoCustomer=Koppel factuurregels welke nog niet verbonden zijn met een product grootboekrekening
 ChangeAccount=Wijzig de product/dienst grootboekrekening voor geselecteerde regels met de volgende grootboekrekening:
 Vide=-
-DescVentilSupplier=Raadpleeg hier de lijst met leveranciers-factuurregels die al dan niet zijn gekoppeld aan een product-grootboekrekening (alleen records die nog niet zijn overgedragen in de boekhouding zijn zichtbaar)
+DescVentilSupplier=Raadpleeg hier de lijst met leverancier factuurregels die al dan niet zijn gekoppeld aan een productgrootboekrekening (alleen mutaties die nog niet zijn doorgeboekt in de boekhouding zijn zichtbaar) 
 DescVentilDoneSupplier=Raadpleeg hier de regels van de leveranciers facturen en hun tegenrekening
 DescVentilTodoExpenseReport=Koppel kosten-boekregels aan grootboekrekeningen welke nog niet zijn vastgelegd
 DescVentilExpenseReport=Hier kunt u de lijst raadplegen van kostenregels om te koppelen aan een grootboekrekening (of niet).
@@ -280,7 +282,7 @@ DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclar
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
 Closure=Jaarafsluiting
-DescClosure=Raadpleeg hier het aantal bewegingen per maand die nog niet gevalideerd & vergrendeld zijn
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Overzicht van bewegingen niet gevalideerd en vergrendeld
 AllMovementsWereRecordedAsValidated=Alle bewegingen werden geregistreerd als gevalideerd en vergrendeld
 NotAllMovementsCouldBeRecordedAsValidated=Niet alle bewegingen konden als gevalideerd en vergrendeld worden geregistreerd

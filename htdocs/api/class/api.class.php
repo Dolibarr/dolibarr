@@ -115,6 +115,8 @@ class DolibarrApi
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
+		unset($object->linkedObjectsFullLoaded);
+		//unset($object->lines[$i]->linked_objects);		// This is the array to create linked object during create
 
 		unset($object->fields);
 		unset($object->oldline);
@@ -125,7 +127,6 @@ class DolibarrApi
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
-		unset($object->ref_int);
 		unset($object->imgWidth);
 		unset($object->imgHeight);
 		unset($object->barcode_type_code);
@@ -139,6 +140,7 @@ class DolibarrApi
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
+		unset($object->fk_projet); // Should be fk_project
 		unset($object->author); // Should be fk_user_author
 		unset($object->timespent_old_duration);
 		unset($object->timespent_id);
@@ -160,8 +162,9 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
-		unset($object->labelStatus);
-		unset($object->labelStatusShort);
+
+		//unset($object->labelStatus);
+		//unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
 		unset($object->stats_commande);
@@ -181,6 +184,7 @@ class DolibarrApi
 		unset($object->picto);
 
 		unset($object->fieldsforcombobox);
+		unset($object->regeximgext);
 
 		unset($object->skip_update_total);
 		unset($object->context);
@@ -256,6 +260,11 @@ class DolibarrApi
 		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
+
+		if (!empty($object->product) && is_object($object->product)) {
+			$this->_cleanObjectDatas($object->product);
+		}
+
 		return $object;
 	}
 

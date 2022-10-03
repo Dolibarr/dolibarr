@@ -28,6 +28,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -225,7 +226,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
@@ -245,7 +246,7 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $pa
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "pc.fk_bank", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
@@ -323,7 +324,7 @@ while ($i < min($num, $limit)) {
 	print '<td>'.$obj->num_payment.'</td>';
 
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Bank transaction
 		print '<td class="nowraponall">';
 		$accountlinestatic->id = $obj->fk_bank;
@@ -341,7 +342,7 @@ while ($i < min($num, $limit)) {
 			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$accountstatic->clos = $obj->clos;
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountstatic->account_number = $obj->account_number;
 				$accountstatic->accountancy_journal = $obj->account_journal;
 			}
@@ -379,7 +380,7 @@ print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print '<td></td>';
 	print '<td></td>';
 }

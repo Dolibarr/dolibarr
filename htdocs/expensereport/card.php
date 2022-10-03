@@ -26,6 +26,7 @@
  *  \brief      	Page for trip and expense report card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -44,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -68,7 +69,7 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
-if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+if (!empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
 	if (empty($date_start)) {
 		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
 	}
@@ -83,7 +84,7 @@ if (! empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
 $rootfordata = DOL_DATA_ROOT;
 $rootforuser = DOL_DATA_ROOT;
 // If multicompany module is enabled, we redefine the root of data
-if (!empty($conf->multicompany->enabled) && !empty($conf->entity) && $conf->entity > 1) {
+if (isModEnabled('multicompany') && !empty($conf->entity) && $conf->entity > 1) {
 	$rootfordata .= '/'.$conf->entity;
 }
 $conf->expensereport->dir_output = $rootfordata.'/expensereport';
@@ -117,7 +118,7 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = $conf->project->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && !empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
 
 if ($object->id > 0) {
@@ -154,6 +155,9 @@ $permissiontoadd = $user->rights->expensereport->creer;	// Used by the include o
 /*
  * Actions
  */
+$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
+$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
+$qty = price2num(GETPOST('qty', 'alpha'));
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -383,10 +387,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -493,10 +497,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -603,10 +607,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -717,10 +721,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -831,10 +835,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -943,10 +947,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -982,10 +986,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1011,10 +1015,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1185,7 +1189,7 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1229,10 +1233,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1321,10 +1325,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -1624,7 +1628,7 @@ if ($action == 'create') {
 
 			print '</form>';
 		} else {
-			$taxlessUnitPriceDisabled = ! empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+			$taxlessUnitPriceDisabled = !empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
@@ -1697,7 +1701,7 @@ if ($action == 'create') {
 			 // Thirdparty
 			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 			 // Project
-			 if (! empty($conf->project->enabled))
+			 if (isModEnabled('project'))
 			 {
 			 $langs->load("projects");
 			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -1717,7 +1721,7 @@ if ($action == 'create') {
 			 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			 }
 			 } else {
-			 if (! empty($object->fk_project)) {
+			 if (!empty($object->fk_project)) {
 			 $proj = new Project($db);
 			 $proj->fetch($object->fk_project);
 			 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
@@ -1930,7 +1934,7 @@ if ($action == 'create') {
 			// List of payments already done
 			$nbcols = 3;
 			$nbrows = 0;
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				$nbrows++;
 				$nbcols++;
 			}
@@ -1941,7 +1945,7 @@ if ($action == 'create') {
 			print '<td class="liste_titre">'.$langs->trans('Payments').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Date').'</td>';
 			print '<td class="liste_titre">'.$langs->trans('Type').'</td>';
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="liste_titre right">'.$langs->trans('Amount').'</td>';
@@ -1950,7 +1954,7 @@ if ($action == 'create') {
 
 			// Payments already done (from payment on this expensereport)
 			$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount, p.fk_bank,";
-			$sql .= "c.code as p_code, c.libelle as payment_type,";
+			$sql .= "c.code as payment_code, c.libelle as payment_type,";
 			$sql .= "ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."payment_expensereport as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
@@ -1969,25 +1973,27 @@ if ($action == 'create') {
 					$objp = $db->fetch_object($resql);
 
 					$paymentexpensereportstatic->id = $objp->rowid;
-					$paymentexpensereportstatic->datepaye = $db->jdate($objp->dp);
+					$paymentexpensereportstatic->datep = $db->jdate($objp->dp);
 					$paymentexpensereportstatic->ref = $objp->rowid;
 					$paymentexpensereportstatic->num_payment = $objp->num_payment;
-					$paymentexpensereportstatic->payment_code = $objp->payment_code;
+					$paymentexpensereportstatic->type_code = $objp->payment_code;
+					$paymentexpensereportstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddseven">';
 					print '<td>';
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->p_code) != ("PaymentType".$objp->p_code) ? $langs->trans("PaymentType".$objp->p_code) : $objp->payment_type;
+					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-					if (!empty($conf->banque->enabled)) {
+					// Bank account
+					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
 						$bankaccountstatic->number = $objp->banumber;
 
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							$bankaccountstatic->account_number = $objp->account_number;
 
 							$accountingjournal = new AccountingJournal($db);
@@ -2062,7 +2068,7 @@ if ($action == 'create') {
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
 				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
@@ -2107,7 +2113,7 @@ if ($action == 'create') {
 						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td class="center dateproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
@@ -2119,7 +2125,7 @@ if ($action == 'create') {
 						}
 
 						$titlealt = '';
-						if (!empty($conf->accounting->enabled)) {
+						if (isModEnabled('accounting')) {
 							require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 							$accountingaccount = new AccountingAccount($db);
 							$resaccountingaccount = $accountingaccount->fetch(0, $line->type_fees_accountancy_code, 1);
@@ -2268,7 +2274,7 @@ if ($action == 'create') {
 					if ($action == 'editline' && $line->rowid == GETPOST('rowid', 'int')) {
 						// Add line with link to add new file or attach line to an existing file
 						$colspan = 11;
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							$colspan++;
 						}
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2343,7 +2349,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Select project
-						if (!empty($conf->project->enabled)) {
+						if (isModEnabled('project')) {
 							print '<td>';
 							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 							print '</td>';
@@ -2367,14 +2373,14 @@ if ($action == 'create') {
 						print '</td>';
 
 						// VAT
-						$selectedvat = price2num($line->vatrate).($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+						$selectedvat = price2num($line->vatrate).(!empty($line->vat_src_code) ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
 						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
 						print '</td>';
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'"'.$taxlessUnitPriceDisabled.' />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num((!empty($line->value_unit_ht) ? $line->value_unit_ht : ""))).'"'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2416,7 +2422,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					$colspan++;
 				}
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					$colspan++;
 				}
 				if ($action != 'editline') {
@@ -2493,7 +2499,7 @@ if ($action == 'create') {
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
 				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
@@ -2518,19 +2524,19 @@ if ($action == 'create') {
 
 				// Select date
 				print '<td class="center inputdate">';
-				print $form->selectDate($date ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
+				print $form->selectDate(!empty($date) ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
 				print '</td>';
 
 				// Select project
-				if (!empty($conf->project->enabled)) {
+				if (isModEnabled('project')) {
 					print '<td class="inputproject">';
-					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+					$formproject->select_projects(-1, !empty($fk_project) ? $fk_project : 0, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';
 				}
 
 					// Select type
 					print '<td class="center inputtype">';
-					print $formexpensereport->selectTypeExpenseReport($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
 					print '</td>';
 
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2542,7 +2548,7 @@ if ($action == 'create') {
 
 				// Add comments
 				print '<td class="inputcomment">';
-				print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments, 0, 1).'</textarea>';
+				print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag(!empty($comments) ? $comments : "", 0, 1).'</textarea>';
 				print '</td>';
 
 				// Select VAT
@@ -2551,22 +2557,22 @@ if ($action == 'create') {
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
-				print $form->load_tva('vatrate', ($vatrate != '' ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net
 				print '<td class="right inputpricenet">';
-				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'"'.$taxlessUnitPriceDisabled.' />';
+				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : 0)).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
 				print '<td class="right inputtax">';
-				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
+				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : 0)).'">';
 				print '</td>';
 
 				// Quantity
 				print '<td class="right inputqty">';
-				print '<input type="text" min="0" class=" input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
+				print '<input type="text" min="0" class=" input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag(!empty($qty) ? $qty : 1).'">'; // We must be able to enter decimal qty
 				print '</td>';
 
 				// Picture
@@ -2765,7 +2771,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is used
-	if ($user->rights->expensereport->to_paid && !empty($conf->banque->enabled) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->rights->expensereport->to_paid && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';

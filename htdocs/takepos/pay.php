@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
- * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,11 @@
  *	\brief      Page with the content of the popup to enter payments
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
+// if (! defined('NOREQUIREUSER'))		define('NOREQUIREUSER', '1');		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');			// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -39,19 +37,48 @@ if (!defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place is id of table for Bar or Restaurant
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
+$hookmanager->initHooks(array('takepospay'));
+
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
+
+
+/*
+ * View
+ */
+
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs = array();
+
+$head = '';
+$title = '';
+$disablejs = 0;
+$disablehead = 0;
+
+$head='<link rel="stylesheet" href="css/pos.css.php">';
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
+	$head .= '<link rel="stylesheet" href="css/colorful.css">';
+}
+
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+?>
+<body>
+<?php
 
 if (!empty($conf->stripe->enabled)) {
 	$service = 'StripeTest';
@@ -83,9 +110,13 @@ function unexpectedDisconnect() {
 }
 function fetchConnectionToken() {
 	<?php
-	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
-	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
-	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
+	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+	if (!empty($conf->global->STRIPE_LOCATION)) {
+		$urlconnexiontoken .= '&location='.urlencode($conf->global->STRIPE_LOCATION);
+	}
+	if (!empty($stripeacc)) {
+		$urlconnexiontoken .= '&stripeacc='.urlencode($stripeacc);
+	}
 	?>
   // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
   return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
@@ -98,10 +129,6 @@ function fetchConnectionToken() {
 }
 </script>
 <?php }
-
-/*
- * View
- */
 
 if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
@@ -175,16 +202,6 @@ if ($invoiceid > 0) {
 </script>
 <?php
 
-$arrayofcss = array('/takepos/css/pos.css.php');
-$arrayofjs = array();
-
-$head = '';
-$title = '';
-$disablejs = 0;
-$disablehead = 0;
-
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
@@ -213,20 +230,12 @@ if ($resql) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
-		if (empty($conf->banque->enabled)) {
+		if (!isModEnabled('banque')) {
 			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
 		}
 	}
 }
 ?>
-<link rel="stylesheet" href="css/pos.css.php">
-<?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
-	print '<link rel="stylesheet" href="css/colorful.css">';
-}
-?>
-</head>
-<body>
 
 <script>
 <?php
@@ -313,7 +322,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
-		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
@@ -350,8 +359,10 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 	function capturePaymentIntent(paymentIntentId) {
 	const bodyContent = JSON.stringify({"id": paymentIntentId})
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&servicestatus='.$servicestatus;
-	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&token='.newToken().'&servicestatus='.urlencode($servicestatus);
+	if (!empty($stripeacc)) {
+		$urlpaymentintent .= '&stripeacc='.urlencode($stripeacc);
+	}
 	?>
   return fetch('<?php echo $urlpaymentintent; ?>', {
 	method: "POST",
@@ -411,7 +422,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 			  } else {
 				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>';
 				console.log("Capture paymentIntent successfull "+paymentIntentId);
-				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
@@ -450,7 +461,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 				url: '<?php echo DOL_URL_ROOT ?>/takepos/smpcb.php?status' }).done(function (data) {
 				console.log(data);
 				if (data === "SUCCESS") {
-					parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
+					parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay=CB&amount=" + amountpayed + "&invoiceid=" + invoiceid, function () {
 						//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
 						parent.$.colorbox.close();
 						//parent.setFocusOnSearchField();	// This does not have effect
@@ -645,8 +656,8 @@ if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty
 	}
 }
 
-if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
-	$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {

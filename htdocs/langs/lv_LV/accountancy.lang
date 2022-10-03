@@ -48,9 +48,8 @@ CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
-ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat meklēt un eksportēt avota notikumus, kas tiek izmantoti jūsu grāmatvedības uzskaitei. <br> Eksportētajā ZIP failā būs pieprasīto vienumu saraksti CSV formātā, kā arī tiem pievienotie faili to sākotnējā formātā (PDF, ODT, DOCX...).
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
-ExportAccountingProjectHelp=Norādiet projektu, ja jums ir nepieciešams grāmatvedības pārskats tikai par konkrētu projektu. Izdevumu atskaites un kredīta maksājumi netiek iekļauti projektu pārskatos.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
@@ -280,7 +279,7 @@ DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
 Closure=Gada slēgšana
-DescClosure=Šeit skatiet to kustību skaitu pa mēnešiem, kas vēl nav apstiprinātas un bloķētas
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Pārskats par kustībām, kas nav apstiprinātas un bloķētas
 AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas un bloķētas
 NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas un bloķētas
@@ -333,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesie�
 
 ## Export
 NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
-NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "%s", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts

@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
+ApplicantOrVisitor=Solicitante ou visitante
+Speaker=Ponente
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrici�
 OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente 
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
+OrganizationEvenLabelName=Nome público da conferencia ou posto
 
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para unha conferencia 

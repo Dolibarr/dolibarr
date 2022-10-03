@@ -182,8 +182,10 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Verrechnungskonto/Zwischenkonto
 DONATION_ACCOUNTINGACCOUNT=Buchungskonto für Spenden
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Buchungskonto für Abonnements
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standard-Buchungskonto zur Registrierung der Kundeneinzahlung
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Standard-Buchungskonto zur Erfassung einer Kundenanzahlung
 UseAuxiliaryAccountOnCustomerDeposit=Debitorenkonto als Einzelkonto im Nebenbuch für Anzahlungspositionen hinterlegen (bei Deaktivierung bleibt Einzelkonto für Anzahlungspositionen leer)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Standard-Buchungskonto zur Erfassung der Lieferantenkaution
+UseAuxiliaryAccountOnSupplierDeposit=Lieferantenkonto als Einzelkonto im Nebenbuch für Anzahlungsbuchungen speichern (falls deaktiviert, bleibt Einzelkonto für Anzahlungsbuchungen leer)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard-Buchungskonto für gekaufte Produkte \n(wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Standard-Buchungskonto für gekaufte Produkte in der EWG (wird verwendet, wenn nicht im Produktblatt definiert)
@@ -193,8 +195,8 @@ ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standard-Buchungskonto für in die EWG ver
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standard-Buchungskonto für außerhalb der EWG verkaufte Produkte [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
 
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard-Buchungskonto für die gekauften Leistungen (wenn nicht anders im Produktblatt definiert)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Standardmäßig Buchungskonto für eingekaufte Dienstleistungen in der EWG (wird verwendet, wenn nicht im Leistungsblatt definiert)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standardmäßig Buchungskonto für die gekauften und aus der EWG importierten Dienstleistungen (wird verwendet, wenn nicht im Leistungsblatt definiert)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Standard-Buchungskonto für eingekaufte Dienstleistungen in der EWG (wird verwendet, wenn nicht im Leistungsblatt definiert)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standard-Buchungskonto für die gekauften und aus der EWG importierten Dienstleistungen (wird verwendet, wenn nicht im Leistungsblatt definiert)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard-Buchungskonto für die verkauften Leistungen (wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standard-Buchungskonto für in die EWG verkaufte Dienstleistungen \n(wird verwendet, wenn nicht im Produktblatt definiert) 
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standard-Buchungskonto für außerhalb der EWG verkaufte Dienstleistungen [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
@@ -414,7 +416,7 @@ ConfirmMassDeleteBookkeepingWriting=Bestätigung für Massenlöschen
 ConfirmMassDeleteBookkeepingWritingQuestion=Dadurch wird die Transaktion aus der Buchhaltung gelöscht (alle Zeilen, die sich auf dieselbe Transaktion beziehen, werden gelöscht). Möchten Sie die %s ausgewählten Datensätze wirklich löschen?
 
 ## Error
-SomeMandatoryStepsOfSetupWereNotDone=Einige zwingende Einstellungen wurden nicht gemacht, bitte vervollständigen sie die Einrichtung
+SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
 ErrorNoAccountingCategoryForThisCountry=Keine Buchhaltung Kategorie für das Land %s verfügbar (siehe Startseite - Einstellungen - Stammdaten)
 ErrorInvoiceContainsLinesNotYetBounded=Sie versuchen einige Rechnungspositionen der Rechnung <strong>%s</strong> zu journalisieren, aber einige Postionen sind keinem Buchungskonto zugewiesen. Alle Rechnungspositionen dieser Rechnung werden ignoriert.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Einige Rechnungspositionen sind unkontiert.

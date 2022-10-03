@@ -454,9 +454,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error ".$this->error);
 						}
 					}
-					//var_dump($paiement->amounts);
-					//var_dump($thirdpartyid);
-					//var_dump($cursoramounts);
 				}
 
 				// Update withdrawal line
@@ -1057,9 +1054,9 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
-						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
+						$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
 
-						$this->raison_sociale              = $account->proprio;
+						$this->raison_sociale = $account->proprio;
 					}
 
 					$this->factures = $factures_prev_id;
@@ -1712,7 +1709,7 @@ class BonPrelevement extends CommonObject
 	{
 		global $langs;
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
-		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		return $pre.($row_code_client ? '-'.$row_code_client : '').'-'.$row_drum.'-'.date('U', $row_datec);
 	}
 
 
@@ -1826,8 +1823,8 @@ class BonPrelevement extends CommonObject
 		$Rowing = sprintf("%010d", $row_idfac);
 
 		// Define value for RUM
-		// Example:  RUMCustomerCode-CustomerBankAccountId-01424448606	(note: Date is date of creation of CustomerBankAccountId)
-		$Rum = empty($row_rum) ? $this->buildRumNumber($row_code_client, $row_datec, $row_drum) : $row_rum;
+		// Example:  RUM-CustomerCode-CustomerBankAccountId-01424448606	(note: Date is the timestamp of the date of creation of CustomerBankAccountId)
+		$Rum = (empty($row_rum) ? $this->buildRumNumber($row_code_client, $row_datec, $row_drum) : $row_rum);
 
 		// Define date of RUM signature
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
@@ -2208,7 +2205,8 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
-			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
+			fputs($this->file, 'INCORRECT EMETTEUR '.$this->raison_sociale.$CrLf);
+			$XML_SEPA_INFO = '';
 		}
 		return $XML_SEPA_INFO;
 	}

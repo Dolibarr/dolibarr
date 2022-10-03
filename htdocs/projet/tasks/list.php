@@ -671,7 +671,7 @@ if ($search_all) {
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
@@ -1102,7 +1102,7 @@ while ($i < $imaxinloop) {
 			// Description
 			if (!empty($arrayfields['t.description']['checked'])) {
 				print '<td>';
-				print dol_escape_htmltag($object->description);
+				print dolGetFirstLineOfText($object->description, 5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1376,7 +1376,7 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Status
-			/*if (! empty($arrayfields['p.fk_statut']['checked']))
+			/*if (!empty($arrayfields['p.fk_statut']['checked']))
 			{
 				$projectstatic->statut = $obj->fk_statut;
 				print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';

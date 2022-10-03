@@ -22,6 +22,7 @@
  *      \brief      Page to setup external calendars for agenda module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -120,7 +121,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
-			if (!$result > 0) {
+			if (!($result > 0)) {
 				$error++;
 			}
 		}

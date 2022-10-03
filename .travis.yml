@@ -2,10 +2,9 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: xenial to have php 5.6+ available
+# We use dist: bionic = 18.04
 os: linux
-dist: xenial
-#dist: bionic
+dist: bionic
 
 language: php
 
@@ -18,22 +17,43 @@ services:
 - mysql
 - postgresql
 
+
+before_install:
+- |
+  echo "Add ondrej PPA"
+  sudo add-apt-repository -y ppa:ondrej/php
+  sudo apt-get update
+  echo "Disabling Xdebug for composer"
+  export PHP_VERSION_NAME=$(phpenv version-name)
+  echo $PHP_VERSION_NAME
+  ls ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/
+  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
+  phpenv config-rm xdebug.ini
+  phpenv rehash
+  echo
+
 addons:
-  # Force postgresql to 9.4 (the oldest availablable on xenial)
-  postgresql: '9.4'
+  # Force postgresql version
+  postgresql: '10'
   apt:
     sources:
-    # To use the last version of pgloader, we add repo of postgresql with a name available in http://apt.postgresql.org/pub/repos/apt/
-    - pgdg-xenial
+    - sourceline: 'ppa:ondrej/php'
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
     - apache2
-    # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
-    - libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
-
+    - php
+    - php7.1-pgsql
+    - php7.1-mysqli
+    - php7.1-xml
+    - php7.1-intl
+    - php8.1-pgsql
+    - php8.1-mysqli
+    - php8.1-xml
+    - php8.1-intl
+    
 env:
   global:
   # Set to true for very verbose output
@@ -44,21 +64,21 @@ jobs:
   #allow_failures:
   #- php: nightly
   include:
-    - stage: PHP 5.6-7.4
+    - stage: PHP 7.0-8.1
       if: type = push
-      php: '5.6'
+      php: '7.1'
       env: DB=postgresql
-    - stage: PHP 5.6-7.4
+    - stage: PHP 7.0-8.1
       if: type = pull_request OR type = push
-      php: '7.4.22'
+      php: '8.1'
       env: DB=mysql
     - stage: PHP Dev
       if: type = push AND branch = develop
-      php: nightly 
+      php: nightly
       env: DB=mysql
     - stage: PHP Dev
-      if: type = push AND branch = 15.0
-      php: nightly 
+      if: type = push AND branch = 17.0
+      php: nightly
       env: DB=mysql
 
 notifications:
@@ -72,13 +92,6 @@ notifications:
     on_failure: always
     use_notice: true
 
-before_install:
-- |
-  echo "Disabling Xdebug for composer"
-  export PHP_VERSION_NAME=$(phpenv version-name)
-  cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
-  phpenv config-rm xdebug.ini
-  echo
 
 install:
 - |
@@ -94,13 +107,6 @@ install:
 
 - |
   echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
-    composer -n require phpunit/phpunit ^5 \
-                        php-parallel-lint/php-parallel-lint ^1 \
-                        php-parallel-lint/php-console-highlighter ^0 \
-                        php-parallel-lint/php-var-dump-check ~0.4 \
-                        squizlabs/php_codesniffer ^3
-  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     composer -n require phpunit/phpunit ^6 \
                         php-parallel-lint/php-parallel-lint ^1 \
@@ -108,7 +114,7 @@ install:
                         php-parallel-lint/php-var-dump-check ~0.4 \
                         squizlabs/php_codesniffer ^3
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
     composer -n require phpunit/phpunit ^7 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -116,8 +122,8 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   # phpunit 9 is required for php 8
-  if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      composer -n require --ignore-platform-reqs phpunit/phpunit ^7 \
+  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+      composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
@@ -246,17 +252,22 @@ before_script:
 
 
   - echo "Setting up Apache + FPM"
+  # setup link for php legacy
+  - sudo ln -s ~/.phpenv/versions/$(phpenv version-name)/bin/php /bin/php
+  # install apache web server
+  - sudo apt-get install apache2 php-fpm php-mysql php-pgsql php-gd php-ldap php-xml php-mbstring libapache2-mod-php
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
-  - sudo a2enmod rewrite actions fastcgi alias
+  - sudo a2enmod proxy_fcgi rewrite setenvif cgi alias
   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  #- sudo chown -R travis:travis /var/lib/apache2/fastcgi
+  # start php-fpm
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
   # configure apache virtual hosts
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
@@ -284,12 +295,12 @@ script:
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+  if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
     parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
       --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
       --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
       --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
-      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
+      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
   fi
   set +e
   echo
@@ -299,7 +310,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
     phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
   fi
   set +e
@@ -310,7 +321,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
      var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
   fi
   set +e
@@ -471,6 +482,9 @@ after_script:
   ls $TRAVIS_BUILD_DIR/documents
   #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
+  echo "After script - Output last lines of apache error.log"
+  sudo ls /var/log/apache2
+  sudo tail -n 50 /var/log/apache2/travis_error_log
 
 after_success:
 - |
@@ -479,16 +493,16 @@ after_success:
 after_failure:
 - |
   echo Failure detected, so we show samples of log to help diagnose
-  # This part of code is executed only if previous command that fails are enclosed with set +e
-  # Upgrade log files
+  # This part of code is executed only if the command that fails are enclosed with set +e
+  # Show upgrade log files
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
     echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
-  # Apache log file
+  # Show Apache log file
   echo "Debugging informations for file apache error.log"
-  sudo cat /var/log/apache2/travis_error_log
+  sudo tail -n 50 /var/log/apache2/travis_error_log
   if [ "$DEBUG" = true ]; then
     # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"

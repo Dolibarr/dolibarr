@@ -613,6 +613,9 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.onholidayallday:not(.weekend) input {
+	background-color: #f8f7f0;
+}
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
@@ -622,6 +625,13 @@ td.leftborder, td.hide6 {
 td.rightborder {
 	border-right: 1px solid #ccc;
 }
+td.weekend {	/* must be after td.onholidayallday */
+	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
+}
+
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
@@ -862,6 +872,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.maxquatrevingtpercent {
+	max-width: 80%;
+}
 .soixantepercent {
 	width: 60%;
 }
@@ -963,6 +976,9 @@ textarea.centpercent {
 .nounderline {
 	text-decoration: none;
 }
+.nounderlineimp {
+	text-decoration: none !important;
+}
 .nopadding {
 	padding: 0;
 }
@@ -1002,6 +1018,12 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.nomarginleft {
+	margin-<?php print $left; ?>: unset;
+}
+.nomarginright {
+	margin-<?php print $right; ?>: unset;
+}
 .paddingtop {
 	padding-top: 4px;
 }
@@ -1026,6 +1048,9 @@ textarea.centpercent {
 }
 .cursormove {
 	cursor: move;
+}
+.cursorwait {
+	cursor: wait;
 }
 .cursornotallowed {
 	cursor: not-allowed;
@@ -1607,6 +1632,7 @@ tr.nobottom td {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
@@ -2537,6 +2563,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none;
+	cursor: not-allowed;
+}
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
@@ -3490,6 +3521,14 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+}
+input.buttonlink {
+	color: var(--colortextlink);
+	background-color: transparent;
+	cursor: pointer;
+}
+input.buttonlink:hover {
+	text-decoration: underline;
 }
 input.buttonreset {
 	margin-top: 3px;

@@ -24,6 +24,7 @@
  *  \brief          Page d'info des contraintes d'une table
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $langs->load("admin");

@@ -22,6 +22,7 @@
  *		\brief      Page to administer data tables
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -42,7 +43,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -111,7 +112,7 @@ $tabrowid[32] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[32] = !empty($conf->accounting->enabled);
+$tabcond[32] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -875,7 +876,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$formaccounting = new FormAccounting($db);
 	}
 
@@ -885,9 +886,11 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 			$fieldname = 'country';
 			if ($context == 'add') {
 				$fieldname = 'country_id';
-				print $form->select_country(GETPOST('country_id', 'int'), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				$preselectcountrycode = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $mysoc->country_code;
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			} else {
-				print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : $mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				$preselectcountrycode = (empty($obj->country_code) ? (empty($obj->country) ? $mysoc->country_code : $obj->country) : $obj->country_code);
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			}
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'country_id') {

@@ -184,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripc
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta contable por defecto para registrar el anticipo del cliente
 UseAuxiliaryAccountOnCustomerDeposit=Almacene la cuenta del cliente como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cuenta contable por defecto para registrar depósito de proveedor
+UseAuxiliaryAccountOnSupplierDeposit=Almacene la cuenta del proveedor como cuenta individual en el libro mayor auxiliar para las líneas de anticipos (si está deshabilitada, la cuenta individual para las líneas de anticipos permanecerá vacía)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (usada si no se define en el producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta contable por defecto para los productos comprados en CEE (usada si no se define en el producto)
@@ -280,7 +282,7 @@ DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de in
 DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
 
 Closure=Cierre anual
-DescClosure=Consulta aquí el número de movimientos por mes que aún no están validados y bloqueados
+DescClosure=Consulta aquí el número de movimientos por mes aún no validados y bloqueados
 OverviewOfMovementsNotValidated=Resumen de movimientos no validados y bloqueados
 AllMovementsWereRecordedAsValidated=Todos los movimientos fueron registrados como validados y bloqueados.
 NotAllMovementsCouldBeRecordedAsValidated=No todos los movimientos se pudieron registrar como validados y bloqueados

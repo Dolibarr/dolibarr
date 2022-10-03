@@ -23,6 +23,7 @@
  *  \brief      Main page for FTP section area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -102,7 +103,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result = $ecmdir->fetch(GETPOST("section", 'int'));
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -316,7 +317,7 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $file, $newsection);
+		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
 
 
 		if ($result) {
@@ -498,14 +499,30 @@ if (!function_exists('ftp_connect')) {
 					//$newsection = '/./';
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
+
 				//$newsection='/';
 				//$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
+
 				$contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
 				$buff = array();
 				foreach ($contents as $i => $key) {
 					$buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;
 				}
+
+				//$i = 0;
+				//$handle = opendir('ssh2.sftp://'.intval($conn_id).$newsection);
+				//$buff=array();
+				//while (false !== ($file = readdir($handle))) {
+				//	if (substr("$file", 0, 1) != "."){
+				//  	if (is_dir($file)) {
+				//      	$buff[$i]="d--------- - root root 1234 Aug 01 2000 ".$file;
+				//      } else {
+				//          $buff[$i]="---------- - root root 1234 Aug 01 2000 ".$file;
+				//      }
+				//  }
+				//  $i++;
+				//}
 			} else {
 				$buff = ftp_rawlist($conn_id, $newsectioniso);
 				$contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
@@ -631,7 +648,7 @@ if (!function_exists('ftp_connect')) {
 
 		// Actions
 		/*
-		if ($user->rights->ftp->write && ! empty($section))
+		if ($user->rights->ftp->write && !empty($section))
 		{
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/ftp/index.php','',0,$section,1);
 		}
@@ -692,7 +709,7 @@ print '<br>';
 if (!empty($conn_id)) {
 	$disconnect = dol_ftp_close($conn_id);
 
-	if ($disconnect == false) {
+	if (!$disconnect) {
 		setEventMessages($langs->trans("ErrorFTPNodisconnect"), null, 'errors');
 	}
 }

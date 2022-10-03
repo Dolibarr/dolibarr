@@ -23,6 +23,7 @@
  *		\brief      Page to add payment of a loan
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
@@ -105,7 +106,7 @@ if ($action == 'add_payment') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !GETPOST('accountid', 'int') > 0) {
+	if (isModEnabled("banque") && !GETPOST('accountid', 'int') > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
@@ -167,7 +168,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
-				if (!$result > 0) {
+				if (!($result > 0)) {
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
 				}

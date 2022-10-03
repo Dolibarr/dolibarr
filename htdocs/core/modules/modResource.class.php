@@ -95,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 6);
+		$this->phpmin = array(7, 0);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants

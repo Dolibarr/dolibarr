@@ -30,6 +30,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -67,7 +68,7 @@ if (isset($user->socid) && $user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
 // A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
-if ($user->id == $id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->hasRight("user", "self_advance", "readperms")) && empty($user->admin))) {
+if ($user->id == $id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->hasRight("user", "self_advance", "readperms") && empty($user->admin))) {
 	accessforbidden();
 }
 
@@ -275,7 +276,7 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 	print '<td>';
 	$addadmin = '';
 	if (property_exists($object, 'admin')) {
-		if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 		} elseif (!empty($object->admin)) {
 			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
@@ -295,7 +296,7 @@ if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
 // If edited user is an extern user, we show warning for external users
-if (! empty($object->socid)) {
+if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
@@ -353,7 +354,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;
@@ -420,7 +421,7 @@ if ($result) {
 		}
 
 		// Special cases
-		if (!empty($conf->reception->enabled)) {
+		if (isModEnabled("reception")) {
 			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
 			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
 				$i++;

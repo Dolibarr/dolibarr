@@ -38,13 +38,11 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
@@ -79,6 +77,8 @@ if ($action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	top_httphead('application/json');
+
 	$outjson = array();
 
 	$object = new Product($db);
@@ -106,7 +106,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$thirdpartytemp->fetch($socid);
 
 			//Load translation description and label
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$newlang = $thirdpartytemp->default_lang;
 
 				if (!empty($newlang)) {

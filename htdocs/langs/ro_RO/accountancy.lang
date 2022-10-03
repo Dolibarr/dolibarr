@@ -184,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cont contabil pentru a înregistra abona
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT= Cont contabil implicit pentru înregistra depunerilor clientului
 UseAuxiliaryAccountOnCustomerDeposit=Stochează contul de client ca și cont contabil individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cont contabil implicit pentru a înregistra depozitul furnizorului
+UseAuxiliaryAccountOnSupplierDeposit=Stocare cont furnizor ca și cont individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol) 
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Contul contabil implicit pentru produsele cumpărate (se foloseşte dacă nu este definit în fișa de produs)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT= Contul contabil implicit pentru produsele cumpărate din CEE (utilizat dacă nu este definit în fișa de produs)
@@ -280,7 +282,7 @@ DescVentilExpenseReportMore=Dacă configurezi contul contabil pe linii de raport
 DescVentilDoneExpenseReport=Consultați aici lista liniilor rapoartelor de cheltuieli și contul contabil a taxelor lor
 
 Closure=Închidere anuală
-DescClosure=Consultă aici numărul de mișcări lunar care nu sunt încă validate și blocate
+DescClosure=Consultă aici numărul de mișcări pe lună nevalidate și blocate
 OverviewOfMovementsNotValidated=Prezentare generală a mișcărilor nevalidate și blocate
 AllMovementsWereRecordedAsValidated=Toate mișcările au fost înregistrate ca validate și blocate
 NotAllMovementsCouldBeRecordedAsValidated=Nu toate mișcările au putut fi înregistrate ca validate și blocate

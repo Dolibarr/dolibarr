@@ -25,9 +25,10 @@
  *      \brief      Page of users
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -110,7 +111,8 @@ $fieldstosearchall = array(
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.note_public'=>"NotePublic",
+	'u.note_private'=>"NotePrivate"
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -121,7 +123,7 @@ $arrayfields = array(
 	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
 	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
 	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
-	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
 	'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
 	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
@@ -131,7 +133,7 @@ $arrayfields = array(
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -189,11 +191,11 @@ $error = 0;
 
 // Permission to list
 if ($mode == 'employee') {
-	if (empty($user->hasRight("salaries", "read"))) {
+	if (!$user->hasRight("salaries", "read")) {
 		accessforbidden();
 	}
 } else {
-	if (empty($user->hasRight("user", "user", "read")) && empty($user->admin)) {
+	if (!$user->hasRight("user", "user", "read") && empty($user->admin)) {
 		accessforbidden();
 	}
 }
@@ -441,7 +443,7 @@ if ($search_categ == -2) {
 if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
 }
-if ($mode == 'employee' && empty($user->hasRight("salaries", "readall"))) {
+if ($mode == 'employee' && !$user->hasRight("salaries", "readall")) {
 	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
@@ -586,7 +588,7 @@ if ($permissiontoadd) {
 if ($permissiontoadd) {
 	$arrayofmassactions['reactivate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Reactivate");
 }
-if ($permissiontoadd) {
+if (isModEnabled('category') && $permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -658,14 +660,14 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
 	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse
-if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -939,9 +941,9 @@ while ($i < $imaxinloop) {
 	$li = $object->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	$canreadhrmdata = 0;
-	if ((!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "read")) && in_array($obj->rowid, $childids))
-		|| (!empty($conf->salaries->enabled) && !empty($user->hasRight("salaries", "readall")))
-		|| (!empty($conf->hrm->enabled) && !empty($user->hasRight("hrm", "employee", "read")))) {
+	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
@@ -981,7 +983,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
-			if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
+			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
 				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($obj->admin) {
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1054,7 +1056,7 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
-				if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2) {
+				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 				} elseif ($obj->admin2) {
 					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1123,7 +1125,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				print '<td>';
 				if (!$obj->entity) {

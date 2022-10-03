@@ -22,6 +22,7 @@
  *	\brief      Setup page of module Contracts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -142,7 +143,7 @@ if ($action == 'updateMask') {
 	$value = GETPOST('activate_hideClosedServiceByDefault', 'alpha');
 	$res3 = dolibarr_set_const($db, "CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) {
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 > 0)) {
 		$error++;
 	}
 

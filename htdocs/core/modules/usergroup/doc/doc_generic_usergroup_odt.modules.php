@@ -46,9 +46,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -123,7 +123,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="USERGROUP_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+		if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 			$texte .= '<input type="hidden" name="param2" value="USERGROUP_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="USERGROUP_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USERGROUP_ADDON_PDF_ODT_CLOSED">';
@@ -169,7 +169,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		if (count($listofdir)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
+			if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
 				// Model for creation
 				$list = ModelePDFUserGroup::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';

@@ -24,6 +24,7 @@
  *       \brief     File of page to resize photos
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -56,13 +57,13 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (!$user->rights->projet->lire) {
+	if (empty($user->rights->projet->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (!$user->rights->bom->read) {
+	if (empty($user->rights->bom->read)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -73,14 +74,14 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
-	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (!$user->rights->user->user->lire) {
+	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
+	if (empty($user->rights->user->user->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (!$user->rights->tax->charges->lire) {
+	if (empty($user->rights->tax->charges->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;

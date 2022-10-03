@@ -406,9 +406,9 @@ class Don extends CommonObject
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", '".$this->db->escape(trim($this->email))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
+		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
+		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -832,8 +832,8 @@ class Don extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -989,7 +989,7 @@ class Don extends CommonObject
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = (!empty($obj->tms) ? $this->db->jdate($obj->tms) : "");
 			}
 			$this->db->free($result);
 		} else {

@@ -423,8 +423,14 @@ td.onholidaymorning, td.onholidayafternoon {
 td.onholidayallday {
 	background-color: #f4eede;
 }
+td.onholidayallday:not(.weekend) input {
+	background-color: #f8f7f0;
+}
 td.weekend {	/* must be after td.onholidayallday */
 	background-color: #eee;
+}
+td.weekend input {
+	background-color: #f8f8f8;
 }
 /*
 td.leftborder, td.hide0 {
@@ -708,6 +714,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.maxquatrevingtpercent {
+	max-width: 80%;
+}
 .soixantepercent {
 	width: 60%;
 }
@@ -815,6 +824,9 @@ textarea.centpercent {
 .nounderline {
 	text-decoration: none;
 }
+.nounderlineimp {
+	text-decoration: none !important;
+}
 .nopadding {
 	padding: 0;
 }
@@ -866,6 +878,13 @@ textarea.centpercent {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.nomarginleft {
+	margin-<?php print $left; ?>: unset;
+}
+.nomarginright {
+	margin-<?php print $right; ?>: unset;
+}
+
 .cursordefault {
 	cursor: default;
 }
@@ -880,6 +899,9 @@ textarea.centpercent {
 }
 .cursornotallowed {
 	cursor: not-allowed;
+}
+.cursorwait {
+	cursor: wait;
 }
 .backgroundblank {
 	background-color: #fff;
@@ -1519,6 +1541,7 @@ table[summary="list_of_modules"] .fa-cog {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
+.minwidth25  { min-width: 25px; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
@@ -2492,6 +2515,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
 	text-decoration: none;
+	cursor: not-allowed;
+}
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
@@ -3527,6 +3555,14 @@ input.button[name="upload"] {
 }
 input.button.smallpaddingimp, input.buttonreset.smallpaddingimp {
 	font-size: 0.8em;
+}
+input.buttonlink {
+	color: var(--colortextlink);
+	background-color: transparent;
+	cursor: pointer;
+}
+input.buttonlink:hover {
+	text-decoration: underline;
 }
 input.buttonreset {
 	margin-top: 3px;

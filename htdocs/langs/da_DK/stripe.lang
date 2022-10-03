@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Link til opsætning Stripe WebHook for at ringe til I
 PaymentWillBeRecordedForNextPeriod=Betaling registreres for den næste periode.
 ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af stærke kunde autentificerings regler skal oprettelse af et kort foretages fra Stripe backoffice. Du kan klikke her for at tænde for Stripe-kundepost:%s
+TERMINAL_LOCATION=Placering (adresse) for terminaler

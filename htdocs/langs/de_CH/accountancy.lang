@@ -205,7 +205,6 @@ DescVentilExpenseReport=Du siehst die Spesenabrechnungspositionen und den aktuel
 DescVentilExpenseReportMore=Wenn du in den Spesenarten Buchhaltungskonten hinterlegt hast, kann ich jene einander   automatisch zuordnen. Dafür ist die Schaltfläche "<strong>%s</strong>" da.\nDort, wo das nicht klappt, kannst du die passenden Buchhaltungskonten via "<strong>%s</strong>" von Hand zuweisen.
 DescVentilDoneExpenseReport=Du siehst die Spesenabrechnungspositionen und die damit verknüpften Buchhaltungskonten.
 Closure=Jahresabschluss
-DescClosure=Consult here the number of movements by month who are not yet validated & locked
 DescValidateMovements=Für den Abschluss müssen alle Kontobewegungen frei gegeben sein. Danach sind sie nicht mehr änderbar.
 ValidateHistory=Automatisch verknüpfen
 ErrorAccountancyCodeIsAlreadyUse=Hoppla, dieses Buchhaltungskonto wird noch verwendet - du kannst es deshalb nicht löschen.
