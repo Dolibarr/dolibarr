@@ -785,7 +785,6 @@ if (!empty($conf->margin->enabled)) {
 	$formmargin = new FormMargin($db);
 }
 $companystatic = new Societe($db);
-$companyparent = new Societe($db);
 $company_url_list = array();
 $formcompany = new FormCompany($db);
 $projectstatic = new Project($db);
@@ -2036,6 +2035,7 @@ if ($resql) {
 			print '<td class="center tdoverflowmax100">';
 			if ($obj->fk_parent > 0) {
 				if (!isset($company_url_list[$obj->fk_parent])) {
+					$companyparent = new Societe($db);
 					$res = $companyparent->fetch($obj->fk_parent);
 					if ($res > 0) {
 						$company_url_list[$obj->fk_parent] = $companyparent->getNomUrl(1);
