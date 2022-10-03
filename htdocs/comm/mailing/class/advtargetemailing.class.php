@@ -128,7 +128,13 @@ class AdvanceTargetingMailing extends CommonObject
 				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
 			}
 		} else {
-			$this->type_statuscommprospect = array();
+			$this->type_statuscommprospect = array(
+				-1 => $langs->trans("StatusProspect-1"),
+				0 => $langs->trans("StatusProspect0"),
+				1 => $langs->trans("StatusProspect1"),
+				2 => $langs->trans("StatusProspect2"),
+				3 => $langs->trans("StatusProspect3")
+			);
 		}
 	}
 
