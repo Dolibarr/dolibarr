@@ -28,9 +28,10 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (!defined('NOREQUIRESOC')) {
+// Needed for create other object with workflow
+/*if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
-}
+}*/
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
