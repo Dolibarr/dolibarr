@@ -111,6 +111,8 @@ class AdvanceTargetingMailing extends CommonObject
 		global $langs;
 		$langs->load('customers');
 
+
+
 		$this->db = $db;
 
 		$this->select_target_type = array(
@@ -119,13 +121,15 @@ class AdvanceTargetingMailing extends CommonObject
 			'3' => $langs->trans('ThirdParty'),
 			'4' => $langs->trans('ContactsWithThirdpartyFilter')
 		);
-		$this->type_statuscommprospect = array(
-			-1 => $langs->trans("StatusProspect-1"),
-			0 => $langs->trans("StatusProspect0"),
-			1 => $langs->trans("StatusProspect1"),
-			2 => $langs->trans("StatusProspect2"),
-			3 => $langs->trans("StatusProspect3")
-		);
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+		$customerStatic = new Client($this->db);
+		$customerStatic->loadCacheOfProspStatus();
+		if (!empty($customerStatic->cacheprospectstatus)) {
+			foreach ($customerStatic->cacheprospectstatus as $dataProspectSt) {
+				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
+			}
+		}
 	}
 
 	/**
