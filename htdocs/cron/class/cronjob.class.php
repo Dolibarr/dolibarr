@@ -173,9 +173,15 @@ class Cronjob extends CommonObject
 	public $libname;
 
 	/**
-	 * @var string A test condition to know if job is visible/qualified
+	 * @var string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
+
+	/**
+	 * @var string 			Autodelete
+	 */
+	public $autodelete;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -1221,7 +1227,8 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 
 				// Create Object for the called module
-				$object = new $this->objectname($this->db);
+				$nameofclass = $this->objectname;
+				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
 				}

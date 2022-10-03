@@ -41,6 +41,8 @@ class PartnershipUtils
 	public $error; //!< To return error code (or message)
 	public $errors = array(); //!< To return several error codes (or messages)
 
+	public $output;	// To store output of some cron methods
+
 
 	/**
 	 *  Constructor
