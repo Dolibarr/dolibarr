@@ -78,8 +78,8 @@ $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
 $search_account_customer_code = trim(GETPOST('search_account_customer_code', 'alpha'));
 $search_account_supplier_code = trim(GETPOST('search_account_supplier_code', 'alpha'));
 $search_address = trim(GETPOST('search_address', 'alpha'));
-$search_town = trim(GETPOST("search_town", 'alpha'));
 $search_zip = trim(GETPOST("search_zip", 'alpha'));
+$search_town = trim(GETPOST("search_town", 'alpha'));
 $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
@@ -351,8 +351,8 @@ if (empty($reshook)) {
 		$search_account_customer_code = '';
 		$search_account_supplier_code = '';
 		$search_address = '';
-		$search_town = "";
 		$search_zip = "";
+		$search_town = "";
 		$search_state = "";
 		$search_region = "";
 		$search_country = '';
@@ -587,11 +587,11 @@ if ($search_account_supplier_code) {
 if ($search_address) {
 	$sql .= natural_search('s.address', $search_address);
 }
-if ($search_town) {
-	$sql .= natural_search("s.town", $search_town);
-}
 if (strlen($search_zip)) {
 	$sql .= natural_search("s.zip", $search_zip);
+}
+if ($search_town) {
+	$sql .= natural_search("s.town", $search_town);
 }
 if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
@@ -783,11 +783,11 @@ if ($search_alias != '') {
 if ($search_address != '') {
 	$param .= '&search_address='.urlencode($search_address);
 }
-if ($search_town != '') {
-	$param .= "&search_town=".urlencode($search_town);
-}
 if ($search_zip != '') {
 	$param .= "&search_zip=".urlencode($search_zip);
+}
+if ($search_town != '') {
+	$param .= "&search_town=".urlencode($search_town);
 }
 if ($search_phone != '') {
 	$param .= "&search_phone=".urlencode($search_phone);
