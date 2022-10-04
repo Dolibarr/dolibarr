@@ -183,7 +183,7 @@ if ($result) {
 
 		// Controls
 		$accountancy_code_supplier_general = (!empty($obj->accountancy_code_supplier_general)) ? $obj->accountancy_code_supplier_general : $cptfour;
-		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $cptfour;
+		$compta_soc = ($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : '';
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -632,7 +632,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptfour;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -762,7 +762,7 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
@@ -842,7 +842,7 @@ if (empty($action) || $action == 'view') {
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_customer_general'] : $cptcli;
+		$companystatic->accountancy_code_supplier_general = !empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour;
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
@@ -914,7 +914,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
+			$accountoshow = length_accountg(!empty($tabcompany[$key]['accountancy_code_supplier_general']) ? $tabcompany[$key]['accountancy_code_supplier_general'] : $cptfour);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
 			} else {

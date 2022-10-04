@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -30,6 +30,7 @@
  * \brief		Page with sells journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -189,7 +190,7 @@ if ($result) {
 
 		// Controls
 		$accountancy_code_customer_general = (!empty($obj->accountancy_code_customer_general)) ? $obj->accountancy_code_customer_general : $cptcli;
-		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : $cptcli;
+		$compta_soc = (!empty($obj->code_compta)) ? $obj->code_compta : '';
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
@@ -313,7 +314,6 @@ if ($action == 'writebookkeeping') {
 	$accountingaccountcustomer->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
 
 	$accountingaccountcustomerwarranty = new AccountingAccount($db);
-
 	$accountingaccountcustomerwarranty->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY, true);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
@@ -328,7 +328,9 @@ if ($action == 'writebookkeeping') {
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->accountancy_code_customer_general = $tabcompany[$key]['accountancy_code_customer_general'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
+		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
+		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
