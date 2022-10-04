@@ -312,7 +312,7 @@ if (isModEnabled("propal") && $user->rights->propale->lire) {
  */
 
 /*
-if (!empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
@@ -387,7 +387,7 @@ if (!empty($conf->propal->enabled))
  */
 
 /*
-if (!empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";

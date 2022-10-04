@@ -506,7 +506,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$this->tab_top -= 2;
@@ -1290,13 +1290,13 @@ class pdf_sponge extends ModelePDFFactures
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') {
 				$useonlinepayment = 0;
 				if (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) {
-					if (!empty($conf->paypal->enabled)) {
+					if (isModEnabled('paypal')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->stripe->enabled)) {
+					if (isModEnabled('stripe')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->paybox->enabled)) {
+					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
 					}
 				}

@@ -99,7 +99,7 @@ if (!empty($conf->salaries->enabled)) {
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 }
 
@@ -132,7 +132,7 @@ if (!empty($conf->loan->enabled)) {
 if (!empty($conf->salaries->enabled)) {
 	$langs->load("salaries");
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	$langs->load("mrp");
 }
 if (isModEnabled('eventorganization')) {

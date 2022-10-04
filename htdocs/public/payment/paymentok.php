@@ -57,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
@@ -65,7 +65,7 @@ if (!empty($conf->paypal->enabled)) {
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
 
 // Clean parameters
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$PAYPAL_API_USER = "";
 	if (!empty($conf->global->PAYPAL_API_USER)) {
 		$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
@@ -127,13 +127,13 @@ dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLT
 
 
 $validpaymentmethod = array();
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$validpaymentmethod['paypal'] = 'paypal';
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	$validpaymentmethod['paybox'] = 'paybox';
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$validpaymentmethod['stripe'] = 'stripe';
 }
 
@@ -236,7 +236,7 @@ if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
 print '<br><br><br>';
 
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	if ($paymentmethod == 'paypal') {							// We call this page only if payment is ok on payment system
 		if ($PAYPALTOKEN) {
 			// Get on url call
@@ -316,14 +316,14 @@ if (!empty($conf->paypal->enabled)) {
 	}
 }
 
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	if ($paymentmethod == 'paybox') {
 		// TODO Add a check to validate that payment is ok.
 		$ispaymentok = true; // We call this page only if payment is ok on payment system
 	}
 }
 
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	if ($paymentmethod == 'stripe') {
 		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
 		$ispaymentok = true; // We call this page only if payment is ok on payment system

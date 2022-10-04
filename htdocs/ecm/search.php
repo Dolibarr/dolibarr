@@ -159,7 +159,7 @@ if (isModEnabled('holiday')) {
 if (isModEnabled("banque")) {
 	$langs->load("banks"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'banque', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	$langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>isModEnabled('mrp'), 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 }
 if (isModEnabled('recruitment')) {

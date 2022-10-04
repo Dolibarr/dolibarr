@@ -1476,7 +1476,7 @@ if ($action == 'create') {
 		$productstatic = new Product($db);
 
 		$usemargins = 0;
-		if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'propal', 'commande'))) {
+		if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'propal', 'commande'))) {
 			$usemargins = 1;
 		}
 
@@ -1522,7 +1522,7 @@ if ($action == 'create') {
 					print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				}
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
-				if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 					print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				}
 				print '<td width="30">&nbsp;</td>';
@@ -1592,7 +1592,7 @@ if ($action == 'create') {
 					}
 
 					// Margin
-					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						print '<td class="right nowraponall">'.price($objp->pa_ht).'</td>';
 					}
 
@@ -1749,7 +1749,7 @@ if ($action == 'create') {
 					print '</tr>';
 
 					$colspan = 6;
-					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						$colspan++;
 					}
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2246,7 +2246,7 @@ $db->close();
 ?>
 
 <?php
-if (!empty($conf->margin->enabled) && $action == 'editline') {
+if (isModEnabled('margin') && $action == 'editline') {
 		// TODO Why this ? To manage margin on contracts ?
 	?>
 <script type="text/javascript">

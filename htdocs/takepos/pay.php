@@ -80,7 +80,7 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <body>
 <?php
 
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 	$servicestatus = 0;
 	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
@@ -130,7 +130,7 @@ function fetchConnectionToken() {
 </script>
 <?php }
 
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
 }
 
@@ -535,7 +535,7 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
 	print '</span>';
@@ -646,7 +646,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i = $i + 1;
 }
 
-if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (!empty($conf->global->$keyforstripeterminalbank)) {

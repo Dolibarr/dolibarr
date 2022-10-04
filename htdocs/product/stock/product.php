@@ -821,7 +821,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product in production
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
