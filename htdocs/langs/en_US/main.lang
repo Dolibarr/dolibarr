@@ -927,6 +927,7 @@ DirectDownloadInternalLink=Private download link
 PrivateDownloadLinkDesc=You need to be logged and you need permissions to view or download the file
 Download=Download
 DownloadDocument=Download document
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=Update currency rate
 Fiscalyear=Fiscal year
 ModuleBuilder=Module and Application Builder
