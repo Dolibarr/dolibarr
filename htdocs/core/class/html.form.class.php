@@ -1929,14 +1929,14 @@ class Form
 	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
 	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string			$morecss		More css
-	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int     		$notdisabled    Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
 	 *  @param  int				$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param  int				$forcecombo     Force the component to be a simple combo box without ajax
 	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -2005,7 +2005,7 @@ class Form
 		if ($includeUsers) {
 			$sql .= " AND u.rowid IN (".$this->db->sanitize($includeUsers).")";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) {
+		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
 		if (!empty($morefilter)) {
@@ -2065,7 +2065,7 @@ class Form
 						$disableline = ($enableonlytext ? $enableonlytext : '1');
 					}
 
-					$labeltoshow = '';
+					$labeltoshow = ''; $labeltoshowhtml = '';
 
 					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
 					$fullNameMode = 0;
@@ -2073,37 +2073,50 @@ class Form
 						$fullNameMode = 1; //Firstname+lastname
 					}
 					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$labeltoshowhtml .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 					if (empty($obj->firstname) && empty($obj->lastname)) {
 						$labeltoshow .= $obj->login;
+						$labeltoshowhtml .= $obj->login;
 					}
 
-					// Complete name with more info
-					$moreinfo = '';
+					// Complete name with a more info string like: ' (info1 - info2 - ...)'
+					$moreinfo = ''; $moreinfohtml = '';
 					if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
-						$moreinfo .= ($moreinfo ? ' - ' : ' (').$obj->login;
+						$moreinfo .= ($moreinfo ? ' - ' : ' (');
+						$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(');
+						$moreinfo .= $obj->login;
+						$moreinfohtml .= $obj->login;
 					}
 					if ($showstatus >= 0) {
 						if ($obj->status == 1 && $showstatus == 1) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans('Enabled');
 						}
 						if ($obj->status == 0 && $showstatus == 1) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans('Disabled');
 						}
 					}
 					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 						if (!$obj->entity) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans("AllEntities");
 						} else {
 							if ($obj->entity != $conf->entity) {
 								$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+								$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 							}
 						}
 					}
 					$moreinfo .= ($moreinfo ? ')' : '');
+					$moreinfohtml .= ($moreinfohtml ? ')' : '');
 					if ($disableline && $disableline != '1') {
-						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
+						// Add text from $enableonlytext parameter
+						$moreinfo .= ' - '.$disableline;
+						$moreinfohtml .= ' - '.$disableline;
 					}
 					$labeltoshow .= $moreinfo;
+					$labeltoshowhtml .= $moreinfohtml;
 
 					$out .= '<option value="'.$obj->rowid.'"';
 					if ($disableline) {
@@ -2120,7 +2133,7 @@ class Form
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '<strike class="opacitymediumxxx">';
 					}
-					$outhtml .= $labeltoshow;
+					$outhtml .= $labeltoshowhtml;
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '</strike>';
 					}
