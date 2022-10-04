@@ -337,7 +337,7 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 	function fetchPaymentIntentClientSecret(amount, invoiceid) {
 	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
   <?php
-	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&servicestatus='.$servicestatus;
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&token='.newToken().'&servicestatus='.$servicestatus;
 	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
 	?>
   return fetch('<?php echo $urlpaymentintent; ?>', {
