@@ -132,8 +132,8 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 						$usergroup->fetch($object->context['newgroupid']);
 
 						//For MultiCompany Separate Groups
-						if(isset($this->context['entity']) && $this->context['entity'] > 0){
-							$targetEntity = $this->context['entity'];
+						if(isset($object->context['entity']) && $object->context['entity'] > 0){
+							$targetEntity = $object->context['entity'];
 						} else {
 							$targetEntity = -1;
 						}
@@ -149,7 +149,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 							$olddn = '';
 						}
 
-						$info = $usergroup->_load_ldap_info(); // Contains all members, included the new one (insert already done before trigger call)
+						$info = $usergroup->_load_ldap_info($targetEntity); // Contains all members, included the new one (insert already done before trigger call)
 						$dn = $usergroup->_load_ldap_dn($info);
 
 						$result = $ldap->update($dn, $info, $user, $olddn);

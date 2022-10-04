@@ -36,6 +36,7 @@ $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
+$seeEntity = GETPOST('seeEntity', 'int');
 
 $socid = 0;
 if ($user->socid > 0) {
@@ -191,10 +192,30 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
+if($conf->multicompany->enabled && $conf->global->LDAP_GROUP_MULTICOMPANY_SEPARATE == "yes"){
+	print '<select name="seeEntity" id="seeEntity">';
+	$entities = $db->query("SELECT rowid, label FROM llx_entity WHERE active = 1 AND visible = 1");
+	while ($reSql = $db->fetch_object($entities)) {
+		$selected = '';
+		if($reSql->rowid == $seeEntity){
+			$selected = " selected";
+		}
+		print "<option value='".$reSql->rowid."'".$selected.">".$reSql->label."</option>";
+	}
+	print "</select>";
+	print '<button class="butAction" onClick=\'document.location.href="'.DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id.'&seeEntity="+document.getElementById(`seeEntity`).value;\'>'.$langs->trans('Show').'</a>';
+}
+
+$entity = -1;
+if($conf->multicompany->enabled && $seeEntity >= 0){
+	$entity = $seeEntity;
+}
+
+
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result > 0) {
-	$info = $object->_load_ldap_info();
+	$info = $object->_load_ldap_info($entity);
 	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
