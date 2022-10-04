@@ -1673,10 +1673,10 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *  Deplace fichier uploade sous le nom $file dans le repertoire sdir
 	 *
-	 *  @param      string	$sdir       Repertoire destination finale
-	 *  @param      string	$file		Nom du fichier uploade
+	 *  @param      string	$sdir       Final destination directory
+	 *  @param      array	$file		Uploaded file name
 	 *	@return		void
 	 */
 	public function add_photo($sdir, $file)

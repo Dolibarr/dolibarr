@@ -99,7 +99,7 @@ function user_prepare_head(User $object)
 		$h++;
 	}
 
-	if (!empty($conf->clicktodial->enabled)) {
+	if (isModEnabled('clicktodial')) {
 		$head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ClickToDial");
 		$head[$h][2] = 'clicktodial';

@@ -962,7 +962,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$sortfield = "t.lastname";
 	}
 
-	if (!empty($conf->clicktodial->enabled)) {
+	if (isModEnabled('clicktodial')) {
 		$user->fetch_clicktodial(); // lecture des infos de clicktodial du user
 	}
 
