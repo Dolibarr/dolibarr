@@ -57,7 +57,6 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
 }
 
-
 /*
  * Actions
  */
