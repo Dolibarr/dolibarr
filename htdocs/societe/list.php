@@ -1217,7 +1217,7 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 	print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
-	print '</select></td>';
+	print '</td>';
 }
 // Prospect level
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
