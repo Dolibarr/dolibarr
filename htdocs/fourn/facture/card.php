@@ -64,7 +64,7 @@ if (isModEnabled('accounting')) {
 
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
@@ -399,7 +399,7 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'setmode' && $usercancreate) {
@@ -2429,7 +2429,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -3127,7 +3127,7 @@ if ($action == 'create') {
 		}
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
@@ -3265,7 +3265,7 @@ if ($action == 'create') {
 		if (isModEnabled("banque")) {
 			$nbrows++; $nbcols++;
 		}
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			$nbrows++;
 		}
 		if (isModEnabled("multicurrency")) {

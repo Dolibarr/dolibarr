@@ -155,7 +155,7 @@ $hookmanager->initHooks(array('bookkeepinglist'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->rights->accounting->mouvements->export) {
+if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'int') == '' && !GETPOST('noreset', 'int') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -221,7 +221,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -434,7 +434,7 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	//if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
+	//if ($action == 'delbookkeepingyearconfirm' && !$user->hasRight('accounting', 'mouvements', 'supprimer_tous')) {
 	//	$delmonth = GETPOST('delmonth', 'int');
 	//	$delyear = GETPOST('delyear', 'int');
 	//	if ($delyear == -1) {
@@ -486,7 +486,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
+	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			$result = $object->fetch($toselectid);
@@ -522,7 +522,7 @@ if (empty($reshook)) {
 	}
 
 	// others mass actions
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
+	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		if ($massaction == 'lettering') {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
@@ -652,7 +652,7 @@ if (!empty($sortfield)) {
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
-if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
+if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements', 'export')) {
 	// TODO Replace the fetchAll to get all ->line followed by call to ->export(). It consumes too much memory on large export.
 	// Replace this with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
@@ -852,7 +852,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting-
 	$arrayofmassactions['preunlettering'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('Unlettering');
 }
 */
-if ($user->rights->accounting->mouvements->supprimer) {
+if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunlettering', 'predeletebookkeepingwriting'))) {
@@ -888,8 +888,8 @@ if (empty($reshook)) {
 	}
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-	if (!empty($user->rights->accounting->mouvements->export)) {
-		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
+	if ($user->hasRight('accounting', 'mouvements', 'export')) {
+		$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file&token='.newToken().($param ? '&'.$param : ''), $user->hasRight('accounting', 'mouvements', 'export'));
 	}
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
@@ -900,7 +900,7 @@ if (empty($reshook)) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->rights->accounting->mouvements->creer);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->hasRight('accounting', 'mouvements', 'creer'));
 }
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);

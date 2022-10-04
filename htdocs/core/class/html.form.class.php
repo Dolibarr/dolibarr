@@ -9452,7 +9452,7 @@ class Form
 					}
 				}
 
-				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
+				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
 					$ret .= '<!-- Put link to gravatar -->';
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash

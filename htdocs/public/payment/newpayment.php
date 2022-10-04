@@ -247,7 +247,7 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 // Make special controls
 
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
@@ -273,10 +273,10 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypa
 		return -1;
 	}
 }
-if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 	// No specific test for the moment
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
 
@@ -481,7 +481,7 @@ if ($action == 'dopayment') {
 // Called when choosing Stripe mode.
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
-if ($action == 'charge' && !empty($conf->stripe->enabled)) {
+if ($action == 'charge' && isModEnabled('stripe')) {
 	$amountstripe = $amount;
 
 	// Correct the amount according to unit of currency
@@ -844,10 +844,10 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 
@@ -911,14 +911,14 @@ if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
 print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
 	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
@@ -2043,7 +2043,7 @@ if ($action != 'dopayment') {
 				'paymentmethod' => $paymentmethod
 			];
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
-			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
@@ -2062,7 +2062,7 @@ if ($action != 'dopayment') {
 				';
 			}
 
-			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 				print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
@@ -2083,7 +2083,7 @@ if ($action != 'dopayment') {
 				';
 			}
 
-			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}

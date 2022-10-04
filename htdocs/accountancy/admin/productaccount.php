@@ -45,7 +45,7 @@ $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
 if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 

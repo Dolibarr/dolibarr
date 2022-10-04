@@ -398,7 +398,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top -= 2;
@@ -1720,8 +1720,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		// phpcs:enable
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 

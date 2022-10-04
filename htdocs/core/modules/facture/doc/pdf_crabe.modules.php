@@ -491,7 +491,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top -= 2;
@@ -1180,13 +1180,13 @@ class pdf_crabe extends ModelePDFFactures
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') {
 				$useonlinepayment = 0;
 				if (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) {
-					if (!empty($conf->paypal->enabled)) {
+					if (isModEnabled('paypal')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->stripe->enabled)) {
+					if (isModEnabled('stripe')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->paybox->enabled)) {
+					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
 					}
 				}
@@ -2062,8 +2062,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }

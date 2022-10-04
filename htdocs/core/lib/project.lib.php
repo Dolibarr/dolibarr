@@ -168,7 +168,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled("expedition")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				$nbElements += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
 			}
 			if (isModEnabled('deplacement')) {
