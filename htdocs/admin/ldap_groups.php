@@ -61,6 +61,12 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!dolibarr_set_const($db, 'LDAP_GROUP_FILTER', GETPOST("filter"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
+	$multicompanySeparate =  GETPOST("multicompanySeparate");
+	if(!empty($multicompanySeparate) && in_array($multicompanySeparate, array('yes', 'no'))){
+		if (!dolibarr_set_const($db, 'LDAP_GROUP_MULTICOMPANY_SEPARATE', GETPOST("multicompanySeparate"), 'tinyint', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -153,6 +159,16 @@ print '<input size="48" type="text" name="filter" value="'.$conf->global->LDAP_G
 print '</td><td>'.$langs->trans("LDAPGroupFilterExample").'</td>';
 print '<td></td>';
 print '</tr>';
+
+// If MultiCompany is enabled, choose to create one group for each combination of group/entity
+if($conf->multicompany->enabled){
+	print '<!-- LDAP_GROUP_MULTICOMPANY_SEPARATE -->';
+	print '<tr class="oddeven"><td>'.$langs->trans("LDAPMultiCompanySeparateGroups").'</td><td>';
+	print $form->selectyesno('multicompanySeparate', $conf->global->LDAP_GROUP_MULTICOMPANY_SEPARATE);
+	print '</td><td>'.$langs->trans("LDAPMultiCompanySeparateGroupsExample").'</td>';
+	print '<td></td>';
+	print '</tr>';
+}
 
 print '</table>';
 

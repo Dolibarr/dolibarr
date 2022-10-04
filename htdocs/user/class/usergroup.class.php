@@ -822,10 +822,10 @@ class UserGroup extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
-	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@param 		int		$entity		Entity if LdapGroupMulticompanySeparate is On (default -1, use $conf->entity)
+	 *	@return		array				Tableau info des attributs
 	 */
-	public function _load_ldap_info()
+	public function _load_ldap_info($entity = -1)
 	{
 		// phpcs:enable
 		global $conf;
@@ -837,7 +837,14 @@ class UserGroup extends CommonObject
 
 		// Champs
 		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+			if($conf->multicompany->enabled && $conf->global->LDAP_GROUP_MULTICOMPANY_SEPARATE == "yes"){
+				if($entity<0){
+					$entity = $conf->entity;
+				}
+				$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name."-".$entity;
+			} else {
+				$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+			}
 		}
 		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
 		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
@@ -846,13 +853,31 @@ class UserGroup extends CommonObject
 		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
-				$muser = new User($this->db);
-				$muser->fetch($val->id);
-				$info2 = $muser->_load_ldap_info();
-				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
+				if($conf->multicompany->enabled && $conf->global->LDAP_GROUP_MULTICOMPANY_SEPARATE == "yes"){
+					if($entity<0){
+						$entity = $conf->entity;
+					}
+					if(in_array($entity, $val->usergroup_entity)){
+						$muser = new User($this->db);
+						$muser->fetch($val->id);
+						$info2 = $muser->_load_ldap_info();
+						$valueofldapfield[] = $muser->_load_ldap_dn($info2);
+					}
+				} else {
+					$muser = new User($this->db);
+					$muser->fetch($val->id);
+					$info2 = $muser->_load_ldap_info();
+					$valueofldapfield[] = $muser->_load_ldap_dn($info2);
+				}
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
+
+		//To avoid auto generated sAMAccountName
+		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') {
+			$info["sAMAccountName"] = $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+		}
+
 		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
 		}

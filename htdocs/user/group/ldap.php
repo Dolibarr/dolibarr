@@ -66,17 +66,35 @@ if ($action == 'dolibarr2ldap') {
 	$result = $ldap->connect_bind();
 
 	if ($result > 0) {
-		$info = $object->_load_ldap_info();
+		if ($conf->multicompany->enabled && $conf->global->LDAP_GROUP_MULTICOMPANY_SEPARATE == "yes") {
+			$entities = $db->query("SELECT rowid FROM llx_entity WHERE active = 1 AND visible = 1");
+			while ($reSql = $db->fetch_object($entities)) {
+				$info = $object->_load_ldap_info($reSql->rowid);
+				//Activedirectory refuses to create a group with no members. If group has no members, then Administrator is included
+				if($ldap->serverType == "activedirectory" && (!isset($info['member']) || empty($info['member']))){
+					$info['member'] = array("cn=administrator,".$conf->global->LDAP_USER_DN);
+				}
+				// Get a gid number for objectclass PosixGroup if none was provided
+				if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+					$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+				}
 
-		// Get a gid number for objectclass PosixGroup if none was provided
-		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
-			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+				$dn = $object->_load_ldap_dn($info);
+				$olddn = $dn; // We can say that old dn = dn as we force synchro
+				$result = $ldap->update($dn, $info, $user, $olddn);
+			}
+		} else {
+			$info = $object->_load_ldap_info();
+			// Get a gid number for objectclass PosixGroup if none was provided
+			if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+			}
+
+			$dn = $object->_load_ldap_dn($info);
+			$olddn = $dn; // We can say that old dn = dn as we force synchro
+
+			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
-
-		$dn = $object->_load_ldap_dn($info);
-		$olddn = $dn; // We can say that old dn = dn as we force synchro
-
-		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0) {

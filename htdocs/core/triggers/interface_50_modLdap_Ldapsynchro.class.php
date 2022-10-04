@@ -131,7 +131,14 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 						$usergroup->fetch($object->context['newgroupid']);
 
-						$oldinfo = $usergroup->_load_ldap_info();
+						//For MultiCompany Separate Groups
+						if(isset($this->context['entity']) && $this->context['entity'] > 0){
+							$targetEntity = $this->context['entity'];
+						} else {
+							$targetEntity = -1;
+						}
+
+						$oldinfo = $usergroup->_load_ldap_info($targetEntity);
 						$olddn = $usergroup->_load_ldap_dn($oldinfo);
 
 						// Verify if entry exist
