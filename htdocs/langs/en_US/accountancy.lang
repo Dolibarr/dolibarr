@@ -58,6 +58,7 @@ MainAccountForSuppliersNotDefined=Main accounting account for vendors not define
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
