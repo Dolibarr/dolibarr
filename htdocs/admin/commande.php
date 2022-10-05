@@ -640,6 +640,7 @@ print '</form>';
 
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
+// TODO Must be implemented by PDF templates
 // Ask for payment bank during order
 if ($conf->banque->enabled) {
 
