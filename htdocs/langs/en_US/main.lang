@@ -1153,6 +1153,7 @@ CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
 ConfirmCancel=Are you sure you want to cancel
 EmailMsgID=Email MsgID
+EmailDate=Email date
 SetToEnabled=Set to enabled
 SetToDisabled=Set to disabled
 ConfirmMassEnabling=mass enabling confirmation
