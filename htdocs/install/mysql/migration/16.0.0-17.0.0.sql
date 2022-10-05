@@ -184,3 +184,5 @@ ALTER TABLE llx_socpeople ADD INDEX idx_socpeople_lastname (lastname);
 ALTER TABLE llx_societe ADD INDEX idx_societe_nom(nom);
 
 ALTER TABLE llx_extrafields MODIFY COLUMN fielddefault text;
+
+ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_url_id (url_id);
