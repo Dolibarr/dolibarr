@@ -91,7 +91,7 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '">';
 	if (empty($val['alwayseditable'])) {
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			print '<div class="longmessagecut">';
 		}
 		if ($key == 'lang') {
@@ -108,7 +108,7 @@ foreach ($object->fields as $key => $val) {
 			}
 		}
 		//print dol_escape_htmltag($object->$key, 1, 1);
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			print '</div>';
 		}
 	} else {
