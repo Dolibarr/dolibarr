@@ -827,6 +827,9 @@ class RecruitmentCandidature extends CommonObject
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
 		}
+		if ($status == self::STATUS_CONTRACT_PROPOSED) {
+			$statusType = 'status4';
+		}
 		if ($status == self::STATUS_CONTRACT_SIGNED) {
 			$statusType = 'status6';
 		}
