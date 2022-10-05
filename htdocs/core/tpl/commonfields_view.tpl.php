@@ -182,7 +182,7 @@ foreach ($object->fields as $key => $val) {
 	$rightpart .= '">';
 
 	if (empty($val['alwayseditable'])) {
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			$rightpart .= '<div class="longmessagecut">';
 		}
 		if ($key == 'lang') {
@@ -198,7 +198,7 @@ foreach ($object->fields as $key => $val) {
 				$rightpart.= $object->showOutputField($val, $key, $value, '', '', '', 0);
 			}
 		}
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			$rightpart .= '</div>';
 		}
 	} else {
