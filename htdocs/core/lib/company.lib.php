@@ -168,24 +168,6 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
-		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->client > 0) {
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabLetteringCustomer");
-			$head[$h][2] = 'lettering_customer';
-			$h++;
-		}
-
-		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->fournisseur > 0) {
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabLetteringSupplier");
-			$head[$h][2] = 'lettering_supplier';
-			$h++;
-		}
-	}
-
 	// Related items
 	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {

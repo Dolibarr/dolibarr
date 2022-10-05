@@ -299,3 +299,6 @@ InvoiceNotLate30Days = A recevoir (dans plus de 30 jours)
 InvoiceToPay=A payer (dans moins de 15 jours)
 InvoiceToPay15Days=A payer (d'ici 15 à 30 jours)
 InvoiceToPay30Days=A payer (dans plus de 30 jours)
+ConfirmPreselectAccount=Présélectionner le code comptable
+ConfirmPreselectAccountQuestion=Êtes-vous sûr de vouloir présélectionner les %s lignes sélectionnées avec ce code comptable ?
+AmountPaidMustMatchAmountOfDownPayment=Le montant payé doit correspondre au montant de l'acompte
