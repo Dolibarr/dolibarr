@@ -751,8 +751,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
-		// TODO with "alreadypaid" parameter with value -1 the status of invoice validated with no paiement sort with "status3" (BillStatusStarted)
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+
+		// Check if invoice as a payment
+		$payment = $objectstatic->getSommePaiement();
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
 
 		$result .= '</tr>';
 
