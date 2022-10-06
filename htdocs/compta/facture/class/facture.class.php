@@ -5530,7 +5530,16 @@ class Facture extends CommonInvoice
 						$res = $tmpinvoice->fetch_thirdparty();
 						$recipient = $tmpinvoice->thirdparty;
 						if ($res > 0) {
-							if (!empty($recipient->email)) {
+							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+								foreach ($tmparraycontact as $data_email) {
+									if (!empty($data_email['email'])) {
+										$to = $data_email['email'];
+										break;
+									}
+								}
+							}
+							if (empty($to) && !empty($recipient->email)) {
 								$to = $recipient->email;
 							} else {
 								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
