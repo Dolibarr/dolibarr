@@ -239,20 +239,20 @@ if (empty($reshook)) {
 			$error++;
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-		} elseif (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
-			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
-			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
+		} elseif (isModEnabled('stock') && getDolGlobalInt($constantforkey) != "1") {
+			$savconst =  getDolGlobalInt('STOCK_CALCULATE_ON_BILL');
+			//getDolGlobalInt('STOCK_CALCULATE_ON_BILL') = 1;
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
+			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".getDolGlobalInt($constantforkey));
 			$batch_rule = 0;
-			if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			if (isModEnabled('productbatch') && !empty(getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK'))) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
-			$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
+			$res = $invoice->validate($user, '', getDolGlobalInt($constantforkey), 0, $batch_rule);
 
-			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
+			//getDolGlobalInt('STOCK_CALCULATE_ON_BILL') = $savconst;
 		} else {
 			$res = $invoice->validate($user);
 			if ($res < 0) {
