@@ -352,7 +352,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
 				if ($conf->incoterm->enabled) {
@@ -419,7 +419,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 							$pdf->AddPage();
 							$pagenb++;
 							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
@@ -473,7 +473,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						// apply note frame to last page
 						$pdf->setPage($pageposafternote);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
 					} else // No pagebreak
@@ -491,7 +491,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 							$pageposafternote++;
 							$pdf->setPage($pageposafternote);
 							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 
 							$posyafter = $tab_top_newpage;
 						}
@@ -582,7 +582,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
 									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
@@ -740,7 +740,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == $pageposafter) {
@@ -753,7 +753,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$pdf->AddPage();
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
 

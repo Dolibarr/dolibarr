@@ -359,7 +359,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -456,7 +456,7 @@ class pdf_einstein extends ModelePDFCommandes
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -608,7 +608,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -628,7 +628,7 @@ class pdf_einstein extends ModelePDFCommandes
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
