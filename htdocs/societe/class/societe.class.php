@@ -4770,15 +4770,16 @@ class Societe extends CommonObject
 	 */
 	public function setThirdpartyType($typent_id)
 	{
+		global $user;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
+			$result = $this->setValueFrom('fk_typent', $typent_id, '', null, '', '', $user, 'COMPANY_MODIFY');
+
+			if ($result > 0) {
 				$this->typent_id = $typent_id;
-				$this->typent_code = dol_getIdFromCode($this->db, $this->$typent_id, 'c_typent', 'id', 'code');
+				$this->typent_code = dol_getIdFromCode($this->db, $this->typent_id, 'c_typent', 'id', 'code');
 				return 1;
 			} else {
 				return -1;
