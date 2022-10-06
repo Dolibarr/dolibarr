@@ -259,7 +259,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
+			print '<td width="96" class="nobordernopadding nowraponall">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 
