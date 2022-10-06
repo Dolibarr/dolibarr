@@ -150,8 +150,8 @@ abstract class DoliDB implements Database
 	/**
 	 * Start transaction
 	 *
-	 * @param		string	$textinlog		Add a small text into log. '' by default.
-	 * @return	    int         			1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return	int         			1 if transaction successfuly opened or already opened, 0 if error
 	 */
 	public function begin($textinlog = '')
 	{
