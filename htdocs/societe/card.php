@@ -2935,7 +2935,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 		if ($object->tva_intra) {
 			$s = '';
-			$s .= dol_print_profids($object->tva_intra, 'VATIntra', $object->country_code, 1);
+			$s .= dol_print_profids($object->tva_intra, 'VAT', $object->country_code, 1);
 			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
