@@ -61,10 +61,10 @@ if (isModEnabled('variants')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings', 'other'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
 
@@ -375,7 +375,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $usercancreate) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'add' && $usercancreate) {
@@ -1048,7 +1048,7 @@ if (empty($reshook)) {
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
-					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
@@ -1870,7 +1870,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr class="field_incoterm_id">';
 		print '<td class="titlefieldcreate"><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td  class="valuefieldcreate maxwidthonsmartphone">';
@@ -2655,7 +2655,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
@@ -2737,7 +2737,7 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		$formmargin->displayMarginInfos($object);
 	}
 
@@ -2855,11 +2855,7 @@ if ($action == 'create') {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
-						if ($usercansend) {
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else {
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
-						}
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '', $usercansend);
 					}
 				}
 

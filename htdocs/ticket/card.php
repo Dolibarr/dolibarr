@@ -689,7 +689,7 @@ if (empty($reshook)) {
 	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-//var_dump($action);exit;
+	//var_dump($action);exit;
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
 	$paramname = 'id';
@@ -1429,12 +1429,6 @@ if ($action == 'create' || $action == 'presend') {
 				if ($object->fk_soc > 0 && isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $user->rights->ficheinter->creer) {
 					print dolGetButtonAction('', $langs->trans('TicketAddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&token='.newToken().'&socid='. $object->fk_soc.'&origin=ticket_ticket&originid='. $object->id, '');
 				}
-
-				/* This is useless. We can already modify each field individually
-				if ($user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?track_id='.$object->track_id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a></div>';
-				}
-				*/
 
 				// Close ticket if statut is read
 				if (isset($object->status) && $object->status > 0 && $object->status < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {

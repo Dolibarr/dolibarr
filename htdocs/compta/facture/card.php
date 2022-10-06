@@ -1385,6 +1385,7 @@ if (empty($reshook)) {
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private = trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client');
+				$object->ref_customer		= GETPOST('ref_client');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
@@ -5460,7 +5461,6 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			$params = array(
 				'attr' => array(
-					'title' => '',
 					'class' => 'classfortooltip'
 				)
 			);
@@ -5535,9 +5535,9 @@ if ($action == 'create') {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
 				}
@@ -5802,7 +5802,7 @@ if ($action == 'create') {
 
 
 		// Show online payment link
-		$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
 		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 			print '<br><!-- Link to pay -->'."\n";

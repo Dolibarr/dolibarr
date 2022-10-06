@@ -552,7 +552,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Make offer - Refuse - Decline
 			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_CONTRACT_PROPOSED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=makeofferordecline">'.$langs->trans("MakeOffer").' / '.$langs->trans("Decline").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=makeofferordecline&token='.newToken().'">'.$langs->trans("MakeOffer").' / '.$langs->trans("Decline").'</a>';
 				}
 			}
 

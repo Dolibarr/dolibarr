@@ -27,7 +27,7 @@
 $supportedoauth2array = array(
 	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full'),
 );
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
 	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
 }

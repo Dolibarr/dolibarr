@@ -1872,7 +1872,7 @@ class Product extends CommonObject
 
 			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
 
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
 					$pu_ht = price($prodcustprice->lines[0]->price);
@@ -4846,7 +4846,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 		$sql.= " ORDER BY pa.rang";
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.implode(',', $parents), LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents)?implode(',', $parents):$parents), LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
@@ -5535,7 +5535,7 @@ class Product extends CommonObject
 			}
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if (!empty($conf->mrp->enabled)) {
+		if (isModEnabled('mrp')) {
 			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);

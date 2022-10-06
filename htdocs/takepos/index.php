@@ -397,7 +397,9 @@ function LoadProducts(position, issubcat) {
 function MoreProducts(moreorless) {
 	console.log("MoreProducts");
 
-	if ($('#search_pagination').val() != '') return Search2('<?php echo $keyCodeForEnter; ?>', moreorless);
+	if ($('#search_pagination').val() != '') {
+		return Search2('<?php echo (isset($keyCodeForEnter) ? $keyCodeForEnter : ''); ?>', moreorless);
+	}
 
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 

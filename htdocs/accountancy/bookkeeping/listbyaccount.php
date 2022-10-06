@@ -194,7 +194,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -401,7 +401,7 @@ if (empty($reshook)) {
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
+	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
 		$db->begin();
 
 		if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
@@ -454,7 +454,7 @@ if (empty($reshook)) {
 	}
 
 	// others mass actions
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
+	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		if ($massaction == 'letteringauto') {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
@@ -616,13 +616,13 @@ print $formconfirm;
 
 // List of mass actions available
 $arrayofmassactions = array();
-if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
 	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
 	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
 	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
-if ($user->rights->accounting->mouvements->supprimer) {
+if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {

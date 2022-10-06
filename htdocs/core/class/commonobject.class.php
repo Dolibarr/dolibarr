@@ -1534,7 +1534,6 @@ abstract class CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
@@ -1548,7 +1547,6 @@ abstract class CommonObject
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
-		// phpcs:enable
 		global $langs, $conf;
 
 		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
@@ -2072,7 +2070,7 @@ abstract class CommonObject
 		if ($resql) {
 			if ($trigkey) {
 				// call trigger with updated object values
-				if (empty($this->fields) && method_exists($this, 'fetch')) {
+				if (method_exists($this, 'fetch')) {
 					$result = $this->fetch($id);
 				} else {
 					$result = $this->fetchCommon($id);
@@ -3550,7 +3548,7 @@ abstract class CommonObject
 			if (!empty($conf->global->$MODULE)) {
 				$modsactivated = explode(',', $conf->global->$MODULE);
 				foreach ($modsactivated as $mod) {
-					if ($conf->$mod->enabled) {
+					if (isModEnabled($mod)) {
 						return 1; // update was disabled by specific setup
 					}
 				}
@@ -4105,7 +4103,7 @@ abstract class CommonObject
 					}
 
 					// Here $module, $classfile and $classname are set, we can use them.
-					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype)) {
+					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
 							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
@@ -4883,7 +4881,7 @@ abstract class CommonObject
 
 		// Define usemargins
 		$usemargins = 0;
-		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
 		}
 
@@ -9139,7 +9137,7 @@ abstract class CommonObject
 
 		// Clean and check mandatory
 		foreach ($keys as $key) {
-			// If field is an implicit foreign key field
+			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
 				$values[$key] = '';
 			}
@@ -9159,7 +9157,7 @@ abstract class CommonObject
 				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
 			}
 
-			// If field is an implicit foreign key field
+			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
 				if (isset($this->fields[$key]['default'])) {
 					$values[$key] = ((int) $this->fields[$key]['default']);

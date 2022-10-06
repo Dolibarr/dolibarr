@@ -498,7 +498,7 @@ if (empty($reshook)) {
 
 					$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $object->thirdparty->id);
 
-					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						if (count($prodcustprice->lines) > 0) {
 							$pu_ht = price($prodcustprice->lines[0]->price);
@@ -1476,7 +1476,7 @@ if ($action == 'create') {
 		$productstatic = new Product($db);
 
 		$usemargins = 0;
-		if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'propal', 'commande'))) {
+		if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'propal', 'commande'))) {
 			$usemargins = 1;
 		}
 
@@ -1522,7 +1522,7 @@ if ($action == 'create') {
 					print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				}
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
-				if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 					print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				}
 				print '<td width="30">&nbsp;</td>';
@@ -1592,7 +1592,7 @@ if ($action == 'create') {
 					}
 
 					// Margin
-					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						print '<td class="right nowraponall">'.price($objp->pa_ht).'</td>';
 					}
 
@@ -1749,7 +1749,7 @@ if ($action == 'create') {
 					print '</tr>';
 
 					$colspan = 6;
-					if (!empty($conf->margin->enabled) && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
+					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						$colspan++;
 					}
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2092,9 +2092,9 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
 				}
@@ -2206,11 +2206,20 @@ if ($action == 'create') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show online signature link
+			if ($object->statut != Contrat::STATUS_DRAFT && $conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+				print '<br><!-- Link to sign -->';
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+
+				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
+			}
+
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
 
 			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -2237,7 +2246,7 @@ $db->close();
 ?>
 
 <?php
-if (!empty($conf->margin->enabled) && $action == 'editline') {
+if (isModEnabled('margin') && $action == 'editline') {
 		// TODO Why this ? To manage margin on contracts ?
 	?>
 <script type="text/javascript">

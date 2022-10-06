@@ -128,6 +128,8 @@ if ($action == 'updateMask') {
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
+} elseif ($action == 'unsetdoc') {
+	dolibarr_del_const($db, "CONTRACT_ADDON_PDF", $conf->entity);
 } elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -152,7 +154,16 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == "allowonlinesign") {
+	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_ONLINESIGN", $value, 0, 'int', $conf->entity)) {
+		$error++;
+	}
+} elseif ($action == "allowexternaldownload") {
+	if (!dolibarr_set_const($db, "CONTRACT_ALLOW_EXTERNAL_DOWNLOAD", $value, 0, 'int', $conf->entity)) {
+		$error++;
+	}
 }
+
 
 
 /*
@@ -369,9 +380,9 @@ foreach ($dirmodels as $reldir) {
 								// Defaut
 								print '<td class="center">';
 								if ($conf->global->CONTRACT_ADDON_PDF == $name) {
-									print img_picto($langs->trans("Default"), 'on');
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -469,6 +480,37 @@ print $form->selectyesno("activate_hideClosedServiceByDefault", (!empty($conf->g
 print '</td>';
 print '</tr>';
 
+// Allow online signing
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
+print '<td class="center">';
+if ($conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activited"), 'switch_on');
+	print '</a>';
+} else {
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="center">';
+if ($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) {
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowexternaldownload&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activited"), 'switch_on');
+	print '</a>';
+} else {
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowexternaldownload&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a>';
+}
+print '</td>';
+print '</tr>';
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');

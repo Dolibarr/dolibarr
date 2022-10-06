@@ -536,7 +536,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = null;
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
 $companystatic = new Societe($db);
@@ -1573,7 +1573,7 @@ if ($resql) {
 	$typenArray = null;
 
 	$with_margin_info = false;
-	if (!empty($conf->margin->enabled) && (
+	if (isModEnabled('margin') && (
 		!empty($arrayfields['total_pa']['checked'])
 		|| !empty($arrayfields['total_margin']['checked'])
 		|| !empty($arrayfields['total_margin_rate']['checked'])

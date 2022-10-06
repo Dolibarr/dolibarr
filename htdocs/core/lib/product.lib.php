@@ -60,9 +60,9 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
+	if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 		if ((((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->fournisseur->lire)
-		|| (!empty($conf->margin->enabled) && $user->hasRight("margin", "liretous"))
+		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 		) {
 			if ($usercancreadprice) {
 				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
@@ -570,7 +570,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// MO
-	if (!empty($conf->mrp->enabled) && !empty($user->rights->mrp->read)) {
+	if (isModEnabled('mrp') && !empty($user->rights->mrp->read)) {
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {

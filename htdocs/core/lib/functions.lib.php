@@ -3385,11 +3385,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
-		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
+		if ($conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
 			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
 			$newphone .= '>'.$newphoneform.'</a>';
-		} elseif (!empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
+		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
 				$user->fetch_clicktodial();
 			}
@@ -6371,7 +6371,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	if (($seller_country_code == $buyer_country_code)
-	|| (in_array($seller_country_code, array('FR,MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
+	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
 		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 	}
@@ -10461,14 +10461,14 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    $actionType default, delete, danger
- * @param string    $url        the url for link
- * @param string    $id         attribute id of button
- * @param int       $userRight  user action right
+ * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string    	$actionType 'default', 'delete', 'danger'
+ * @param string    	$url        Url for link
+ * @param string    	$id         Attribute id of button
+ * @param int|boolean	$userRight  User action right
  * // phpcs:disable
- * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                          'attr' => [ // to add or override button attributes
  *                          'xxxxx' => '', // your xxxxx attribute you want
  *                          'class' => '', // to add more css class to the button class attribute
@@ -10485,7 +10485,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          ],
  *                          ]
  * // phpcs:enable
- * @return string               html button
+ * @return string               	html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -10511,18 +10511,19 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
+		$attr['title'] = $label;
 		$attr['aria-label'] = $label;
 	}
 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
+		$attr['title'] = $langs->trans('NotEnoughPermissions');
 	}
 
 	if (!empty($id)) {
 		$attr['id'] = $id;
 	}
-
 
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
