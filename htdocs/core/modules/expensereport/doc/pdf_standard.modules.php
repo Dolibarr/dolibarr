@@ -286,7 +286,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 95;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 65 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -361,7 +361,7 @@ class pdf_standard extends ModeleExpenseReport
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								 $this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							$pdf->setPage($pageposafter + 1);
@@ -390,7 +390,7 @@ class pdf_standard extends ModeleExpenseReport
 								if (!empty($tplidx)) {
 									$pdf->useTemplate($tplidx);
 								}
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
@@ -447,7 +447,7 @@ class pdf_standard extends ModeleExpenseReport
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -467,7 +467,7 @@ class pdf_standard extends ModeleExpenseReport
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}

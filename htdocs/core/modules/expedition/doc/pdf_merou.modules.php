@@ -281,7 +281,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 52;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
