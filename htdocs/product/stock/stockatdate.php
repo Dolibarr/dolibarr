@@ -565,8 +565,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if ($stock * price2num($objp->pmp, 'MT')) {
-				print '<span class="amount">'.price($stock * price2num($objp->pmp, 'MT'), 1).'</span>';
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
