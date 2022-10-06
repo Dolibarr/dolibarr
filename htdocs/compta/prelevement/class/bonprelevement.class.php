@@ -22,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/compta/prelevement/class/bonprelevement.class.php
- *      \ingroup    prelevement
- *      \brief      File of withdrawal receipts class
+ * \file       htdocs/compta/prelevement/class/bonprelevement.class.php
+ * \ingroup    prelevement
+ * \brief      File of withdrawal receipts class
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -419,8 +419,8 @@ class BonPrelevement extends CommonObject
 					} else {
 						$paiement = new Paiement($this->db);
 					}
-					$paiement->datepaye     = $date;
-					$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
+					$paiement->datepaye = $date;
+					$paiement->amounts = $cursoramounts; // Array with detail of dispatching of payments for each invoice
 
 					if ($this->type == 'bank-transfer') {
 						$paiement->paiementid = 2;
@@ -757,14 +757,14 @@ class BonPrelevement extends CommonObject
 
 		$error = 0;
 
-		$datetimeprev = time();
+		$datetimeprev = dol_now('gmt');
 		//Choice the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
 
-		$month = strftime("%m", $datetimeprev);
-		$year = strftime("%Y", $datetimeprev);
+		$month = dol_print_date($datetimeprev, "%m", 'gmt');
+		$year = dol_print_date($datetimeprev, "%Y", 'gmt');
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
@@ -1743,8 +1743,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date($this->date_echeance, "%d%m", 'gmt'));
+		fputs($this->file, substr(dol_print_date($this->date_echeance, "%y", 'gmt'), 1));
 
 		// Raison Sociale Destinataire C2
 
@@ -1969,8 +1969,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date($this->date_echeance, "%d%m", 'gmt'));
+		fputs($this->file, substr(dol_print_date($this->date_echeance, "%y", 'gmt'), 1));
 
 		// Raison Sociale C2
 
