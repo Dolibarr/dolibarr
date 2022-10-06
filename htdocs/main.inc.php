@@ -3004,7 +3004,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'"><i class="fas fa-bug"></i> '.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 
