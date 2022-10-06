@@ -5143,11 +5143,11 @@ class Facture extends CommonInvoice
 							if (!empty($recipient->email)) {
 								$to = $recipient->email;
 							} else {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->fk_soc.". No email defined for user.";
+								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->thirdparty->id.". No email defined for user.";
 								$error++;
 							}
 						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->fk_soc;
+							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->thirdparty->id;
 							$error++;
 						}
 
