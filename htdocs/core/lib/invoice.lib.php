@@ -752,7 +752,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
 
-		// Check if invoice as a payment
+		// Load amount of existing payment of invoice (needed for complete status)
 		$payment = $objectstatic->getSommePaiement();
 		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
 
