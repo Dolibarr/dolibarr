@@ -3161,9 +3161,22 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 	$ret = '';
 	if (strtoupper($countrycode) == 'FR') {
 		// France
-		if ($id == 1 && dol_strlen($newProfID) == 9)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
-		if ($id == 2 && dol_strlen($newProfID) == 14)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
-		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+		if ($id == 1 && dol_strlen($newProfID) == 9) {
+			// SIREN (ex: 123 123 123)
+			$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
+		}
+		if ($id == 2 && dol_strlen($newProfID) == 14) {
+			// SIRET (ex: 123 123 123 12345)
+			$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
+		}
+		if ($id == 3 && dol_strlen($newProfID) == 5) {
+			// NAF/APE (ex: 69.20Z)
+			$newProfID = substr($newProfID, 0, 2).$separ.substr($newProfID, 2, 3);
+		}
+		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13) {
+			// TVA intra-communautaire (ex: FR12 123 123 123)
+			$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+		}
 	}
 	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
 	else $ret = $newProfID;
