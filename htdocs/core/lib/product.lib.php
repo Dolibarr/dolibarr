@@ -183,7 +183,7 @@ function product_prepare_head($object)
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
