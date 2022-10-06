@@ -290,19 +290,21 @@ print '<td class="right">' . $langs->trans("Debit") . '</td>';
 print '<td class="right">' . $langs->trans("Credit") . '</td>';
 print "</tr>\n";
 
-foreach ($journal_data as $element_id => $element) {
-	foreach ($element['blocks'] as $lines) {
-		foreach ($lines as $line) {
-			print '<tr class="oddeven">';
-			print '<td>' . $line['date'] . '</td>';
-			print '<td>' . $line['piece'] . '</td>';
-			print '<td>' . $line['account_accounting'] . '</td>';
-			print '<td>' . $line['subledger_account'] . '</td>';
-			print '<td>' . $line['label_operation'] . '</td>';
-			if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
-			print '<td class="right nowraponall">' . $line['debit'] . '</td>';
-			print '<td class="right nowraponall">' . $line['credit'] . '</td>';
-			print '</tr>';
+if (is_array($journal_data) && !empty($journal_data)) {
+	foreach ($journal_data as $element_id => $element) {
+		foreach ($element['blocks'] as $lines) {
+			foreach ($lines as $line) {
+				print '<tr class="oddeven">';
+				print '<td>' . $line['date'] . '</td>';
+				print '<td>' . $line['piece'] . '</td>';
+				print '<td>' . $line['account_accounting'] . '</td>';
+				print '<td>' . $line['subledger_account'] . '</td>';
+				print '<td>' . $line['label_operation'] . '</td>';
+				if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
+				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
+				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
+				print '</tr>';
+			}
 		}
 	}
 }

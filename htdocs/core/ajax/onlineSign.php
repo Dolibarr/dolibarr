@@ -28,9 +28,10 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (!defined('NOREQUIRESOC')) {
+// Needed to create other objects with workflow
+/*if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
-}
+}*/
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
