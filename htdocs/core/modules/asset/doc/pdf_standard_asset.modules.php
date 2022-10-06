@@ -383,10 +383,10 @@ class pdf_standard_asset extends ModelePDFAsset
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 				$tab_height = 130 - $top_shift;
 				$tab_height_newpage = 150;
-				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$tab_height_newpage -= $top_shift;
 				}
 
@@ -430,7 +430,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -488,7 +488,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
@@ -510,7 +510,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 
@@ -748,7 +748,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -766,7 +766,7 @@ class pdf_standard_asset extends ModelePDFAsset
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
