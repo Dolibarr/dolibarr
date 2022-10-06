@@ -5630,7 +5630,7 @@ class Product extends CommonObject
 		$result = 0;
 
 		$dir = $sdir;
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref);
@@ -5675,7 +5675,7 @@ class Product extends CommonObject
 		global $conf;
 
 		$dir = $sdir;
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product');
