@@ -189,6 +189,7 @@ print dol_get_fiche_head($head, 'contract', $langs->trans("Contracts"), -1, 'con
 
 print load_fiche_titre($langs->trans("ContractsNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -282,7 +283,7 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table></div><br>';
 
 /*
  *  Documents models for Contracts
@@ -310,6 +311,7 @@ if ($resql) {
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -426,6 +428,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 print "<br>";
 
 /*
@@ -438,6 +441,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_other">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -512,6 +517,7 @@ if ($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) {
 print '</td>';
 print '</tr>';
 print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 
