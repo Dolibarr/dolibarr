@@ -4000,7 +4000,9 @@ if ($action == 'create') {
 		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
 		$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaid - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
 		// Code to fix case of corrupted data
-		if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
+		// TODO We should not need this. Also data comes from a not reliable value of $object->multicurrency_total_ttc that may be wrong if it was
+		// calculated by summing lines that were in a currency for some of them and into another for others (lines from discount/down payment into another currency for example)
+		if ($resteapayer == 0 && $multicurrency_resteapayer != 0 && $object->multicurrency_code != $conf->currency) {
 			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 		}
 	}
