@@ -973,10 +973,11 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Visibility
 if (!empty($arrayfields['p.public']['checked'])) {
 	print '<td class="liste_titre center">';
 	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
-	print $form->selectarray('search_public', $array, $search_public);
+	print $form->selectarray('search_public', $array, $search_public, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
 	print '</td>';
 }
 if (!empty($arrayfields['c.assigned']['checked'])) {
