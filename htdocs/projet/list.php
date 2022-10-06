@@ -1372,10 +1372,10 @@ while ($i < $imaxinloop) {
 		}
 		// Contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall tdoverflowmax200">';
 			$ifisrt = 1;
 			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source);
+				$tab = $object->liste_contact(-1, $source, 0, '', 1);
 				$numcontact = count($tab);
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {

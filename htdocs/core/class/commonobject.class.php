@@ -1348,13 +1348,14 @@ abstract class CommonObject
 	/**
 	 *    Get array of all contacts for an object
 	 *
-	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
-	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
-	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return	array|int		        Array of contacts, -1 if error
+	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
+	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *    @param	int         $list       	0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *    @param	int			$status			Status of user or company
+	 *    @return	array|int		        	Array of contacts, -1 if error
 	 */
-	public function liste_contact($status = -1, $source = 'external', $list = 0, $code = '')
+	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1372,10 +1373,10 @@ abstract class CommonObject
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."element_contact ec";
-		if ($source == 'internal') {
+		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
-		if ($source == 'external' || $source == 'thirdparty') {
+		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
@@ -1386,13 +1387,19 @@ abstract class CommonObject
 		}
 		if ($source == 'internal') {
 			$sql .= " AND tc.source = 'internal'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);
+			}
 		}
 		if ($source == 'external' || $source == 'thirdparty') {
 			$sql .= " AND tc.source = 'external'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			}
 		}
 		$sql .= " AND tc.active=1";
-		if ($status >= 0) {
-			$sql .= " AND ec.statut = ".((int) $status);
+		if ($statusoflink >= 0) {
+			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
 		$sql .= " ORDER BY t.lastname ASC";
 
