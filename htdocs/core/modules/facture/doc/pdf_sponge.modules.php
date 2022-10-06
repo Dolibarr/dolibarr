@@ -457,7 +457,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// $this->tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
 				$this->tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
-				$this->tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
 				$extra_under_address_shift = 0;
@@ -575,7 +575,7 @@ class pdf_sponge extends ModelePDFFactures
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -633,7 +633,7 @@ class pdf_sponge extends ModelePDFFactures
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						$height_note = $posyafter - $this->tab_top_newpage;
@@ -655,7 +655,7 @@ class pdf_sponge extends ModelePDFFactures
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 
@@ -957,7 +957,7 @@ class pdf_sponge extends ModelePDFFactures
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						if (!empty($tplidx)) {
@@ -978,7 +978,7 @@ class pdf_sponge extends ModelePDFFactures
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 					}
@@ -1472,7 +1472,7 @@ class pdf_sponge extends ModelePDFFactures
 				if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 					$this->_pagefoot($pdf, $object, $outputlangs, 1);
 					$pdf->addPage();
-					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 						$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						$pdf->setY($this->tab_top_newpage);
 					} else {
@@ -1539,7 +1539,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 				$pdf->addPage();
-				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 					$pdf->setY($this->tab_top_newpage);
 				} else {
