@@ -2213,12 +2213,13 @@ class ExtraFields
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
-						continue; // Value was not provided, we should not set it.
+						$value_key = ''; // You can set the value to empty, e.g. when you completely uncheck the previous selection
+					} else {
+						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+						// Make sure we get an array even if there's only one checkbox
+						$value_arr = (array) $value_arr;
+						$value_key = implode(',', $value_arr);
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					// Make sure we get an array even if there's only one checkbox
-					$value_arr = (array) $value_arr;
-					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
