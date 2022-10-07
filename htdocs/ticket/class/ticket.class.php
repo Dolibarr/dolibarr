@@ -2756,8 +2756,8 @@ class Ticket extends CommonObject
 									$result = $this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 									if ($result) {
 										// update last_msg_sent date
-										$object->date_last_msg_sent = dol_now();
-										$object->update($user);
+										$this->date_last_msg_sent = dol_now();
+										$this->update($user);
 									}
 								}
 							}
@@ -2766,7 +2766,7 @@ class Ticket extends CommonObject
 				}
 
 				// Set status to "answered" if not set yet, but only if internal user
-				if ($object->fk_statut < 3 && !$user->socid) {
+				if ($object->status < 3 && !$user->socid) {
 					$object->setStatut(3);
 				}
 				return 1;
