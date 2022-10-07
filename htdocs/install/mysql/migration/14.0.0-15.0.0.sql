@@ -530,3 +530,6 @@ ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIG
 -- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
 -- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
 ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
+
+-- VMYSQL4.3 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN source_directory VARCHAR(255) NOT NULL DEFAULT 'Inbox';
+-- VPGSQL8.2 ALTER TABLE llx_emailcollector_emailcollector ALTER COLUMN source_directory SET DEFAULT 'Inbox';
