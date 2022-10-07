@@ -97,7 +97,8 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 
 $permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
-
+$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoedit = $permissiontoadd;
 $error = 0;
 
 
@@ -137,6 +138,8 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';  // Must be include, not include_once
 
 	if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer) {
 		$result = $object->active_line($user, GETPOST('ligne', 'int'), GETPOST('date'), GETPOST('dateend'), GETPOST('comment'));
@@ -350,7 +353,8 @@ if (empty($reshook)) {
 									$lines[$i]->fk_fournprice,
 									$lines[$i]->pa_ht,
 									$array_options,
-									$lines[$i]->fk_unit
+									$lines[$i]->fk_unit,
+									$num+1
 								);
 
 								if ($result < 0) {
@@ -401,6 +405,8 @@ if (empty($reshook)) {
 		$price_ht_devise = '';
 		$price_ttc = '';
 		$price_ttc_devise = '';
+
+		$rang = count($object->lines) + 1;
 
 		if (GETPOST('price_ht') !== '') {
 			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
@@ -609,7 +615,8 @@ if (empty($reshook)) {
 					$fk_fournprice,
 					$pa_ht,
 					$array_options,
-					$fk_unit
+					$fk_unit,
+					$rang
 				);
 			}
 
@@ -692,10 +699,10 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			if ($date_start_real_update == '') {
-				$date_start_real_update = $objectline->date_ouverture;
+				$date_start_real_update = $objectline->date_start_real;
 			}
 			if ($date_end_real_update == '') {
-				$date_end_real_update = $objectline->date_cloture;
+				$date_end_real_update = $objectline->date_end_real;
 			}
 
 			$vat_rate = GETPOST('eltva_tx');
@@ -739,13 +746,14 @@ if (empty($reshook)) {
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;
 			$objectline->localtax2_tx = is_numeric($localtax2_tx) ? $localtax2_tx : 0;
-			$objectline->date_ouverture_prevue = $date_start_update;
-			$objectline->date_ouverture = $date_start_real_update;
-			$objectline->date_fin_validite = $date_end_update;
-			$objectline->date_cloture = $date_end_real_update;
+			$objectline->date_start = $date_start_update;
+			$objectline->date_start_real = $date_start_real_update;
+			$objectline->date_end = $date_end_update;
+			$objectline->date_end_real = $date_end_real_update;
 			$objectline->fk_user_cloture = $user->id;
 			$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
+			$objectline->rang = $objectline->rang;
 
 			if ($fk_unit > 0) {
 				$objectline->fk_unit = GETPOST('unit');
@@ -1482,9 +1490,11 @@ if ($action == 'create') {
 
 		// Title line for service
 		$cursorline = 1;
-		print '<div id="contrat-lines-container" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
+
+
+		print '<div id="contrat-lines-container"  id="contractlines" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
 		while ($cursorline <= $nbofservices) {
-			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
+			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" class="" draggable="true" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
@@ -1493,15 +1503,16 @@ if ($action == 'create') {
 
 			// Area with common detail of line
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
+			print '<table class="notopnoleftnoright allwidth tableforservicepart1 " width="100%">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
-			$sql .= " cd.date_ouverture_prevue as date_debut, cd.date_ouverture as date_debut_reelle,";
-			$sql .= " cd.date_fin_validite as date_fin, cd.date_cloture as date_fin_reelle,";
+			$sql .= " cd.date_ouverture_prevue as date_start, cd.date_ouverture as date_start_real,";
+			$sql .= " cd.date_fin_validite as date_end, cd.date_cloture as date_end_real,";
 			$sql .= " cd.commentaire as comment, cd.fk_product_fournisseur_price as fk_fournprice, cd.buy_price_ht as pa_ht,";
 			$sql .= " cd.fk_unit,";
 			$sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity, p.tosell, p.tobuy, p.tobatch";
+			$sql .= " ,cd.rang";
 			$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			$sql .= " WHERE cd.rowid = ".((int) $object->lines[$cursorline - 1]->id);
@@ -1509,6 +1520,8 @@ if ($action == 'create') {
 			$result = $db->query($sql);
 			if ($result) {
 				$total = 0;
+
+				$objp = $db->fetch_object($result);
 
 				print '<tr class="liste_titre'.($cursorline ? ' liste_titre_add' : '').'">';
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
@@ -1525,10 +1538,28 @@ if ($action == 'create') {
 				if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 					print '<td width="50" class="right">'.$langs->trans("BuyingPrice").'</td>';
 				}
-				print '<td width="30">&nbsp;</td>';
+				//
+
+				if ($nbofservices > 1 && $conf->browser->layout != 'phone' && !empty($user->rights->contrat->creer)) {
+					print '<td width="30" class="linecolmove tdlineupdown center">';
+					if ($cursorline > 1) {
+						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$objp->rowid.'">';
+						echo img_up('default', 0, 'imgupforline');
+						print '</a>';
+					}
+					if ($cursorline < $nbofservices) {
+						print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$objp->rowid.'">';
+						echo img_down('default', 0, 'imgdownforline');
+						print '</a>';
+					}
+					print '</td>';
+				} else {
+					print '<td width="30">&nbsp;sss</td>';
+				}
+
 				print "</tr>\n";
 
-				$objp = $db->fetch_object($result);
+
 
 				// Line in view mode
 				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid) {
@@ -1633,10 +1664,10 @@ if ($action == 'create') {
 
 						// Date planned
 						print $langs->trans("DateStartPlanned").': ';
-						if ($objp->date_debut) {
-							print dol_print_date($db->jdate($objp->date_debut), 'day');
+						if ($objp->date_start) {
+							print dol_print_date($db->jdate($objp->date_start), 'day');
 							// Warning si date prevu passee et pas en service
-							if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) {
+							if ($objp->statut == 0 && $db->jdate($objp->date_start) < ($now - $conf->contrat->services->inactifs->warning_delay)) {
 								$warning_delay = $conf->contrat->services->inactifs->warning_delay / 3600 / 24;
 								$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 								print " ".img_warning($textlate);
@@ -1646,9 +1677,9 @@ if ($action == 'create') {
 						}
 						print ' &nbsp;-&nbsp; ';
 						print $langs->trans("DateEndPlanned").': ';
-						if ($objp->date_fin) {
-							print dol_print_date($db->jdate($objp->date_fin), 'day');
-							if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) {
+						if ($objp->date_end) {
+							print dol_print_date($db->jdate($objp->date_end), 'day');
+							if ($objp->statut == 4 && $db->jdate($objp->date_end) < ($now - $conf->contrat->services->expires->warning_delay)) {
 								$warning_delay = $conf->contrat->services->expires->warning_delay / 3600 / 24;
 								$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 								print " ".img_warning($textlate);
@@ -1760,9 +1791,9 @@ if ($action == 'create') {
 					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
-					print $form->selectDate($db->jdate($objp->date_debut), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_debut) > 0 ? 0 : 1), "update");
+					print $form->selectDate($db->jdate($objp->date_start), "date_start_update", $usehm, $usehm, ($db->jdate($objp->date_start) > 0 ? 0 : 1), "update");
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-					print $form->selectDate($db->jdate($objp->date_fin), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_fin) > 0 ? 0 : 1), "update");
+					print $form->selectDate($db->jdate($objp->date_end), "date_end_update", $usehm, $usehm, ($db->jdate($objp->date_end) > 0 ? 0 : 1), "update");
 					print '</td>';
 					print '</tr>';
 
@@ -1882,26 +1913,26 @@ if ($action == 'create') {
 
 				print '<td>';
 				// Si pas encore active
-				if (!$objp->date_debut_reelle) {
+				if (!$objp->date_start_real) {
 					print $langs->trans("DateStartReal").': ';
-					if ($objp->date_debut_reelle) {
-						print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
+					if ($objp->date_start_real) {
+						print dol_print_date($db->jdate($objp->date_start_real), 'day');
 					} else {
 						print $langs->trans("ContractStatusNotRunning");
 					}
 				}
 				// Si active et en cours
-				if ($objp->date_debut_reelle && !$objp->date_fin_reelle) {
+				if ($objp->date_start_real && !$objp->date_end_real) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
+					print dol_print_date($db->jdate($objp->date_start_real), 'day');
 				}
 				// Si desactive
-				if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
+				if ($objp->date_start_real && $objp->date_end_real) {
 					print $langs->trans("DateStartReal").': ';
-					print dol_print_date($db->jdate($objp->date_debut_reelle), 'day');
+					print dol_print_date($db->jdate($objp->date_start_real), 'day');
 					print ' &nbsp;-&nbsp; ';
 					print $langs->trans("DateEndReal").': ';
-					print dol_print_date($db->jdate($objp->date_fin_reelle), 'day');
+					print dol_print_date($db->jdate($objp->date_end_real), 'day');
 				}
 				if (!empty($objp->comment)) {
 					print " &nbsp;-&nbsp; ".$objp->comment;
@@ -1922,14 +1953,14 @@ if ($action == 'create') {
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
 				// Definie date debut et fin par defaut
-				$dateactstart = $objp->date_debut;
+				$dateactstart = $objp->date_start;
 				if (GETPOST('remonth')) {
 					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 				} elseif (!$dateactstart) {
 					$dateactstart = time();
 				}
 
-				$dateactend = $objp->date_fin;
+				$dateactend = $objp->date_end;
 				if (GETPOST('endmonth')) {
 					$dateactend = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				} elseif (!$dateactend) {
@@ -1978,14 +2009,14 @@ if ($action == 'create') {
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
 
 				// Definie date debut et fin par defaut
-				$dateactstart = $objp->date_debut_reelle;
+				$dateactstart = $objp->date_start_real;
 				if (GETPOST('remonth')) {
 					$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 				} elseif (!$dateactstart) {
 					$dateactstart = time();
 				}
 
-				$dateactend = $objp->date_fin_reelle;
+				$dateactend = $objp->date_end_real;
 				if (GETPOST('endmonth')) {
 					$dateactend = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				} elseif (!$dateactend) {
@@ -2004,7 +2035,7 @@ if ($action == 'create') {
 				if ($objp->statut >= 4) {
 					if ($objp->statut == 4) {
 						print $langs->trans("DateEndReal").' ';
-						print $form->selectDate($dateactend, "end", $usehm, $usehm, ($objp->date_fin_reelle > 0 ? 0 : 1), "closeline", 1, 1);
+						print $form->selectDate($dateactend, "end", $usehm, $usehm, ($objp->date_end_real > 0 ? 0 : 1), "closeline", 1, 1);
 					}
 				}
 				print '</td>';
