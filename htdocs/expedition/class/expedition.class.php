@@ -2152,8 +2152,9 @@ class Expedition extends CommonObject
 					}
 				}
 				if ($shipments_match_order) {
-					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for shipments with status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
-					$order->cloture($user);
+					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
+					// We close the order
+					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
 				}
 			}
 
