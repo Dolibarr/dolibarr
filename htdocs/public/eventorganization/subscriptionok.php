@@ -167,7 +167,7 @@ print $langs->trans("SubscriptionOk");
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 
 // Clean session variables to avoid duplicate actions if post is resent
